@@ -17,6 +17,10 @@
     <Page Include="ConfigurationPage.xaml">
       <Filter>Pages</Filter>
     </Page>
+    <Page Include="ResourceDictionary.xaml" />
+    <Page Include="UpdateDialog.xaml">
+      <Filter>Dialogs</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -58,6 +62,9 @@
     </Filter>
     <Filter Include="Pages">
       <UniqueIdentifier>{9c55212e-2c38-4892-9bba-9d1ebb6d9921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialogs">
+      <UniqueIdentifier>{eb2157d0-db85-49fa-8de9-c292dbca6f7b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

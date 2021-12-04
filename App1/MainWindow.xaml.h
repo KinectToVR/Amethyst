@@ -5,6 +5,8 @@
 #include "GeneralPage.g.h"
 #include "ControllersPage.g.h"
 
+#include "UpdateDialog.g.h"
+
 namespace muxc
 {
     using namespace winrt::Microsoft::UI::Xaml::Controls;
@@ -51,6 +53,10 @@ namespace winrt::App1::implementation
 		// Vector of std::pair holding the Navigation Tag and the relative Navigation Page.
 		std::vector<std::pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>> m_pages;
 
+    public:
+        void Minimize_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
+        void Exit_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
+        void Update_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
     };
 }
 

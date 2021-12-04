@@ -4,6 +4,5 @@ namespace App1
     runtimeclass GeneralPage : Microsoft.UI.Xaml.Controls.Page
     {
         GeneralPage();
-        Int32 MyProperty;
     }
 }

@@ -19,7 +19,10 @@ namespace winrt::App1::implementation
     MainWindow::MainWindow()
     {
         InitializeComponent();
-
+        
+        this->ExtendsContentIntoTitleBar(true);
+        this->SetTitleBar(DragElement());
+        
         m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
             (L"general", winrt::xaml_typename<GeneralPage>()));
         m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
@@ -30,7 +33,6 @@ namespace winrt::App1::implementation
             (L"configuration", winrt::xaml_typename<ConfigurationPage>()));
     }
 }
-
 
 void winrt::App1::implementation::MainWindow::NavView_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
@@ -172,4 +174,38 @@ void winrt::App1::implementation::MainWindow::On_Navigated(
             }
         }
     }
+}
+
+void winrt::App1::implementation::MainWindow::Exit_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+{
+    // Save and Exit with 0
+    exit(0);
+}
+
+void winrt::App1::implementation::MainWindow::Minimize_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+{
+    // Minimize with win+down
+    INPUT inputs[4] = {};
+    ZeroMemory(inputs, sizeof(inputs));
+
+    inputs[0].type = INPUT_KEYBOARD;
+    inputs[0].ki.wVk = VK_LWIN;
+
+    inputs[1].type = INPUT_KEYBOARD;
+    inputs[1].ki.wVk = VK_DOWN;
+
+    inputs[2].type = INPUT_KEYBOARD;
+    inputs[2].ki.wVk = VK_DOWN;
+    inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+
+    inputs[3].type = INPUT_KEYBOARD;
+    inputs[3].ki.wVk = VK_LWIN;
+    inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+
+    SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
+}
+
+void winrt::App1::implementation::MainWindow::Update_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+{
+    
 }

@@ -8,72 +8,61 @@
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <Grid MinHeight="700" MinWidth="1000" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" x:Name="XMainGrid">
+
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="550"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="160"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="49"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" x:Name="DragElement" Canvas.ZIndex="1"/>
+        </Grid>
 
         <muxc:NavigationView x:Name="NavView"
-                             Loaded="NavView_Loaded"
-                             ItemInvoked="NavView_ItemInvoked"
-                             BackRequested="NavView_BackRequested"
-		                     Grid.Row="1"
-		                     PaneDisplayMode="Top"
-                             IsBackButtonVisible="Collapsed"
-                             IsSettingsVisible="False"
-                             SelectedItem="general"
-		                     IsTabStop="False">
+	                         Loaded="NavView_Loaded"
+	                         ItemInvoked="NavView_ItemInvoked"
+	                         BackRequested="NavView_BackRequested"
+	                         Grid.Row="1"
+	                         PaneDisplayMode="Top"
+	                         IsBackButtonVisible="Collapsed"
+	                         IsSettingsVisible="False"
+	                         SelectedItem="general"
+	                         IsTabStop="False"
+	                         FontWeight="Bold">
 
             <muxc:NavigationView.PaneHeader>
                 <StackPanel Orientation="Horizontal">
-	                <SymbolIcon Symbol="Camera" Margin="10,0,0,0"/>
+                    <SymbolIcon Symbol="Camera" Margin="10,2,0,0"/>
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,0">
 						KinectToVR
                     </TextBlock>
                 </StackPanel>
             </muxc:NavigationView.PaneHeader>
 
-            <muxc:NavigationView.FooterMenuItems>
-                <muxc:NavigationViewItem Content="" Icon="Target"/>
-            </muxc:NavigationView.FooterMenuItems>
+            <muxc:NavigationView.PaneFooter>
+                <StackPanel x:Name="FooterStackPanel" Orientation="Horizontal" Visibility="Visible">
+                    <muxc:NavigationViewItem Icon="Sync" Width="49" Tapped="Update_Tapped"/>
+                    <muxc:NavigationViewItem Icon="Remove" Width="49" Tapped="Minimize_Tapped"/>
+                    <muxc:NavigationViewItem Icon="Cancel" Width="49" Tapped="Exit_Tapped"/>
+                </StackPanel>
+            </muxc:NavigationView.PaneFooter>
 
             <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem Content="General" Tag="general" x:Name="GeneralItem"/>
-                <muxc:NavigationViewItem Content="Headset/Controllers" Tag="controllers" x:Name="ControllersItem"/>
-                <muxc:NavigationViewItem Content="Devices" Tag="devices" x:Name="DevicesItem"/>
-                <muxc:NavigationViewItem Content="Configuration" Tag="configuration" x:Name="ConfigurationItem"/>
+                <muxc:NavigationViewItem FontWeight="SemiBold" Content="General" Tag="general" x:Name="GeneralItem"/>
+                <muxc:NavigationViewItem FontWeight="SemiBold" Content="Headset/Controllers" Tag="controllers" x:Name="ControllersItem"/>
+                <muxc:NavigationViewItem FontWeight="SemiBold" Content="Devices" Tag="devices" x:Name="DevicesItem"/>
+                <muxc:NavigationViewItem FontWeight="SemiBold" Content="Configuration" Tag="configuration" x:Name="ConfigurationItem"/>
             </muxc:NavigationView.MenuItems>
 
             <Frame x:Name="ContentFrame" IsTabStop="True" NavigationFailed="ContentFrame_NavigationFailed"/>
         </muxc:NavigationView>
     </Grid>
-
-
-    <!--<Window.Resources>
-        <Style TargetType="{x:Type TabItem}">
-            <Setter Property="Foreground" Value="{StaticResource brush_button_transparent}" />
-            <Setter Property="Background" Value="{StaticResource brush_secondary}"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Border x:Name="border" BorderThickness="0 0 0 4" VerticalAlignment="Bottom" CornerRadius="0 0 0 0" Height="50" Margin="14 0">
-                            <TextBlock x:Name="text_block" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="17" Margin="0 4 0 0"
-                                       Foreground="{TemplateBinding Foreground}" Height="25">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Header}" />
-                            </TextBlock>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="border" Property="Border.BorderBrush" Value="{StaticResource brush_foreground}"/>
-                                <Setter TargetName="text_block" Property="TextBlock.Foreground" Value="{StaticResource brush_foreground}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>-->
 
 </Window>

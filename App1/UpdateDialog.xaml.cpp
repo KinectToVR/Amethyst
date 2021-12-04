@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
-#include "GeneralPage.xaml.h"
-#if __has_include("GeneralPage.g.cpp")
-#include "GeneralPage.g.cpp"
+#include "UpdateDialog.xaml.h"
+#if __has_include("UpdateDialog.g.cpp")
+#include "UpdateDialog.g.cpp"
 #endif
 
 using namespace winrt;
@@ -12,7 +12,7 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::App1::implementation
 {
-    GeneralPage::GeneralPage()
+    UpdateDialog::UpdateDialog()
     {
         InitializeComponent();
     }
