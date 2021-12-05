@@ -241,7 +241,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow:
 	IconRotation().Stop();
 
 	try {
-		if (true)
+		if (false)
 		{
 			FlyoutHeader().Text(L"New Update Available");
 			FlyoutFooter().Text(L"KinectToVR v1.0.1");
