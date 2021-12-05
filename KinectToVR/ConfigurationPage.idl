@@ -1,0 +1,9 @@
+namespace KinectToVR
+{
+    [default_interface]
+    runtimeclass ConfigurationPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        ConfigurationPage();
+        Int32 MyProperty;
+    }
+}

@@ -1,0 +1,98 @@
+﻿<Window
+    x:Class="KinectToVR.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:KinectToVR"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
+
+    <Grid MinHeight="600" MinWidth="900" Background="{ThemeResource SystemControlAcrylicWindowBrush}" x:Name="XMainGrid">
+
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="550"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="160"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="49"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" x:Name="DragElement" Canvas.ZIndex="1"/>
+        </Grid>
+
+        <muxc:NavigationView x:Name="NavView"
+	                         Loaded="NavView_Loaded"
+	                         ItemInvoked="NavView_ItemInvoked"
+	                         BackRequested="NavView_BackRequested"
+	                         Grid.Row="1"
+	                         PaneDisplayMode="Top"
+	                         IsBackButtonVisible="Collapsed"
+	                         IsSettingsVisible="False"
+	                         SelectedItem="general"
+	                         IsTabStop="False"
+	                         FontWeight="Bold">
+
+            <muxc:NavigationView.PaneHeader>
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Camera" Margin="10,2,0,0"/>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,0">
+						KinectToVR
+                    </TextBlock>
+                </StackPanel>
+            </muxc:NavigationView.PaneHeader>
+
+            <muxc:NavigationView.PaneFooter>
+                <StackPanel x:Name="FooterStackPanel" Orientation="Horizontal" Visibility="Visible">
+                    <muxc:NavigationViewItem x:Name="UpdateItem" Width="49" Tapped="Update_Tapped">
+                        <FlyoutBase.AttachedFlyout>
+                            <Flyout x:Name="UpdateFlyout">
+                                <StackPanel>
+                                    <TextBlock x:Name="FlyoutHeader" FontSize="17" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15"/>
+                                    <TextBlock x:Name="FlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0"/>
+                                    <TextBlock x:Name="FlyoutContent" Margin="0,0,0,12"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click" Content="Install Later" Margin="0,0,5,0"/>
+                                        <Button x:Name="InstallNowButton" Click="InstallNowButton_Click" Content="Install Now" Margin="5,0,0,0" Style="{StaticResource AccentButtonStyle}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Flyout>
+                        </FlyoutBase.AttachedFlyout>
+                        <muxc:NavigationViewItem.Icon>
+                            <SymbolIcon x:Name="symbolIcon" Symbol="Sync" RenderTransformOrigin="0.5,0.5">
+                                <SymbolIcon.RenderTransform>
+                                    <CompositeTransform/>
+                                </SymbolIcon.RenderTransform>
+                            </SymbolIcon>
+                        </muxc:NavigationViewItem.Icon>
+                    </muxc:NavigationViewItem>
+                    <muxc:NavigationViewItem Icon="Remove" Width="49" Tapped="Minimize_Tapped"/>
+                    <muxc:NavigationViewItem Icon="Cancel" Width="49" Tapped="Exit_Tapped"/>
+                </StackPanel>
+            </muxc:NavigationView.PaneFooter>
+
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem FontWeight="SemiBold" Content="General" Tag="general" x:Name="GeneralItem"/>
+                <muxc:NavigationViewItem FontWeight="SemiBold" Content="Headset/Controllers" Tag="controllers" x:Name="ControllersItem"/>
+                <muxc:NavigationViewItem FontWeight="SemiBold" Content="Devices" Tag="devices" x:Name="DevicesItem"/>
+                <muxc:NavigationViewItem FontWeight="SemiBold" Content="Configuration" Tag="configuration" x:Name="ConfigurationItem"/>
+            </muxc:NavigationView.MenuItems>
+
+            <Frame x:Name="ContentFrame" IsTabStop="True" NavigationFailed="ContentFrame_NavigationFailed"/>
+        </muxc:NavigationView>
+
+        <Grid.Resources>
+	        <Storyboard x:Name="IconRotation" AutoReverse="False" RepeatBehavior="Forever">
+		        <DoubleAnimation Duration="0:0:1" To="360" 
+		                         Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" 
+		                         Storyboard.TargetName="symbolIcon" />
+	        </Storyboard>
+        </Grid.Resources>
+    </Grid>
+
+</Window>

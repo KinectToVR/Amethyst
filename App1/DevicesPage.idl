@@ -1,9 +1,0 @@
-namespace App1
-{
-    [default_interface]
-    runtimeclass DevicesPage : Microsoft.UI.Xaml.Controls.Page
-    {
-        DevicesPage();
-        Int32 MyProperty;
-    }
-}
