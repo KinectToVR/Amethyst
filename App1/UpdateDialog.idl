@@ -1,8 +1,0 @@
-namespace App1
-{
-    [default_interface]
-    runtimeclass UpdateDialog : Microsoft.UI.Xaml.Controls.Page
-    {
-        UpdateDialog();
-    }
-}
