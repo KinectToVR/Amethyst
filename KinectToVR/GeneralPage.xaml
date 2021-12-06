@@ -698,7 +698,7 @@
 
                     </Grid>
 
-                    <Button FontSize="14" x:Name="b3" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Disconnect Trackers" Margin="20,10" CornerRadius="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"/>
+                    <ToggleButton FontSize="14" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked" Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Connect Trackers" Margin="20,10" CornerRadius="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"/>
 
                 </Grid>
 
@@ -723,13 +723,13 @@
 
 
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0" Grid.Column="1" Grid.Row="0" Margin="0,0,20,0" MinWidth="260" MinHeight="50">
-                        <x:String>Kinect-inferred Rotation</x:String>
+                        <x:String>Device-inferred Rotation</x:String>
                         <x:String>Follow Headset</x:String>
                         <x:String>Disable Rotation</x:String>
                     </ComboBox>
 
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0" Grid.Column="1" Grid.Row="1" Margin="0,0,20,0" MinWidth="260" MinHeight="50">
-                        <x:String>Kinect-inferred Rotation</x:String>
+                        <x:String>Device-inferred Rotation</x:String>
                         <x:String>Software-calculated Rotation</x:String>
                         <x:String>Follow Headset</x:String>
                         <x:String>Disable Rotation</x:String>

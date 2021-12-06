@@ -79,9 +79,9 @@
 
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="General" Tag="general" x:Name="GeneralItem"/>
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Headset/Controllers" Tag="controllers" x:Name="ControllersItem"/>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Settings" Tag="settings" x:Name="SettingsItem"/>
                 <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Devices" Tag="devices" x:Name="DevicesItem"/>
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Configuration" Tag="configuration" x:Name="ConfigurationItem"/>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Information" Tag="info" x:Name="InfoItem"/>
             </muxc:NavigationView.MenuItems>
 
             <Frame x:Name="ContentFrame" IsTabStop="True" NavigationFailed="ContentFrame_NavigationFailed"/>

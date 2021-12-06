@@ -1,0 +1,8 @@
+namespace KinectToVR
+{
+    [default_interface]
+    runtimeclass InfoPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        InfoPage();
+    }
+}

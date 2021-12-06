@@ -28,11 +28,11 @@ namespace winrt::KinectToVR::implementation
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"general", winrt::xaml_typename<GeneralPage>()));
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
-			(L"controllers", winrt::xaml_typename<ControllersPage>()));
+			(L"settings", winrt::xaml_typename<SettingsPage>()));
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"devices", winrt::xaml_typename<DevicesPage>()));
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
-			(L"configuration", winrt::xaml_typename<ConfigurationPage>()));
+			(L"info", winrt::xaml_typename<InfoPage>()));
 	}
 }
 

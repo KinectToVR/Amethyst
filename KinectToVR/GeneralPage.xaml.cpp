@@ -245,3 +245,15 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardManualCalibrationBut
     // Begin abort
     else CalibrationPending = false;
 }
+
+
+void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+    ToggleTrackersButton().Content(box_value(L"Disconnect Trackers"));
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+    ToggleTrackersButton().Content(box_value(L"Reconnect Trackers"));
+}

@@ -4,6 +4,5 @@ namespace KinectToVR
     runtimeclass DevicesPage : Microsoft.UI.Xaml.Controls.Page
     {
         DevicesPage();
-        Int32 MyProperty;
     }
 }

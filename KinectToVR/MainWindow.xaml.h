@@ -3,7 +3,9 @@
 #include "MainWindow.g.h"
 
 #include "GeneralPage.g.h"
-#include "ControllersPage.g.h"
+#include "SettingsPage.g.h"
+#include "DevicesPage.g.h"
+#include "InfoPage.g.h"
 
 namespace muxc
 {

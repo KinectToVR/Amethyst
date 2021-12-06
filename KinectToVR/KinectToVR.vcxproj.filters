@@ -5,19 +5,19 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindow.xaml" />
-    <Page Include="ControllersPage.xaml">
-      <Filter>Pages</Filter>
-    </Page>
     <Page Include="GeneralPage.xaml">
       <Filter>Pages</Filter>
     </Page>
     <Page Include="DevicesPage.xaml">
       <Filter>Pages</Filter>
     </Page>
-    <Page Include="ConfigurationPage.xaml">
+    <Page Include="ResourceDictionary.xaml" />
+    <Page Include="SettingsPage.xaml">
       <Filter>Pages</Filter>
     </Page>
-    <Page Include="ResourceDictionary.xaml" />
+    <Page Include="InfoPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />

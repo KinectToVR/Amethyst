@@ -107,20 +107,16 @@
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConfigurationPage.xaml.h">
-      <DependentUpon>ConfigurationPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="ControllersPage.xaml.h">
-      <DependentUpon>ControllersPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="DevicesPage.xaml.h">
       <DependentUpon>DevicesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="GeneralPage.xaml.h">
       <DependentUpon>GeneralPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="InfoPage.xaml.h">
+      <DependentUpon>InfoPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="pch.h" />
@@ -131,41 +127,41 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SettingsPage.xaml.h">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
-    <Page Include="ConfigurationPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ControllersPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="DevicesPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GeneralPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="InfoPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml" />
     <Page Include="ResourceDictionary.xaml">
       <DeploymentContent>true</DeploymentContent>
     </Page>
+    <Page Include="SettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ConfigurationPage.xaml.cpp">
-      <DependentUpon>ConfigurationPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="ControllersPage.xaml.cpp">
-      <DependentUpon>ControllersPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="DevicesPage.xaml.cpp">
       <DependentUpon>DevicesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="GeneralPage.xaml.cpp">
       <DependentUpon>GeneralPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="InfoPage.xaml.cpp">
+      <DependentUpon>InfoPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="pch.cpp">
@@ -178,19 +174,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="SettingsPage.xaml.cpp">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
-    </Midl>
-    <Midl Include="ConfigurationPage.idl">
-      <DependentUpon>ConfigurationPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="ControllersPage.idl">
-      <DependentUpon>ControllersPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
     </Midl>
     <Midl Include="DevicesPage.idl">
       <DependentUpon>DevicesPage.xaml</DependentUpon>
@@ -200,9 +192,17 @@
       <DependentUpon>GeneralPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="InfoPage.idl">
+      <DependentUpon>InfoPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="MainWindow.idl">
       <SubType>Code</SubType>
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Midl>
+    <Midl Include="SettingsPage.idl">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
   </ItemGroup>
   <ItemGroup>

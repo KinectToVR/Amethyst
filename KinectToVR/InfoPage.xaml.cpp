@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
-#include "DevicesPage.xaml.h"
-#if __has_include("DevicesPage.g.cpp")
-#include "DevicesPage.g.cpp"
+#include "InfoPage.xaml.h"
+#if __has_include("InfoPage.g.cpp")
+#include "InfoPage.g.cpp"
 #endif
 
 using namespace winrt;
@@ -12,7 +12,7 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::KinectToVR::implementation
 {
-    DevicesPage::DevicesPage()
+    InfoPage::InfoPage()
     {
         InitializeComponent();
     }
