@@ -54,6 +54,7 @@ namespace winrt::KinectToVR::implementation
 		std::vector<std::pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>> m_pages;
 
     public:
+        Windows::Foundation::IAsyncAction checkUpdates(winrt::Microsoft::UI::Xaml::UIElement const& show_el, bool show = false, DWORD delay_ms = 0);
         void Minimize_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
         void Exit_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
         Windows::Foundation::IAsyncAction Update_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
