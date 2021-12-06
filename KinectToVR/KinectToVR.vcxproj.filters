@@ -54,6 +54,15 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\KinectToVR.ico" />
+    <Image Include="Assets\autocalibration.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\manualcalibration.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\manualcalibrationinstructions.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">

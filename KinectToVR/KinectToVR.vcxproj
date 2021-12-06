@@ -90,6 +90,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
@@ -210,8 +211,11 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Assets\autocalibration.png" />
     <Image Include="Assets\KinectToVR.ico" />
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
+    <Image Include="Assets\manualcalibration.png" />
+    <Image Include="Assets\manualcalibrationinstructions.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
     <Image Include="Assets\Square150x150Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.scale-200.png" />

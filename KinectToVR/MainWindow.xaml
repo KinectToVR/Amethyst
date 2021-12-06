@@ -31,6 +31,7 @@
 	                         ItemInvoked="NavView_ItemInvoked"
 	                         BackRequested="NavView_BackRequested"
 	                         Grid.Row="1"
+                             FontSize="16"
 	                         PaneDisplayMode="Top"
 	                         IsBackButtonVisible="Collapsed"
 	                         IsSettingsVisible="False"
@@ -77,10 +78,10 @@
             </muxc:NavigationView.PaneFooter>
 
             <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem FontWeight="SemiBold" Content="General" Tag="general" x:Name="GeneralItem"/>
-                <muxc:NavigationViewItem FontWeight="SemiBold" Content="Headset/Controllers" Tag="controllers" x:Name="ControllersItem"/>
-                <muxc:NavigationViewItem FontWeight="SemiBold" Content="Devices" Tag="devices" x:Name="DevicesItem"/>
-                <muxc:NavigationViewItem FontWeight="SemiBold" Content="Configuration" Tag="configuration" x:Name="ConfigurationItem"/>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="General" Tag="general" x:Name="GeneralItem"/>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Headset/Controllers" Tag="controllers" x:Name="ControllersItem"/>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Devices" Tag="devices" x:Name="DevicesItem"/>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Configuration" Tag="configuration" x:Name="ConfigurationItem"/>
             </muxc:NavigationView.MenuItems>
 
             <Frame x:Name="ContentFrame" IsTabStop="True" NavigationFailed="ContentFrame_NavigationFailed"/>

@@ -10,7 +10,7 @@
 
     <Grid>
         <SplitView Canvas.ZIndex="1" x:Name="OffsetsView" PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-	               IsPaneOpen="False" OpenPaneLength="665" CompactPaneLength="48" DisplayMode="Overlay" CornerRadius="10">
+	               PaneClosing="OffsetsView_PaneClosing" IsPaneOpen="False" OpenPaneLength="665" CompactPaneLength="48" DisplayMode="Overlay" CornerRadius="10">
             <SplitView.Pane>
 
                 <Grid>
@@ -505,17 +505,15 @@
                         </PivotItem>
                     </Pivot>
 
-
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
-	                        <ColumnDefinition Width="15"/>
+	                        <ColumnDefinition Width="392"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="15"/>
                             <ColumnDefinition Width="*"/>
 	                        <ColumnDefinition Width="19"/>
                         </Grid.ColumnDefinitions>
-                        <Button Content="Save" Height="50" Grid.Column="3" Style="{StaticResource AccentButtonStyle}" FontSize="16" FontWeight="Medium" Margin="0,25,5,0" HorizontalAlignment="Stretch"/>
-                        <Button Content="Discard" Height="50" Grid.Column="1" FontSize="16" FontWeight="Medium" Margin="5,25,0,0" HorizontalAlignment="Stretch"/>
+                        <Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="3" FontSize="14" Content="Save" Height="50" Grid.Column="2" Style="{StaticResource AccentButtonStyle}" FontWeight="Medium" Margin="5,15,5,0" HorizontalAlignment="Stretch"/>
+                        <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="3" FontSize="14" Content="Discard" Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0" HorizontalAlignment="Stretch"/>
                     </Grid>
 
                 </Grid>
@@ -524,9 +522,141 @@
         </SplitView>
 
         <SplitView Canvas.ZIndex="1" x:Name="CalibrationView" PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-	               IsPaneOpen="False" OpenPaneLength="700" CompactPaneLength="48" DisplayMode="Overlay" CornerRadius="10">
+	               PaneClosing="CalibrationView_PaneClosing" IsPaneOpen="False" OpenPaneLength="600" CompactPaneLength="48" DisplayMode="Overlay" CornerRadius="10">
             <SplitView.Pane>
-                <TextBlock Text="Calibration" Style="{StaticResource BaseTextBlockStyle}"/>
+                <Grid>
+                    <Grid x:Name="CalibrationSelectionPane">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="70"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Pick a calibration mode" Margin="0,15,0,0" 
+                               HorizontalAlignment="Center" FontSize="26" 
+                               Style="{StaticResource BaseTextBlockStyle}"/>
+
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
+                          Background="{StaticResource SystemControlAcrylicElementBrush}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Button x:Name="AutoCalibrationButton" Grid.Row="0" MaxWidth="320" Margin="20,20,20,10" 
+	                            Click="AutoCalibrationButton_Click" HorizontalAlignment="Center">
+                                <Image Source="ms-appx:///Assets/autocalibration.png"/>
+                            </Button>
+
+                            <Button x:Name="ManualCalibrationButton" Grid.Row="1" MaxWidth="320" Margin="20,10,20,20" 
+	                            Click="ManualCalibrationButton_Click" HorizontalAlignment="Center">
+                                <Image Source="ms-appx:///Assets/manualcalibration.png"/>
+                            </Button>
+                        </Grid>
+                    </Grid>
+
+	                <Grid x:Name="AutoCalibrationPane">
+		                <Grid.RowDefinitions>
+			                <RowDefinition Height="70"/>
+			                <RowDefinition Height="*"/>
+		                </Grid.RowDefinitions>
+
+		                <TextBlock Text="Automatic Calibration" Margin="0,15,0,0" 
+		                           HorizontalAlignment="Center" FontSize="26" 
+		                           Style="{StaticResource BaseTextBlockStyle}"/>
+
+		                <Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
+		                      Background="{StaticResource SystemControlAcrylicElementBrush}">
+			                <Grid.RowDefinitions>
+				                <RowDefinition Height="70"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="170"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Follow the directions" Margin="0,40,0,0" 
+			                           HorizontalAlignment="Center" FontSize="20" Grid.Row="0"
+			                           Style="{StaticResource BaseTextBlockStyle}"/>
+
+                            <Border CornerRadius="75"
+                                    Grid.Row="2" Width="150"
+                                    Height="150" Margin="10"
+                                    Padding="0,20,0,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Background="{StaticResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}">
+                                <TextBlock x:Name="CalibrationCountdownLabel" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,0,30"
+                                           Text="~" FontSize="75" FontWeight="Bold"/>
+                            </Border>
+
+                            <TextBlock x:Name="CalibrationInstructionsLabel" 
+                                       Text="Start the calibration" Margin="0,15,0,0" 
+                                       HorizontalAlignment="Center" FontSize="27" Grid.Row="3"
+                                       Style="{StaticResource BaseTextBlockStyle}"/>
+
+                            <Grid Grid.Row="5" VerticalAlignment="Bottom" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+	                            <Button x:Name="StartAutoCalibrationButton" 
+	                                    Click="StartAutoCalibrationButton_Click" CornerRadius="3" FontSize="14" 
+	                                    Content="Start" Height="50" Grid.Column="1" Width="130"
+	                                    Style="{StaticResource AccentButtonStyle}" 
+	                                    FontWeight="Medium" Margin="5,15,5,0" HorizontalAlignment="Left"/>
+                                <Button x:Name="DiscardAutoCalibrationButton" 
+                                        Click="DiscardAutoCalibrationButton_Click"  CornerRadius="3" FontSize="14" 
+	                                    Content="Cancel" Height="50" Grid.Column="0" Width="130"
+	                                    FontWeight="Medium" Margin="0,15,5,0" HorizontalAlignment="Right"/>
+                            </Grid>
+
+                        </Grid>
+	                </Grid>
+
+	                <Grid x:Name="ManualCalibrationPane">
+		                <Grid.RowDefinitions>
+			                <RowDefinition Height="70"/>
+			                <RowDefinition Height="*"/>
+		                </Grid.RowDefinitions>
+
+                        <TextBlock Text="Manual Calibration" Margin="0,15,0,0" 
+		                           HorizontalAlignment="Center" FontSize="26" 
+		                           Style="{StaticResource BaseTextBlockStyle}"/>
+
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
+		                      Background="{StaticResource SystemControlAcrylicElementBrush}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="100"/>
+                            </Grid.RowDefinitions>
+
+                            <Image Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,40,0,10"
+                                   MaxWidth="350"
+                                   Source="ms-appx:///Assets/manualcalibrationinstructions.png"/>
+
+                            <Grid Grid.Row="1" VerticalAlignment="Bottom" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button x:Name="StartManualCalibrationButton" 
+	                                    Click="StartManualCalibrationButton_Click" CornerRadius="3" FontSize="14" 
+	                                    Content="Start" Height="50" Grid.Column="1" Width="130"
+	                                    Style="{StaticResource AccentButtonStyle}" 
+	                                    FontWeight="Medium" Margin="5,15,5,0" HorizontalAlignment="Left"/>
+                                <Button x:Name="DiscardManualCalibrationButton" 
+                                        Click="DiscardManualCalibrationButton_Click" CornerRadius="3" FontSize="14" 
+	                                    Content="Cancel" Height="50" Grid.Column="0" Width="130"
+	                                    FontWeight="Medium" Margin="0,15,5,0" HorizontalAlignment="Right"/>
+                            </Grid>
+
+                        </Grid>
+                    </Grid>
+
+                </Grid>
             </SplitView.Pane>
         </SplitView>
 
@@ -563,12 +693,12 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="CalibrationButton" Click="CalibrationButton_Click" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Begin Calibration" Margin="20,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"/>
-                        <Button x:Name="OffsetsButton" Click="OffsetsButton_Click" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Adjust Offsets" Margin="10,10,20,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        <Button FontSize="14" x:Name="CalibrationButton" Click="CalibrationButton_Click" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Begin Calibration" Margin="20,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"/>
+                        <Button FontSize="14" x:Name="OffsetsButton" Click="OffsetsButton_Click" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Adjust Offsets" Margin="10,10,20,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
                     </Grid>
 
-                    <Button x:Name="b3" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Disconnect Trackers" Margin="20,10" CornerRadius="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"/>
+                    <Button FontSize="14" x:Name="b3" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Disconnect Trackers" Margin="20,10" CornerRadius="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"/>
 
                 </Grid>
 
