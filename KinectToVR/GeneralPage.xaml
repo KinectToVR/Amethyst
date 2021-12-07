@@ -748,7 +748,7 @@
                             <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold" Text="Flip when turning:" Margin="0,0,0,10" Grid.Column="0"/>
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Medium" Text="Flip when turning:" Margin="0,0,0,12" Grid.Column="0"/>
                         <CheckBox x:Name="FlipCheckBox" Checked="FlipCheckBox_Checked" Unchecked="FlipCheckBox_Unchecked" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" MinWidth="0" MinHeight="0" Margin="0,0,12,7" IsChecked="True"/>
 
                     </Grid>
