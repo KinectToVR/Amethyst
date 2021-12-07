@@ -505,7 +505,7 @@
                         </PivotItem>
                     </Pivot>
 
-                    <Grid Grid.Row="2">
+                    <Grid Grid.Row="2" Margin="0,303,0,0" VerticalAlignment="Top">
                         <Grid.ColumnDefinitions>
 	                        <ColumnDefinition Width="392"/>
                             <ColumnDefinition Width="*"/>
