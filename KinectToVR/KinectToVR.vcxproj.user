@@ -2,5 +2,14 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ShowAllFiles>false</ShowAllFiles>
+    <Source>F:\repos\K2App\KinectToVR\Assets\k2app_ico@4x.png</Source>
+    <SmallTileSource>F:\repos\K2App\KinectToVR\Assets\k2app_ico@4x.png</SmallTileSource>
+    <MediumTileSource>F:\repos\K2App\KinectToVR\Assets\k2app_ico@4x.png</MediumTileSource>
+    <WideTileSource>F:\repos\K2App\KinectToVR\Assets\k2app_ico@4x.png</WideTileSource>
+    <LargeTileSource>F:\repos\K2App\KinectToVR\Assets\k2app_ico@4x.png</LargeTileSource>
+    <AppIconSource>F:\repos\K2App\KinectToVR\Assets\k2app_ico@4x.png</AppIconSource>
+    <SplashScreenSource>F:\repos\K2App\KinectToVR\Assets\k2app_ico@4x.png</SplashScreenSource>
+    <BadgeLogoSource>F:\repos\K2App\KinectToVR\Assets\k2app_ico@4x.png</BadgeLogoSource>
+    <PackageLogoSource>F:\repos\K2App\KinectToVR\Assets\k2app_ico@4x.png</PackageLogoSource>
   </PropertyGroup>
 </Project>

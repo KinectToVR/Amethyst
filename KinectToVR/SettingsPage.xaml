@@ -100,6 +100,7 @@
 								  x:Name="WaistOnToggleButton"
 								  Checked="WaistOnToggleButton_Checked"
 								  Unchecked="WaistOnToggleButton_Unchecked"
+								  IsEnabled="{Binding ElementName=WaistEnabledToggleButton, Path=IsChecked,TargetNullValue=False}"
 					              CornerRadius="3,3,0,0" Width="120" Height="50"
 					              HorizontalAlignment="Center" />
                     <ToggleButton Content="Disable" IsChecked="True"
@@ -121,6 +122,7 @@
                                   x:Name="LeftFootOnToggleButton"
 								  Checked="LeftFootOnToggleButton_Checked"
 								  Unchecked="LeftFootOnToggleButton_Unchecked"
+                                  IsEnabled="{Binding ElementName=LeftFootEnabledToggleButton, Path=IsChecked,TargetNullValue=False}"
 					              CornerRadius="3,3,0,0" Width="120" Height="50"
 					              HorizontalAlignment="Center" />
                     <ToggleButton Content="Disable" IsChecked="True"
@@ -142,6 +144,7 @@
                                   x:Name="RightFootOnToggleButton"
 								  Checked="RightFootOnToggleButton_Checked"
 								  Unchecked="RightFootOnToggleButton_Unchecked"
+                                  IsEnabled="{Binding ElementName=RightFootEnabledToggleButton, Path=IsChecked,TargetNullValue=False}"
 					              CornerRadius="3,3,0,0" Width="120" Height="50"
 					              HorizontalAlignment="Center" />
                     <ToggleButton Content="Disable" IsChecked="True"
@@ -177,8 +180,9 @@
 					              Height="50" Margin="30" VerticalAlignment="Top"
 					              HorizontalAlignment="Stretch" />
 
-					<Slider Grid.Row="1" Margin="20,0,20,20" Header="Sound Level"
-					        HorizontalAlignment="Stretch" Width="200" Value="69"
+					<Slider Grid.Row="1" Margin="20,0,20,20" Header="Sound Level:"
+					        HorizontalAlignment="Stretch" Width="200" Value="69" 
+					        IsEnabled="{Binding ElementName=SoundsEnabledToggleButton, Path=IsChecked,TargetNullValue=False}"
 					        x:Name="SoundsVolumeSlider" ValueChanged="SoundsVolumeSlider_ValueChanged"/>
 				</Grid>
 

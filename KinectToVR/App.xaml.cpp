@@ -23,7 +23,7 @@ App::App()
     this->RequestedTheme(ApplicationTheme::Dark);
 
     InitializeComponent();
-
+    
     Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize(Windows::Foundation::Size(1000, 700));
     Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode(Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize);
 
@@ -46,6 +46,6 @@ App::App()
 /// <param name="e">Details about the launch request and process.</param>
 void App::OnLaunched(LaunchActivatedEventArgs const&)
 {
-	window = make<MainWindow>();
-	window.Activate();
+    window = make<MainWindow>();
+    window.Activate();
 }
