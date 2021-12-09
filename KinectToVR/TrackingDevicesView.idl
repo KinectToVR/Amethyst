@@ -1,0 +1,13 @@
+namespace KinectToVR
+{
+	runtimeclass TrackingDevicesView : Windows.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		TrackingDevicesView(String DeviceName, String ConnectedStatus, String OnlineStatus);
+
+		Int32 DeviceID;
+		String DeviceName;
+		String ConnectedStatus;
+		String OnlineStatus;
+		Boolean Current;
+	}
+}

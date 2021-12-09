@@ -9,7 +9,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
-    <Grid MinHeight="600" MinWidth="900" Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}" x:Name="XMainGrid">
+    <Grid MinHeight="600" MinWidth="950" Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}" x:Name="XMainGrid">
 
         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent">
             <Grid.ColumnDefinitions>

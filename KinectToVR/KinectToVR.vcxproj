@@ -131,6 +131,8 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="TrackingDevicesView.h" />
+    <ClInclude Include="PSMovesView.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -178,6 +180,8 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="TrackingDevicesView.cpp" />
+    <ClCompile Include="PSMovesView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">
@@ -204,6 +208,8 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="TrackingDevicesView.idl" />
+    <Midl Include="PSMovesView.idl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt">

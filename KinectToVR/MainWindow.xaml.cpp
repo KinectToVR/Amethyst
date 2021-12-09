@@ -66,7 +66,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow:
 		{
 			FlyoutHeader().Text(L"You're Up To Date");
 			FlyoutFooter().Text(L"KinectToVR v1.0.0");
-			FlyoutContent().Text(L"Please tell us if you have any ideas\nfor then next KinectToVR update.");
+			FlyoutContent().Text(L"Please tell us if you have any ideas\nfor the next KinectToVR update.");
 
 			auto thickness = Thickness();
 			thickness.Left = 0;

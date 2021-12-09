@@ -26,13 +26,13 @@ App::App()
     
     Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize(Windows::Foundation::Size(1000, 700));
     Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode(Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize);
-
+    
 #if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
     UnhandledException([this](IInspectable const&, UnhandledExceptionEventArgs const& e)
     {
         if (IsDebuggerPresent())
         {
-            auto errorMessage = e.Message();
+            auto errorMessage = e.Message(); // LOG it?
             __debugbreak();
         }
     });
