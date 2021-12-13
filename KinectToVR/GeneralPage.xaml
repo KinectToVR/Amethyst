@@ -662,21 +662,23 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="400" />
+                <ColumnDefinition Width="520" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0">
 
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="55" />
+                    <RowDefinition Height="170" />
+                    <RowDefinition Height="*" />
                     <RowDefinition Height="50" />
-                    <RowDefinition Height="120" />
-                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="200" />
                     <RowDefinition Height="50" />
-                    <RowDefinition Height="270" />
+                    <RowDefinition Height="100" />
                 </Grid.RowDefinitions>
 
-                <TextBlock FontWeight="SemiBold" Text="Trackers:" Margin="20,20,0,0" Grid.Row="0"/>
+                <TextBlock FontWeight="SemiBold" Text="Trackers" FontSize="20" Margin="40,20,0,0" Grid.Row="0"/>
 
                 <Grid HorizontalAlignment="Stretch" Grid.Row="1">
                     <Grid.ColumnDefinitions>
@@ -684,27 +686,38 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="0.7*"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0">
+                    <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button FontSize="14" x:Name="CalibrationButton" Click="CalibrationButton_Click" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Begin Calibration" Margin="20,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"/>
-                        <Button FontSize="14" x:Name="OffsetsButton" Click="OffsetsButton_Click" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Adjust Offsets" Margin="10,10,20,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click" 
+                                VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Begin Calibration" 
+                                Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch" 
+                                VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"/>
+                        <Button FontSize="15" x:Name="OffsetsButton" Click="OffsetsButton_Click" 
+                                VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Adjust Offsets" 
+                                Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch" 
+                                VerticalAlignment="Stretch"/>
 
                     </Grid>
 
-                    <ToggleButton FontSize="14" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked" Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Connect Trackers" Margin="20,10" CornerRadius="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"/>
+                    <ToggleButton FontSize="15" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked" 
+                                  Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center" 
+                                  FontWeight="SemiBold" Content="Connect Trackers" Margin="40,10" CornerRadius="3" 
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0"/>
 
                 </Grid>
 
-                <TextBlock FontWeight="SemiBold" Text="Tracking Settings:" Margin="20,20,0,0" Grid.Row="3"/>
+                <TextBlock FontWeight="SemiBold" Text="Device" FontSize="20" Margin="40,20,0,0" Grid.Row="3"/>
 
-                <Grid Grid.Row="4">
+                <TextBlock FontWeight="SemiBold" Text="Tracking Settings:" Margin="20,20,0,0" Grid.Row="5"/>
+
+                <Grid Grid.Row="6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="5*"/>
@@ -714,44 +727,10 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="0.6*"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold" Text="Waist:" Margin="0,0,20,0" Grid.Column="0" Grid.Row="0"/>
                     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold" Text="Feet:" Margin="0,0,20,0" Grid.Column="0" Grid.Row="1"/>
-                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold" Text="Filter:" Margin="0,0,20,0" Grid.Column="0" Grid.Row="2"/>
-
-
-                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0" Grid.Column="1" Grid.Row="0" Margin="0,0,20,0" MinWidth="260" MinHeight="50">
-                        <x:String>Device-inferred Rotation</x:String>
-                        <x:String>Follow Headset</x:String>
-                        <x:String>Disable Rotation</x:String>
-                    </ComboBox>
-
-                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0" Grid.Column="1" Grid.Row="1" Margin="0,0,20,0" MinWidth="260" MinHeight="50">
-                        <x:String>Device-inferred Rotation</x:String>
-                        <x:String>Software-calculated Rotation</x:String>
-                        <x:String>Follow Headset</x:String>
-                        <x:String>Disable Rotation</x:String>
-                    </ComboBox>
-
-                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0" Grid.Column="1" Grid.Row="2" Margin="0,0,20,0" MinWidth="260" MinHeight="50">
-                        <x:String>Linear Interpolation</x:String>
-                        <x:String>Low Pass Filter</x:String>
-                        <x:String>Extended Kalman Filter</x:String>
-                        <x:String>Disable Filter</x:String>
-                    </ComboBox>
-
-                    <Grid Grid.Row="3" Grid.Column="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*"/>
-                            <ColumnDefinition Width="2*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Medium" Text="Flip when turning:" Margin="0,0,0,12" Grid.Column="0"/>
-                        <CheckBox x:Name="FlipCheckBox" Checked="FlipCheckBox_Checked" Unchecked="FlipCheckBox_Unchecked" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" MinWidth="0" MinHeight="0" Margin="0,0,12,7" IsChecked="True"/>
-
-                    </Grid>
 
                 </Grid>
 
@@ -759,17 +738,22 @@
 
             <Grid Background="Black" Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
                     <RowDefinition Height="40" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <ToggleButton x:Name="SkeletonToggleButton" Checked="SkeletonToggleButton_Checked" Unchecked="SkeletonToggleButton_Unchecked" IsChecked="True" VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Skeleton" Margin="10,0,0,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <ToggleButton x:Name="SkeletonToggleButton" Checked="SkeletonToggleButton_Checked" 
+                                  Unchecked="SkeletonToggleButton_Unchecked" IsChecked="True" 
+                                  VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Skeleton" 
+                                  Margin="20,0,0,10" CornerRadius="3" Grid.Column="0" 
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
                 </Grid>
             </Grid>

@@ -32,56 +32,36 @@
 	                         BackRequested="NavView_BackRequested"
 	                         Grid.Row="1"
                              FontSize="16"
-	                         PaneDisplayMode="Top"
+                             PaneDisplayMode="LeftCompact"
+                             SelectionFollowsFocus="Enabled"
 	                         IsBackButtonVisible="Collapsed"
 	                         IsSettingsVisible="False"
 	                         SelectedItem="general"
-	                         IsTabStop="False"
 	                         FontWeight="Bold">
 
             <muxc:NavigationView.PaneHeader>
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Camera" Margin="10,2,0,0"/>
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,0">
-						KinectToVR
-                    </TextBlock>
-                </StackPanel>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,10,0">
+				        KinectToVR
+                </TextBlock>
             </muxc:NavigationView.PaneHeader>
-
-            <muxc:NavigationView.PaneFooter>
-                <StackPanel x:Name="FooterStackPanel" Orientation="Horizontal" Visibility="Visible">
-                    <muxc:NavigationViewItem x:Name="UpdateItem" Width="49" Tapped="Update_Tapped">
-                        <FlyoutBase.AttachedFlyout>
-                            <Flyout x:Name="UpdateFlyout">
-                                <StackPanel>
-                                    <TextBlock x:Name="FlyoutHeader" FontSize="17" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15"/>
-                                    <TextBlock x:Name="FlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0"/>
-                                    <TextBlock x:Name="FlyoutContent" Margin="0,0,0,12"/>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click" Content="Install Later" Margin="0,0,5,0"/>
-                                        <Button x:Name="InstallNowButton" Click="InstallNowButton_Click" Content="Install Now" Margin="5,0,0,0" Style="{StaticResource AccentButtonStyle}"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Flyout>
-                        </FlyoutBase.AttachedFlyout>
-                        <muxc:NavigationViewItem.Icon>
-                            <SymbolIcon x:Name="symbolIcon" Symbol="Sync" RenderTransformOrigin="0.5,0.5">
-                                <SymbolIcon.RenderTransform>
-                                    <CompositeTransform/>
-                                </SymbolIcon.RenderTransform>
-                            </SymbolIcon>
-                        </muxc:NavigationViewItem.Icon>
-                    </muxc:NavigationViewItem>
-                    <muxc:NavigationViewItem Icon="Remove" Width="49" Tapped="Minimize_Tapped"/>
-                    <muxc:NavigationViewItem Icon="Cancel" Width="49" Tapped="Exit_Tapped"/>
-                </StackPanel>
-            </muxc:NavigationView.PaneFooter>
-
-            <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="General" Tag="general" x:Name="GeneralItem"/>
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Settings" Tag="settings" x:Name="SettingsItem"/>
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Devices" Tag="devices" x:Name="DevicesItem"/>
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Content="Info" Tag="info" x:Name="InfoItem"/>
+	        
+	        <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Icon="Home" Margin="0,10,0,5"
+                                         Content="General" Tag="general" x:Name="GeneralItem"/>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Icon="Setting" Margin="0,5,0,5"
+                                         Content="Settings" Tag="settings" x:Name="SettingsItem"/>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"
+                                         Content="Devices" Tag="devices" x:Name="DevicesItem">
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE88E;"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"
+                                         Content="Info" Tag="info" x:Name="InfoItem">
+	                <muxc:NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE946;"/>
+	                </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
             </muxc:NavigationView.MenuItems>
 
             <Frame x:Name="ContentFrame" IsTabStop="True" NavigationFailed="ContentFrame_NavigationFailed"/>

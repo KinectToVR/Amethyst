@@ -14,83 +14,83 @@ using namespace Microsoft::UI::Xaml;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::checkUpdates(
-	winrt::Microsoft::UI::Xaml::UIElement const& show_el, const bool show, const DWORD delay_ms)
-{
-	{ // Sleep on UI (Non-blocking)
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
-		Sleep(delay_ms);
-		co_await ui_thread;
-	}
-
-	// Here check for updates (via external bool)
-	IconRotation().Begin();
-	// Capture the calling context.
-	winrt::apartment_context ui_thread;
-	co_await winrt::resume_background();
-
-	// Check for updates
-	auto start_time = std::chrono::high_resolution_clock::now();
-
-	// Check now
-	bool updateFound = false; // Assume up-to-date
-
-	// Limit time to (min) 1s
-	if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now() - start_time).count(); duration <= 1000.f)
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 - duration));
-
-	// Resume to UI and stop the animation
-	co_await ui_thread;
-	IconRotation().Stop();
-
-	try {
-		if (updateFound)
-		{
-			FlyoutHeader().Text(L"New Update Available");
-			FlyoutFooter().Text(L"KinectToVR v1.0.1");
-			FlyoutContent().Text(L"- OpenSSL Library update\n- Several Kinect V2 fixes");
-
-			auto thickness = Thickness();
-			thickness.Left = 0;
-			thickness.Top = 0;
-			thickness.Right = 0;
-			thickness.Bottom = 12;
-			FlyoutContent().Margin(thickness);
-
-			InstallLaterButton().Visibility(Visibility::Visible);
-			InstallNowButton().Visibility(Visibility::Visible);
-		}
-		else
-		{
-			FlyoutHeader().Text(L"You're Up To Date");
-			FlyoutFooter().Text(L"KinectToVR v1.0.0");
-			FlyoutContent().Text(L"Please tell us if you have any ideas\nfor the next KinectToVR update.");
-
-			auto thickness = Thickness();
-			thickness.Left = 0;
-			thickness.Top = 0;
-			thickness.Right = 0;
-			thickness.Bottom = 0;
-			FlyoutContent().Margin(thickness);
-
-			InstallLaterButton().Visibility(Visibility::Collapsed);
-			InstallNowButton().Visibility(Visibility::Collapsed);
-		}
-
-		Controls::Primitives::FlyoutShowOptions options;
-		options.Placement(Controls::Primitives::FlyoutPlacementMode::Bottom);
-		options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
-
-		if (updateFound || show)
-			UpdateFlyout().ShowAt(show_el, options);
-	}
-	catch (...)
-	{
-
-	}
-}
+//Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::checkUpdates(
+//	winrt::Microsoft::UI::Xaml::UIElement const& show_el, const bool show, const DWORD delay_ms)
+//{
+//	{ // Sleep on UI (Non-blocking)
+//		winrt::apartment_context ui_thread;
+//		co_await winrt::resume_background();
+//		Sleep(delay_ms);
+//		co_await ui_thread;
+//	}
+//
+//	// Here check for updates (via external bool)
+//	IconRotation().Begin();
+//	// Capture the calling context.
+//	winrt::apartment_context ui_thread;
+//	co_await winrt::resume_background();
+//
+//	// Check for updates
+//	auto start_time = std::chrono::high_resolution_clock::now();
+//
+//	// Check now
+//	bool updateFound = false; // Assume up-to-date
+//
+//	// Limit time to (min) 1s
+//	if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+//		std::chrono::high_resolution_clock::now() - start_time).count(); duration <= 1000.f)
+//		std::this_thread::sleep_for(std::chrono::milliseconds(1000 - duration));
+//
+//	// Resume to UI and stop the animation
+//	co_await ui_thread;
+//	IconRotation().Stop();
+//
+//	try {
+//		if (updateFound)
+//		{
+//			FlyoutHeader().Text(L"New Update Available");
+//			FlyoutFooter().Text(L"KinectToVR v1.0.1");
+//			FlyoutContent().Text(L"- OpenSSL Library update\n- Several Kinect V2 fixes");
+//
+//			auto thickness = Thickness();
+//			thickness.Left = 0;
+//			thickness.Top = 0;
+//			thickness.Right = 0;
+//			thickness.Bottom = 12;
+//			FlyoutContent().Margin(thickness);
+//
+//			InstallLaterButton().Visibility(Visibility::Visible);
+//			InstallNowButton().Visibility(Visibility::Visible);
+//		}
+//		else
+//		{
+//			FlyoutHeader().Text(L"You're Up To Date");
+//			FlyoutFooter().Text(L"KinectToVR v1.0.0");
+//			FlyoutContent().Text(L"Please tell us if you have any ideas\nfor the next KinectToVR update.");
+//
+//			auto thickness = Thickness();
+//			thickness.Left = 0;
+//			thickness.Top = 0;
+//			thickness.Right = 0;
+//			thickness.Bottom = 0;
+//			FlyoutContent().Margin(thickness);
+//
+//			InstallLaterButton().Visibility(Visibility::Collapsed);
+//			InstallNowButton().Visibility(Visibility::Collapsed);
+//		}
+//
+//		Controls::Primitives::FlyoutShowOptions options;
+//		options.Placement(Controls::Primitives::FlyoutPlacementMode::Bottom);
+//		options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+//
+//		if (updateFound || show)
+//			UpdateFlyout().ShowAt(show_el, options);
+//	}
+//	catch (...)
+//	{
+//
+//	}
+//}
 
 namespace winrt::KinectToVR::implementation
 {
@@ -112,7 +112,7 @@ namespace winrt::KinectToVR::implementation
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"info", winrt::xaml_typename<InfoPage>()));
 
-		checkUpdates(UpdateItem(), false, 2000);
+		//checkUpdates(UpdateItem(), false, 2000);
 	}
 }
 
@@ -294,22 +294,22 @@ Windows::UI::Xaml::Controls::Primitives::Popup GetPopup() {
 		return popups.GetAt(0);
 	return nullptr;
 }
+//
+//Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::Update_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+//{
+//	// Cache UI Flyout
+//	auto ui_element = sender.as<UIElement>();
+//
+//	// Check for updates (and show)
+//	//co_await checkUpdates(ui_element, true);
+//}
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::Update_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
-{
-	// Cache UI Flyout
-	auto ui_element = sender.as<UIElement>();
-
-	// Check for updates (and show)
-	co_await checkUpdates(ui_element, true);
-}
-
-void winrt::KinectToVR::implementation::MainWindow::InstallLaterButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-	UpdateFlyout().Hide();
-}
-
-void winrt::KinectToVR::implementation::MainWindow::InstallNowButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-	UpdateFlyout().Hide();
-}
+//void winrt::KinectToVR::implementation::MainWindow::InstallLaterButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+//{
+//	UpdateFlyout().Hide();
+//}
+//
+//void winrt::KinectToVR::implementation::MainWindow::InstallNowButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+//{
+//	UpdateFlyout().Hide();
+//}
