@@ -6,3 +6,13 @@ x64/
 KinectToVR/Generated Files/
 
 packages/
+
+external/eigen/
+
+external/gflags/
+
+external/glm/
+
+external/glog/
+
+external/openvr/
