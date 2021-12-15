@@ -257,3 +257,15 @@ void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchec
 {
     ToggleTrackersButton().Content(box_value(L"Reconnect Trackers"));
 }
+
+
+void winrt::KinectToVR::implementation::GeneralPage::OpenDiscordButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::OpenDocsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+
+}
