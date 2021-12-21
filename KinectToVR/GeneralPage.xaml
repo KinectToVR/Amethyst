@@ -677,16 +677,16 @@
 			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0">
 
 				<Grid.RowDefinitions>
-					<RowDefinition Height="55" />
+					<RowDefinition Height="60" />
 					<RowDefinition Height="170" />
 					<RowDefinition Height="*" />
-					<RowDefinition Height="50" />
+					<RowDefinition Height="60" />
 					<RowDefinition Height="240" />
-					<RowDefinition Height="50" />
+					<RowDefinition Height="60" />
 					<RowDefinition Height="90" />
 				</Grid.RowDefinitions>
 
-				<TextBlock FontWeight="SemiBold" Text="Trackers" FontSize="20" Margin="40,20,0,0" Grid.Row="0" />
+				<TextBlock FontWeight="SemiBold" Text="Trackers" FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
 
 				<Grid HorizontalAlignment="Stretch" Grid.Row="1">
 					<Grid.ColumnDefinitions>
@@ -721,7 +721,7 @@
 
 				</Grid>
 
-				<TextBlock FontWeight="SemiBold" Text="Device" FontSize="20" Margin="40,20,0,0" Grid.Row="3" />
+				<TextBlock FontWeight="SemiBold" Text="Device" FontSize="25" Margin="40,20,0,0" Grid.Row="3" />
 
 				<Grid Grid.Row="4">
 					<StackPanel Orientation="Vertical" Margin="0,5,0,0">
@@ -776,7 +776,7 @@
 					</StackPanel>
 				</Grid>
 
-				<TextBlock FontWeight="SemiBold" Text="Status" FontSize="20" Margin="40,20,0,0" Grid.Row="5" />
+				<TextBlock FontWeight="SemiBold" Text="Status" FontSize="25" Margin="40,20,0,0" Grid.Row="5" />
 
 				<Grid Grid.Row="6">
 					<StackPanel Orientation="Vertical" Margin="0,5,0,0">
