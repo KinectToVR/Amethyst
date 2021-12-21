@@ -1,6 +1,5 @@
 #pragma once
 #include "PSMovesView.g.h"
-#include "PSMovesView.h"
 
 namespace winrt::KinectToVR::implementation
 {

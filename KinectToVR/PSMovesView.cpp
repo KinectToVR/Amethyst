@@ -7,7 +7,7 @@
 namespace winrt::KinectToVR::implementation
 {
 	PSMovesView::PSMovesView(
-		int32_t const& DeviceID ) :
+		int32_t const& DeviceID) :
 		m_DeviceID{ DeviceID }
 	{
 	}
