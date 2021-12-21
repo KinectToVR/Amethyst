@@ -11,202 +11,289 @@
 	xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
 	<Grid>
-		<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="50" />
-				<RowDefinition Height="300" />
-				<RowDefinition Height="0.8*" />
-				<RowDefinition Height="120" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="700" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
 
-			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Margin="20,20,0,0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="150" />
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="150" />
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="150" />
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="4*" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
+		<ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
+		              VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
-				<TextBlock FontWeight="SemiBold"
-				           Text="Note:" Margin="20,20,0,0" Grid.Row="0" Grid.Column="6" />
+			<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Orientation="Vertical">
 
-				<TextBlock FontWeight="Normal" TextWrapping="WrapWholeWords"
-				           Margin="30,60,0,0" Grid.Row="0" Grid.Column="6"
-				           Text="Turning a virtual tracker off will still let it spawn in SteamVR, but it will appear as disconnected.&#x0a;&#x0a;Disabling a virtual tracker will block it from both spawning in SteamVR and connecting/turning on." />
-			</Grid>
-		</Grid>
+				<TextBlock FontWeight="SemiBold" Text="Tracking" FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
 
-		<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="50" />
-				<RowDefinition Height="220" />
-				<RowDefinition Height="0.8*" />
-				<RowDefinition Height="200" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
+				<Grid Margin="0,15,0,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="9*" />
+						<ColumnDefinition Width="2*" />
+					</Grid.ColumnDefinitions>
 
-			<TextBlock FontWeight="SemiBold" Text="Trackers:"
-			           Margin="20,20,0,0" Grid.Row="0" />
+					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+					           Text="Mirror trackers when turning away from the Kinect" Margin="30,0,0,10" Grid.Column="0" />
+					<CheckBox x:Name="FlipCheckBox"
+					          Checked="FlipCheckBox_Checked"
+					          Unchecked="FlipCheckBox_Unchecked"
+					          HorizontalAlignment="Left" VerticalAlignment="Center"
+					          MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="True" />
 
-			<CheckBox Content="Connect automatically on startup"
-					  x:Name="AutoSpawnCheckBox"
-					  Checked="AutoSpawnCheckBox_Checked"
-					  Unchecked="AutoSpawnCheckBox_Unchecked"
-			          Grid.Row="0" Margin="100,15,0,0"
-			          FontSize="15" FontWeight="Normal" />
-
-			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"
-			      Margin="20,20,0,0">
-
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="0.25*" />
-					<ColumnDefinition Width="150" />
-					<ColumnDefinition Width="0.5*" />
-					<ColumnDefinition Width="150" />
-					<ColumnDefinition Width="0.5*" />
-					<ColumnDefinition Width="150" />
-					<ColumnDefinition Width="0.25*" />
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="4*" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-
-				<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="0"
-				      Margin="0,0,0,10" CornerRadius="5,0,0,5" Background="{StaticResource SystemControlAcrylicElementBrush}" />
-				<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="1"
-				      Margin="0,0,0,10" Background="{StaticResource SystemControlAcrylicElementBrush}" />
-				<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="2"
-				      Margin="0,0,0,10" Background="{StaticResource SystemControlAcrylicElementBrush}" />
-				<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="3"
-				      Margin="0,0,0,10" Background="{StaticResource SystemControlAcrylicElementBrush}" />
-				<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="4"
-				      Margin="0,0,0,10" Background="{StaticResource SystemControlAcrylicElementBrush}" />
-				<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="5"
-				      Margin="0,0,0,10" Background="{StaticResource SystemControlAcrylicElementBrush}" />
-				<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="6"
-				      Margin="0,0,-20,10" CornerRadius="0,5,5,0" Background="{StaticResource SystemControlAcrylicElementBrush}" />
-
-				<StackPanel Orientation="Vertical" Grid.Row="1" Margin="20,0,0,0" Grid.Column="1">
-					<TextBlock FontWeight="SemiBold" HorizontalAlignment="Center"
-					           Text="Waist:" Margin="0,20,0,10"
-					           Grid.Row="0" Grid.Column="0" />
-
-					<ToggleButton Content="Turn Off" IsChecked="True"
-								  x:Name="WaistOnToggleButton"
-								  Checked="WaistOnToggleButton_Checked"
-								  Unchecked="WaistOnToggleButton_Unchecked"
-								  IsEnabled="{Binding ElementName=WaistEnabledToggleButton, Path=IsChecked,TargetNullValue=False}"
-					              CornerRadius="3,3,0,0" Width="120" Height="50"
-					              HorizontalAlignment="Center" />
-                    <ToggleButton Content="Disable" IsChecked="True"
-                                  x:Name="WaistEnabledToggleButton"
-								  Checked="WaistEnabledToggleButton_Checked"
-								  Unchecked="WaistEnabledToggleButton_Unchecked"
-					              CornerRadius="0,0,3,3" Width="120" Height="50"
-					              HorizontalAlignment="Center" />
-				</StackPanel>
-
-				<muxc:AppBarSeparator Grid.Column="2" Margin="20,0,0,10" Height="170" />
-
-				<StackPanel Orientation="Vertical" Grid.Row="1" Margin="20,0,0,0" Grid.Column="3">
-					<TextBlock FontWeight="SemiBold" HorizontalAlignment="Center"
-					           Text="Left Foot:" Margin="0,20,0,10"
-					           Grid.Row="0" Grid.Column="0" />
-
-                    <ToggleButton Content="Turn Off" IsChecked="True"
-                                  x:Name="LeftFootOnToggleButton"
-								  Checked="LeftFootOnToggleButton_Checked"
-								  Unchecked="LeftFootOnToggleButton_Unchecked"
-                                  IsEnabled="{Binding ElementName=LeftFootEnabledToggleButton, Path=IsChecked,TargetNullValue=False}"
-					              CornerRadius="3,3,0,0" Width="120" Height="50"
-					              HorizontalAlignment="Center" />
-                    <ToggleButton Content="Disable" IsChecked="True"
-                                  x:Name="LeftFootEnabledToggleButton"
-								  Checked="LeftFootEnabledToggleButton_Checked"
-								  Unchecked="LeftFootEnabledToggleButton_Unchecked"
-					              CornerRadius="0,0,3,3" Width="120" Height="50"
-					              HorizontalAlignment="Center" />
-				</StackPanel>
-
-				<muxc:AppBarSeparator Grid.Column="4" Margin="20,0,0,10" Height="170" />
-
-				<StackPanel Orientation="Vertical" Grid.Row="1" Margin="20,0,0,0" Grid.Column="5">
-					<TextBlock FontWeight="SemiBold" HorizontalAlignment="Center"
-					           Text="Right Foot:" Margin="0,20,0,10"
-					           Grid.Row="0" Grid.Column="0" />
-
-                    <ToggleButton Content="Turn Off" IsChecked="True"
-                                  x:Name="RightFootOnToggleButton"
-								  Checked="RightFootOnToggleButton_Checked"
-								  Unchecked="RightFootOnToggleButton_Unchecked"
-                                  IsEnabled="{Binding ElementName=RightFootEnabledToggleButton, Path=IsChecked,TargetNullValue=False}"
-					              CornerRadius="3,3,0,0" Width="120" Height="50"
-					              HorizontalAlignment="Center" />
-                    <ToggleButton Content="Disable" IsChecked="True"
-                                  x:Name="RightFootEnabledToggleButton"
-								  Checked="RightFootEnabledToggleButton_Checked"
-								  Unchecked="RightFootEnabledToggleButton_Unchecked"
-					              CornerRadius="0,0,3,3" Width="120" Height="50"
-					              HorizontalAlignment="Center" />
-				</StackPanel>
-			</Grid>
-
-			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="3">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="300" />
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="300" />
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="4*" />
-				</Grid.ColumnDefinitions>
-
-				<Grid CornerRadius="5" Margin="20,0,20,0"
-				      Background="{StaticResource SystemControlAcrylicElementBrush}">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="1.3*" />
-						<RowDefinition Height="*" />
-					</Grid.RowDefinitions>
-
-                    <ToggleButton Content="Disable Sounds" IsChecked="True" Grid.Row="0"
-                                  x:Name="SoundsEnabledToggleButton"
-								  Checked="SoundsEnabledToggleButton_Checked"
-								  Unchecked="SoundsEnabledToggleButton_Unchecked"
-					              Height="50" Margin="30" VerticalAlignment="Top"
-					              HorizontalAlignment="Stretch" />
-
-					<Slider Grid.Row="1" Margin="20,0,20,20" Header="Sound Level:"
-					        HorizontalAlignment="Stretch" Width="200" Value="69" 
-					        IsEnabled="{Binding ElementName=SoundsEnabledToggleButton, Path=IsChecked,TargetNullValue=False}"
-					        x:Name="SoundsVolumeSlider" ValueChanged="SoundsVolumeSlider_ValueChanged"/>
 				</Grid>
 
-				<Grid Grid.Column="2" CornerRadius="5" Margin="0,0,40,0">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="2*" />
+						<ColumnDefinition Width="5*" />
+					</Grid.ColumnDefinitions>
+
 					<Grid.RowDefinitions>
-						<RowDefinition Height="*" />
-						<RowDefinition Height="*" />
+						<RowDefinition Height="80" />
+						<RowDefinition Height="80" />
+						<RowDefinition Height="80" />
 					</Grid.RowDefinitions>
 
-                    <ToggleButton Content="Freeze Tracking" IsChecked="True" Grid.Row="0"
-                                  x:Name="TrackingFreezeToggleButton"
-								  Checked="TrackingFreezeToggleButton_Checked"
-								  Unchecked="TrackingFreezeToggleButton_Unchecked"
-					              Height="50" Margin="30,30,30,15" VerticalAlignment="Bottom"
-					              HorizontalAlignment="Stretch" />
+					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" Text="Waist Rotation:"
+					           Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
+					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" Text="Feet Rotation:"
+					           Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
+					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+					           Text="Positional Tracking Filter:"
+					           Margin="0,0,20,0" Grid.Column="0" Grid.Row="2" />
 
-                    <Button Content="Reset Configuration" Grid.Row="1"
-                            x:Name="ResetConfigButton"
-							Click="ResetConfigButton_Click"
-					        Height="50" Margin="30,15,30,30" VerticalAlignment="Top"
-					        HorizontalAlignment="Stretch" />
+					<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+					          Height="65" MinWidth="350" FontSize="15"
+					          x:Name="WaistRotationOptionBox"
+					          SelectionChanged="WaistRotationOptionBox_SelectionChanged"
+					          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+						<x:String>Device-inferred Rotation</x:String>
+						<x:String>Follow Headset</x:String>
+						<x:String>Disable Rotation</x:String>
+					</ComboBox>
+
+					<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+					          Height="65" MinWidth="350" FontSize="15"
+					          x:Name="FeetRotationOptionBox"
+					          SelectionChanged="FeetRotationOptionBox_SelectionChanged"
+					          Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+						<x:String>Device-inferred Rotation</x:String>
+						<x:String>Software-calculated Rotation</x:String>
+						<x:String>Follow Headset</x:String>
+						<x:String>Disable Rotation</x:String>
+					</ComboBox>
+
+					<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+					          Height="65" MinWidth="350" FontSize="15"
+					          x:Name="PositionFilterOptionBox"
+					          SelectionChanged="PositionFilterOptionBox_SelectionChanged"
+					          Grid.Column="1" Grid.Row="2" Margin="0,0,0,0">
+						<x:String>Linear Interpolation</x:String>
+						<x:String>Low Pass Filter</x:String>
+						<x:String>Extended Kalman Filter</x:String>
+						<x:String>Disable Filter</x:String>
+					</ComboBox>
+
 				</Grid>
-			</Grid>
-		</Grid>
+
+				<TextBlock FontWeight="SemiBold" Text="Tracker Configuration" FontSize="25" Margin="0,30,0,0" />
+
+				<Grid Margin="0,10,0,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="3*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="3*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="3*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+
+					<Grid.RowDefinitions>
+						<RowDefinition Height="50" />
+						<RowDefinition Height="50" />
+						<RowDefinition Height="50" />
+						<RowDefinition Height="50" />
+					</Grid.RowDefinitions>
+
+					<!-- Background -->
+					<Grid Grid.Column="0" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      CornerRadius="5,0,0,0" Canvas.ZIndex="-1" />
+					<Grid Grid.Column="1" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="2" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="3" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="4" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="5" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="6" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      CornerRadius="0,5,0,0" Canvas.ZIndex="-1" />
+
+					<!-- Background -->
+					<Grid Grid.Column="0" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="1" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="2" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="3" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="4" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="5" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+					<Grid Grid.Column="6" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+					      Canvas.ZIndex="-1" />
+
+
+					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+					           FontWeight="SemiBold" Text="Tracker:"
+					           Margin="0,0,20,0" Grid.Column="1" Grid.Row="0" />
+					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+					           FontWeight="SemiBold" Text="On/Off:"
+					           Margin="0,0,20,0" Grid.Column="3" Grid.Row="0" />
+					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+					           FontWeight="SemiBold" Text="Enabled on startup:"
+					           Margin="0,0,20,0" Grid.Column="5" Grid.Row="0" />
+
+
+					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+					           FontWeight="SemiBold" Text="Waist"
+					           Margin="0,0,20,0" Grid.Column="1" Grid.Row="1" />
+
+					<ToggleSwitch IsOn="True" x:Name="WaistEnabledToggle"
+								  Toggled="WaistEnabledToggle_Toggled"
+								  ToolTipService.ToolTip="Turning off will make waist tracker&#x0a;appear as disconnected in SteamVR."
+					              Grid.Column="3" Grid.Row="1" Margin="52,0,0,0"
+					              IsEnabled="{Binding ElementName=WaistOnToggle, 
+									Path=IsChecked,TargetNullValue=False}"
+					              OnContent="" OffContent="" HorizontalAlignment="Left" />
+
+					<CheckBox IsChecked="True" x:Name="WaistOnToggle"
+					          Checked="WaistOnToggle_Checked"
+					          Unchecked="WaistOnToggle_Unchecked"
+					          ToolTipService.ToolTip="Disabling will stop waist tracker&#x0a;from spawning on app startup."
+					          Grid.Column="5" Grid.Row="1" Margin="62,0,0,0"
+					          HorizontalAlignment="Left" />
+
+
+					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+					           FontWeight="SemiBold" Text="Left Foot"
+					           Margin="0,0,20,0" Grid.Column="1" Grid.Row="2" />
+
+					<ToggleSwitch IsOn="True" x:Name="LeftFootEnabledToggle"
+								  Toggled="LeftFootEnabledToggle_Toggled"
+								  ToolTipService.ToolTip="Turning off will make left foot tracker&#x0a;appear as disconnected in SteamVR."
+					              Grid.Column="3" Grid.Row="2" Margin="52,0,0,0"
+					              IsEnabled="{Binding ElementName=LeftFootOnToggle, 
+									Path=IsChecked,TargetNullValue=False}"
+					              OnContent="" OffContent="" HorizontalAlignment="Left" />
+
+					<CheckBox IsChecked="True" x:Name="LeftFootOnToggle"
+					          Checked="LeftFootOnToggle_Checked"
+					          Unchecked="LeftFootOnToggle_Unchecked"
+					          ToolTipService.ToolTip="Disabling will stop left foot tracker&#x0a;from spawning on app startup."
+					          Grid.Column="5" Grid.Row="2" Margin="62,0,0,0"
+					          HorizontalAlignment="Left" />
+
+
+					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+					           FontWeight="SemiBold" Text="Right Foot"
+					           Margin="0,0,20,0" Grid.Column="1" Grid.Row="3" />
+
+					<ToggleSwitch IsOn="True" x:Name="RightFootEnabledToggle"
+								  Toggled="RightFootEnabledToggle_Toggled"
+								  ToolTipService.ToolTip="Turning off will make right foot tracker&#x0a;appear as disconnected in SteamVR."
+					              Grid.Column="3" Grid.Row="3" Margin="52,0,0,0"
+					              IsEnabled="{Binding ElementName=RightFootOnToggle, 
+									Path=IsChecked,TargetNullValue=False}"
+					              OnContent="" OffContent="" HorizontalAlignment="Left" />
+
+					<CheckBox IsChecked="True" x:Name="RightFootOnToggle"
+					          Checked="RightFootOnToggle_Checked"
+					          Unchecked="RightFootOnToggle_Unchecked"
+					          ToolTipService.ToolTip="Disabling will stop right foot tracker&#x0a;from spawning on app startup."
+					          Grid.Column="5" Grid.Row="3" Margin="62,0,0,0"
+					          HorizontalAlignment="Left" />
+
+				</Grid>
+
+				<Grid Margin="0,10,0,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="9*" />
+						<ColumnDefinition Width="2.8*" />
+					</Grid.ColumnDefinitions>
+
+					<Grid.RowDefinitions>
+						<RowDefinition Height="50" />
+						<RowDefinition Height="50" />
+					</Grid.RowDefinitions>
+
+					<Button Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" Height="40"
+					        Style="{StaticResource AccentButtonStyle}" x:Name="RestartButton"
+							Click="RestartButton_Click"
+					        HorizontalAlignment="Stretch" VerticalAlignment="Center"
+					        Content="Restart SteamVR" FontSize="16" IsEnabled="False" />
+
+					<StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
+						<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
+						           Text="Enabling or disabling a tracker requires restarting SteamVR"
+						           Margin="0,0,0,0" Foreground="LightGray" />
+						<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
+						           Text="and K2EX for changes to take effect."
+						           Margin="0,0,0,0" Foreground="LightGray" />
+					</StackPanel>
+
+					<Grid Grid.Column="0" Grid.Row="1" Margin="0,20,0,0">
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+						           Text="Automatically connect enabled trackers at launch" Margin="30,0,0,10" />
+						<CheckBox x:Name="AutoSpawnCheckBox"
+						          HorizontalAlignment="Left" VerticalAlignment="Center"
+						          MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="False" />
+					</Grid>
+
+				</Grid>
+
+				<TextBlock FontWeight="SemiBold" Text="Sounds" FontSize="25" Margin="0,50,0,0" />
+
+				<Grid Grid.Column="0" Grid.Row="1" Margin="0,15,0,0">
+					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+					           Text="Enable app sounds" Margin="30,0,0,10" />
+					<CheckBox x:Name="SoundsEnabledCheckBox"
+					          HorizontalAlignment="Left" VerticalAlignment="Center"
+					          MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="True" />
+				</Grid>
+
+				<Slider Grid.Row="1" HorizontalAlignment="Left" Width="400" Value="69"
+				        IsEnabled="{Binding ElementName=SoundsEnabledCheckBox, Path=IsChecked,TargetNullValue=False}"
+				        x:Name="SoundsVolumeSlider" />
+
+				<StackPanel Orientation="Vertical" Margin="0,0,5,0">
+					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+					           Text="Sounds happen during startup, calibration, errors, or when toggling tracker freeze"
+					           Margin="0,0,0,0" Foreground="LightGray" />
+					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+					           Text="or skeleton mirroring."
+					           Margin="0,0,0,0" Foreground="LightGray" />
+				</StackPanel>
+
+				<TextBlock FontWeight="SemiBold" Text="Troubleshooting" FontSize="25" Margin="0,50,0,15" />
+
+				<Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
+				        x:Name="ResetButton" Width="270"
+				        Content="Delete configuration and restart" FontSize="16" />
+				<Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
+				        x:Name="ReRegisterButton" Width="270"
+				        Content="Re-register SteamVR driver entry" FontSize="16" />
+				<Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
+				        x:Name="ReManifestButton" Width="340"
+				        Content="Reinstall SteamVR input binding manifests" FontSize="16" />
+
+			</StackPanel>
+
+		</ScrollViewer>
+
 	</Grid>
 
 </Page>
