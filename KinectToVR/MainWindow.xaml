@@ -14,13 +14,12 @@
 
 		<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="760" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="160" />
-			</Grid.ColumnDefinitions>
+				<ColumnDefinition Width="62" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
 			<Grid.RowDefinitions>
-				<RowDefinition Height="60" />
+				<RowDefinition Height="20" />
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
 
@@ -32,7 +31,7 @@
 		                     Loaded="NavView_Loaded"
 		                     ItemInvoked="NavView_ItemInvoked"
 		                     BackRequested="NavView_BackRequested"
-		                     Grid.Row="1"
+		                     Grid.Row="1" CompactPaneLength="60"
 		                     FontSize="16"
 		                     PaneDisplayMode="LeftCompact"
 		                     SelectionFollowsFocus="Enabled"
@@ -72,8 +71,15 @@
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
 		            VerticalAlignment="Top" Canvas.ZIndex="1" Margin="20">
 			<Grid Height="35" Width="35" Margin="0,0,10,0">
-                <FontIcon x:Name="symbolIcon" Glyph="&#xE895;" FontSize="15" IsHitTestVisible="False"
+                <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" FontSize="15" IsHitTestVisible="False"
 				          Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5">
+                    <FontIcon.RenderTransform>
+                        <CompositeTransform />
+                    </FontIcon.RenderTransform>
+                </FontIcon>
+                <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="15" IsHitTestVisible="False"
+						  HorizontalAlignment="Right" VerticalAlignment="Bottom"
+				          Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed" Margin="0,0,7,7">
 					<FontIcon.RenderTransform>
 						<CompositeTransform />
 					</FontIcon.RenderTransform>
@@ -96,9 +102,9 @@
 					</FlyoutBase.AttachedFlyout>
 				</Button>
 			</Grid>
-			<Grid Height="35" Width="35" Margin="0,0,10,0">
-				<FontIcon Glyph="&#xE921;" FontSize="13" Canvas.ZIndex="1" IsHitTestVisible="False"/>
-				<Button Height="35" Width="35" Click="MinimizeButton_Click"
+            <Grid Height="35" Width="35" Margin="0,0,10,0">
+                <FontIcon Glyph="&#xE921;" FontSize="13" Canvas.ZIndex="1" IsHitTestVisible="False"/>
+                <Button Height="35" Width="35" Click="MinimizeButton_Click"
 				        Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}" />
 			</Grid>
 			<Grid Height="35" Width="35">
@@ -112,7 +118,7 @@
 			<Storyboard x:Name="IconRotation" AutoReverse="False" RepeatBehavior="Forever">
 				<DoubleAnimation Duration="0:0:1" To="360"
 				                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)"
-				                 Storyboard.TargetName="symbolIcon" />
+				                 Storyboard.TargetName="UpdateIcon" />
 			</Storyboard>
 		</Grid.Resources>
 	</Grid>

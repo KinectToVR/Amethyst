@@ -14,78 +14,100 @@ using namespace Microsoft::UI::Xaml;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+// LMAO Eat Dirt Micro&Soft
+// Imma just cache object before the fancy UWP delegation reownership
+std::shared_ptr<Controls::FontIcon> updateIconDot;
+
+// Helper local variables
+bool updateFound = false,
+     main_localInitFinished = false;
+
+// Updates checking function
 Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::checkUpdates(
 	winrt::Microsoft::UI::Xaml::UIElement const& show_el, const bool show, const DWORD delay_ms)
 {
-	{
-		// Sleep on UI (Non-blocking)
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
-		Sleep(delay_ms);
-		co_await ui_thread;
+	// Attempt only after init
+	if (main_localInitFinished) {
+
+		{
+			// Sleep on UI (Non-blocking)
+			winrt::apartment_context ui_thread;
+			co_await winrt::resume_background();
+			Sleep(delay_ms);
+			co_await ui_thread;
+		}
+
+		// Don't check if found
+		if (!updateFound)
+		{
+			// Here check for updates (via external bool)
+			IconRotation().Begin();
+			// Capture the calling context.
+			winrt::apartment_context ui_thread;
+			co_await winrt::resume_background();
+
+			// Check for updates
+			auto start_time = std::chrono::high_resolution_clock::now();
+
+			// Check now
+			srand(time(NULL)); // Generate somewhat random up-to-date or not
+			updateFound = rand() & 1;
+
+			// Limit time to (min) 1s
+			if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+				std::chrono::high_resolution_clock::now() - start_time).count(); duration <= 1000.f)
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000 - duration));
+
+			// Resume to UI and stop the animation
+			co_await ui_thread;
+			IconRotation().Stop();
+
+			if (updateFound)
+			{
+				FlyoutHeader().Text(L"New Update Available");
+				FlyoutFooter().Text(L"KinectToVR v1.0.1");
+				FlyoutContent().Text(L"- OpenSSL Library update\n- Several Kinect V2 fixes");
+
+				auto thickness = Thickness();
+				thickness.Left = 0;
+				thickness.Top = 0;
+				thickness.Right = 0;
+				thickness.Bottom = 12;
+				FlyoutContent().Margin(thickness);
+
+				InstallLaterButton().Visibility(Visibility::Visible);
+				InstallNowButton().Visibility(Visibility::Visible);
+
+				updateIconDot.get()->Visibility(Visibility::Visible);
+			}
+			else
+			{
+				FlyoutHeader().Text(L"You're Up To Date");
+				FlyoutFooter().Text(L"KinectToVR v1.0.0");
+				FlyoutContent().Text(L"Please tell us if you have any ideas\nfor the next KinectToVR update.");
+
+				auto thickness = Thickness();
+				thickness.Left = 0;
+				thickness.Top = 0;
+				thickness.Right = 0;
+				thickness.Bottom = 0;
+				FlyoutContent().Margin(thickness);
+
+				InstallLaterButton().Visibility(Visibility::Collapsed);
+				InstallNowButton().Visibility(Visibility::Collapsed);
+
+				updateIconDot.get()->Visibility(Visibility::Collapsed);
+			}
+		}
+
+		Controls::Primitives::FlyoutShowOptions options;
+		options.Placement(Controls::Primitives::FlyoutPlacementMode::Bottom);
+		options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+
+		if (updateFound || show)
+			UpdateFlyout().ShowAt(show_el, options);
+
 	}
-
-	// Here check for updates (via external bool)
-	IconRotation().Begin();
-	// Capture the calling context.
-	winrt::apartment_context ui_thread;
-	co_await winrt::resume_background();
-
-	// Check for updates
-	auto start_time = std::chrono::high_resolution_clock::now();
-
-	// Check now
-	srand(time(NULL)); // Generate somewhat random up-to-date or now
-	bool updateFound = rand() & 1;
-
-	// Limit time to (min) 1s
-	if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now() - start_time).count(); duration <= 1000.f)
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 - duration));
-
-	// Resume to UI and stop the animation
-	co_await ui_thread;
-	IconRotation().Stop();
-
-	if (updateFound)
-	{
-		FlyoutHeader().Text(L"New Update Available");
-		FlyoutFooter().Text(L"KinectToVR v1.0.1");
-		FlyoutContent().Text(L"- OpenSSL Library update\n- Several Kinect V2 fixes");
-
-		auto thickness = Thickness();
-		thickness.Left = 0;
-		thickness.Top = 0;
-		thickness.Right = 0;
-		thickness.Bottom = 12;
-		FlyoutContent().Margin(thickness);
-
-		InstallLaterButton().Visibility(Visibility::Visible);
-		InstallNowButton().Visibility(Visibility::Visible);
-	}
-	else
-	{
-		FlyoutHeader().Text(L"You're Up To Date");
-		FlyoutFooter().Text(L"KinectToVR v1.0.0");
-		FlyoutContent().Text(L"Please tell us if you have any ideas\nfor the next KinectToVR update.");
-
-		auto thickness = Thickness();
-		thickness.Left = 0;
-		thickness.Top = 0;
-		thickness.Right = 0;
-		thickness.Bottom = 0;
-		FlyoutContent().Margin(thickness);
-
-		InstallLaterButton().Visibility(Visibility::Collapsed);
-		InstallNowButton().Visibility(Visibility::Collapsed);
-	}
-
-	Controls::Primitives::FlyoutShowOptions options;
-	options.Placement(Controls::Primitives::FlyoutPlacementMode::Bottom);
-	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
-
-	if (updateFound || show)
-		UpdateFlyout().ShowAt(show_el, options);
 }
 
 namespace winrt::KinectToVR::implementation
@@ -94,6 +116,10 @@ namespace winrt::KinectToVR::implementation
 	{
 		InitializeComponent();
 
+		// Cache needed UI elements
+		updateIconDot = std::make_shared<Controls::FontIcon>(UpdateIconDot());
+
+		// Set up
 		this->Title(L"KinectToVR");
 
 		this->ExtendsContentIntoTitleBar(true);
@@ -108,6 +134,8 @@ namespace winrt::KinectToVR::implementation
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"info", winrt::xaml_typename<InfoPage>()));
 
+		// Notify of the setup end
+		main_localInitFinished = true;
 	}
 }
 
@@ -318,19 +346,14 @@ void winrt::KinectToVR::implementation::MainWindow::MinimizeButton_Click(
 Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::UpdateButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-	// Cache UI Flyout
-	auto ui_element = sender.as<UIElement>();
-
 	// Check for updates (and show)
-	co_await checkUpdates(ui_element, true);
+	co_await checkUpdates(sender.as<UIElement>(), true);
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::UpdateButton_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::UpdateButton_Loaded(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-	// Cache UI Flyout
-	auto ui_element = sender.as<UIElement>();
-
 	// Check for updates (and show)
-	co_await checkUpdates(ui_element, false, 2000);
+	co_await checkUpdates(sender.as<UIElement>(), true, 2000);
 }
