@@ -10,188 +10,88 @@
 	xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="10" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="50" />
-        </Grid.RowDefinitions>
 
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"
-		      Margin="30,20,0,0">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="700" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0" />
-                <!--tmp-->
-                <ColumnDefinition Width="300" />
-                <ColumnDefinition Width="0.5*" />
-                <ColumnDefinition Width="280" />
-                <ColumnDefinition Width="0.7*" />
-                <ColumnDefinition Width="280" />
-                <ColumnDefinition Width="0.5*" />
-            </Grid.ColumnDefinitions>
+        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
+		              VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
-            <ListView Grid.Column="1" CornerRadius="5"
-			          Background="{StaticResource SystemControlAcrylicElementBrush}"
-			          VerticalAlignment="Top" HorizontalAlignment="Stretch" SelectionMode="None"
-			          CanReorderItems="False" CanDragItems="False" AllowDrop="False">
+            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
 
-                <ListViewItem Margin="15">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="45" />
-                            <RowDefinition Height="40" />
-                        </Grid.RowDefinitions>
+                <Grid Background="Transparent" Height="75"/>
 
-                        <TextBlock Grid.Column="0" Margin="0,10,0,0" FontWeight="Bold"
-						           VerticalAlignment="Top" FontSize="16"
-						           Text="Tracking Device" />
+	            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal">
+		            <Image Source="ms-appx:///Assets/ktvr.png" Height="200" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBlock Margin="30,0,0,7" Text="KinectToVR" FontSize="85" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+	            </StackPanel>
 
-                        <TextBlock Grid.Column="0" Margin="20,0,0,0" FontSize="16"
-						           VerticalAlignment="Top" Grid.Row="1" FontWeight="Medium"
-						           Text="🟢 Online" />
-                    </Grid>
-                </ListViewItem>
-	            <ListViewItem Margin="15">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="45" />
-                            <RowDefinition Height="40" />
-                        </Grid.RowDefinitions>
+                <TextBlock FontWeight="SemiBold" Text="Credits" FontSize="25" Margin="0,60,0,0"/>
 
-                        <TextBlock Grid.Column="0" Margin="0,10,0,0" FontWeight="Bold"
-						           VerticalAlignment="Top" FontSize="16"
-						           Text="K2App's Driver (K2Driver)" />
+                <TextBlock FontWeight="SemiBold" Foreground="LightGray" Text="Main Team:" Margin="0,20,0,0"/>
 
-                        <TextBlock Grid.Column="0" Margin="20,0,0,0" FontSize="16"
-						           VerticalAlignment="Top" Grid.Row="1" FontWeight="Medium"
-						           Text="🟢 Online" />
-                    </Grid>
-                </ListViewItem>
-                <ListViewItem Margin="15">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="45" />
-                            <RowDefinition Height="40" />
-                        </Grid.RowDefinitions>
+                <TextBlock FontWeight="SemiBold">
+                    <Run xml:space="preserve">Lead Developer: </Run>
+	                <Hyperlink NavigateUri="https://github.com/KimihikoAkayasaki" UnderlineStyle="None">KimihikoAkayasaki</Hyperlink>
+					<Run xml:space="preserve">&#x09;"Akaya"</Run>
+                </TextBlock>
 
-                        <TextBlock Grid.Column="0" Margin="0,10,0,0" FontWeight="Bold"
-						           VerticalAlignment="Top" FontSize="16"
-						           Text="SteamVR (OpenVR)" />
+                <TextBlock FontWeight="SemiBold">
+                    <Run xml:space="preserve">Project Management: </Run>
+	                <Hyperlink NavigateUri="https://github.com/TripingPC" UnderlineStyle="None">TripingPC</Hyperlink>
+					<Run xml:space="preserve">&#x09;&#x09;"Ella"</Run>
+                </TextBlock>
 
-                        <TextBlock Grid.Column="0" Margin="20,0,0,0" FontSize="16"
-						           VerticalAlignment="Top" Grid.Row="1" FontWeight="Medium"
-						           Text="🟢 Online" />
-                    </Grid>
-                </ListViewItem>
-            </ListView>
+                <TextBlock FontWeight="SemiBold">
+                    <Run xml:space="preserve">Installer Development: </Run>
+	                <Hyperlink NavigateUri="https://github.com/HimbeersaftLP" UnderlineStyle="None">himbeersaft</Hyperlink>
+					<Run xml:space="preserve">&#x09;"Himbeer"</Run>
+                </TextBlock>
 
-	        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="200"
-	              Grid.Column="2" Margin="10,70,-50,10" CornerRadius="5">
-		        <AppBarSeparator RenderTransformOrigin="0.5,0.5" Grid.Row="1" Grid.Column="4"
-		                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			        <AppBarSeparator.RenderTransform>
-				        <RotateTransform Angle="90" />
-			        </AppBarSeparator.RenderTransform>
-		        </AppBarSeparator>
-	        </Grid>
-	        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="200"
-	              Grid.Column="2" Margin="10,180,-50,10" CornerRadius="5">
-		        <AppBarSeparator RenderTransformOrigin="0.5,0.5" Grid.Row="1" Grid.Column="4"
-		                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			        <AppBarSeparator.RenderTransform>
-				        <RotateTransform Angle="90" />
-			        </AppBarSeparator.RenderTransform>
-		        </AppBarSeparator>
-	        </Grid>
-            
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="400" Width="200"
-				      Grid.Row="1" Grid.Column="3" Margin="0,40,0,10" CornerRadius="5">
+                <TextBlock FontWeight="SemiBold">
+                    <Run xml:space="preserve">Support: </Run>
+	                <Hyperlink NavigateUri="https://github.com/ArtemisMax" UnderlineStyle="None">ArtemisMax</Hyperlink>
+					<Run xml:space="preserve">&#x09;&#x09;&#x09;"Artemis"</Run>
+                </TextBlock>
 
-	            <Grid.RowDefinitions>
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="50" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="25" />
-                </Grid.RowDefinitions>
+                <TextBlock FontWeight="SemiBold">
+	                <Run xml:space="preserve">Support: </Run>
+	                <Hyperlink NavigateUri="https://github.com/i386sh" UnderlineStyle="None">i386sh</Hyperlink>
+					<Run xml:space="preserve">/ notzer0&#x09;&#x09;&#x09;"Ollie"</Run>
+                </TextBlock>
 
-	            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="200"
-	                  Grid.Column="2" Margin="20,0,0,10" CornerRadius="5" Grid.Row="1">
-                    <AppBarSeparator RenderTransformOrigin="0.5,0.5" Grid.Row="1" Grid.Column="4"
-		                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                </Grid>
+                <TextBlock FontWeight="SemiBold">
+	                <Run xml:space="preserve">Support (inactive): </Run>
+	                <Hyperlink NavigateUri="https://github.com/conatsera" UnderlineStyle="None">conatsera</Hyperlink>
+					<Run xml:space="preserve">&#x09;&#x09;"Aria"</Run>
+                </TextBlock>
 
-				<TextBlock Margin="40,10,0,0" Grid.Row="1"
-					           VerticalAlignment="Top" Text="Status Code:" />
-                <TextBlock Margin="50,40,0,0" Grid.Row="1"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-					           Text="SERVER_CODE10" HorizontalAlignment="Right"/>
+                <TextBlock FontWeight="SemiBold" Foreground="LightGray" Text="Helpers:" Margin="0,20,0,0"/>
 
-                <Button Margin="40,80,0,0" Grid.Row="1" FontSize="16" Height="50"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-                               VerticalContentAlignment="Center"
-					           Content="Re-Register Driver" HorizontalAlignment="Stretch"/>
+                <TextBlock FontWeight="SemiBold">
+	                <Run xml:space="preserve">Alex (nakog)    </Run>
+	                <Run xml:space="preserve">Allen    </Run>
+	                <Run xml:space="preserve">Fiery (fierybattlehawk)    </Run>
+	                <Run xml:space="preserve">Hekky    </Run>
+	                <Run xml:space="preserve">illyriarose    </Run>
+	                <Run xml:space="preserve">Luka (woomie)    </Run>
+	                <Run xml:space="preserve">Sky    </Run>
+                </TextBlock>
+                <TextBlock FontWeight="SemiBold">
+	                <Run xml:space="preserve">Sylva    </Run>
+	                <Run xml:space="preserve">Vexa (vexatag)</Run>
+                </TextBlock>
 
+                <TextBlock FontWeight="SemiBold" Text="And everyone else who helped along the way. " Margin="0,20,0,0"/>
 
-				<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="150"
-				      Grid.Column="2" Margin="20,-50,0,10" CornerRadius="5" Grid.Row="3">
-					<AppBarSeparator RenderTransformOrigin="0.5,0.5" Grid.Row="1" Grid.Column="4"
-					                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-				</Grid>
+            </StackPanel>
 
-				<TextBlock Margin="40,-40,0,0" Grid.Row="3"
-				           VerticalAlignment="Top" Text="Input Actions:" />
-				<TextBlock Margin="50,-10,0,0" Grid.Row="3"
-				           VerticalAlignment="Top" FontWeight="SemiBold"
-				           Text="ACTIONS_OK" HorizontalAlignment="Right"/>
-
-				<Button Margin="40,30,0,0" Grid.Row="3" FontSize="16" Height="50"
-				        VerticalAlignment="Top" FontWeight="SemiBold"
-				        VerticalContentAlignment="Center"
-				        Content="Reinstall Manifest" HorizontalAlignment="Stretch"/>
-            </Grid>
-
-
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="400" Width="200"
-				      Grid.Row="1" Grid.Column="5" Margin="0,40,0,10" CornerRadius="5">
-
-	            <Grid.RowDefinitions>
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="0" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="25" />
-                </Grid.RowDefinitions>
-
-				<TextBlock Margin="0,10,0,0" Grid.Row="1"
-					           VerticalAlignment="Top" Text="KinectToVR K2App"/>
-				<TextBlock Margin="30,40,0,0" Grid.Row="1" VerticalAlignment="Top" 
-				           FontWeight="SemiBold" Text="Version: vVERSION" HorizontalAlignment="Left"/>
-                <TextBlock Margin="30,65,0,0" Grid.Row="1" VerticalAlignment="Top" 
-                           FontWeight="SemiBold" Text="Build: #BUILD" HorizontalAlignment="Left"/>
-                <TextBlock Margin="30,90,0,0" Grid.Row="1" VerticalAlignment="Top" 
-                           FontWeight="SemiBold" Text="Commit: #COMMIT" HorizontalAlignment="Left"/>
-
-				<TextBlock Margin="0,10,0,0" Grid.Row="3"
-					           VerticalAlignment="Top" Text="Special Thanks"/>
-                <TextBlock Margin="30,40,0,0" Grid.Row="3" VerticalAlignment="Top" 
-				           FontWeight="SemiBold" Text="PERSON - ROLE, ROLE" HorizontalAlignment="Left"/>
-                <TextBlock Margin="30,65,0,0" Grid.Row="3" VerticalAlignment="Top" 
-				           FontWeight="SemiBold" Text="PERSON - ROLE, ROLE" HorizontalAlignment="Left"/>
-                <TextBlock Margin="30,90,0,0" Grid.Row="3" VerticalAlignment="Top" 
-				           FontWeight="SemiBold" Text="PERSON - ROLE, ROLE" HorizontalAlignment="Left"/>
-                <TextBlock Margin="30,115,0,0" Grid.Row="3" VerticalAlignment="Top" 
-				           FontWeight="SemiBold" Text="PERSON - ROLE, ROLE" HorizontalAlignment="Left"/>
-                <TextBlock Margin="30,140,0,0" Grid.Row="3" VerticalAlignment="Top" 
-				           FontWeight="SemiBold" Text="PERSON - ROLE, ROLE" HorizontalAlignment="Left"/>
-
-            </Grid>
-
-
-        </Grid>
+        </ScrollViewer>
 
     </Grid>
-
 
 </Page>
