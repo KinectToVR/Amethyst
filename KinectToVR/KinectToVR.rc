@@ -91,7 +91,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON                    "Assets\\KinectToVR.ico"
+IDI_ICON1               ICON                    "Assets\\ktvr.ico"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

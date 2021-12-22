@@ -65,7 +65,6 @@
     <Image Include="Assets\SplashScreen.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\KinectToVR.ico" />
     <Image Include="Assets\autocalibration.png">
       <Filter>Assets</Filter>
     </Image>
@@ -223,6 +222,18 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\StoreLogo.scale-400.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\flat_ktvr.ico">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\flat_ktvr.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ktvr.ico">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ktvr.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>
