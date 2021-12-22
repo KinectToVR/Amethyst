@@ -32,6 +32,7 @@
 		                     ItemInvoked="NavView_ItemInvoked"
 		                     BackRequested="NavView_BackRequested"
 		                     Grid.Row="1" CompactPaneLength="60"
+							 OpenPaneLength="197"
 		                     FontSize="16"
 		                     PaneDisplayMode="LeftCompact"
 		                     SelectionFollowsFocus="Enabled"
