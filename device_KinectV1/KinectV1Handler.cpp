@@ -13,16 +13,16 @@ std::string KinectV1Handler::statusResultString(HRESULT stat)
 	// Wrap status to string for readability
 	switch (stat)
 	{
-	case S_OK: return "S_OK";
-	case S_NUI_INITIALIZING: return "S_NUI_INITIALIZING The device is connected, but still initializing.";
-	case E_NUI_NOTCONNECTED: return "E_NUI_NOTCONNECTED The device is not connected.";
-	case E_NUI_NOTGENUINE: return "E_NUI_NOTGENUINE The device is not a valid Kinect.";
-	case E_NUI_NOTSUPPORTED: return "E_NUI_NOTSUPPORTED The device is an unsupported model.";
+	case S_OK: return "Success!\nS_OK\nEverything's good!";
+	case S_NUI_INITIALIZING: return "INITIALIZING\nS_NUI_INITIALIZING\nThe device is connected, but still initializing.";
+	case E_NUI_NOTCONNECTED: return "NOTCONNECTED\nE_NUI_NOTCONNECTED\nThe device is not connected.";
+	case E_NUI_NOTGENUINE: return "NOTGENUINE\nE_NUI_NOTGENUINE\nThe device is not a valid Kinect.";
+	case E_NUI_NOTSUPPORTED: return "NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nThe device is an unsupported model.";
 	case E_NUI_INSUFFICIENTBANDWIDTH: return
-			"E_NUI_INSUFFICIENTBANDWIDTH The device is connected to a hub without the necessary bandwidth requirements.";
-	case E_NUI_NOTPOWERED: return "E_NUI_NOTPOWERED The device is connected, but unpowered.";
-	case E_NUI_NOTREADY: return "E_NUI_NOTREADY There was some other unspecified error.";
-	default: return "Uh Oh undefined kinect error! " + std::to_string(stat);
+			"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nThe device is connected to a hub without the necessary bandwidth requirements.";
+	case E_NUI_NOTPOWERED: return "NOTPOWERED\nE_NUI_NOTPOWERED\nThere is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.";
+	case E_NUI_NOTREADY: return "NOTREADY\nE_NUI_NOTREADY\nThere was some other unspecified error.";
+	default: return "Undefined: " + std::to_string(stat) + "\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
 }
 
@@ -43,7 +43,8 @@ void KinectV1Handler::shutdown()
 	try
 	{
 		// Shut down the sensor (Only NUI API)
-		kinectSensor->NuiShutdown();
+		if (kinectSensor) // Protect from null call
+			kinectSensor->NuiShutdown();
 	}
 	catch (std::exception& e)
 	{
@@ -130,14 +131,18 @@ void KinectV1Handler::updateSkeletalData()
 				for (int j = 0; j < ktvr::Joint_Total; ++j)
 				{
 					//TrackingDeviceBase::jointPositions[j].w() = skeletonFrame.SkeletonData[i].SkeletonPositions[globalIndex[j]].w;
-					TrackingDeviceBase::jointPositions[j].x() = skeletonFrame.SkeletonData[i].SkeletonPositions[
-						globalIndex[j]].x;
-					TrackingDeviceBase::jointPositions[j].y() = skeletonFrame.SkeletonData[i].SkeletonPositions[
-						globalIndex[j]].y;
-					TrackingDeviceBase::jointPositions[j].z() = skeletonFrame.SkeletonData[i].SkeletonPositions[
-						globalIndex[j]].z;
+					jointPositions[j].x() = skeletonFrame.SkeletonData[i].
+						SkeletonPositions[
+							globalIndex[j]].x;
+					jointPositions[j].y() = skeletonFrame.SkeletonData[i].
+						SkeletonPositions[
+							globalIndex[j]].y;
+					jointPositions[j].z() = skeletonFrame.SkeletonData[i].
+						SkeletonPositions[
+							globalIndex[j]].z;
 
-					TrackingDeviceBase::trackingStates[j] = skeletonFrame.SkeletonData[i].eSkeletonPositionTrackingState
+					trackingStates[j] = skeletonFrame.SkeletonData[i].
+						eSkeletonPositionTrackingState
 						[globalIndex[j]];
 				}
 
@@ -147,14 +152,18 @@ void KinectV1Handler::updateSkeletalData()
 				/* Copy joint orientations */
 				for (int k = 0; k < ktvr::Joint_Total; ++k)
 				{
-					TrackingDeviceBase::jointOrientations[k].w() = boneOrientations[globalIndex[k]].absoluteRotation.
-						rotationQuaternion.w;
-					TrackingDeviceBase::jointOrientations[k].x() = boneOrientations[globalIndex[k]].absoluteRotation.
-						rotationQuaternion.x;
-					TrackingDeviceBase::jointOrientations[k].y() = boneOrientations[globalIndex[k]].absoluteRotation.
-						rotationQuaternion.y;
-					TrackingDeviceBase::jointOrientations[k].z() = boneOrientations[globalIndex[k]].absoluteRotation.
-						rotationQuaternion.z;
+					jointOrientations[k].w() = boneOrientations[globalIndex[k]].
+					                           absoluteRotation.
+					                           rotationQuaternion.w;
+					jointOrientations[k].x() = boneOrientations[globalIndex[k]].
+					                           absoluteRotation.
+					                           rotationQuaternion.x;
+					jointOrientations[k].y() = boneOrientations[globalIndex[k]].
+					                           absoluteRotation.
+					                           rotationQuaternion.y;
+					jointOrientations[k].z() = boneOrientations[globalIndex[k]].
+					                           absoluteRotation.
+					                           rotationQuaternion.z;
 				}
 				break; // Only first skeleton
 			}

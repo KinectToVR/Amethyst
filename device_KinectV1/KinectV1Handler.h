@@ -9,14 +9,15 @@
 #include "KinectToVR_API.h"
 /* Not exported */
 
-class KinectV1Handler : public ktvr::TrackingDeviceBase
+class KinectV1Handler : public ktvr::TrackingDeviceBase_KinectBasis
 {
 	// A representation of the Kinect elements for the v1 api
 public:
 	KinectV1Handler()
 	{
-		KinectV1Handler::initialize();
-		TrackingDeviceBase::deviceType = ktvr::K2_Kinect;
+		//KinectV1Handler::initialize();
+		TrackingDeviceBase_KinectBasis::deviceType = ktvr::K2_Kinect;
+		TrackingDeviceBase_KinectBasis::deviceName = "Xbox 360 Kinect";
 	}
 
 	HANDLE kinectRGBStream = nullptr;
@@ -49,22 +50,19 @@ private:
 };
 
 /* Exported for dynamic linking */
-
-extern "C" __declspec(dllexport) void* TrackingDeviceBaseFactory(const char* pVersionName, int* pReturnCode)
+extern "C" __declspec(dllexport) void* TrackingDeviceBaseFactory(
+	const char* pVersionName, int* pReturnCode)
 {
-	static KinectV1Handler TrackingHandler; // Create a new device handler -> KinectV1
-	static ktvr::TrackingDeviceBase BaseTrackingHandler = // Slice the handler to the general handler
-		static_cast<ktvr::TrackingDeviceBase&>(TrackingHandler);
-
 	// Return the device handler for tracking
 	// but only if interfaces are the same / up-to-date
 	if (0 == strcmp(ktvr::IK2API_Version, pVersionName))
 	{
-		return &BaseTrackingHandler;
+		static KinectV1Handler TrackingHandler; // Create a new device handler -> KinectV2
+
+		*pReturnCode = ktvr::K2InitError_None;
+		return &TrackingHandler;
 	}
 
 	// Return code for initialization
-	(*pReturnCode) = ktvr::K2InitError_None;
-	if (pReturnCode)
-		*pReturnCode = ktvr::K2InitError_BadInterface;
+	*pReturnCode = ktvr::K2InitError_BadInterface;
 }

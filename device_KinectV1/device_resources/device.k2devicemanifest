@@ -1,5 +1,6 @@
 {
 	"device_name": "KinectV1",
+	"device_type": "KinectBasis",
 	"linked_dll_path": "C:/Windows/System32/Kinect10.dll",
 	"force_default": false
 }
