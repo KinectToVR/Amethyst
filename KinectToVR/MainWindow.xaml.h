@@ -7,6 +7,8 @@
 #include "DevicesPage.g.h"
 #include "InfoPage.g.h"
 
+#include "TrackingDevices.h"
+
 namespace muxc
 {
     using namespace winrt::Microsoft::UI::Xaml::Controls;

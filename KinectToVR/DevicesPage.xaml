@@ -11,237 +11,133 @@
 	xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
 	<Grid>
-		<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="50" />
-				<RowDefinition Height="*" />
-				<RowDefinition Height="50" />
-			</Grid.RowDefinitions>
 
-			<TextBlock FontWeight="SemiBold" Text="Tracking Devices:"
-			           Margin="20,20,0,0" Grid.Row="0" />
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="450" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="290" />
+				<ColumnDefinition Width="6*" />
+				<ColumnDefinition Width="150" />
+				<ColumnDefinition Width="6*" />
+			</Grid.ColumnDefinitions>
 
-			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"
-			      Margin="20,20,0,0">
+			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0">
 
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="0" /> <!--tmp-->
-					<ColumnDefinition Width="300" />
-					<ColumnDefinition Width="0.5*" />
-					<ColumnDefinition Width="280" />
-					<ColumnDefinition Width="0.5*" />
-					<ColumnDefinition Width="280" />
-					<ColumnDefinition Width="0.5*" />
-				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="60" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+
+				<TextBlock FontWeight="SemiBold" Text="Devices" FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
 
 				<ListView x:Name="TrackingDeviceListView" Grid.Column="1" CornerRadius="5"
-				          Background="{StaticResource SystemControlAcrylicElementBrush}"
-				          VerticalAlignment="Top" HorizontalAlignment="Stretch"
+				          VerticalAlignment="Top" HorizontalAlignment="Left"
+				          Grid.Row="1" Margin="40,10,0,0" Width="370"
 				          SelectedIndex="1" SelectionChanged="TrackingDeviceListView_SelectionChanged"
 				          CanReorderItems="False" CanDragItems="False" AllowDrop="False">
 
+					<ListView.Resources>
+						<Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+							<Setter Property="Margin" Value="0,0,0,20" />
+							<Setter Property="Background" Value="{StaticResource SystemControlAcrylicElementBrush}" />
+						</Style>
+					</ListView.Resources>
+
 					<ListView.ItemTemplate>
 						<DataTemplate x:DataType="local:TrackingDevicesView">
-							<Grid>
+							<Grid Height="70">
 								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="30" />
-									<ColumnDefinition Width="170" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="37" />
 								</Grid.ColumnDefinitions>
 
-								<Grid.RowDefinitions>
-									<RowDefinition Height="45" />
-									<RowDefinition Height="40" />
-									<RowDefinition Height="58" />
-								</Grid.RowDefinitions>
+								<Viewbox Height="150" Width="150"
+								         Grid.Column="1" Margin="0,0,0,0"
+								         VerticalAlignment="Center"
+								         HorizontalAlignment="Left">
 
-								<RadioButton Grid.Column="0" Margin="0,7,0,0"
-								             VerticalAlignment="Top"
-								             IsHitTestVisible="False"
-								             IsChecked="{x:Bind Current, Mode=OneWay}"
-								             GroupName="DeviceRadioButton" />
-								<TextBlock Grid.Column="1" Margin="0,10,0,0" FontWeight="Bold"
-								           VerticalAlignment="Top" FontSize="16"
+									<RadioButton IsHitTestVisible="False"
+									             IsChecked="{x:Bind Current, Mode=OneWay}"
+									             GroupName="DeviceRadioButton" />
+								</Viewbox>
+
+								<TextBlock Grid.Column="0" Margin="10,0,0,2" FontWeight="Bold"
+								           VerticalAlignment="Center" FontSize="16"
 								           Text="{x:Bind DeviceName, Mode=OneWay}" />
 
-								<TextBlock Grid.Column="1" Margin="10,0,0,0" FontSize="16"
-								           VerticalAlignment="Top" Grid.Row="1" FontWeight="Medium"
-								           Text="{x:Bind ConnectedStatus, Mode=OneWay}" />
-								<TextBlock Grid.Column="1" Margin="10,0,0,0" FontSize="16"
-								           VerticalAlignment="Top" Grid.Row="2" FontWeight="Medium"
-								           Text="{x:Bind OnlineStatus, Mode=OneWay}" />
-
-								<muxc:NavigationViewItem Width="49" Grid.Column="2" Grid.Row="0"
-								                         HorizontalAlignment="Right" VerticalAlignment="Top"
-								                         Margin="0,3,-80,0" x:Name="RefreshDeviceButton"
-								                         Tapped="RefreshDeviceButton_Tapped">
-									<muxc:NavigationViewItem.Icon>
-										<SymbolIcon Symbol="Sync" RenderTransformOrigin="0.5,0.5">
-											<SymbolIcon.RenderTransform>
-												<RotateTransform x:Name="SyncRotationTransform" Angle="0" />
-											</SymbolIcon.RenderTransform>
-										</SymbolIcon>
-									</muxc:NavigationViewItem.Icon>
-								</muxc:NavigationViewItem>
 							</Grid>
 						</DataTemplate>
 					</ListView.ItemTemplate>
 
 				</ListView>
 
-				<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="400"
-				      Grid.Row="1" Grid.Column="3" Margin="0,0,0,10" CornerRadius="5"
-				      Background="{StaticResource SystemControlAcrylicElementBrush}">
+			</Grid>
 
-					<Grid.RowDefinitions>
-						<RowDefinition Height="25" />
-						<RowDefinition Height="*" />
-						<RowDefinition Height="50" />
-						<RowDefinition Height="*" />
-						<RowDefinition Height="25" />
-					</Grid.RowDefinitions>
+			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="2">
 
-					<TextBlock Margin="40,10,0,0" Grid.Row="1"
-					           VerticalAlignment="Top" Text="Currently Tracking" />
-					<TextBlock Margin="50,40,0,0" Grid.Row="1"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-					           Text="Device: Kinect V1 (X360)" />
-					<TextBlock Margin="50,70,0,0" Grid.Row="1"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-					           Text="Status: OK" />
-					<TextBlock Margin="50,100,0,0" Grid.Row="1"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-					           Text="Code: RESULT_OK" />
+				<Grid.RowDefinitions>
+					<RowDefinition Height="60" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
 
-					<TextBlock Margin="40,10,0,0" Grid.Row="3"
-					           VerticalAlignment="Top" Text="Selected Item" />
-					<TextBlock Margin="50,40,0,0" Grid.Row="3"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-					           Text="Device: Kinect V2 (XBONE)" />
-					<TextBlock Margin="50,70,0,0" Grid.Row="3"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-					           Text="Status:" />
+				<TextBlock FontWeight="SemiBold" Text="E_UNKNOWN"
+				           x:Name="SelectedDeviceNameLabel"
+				           FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
 
-					<TextBlock Margin="90,90,0,0" Grid.Row="3"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-					           Text="- Connected" />
-					<TextBlock Margin="90,115,0,0" Grid.Row="3"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-					           Text="- Offline" />
+				<StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="1">
 
-                    <Border CornerRadius="5" Margin="20,-5,20,-5" BorderThickness="2"
-					        BorderBrush="{StaticResource SystemControlAccentDark1AcrylicElementAccentDark1Brush}"
-					        Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                    <Border CornerRadius="5" Margin="20,-5,20,-5" BorderThickness="2"
-					        BorderBrush="{StaticResource SystemControlAccentDark1AcrylicElementAccentDark1Brush}"
-					        Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+					<StackPanel Orientation="Horizontal" Margin="40,5,20,0">
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+						           Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+						           Text="Not Powered" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
+					</StackPanel>
 
-					<AppBarSeparator RenderTransformOrigin="0.5,0.5" Grid.Row="2"
-					                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-						<AppBarSeparator.RenderTransform>
-							<RotateTransform Angle="90" />
-						</AppBarSeparator.RenderTransform>
-					</AppBarSeparator>
-				</Grid>
+					<Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
+					      Height="125" Margin="40,8,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
 
-				<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="200"
-				      Grid.Row="1" Grid.Column="4" Margin="0,-20,0,10" CornerRadius="5" 
-				      Visibility="{Binding ElementName=RestartPendingGrid, Path=Visibility,TargetNullValue=Collapsed}">
-					<AppBarSeparator RenderTransformOrigin="0.5,0.5" Grid.Row="1" Grid.Column="4"
-					                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-						<AppBarSeparator.RenderTransform>
-							<RotateTransform Angle="90" />
-						</AppBarSeparator.RenderTransform>
-					</AppBarSeparator>
-				</Grid>
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+						           Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
+						           x:Name="TrackingDeviceErrorLabel"
+						           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
 
-				<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="160"
-				      Grid.Row="1" Grid.Column="5" Margin="0,0,0,10" CornerRadius="5"
-					  x:Name="RestartPendingGrid" Visibility="Visible"
-				      Background="{StaticResource SystemControlAcrylicElementBrush}">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="25" />
-						<RowDefinition Height="*" />
-						<RowDefinition Height="25" />
-					</Grid.RowDefinitions>
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold" x:Name="ErrorWhatText"
+						           Margin="10,30,0,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+							<TextBlock.Text>
+								There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
+							</TextBlock.Text>
+						</TextBlock>
+					</Grid>
 
-					<TextBlock Margin="40,10,0,0" Grid.Row="1"
-					           VerticalAlignment="Top" Text="Restart Pending" />
-					<TextBlock Margin="50,40,0,0" Grid.Row="1"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-					           Text="Reason: Device Changed" />
-					<TextBlock Margin="50,70,0,0" Grid.Row="1"
-					           VerticalAlignment="Top" FontWeight="SemiBold"
-					           Text="Device: Kinect V2 (XBONE)" />
+					<Grid Margin="40,12,0,0" x:Name="ErrorButtonsGrid">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
 
-					<Border CornerRadius="5" Margin="20,-5,20,-5" BorderThickness="2"
-					        BorderBrush="DarkRed"
-					        Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-				</Grid>
+						<Button FontSize="15" Height="65"
+						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Join Discord"
+						        Margin="0,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
+						        VerticalAlignment="Stretch" />
+						<Button FontSize="15" Height="65"
+						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="View Docs"
+						        Margin="10,10,0,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
+						        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
 
-                <TextBlock Grid.Column="5" Margin="10,190,0,10" FontSize="17"
-                           VerticalAlignment="Top" FontWeight="SemiBold" Text="Trackers / PSMoves:" />
+					</Grid>
 
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="180"
-				      Grid.Column="5" Margin="0,220,0,10" CornerRadius="5"
-				      Background="{StaticResource SystemControlAcrylicElementBrush}">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="10" />
-						<RowDefinition Height="*" />
-						<RowDefinition Height="10" />
-					</Grid.RowDefinitions>
-
-                    <StackPanel Orientation="Vertical"
-                                Grid.Column="1" Grid.Row="1">
-
-                        <Grid>
-                            <ComboBox HorizontalAlignment="Left"
-						          VerticalAlignment="Top"
-						          SelectedIndex="0"
-						          Grid.Column="1" Grid.Row="1"
-						          Margin="135,5,0,10"
-						          Width="130" Height="40">
-                                <x:String>PSMS/ID: 0</x:String>
-                                <x:String>PSMS/ID: 1</x:String>
-                                <x:String>PSMS/ID: 2</x:String>
-                            </ComboBox>
-                            <TextBlock Margin="25,11,0,0" Grid.Row="1" HorizontalAlignment="Left"
-						           VerticalAlignment="Top" FontWeight="SemiBold" Text="Waist:" />
-                        </Grid>
-                        <Grid>
-                            <ComboBox HorizontalAlignment="Left"
-						          VerticalAlignment="Top"
-						          SelectedIndex="0"
-						          Grid.Column="1" Grid.Row="1"
-						          Margin="135,5,0,10"
-						          Width="130" Height="40">
-	                            <x:String>PSMS/ID: 0</x:String>
-	                            <x:String>PSMS/ID: 1</x:String>
-	                            <x:String>PSMS/ID: 2</x:String>
-                            </ComboBox>
-                            <TextBlock Margin="25,11,0,0" Grid.Row="1" HorizontalAlignment="Left"
-						           VerticalAlignment="Top" FontWeight="SemiBold" Text="Left Foot:" />
-                        </Grid>
-                        <Grid>
-                            <ComboBox HorizontalAlignment="Left"
-						          VerticalAlignment="Top"
-						          SelectedIndex="0"
-						          Grid.Column="1" Grid.Row="1"
-						          Margin="135,5,0,0"
-						          Width="130" Height="40">
-	                            <x:String>PSMS/ID: 0</x:String>
-	                            <x:String>PSMS/ID: 1</x:String>
-	                            <x:String>PSMS/ID: 2</x:String>
-                            </ComboBox>
-                            <TextBlock Margin="25,11,0,0" Grid.Row="1" HorizontalAlignment="Left"
-						           VerticalAlignment="Top" FontWeight="SemiBold" Text="Right Foot:" />
-                        </Grid>
-
-                    </StackPanel>
-                </Grid>
+				</StackPanel>
 
 			</Grid>
 
-		</Grid>
+            <Button VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Reconnect"
+			        Margin="3,70,37,0" CornerRadius="3" Grid.Column="4" Height="35"
+			        HorizontalAlignment="Stretch" VerticalAlignment="Top" 
+			        x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click"/>
+
+        </Grid>
+
 	</Grid>
 
 </Page>

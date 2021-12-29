@@ -48,3 +48,11 @@
 #include <sstream>
 #include <chrono>
 #include <future>
+
+#include <KinectToVR_API.h>
+
+#include <boost/filesystem.hpp>
+#include <boost/dll.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/foreach.hpp>

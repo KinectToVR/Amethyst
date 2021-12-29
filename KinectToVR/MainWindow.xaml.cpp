@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 
-#include <winrt/impl/Windows.UI.Xaml.Media.Animation.2.h>
-
 #include "App.xaml.h"
 #if __has_include("MainWindow.g.cpp")
 #include "MainWindow.g.cpp"
@@ -23,16 +21,16 @@ bool updateFound = false,
      main_localInitFinished = false;
 
 // Updates checking function
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::checkUpdates(
-	winrt::Microsoft::UI::Xaml::UIElement const& show_el, const bool show, const DWORD delay_ms)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkUpdates(
+	const UIElement& show_el, const bool show, const DWORD delay_ms)
 {
 	// Attempt only after init
-	if (main_localInitFinished) {
-
+	if (main_localInitFinished)
+	{
 		{
 			// Sleep on UI (Non-blocking)
-			winrt::apartment_context ui_thread;
-			co_await winrt::resume_background();
+			apartment_context ui_thread;
+			co_await resume_background();
 			Sleep(delay_ms);
 			co_await ui_thread;
 		}
@@ -43,14 +41,14 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow:
 			// Here check for updates (via external bool)
 			IconRotation().Begin();
 			// Capture the calling context.
-			winrt::apartment_context ui_thread;
-			co_await winrt::resume_background();
+			apartment_context ui_thread;
+			co_await resume_background();
 
 			// Check for updates
 			auto start_time = std::chrono::high_resolution_clock::now();
 
 			// Check now
-			srand(time(NULL)); // Generate somewhat random up-to-date or not
+			srand(time(nullptr)); // Generate somewhat random up-to-date or not
 			updateFound = rand() & 1;
 
 			// Limit time to (min) 1s
@@ -106,7 +104,6 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow:
 
 		if (updateFound || show)
 			UpdateFlyout().ShowAt(show_el, options);
-
 	}
 }
 
@@ -134,13 +131,243 @@ namespace winrt::KinectToVR::implementation
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"info", winrt::xaml_typename<InfoPage>()));
 
+		// Scan for tracking devices
+		std::thread([&]
+			{
+				OutputDebugString(L"Searching for tracking devices\n");
+
+				using namespace boost::filesystem;
+				using namespace std::string_literals;
+
+				OutputDebugString(L"Current path is: ");
+				OutputDebugString(boost::dll::program_location().parent_path().c_str());
+				OutputDebugString(L"\n");
+
+				if (exists(boost::dll::program_location().parent_path() / "devices"))
+				{
+					for (directory_entry& entry : directory_iterator(
+						     boost::dll::program_location().parent_path() / "devices"))
+					{
+						if (exists(entry.path() / "device.k2devicemanifest"))
+						{
+							boost::property_tree::ptree root;
+							read_json((entry.path() / "device.k2devicemanifest").string(), root);
+
+							if (root.find("device_name") == root.not_found() ||
+								root.find("device_type") == root.not_found() ||
+								root.find("linked_dll_path") == root.not_found() ||
+								root.find("force_default") == root.not_found())
+							{
+								OutputDebugString(entry.path().stem().c_str());
+								OutputDebugString(L"'s manifest was invalid ヽ(≧□≦)ノ\n");
+							}
+
+							auto device_name = root.get<std::string>("device_name");
+							auto device_type = root.get<std::string>("device_type");
+
+							auto linked_dll_path = root.get<std::string>("linked_dll_path");
+							auto force_default = root.get<bool>("force_default", false);
+
+							OutputDebugString(L"Found tracking device with:\n - name: ");
+							OutputDebugString(std::wstring(device_name.begin(), device_name.end()).c_str());
+							OutputDebugString(L"\n - type: ");
+							OutputDebugString(std::wstring(device_type.begin(), device_type.end()).c_str());
+							OutputDebugString(L"\n - linked dll: ");
+							OutputDebugString(std::wstring(linked_dll_path.begin(), linked_dll_path.end()).c_str());
+							OutputDebugString(force_default
+								                  ? L"\nWhich is forcing to be the default\n"
+								                  : L"\nWhich is not forcing to be the default\n");
+
+							auto deviceDllPath = entry.path() / "bin" / "win64" / ("device_" + device_name +
+								".dll");
+							if (exists(deviceDllPath))
+							{
+								OutputDebugString(L"Found the device's driver dll, now checking dependencies...\n");
+
+								if (exists(linked_dll_path) || linked_dll_path.compare("none"))
+								{
+									OutputDebugString(L"Found the device's dependency dll, now loading...\n");
+
+									HINSTANCE hLibraryInstance;
+									BOOL fRunTimeLinkSuccess = FALSE;
+
+									// Get a handle to the DLL module.
+									hLibraryInstance = LoadLibraryA(deviceDllPath.string().c_str());
+
+									if (hLibraryInstance != nullptr)
+									{
+										auto hDeviceFactory =
+											(TrackingDevices::TrackingDeviceBaseFactory)
+											GetProcAddress(hLibraryInstance, "TrackingDeviceBaseFactory");
+
+										// If the function address is valid, call the function.
+										if (nullptr != hDeviceFactory)
+										{
+											fRunTimeLinkSuccess = TRUE;
+											OutputDebugString(
+												L"Device library loaded, now checking interface...\n");
+
+											int returnCode = ktvr::K2InitError_Invalid;
+											std::string stat = "E_UNKNOWN";
+
+											if (strcmp(device_type.c_str(), "KinectBasis") == 0)
+											{
+												auto pDevice =
+													static_cast<ktvr::TrackingDeviceBase_KinectBasis*>(
+														(hDeviceFactory)(ktvr::IK2API_Version, &returnCode));
+
+												if (returnCode == ktvr::K2InitError_None)
+												{
+													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
+
+													stat = pDevice->statusResultString(
+														pDevice->getStatusResult());
+												}
+											}
+											else if (strcmp(device_type.c_str(), "JointsBasis") == 0)
+											{
+												auto pDevice =
+													static_cast<ktvr::TrackingDeviceBase_JointsBasis*>(
+														(hDeviceFactory)(ktvr::IK2API_Version, &returnCode));
+
+												if (returnCode == ktvr::K2InitError_None)
+												{
+													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
+
+													stat = pDevice->statusResultString(
+														pDevice->getStatusResult());
+												}
+											}
+											else if (strcmp(device_type.c_str(), "OnlyOverride") == 0)
+											{
+												auto pDevice =
+													static_cast<ktvr::TrackingDeviceBase_OnlyOverride*>(
+														(hDeviceFactory)(ktvr::IK2API_Version, &returnCode));
+
+												if (returnCode == ktvr::K2InitError_None)
+												{
+													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
+
+													stat = pDevice->statusResultString(
+														pDevice->getStatusResult());
+												}
+											}
+
+											switch (returnCode)
+											{
+											case ktvr::K2InitError_None:
+												{
+													OutputDebugString(
+														L"Interface version OK, now constructing...\n");
+
+													OutputDebugString(
+														L"Registered tracking device with:\n - name: ");
+													OutputDebugString(
+														std::wstring(device_name.begin(), device_name.end()).c_str());
+													OutputDebugString(L"\n - type: ");
+													OutputDebugString(
+														std::wstring(device_type.begin(), device_type.end()).
+														c_str());
+													OutputDebugString(L"\n - linked dll: ");
+													OutputDebugString(
+														std::wstring(linked_dll_path.begin(), linked_dll_path.end())
+														.c_str());
+													OutputDebugString(force_default
+														                  ? L"\nWhich is forcing to be the default\n"
+														                  : L"\nWhich is not forcing to be the default\n");
+
+													OutputDebugString(L"at index ");
+													OutputDebugString(std::to_wstring(
+														TrackingDevices::TrackingDevicesVector.size() - 1).c_str());
+													OutputDebugString(L".\n");
+
+													OutputDebugString(
+														L"Device status (should be 'not initialized'): \n");
+													OutputDebugString(std::wstring(
+														stat.begin(),
+														stat.end()).c_str());
+													OutputDebugString(L"\n");
+												}
+												break;
+											case ktvr::K2InitError_BadInterface:
+												{
+													OutputDebugString(
+														std::wstring(
+															("Device's interface is incompatible with current K2API"s
+																+
+																ktvr::IK2API_Version +
+																", it's probably outdated.\n").
+															begin(),
+															("Device's interface is incompatible with current K2API"s
+																+
+																ktvr::IK2API_Version +
+																", it's probably outdated.\n").
+															end())
+														.c_str());
+												}
+												break;
+											case ktvr::K2InitError_Invalid:
+												OutputDebugString(
+													L"Device either didn't give any return code or it's factory malfunctioned. You can only about it...");
+												break;
+											}
+										}
+										else
+										{
+											OutputDebugString(
+												std::wstring(
+													("Device's interface is incompatible with current K2API"s
+														+
+														ktvr::IK2API_Version +
+														", it's probably outdated.\n").
+													begin(),
+													("Device's interface is incompatible with current K2API"s
+														+
+														ktvr::IK2API_Version +
+														", it's probably outdated.\n").
+													end())
+												.c_str());
+										}
+									}
+
+									// If unable to call the DLL function, use an alternative.
+									if (!fRunTimeLinkSuccess)
+										OutputDebugString(
+											L"There was an error linking with the device library... (⊙_⊙)？\n");
+								}
+								else
+									OutputDebugString(
+										L"Device's dependency dll (external linked dll) was not found (┬┬﹏┬┬)\n");
+							}
+							else
+								OutputDebugString(
+									L"Device's driver dll (bin/win64/device_[device].dll) was not found o(≧口≦)o\n");
+						}
+						else
+						{
+							OutputDebugString(entry.path().stem().c_str());
+							OutputDebugString(L"'s manifest was not found :/\n");
+						}
+					}
+
+					OutputDebugString(
+						L"Registration of tracking devices has ended, there are ");
+					OutputDebugString(std::to_wstring(TrackingDevices::TrackingDevicesVector.size()).c_str());
+					OutputDebugString(L" tracking devices in total.\n");
+				}
+				else
+					OutputDebugString(L"No tracking devices found :/\n");
+			}
+		).detach();
+
+
 		// Notify of the setup end
 		main_localInitFinished = true;
 	}
 }
 
-void winrt::KinectToVR::implementation::MainWindow::NavView_Loaded(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::MainWindow::NavView_Loaded(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// NavView doesn't load any page by default, so load home page.
 	NavView().SelectedItem(NavView().MenuItems().GetAt(0));
@@ -149,22 +376,22 @@ void winrt::KinectToVR::implementation::MainWindow::NavView_Loaded(
 	// Because we use ItemInvoked to navigate, we need to call Navigate
 	// here to load the home page.
 	NavView_Navigate(L"general",
-	                 Microsoft::UI::Xaml::Media::Animation::EntranceNavigationTransitionInfo());
+	                 Media::Animation::EntranceNavigationTransitionInfo());
 }
 
-void winrt::KinectToVR::implementation::MainWindow::NavView_ItemInvoked(
-	winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs const& args)
+void KinectToVR::implementation::MainWindow::NavView_ItemInvoked(
+	const Controls::NavigationView& sender,
+	const Controls::NavigationViewItemInvokedEventArgs& args)
 {
 	NavView_Navigate(
-		winrt::unbox_value_or<winrt::hstring>(
+		winrt::unbox_value_or<hstring>(
 			args.InvokedItemContainer().Tag(), L"").c_str(),
 		args.RecommendedNavigationTransitionInfo());
 }
 
-void winrt::KinectToVR::implementation::MainWindow::NavView_Navigate(
+void KinectToVR::implementation::MainWindow::NavView_Navigate(
 	std::wstring navItemTag,
-	Microsoft::UI::Xaml::Media::Animation::NavigationTransitionInfo const& transitionInfo)
+	const Media::Animation::NavigationTransitionInfo& transitionInfo)
 {
 	Windows::UI::Xaml::Interop::TypeName pageTypeName;
 
@@ -189,24 +416,24 @@ void winrt::KinectToVR::implementation::MainWindow::NavView_Navigate(
 	}
 }
 
-void winrt::KinectToVR::implementation::MainWindow::ContentFrame_NavigationFailed(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs const& e)
+void KinectToVR::implementation::MainWindow::ContentFrame_NavigationFailed(
+	const Windows::Foundation::IInspectable& sender,
+	const Navigation::NavigationFailedEventArgs& e)
 {
-	throw winrt::hresult_error(
-		E_FAIL, winrt::hstring(L"Failed to load Page ") + e.SourcePageType().Name);
+	throw hresult_error(
+		E_FAIL, hstring(L"Failed to load Page ") + e.SourcePageType().Name);
 }
 
-void winrt::KinectToVR::implementation::MainWindow::NavView_BackRequested(
-	winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::NavigationViewBackRequestedEventArgs const& args)
+void KinectToVR::implementation::MainWindow::NavView_BackRequested(
+	const Controls::NavigationView& sender,
+	const Controls::NavigationViewBackRequestedEventArgs& args)
 {
 	TryGoBack();
 }
 
-void winrt::KinectToVR::implementation::MainWindow::CoreDispatcher_AcceleratorKeyActivated(
-	Windows::UI::Core::CoreDispatcher const& /* sender */,
-	Windows::UI::Core::AcceleratorKeyEventArgs const& args)
+void KinectToVR::implementation::MainWindow::CoreDispatcher_AcceleratorKeyActivated(
+	const Windows::UI::Core::CoreDispatcher& /* sender */,
+	const Windows::UI::Core::AcceleratorKeyEventArgs& args)
 {
 	// When Alt+Left are pressed navigate back
 	if (args.EventType() == Windows::UI::Core::CoreAcceleratorKeyEventType::SystemKeyDown
@@ -218,9 +445,9 @@ void winrt::KinectToVR::implementation::MainWindow::CoreDispatcher_AcceleratorKe
 	}
 }
 
-void winrt::KinectToVR::implementation::MainWindow::CoreWindow_PointerPressed(
-	Windows::UI::Core::CoreWindow const& /* sender */,
-	Windows::UI::Core::PointerEventArgs const& args)
+void KinectToVR::implementation::MainWindow::CoreWindow_PointerPressed(
+	const Windows::UI::Core::CoreWindow& /* sender */,
+	const Windows::UI::Core::PointerEventArgs& args)
 {
 	// Handle mouse back button.
 	if (args.CurrentPoint().Properties().IsXButton1Pressed())
@@ -229,9 +456,9 @@ void winrt::KinectToVR::implementation::MainWindow::CoreWindow_PointerPressed(
 	}
 }
 
-void winrt::KinectToVR::implementation::MainWindow::System_BackRequested(
-	Windows::Foundation::IInspectable const& /* sender */,
-	Windows::UI::Core::BackRequestedEventArgs const& args)
+void KinectToVR::implementation::MainWindow::System_BackRequested(
+	const Windows::Foundation::IInspectable& /* sender */,
+	const Windows::UI::Core::BackRequestedEventArgs& args)
 {
 	if (!args.Handled())
 	{
@@ -239,7 +466,7 @@ void winrt::KinectToVR::implementation::MainWindow::System_BackRequested(
 	}
 }
 
-bool winrt::KinectToVR::implementation::MainWindow::TryGoBack()
+bool KinectToVR::implementation::MainWindow::TryGoBack()
 {
 	if (!ContentFrame().CanGoBack())
 		return false;
@@ -252,9 +479,9 @@ bool winrt::KinectToVR::implementation::MainWindow::TryGoBack()
 	return true;
 }
 
-void winrt::KinectToVR::implementation::MainWindow::On_Navigated(
-	Windows::Foundation::IInspectable const& /* sender */,
-	Windows::UI::Xaml::Navigation::NavigationEventArgs const& args)
+void KinectToVR::implementation::MainWindow::On_Navigated(
+	const Windows::Foundation::IInspectable& /* sender */,
+	const Windows::UI::Xaml::Navigation::NavigationEventArgs& args)
 {
 	NavView().IsBackEnabled(ContentFrame().CanGoBack());
 
@@ -271,8 +498,8 @@ void winrt::KinectToVR::implementation::MainWindow::On_Navigated(
 					{
 						if (navigationViewItem)
 						{
-							winrt::hstring hstringValue =
-								winrt::unbox_value_or<winrt::hstring>(
+							auto hstringValue =
+								winrt::unbox_value_or<hstring>(
 									navigationViewItem.Tag(), L"");
 							if (hstringValue == eachPage.first)
 							{
@@ -297,29 +524,29 @@ Windows::UI::Xaml::Controls::Primitives::Popup GetPopup()
 	return nullptr;
 }
 
-void winrt::KinectToVR::implementation::MainWindow::InstallLaterButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::MainWindow::InstallLaterButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	UpdateFlyout().Hide();
 }
 
-void winrt::KinectToVR::implementation::MainWindow::InstallNowButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::MainWindow::InstallNowButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	UpdateFlyout().Hide();
 }
 
 
-void winrt::KinectToVR::implementation::MainWindow::ExitButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::MainWindow::ExitButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Save and Exit with 0
 	exit(0);
 }
 
 
-void winrt::KinectToVR::implementation::MainWindow::MinimizeButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::MainWindow::MinimizeButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Minimize with win+down
 	INPUT inputs[4] = {};
@@ -343,17 +570,17 @@ void winrt::KinectToVR::implementation::MainWindow::MinimizeButton_Click(
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::UpdateButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::UpdateButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Check for updates (and show)
 	co_await checkUpdates(sender.as<UIElement>(), true);
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::UpdateButton_Loaded(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::UpdateButton_Loaded(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Check for updates (and show)
-	co_await checkUpdates(sender.as<UIElement>(), true, 2000);
+	co_await checkUpdates(sender.as<UIElement>(), false, 2000);
 }
