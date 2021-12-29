@@ -1,9 +1,0 @@
-namespace KinectToVR
-{
-	runtimeclass PSMovesView : Windows.UI.Xaml.Data.INotifyPropertyChanged
-	{
-		PSMovesView(Int32 DeviceID);
-
-		Int32 DeviceID;
-	}
-}
