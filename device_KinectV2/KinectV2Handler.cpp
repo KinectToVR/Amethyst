@@ -13,9 +13,12 @@
 HRESULT KinectV2Handler::getStatusResult()
 {
 	BOOLEAN avail;
-	kinectSensor->get_IsAvailable(&avail);
-	if (avail)
-		return S_OK;
+	if (kinectSensor) // Protect from null call
+	{
+		kinectSensor->get_IsAvailable(&avail);
+		if (avail)
+			return S_OK;
+	}
 	return S_FALSE;
 	// Hresult only actually determines whether the function worked, the bool is the true value....
 }
@@ -24,9 +27,9 @@ std::string KinectV2Handler::statusResultString(HRESULT stat)
 {
 	switch (stat)
 	{
-	case S_OK: return "S_OK";
-	case S_FALSE: return "Sensor Unavailable! Check if it's plugged in to your USB and power plugs";
-	default: return "Uh Oh undefined kinect error! " + std::to_string(stat);
+	case S_OK: return "Success!\nS_OK\nEverything's good!";
+	case S_FALSE: return "Sensor Unavailable!\nE_NOTAVAILABLE\nCheck if the Kinect plugged in to your PC's USB and power plugs.";
+	default: return "Undefined: " + std::to_string(stat) + "\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
 }
 
@@ -180,20 +183,24 @@ void KinectV2Handler::updateParseFrame()
 			for (int j = 0; j < ktvr::Joint_Total; ++j)
 			{
 				//TrackingDeviceBase::jointPositions[j].w = 1.0f;
-				TrackingDeviceBase::jointPositions[j].x() = joints[globalIndex[j]].Position.X;
-				TrackingDeviceBase::jointPositions[j].y() = joints[globalIndex[j]].Position.Y;
-				TrackingDeviceBase::jointPositions[j].z() = joints[globalIndex[j]].Position.Z;
+				jointPositions[j].x() = joints[globalIndex[j]].Position.X;
+				jointPositions[j].y() = joints[globalIndex[j]].Position.Y;
+				jointPositions[j].z() = joints[globalIndex[j]].Position.Z;
 
-				TrackingDeviceBase::trackingStates[j] = joints[globalIndex[j]].TrackingState;
+				trackingStates[j] = joints[globalIndex[j]].TrackingState;
 			}
 
 			/* Copy joint orientations */
 			for (int k = 0; k < ktvr::Joint_Total; ++k)
 			{
-				TrackingDeviceBase::jointOrientations[k].w() = boneOrientations[globalIndex[k]].Orientation.w;
-				TrackingDeviceBase::jointOrientations[k].x() = boneOrientations[globalIndex[k]].Orientation.x;
-				TrackingDeviceBase::jointOrientations[k].y() = boneOrientations[globalIndex[k]].Orientation.y;
-				TrackingDeviceBase::jointOrientations[k].z() = boneOrientations[globalIndex[k]].Orientation.z;
+				jointOrientations[k].w() = boneOrientations[globalIndex[k]].Orientation.
+				                                                            w;
+				jointOrientations[k].x() = boneOrientations[globalIndex[k]].Orientation.
+				                                                            x;
+				jointOrientations[k].y() = boneOrientations[globalIndex[k]].Orientation.
+				                                                            y;
+				jointOrientations[k].z() = boneOrientations[globalIndex[k]].Orientation.
+				                                                            z;
 			}
 
 			newBodyFrameArrived = false;
@@ -239,7 +246,8 @@ void KinectV2Handler::shutdown()
 	{
 		// Release the Kinect sensor, called form k2vr
 		// OR from the crash handler
-		kinectSensor->Release();
+		if (kinectSensor) // Protect from null call
+			kinectSensor->Release();
 	}
 	catch (std::exception& e)
 	{
