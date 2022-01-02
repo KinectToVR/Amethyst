@@ -30,6 +30,12 @@
     <ClInclude Include="KinectToVR_API.h">
       <Filter>API Files</Filter>
     </ClInclude>
+    <ClInclude Include="KinectToVR_API_Devices.h">
+      <Filter>API Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KinectToVR_API_Paths.h">
+      <Filter>API Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

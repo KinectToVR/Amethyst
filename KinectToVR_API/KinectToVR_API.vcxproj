@@ -181,6 +181,8 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="KinectToVR_API.h" />
+    <ClInclude Include="KinectToVR_API_Devices.h" />
+    <ClInclude Include="KinectToVR_API_Paths.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
