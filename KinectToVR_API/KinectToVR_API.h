@@ -100,6 +100,15 @@ namespace ktvr
 		K2_Override
 	};
 
+	// Device types for joints [KINECT]
+	enum ITrackingDeviceCharacteristics
+	{
+		K2_Character_Unknown,
+		K2_Character_Basic, // NO mathbased, only [ head, waist, ankles ]
+		K2_Character_Simple, // SUP mathbased, only [ head, waist, knees, ankles, foot_tips ]
+		K2_Character_Full // SUP mathbased, [ everything ]
+	};
+
 	// Global Joint Types,
 	// see enumeration in external/Kinect
 	enum ITrackedJointType
@@ -218,7 +227,7 @@ namespace ktvr
 	};
 
 	// Alias for code readability
-	typedef int JointTrackingState, K2DeviceType, MessageType, MessageCode;
+	typedef int JointTrackingState, K2DeviceType, K2DeviceCharacteristics, MessageType, MessageCode;
 
 	// Mapping enum to string for eliminating if-else loop
 	const boost::unordered_map<ITrackerType, const char*>
@@ -725,10 +734,10 @@ namespace ktvr
 	};
 
 	// Tracking Device class for client plugins to base on [KINECT]
-	class TrackingDeviceBase_KinectBasis
+	class K2TrackingDeviceBase_KinectBasis
 	{
 	public:
-		virtual ~TrackingDeviceBase_KinectBasis()
+		virtual ~K2TrackingDeviceBase_KinectBasis()
 		{
 		}
 
@@ -750,8 +759,14 @@ namespace ktvr
 		}
 
 		// Should be set up at construction
-		// Kinect type must provide joints: [ head, waist, knees, ankles, foot_tips ]
-		// Other type must provide joints: [ waist, ankles ] and will presuade manual calibration
+		// Kinect type must provide joints: [ head, waist, knees, ankles, foot_tips ] or [ head, waist, ankles ]
+		// Other type must provide joints: [ waist, ankles ] and will persuade manual calibration
+
+		// Basic character will provide the same as JointsBasis but with head to support autocalibration
+		// Simple character will provide the same as Basic but with ankles and knees to support mathbased
+		// Full character will provide every kinect joint
+		K2DeviceCharacteristics getDeviceCharacteristics() { return deviceCharacteristics; }
+
 		K2DeviceType getDeviceType() { return deviceType; }
 		std::string getDeviceName() { return deviceName; } // Custom name
 
@@ -773,12 +788,21 @@ namespace ktvr
 		//    if set to false at runtime somewhen
 		[[nodiscard]] bool isSkeletonTracked() const { return skeletonTracked; }
 
+		// Should be set up at construction
+		[[nodiscard]] bool isFlipSupported() const { return flipSupported; } // Flip block
+		[[nodiscard]] bool isAppOrientationSupported() const { return appOrientationSupported; } // Math-based
+
 	protected:
+		K2DeviceCharacteristics deviceCharacteristics = K2_Character_Unknown;
+
 		K2DeviceType deviceType = K2_Unknown;
 		std::string deviceName = "Name not set";
 
 		bool initialized = false;
 		bool skeletonTracked = false;
+
+		bool flipSupported = true;
+		bool appOrientationSupported = true;
 
 		std::array<Eigen::Vector3f, 25> jointPositions = {Eigen::Vector3f(0.f, 0.f, 0.f)};
 		std::array<Eigen::Quaternionf, 25> jointOrientations = {Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f)};
@@ -793,80 +817,31 @@ namespace ktvr
 		} FailedKinectInitialization;
 	};
 
-	// Tracking Device class for client plugins to base on [KINECT]
-	class TrackingDeviceBase_JointsBasis
+	// Tracking Device Joint class for client plugins to base on [PSMS]
+	class K2TrackedJoint
 	{
+		// Named joint, provides pos, rot, state and ofc name
 	public:
-		virtual ~TrackingDeviceBase_JointsBasis()
-		{
-		}
+		std::string getJointName() { return jointName; } // Custom name
 
-		// These 3 functions are critical.
-		// All 3 are called by K2App,
-		// - in init you should set the device up (and run the first frame)
-		// - in update you should update the array of joints with data
-		// - in shutdown you should gracefully turn your device off
-		virtual void initialize()
-		{
-		}
-
-		virtual void shutdown()
-		{
-		}
-
-		virtual void update()
-		{
-		}
-
-		// Should be set up at construction
-		// Kinect type must provide joints: [ head, waist, knees, ankles, foot_tips ]
-		// Other type must provide joints: [ waist, ankles ] and will presuade manual calibration
-		K2DeviceType getDeviceType() { return deviceType; }
-		std::string getDeviceName() { return deviceName; } // Custom name
-
-		std::array<Eigen::Vector3f, 25> getJointPositions() { return jointPositions; }
-		std::array<Eigen::Quaternionf, 25> getJointOrientations() { return jointOrientations; }
-		std::array<JointTrackingState, 25> getTrackingStates() { return trackingStates; }
-
-		// After init, this should always return true
-		[[nodiscard]] bool isInitialized() const { return initialized; }
-
-		// These will indicate the device's status.
-		// Both should be updated either on call or as frequent as possible
-		virtual HRESULT getStatusResult() { return E_NOTIMPL; }
-		virtual std::string statusResultString(HRESULT stat) { return "statusResultString behaviour not defined"; };
-
-		// This should be updated on every frame,
-		// along with joint devices
-		// -> will lead to global tracking loss notification
-		//    if set to false at runtime somewhen
-		[[nodiscard]] bool isSkeletonTracked() const { return skeletonTracked; }
+		Eigen::Vector3f getJointPosition() { return jointPosition; }
+		Eigen::Quaternionf getJointOrientation() { return jointOrientation; }
+		JointTrackingState getTrackingState() { return trackingState; }
 
 	protected:
-		K2DeviceType deviceType = K2_Unknown;
-		std::string deviceName = "Name not set";
+		// Tracker should be centered automatically
+		Eigen::Quaternionf jointOrientation = Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f);
+		Eigen::Vector3f jointPosition = Eigen::Vector3f(0.f, 0.f, 0.f);
+		JointTrackingState trackingState = State_NotTracked;
 
-		bool initialized = false;
-		bool skeletonTracked = false;
-
-		std::array<Eigen::Vector3f, 25> jointPositions = { Eigen::Vector3f(0.f, 0.f, 0.f) };
-		std::array<Eigen::Quaternionf, 25> jointOrientations = { Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f) };
-		std::array<JointTrackingState, 25> trackingStates = { State_NotTracked };
-
-		class FailedKinectInitialization : public std::exception
-		{
-			[[nodiscard]] virtual const char* what() const throw()
-			{
-				return "Failure to initialize the Tracking Device. Is it set up properly?";
-			}
-		} FailedKinectInitialization;
+		std::string jointName = "Name not set";
 	};
 
-	// Tracking Device class for client plugins to base on [KINECT]
-	class TrackingDeviceBase_OnlyOverride
+	// Tracking Device class for client plugins to base on [PSMS]
+	class K2TrackingDeviceBase_JointsBasis
 	{
 	public:
-		virtual ~TrackingDeviceBase_OnlyOverride()
+		virtual ~K2TrackingDeviceBase_JointsBasis()
 		{
 		}
 
@@ -889,13 +864,11 @@ namespace ktvr
 
 		// Should be set up at construction
 		// Kinect type must provide joints: [ head, waist, knees, ankles, foot_tips ]
-		// Other type must provide joints: [ waist, ankles ] and will presuade manual calibration
+		// Other type must provide joints: [ waist, ankles ] and will persuade manual calibration
 		K2DeviceType getDeviceType() { return deviceType; }
 		std::string getDeviceName() { return deviceName; } // Custom name
 
-		std::array<Eigen::Vector3f, 25> getJointPositions() { return jointPositions; }
-		std::array<Eigen::Quaternionf, 25> getJointOrientations() { return jointOrientations; }
-		std::array<JointTrackingState, 25> getTrackingStates() { return trackingStates; }
+		std::vector<K2TrackedJoint> getTrackedJoints() { return trackedJoints; }
 
 		// After init, this should always return true
 		[[nodiscard]] bool isInitialized() const { return initialized; }
@@ -918,9 +891,7 @@ namespace ktvr
 		bool initialized = false;
 		bool skeletonTracked = false;
 
-		std::array<Eigen::Vector3f, 25> jointPositions = { Eigen::Vector3f(0.f, 0.f, 0.f) };
-		std::array<Eigen::Quaternionf, 25> jointOrientations = { Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f) };
-		std::array<JointTrackingState, 25> trackingStates = { State_NotTracked };
+		std::vector<K2TrackedJoint> trackedJoints = {K2TrackedJoint()};
 
 		class FailedKinectInitialization : public std::exception
 		{
