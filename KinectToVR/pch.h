@@ -48,6 +48,7 @@
 #include <sstream>
 #include <chrono>
 #include <future>
+#include <semaphore>
 
 #include <KinectToVR_API.h>
 
