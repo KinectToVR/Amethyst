@@ -154,12 +154,11 @@ namespace winrt::KinectToVR::implementation
 							read_json((entry.path() / "device.k2devicemanifest").string(), root);
 
 							if (root.find("device_name") == root.not_found() ||
-								root.find("device_type") == root.not_found() ||
-								root.find("linked_dll_path") == root.not_found() ||
-								root.find("force_default") == root.not_found())
+								root.find("device_type") == root.not_found())
 							{
 								OutputDebugString(entry.path().stem().c_str());
 								OutputDebugString(L"'s manifest was invalid ヽ(≧□≦)ノ\n");
+								continue;
 							}
 
 							auto device_name = root.get<std::string>("device_name");
@@ -167,20 +166,24 @@ namespace winrt::KinectToVR::implementation
 
 							auto linked_dll_path = root.get<std::string>("linked_dll_path");
 
+							if (root.find("linked_dll_path") == root.not_found())
+								linked_dll_path = "none"; // Self-fix or smth?
+
 							OutputDebugString(L"Found tracking device with:\n - name: ");
 							OutputDebugString(std::wstring(device_name.begin(), device_name.end()).c_str());
 							OutputDebugString(L"\n - type: ");
 							OutputDebugString(std::wstring(device_type.begin(), device_type.end()).c_str());
 							OutputDebugString(L"\n - linked dll: ");
 							OutputDebugString(std::wstring(linked_dll_path.begin(), linked_dll_path.end()).c_str());
+							OutputDebugString(L"\n");
 
-							auto deviceDllPath = entry.path() / "bin" / "win64" / ("device_" + device_name +
-								".dll");
+							auto deviceDllPath = entry.path() / "bin" / "win64" / ("device_" + device_name + ".dll");
+
 							if (exists(deviceDllPath))
 							{
 								OutputDebugString(L"Found the device's driver dll, now checking dependencies...\n");
 
-								if (exists(linked_dll_path) || linked_dll_path.compare("none"))
+								if (exists(linked_dll_path) || linked_dll_path == "none")
 								{
 									OutputDebugString(L"Found the device's dependency dll, now loading...\n");
 
@@ -188,12 +191,15 @@ namespace winrt::KinectToVR::implementation
 									BOOL fRunTimeLinkSuccess = FALSE;
 
 									// Get a handle to the DLL module.
-									hLibraryInstance = LoadLibraryA(deviceDllPath.string().c_str());
+									hLibraryInstance = LoadLibraryExA(deviceDllPath.string().c_str(), NULL,
+									                                  LOAD_LIBRARY_SEARCH_DEFAULT_DIRS |
+									                                  // Add device's folder to dll search path
+									                                  LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR |
+									                                  LOAD_LIBRARY_SEARCH_SYSTEM32);
 
 									if (hLibraryInstance != nullptr)
 									{
-										auto hDeviceFactory =
-											(TrackingDevices::TrackingDeviceBaseFactory)
+										auto hDeviceFactory = (TrackingDevices::TrackingDeviceBaseFactory)
 											GetProcAddress(hLibraryInstance, "TrackingDeviceBaseFactory");
 
 										// If the function address is valid, call the function.
@@ -270,17 +276,17 @@ namespace winrt::KinectToVR::implementation
 														std::to_wstring(supports_math)
 														.c_str());
 
-													OutputDebugString(L"at index ");
+													OutputDebugString(L"\nat index ");
 													OutputDebugString(std::to_wstring(
 														TrackingDevices::TrackingDevicesVector.size() - 1).c_str());
 													OutputDebugString(L".\n");
 
 													OutputDebugString(
-														L"Device status (should be 'not initialized'): \n");
+														L"Device status (should be 'not initialized'): \n[\n");
 													OutputDebugString(std::wstring(
 														stat.begin(),
 														stat.end()).c_str());
-													OutputDebugString(L"\n");
+													OutputDebugString(L"\n]\n");
 												}
 												break;
 											case ktvr::K2InitError_BadInterface:
@@ -301,8 +307,10 @@ namespace winrt::KinectToVR::implementation
 												}
 												break;
 											case ktvr::K2InitError_Invalid:
-												OutputDebugString(
-													L"Device either didn't give any return code or it's factory malfunctioned. You can only about it...");
+												{
+													OutputDebugString(
+														L"Device either didn't give any return code or it's factory malfunctioned. You can only about it...");
+												}
 												break;
 											}
 										}
@@ -323,11 +331,14 @@ namespace winrt::KinectToVR::implementation
 												.c_str());
 										}
 									}
+									else
+										OutputDebugString(
+											L"There was an error linking with the device library! (►＿◄)\n");
 
 									// If unable to call the DLL function, use an alternative.
 									if (!fRunTimeLinkSuccess)
 										OutputDebugString(
-											L"There was an error linking with the device library... (⊙_⊙)？\n");
+											L"There was an error calling the device factory... (⊙_⊙)？\n");
 								}
 								else
 									OutputDebugString(
@@ -357,7 +368,7 @@ namespace winrt::KinectToVR::implementation
 							k2app::interfacing::trackingDeviceID = 0; // Select the first one
 
 						// Init the device
-						auto const& trackingDevice = 
+						auto const& trackingDevice =
 							TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::trackingDeviceID);
 						switch (trackingDevice.index())
 						{
@@ -370,7 +381,31 @@ namespace winrt::KinectToVR::implementation
 							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
 							break;
 						}
-						
+
+						// Second check and try after 3 seconds
+						std::thread([&]
+						{
+							// Wait a moment
+							std::this_thread::sleep_for(std::chrono::seconds(3));
+
+							// Init the device (optionally this time)
+							auto const& trackingDevice =
+								TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::trackingDeviceID);
+							switch (trackingDevice.index())
+							{
+							case 0:
+								// Kinect Basis
+								if (!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isInitialized())
+									std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
+								break;
+							case 1:
+								// Joints Basis
+								if (!std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->isInitialized())
+									std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
+								break;
+							}
+						}).detach();
+
 						// Update the UI
 						TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
 					}
