@@ -292,7 +292,7 @@ bool PSMoveServiceHandler::startup()
 			std::chrono::duration_cast<std::chrono::milliseconds>(
 				std::chrono::system_clock::now().time_since_epoch());
 	}
-	
+
 	return success;
 }
 
@@ -404,21 +404,22 @@ void PSMoveServiceHandler::processKeyInputs()
 			continue; // Skip other types cuz no input otr whatever
 
 		auto& controller = wrapper.controller->ControllerState.PSMoveState;
-		bool bStartRealignHMDTriggered =
-		(controller.StartButton == PSMButtonState_PRESSED
+
+		const bool bStartRealignHMDTriggered = (controller.StartButton == PSMButtonState_PRESSED
 			|| controller.StartButton == PSMButtonState_DOWN) && (controller.SelectButton == PSMButtonState_PRESSED
 			|| controller.SelectButton == PSMButtonState_DOWN);
-		bool bStartVRRatioCalibrationTriggered = (
-				controller.CrossButton == PSMButtonState_PRESSED
 
-			) &&
-			(controller.CircleButton == PSMButtonState_PRESSED
-			);
+		const bool bStartVRRatioCalibrationTriggered = (controller.CrossButton == PSMButtonState_PRESSED) &&
+			(controller.CircleButton == PSMButtonState_PRESSED);
+		
+		// Recenter (capture)
+		if(controller.SelectButton == PSMButtonState_PRESSED)
+			wrapper.orientationOffset = PSMSToEigen(controller.Pose.Orientation);
 
 		// Update joint's position
 		trackedJoints.at(wrapper.controller->ControllerID).
 		              update(PSMSToEigen(controller.Pose.Position),
-		                     PSMSToEigen(controller.Pose.Orientation),
+		                     wrapper.orientationOffset.inverse() * PSMSToEigen(controller.Pose.Orientation), // Recenter (offset)
 		                     ktvr::State_Tracked);
 
 		// Optionally signal the joint
