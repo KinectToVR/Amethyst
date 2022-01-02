@@ -7,6 +7,7 @@ namespace winrt::KinectToVR::implementation
 	{
 		TrackingDevicesView() = delete;
 		TrackingDevicesView(hstring const& DeviceName);
+		TrackingDevicesView(int32_t const& DeviceID, hstring const& DeviceName, bool const& Current);
 
 		int32_t DeviceID();
 		hstring DeviceName();

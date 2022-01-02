@@ -8,10 +8,20 @@ namespace winrt::KinectToVR::implementation
 {
 	TrackingDevicesView::TrackingDevicesView(
 		hstring const& DeviceName) :
-		m_DeviceName{DeviceName}
+		m_DeviceName{ DeviceName }
 	{
 		m_DeviceID = -1;
 		m_Current = false;
+	}
+
+	TrackingDevicesView::TrackingDevicesView(
+		int32_t const& DeviceID,
+		hstring const& DeviceName,
+		bool const& Current) :
+		m_DeviceID{ DeviceID },
+		m_DeviceName{ DeviceName },
+		m_Current{ Current }
+	{
 	}
 
 	int32_t TrackingDevicesView::DeviceID()
