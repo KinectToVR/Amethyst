@@ -137,8 +137,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(SolutionDir)external\openvr\lib\win64;$(KINECTSDK10_DIR)lib\amd64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(SolutionDir)external\glog\vcbuild\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflagsd.lib;KinectToVR_API.lib;Kinect10.lib;openvr_api.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(KINECTSDK10_DIR)lib\amd64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Kinect10.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1"
@@ -146,9 +146,6 @@
 xcopy /y /d "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
-xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\boost_serialization*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
-
-xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -171,8 +168,8 @@ xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(S
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(SolutionDir)external\openvr\lib\win64;$(KINECTSDK10_DIR)lib\amd64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags.lib;KinectToVR_API.lib;Kinect10.lib;openvr_api.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(KINECTSDK10_DIR)lib\amd64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Kinect10.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1"
@@ -180,9 +177,6 @@ xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(S
 xcopy /y /d "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
-xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\boost_serialization*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
-
-xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

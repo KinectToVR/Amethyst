@@ -6,7 +6,8 @@
 #include <NuiSensor.h>
 #include <NuiSkeleton.h>
 
-#include "KinectToVR_API.h"
+#include "KinectToVR_API_Devices.h"
+
 /* Not exported */
 
 class KinectV1Handler : public ktvr::K2TrackingDeviceBase_KinectBasis
@@ -59,7 +60,7 @@ extern "C" __declspec(dllexport) void* TrackingDeviceBaseFactory(
 {
 	// Return the device handler for tracking
 	// but only if interfaces are the same / up-to-date
-	if (0 == strcmp(ktvr::IK2API_Version, pVersionName))
+	if (0 == strcmp(ktvr::IK2API_Devices_Version, pVersionName))
 	{
 		static KinectV1Handler TrackingHandler; // Create a new device handler -> KinectV2
 
