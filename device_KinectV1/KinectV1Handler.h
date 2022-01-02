@@ -9,15 +9,19 @@
 #include "KinectToVR_API.h"
 /* Not exported */
 
-class KinectV1Handler : public ktvr::TrackingDeviceBase_KinectBasis
+class KinectV1Handler : public ktvr::K2TrackingDeviceBase_KinectBasis
 {
 	// A representation of the Kinect elements for the v1 api
 public:
 	KinectV1Handler()
 	{
 		//KinectV1Handler::initialize();
-		TrackingDeviceBase_KinectBasis::deviceType = ktvr::K2_Kinect;
-		TrackingDeviceBase_KinectBasis::deviceName = "Xbox 360 Kinect";
+		K2TrackingDeviceBase_KinectBasis::deviceType = ktvr::K2_Kinect;
+		K2TrackingDeviceBase_KinectBasis::deviceName = "Xbox 360 Kinect";
+
+		K2TrackingDeviceBase_KinectBasis::deviceCharacteristics = ktvr::K2_Character_Full;
+		K2TrackingDeviceBase_KinectBasis::flipSupported = true;
+		K2TrackingDeviceBase_KinectBasis::appOrientationSupported = true;
 	}
 
 	HANDLE kinectRGBStream = nullptr;
