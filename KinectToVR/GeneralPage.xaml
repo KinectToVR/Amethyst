@@ -5,6 +5,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
+	Loaded="GeneralPage_Loaded"
 	xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	NavigationCacheMode="Required">
 
@@ -56,7 +57,7 @@
 									                Grid.Column="1"
 									                Maximum="360"
 									                Minimum="0"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -217,7 +218,7 @@
 									                Grid.Column="1"
 									                Maximum="360"
 									                Minimum="0"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -240,7 +241,7 @@
 									                Grid.Column="1"
 									                Maximum="360"
 									                Minimum="0"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -263,7 +264,7 @@
 									                Grid.Column="1"
 									                Maximum="360"
 									                Minimum="0"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -288,7 +289,7 @@
 									                Grid.Column="1"
 									                Maximum="1000"
 									                Minimum="-1000"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -311,7 +312,7 @@
 									                Grid.Column="1"
 									                Maximum="1000"
 									                Minimum="-1000"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -334,7 +335,7 @@
 									                Grid.Column="1"
 									                Maximum="1000"
 									                Minimum="-1000"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -378,7 +379,7 @@
 									                Grid.Column="1"
 									                Maximum="360"
 									                Minimum="0"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -401,7 +402,7 @@
 									                Grid.Column="1"
 									                Maximum="360"
 									                Minimum="0"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -424,7 +425,7 @@
 									                Grid.Column="1"
 									                Maximum="360"
 									                Minimum="0"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -449,7 +450,7 @@
 									                Grid.Column="1"
 									                Maximum="1000"
 									                Minimum="-1000"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -472,7 +473,7 @@
 									                Grid.Column="1"
 									                Maximum="1000"
 									                Minimum="-1000"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -495,7 +496,7 @@
 									                Grid.Column="1"
 									                Maximum="1000"
 									                Minimum="-1000"
-									                Value="0" 
+									                Value="0"
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
@@ -668,20 +669,21 @@
 			</SplitView.Pane>
 		</SplitView>
 
-		<Grid>
+        <Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="520" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 
-			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0">
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                  Grid.Column="0" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
 
 				<Grid.RowDefinitions>
 					<RowDefinition Height="60" />
 					<RowDefinition Height="170" />
 					<RowDefinition Height="*" />
-					<RowDefinition Height="60" />
-					<RowDefinition Height="240" />
+					<RowDefinition Height="0" />
+					<RowDefinition Height="300" />
 					<RowDefinition Height="60" />
 					<RowDefinition Height="90" />
 				</Grid.RowDefinitions>
@@ -721,16 +723,16 @@
 
 				</Grid>
 
-				<TextBlock FontWeight="SemiBold" Text="Device" FontSize="25" Margin="40,20,0,0" Grid.Row="3" />
-
 				<Grid Grid.Row="4">
-					<StackPanel Orientation="Vertical" Margin="0,5,0,0">
+					<StackPanel Orientation="Vertical" Margin="0,5,0,0" VerticalAlignment="Bottom">
+						<TextBlock FontWeight="SemiBold" Text="Device" FontSize="25"
+						           Margin="40,20,0,10" Grid.Row="3" />
 
 						<StackPanel Orientation="Horizontal" Margin="40,0,20,0">
 							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
 							           Text="Current Device:" Margin="0,0,0,0" Foreground="LightGray" />
 							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="Xbox One Kinect (V2)" Margin="5,0,0,0" x:Name="TrackingDeviceNameLabel" />
+							           Text="Xbox One Kinect (V2)" Margin="5,0,0,0" x:Name="SelectedDeviceNameLabel" />
 						</StackPanel>
 
 						<StackPanel Orientation="Horizontal" Margin="40,5,20,0">
@@ -741,7 +743,7 @@
 						</StackPanel>
 
 						<Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
-						      Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3">
+						      Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
 
 							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
 							           Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
@@ -749,6 +751,7 @@
 							           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
 
 							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+							           x:Name="ErrorWhatText"
 							           Margin="10,30,0,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
 								<TextBlock.Text>
 									There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
@@ -756,7 +759,7 @@
 							</TextBlock>
 						</Grid>
 
-						<Grid Margin="0,12,0,0">
+						<Grid Margin="0,12,0,0" x:Name="ErrorButtonsGrid">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="*" />
 								<ColumnDefinition Width="*" />
@@ -800,7 +803,59 @@
 
 			</Grid>
 
-			<Grid Background="Black" Grid.Column="1">
+			<!--Skeleton canvas-->
+            <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Canvas.ZIndex="-1"
+			        x:Name="SkeletonDrawingCanvas" Loaded="SkeletonDrawingCanvas_Loaded" />
+
+            <!--Background-->
+			<Grid Background="Black" Grid.Column="1" Canvas.ZIndex="-2"
+			        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+            <!--No Skeleton-->
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
+			         VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
+                <StackPanel Grid.Column="1" x:Name="NotTrackedNotice"
+			            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" />
+                        <TextBlock Margin="10,0,0,7" Text="No skeleton found" FontSize="50" FontWeight="SemiBold" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+					<Run>Make sure the device works properly</Run>
+                    </TextBlock>
+
+                    <TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+					<Run>and can see your body for tracking.</Run>
+                    </TextBlock>
+
+                </StackPanel>
+            </Viewbox>
+			
+			<!--Skeleton Disabled-->
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
+			         VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
+                <StackPanel Grid.Column="1" x:Name="SkeletonHiddenNotice" Visibility="Collapsed"
+			            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
+                        <TextBlock Margin="10,0,0,7" Text="Skeleton preview disabled" FontSize="50" FontWeight="SemiBold" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+	                    <Run>To re-enable it please click the</Run>
+                    </TextBlock>
+
+                    <TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+	                    <Run>"Show/Hide Skeleton" button.</Run>
+                    </TextBlock>
+
+                </StackPanel>
+            </Viewbox>
+
+            <Grid Background="Transparent" Grid.Column="1">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="20" />
 					<RowDefinition Height="45" />

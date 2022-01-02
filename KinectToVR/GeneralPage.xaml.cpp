@@ -9,263 +9,606 @@ using namespace Microsoft::UI::Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
+bool show_skeleton_current = true,
+     show_skeleton_previous = true;
 
 namespace winrt::KinectToVR::implementation
 {
-    GeneralPage::GeneralPage()
-    {
-        InitializeComponent();
-    }
+	GeneralPage::GeneralPage()
+	{
+		InitializeComponent();
+
+		// Cache needed UI elements
+		using namespace ::k2app::shared::general;
+
+		deviceNameLabel = std::make_shared<Controls::TextBlock>(SelectedDeviceNameLabel());
+		deviceStatusLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceStatusLabel());
+		errorWhatText = std::make_shared<Controls::TextBlock>(ErrorWhatText());
+		trackingDeviceErrorLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceErrorLabel());
+
+		errorButtonsGrid = std::make_shared<Controls::Grid>(ErrorButtonsGrid());
+		errorWhatGrid = std::make_shared<Controls::Grid>(ErrorWhatGrid());
+	}
 }
 
-void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    OffsetsView().IsPaneOpen(true);
+	OffsetsView().IsPaneOpen(true);
 }
 
-void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    AutoCalibrationPane().Visibility(Visibility::Collapsed);
-    ManualCalibrationPane().Visibility(Visibility::Collapsed);
-    CalibrationSelectionPane().Visibility(Visibility::Visible);
+	AutoCalibrationPane().Visibility(Visibility::Collapsed);
+	ManualCalibrationPane().Visibility(Visibility::Collapsed);
+	CalibrationSelectionPane().Visibility(Visibility::Visible);
 
-    CalibrationView().IsPaneOpen(true);
-}
+	CalibrationView().IsPaneOpen(true);
 
-
-void winrt::KinectToVR::implementation::GeneralPage::FlipCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-
-}
-
-
-void winrt::KinectToVR::implementation::GeneralPage::FlipCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-
-}
-
-
-void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-
-}
-
-
-void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-
+	show_skeleton_previous = show_skeleton_current; // Back up
+	show_skeleton_current = true; // Change to show
+	SkeletonToggleButton().IsChecked(true); // Change to show
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::SaveOffsetsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    OffsetsView().IsPaneOpen(false);
+	show_skeleton_current = true;
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    OffsetsView().IsPaneOpen(false);
+	show_skeleton_current = false;
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::OffsetsView_PaneClosing(winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
+void winrt::KinectToVR::implementation::GeneralPage::SaveOffsetsButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    args.Cancel(true);
+	OffsetsView().IsPaneOpen(false);
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::CalibrationView_PaneClosing(winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
+void winrt::KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    args.Cancel(true);
+	OffsetsView().IsPaneOpen(false);
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::OffsetsView_PaneClosing(
+	winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
 {
-    AutoCalibrationPane().Visibility(Visibility::Visible);
-    ManualCalibrationPane().Visibility(Visibility::Collapsed);
-    CalibrationSelectionPane().Visibility(Visibility::Collapsed);
-
-    StartAutoCalibrationButton().IsEnabled(true);
-    CalibrationInstructionsLabel().Text(L"Start the calibration");
-    CalibrationCountdownLabel().Text(L"~");
-
-    DiscardAutoCalibrationButton().Content(box_value(L"Cancel"));
+	args.Cancel(true);
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::ManualCalibrationButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::CalibrationView_PaneClosing(
+	winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
 {
-    AutoCalibrationPane().Visibility(Visibility::Collapsed);
-    ManualCalibrationPane().Visibility(Visibility::Visible);
-    CalibrationSelectionPane().Visibility(Visibility::Collapsed);
-
-    StartManualCalibrationButton().IsEnabled(true);
-    DiscardManualCalibrationButton().Content(box_value(L"Cancel"));
+	args.Cancel(true);
 }
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage::StartAutoCalibrationButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+
+void winrt::KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    // Set the [calibration pending] bool
-    CalibrationPending = true;
-    
-    // Disable the start button and change [cancel]'s text
-    StartAutoCalibrationButton().IsEnabled(false);
-    DiscardAutoCalibrationButton().Content(box_value(L"Abort"));
+	AutoCalibrationPane().Visibility(Visibility::Visible);
+	ManualCalibrationPane().Visibility(Visibility::Collapsed);
+	CalibrationSelectionPane().Visibility(Visibility::Collapsed);
 
-    // Loop over total 3 points (may change)
-    for (int point = 0; point < 3; point++) {
-        // Wait for the user to move
-        CalibrationInstructionsLabel().Text(L"Move somewhere else");
-        for (int i = 3; i >= 0; i--) {
-            CalibrationCountdownLabel().Text(std::to_wstring(i));
-            if (!CalibrationPending)break; // Check for exiting
+	StartAutoCalibrationButton().IsEnabled(true);
+	CalibrationInstructionsLabel().Text(L"Start the calibration");
+	CalibrationCountdownLabel().Text(L"~");
 
-            { // Sleep on UI
-                winrt::apartment_context ui_thread;
-                co_await winrt::resume_background();
-                Sleep(1000);
-                co_await ui_thread;
-            }
-            if (!CalibrationPending)break; // Check for exiting
-        }
+	DiscardAutoCalibrationButton().Content(box_value(L"Cancel"));
+}
 
-        CalibrationInstructionsLabel().Text(L"Stand still!");
-        for (int i = 3; i >= 0; i--) {
-            CalibrationCountdownLabel().Text(std::to_wstring(i));
-            if (!CalibrationPending)break; // Check for exiting
 
-            // Capture user's position at [1]
-            if(i==1)
-            {
-	            // Capture
-            }
+void winrt::KinectToVR::implementation::GeneralPage::ManualCalibrationButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	AutoCalibrationPane().Visibility(Visibility::Collapsed);
+	ManualCalibrationPane().Visibility(Visibility::Visible);
+	CalibrationSelectionPane().Visibility(Visibility::Collapsed);
 
-            // Wait and eventually break
-            { // Sleep on UI
-                winrt::apartment_context ui_thread;
-                co_await winrt::resume_background();
-                Sleep(1000);
-                co_await ui_thread;
-            }
-            if (!CalibrationPending)break; // Check for exiting
-        }
-        
-        // Exit if aborted
-        if (!CalibrationPending)break;
-    }
+	StartManualCalibrationButton().IsEnabled(true);
+	DiscardManualCalibrationButton().Content(box_value(L"Cancel"));
+}
+
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage::StartAutoCalibrationButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Set the [calibration pending] bool
+	CalibrationPending = true;
+
+	// Disable the start button and change [cancel]'s text
+	StartAutoCalibrationButton().IsEnabled(false);
+	DiscardAutoCalibrationButton().Content(box_value(L"Abort"));
+
+	// Loop over total 3 points (may change)
+	for (int point = 0; point < 3; point++)
+	{
+		// Wait for the user to move
+		CalibrationInstructionsLabel().Text(L"Move somewhere else");
+		for (int i = 3; i >= 0; i--)
+		{
+			CalibrationCountdownLabel().Text(std::to_wstring(i));
+			if (!CalibrationPending)break; // Check for exiting
+
+			{
+				// Sleep on UI
+				winrt::apartment_context ui_thread;
+				co_await winrt::resume_background();
+				Sleep(1000);
+				co_await ui_thread;
+			}
+			if (!CalibrationPending)break; // Check for exiting
+		}
+
+		CalibrationInstructionsLabel().Text(L"Stand still!");
+		for (int i = 3; i >= 0; i--)
+		{
+			CalibrationCountdownLabel().Text(std::to_wstring(i));
+			if (!CalibrationPending)break; // Check for exiting
+
+			// Capture user's position at [1]
+			if (i == 1)
+			{
+				// Capture
+			}
+
+			// Wait and eventually break
+			{
+				// Sleep on UI
+				winrt::apartment_context ui_thread;
+				co_await winrt::resume_background();
+				Sleep(1000);
+				co_await ui_thread;
+			}
+			if (!CalibrationPending)break; // Check for exiting
+		}
+
+		// Exit if aborted
+		if (!CalibrationPending)break;
+	}
 
 	// Notify that we're finished
 	CalibrationInstructionsLabel().Text(
-        CalibrationPending ? L"Calibration done!" : L"Calibration aborted!");
+		CalibrationPending ? L"Calibration done!" : L"Calibration aborted!");
 	CalibrationCountdownLabel().Text(L"~");
-    { // Sleep on UI
-        winrt::apartment_context ui_thread;
-        co_await winrt::resume_background();
-        Sleep(2200); // Just right
-        co_await ui_thread;
-    }
+	{
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(2200); // Just right
+		co_await ui_thread;
+	}
 
-    // Exit the pane
-    CalibrationView().IsPaneOpen(false);
+	// Exit the pane
+	CalibrationView().IsPaneOpen(false);
+
+	show_skeleton_current = show_skeleton_previous; // Change to whatever
+	SkeletonToggleButton().IsChecked(show_skeleton_previous); // Change to whatever
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::DiscardAutoCalibrationButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::DiscardAutoCalibrationButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    // Just exit
-    if(!CalibrationPending) CalibrationView().IsPaneOpen(false);
-    // Begin abort
-    else CalibrationPending = false;
+	// Just exit
+	if (!CalibrationPending)
+	{
+		CalibrationView().IsPaneOpen(false);
+
+		show_skeleton_current = show_skeleton_previous; // Change to whatever
+		SkeletonToggleButton().IsChecked(show_skeleton_previous); // Change to whatever
+	}
+	// Begin abort
+	else CalibrationPending = false;
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage::StartManualCalibrationButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage::StartManualCalibrationButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    // Set the [calibration pending] bool
-    CalibrationPending = true;
+	// Set the [calibration pending] bool
+	CalibrationPending = true;
 
-    // Disable the start button and change [cancel]'s text
-    StartManualCalibrationButton().IsEnabled(false);
-    DiscardManualCalibrationButton().Content(box_value(L"Abort"));
+	// Disable the start button and change [cancel]'s text
+	StartManualCalibrationButton().IsEnabled(false);
+	DiscardManualCalibrationButton().Content(box_value(L"Abort"));
 
-    // Loop over until finished
-    while(true /*!confirm*/) {
-        
-        // Wait for a mode switch
-        while(true /*!modeswap && !confirm*/)
-        {
-            // TMP
-            { // Sleep on UI
-                winrt::apartment_context ui_thread;
-                co_await winrt::resume_background();
-                Sleep(1000);
-                co_await ui_thread;
-            }
-            
-            // Exit if aborted
-            if (!CalibrationPending)break;
-        }
+	// Loop over until finished
+	while (true /*!confirm*/)
+	{
+		// Wait for a mode switch
+		while (true /*!modeswap && !confirm*/)
+		{
+			// TMP
+			{
+				// Sleep on UI
+				winrt::apartment_context ui_thread;
+				co_await winrt::resume_background();
+				Sleep(1000);
+				co_await ui_thread;
+			}
 
-    	// Wait for a mode switch
-        while(true /*!modeswap && !confirm*/)
-        {
-            // TMP
-            { // Sleep on UI
-                winrt::apartment_context ui_thread;
-                co_await winrt::resume_background();
-                Sleep(1000);
-                co_await ui_thread;
-            }
+			// Exit if aborted
+			if (!CalibrationPending)break;
+		}
 
-            // Exit if aborted
-            if (!CalibrationPending)break;
-        }
-        
-        // Exit if aborted
-        if (!CalibrationPending)break;
-    }
+		// Wait for a mode switch
+		while (true /*!modeswap && !confirm*/)
+		{
+			// TMP
+			{
+				// Sleep on UI
+				winrt::apartment_context ui_thread;
+				co_await winrt::resume_background();
+				Sleep(1000);
+				co_await ui_thread;
+			}
 
-    { // Sleep on UI
-        winrt::apartment_context ui_thread;
-        co_await winrt::resume_background();
-        Sleep(1000); // Just right
-        co_await ui_thread;
-    }
-    // Exit the pane
-    CalibrationView().IsPaneOpen(false);
+			// Exit if aborted
+			if (!CalibrationPending)break;
+		}
+
+		// Exit if aborted
+		if (!CalibrationPending)break;
+	}
+
+	{
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(1000); // Just right
+		co_await ui_thread;
+	}
+	// Exit the pane
+	CalibrationView().IsPaneOpen(false);
+
+	show_skeleton_current = show_skeleton_previous; // Change to whatever
+	SkeletonToggleButton().IsChecked(show_skeleton_previous); // Change to whatever
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::DiscardManualCalibrationButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::DiscardManualCalibrationButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    // Just exit
-    if (!CalibrationPending) CalibrationView().IsPaneOpen(false);
-    // Begin abort
-    else CalibrationPending = false;
+	// Just exit
+	if (!CalibrationPending)
+	{
+		CalibrationView().IsPaneOpen(false);
+
+		show_skeleton_current = show_skeleton_previous; // Change to whatever
+		SkeletonToggleButton().IsChecked(show_skeleton_previous); // Change to whatever
+	}
+	// Begin abort
+	else CalibrationPending = false;
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    ToggleTrackersButton().Content(box_value(L"Disconnect Trackers"));
+	ToggleTrackersButton().Content(box_value(L"Disconnect Trackers"));
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    ToggleTrackersButton().Content(box_value(L"Reconnect Trackers"));
+	ToggleTrackersButton().Content(box_value(L"Reconnect Trackers"));
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::OpenDiscordButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::OpenDiscordButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::OpenDocsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::OpenDocsButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+}
 
+
+void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::sk_line(
+	Shapes::Line& line,
+	std::array<Eigen::Vector3f, 25> const& joints,
+	std::array<ktvr::JointTrackingState, 25> const& states,
+	ktvr::ITrackedJointType const& from,
+	ktvr::ITrackedJointType const& to)
+{
+	constexpr double s_mat_width_default = 700,
+	                 s_mat_height_default = 600;
+
+	double s_mat_width = SkeletonDrawingCanvas().ActualWidth(),
+	       s_mat_height = SkeletonDrawingCanvas().ActualHeight();
+
+	// Eventually fix sizes
+	if (s_mat_height < 1)s_mat_height = s_mat_height_default;
+	if (s_mat_height < 1)s_mat_width = s_mat_width_default;
+
+	// Where to scale by 1.0 in perspective
+	constexpr double s_normal_distance = 3;
+
+	// Compose perspective constants, make it 70%
+	const double s_from_multiply = .7 * (s_normal_distance / (joints[from].z() > 0. ? joints[from].z() : 3.)),
+	             s_to_multiply = .7 * (s_normal_distance / (joints[to].z() > 0. ? joints[to].z() : 3.));
+
+	auto a = Media::AcrylicBrush();
+	auto ui = Windows::UI::ViewManagement::UISettings();
+
+	line.StrokeThickness(5);
+	a.TintColor(ui.GetColorValue(Windows::UI::ViewManagement::UIColorType::Accent));
+
+	if (states[from] != ktvr::State_Tracked ||
+		states[to] != ktvr::State_Tracked)
+		line.Stroke(a);
+	else
+		line.Stroke(Media::SolidColorBrush(Windows::UI::Colors::White()));
+
+	// Select the smaller scale to preserve somewhat uniform skeleton scaling
+	const double s_scale_w = s_mat_width / s_mat_width_default,
+	             s_scale_h = s_mat_height / s_mat_height_default;
+
+	line.X1(joints[from].x() * 300. * std::min(s_scale_w, s_scale_h) * s_from_multiply + s_mat_width / 2.);
+	line.Y1(joints[from].y() * -300. * std::min(s_scale_w, s_scale_h) * s_from_multiply + s_mat_height / 3.);
+
+	line.X2(joints[to].x() * 300. * std::min(s_scale_w, s_scale_h) * s_to_multiply + s_mat_width / 2.);
+	line.Y2(joints[to].y() * -300. * std::min(s_scale_w, s_scale_h) * s_to_multiply + s_mat_height / 3.);
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	static auto boneLines = std::array<Shapes::Line, 24>();
+
+	for (auto& l : boneLines)
+	{
+		l = Shapes::Line();
+		SkeletonDrawingCanvas().Children().Append(l);
+	}
+
+	auto timer = DispatcherTimer();
+	timer.Interval(std::chrono::milliseconds(33));
+
+	timer.Tick([&, this](IInspectable const& sender, IInspectable const& e)
+	{
+		if (!show_skeleton_current)
+		{
+			// Hide the UI, only show that viewing is disabled
+			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
+			NotTrackedNotice().Visibility(Visibility::Collapsed);
+
+			SkeletonHiddenNotice().Visibility(Visibility::Visible);
+			return; // Nothing more to do anyway
+		}
+
+		SkeletonHiddenNotice().Visibility(Visibility::Collapsed); // Else hide
+		auto const& trackingDevice = TrackingDevices::getCurrentDevice();
+
+		switch (trackingDevice.index())
+		{
+		case 0:
+			{
+				auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+
+				device->update(); // TODO: call this in K2Main
+
+				const auto joints = device->getJointPositions();
+				const auto states = device->getTrackingStates();
+
+				if (device->isSkeletonTracked())
+				{
+					// Don't waste cpu & ram, ok?
+
+					// Show the UI
+					SkeletonDrawingCanvas().Visibility(Visibility::Visible);
+					NotTrackedNotice().Visibility(Visibility::Collapsed);
+
+					if (device->getDeviceCharacteristics() == ktvr::K2_Character_Full)
+					{
+						// Draw the skeleton with from-to lines
+						// Head
+						sk_line(boneLines[0], joints, states, ktvr::Joint_Head, ktvr::Joint_Neck);
+						sk_line(boneLines[1], joints, states, ktvr::Joint_Neck, ktvr::Joint_SpineShoulder);
+
+						// Upper left limb
+						sk_line(boneLines[2], joints, states, ktvr::Joint_SpineShoulder, ktvr::Joint_ShoulderLeft);
+						sk_line(boneLines[3], joints, states, ktvr::Joint_ShoulderLeft, ktvr::Joint_ElbowLeft);
+						sk_line(boneLines[4], joints, states, ktvr::Joint_ElbowLeft, ktvr::Joint_WristLeft);
+						sk_line(boneLines[5], joints, states, ktvr::Joint_WristLeft, ktvr::Joint_HandLeft);
+						sk_line(boneLines[6], joints, states, ktvr::Joint_HandLeft, ktvr::Joint_HandTipLeft);
+						sk_line(boneLines[7], joints, states, ktvr::Joint_HandLeft, ktvr::Joint_ThumbLeft);
+
+						// Upper right limb
+						sk_line(boneLines[8], joints, states, ktvr::Joint_SpineShoulder, ktvr::Joint_ShoulderRight);
+						sk_line(boneLines[9], joints, states, ktvr::Joint_ShoulderRight, ktvr::Joint_ElbowRight);
+						sk_line(boneLines[10], joints, states, ktvr::Joint_ElbowRight, ktvr::Joint_WristRight);
+						sk_line(boneLines[11], joints, states, ktvr::Joint_WristRight, ktvr::Joint_HandRight);
+						sk_line(boneLines[12], joints, states, ktvr::Joint_HandRight, ktvr::Joint_HandTipRight);
+						sk_line(boneLines[13], joints, states, ktvr::Joint_HandRight, ktvr::Joint_ThumbRight);
+
+						// Spine
+						sk_line(boneLines[14], joints, states, ktvr::Joint_SpineShoulder, ktvr::Joint_SpineMiddle);
+						sk_line(boneLines[15], joints, states, ktvr::Joint_SpineMiddle, ktvr::Joint_SpineWaist);
+
+						// Lower left limb
+						sk_line(boneLines[16], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_HipLeft);
+						sk_line(boneLines[17], joints, states, ktvr::Joint_HipLeft, ktvr::Joint_KneeLeft);
+						sk_line(boneLines[18], joints, states, ktvr::Joint_KneeLeft, ktvr::Joint_AnkleLeft);
+						sk_line(boneLines[19], joints, states, ktvr::Joint_AnkleLeft, ktvr::Joint_FootLeft);
+
+						// Lower right limb
+						sk_line(boneLines[20], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_HipRight);
+						sk_line(boneLines[21], joints, states, ktvr::Joint_HipRight, ktvr::Joint_KneeRight);
+						sk_line(boneLines[22], joints, states, ktvr::Joint_KneeRight, ktvr::Joint_AnkleRight);
+						sk_line(boneLines[23], joints, states, ktvr::Joint_AnkleRight, ktvr::Joint_FootRight);
+					}
+					else if (device->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
+					{
+						// Draw the skeleton with from-to lines
+						// Head
+						sk_line(boneLines[0], joints, states, ktvr::Joint_Head, ktvr::Joint_SpineWaist);
+
+						// Empty lines
+						boneLines[1] = Shapes::Line();
+						boneLines[2] = Shapes::Line();
+						boneLines[3] = Shapes::Line();
+						boneLines[4] = Shapes::Line();
+						boneLines[5] = Shapes::Line();
+						boneLines[6] = Shapes::Line();
+						boneLines[7] = Shapes::Line();
+						boneLines[8] = Shapes::Line();
+						boneLines[9] = Shapes::Line();
+						boneLines[10] = Shapes::Line();
+						boneLines[11] = Shapes::Line();
+						boneLines[12] = Shapes::Line();
+						boneLines[13] = Shapes::Line();
+						boneLines[14] = Shapes::Line();
+						boneLines[15] = Shapes::Line();
+
+						// Lower left limb
+						sk_line(boneLines[16], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_HipLeft);
+						sk_line(boneLines[17], joints, states, ktvr::Joint_HipLeft, ktvr::Joint_KneeLeft);
+						sk_line(boneLines[18], joints, states, ktvr::Joint_KneeLeft, ktvr::Joint_AnkleLeft);
+						sk_line(boneLines[19], joints, states, ktvr::Joint_AnkleLeft, ktvr::Joint_FootLeft);
+
+						// Lower right limb
+						sk_line(boneLines[20], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_HipRight);
+						sk_line(boneLines[21], joints, states, ktvr::Joint_HipRight, ktvr::Joint_KneeRight);
+						sk_line(boneLines[22], joints, states, ktvr::Joint_KneeRight, ktvr::Joint_AnkleRight);
+						sk_line(boneLines[23], joints, states, ktvr::Joint_AnkleRight, ktvr::Joint_FootRight);
+					}
+					else if (device->getDeviceCharacteristics() == ktvr::K2_Character_Basic)
+					{
+						// Draw the skeleton with from-to lines
+						// Head
+						sk_line(boneLines[0], joints, states, ktvr::Joint_Head, ktvr::Joint_SpineWaist);
+
+						// Empty lines
+						boneLines[1] = Shapes::Line();
+						boneLines[2] = Shapes::Line();
+						boneLines[3] = Shapes::Line();
+						boneLines[4] = Shapes::Line();
+						boneLines[5] = Shapes::Line();
+						boneLines[6] = Shapes::Line();
+						boneLines[7] = Shapes::Line();
+						boneLines[8] = Shapes::Line();
+						boneLines[9] = Shapes::Line();
+						boneLines[10] = Shapes::Line();
+						boneLines[11] = Shapes::Line();
+						boneLines[12] = Shapes::Line();
+						boneLines[13] = Shapes::Line();
+						boneLines[14] = Shapes::Line();
+						boneLines[15] = Shapes::Line();
+
+						// Lower left limb
+						sk_line(boneLines[16], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_AnkleLeft);
+
+						// Empty lines
+						boneLines[17] = Shapes::Line();
+						boneLines[18] = Shapes::Line();
+						boneLines[19] = Shapes::Line();
+
+						// Lower right limb
+						sk_line(boneLines[20], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_AnkleRight);
+
+						// Empty lines
+						boneLines[21] = Shapes::Line();
+						boneLines[22] = Shapes::Line();
+						boneLines[23] = Shapes::Line();
+					}
+				}
+				else
+				{
+					SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
+					NotTrackedNotice().Visibility(Visibility::Visible);
+				}
+			}
+			break;
+		//case 1: // TODO: Other device types
+		//	{
+		//		auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+
+		//		device->update();
+
+		//		const auto joints = device->getTrackedJoints();
+
+		//		if (device->isSkeletonTracked())
+		//		{
+		//			// Don't waste cpu & ram, ok?
+
+		//			// Show the UI
+		//			SkeletonDrawingCanvas().Visibility(Visibility::Visible);
+		//			NotTrackedNotice().Visibility(Visibility::Collapsed);
+
+		//			{
+		//				// Draw the skeleton with from-to lines
+		//				// Head
+		//				sk_line(boneLines[0], joints, states, ktvr::Joint_Head, ktvr::Joint_SpineWaist);
+
+		//				// Empty lines
+		//				boneLines[1] = Shapes::Line();
+		//				boneLines[2] = Shapes::Line();
+		//				boneLines[3] = Shapes::Line();
+		//				boneLines[4] = Shapes::Line();
+		//				boneLines[5] = Shapes::Line();
+		//				boneLines[6] = Shapes::Line();
+		//				boneLines[7] = Shapes::Line();
+		//				boneLines[8] = Shapes::Line();
+		//				boneLines[9] = Shapes::Line();
+		//				boneLines[10] = Shapes::Line();
+		//				boneLines[11] = Shapes::Line();
+		//				boneLines[12] = Shapes::Line();
+		//				boneLines[13] = Shapes::Line();
+		//				boneLines[14] = Shapes::Line();
+		//				boneLines[15] = Shapes::Line();
+
+		//				// Lower left limb
+		//				sk_line(boneLines[16], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_AnkleLeft);
+
+		//				// Empty lines
+		//				boneLines[17] = Shapes::Line();
+		//				boneLines[18] = Shapes::Line();
+		//				boneLines[19] = Shapes::Line();
+
+		//				// Lower right limb
+		//				sk_line(boneLines[20], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_AnkleRight);
+
+		//				// Empty lines
+		//				boneLines[21] = Shapes::Line();
+		//				boneLines[22] = Shapes::Line();
+		//				boneLines[23] = Shapes::Line();
+		//			}
+		//		}
+		//		else
+		//		{
+		//			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
+		//			NotTrackedNotice().Visibility(Visibility::Visible);
+		//		}
+		//	}
+		//	break;
+		}
+	});
+
+	timer.Start();
 }
