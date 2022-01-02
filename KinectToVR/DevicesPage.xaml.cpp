@@ -6,21 +6,11 @@
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
+using namespace ::k2app::shared::devices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-
-std::shared_ptr<Controls::TextBlock>
-	deviceNameLabel,
-	deviceStatusLabel,
-	errorWhatText,
-	trackingDeviceErrorLabel;
-
-std::shared_ptr<Controls::Grid>
-	errorButtonsGrid,
-	errorWhatGrid;
-
-std::shared_ptr<Controls::ListView> devicesListView;
+bool devices_tab_setup_finished = false;
 
 namespace winrt::KinectToVR::implementation
 {
@@ -38,12 +28,10 @@ namespace winrt::KinectToVR::implementation
 		errorWhatGrid = std::make_shared<Controls::Grid>(ErrorWhatGrid());
 
 		devicesListView = std::make_shared<Controls::ListView>(TrackingDeviceListView());
-		
+
 		// Create tracking devices' list
-		Windows::Foundation::Collections::IObservableVector<KinectToVR::TrackingDevicesView> m_TrackingDevicesViewModels
-		{
-			single_threaded_observable_vector<KinectToVR::TrackingDevicesView>()
-		};
+		static auto m_TrackingDevicesViewModels =
+			multi_threaded_observable_vector<KinectToVR::TrackingDevicesView>();
 
 		// Watch for insertions
 		m_TrackingDevicesViewModels.VectorChanged(
@@ -55,8 +43,8 @@ namespace winrt::KinectToVR::implementation
 				OutputDebugString(L"'s been registered as a tracking device. [UI Node]\n");
 
 				// Set the current device
-				if (sender.Size() >= 2)
-					sender.GetAt(1).Current(true);
+				if (sender.Size() > k2app::interfacing::trackingDeviceID)
+					sender.GetAt(k2app::interfacing::trackingDeviceID).Current(true);
 
 				// Re-set all indexes
 				for (uint32_t i = 0; i < sender.Size(); i++)
@@ -64,62 +52,21 @@ namespace winrt::KinectToVR::implementation
 			});
 
 		// Add tracking devices here
-		std::string device_status = "E_UKNOWN\nWhat's happened here?";
-
 		for (auto const& trackingDevice : TrackingDevices::TrackingDevicesVector)
 		{
 			std::string deviceName = "[UNKNOWN]";
 
-			if (trackingDevice.index() == 0)
+			switch (trackingDevice.index())
 			{
-				// Kinect Basis
-				const auto device = std::get<ktvr::TrackingDeviceBase_KinectBasis*>(trackingDevice);
-
-				deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
-				device_status = device->statusResultString(device->getStatusResult());
-
-				deviceName = device->getDeviceName();
+			case 0:
+				deviceName = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
+					(trackingDevice)->getDeviceName();
+				break;
+			case 1:
+				deviceName = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
+					(trackingDevice)->getDeviceName();
+				break;
 			}
-			else if (trackingDevice.index() == 1)
-			{
-				// Joints Basis
-				const auto device = std::get<ktvr::TrackingDeviceBase_JointsBasis*>(trackingDevice);
-
-				deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
-				device_status = device->statusResultString(device->getStatusResult());
-
-				deviceName = device->getDeviceName();
-			}
-			else if (trackingDevice.index() == 2)
-			{
-				// Override
-				const auto device = std::get<ktvr::TrackingDeviceBase_OnlyOverride*>(trackingDevice);
-
-				deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
-				device_status = device->statusResultString(device->getStatusResult());
-
-				deviceName = device->getDeviceName();
-			}
-
-			// Update the status here
-			const bool status_ok = device_status.find("S_OK") != std::string::npos;
-
-			errorWhatText.get()->Visibility(
-				status_ok ? Visibility::Collapsed : Visibility::Visible);
-			errorWhatGrid.get()->Visibility(
-				status_ok ? Visibility::Collapsed : Visibility::Visible);
-			errorButtonsGrid.get()->Visibility(
-				status_ok ? Visibility::Collapsed : Visibility::Visible);
-			trackingDeviceErrorLabel.get()->Visibility(
-				status_ok ? Visibility::Collapsed : Visibility::Visible);
-			errorWhatText.get()->Visibility(
-				status_ok ? Visibility::Collapsed : Visibility::Visible);
-
-
-			// Split status and message by \n
-			deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
-			trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
-			errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 
 			OutputDebugString(L"Appending ");
 			OutputDebugString(wstring_cast(deviceName).c_str());
@@ -134,6 +81,39 @@ namespace winrt::KinectToVR::implementation
 
 		// Register tracking devices' list
 		TrackingDeviceListView().ItemsSource(m_TrackingDevicesViewModels);
+		NavigationCacheMode(Navigation::NavigationCacheMode::Required);
+
+		std::thread([&, this]() -> Windows::Foundation::IAsyncAction
+		{
+			/* Update the device in devices tab */
+
+			if (devicesListView.get() != nullptr &&
+				m_TrackingDevicesViewModels.Size() > k2app::interfacing::trackingDeviceID)
+			{
+				while (true)
+				{
+					// wait for a signal from the main proc
+					// by attempting to decrement the semaphore
+					smphSignalCurrentUpdate.acquire();
+
+					// Only when ready
+					if (devices_tab_setup_finished)
+					{
+						DispatcherQueue().TryEnqueue(Microsoft::UI::Dispatching::DispatcherQueuePriority::High,
+							[&, this] {
+
+								OutputDebugString(L"ID IS ");
+								OutputDebugString(std::to_wstring(k2app::interfacing::trackingDeviceID).c_str());
+								OutputDebugString(L"\n");
+								
+							});
+					}
+				}
+			}
+		}).detach();
+
+		// Notify of the setup's end
+		devices_tab_setup_finished = true;
 	}
 }
 
@@ -143,7 +123,7 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
 {
 	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(
-		sender.try_as<Controls::ListView>().SelectedIndex());
+		sender.as<Controls::ListView>().SelectedIndex());
 
 	std::string deviceName = "[UNKNOWN]";
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
@@ -151,7 +131,7 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		const auto device = std::get<ktvr::TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
 		deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
 		device_status = device->statusResultString(device->getStatusResult());
@@ -161,23 +141,15 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 	else if (trackingDevice.index() == 1)
 	{
 		// Joints Basis
-		const auto device = std::get<ktvr::TrackingDeviceBase_JointsBasis*>(trackingDevice);
+		const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
 		deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
 		device_status = device->statusResultString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
 	}
-	else if (trackingDevice.index() == 2)
-	{
-		// Override
-		const auto device = std::get<ktvr::TrackingDeviceBase_OnlyOverride*>(trackingDevice);
 
-		deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
-		device_status = device->statusResultString(device->getStatusResult());
-
-		deviceName = device->getDeviceName();
-	}
+	/* Update local statuses */
 
 	// Update the status here
 	const bool status_ok = device_status.find("S_OK") != std::string::npos;
@@ -189,8 +161,6 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 	errorButtonsGrid.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
 	trackingDeviceErrorLabel.get()->Visibility(
-		status_ok ? Visibility::Collapsed : Visibility::Visible);
-	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
 
 	// Split status and message by \n
@@ -209,14 +179,16 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(devicesListView->SelectedIndex());
+	auto _index = devicesListView->SelectedIndex();
+
+	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
 	OutputDebugString(L"Now reconnecting the tracking device...\n");
 
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		auto const& device = std::get<ktvr::TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
 		device->shutdown();
 		device->initialize();
@@ -225,21 +197,14 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 	else if (trackingDevice.index() == 1)
 	{
 		// Joints Basis
-		auto const& device = std::get<ktvr::TrackingDeviceBase_JointsBasis*>(trackingDevice);
+		auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
 		device->shutdown();
 		device->initialize();
 		device_status = device->statusResultString(device->getStatusResult());
 	}
-	else if (trackingDevice.index() == 2)
-	{
-		// Override
-		auto const& device = std::get<ktvr::TrackingDeviceBase_OnlyOverride*>(trackingDevice);
 
-		device->shutdown();
-		device->initialize();
-		device_status = device->statusResultString(device->getStatusResult());
-	}
+	/* Update local statuses */
 
 	// Update the status here
 	const bool status_ok = device_status.find("S_OK") != std::string::npos;
@@ -252,11 +217,12 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
 	trackingDeviceErrorLabel.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
-	errorWhatText.get()->Visibility(
-		status_ok ? Visibility::Collapsed : Visibility::Visible);
 
 	// Split status and message by \n
 	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
 	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
 	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+
+	// Update the GeneralPage status
+	TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
 }

@@ -46,21 +46,10 @@
 
 					<ListView.ItemTemplate>
 						<DataTemplate x:DataType="local:TrackingDevicesView">
-							<Grid Height="70">
+							<Grid Height="70" Name="DevicesViewGrid">
 								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="37" />
-								</Grid.ColumnDefinitions>
-
-								<Viewbox Height="150" Width="150"
-								         Grid.Column="1" Margin="0,0,0,0"
-								         VerticalAlignment="Center"
-								         HorizontalAlignment="Left">
-
-									<RadioButton IsHitTestVisible="False"
-									             IsChecked="{x:Bind Current, Mode=OneWay}"
-									             GroupName="DeviceRadioButton" />
-								</Viewbox>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
 								<TextBlock Grid.Column="0" Margin="10,0,0,2" FontWeight="Bold"
 								           VerticalAlignment="Center" FontSize="16"
@@ -116,11 +105,11 @@
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
-						<Button FontSize="15" Height="65"
+                        <Button FontSize="15" Height="65" x:Name="OpenDiscordButton"
 						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Join Discord"
 						        Margin="0,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
 						        VerticalAlignment="Stretch" />
-						<Button FontSize="15" Height="65"
+                        <Button FontSize="15" Height="65" x:Name="OpenDocsButton" 
 						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="View Docs"
 						        Margin="10,10,0,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
 						        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />

@@ -3,6 +3,7 @@
 #include "TrackingDevicesView.h"
 
 #include "TrackingDevices.h"
+#include "K2Shared.h"
 
 namespace winrt::KinectToVR::implementation
 {
