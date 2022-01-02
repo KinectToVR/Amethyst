@@ -166,7 +166,6 @@ namespace winrt::KinectToVR::implementation
 							auto device_type = root.get<std::string>("device_type");
 
 							auto linked_dll_path = root.get<std::string>("linked_dll_path");
-							auto force_default = root.get<bool>("force_default", false);
 
 							OutputDebugString(L"Found tracking device with:\n - name: ");
 							OutputDebugString(std::wstring(device_name.begin(), device_name.end()).c_str());
@@ -174,9 +173,6 @@ namespace winrt::KinectToVR::implementation
 							OutputDebugString(std::wstring(device_type.begin(), device_type.end()).c_str());
 							OutputDebugString(L"\n - linked dll: ");
 							OutputDebugString(std::wstring(linked_dll_path.begin(), linked_dll_path.end()).c_str());
-							OutputDebugString(force_default
-								                  ? L"\nWhich is forcing to be the default\n"
-								                  : L"\nWhich is not forcing to be the default\n");
 
 							auto deviceDllPath = entry.path() / "bin" / "win64" / ("device_" + device_name +
 								".dll");
@@ -209,11 +205,12 @@ namespace winrt::KinectToVR::implementation
 
 											int returnCode = ktvr::K2InitError_Invalid;
 											std::string stat = "E_UNKNOWN";
+											bool blocks_flip = false, supports_math = true;
 
 											if (strcmp(device_type.c_str(), "KinectBasis") == 0)
 											{
 												auto pDevice =
-													static_cast<ktvr::TrackingDeviceBase_KinectBasis*>(
+													static_cast<ktvr::K2TrackingDeviceBase_KinectBasis*>(
 														(hDeviceFactory)(ktvr::IK2API_Version, &returnCode));
 
 												if (returnCode == ktvr::K2InitError_None)
@@ -222,12 +219,15 @@ namespace winrt::KinectToVR::implementation
 
 													stat = pDevice->statusResultString(
 														pDevice->getStatusResult());
+
+													blocks_flip = !pDevice->isFlipSupported();
+													supports_math = pDevice->isAppOrientationSupported();
 												}
 											}
 											else if (strcmp(device_type.c_str(), "JointsBasis") == 0)
 											{
 												auto pDevice =
-													static_cast<ktvr::TrackingDeviceBase_JointsBasis*>(
+													static_cast<ktvr::K2TrackingDeviceBase_JointsBasis*>(
 														(hDeviceFactory)(ktvr::IK2API_Version, &returnCode));
 
 												if (returnCode == ktvr::K2InitError_None)
@@ -236,20 +236,9 @@ namespace winrt::KinectToVR::implementation
 
 													stat = pDevice->statusResultString(
 														pDevice->getStatusResult());
-												}
-											}
-											else if (strcmp(device_type.c_str(), "OnlyOverride") == 0)
-											{
-												auto pDevice =
-													static_cast<ktvr::TrackingDeviceBase_OnlyOverride*>(
-														(hDeviceFactory)(ktvr::IK2API_Version, &returnCode));
 
-												if (returnCode == ktvr::K2InitError_None)
-												{
-													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
-
-													stat = pDevice->statusResultString(
-														pDevice->getStatusResult());
+													blocks_flip = true; // Always the same for JointsBasis
+													supports_math = false; // Always the same for JointsBasis
 												}
 											}
 
@@ -272,9 +261,14 @@ namespace winrt::KinectToVR::implementation
 													OutputDebugString(
 														std::wstring(linked_dll_path.begin(), linked_dll_path.end())
 														.c_str());
-													OutputDebugString(force_default
-														                  ? L"\nWhich is forcing to be the default\n"
-														                  : L"\nWhich is not forcing to be the default\n");
+													OutputDebugString(L"\n - blocks flip: ");
+													OutputDebugString(
+														std::to_wstring(blocks_flip)
+														.c_str());
+													OutputDebugString(L"\n - supports math-based orientation: ");
+													OutputDebugString(
+														std::to_wstring(supports_math)
+														.c_str());
 
 													OutputDebugString(L"at index ");
 													OutputDebugString(std::to_wstring(
@@ -354,12 +348,45 @@ namespace winrt::KinectToVR::implementation
 						L"Registration of tracking devices has ended, there are ");
 					OutputDebugString(std::to_wstring(TrackingDevices::TrackingDevicesVector.size()).c_str());
 					OutputDebugString(L" tracking devices in total.\n");
-				}
-				else
-					OutputDebugString(L"No tracking devices found :/\n");
-			}
-		).detach();
 
+					// Now select the proper device
+					// TODO k2app::interfacing::trackingDeviceID must be read from settings before!
+					if (TrackingDevices::TrackingDevicesVector.size() > 0)
+					{
+						if (TrackingDevices::TrackingDevicesVector.size() <= k2app::interfacing::trackingDeviceID)
+							k2app::interfacing::trackingDeviceID = 0; // Select the first one
+
+						// Init the device
+						auto const& trackingDevice = 
+							TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::trackingDeviceID);
+						switch (trackingDevice.index())
+						{
+						case 0:
+							// Kinect Basis
+							std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
+							break;
+						case 1:
+							// Joints Basis
+							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
+							break;
+						}
+						
+						// Update the UI
+						TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
+					}
+					else // Log and exit, we have nothing to do
+					{
+						OutputDebugString(L"No proper tracking devices (K2Devices) found :/\n");
+						exit(-12); // -12 is for NO_DEVICES
+					}
+				}
+				else // Log and exit, we have nothing to do
+				{
+					OutputDebugString(L"No tracking devices (K2Devices) found :/\n");
+					exit(-12);
+				}
+			}
+		).join(); // Now this would be in background but to spare bugs, we're gonna wait
 
 		// Notify of the setup end
 		main_localInitFinished = true;
