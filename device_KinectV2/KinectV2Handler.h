@@ -6,14 +6,18 @@
 
 /* Not exported */
 
-class KinectV2Handler : public ktvr::TrackingDeviceBase_KinectBasis
+class KinectV2Handler : public ktvr::K2TrackingDeviceBase_KinectBasis
 {
 public:
 	KinectV2Handler()
 	{
 		//KinectV2Handler::initialize();
-		TrackingDeviceBase_KinectBasis::deviceType = ktvr::K2_Kinect;
-		TrackingDeviceBase_KinectBasis::deviceName = "Xbox One Kinect";
+		K2TrackingDeviceBase_KinectBasis::deviceType = ktvr::K2_Kinect;
+		K2TrackingDeviceBase_KinectBasis::deviceName = "Xbox One Kinect";
+
+		K2TrackingDeviceBase_KinectBasis::deviceCharacteristics = ktvr::K2_Character_Full;
+		K2TrackingDeviceBase_KinectBasis::flipSupported = true;
+		K2TrackingDeviceBase_KinectBasis::appOrientationSupported = true;
 	}
 
 	virtual ~KinectV2Handler()
