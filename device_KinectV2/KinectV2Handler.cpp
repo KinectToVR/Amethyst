@@ -246,8 +246,10 @@ void KinectV2Handler::shutdown()
 	{
 		// Release the Kinect sensor, called form k2vr
 		// OR from the crash handler
-		if (kinectSensor) // Protect from null call
+		if (kinectSensor) { // Protect from null call
+			kinectSensor->Close();
 			kinectSensor->Release();
+		}
 	}
 	catch (std::exception& e)
 	{
