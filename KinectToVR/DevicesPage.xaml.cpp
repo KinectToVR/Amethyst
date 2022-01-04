@@ -110,6 +110,8 @@ namespace winrt::KinectToVR::implementation
 					}
 				}
 			}
+
+			return Windows::Foundation::IAsyncAction(); // UWU
 		}).detach();
 
 		// Notify of the setup's end

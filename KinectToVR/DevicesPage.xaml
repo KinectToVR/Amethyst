@@ -92,7 +92,7 @@
 						           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
 
 						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold" x:Name="ErrorWhatText"
-						           Margin="10,30,0,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+						           Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
 							<TextBlock.Text>
 								There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
 							</TextBlock.Text>
