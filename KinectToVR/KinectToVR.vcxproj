@@ -159,9 +159,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml" />
-    <Page Include="ResourceDictionary.xaml">
-      <DeploymentContent>true</DeploymentContent>
-    </Page>
     <Page Include="SettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
