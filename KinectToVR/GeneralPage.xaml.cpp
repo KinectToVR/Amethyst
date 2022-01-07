@@ -37,19 +37,18 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 	OffsetsView().IsPaneOpen(true);
 }
 
-void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-	AutoCalibrationPane().Visibility(Visibility::Collapsed);
-	ManualCalibrationPane().Visibility(Visibility::Collapsed);
-	CalibrationSelectionPane().Visibility(Visibility::Visible);
-
-	CalibrationView().IsPaneOpen(true);
-
-	show_skeleton_previous = show_skeleton_current; // Back up
-	show_skeleton_current = true; // Change to show
-	SkeletonToggleButton().IsChecked(true); // Change to show
-}
+//void CalibrationButton_Click()
+//{
+//	AutoCalibrationPane().Visibility(Visibility::Collapsed);
+//	ManualCalibrationPane().Visibility(Visibility::Collapsed);
+//	CalibrationSelectionPane().Visibility(Visibility::Visible);
+//
+//	CalibrationView().IsPaneOpen(true);
+//
+//	show_skeleton_previous = show_skeleton_current; // Back up
+//	show_skeleton_current = true; // Change to show
+//	SkeletonToggleButton().IsChecked(true); // Change to show
+//}
 
 
 void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Checked(
@@ -381,6 +380,7 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 {
 	static auto boneLines = std::array<Shapes::Line, 24>();
 
+	SkeletonDrawingCanvas().Children().Clear();
 	for (auto& l : boneLines)
 	{
 		l = Shapes::Line();
@@ -611,4 +611,80 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 	});
 
 	timer.Start();
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// If no overrides
+	if (k2app::interfacing::overrideDeviceID < 0)
+	{
+		AutoCalibrationPane().Visibility(Visibility::Collapsed);
+		ManualCalibrationPane().Visibility(Visibility::Collapsed);
+		CalibrationSelectionPane().Visibility(Visibility::Visible);
+
+		CalibrationView().IsPaneOpen(true);
+
+		show_skeleton_previous = show_skeleton_current; // Back up
+		show_skeleton_current = true; // Change to show
+		SkeletonToggleButton().IsChecked(true); // Change to show
+	}
+	else
+	{
+		ChooseDeviceFlyout().ShowAt(CalibrationButton());
+
+		// Assume no head position providers
+		AutoCalibrationButton().IsEnabled(false);
+	}
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::BaseCalibration_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	ChooseDeviceFlyout().Hide();
+
+	AutoCalibrationPane().Visibility(Visibility::Collapsed);
+	ManualCalibrationPane().Visibility(Visibility::Collapsed);
+	CalibrationSelectionPane().Visibility(Visibility::Visible);
+
+	CalibrationView().IsPaneOpen(true);
+
+	show_skeleton_previous = show_skeleton_current; // Back up
+	show_skeleton_current = true; // Change to show
+	SkeletonToggleButton().IsChecked(true); // Change to show
+
+	// Eventually enable the auto calibration
+	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::trackingDeviceID);
+	if (trackingDevice.index() == 0)
+	{
+		// Kinect Basis
+		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceCharacteristics() == ktvr::K2_Character_Full)
+			AutoCalibrationButton().IsEnabled(true);
+	}
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	ChooseDeviceFlyout().Hide();
+
+	AutoCalibrationPane().Visibility(Visibility::Collapsed);
+	ManualCalibrationPane().Visibility(Visibility::Collapsed);
+	CalibrationSelectionPane().Visibility(Visibility::Visible);
+
+	CalibrationView().IsPaneOpen(true);
+
+	show_skeleton_previous = show_skeleton_current; // Back up
+	show_skeleton_current = true; // Change to show
+	SkeletonToggleButton().IsChecked(true); // Change to show
+
+	// Eventually enable the auto calibration
+	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::overrideDeviceID);
+	if (trackingDevice.index() == 0)
+	{
+		// Kinect Basis
+		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceCharacteristics() == ktvr::K2_Character_Full)
+			AutoCalibrationButton().IsEnabled(true);
+	}
 }
