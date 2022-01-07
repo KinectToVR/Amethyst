@@ -28,8 +28,10 @@ std::string KinectV2Handler::statusResultString(HRESULT stat)
 	switch (stat)
 	{
 	case S_OK: return "Success!\nS_OK\nEverything's good!";
-	case S_FALSE: return "Sensor Unavailable!\nE_NOTAVAILABLE\nCheck if the Kinect plugged in to your PC's USB and power plugs.";
-	default: return "Undefined: " + std::to_string(stat) + "\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
+	case S_FALSE: return
+			"Sensor Unavailable!\nE_NOTAVAILABLE\nCheck if the Kinect plugged in to your PC's USB and power plugs.";
+	default: return "Undefined: " + std::to_string(stat) +
+			"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
 }
 
@@ -74,10 +76,15 @@ void KinectV2Handler::terminateSkeleton()
 		{
 			throw std::exception("Couldn't unsubscribe frame!");
 		}
-		CloseHandle((HANDLE)h_bodyFrameEvent);
+		__try
+		{
+			CloseHandle((HANDLE)h_bodyFrameEvent);
+			bodyFrameReader->Release();
+		}
+		__except (EXCEPTION_INVALID_HANDLE)
+		{
+		}
 		h_bodyFrameEvent = NULL;
-
-		bodyFrameReader->Release();
 		bodyFrameReader = nullptr;
 	}
 }
@@ -246,7 +253,11 @@ void KinectV2Handler::shutdown()
 	{
 		// Release the Kinect sensor, called form k2vr
 		// OR from the crash handler
-		if (kinectSensor) { // Protect from null call
+		if (kinectSensor)
+		{
+			// Protect from null call
+			terminateSkeleton();
+
 			kinectSensor->Close();
 			kinectSensor->Release();
 		}
