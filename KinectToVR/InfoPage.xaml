@@ -11,23 +11,25 @@
 	xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
 
-    <Grid>
+    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="700" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
-		              VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
+	    <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
+	                  VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
 
                 <Grid Background="Transparent" Height="75"/>
 
 	            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal">
-		            <Image Source="ms-appx:///Assets/ktvr.png" Height="200" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <TextBlock Margin="30,0,0,7" Text="KinectToVR" FontSize="85" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+		            <Image Source="ms-appx:///Assets/ktvr.png" Height="200" Width="200" HorizontalAlignment="Left" 
+		                   VerticalAlignment="Center" ToolTipService.ToolTip="Pls donate if you like us! ˶ᵔ ᵕ ᵔ˶"/>
+                    <TextBlock Margin="30,0,0,7" Text="KinectToVR" FontSize="85" VerticalAlignment="Center" 
+                               HorizontalAlignment="Right" ToolTipService.ToolTip="Pls donate if you like us! ˶ᵔ ᵕ ᵔ˶"/>
 	            </StackPanel>
 
                 <TextBlock FontWeight="SemiBold" Text="Credits" FontSize="25" Margin="0,60,0,0"/>
@@ -86,7 +88,7 @@
 	                <Run xml:space="preserve">Vexa (vexatag)</Run>
                 </TextBlock>
 
-                <TextBlock FontWeight="SemiBold" Text="And everyone else who helped along the way. " Margin="0,20,0,0"/>
+                <TextBlock FontWeight="SemiBold" Text="And everyone else who helped along the way. " Margin="0,20,0,20"/>
 
             </StackPanel>
 
