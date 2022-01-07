@@ -389,25 +389,60 @@ namespace winrt::KinectToVR::implementation
 							std::this_thread::sleep_for(std::chrono::seconds(3));
 
 							// Init the device (optionally this time)
-							auto const& trackingDevice =
-								TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::trackingDeviceID);
-							switch (trackingDevice.index())
+							// Base
 							{
-							case 0:
-								// Kinect Basis
-								if (!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isInitialized())
-									std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
-								break;
-							case 1:
-								// Joints Basis
-								if (!std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->isInitialized())
-									std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
-								break;
+								switch (auto const& _trackingDevice =
+										TrackingDevices::TrackingDevicesVector.at(
+											k2app::interfacing::trackingDeviceID);
+									_trackingDevice.index())
+								{
+								case 0:
+									// Kinect Basis
+									if (!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_trackingDevice)->
+										isInitialized())
+										std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_trackingDevice)->
+											initialize();
+									break;
+								case 1:
+									// Joints Basis
+									if (!std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
+										isInitialized())
+										std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
+											initialize();
+									break;
+								}
 							}
+							// Override
+							if (k2app::interfacing::overrideDeviceID > -1 &&
+								k2app::interfacing::overrideDeviceID != k2app::interfacing::trackingDeviceID)
+							{
+								switch (auto const& _trackingDevice =
+										TrackingDevices::TrackingDevicesVector.at(
+											k2app::interfacing::overrideDeviceID);
+									_trackingDevice.index())
+								{
+								case 0:
+									// Kinect Basis
+									if (!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_trackingDevice)->
+										isInitialized())
+										std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_trackingDevice)->
+											initialize();
+									break;
+								case 1:
+									// Joints Basis
+									if (!std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
+										isInitialized())
+										std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
+											initialize();
+									break;
+								}
+							}
+							else k2app::interfacing::overrideDeviceID = -1; // Set to NONE
 						}).detach();
 
 						// Update the UI
 						TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
+						//TrackingDevices::updateOverrideDeviceUI(k2app::interfacing::overrideDeviceID); // Not yet
 					}
 					else // Log and exit, we have nothing to do
 					{
