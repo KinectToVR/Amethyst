@@ -25,6 +25,8 @@ namespace k2app
 				deviceNameLabel,
 				deviceStatusLabel,
 				errorWhatText,
+				baseDeviceName,
+				overrideDeviceName,
 				trackingDeviceErrorLabel;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
