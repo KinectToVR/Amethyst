@@ -42,5 +42,6 @@ namespace k2app
 	{
 		// Current tracking device: 0 is the default
 		inline uint32_t trackingDeviceID = 0;
+		inline int32_t overrideDeviceID = -1;
 	}
 }
