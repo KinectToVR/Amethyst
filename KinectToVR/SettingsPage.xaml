@@ -10,7 +10,7 @@
 	xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
-	<Grid>
+    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="700" />
@@ -20,7 +20,7 @@
 		<ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
 		              VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
-			<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Orientation="Vertical">
+			<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
 
 				<TextBlock FontWeight="SemiBold" Text="Tracking" FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
 
@@ -232,7 +232,7 @@
 
 					<Button Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" Height="40"
 					        Style="{StaticResource AccentButtonStyle}" x:Name="RestartButton"
-							Click="RestartButton_Click"
+							Click="RestartButton_Click" FontWeight="SemiBold"
 					        HorizontalAlignment="Stretch" VerticalAlignment="Center"
 					        Content="Restart SteamVR" FontSize="16" IsEnabled="False" />
 
