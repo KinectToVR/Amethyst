@@ -15,6 +15,8 @@ namespace winrt::KinectToVR::implementation
 		                                             winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
 		                                             const& e);
 		void ReconnectDeviceButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void SetAsOverrideButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void SetAsBaseButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 	};
 }
 

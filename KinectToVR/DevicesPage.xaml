@@ -10,17 +10,15 @@
 	xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
-	<Grid>
+    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
 
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="450" />
 				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="290" />
-				<ColumnDefinition Width="6*" />
-				<ColumnDefinition Width="150" />
-				<ColumnDefinition Width="6*" />
-			</Grid.ColumnDefinitions>
+				<ColumnDefinition Width="15*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
 
 			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0">
 
@@ -67,23 +65,56 @@
 
 				<Grid.RowDefinitions>
 					<RowDefinition Height="60" />
+					<RowDefinition Height="73" />
+					<RowDefinition Height="50" />
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
 
-				<TextBlock FontWeight="SemiBold" Text="E_UNKNOWN"
-				           x:Name="SelectedDeviceNameLabel"
+				<!--Header Part-->
+
+				<TextBlock FontWeight="SemiBold" Text="Currently Tracking"
 				           FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
 
-				<StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="1">
+                <StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="1" HorizontalAlignment="Stretch">
 
-					<StackPanel Orientation="Horizontal" Margin="40,5,20,0">
+	                <StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch" MinWidth="290">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+	                               Text="Device:" Margin="0,0,5,0" Foreground="LightGray" />
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+						           Text="E_UNKNOWN" x:Name="BaseDeviceName" />
+                    </StackPanel>
+
+	                <StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch" MinWidth="290">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+	                               Text="Override:" Margin="0,0,5,0" Foreground="LightGray" />
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                   Text="No Overrides" x:Name="OverrideDeviceName" />
+                    </StackPanel>
+
+                </StackPanel>
+
+                <!--Status Part-->
+
+				<TextBlock FontWeight="SemiBold" Text="E_UNKNOWN"
+				           x:Name="SelectedDeviceNameLabel"
+				           FontSize="25" Margin="40,20,0,0" Grid.Row="2" />
+
+				<StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="3" HorizontalAlignment="Stretch">
+
+					<Grid Margin="40,5,20,0" HorizontalAlignment="Stretch" MinWidth="290">
 						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
 						           Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
 						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-						           Text="Not Powered" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
-					</StackPanel>
+						           Text="Connection error!" Margin="55,0,0,0" x:Name="TrackingDeviceStatusLabel" />
 
-					<Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
+						<Button VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Reconnect"
+						        Margin="0,0,3,0" CornerRadius="3" Height="35"
+						        HorizontalAlignment="Right" VerticalAlignment="Top" 
+						        x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click"/>
+                    </Grid>
+
+					<Grid Background="{ThemeResource SystemControlAcrylicElementBrush}" 
+					      Width="290" HorizontalAlignment="Left"
 					      Height="125" Margin="40,8,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
 
 						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
@@ -99,7 +130,8 @@
 						</TextBlock>
 					</Grid>
 
-					<Grid Margin="40,12,0,0" x:Name="ErrorButtonsGrid">
+					<Grid Margin="40,12,0,0" x:Name="ErrorButtonsGrid"
+					      Width="290" HorizontalAlignment="Left">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="*" />
@@ -116,16 +148,46 @@
 
 					</Grid>
 
-				</StackPanel>
+					<!--Changer Part-->
+
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,0" HorizontalAlignment="Stretch" 
+                                x:Name="TrackingDeviceChangePanel">
+
+                        <Grid Margin="40,0,20,0" HorizontalAlignment="Stretch" MinWidth="290">
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+						           Text="Set as tracking device:" Margin="0,0,0,0" Foreground="LightGray" />
+                        </Grid>
+
+	                    <Grid Margin="40,0,0,0" x:Name="g"
+	                          Width="290" HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button FontSize="15" Height="65"
+						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Set as Override"
+						        Margin="0,10,10,10" CornerRadius="3" Grid.Column="0" 
+						        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+								x:Name="SetAsOverrideButton" Click="SetAsOverrideButton_Click"
+						        ToolTipService.ToolTip="The device will override position/rotation&#x0a;of one or more virtual trackers."/>
+
+                            <Button FontSize="15" Height="65"
+						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Set as Base"
+						        Margin="10,10,0,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
+						        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" 
+						        x:Name="SetAsBaseButton" Click="SetAsBaseButton_Click"
+						        ToolTipService.ToolTip="The device will provide the primary&#x0a;position and rotation of virtual trackers."/>
+
+                        </Grid>
+
+                    </StackPanel>
+
+                </StackPanel>
 
 			</Grid>
 
-            <Button VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Reconnect"
-			        Margin="3,70,37,0" CornerRadius="3" Grid.Column="4" Height="35"
-			        HorizontalAlignment="Stretch" VerticalAlignment="Top" 
-			        x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click"/>
-
-        </Grid>
+		</Grid>
 
 	</Grid>
 
