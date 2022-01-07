@@ -34,7 +34,15 @@ namespace k2app
 				errorWhatGrid;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ListView> devicesListView;
-			inline std::binary_semaphore smphSignalCurrentUpdate{ 0 };
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel> trackingDeviceChangePanel;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
+				setAsOverrideButton,
+				setAsBaseButton;
+
+			inline std::binary_semaphore smphSignalCurrentUpdate{0};
+			inline uint32_t selectedTrackingDeviceID = 0;
 		}
 	}
 
