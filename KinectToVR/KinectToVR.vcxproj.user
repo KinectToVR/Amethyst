@@ -12,4 +12,12 @@
     <BadgeLogoSource>F:\repos\K2App\KinectToVR\Assets\ktvr.png</BadgeLogoSource>
     <PackageLogoSource>F:\repos\K2App\KinectToVR\Assets\ktvr.png</PackageLogoSource>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebuggerType>NativeWithManagedCore</DebuggerType>
+    <DebuggerFlavor>AppHostLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DebuggerType>NativeWithManagedCore</DebuggerType>
+    <DebuggerFlavor>AppHostLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>
