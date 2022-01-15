@@ -75,10 +75,12 @@ namespace winrt::KinectToVR::implementation
 		baseDeviceName = std::make_shared<Controls::TextBlock>(BaseDeviceName());
 		overrideDeviceName = std::make_shared<Controls::TextBlock>(OverrideDeviceName());
 		overridesLabel = std::make_shared<Controls::TextBlock>(OverridesLabel());
+		jointBasisLabel = std::make_shared<Controls::TextBlock>(JointBasisLabel());
 
 		deviceErrorGrid = std::make_shared<Controls::Grid>(DeviceErrorGrid());
 		trackingDeviceChangePanel = std::make_shared<Controls::Grid>(TrackingDeviceChangePanel());
 		overridesControls = std::make_shared<Controls::Grid>(OverridesControls());
+		jointBasisControls = std::make_shared<Controls::Grid>(JointBasisControls());
 
 		devicesListView = std::make_shared<Controls::ListView>(TrackingDeviceListView());
 
@@ -198,6 +200,10 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 		device_status = device->statusResultString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
+
+		// We've selected a kinectbasis device, so this should be hidden
+		jointBasisControls.get()->Visibility(Visibility::Collapsed);
+		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (trackingDevice.index() == 1)
 	{
@@ -208,6 +214,20 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 		device_status = device->statusResultString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
+
+		// We've selected a jointsbasis device, so this should be visible
+		//	at least when the device is online
+		jointBasisControls.get()->Visibility(
+			(device_status.find("S_OK") != std::string::npos &&
+				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+				? Visibility::Visible
+				: Visibility::Collapsed);
+
+		jointBasisLabel.get()->Visibility(
+			(device_status.find("S_OK") != std::string::npos &&
+				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+				? Visibility::Visible
+				: Visibility::Collapsed);
 	}
 
 	// Update the status here
@@ -265,7 +285,7 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 
 
 void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
-	winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender, 
+	winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args)
 {
 	auto _index = devicesListView->SelectedIndex();
@@ -281,6 +301,10 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 
 		device->initialize();
 		device_status = device->statusResultString(device->getStatusResult());
+
+		// We've selected a kinectbasis device, so this should be hidden
+		jointBasisControls.get()->Visibility(Visibility::Collapsed);
+		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (trackingDevice.index() == 1)
 	{
@@ -289,6 +313,20 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 
 		device->initialize();
 		device_status = device->statusResultString(device->getStatusResult());
+
+		// We've selected a jointsbasis device, so this should be visible
+		//	at least when the device is online
+		jointBasisControls.get()->Visibility(
+			(device_status.find("S_OK") != std::string::npos &&
+				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		jointBasisLabel.get()->Visibility(
+			(device_status.find("S_OK") != std::string::npos &&
+				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+			? Visibility::Visible
+			: Visibility::Collapsed);
 	}
 
 	/* Update local statuses */
@@ -317,10 +355,9 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 
 
 void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, 
+	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-
 }
 
 
@@ -343,6 +380,10 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 
 		device->initialize(); // Init the device as we'll be using it
 		device_status = device->statusResultString(device->getStatusResult());
+
+		// We've selected a kinectbasis device, so this should be hidden
+		jointBasisControls.get()->Visibility(Visibility::Collapsed);
+		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (trackingDevice.index() == 1)
 	{
@@ -352,6 +393,10 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 
 		device->initialize(); // Init the device as we'll be using it
 		device_status = device->statusResultString(device->getStatusResult());
+
+		// We've selected an override device, so this should be hidden
+		jointBasisControls.get()->Visibility(Visibility::Collapsed);
+		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
 
 	/* Update local statuses */
@@ -384,7 +429,7 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
 	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
 	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
-	
+
 	k2app::interfacing::overrideDeviceID = selectedTrackingDeviceID;
 	//TrackingDevices::updateOverrideDeviceUI(k2app::interfacing::overrideDeviceID); // Not yet
 }
@@ -409,6 +454,10 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 
 		device->initialize(); // Init the device as we'll be using it
 		device_status = device->statusResultString(device->getStatusResult());
+
+		// We've selected a kinectbasis device, so this should be hidden
+		jointBasisControls.get()->Visibility(Visibility::Collapsed);
+		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (trackingDevice.index() == 1)
 	{
@@ -418,6 +467,14 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 
 		device->initialize(); // Init the device as we'll be using it
 		device_status = device->statusResultString(device->getStatusResult());
+
+		// We've selected a jointsbasis device, so this should be visible
+		//	at least when the device is online
+		jointBasisControls.get()->Visibility(
+			(device_status.find("S_OK") != std::string::npos) ? Visibility::Visible : Visibility::Collapsed);
+
+		jointBasisLabel.get()->Visibility(
+			(device_status.find("S_OK") != std::string::npos) ? Visibility::Visible : Visibility::Collapsed);
 	}
 
 	/* Update local statuses */
@@ -452,7 +509,7 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
 	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
 	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
-	
+
 	k2app::interfacing::trackingDeviceID = selectedTrackingDeviceID;
 	if (k2app::interfacing::overrideDeviceID == k2app::interfacing::trackingDeviceID)
 		k2app::interfacing::overrideDeviceID = -1; // Reset the override

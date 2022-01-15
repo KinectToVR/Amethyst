@@ -28,12 +28,14 @@ namespace k2app
 				baseDeviceName,
 				overrideDeviceName,
 				trackingDeviceErrorLabel,
-				overridesLabel;
+				overridesLabel,
+				jointBasisLabel;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
 				deviceErrorGrid,
 				trackingDeviceChangePanel,
-				overridesControls;
+				overridesControls,
+				jointBasisControls;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ListView> devicesListView;
 			
