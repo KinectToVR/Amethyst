@@ -10,15 +10,15 @@
 	xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
-    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
+	<Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
 
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="450" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="15*" />
-                <ColumnDefinition Width="3*" />
-            </Grid.ColumnDefinitions>
+				<ColumnDefinition Width="20" />
+			</Grid.ColumnDefinitions>
 
 			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0">
 
@@ -46,8 +46,8 @@
 						<DataTemplate x:DataType="local:TrackingDevicesView">
 							<Grid Height="70" Name="DevicesViewGrid">
 								<Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
 
 								<TextBlock Grid.Column="0" Margin="10,0,0,2" FontWeight="Bold"
 								           VerticalAlignment="Center" FontSize="16"
@@ -75,25 +75,25 @@
 				<TextBlock FontWeight="SemiBold" Text="Currently Tracking"
 				           FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
 
-                <StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="1" HorizontalAlignment="Stretch">
+				<StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="1" HorizontalAlignment="Stretch">
 
-	                <StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch" MinWidth="290">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-	                               Text="Device:" Margin="0,0,5,0" Foreground="LightGray" />
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+					<StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch" MinWidth="290">
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+						           Text="Device:" Margin="0,0,5,0" Foreground="LightGray" />
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
 						           Text="E_UNKNOWN" x:Name="BaseDeviceName" />
-                    </StackPanel>
+					</StackPanel>
 
-	                <StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch" MinWidth="290">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-	                               Text="Override:" Margin="0,0,5,0" Foreground="LightGray" />
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                   Text="No Overrides" x:Name="OverrideDeviceName" />
-                    </StackPanel>
+					<StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch" MinWidth="290">
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+						           Text="Override:" Margin="0,0,5,0" Foreground="LightGray" />
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+						           Text="No Overrides" x:Name="OverrideDeviceName" />
+					</StackPanel>
 
-                </StackPanel>
+				</StackPanel>
 
-                <!--Status Part-->
+				<!--Status Part-->
 
 				<TextBlock FontWeight="SemiBold" Text="E_UNKNOWN"
 				           x:Name="SelectedDeviceNameLabel"
@@ -101,89 +101,320 @@
 
 				<StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="3" HorizontalAlignment="Stretch">
 
-					<Grid Margin="40,5,20,0" HorizontalAlignment="Stretch" MinWidth="290">
-						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-						           Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
-						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-						           Text="Connection error!" Margin="55,0,0,0" x:Name="TrackingDeviceStatusLabel" />
+					<!--Status + Reconnect-->
 
-						<Button VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Reconnect"
-						        Margin="0,0,3,0" CornerRadius="3" Height="35"
-						        HorizontalAlignment="Right" VerticalAlignment="Top" 
-						        x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click"/>
-                    </Grid>
-
-					<Grid Background="{ThemeResource SystemControlAcrylicElementBrush}" 
-					      Width="290" HorizontalAlignment="Left"
-					      Height="125" Margin="40,8,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
-
-						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-						           Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
-						           x:Name="TrackingDeviceErrorLabel"
-						           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
-
-						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold" x:Name="ErrorWhatText"
-						           Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
-							<TextBlock.Text>
-								There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
-							</TextBlock.Text>
-						</TextBlock>
-					</Grid>
-
-					<Grid Margin="40,12,0,0" x:Name="ErrorButtonsGrid"
-					      Width="290" HorizontalAlignment="Left">
+					<Grid Margin="40,5,0,0" HorizontalAlignment="Stretch" MinWidth="290">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="25*" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
-                        <Button FontSize="15" Height="65" x:Name="OpenDiscordButton"
-						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Join Discord"
-						        Margin="0,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
-						        VerticalAlignment="Stretch" />
-                        <Button FontSize="15" Height="65" x:Name="OpenDocsButton" 
-						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="View Docs"
-						        Margin="10,10,0,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
-						        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
+						<Grid Grid.Column="0">
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+							           Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+							           Text="Connection error!" Margin="55,0,0,0" x:Name="TrackingDeviceStatusLabel" />
+
+							<SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Reconnect"
+							             Margin="0,0,3,0" CornerRadius="3" Height="35" Width="140"
+							             HorizontalAlignment="Right" VerticalAlignment="Top"
+							             x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click">
+
+								<SplitButton.Flyout>
+									<Flyout Placement="Bottom">
+										<Button FontWeight="SemiBold" Content="Disconnect"
+										        CornerRadius="3" Height="35"
+										        x:Name="DisconnectDeviceButton"
+										        Click="DisconnectDeviceButton_Click" />
+									</Flyout>
+								</SplitButton.Flyout>
+
+							</SplitButton>
+						</Grid>
+
+					</Grid>
+
+					<!--Error Part-->
+
+                    <Grid Margin="40,5,0,0" HorizontalAlignment="Stretch" MinWidth="290" x:Name="DeviceErrorGrid">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="25*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+
+						<Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
+						      Width="290" HorizontalAlignment="Left" Grid.Column="0"
+						      Height="115" Margin="0,0,0,0" CornerRadius="3">
+
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+							           Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
+							           x:Name="TrackingDeviceErrorLabel"
+							           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
+
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold" x:Name="ErrorWhatText"
+							           Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+								<TextBlock.Text>
+									There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
+								</TextBlock.Text>
+							</TextBlock>
+						</Grid>
+
+						<StackPanel Grid.Column="0" Margin="0,0,0,0" Orientation="Vertical">
+
+							<Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+							        Content="View Docs" Margin="0,0,3,5" CornerRadius="3"
+							        x:Name="OpenDocsButton"
+							        Height="55" Width="140" Style="{StaticResource AccentButtonStyle}"
+							        HorizontalAlignment="Right" VerticalAlignment="Top" />
+
+							<Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+							        Content="Join Discord" Margin="0,0,3,0" CornerRadius="3"
+							        Height="55" Width="140" x:Name="OpenDiscordButton"
+							        HorizontalAlignment="Right" VerticalAlignment="Top" />
+
+						</StackPanel>
 
 					</Grid>
 
 					<!--Changer Part-->
 
-                    <StackPanel Orientation="Vertical" Margin="0,0,0,0" HorizontalAlignment="Stretch" 
-                                x:Name="TrackingDeviceChangePanel">
+					<Grid Margin="40,5,0,0" HorizontalAlignment="Stretch" MinWidth="290" x:Name="TrackingDeviceChangePanel">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="25*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
 
-                        <Grid Margin="40,0,20,0" HorizontalAlignment="Stretch" MinWidth="290">
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-						           Text="Set as tracking device:" Margin="0,0,0,0" Foreground="LightGray" />
-                        </Grid>
+						<Grid Grid.Column="0">
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+							           Text="Set as Tracking Device:" Margin="0,0,0,0" Foreground="LightGray" />
 
-	                    <Grid Margin="40,0,0,0" x:Name="g"
-	                          Width="290" HorizontalAlignment="Left">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+							<Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+							        Content="Set Device as..." Margin="0,0,3,0" CornerRadius="3"
+							        Height="35" Width="140"
+							        HorizontalAlignment="Right" VerticalAlignment="Top"
+							        ToolTipService.ToolTip="Set the selected device&#x0a;as a Base or an Override.">
 
-                            <Button FontSize="15" Height="65"
-						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Set as Override"
-						        Margin="0,10,10,10" CornerRadius="3" Grid.Column="0" 
-						        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-								x:Name="SetAsOverrideButton" Click="SetAsOverrideButton_Click"
-						        ToolTipService.ToolTip="The device will override position/rotation&#x0a;of one or more virtual trackers."/>
+								<Button.Flyout>
+									<Flyout Placement="Bottom">
+										<StackPanel Orientation="Vertical">
+											<Button FontWeight="SemiBold" Content="Set as Base"
+											        Style="{StaticResource AccentButtonStyle}"
+											        HorizontalAlignment="Stretch"
+											        CornerRadius="3" Height="35" Margin="0,0,0,15"
+											        x:Name="SetAsBaseButton" Click="SetAsBaseButton_Click"
+											        ToolTipService.ToolTip="The device will provide the primary&#x0a;position and rotation of virtual trackers." />
+											<Button FontWeight="SemiBold" Content="Set as Override"
+											        HorizontalAlignment="Stretch"
+											        CornerRadius="3" Height="35"
+											        x:Name="SetAsOverrideButton" Click="SetAsOverrideButton_Click"
+											        ToolTipService.ToolTip="The device will override position/rotation&#x0a;of one or more virtual trackers." />
+										</StackPanel>
+									</Flyout>
+								</Button.Flyout>
 
-                            <Button FontSize="15" Height="65"
-						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Set as Base"
-						        Margin="10,10,0,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
-						        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" 
-						        x:Name="SetAsBaseButton" Click="SetAsBaseButton_Click"
-						        ToolTipService.ToolTip="The device will provide the primary&#x0a;position and rotation of virtual trackers."/>
+							</Button>
+						</Grid>
 
-                        </Grid>
+					</Grid>
 
-                    </StackPanel>
+					<!--Overrides Part-->
 
-                </StackPanel>
+					<TextBlock FontWeight="SemiBold" Text="Overrides" x:Name="OverridesLabel"
+					           FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
+
+					<Grid Margin="0,15,0,0" x:Name="OverridesControls">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="40" />
+							<ColumnDefinition Width="3*" MinWidth="80" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="3*" MinWidth="140" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="3*" MinWidth="140" />
+							<ColumnDefinition Width="0" />
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition Height="50" />
+							<RowDefinition Height="50" />
+							<RowDefinition Height="50" />
+							<RowDefinition Height="50" />
+						</Grid.RowDefinitions>
+
+
+						<!-- Background -->
+						<Grid Grid.Column="1" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      CornerRadius="5,0,0,0" Canvas.ZIndex="-1" />
+						<Grid Grid.Column="2" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      Canvas.ZIndex="-1" />
+						<Grid Grid.Column="3" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      Canvas.ZIndex="-1" />
+						<Grid Grid.Column="4" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      Canvas.ZIndex="-1" />
+						<Grid Grid.Column="5" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      Canvas.ZIndex="-1" />
+						<Grid Grid.Column="6" Grid.Row="0" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      CornerRadius="0,5,0,0" Canvas.ZIndex="-1" />
+
+						<!-- Background -->
+						<Grid Grid.Column="1" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      Canvas.ZIndex="-1" />
+						<Grid Grid.Column="2" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      Canvas.ZIndex="-1" />
+						<Grid Grid.Column="3" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      Canvas.ZIndex="-1" />
+						<Grid Grid.Column="4" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      Canvas.ZIndex="-1" />
+						<Grid Grid.Column="5" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      Canvas.ZIndex="-1" />
+						<Grid Grid.Column="6" Grid.Row="2" Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+						      Canvas.ZIndex="-1" />
+
+						<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+						           FontWeight="SemiBold" Text="Tracker:"
+						           Margin="0,0,20,0" Grid.Column="1" Grid.Row="0" />
+						<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+						           FontWeight="SemiBold" Text="Position:"
+						           Margin="0,0,20,0" Grid.Column="3" Grid.Row="0" />
+						<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+						           FontWeight="SemiBold" Text="Rotation:"
+						           Margin="0,0,20,0" Grid.Column="5" Grid.Row="0" />
+
+						<Grid Grid.Column="1" Grid.Row="1" Width="110" Margin="0,0,0,0"
+						      HorizontalAlignment="Center" VerticalAlignment="Center">
+
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+
+							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0"
+							           FontWeight="SemiBold" Text="Waist" Margin="0,0,0,0" />
+							<AppBarButton HorizontalAlignment="Right" VerticalAlignment="Center"
+							              Margin="0,3,0,0" Width="35" Height="48"
+							              ToolTipService.ToolTip="Overrides" Grid.Column="1">
+								<AppBarButton.Flyout>
+									<MenuFlyout>
+										<ToggleMenuFlyoutItem x:Name="OverrideWaistPosition" Text="Position" IsChecked="True" />
+										<ToggleMenuFlyoutItem x:Name="OverrideWaistRotation" Text="Rotation" IsChecked="True" />
+									</MenuFlyout>
+								</AppBarButton.Flyout>
+							</AppBarButton>
+						</Grid>
+
+						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
+						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
+						          x:Name="WaistPositionOverrideOptionBox"
+						          IsEnabled="{Binding ElementName=OverrideWaistPosition, Path=IsChecked, TargetNullValue=False}"
+						          Grid.Column="3" Grid.Row="1" Margin="0,0,0,0">
+							<x:String>No Override</x:String>
+							<x:String>DUM_Joint0</x:String>
+							<x:String>DUM_Joint1</x:String>
+							<x:String>DUM_Joint2</x:String>
+						</ComboBox>
+
+						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
+						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
+						          x:Name="WaistRotationOverrideOptionBox"
+						          IsEnabled="{Binding ElementName=OverrideWaistRotation, Path=IsChecked, TargetNullValue=False}"
+						          Grid.Column="5" Grid.Row="1" Margin="0,0,0,0">
+							<x:String>No Override</x:String>
+							<x:String>DUM_Joint0</x:String>
+							<x:String>DUM_Joint1</x:String>
+							<x:String>DUM_Joint2</x:String>
+						</ComboBox>
+
+						<Grid Grid.Column="1" Grid.Row="2" Width="110" Margin="0,0,0,0"
+						      HorizontalAlignment="Center" VerticalAlignment="Center">
+
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+
+							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0"
+							           FontWeight="SemiBold" Text="Left Foot" Margin="0,0,0,0" />
+							<AppBarButton HorizontalAlignment="Right" VerticalAlignment="Center"
+							              Margin="0,3,0,0" Width="35" Height="48"
+							              ToolTipService.ToolTip="Overrides" Grid.Column="1">
+								<AppBarButton.Flyout>
+									<MenuFlyout>
+										<ToggleMenuFlyoutItem x:Name="OverrideLeftFootPosition" Text="Position" IsChecked="False" />
+										<ToggleMenuFlyoutItem x:Name="OverrideLeftFootRotation" Text="Rotation" IsChecked="False" />
+									</MenuFlyout>
+								</AppBarButton.Flyout>
+							</AppBarButton>
+						</Grid>
+
+						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
+						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
+						          x:Name="LeftFootPositionOverrideOptionBox"
+						          IsEnabled="{Binding ElementName=OverrideLeftFootPosition, Path=IsChecked, TargetNullValue=False}"
+						          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
+							<x:String>No Override</x:String>
+							<x:String>DUM_Joint0</x:String>
+							<x:String>DUM_Joint1</x:String>
+							<x:String>DUM_Joint2</x:String>
+						</ComboBox>
+
+						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
+						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
+						          x:Name="LeftFootRotationOverrideOptionBox"
+						          IsEnabled="{Binding ElementName=OverrideLeftFootRotation, Path=IsChecked, TargetNullValue=False}"
+						          Grid.Column="5" Grid.Row="2" Margin="0,0,0,0">
+							<x:String>No Override</x:String>
+							<x:String>DUM_Joint0</x:String>
+							<x:String>DUM_Joint1</x:String>
+							<x:String>DUM_Joint2</x:String>
+						</ComboBox>
+
+						<Grid Grid.Column="1" Grid.Row="3" Width="110" Margin="0,0,0,0" Name="RightFootOverrideLabel"
+						      HorizontalAlignment="Center" VerticalAlignment="Center">
+
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+
+							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0"
+							           FontWeight="SemiBold" Text="Right Foot" Margin="0,0,0,0" />
+							<AppBarButton HorizontalAlignment="Right" VerticalAlignment="Center"
+							              Margin="0,3,0,0" Width="35" Height="48"
+							              ToolTipService.ToolTip="Overrides" Grid.Column="1">
+								<AppBarButton.Flyout>
+									<MenuFlyout>
+										<ToggleMenuFlyoutItem x:Name="OverrideRightFootPosition" Text="Position" IsChecked="False" />
+										<ToggleMenuFlyoutItem x:Name="OverrideRightFootRotation" Text="Rotation" IsChecked="False" />
+									</MenuFlyout>
+								</AppBarButton.Flyout>
+							</AppBarButton>
+						</Grid>
+
+						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
+						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
+						          x:Name="RightFootPositionOverrideOptionBox"
+						          IsEnabled="{Binding ElementName=OverrideRightFootPosition, Path=IsChecked, TargetNullValue=False}"
+						          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
+							<x:String>No Override</x:String>
+							<x:String>DUM_Joint0</x:String>
+							<x:String>DUM_Joint1</x:String>
+							<x:String>DUM_Joint2</x:String>
+						</ComboBox>
+
+						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
+						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
+						          x:Name="RightFootRotationOverrideOptionBox"
+						          IsEnabled="{Binding ElementName=OverrideRightFootRotation, Path=IsChecked, TargetNullValue=False}"
+						          Grid.Column="5" Grid.Row="3" Margin="0,0,0,0">
+							<x:String>No Override</x:String>
+							<x:String>DUM_Joint0</x:String>
+							<x:String>DUM_Joint1</x:String>
+							<x:String>DUM_Joint2</x:String>
+						</ComboBox>
+
+					</Grid>
+
+
+				</StackPanel>
 
 			</Grid>
 

@@ -74,13 +74,13 @@ namespace winrt::KinectToVR::implementation
 		trackingDeviceErrorLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceErrorLabel());
 		baseDeviceName = std::make_shared<Controls::TextBlock>(BaseDeviceName());
 		overrideDeviceName = std::make_shared<Controls::TextBlock>(OverrideDeviceName());
+		overridesLabel = std::make_shared<Controls::TextBlock>(OverridesLabel());
 
-		errorButtonsGrid = std::make_shared<Controls::Grid>(ErrorButtonsGrid());
-		errorWhatGrid = std::make_shared<Controls::Grid>(ErrorWhatGrid());
+		deviceErrorGrid = std::make_shared<Controls::Grid>(DeviceErrorGrid());
+		trackingDeviceChangePanel = std::make_shared<Controls::Grid>(TrackingDeviceChangePanel());
+		overridesControls = std::make_shared<Controls::Grid>(OverridesControls());
 
 		devicesListView = std::make_shared<Controls::ListView>(TrackingDeviceListView());
-
-		trackingDeviceChangePanel = std::make_shared<Controls::StackPanel>(TrackingDeviceChangePanel());
 
 		setAsOverrideButton = std::make_shared<Controls::Button>(SetAsOverrideButton());
 		setAsBaseButton = std::make_shared<Controls::Button>(SetAsBaseButton());
@@ -215,9 +215,7 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
-	errorWhatGrid.get()->Visibility(
-		status_ok ? Visibility::Collapsed : Visibility::Visible);
-	errorButtonsGrid.get()->Visibility(
+	deviceErrorGrid.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
 	trackingDeviceErrorLabel.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -235,18 +233,27 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 		OutputDebugString(L"Selected a base\n");
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(false);
+
+		overridesLabel.get()->Visibility(Visibility::Collapsed);
+		overridesControls.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (selectedTrackingDeviceID == k2app::interfacing::overrideDeviceID)
 	{
 		OutputDebugString(L"Selected an override\n");
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(true);
+
+		overridesLabel.get()->Visibility(Visibility::Visible);
+		overridesControls.get()->Visibility(Visibility::Visible);
 	}
 	else
 	{
 		OutputDebugString(L"Selected a [none]\n");
 		setAsOverrideButton.get()->IsEnabled(true);
 		setAsBaseButton.get()->IsEnabled(true);
+
+		overridesLabel.get()->Visibility(Visibility::Collapsed);
+		overridesControls.get()->Visibility(Visibility::Collapsed);
 	}
 
 	OutputDebugString(L"Changed the currently selected device to ");
@@ -258,7 +265,8 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 
 
 void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender, 
+	winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args)
 {
 	auto _index = devicesListView->SelectedIndex();
 
@@ -290,9 +298,7 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
-	errorWhatGrid.get()->Visibility(
-		status_ok ? Visibility::Collapsed : Visibility::Visible);
-	errorButtonsGrid.get()->Visibility(
+	deviceErrorGrid.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
 	trackingDeviceErrorLabel.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -307,6 +313,14 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 
 	// Update the GeneralPage status
 	TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, 
+	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+
 }
 
 
@@ -347,6 +361,9 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	OutputDebugString(wstring_cast(deviceName).c_str());
 	OutputDebugString(L"\n");
 
+	overridesLabel.get()->Visibility(Visibility::Visible);
+	overridesControls.get()->Visibility(Visibility::Visible);
+
 	// Register and etc
 	/* Update local statuses */
 
@@ -355,9 +372,7 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
-	errorWhatGrid.get()->Visibility(
-		status_ok ? Visibility::Collapsed : Visibility::Visible);
-	errorButtonsGrid.get()->Visibility(
+	deviceErrorGrid.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
 	trackingDeviceErrorLabel.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -414,6 +429,9 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 	OutputDebugString(wstring_cast(deviceName).c_str());
 	OutputDebugString(L"\n");
 
+	overridesLabel.get()->Visibility(Visibility::Collapsed);
+	overridesControls.get()->Visibility(Visibility::Collapsed);
+
 	// Register and etc
 	/* Update local statuses */
 
@@ -422,9 +440,7 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
-	errorWhatGrid.get()->Visibility(
-		status_ok ? Visibility::Collapsed : Visibility::Visible);
-	errorButtonsGrid.get()->Visibility(
+	deviceErrorGrid.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
 	trackingDeviceErrorLabel.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
