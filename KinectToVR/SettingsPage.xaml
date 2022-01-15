@@ -61,7 +61,7 @@
 					           Margin="0,0,20,0" Grid.Column="0" Grid.Row="2" />
 
 					<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-					          Height="65" MinWidth="350" FontSize="15"
+					          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
 					          x:Name="WaistRotationOptionBox"
 					          SelectionChanged="WaistRotationOptionBox_SelectionChanged"
 					          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
@@ -71,7 +71,7 @@
 					</ComboBox>
 
 					<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-					          Height="65" MinWidth="350" FontSize="15"
+					          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
 					          x:Name="FeetRotationOptionBox"
 					          SelectionChanged="FeetRotationOptionBox_SelectionChanged"
 					          Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
@@ -82,7 +82,7 @@
 					</ComboBox>
 
 					<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-					          Height="65" MinWidth="350" FontSize="15"
+					          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
 					          x:Name="PositionFilterOptionBox"
 					          SelectionChanged="PositionFilterOptionBox_SelectionChanged"
 					          Grid.Column="1" Grid.Row="2" Margin="0,0,0,0">
