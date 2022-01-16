@@ -131,7 +131,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\glm;$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\openvr\headers;$(SolutionDir)KinectToVR_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(SolutionDir)external\PSMoveService\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\openvr\headers;$(SolutionDir)KinectToVR_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(SolutionDir)external\PSMoveService\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -163,7 +163,7 @@ xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\glm;$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\openvr\headers;$(SolutionDir)KinectToVR_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(SolutionDir)external\PSMoveService\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\openvr\headers;$(SolutionDir)KinectToVR_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(SolutionDir)external\PSMoveService\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

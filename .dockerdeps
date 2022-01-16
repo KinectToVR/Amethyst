@@ -1,0 +1,21 @@
+Invoke-WebRequest -Uri 'https://github.com/microsoft/vswhere/releases/latest/download/vswhere.exe' -OutFile './vswhere.exe'
+$msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Select-String -Pattern "2022" | `
+    Select-String -Pattern "BuildTools" | Select-String -Pattern "installationPath")" `
+    -replace('"installationPath": "','') -replace('",',''))".Trim() + "\\MSBuild\\Current\\Bin\\MSBuild.exe"
+
+git clone https://github.com/ValveSoftware/openvr /external/openvr
+git clone https://gitlab.com/libeigen/eigen /external/eigen
+
+git clone https://github.com/google/glog.git /external/glog
+cd /external/glog
+git reset --hard f8c8e99fdfb998c2ba96cfb470decccf418f0b30
+mkdir vcbuild; cd vcbuild
+&"C:/Program Files/CMake/bin/cmake.exe" .. -DBUILD_SHARED_LIBS=ON
+&"$msbuild" glog.vcxproj "/p:Configuration=Release;Platform=x64"
+
+git clone https://github.com/gflags/gflags.git /external/gflags
+cd /external/gflags
+git reset --hard 827c769e5fc98e0f2a34c47cef953cc6328abced
+mkdir vcbuild; cd vcbuild
+&"C:/Program Files/CMake/bin/cmake.exe" .. -DBUILD_SHARED_LIBS=ON
+&"$msbuild" gflags.vcxproj "/p:Configuration=Release;Platform=x64"

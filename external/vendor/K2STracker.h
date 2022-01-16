@@ -128,7 +128,7 @@ public:
 			(rotationMatrix * (m_pose - calibration_origin)).
 			colwise() + translationVector + calibration_origin;
 
-		// Construct the calibrated pose in glm
+		// Construct the calibrated pose in eigen
 		Eigen::Vector3f calibrated_pose_gl(
 			m_pose_calibrated(0),
 			m_pose_calibrated(1),

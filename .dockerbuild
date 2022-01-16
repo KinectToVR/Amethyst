@@ -1,0 +1,8 @@
+Invoke-WebRequest -Uri 'https://github.com/microsoft/vswhere/releases/latest/download/vswhere.exe' -OutFile './vswhere.exe'
+$msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Select-String -Pattern "2022" | `
+    Select-String -Pattern "BuildTools" | Select-String -Pattern "installationPath")" `
+    -replace('"installationPath": "','') -replace('",',''))".Trim() + "\\MSBuild\\Current\\Bin\\MSBuild.exe"
+
+&"$msbuild" KinectToVR.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
+&"$msbuild" KinectToVR.sln /t:KinectToVR_API "/p:Configuration=Release;Platform=x64"
+&"$msbuild" KinectToVR.sln "/p:Configuration=Release;Platform=x64"
