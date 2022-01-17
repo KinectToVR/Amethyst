@@ -26,8 +26,3 @@ RUN powershell.exe -Command \
 RUN powershell.exe -Command \
     Set-ExecutionPolicy Bypass -Scope Process -Force; \
     Invoke-Expression (Get-Content .dockerbuild -Raw)
-
-# Copy output to artifacts
-FROM main AS publish
-LABEL Description="IIS" Vendor="Microsoft" Version="10"
-COPY --from=main x64/Release /
