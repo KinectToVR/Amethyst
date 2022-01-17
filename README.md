@@ -32,6 +32,8 @@ Follow these steps:
 
   # Release (remove) the dummy container
   > docker rm -v $id
+  # Release (remove) the base k2app container
+  > docker rmi --force $(docker images -q 'k2app')
   ```
   Where ```k2app``` may be your very own super cool container tag name.<br>
   Artifacts (```x64/Release``` directory) will be saved to ```x64/Release``` inside the repository root.<br>
