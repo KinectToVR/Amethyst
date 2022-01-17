@@ -1,4 +1,9 @@
-# **K2App** (The Super Secret One 😳)
+<h1 dir=auto>
+<b>K2App</b>
+<text>(&nbspCodename</text>
+<text style="color:#9966cc;">Amethyst</text>
+<text>)</text>
+</h1>
 
 ## <ins>__[Discord server](https://discord.gg/YBQCRDG)__</ins> and I'm **公彦赤屋先#5023**
 
@@ -18,11 +23,13 @@ Follow these steps:
   ```powershell
   # Build the whole thing
   > docker build -t k2app .
+
   # Create a dummy container from saved image
   > $id = $(docker create k2app)
   # Copy Release files to the host machine
   > mkdir ./x64/Release
   > docker cp $id:/x64/Release ./x64/Release
+
   # Release (remove) the dummy container
   > docker rm -v $id
   ```
@@ -84,7 +91,7 @@ Follow these steps:
   > Set-ExecutionPolicy Bypass -Scope Process -Force
   > Invoke-Expression (Get-Content .dockerbuild -Raw)
   ```
-  Alternatively you can open the developer powershell for BuildTools 2022 and:
+  Alternatively you can open the developer powershell for Visual Studio (or BuildTools) 2022 and:
   ```powershell
   > msbuild KinectToVR.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
   > msbuild KinectToVR.sln /t:KinectToVR_API "/p:Configuration=Release;Platform=x64"
