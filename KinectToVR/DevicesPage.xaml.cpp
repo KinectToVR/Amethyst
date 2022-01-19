@@ -336,14 +336,14 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 		jointBasisControls.get()->Visibility(
 			(device_status.find("S_OK") != std::string::npos &&
 				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
-			? Visibility::Visible
-			: Visibility::Collapsed);
+				? Visibility::Visible
+				: Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(
 			(device_status.find("S_OK") != std::string::npos &&
 				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
-			? Visibility::Visible
-			: Visibility::Collapsed);
+				? Visibility::Visible
+				: Visibility::Collapsed);
 	}
 
 	/* Update local statuses */
