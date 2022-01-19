@@ -370,11 +370,74 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 	TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
 }
 
-
+// *Nearly* the same as reconnect
 void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	auto _index = devicesListView->SelectedIndex();
+
+	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
+	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+	OutputDebugString(L"Now reconnecting the tracking device...\n");
+
+	if (trackingDevice.index() == 0)
+	{
+		// Kinect Basis
+		auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+
+		device->shutdown();
+		device_status = device->statusResultString(device->getStatusResult());
+
+		// We've selected a kinectbasis device, so this should be hidden
+		jointBasisControls.get()->Visibility(Visibility::Collapsed);
+		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+	}
+	else if (trackingDevice.index() == 1)
+	{
+		// Joints Basis
+		auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+
+		device->shutdown();
+		device_status = device->statusResultString(device->getStatusResult());
+
+		// We've selected a jointsbasis device, so this should be visible
+		//	at least when the device is online
+		jointBasisControls.get()->Visibility(
+			(device_status.find("S_OK") != std::string::npos &&
+				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+				? Visibility::Visible
+				: Visibility::Collapsed);
+
+		jointBasisLabel.get()->Visibility(
+			(device_status.find("S_OK") != std::string::npos &&
+				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+				? Visibility::Visible
+				: Visibility::Collapsed);
+	}
+
+	/* Update local statuses */
+
+	// Update the status here
+	const bool status_ok = device_status.find("S_OK") != std::string::npos;
+
+	errorWhatText.get()->Visibility(
+		status_ok ? Visibility::Collapsed : Visibility::Visible);
+	deviceErrorGrid.get()->Visibility(
+		status_ok ? Visibility::Collapsed : Visibility::Visible);
+	trackingDeviceErrorLabel.get()->Visibility(
+		status_ok ? Visibility::Collapsed : Visibility::Visible);
+
+	trackingDeviceChangePanel.get()->Visibility(
+		status_ok ? Visibility::Visible : Visibility::Collapsed);
+
+	// Split status and message by \n
+	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
+	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
+	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+
+	// Update the GeneralPage status
+	TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
 }
 
 
