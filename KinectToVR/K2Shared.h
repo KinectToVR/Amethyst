@@ -38,10 +38,29 @@ namespace k2app
 				jointBasisControls;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ListView> devicesListView;
-			
+
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
 				setAsOverrideButton,
 				setAsBaseButton;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBox>
+				waistJointOptionBox,
+				leftFootJointOptionBox,
+				rightFootJointOptionBox,
+				rightFootPositionOverrideOptionBox,
+				rightFootRotationOverrideOptionBox,
+				leftFootRotationOverrideOptionBox,
+				leftFootPositionOverrideOptionBox,
+				waistRotationOverrideOptionBox,
+				waistPositionOverrideOptionBox;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>
+				overrideWaistPosition,
+				overrideWaistRotation,
+				overrideLeftFootPosition,
+				overrideLeftFootRotation,
+				overrideRightFootPosition,
+				overrideRightFootRotation;
 
 			inline std::binary_semaphore smphSignalCurrentUpdate{0};
 			inline uint32_t selectedTrackingDeviceID = 0;
