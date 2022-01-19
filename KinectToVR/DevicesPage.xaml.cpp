@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "DevicesPage.xaml.h"
 #if __has_include("DevicesPage.g.cpp")
 #include "DevicesPage.g.cpp"
@@ -595,4 +595,150 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 		k2app::interfacing::overrideDeviceID = -1; // Reset the override
 
 	TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
+}
+
+/* For JointBasis device type: joints selector */
+
+void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	if (waistJointOptionBox.get()->SelectedIndex() >= 0)
+		k2app::interfacing::selectedTrackedJointID[0] = waistJointOptionBox.get()->SelectedIndex();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	if (leftFootJointOptionBox.get()->SelectedIndex() >= 0)
+		k2app::interfacing::selectedTrackedJointID[1] = leftFootJointOptionBox.get()->SelectedIndex();
+}
+
+void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	if (rightFootJointOptionBox.get()->SelectedIndex() >= 0)
+		k2app::interfacing::selectedTrackedJointID[1] = rightFootJointOptionBox.get()->SelectedIndex();
+}
+
+/* For *Override* device type: position & rotation joints selector */
+
+void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	if (k2app::interfacing::isPositionOverriddenJoint[0] &&
+		waistPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
+		k2app::interfacing::positionOverrideJointID[0] = waistPositionOverrideOptionBox.get()->SelectedIndex();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	if (k2app::interfacing::isRotationOverriddenJoint[0] &&
+		waistRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
+		k2app::interfacing::rotationOverrideJointID[0] = waistRotationOverrideOptionBox.get()->SelectedIndex();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	if (k2app::interfacing::isPositionOverriddenJoint[1] &&
+		leftFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
+		k2app::interfacing::positionOverrideJointID[1] = leftFootPositionOverrideOptionBox.get()->SelectedIndex();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	if (k2app::interfacing::isRotationOverriddenJoint[1] &&
+		leftFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
+		k2app::interfacing::rotationOverrideJointID[1] = leftFootRotationOverrideOptionBox.get()->SelectedIndex();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	if (k2app::interfacing::isPositionOverriddenJoint[2] &&
+		rightFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
+		k2app::interfacing::positionOverrideJointID[2] = rightFootPositionOverrideOptionBox.get()->SelectedIndex();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	if (k2app::interfacing::isRotationOverriddenJoint[2] &&
+		rightFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
+		k2app::interfacing::rotationOverrideJointID[2] = rightFootRotationOverrideOptionBox.get()->SelectedIndex();
+}
+
+/* For *Override* device type: override elements for joints selector */
+
+void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	k2app::interfacing::isPositionOverriddenJoint[0] = overrideWaistPosition.get()->IsChecked();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	k2app::interfacing::isRotationOverriddenJoint[0] = overrideWaistRotation.get()->IsChecked();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	k2app::interfacing::isPositionOverriddenJoint[1] = overrideLeftFootPosition.get()->IsChecked();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	k2app::interfacing::isRotationOverriddenJoint[1] = overrideLeftFootRotation.get()->IsChecked();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	k2app::interfacing::isPositionOverriddenJoint[2] = overrideRightFootPosition.get()->IsChecked();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	k2app::interfacing::isRotationOverriddenJoint[2] = overrideRightFootRotation.get()->IsChecked();
 }
