@@ -294,8 +294,12 @@
 							              ToolTipService.ToolTip="Overrides" Grid.Column="1">
 								<AppBarButton.Flyout>
 									<MenuFlyout>
-										<ToggleMenuFlyoutItem x:Name="OverrideWaistPosition" Text="Position" IsChecked="True" />
-										<ToggleMenuFlyoutItem x:Name="OverrideWaistRotation" Text="Rotation" IsChecked="True" />
+										<ToggleMenuFlyoutItem x:Name="OverrideWaistPosition" 
+										                      Click="OverrideWaistPosition_Click"
+										                      Text="Position" IsChecked="True" />
+										<ToggleMenuFlyoutItem x:Name="OverrideWaistRotation" 
+										                      Click="OverrideWaistRotation_Click"
+										                      Text="Rotation" IsChecked="True" />
 									</MenuFlyout>
 								</AppBarButton.Flyout>
 							</AppBarButton>
@@ -303,7 +307,7 @@
 
 						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
 						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-						          x:Name="WaistPositionOverrideOptionBox"
+						          x:Name="WaistPositionOverrideOptionBox" SelectionChanged="WaistPositionOverrideOptionBox_SelectionChanged"
 						          IsEnabled="{Binding ElementName=OverrideWaistPosition, Path=IsChecked, TargetNullValue=False}"
 						          Grid.Column="3" Grid.Row="1" Margin="0,0,0,0">
 							<x:String>No Override</x:String>
@@ -314,7 +318,7 @@
 
 						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
 						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-						          x:Name="WaistRotationOverrideOptionBox"
+						          x:Name="WaistRotationOverrideOptionBox" SelectionChanged="WaistRotationOverrideOptionBox_SelectionChanged"
 						          IsEnabled="{Binding ElementName=OverrideWaistRotation, Path=IsChecked, TargetNullValue=False}"
 						          Grid.Column="5" Grid.Row="1" Margin="0,0,0,0">
 							<x:String>No Override</x:String>
@@ -338,8 +342,12 @@
 							              ToolTipService.ToolTip="Overrides" Grid.Column="1">
 								<AppBarButton.Flyout>
 									<MenuFlyout>
-										<ToggleMenuFlyoutItem x:Name="OverrideLeftFootPosition" Text="Position" IsChecked="False" />
-										<ToggleMenuFlyoutItem x:Name="OverrideLeftFootRotation" Text="Rotation" IsChecked="False" />
+										<ToggleMenuFlyoutItem x:Name="OverrideLeftFootPosition" 
+										                      Click="OverrideLeftFootPosition_Click"
+										                      Text="Position" IsChecked="False" />
+										<ToggleMenuFlyoutItem x:Name="OverrideLeftFootRotation" 
+										                      Click="OverrideLeftFootRotation_Click"
+										                      Text="Rotation" IsChecked="False" />
 									</MenuFlyout>
 								</AppBarButton.Flyout>
 							</AppBarButton>
@@ -347,7 +355,7 @@
 
 						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
 						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-						          x:Name="LeftFootPositionOverrideOptionBox"
+						          x:Name="LeftFootPositionOverrideOptionBox" SelectionChanged="LeftFootPositionOverrideOptionBox_SelectionChanged"
 						          IsEnabled="{Binding ElementName=OverrideLeftFootPosition, Path=IsChecked, TargetNullValue=False}"
 						          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
 							<x:String>No Override</x:String>
@@ -358,7 +366,7 @@
 
 						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
 						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-						          x:Name="LeftFootRotationOverrideOptionBox"
+						          x:Name="LeftFootRotationOverrideOptionBox" SelectionChanged="LeftFootRotationOverrideOptionBox_SelectionChanged"
 						          IsEnabled="{Binding ElementName=OverrideLeftFootRotation, Path=IsChecked, TargetNullValue=False}"
 						          Grid.Column="5" Grid.Row="2" Margin="0,0,0,0">
 							<x:String>No Override</x:String>
@@ -382,8 +390,12 @@
 							              ToolTipService.ToolTip="Overrides" Grid.Column="1">
 								<AppBarButton.Flyout>
 									<MenuFlyout>
-										<ToggleMenuFlyoutItem x:Name="OverrideRightFootPosition" Text="Position" IsChecked="False" />
-										<ToggleMenuFlyoutItem x:Name="OverrideRightFootRotation" Text="Rotation" IsChecked="False" />
+										<ToggleMenuFlyoutItem x:Name="OverrideRightFootPosition" 
+										                      Click="OverrideRightFootPosition_Click"
+										                      Text="Position" IsChecked="False" />
+										<ToggleMenuFlyoutItem x:Name="OverrideRightFootRotation" 
+										                      Click="OverrideRightFootRotation_Click"
+										                      Text="Rotation" IsChecked="False" />
 									</MenuFlyout>
 								</AppBarButton.Flyout>
 							</AppBarButton>
@@ -391,7 +403,7 @@
 
 						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
 						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-						          x:Name="RightFootPositionOverrideOptionBox"
+						          x:Name="RightFootPositionOverrideOptionBox" SelectionChanged="RightFootPositionOverrideOptionBox_SelectionChanged"
 						          IsEnabled="{Binding ElementName=OverrideRightFootPosition, Path=IsChecked, TargetNullValue=False}"
 						          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
 							<x:String>No Override</x:String>
@@ -402,7 +414,7 @@
 
 						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
 						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-						          x:Name="RightFootRotationOverrideOptionBox"
+						          x:Name="RightFootRotationOverrideOptionBox" SelectionChanged="RightFootRotationOverrideOptionBox_SelectionChanged"
 						          IsEnabled="{Binding ElementName=OverrideRightFootRotation, Path=IsChecked, TargetNullValue=False}"
 						          Grid.Column="5" Grid.Row="3" Margin="0,0,0,0">
 							<x:String>No Override</x:String>
@@ -462,7 +474,7 @@
 
 						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
 						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-						          x:Name="WaistJointOptionBox"
+						          x:Name="WaistJointOptionBox" SelectionChanged="WaistJointOptionBox_SelectionChanged"
 						          Grid.Column="3" Grid.Row="1" Margin="0,0,0,0">
 							<x:String>DUM_Joint0</x:String>
 							<x:String>DUM_Joint1</x:String>
@@ -475,7 +487,7 @@
 
 						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
 						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-						          x:Name="LeftFootJointOptionBox"
+						          x:Name="LeftFootJointOptionBox" SelectionChanged="LeftFootJointOptionBox_SelectionChanged"
 						          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
 							<x:String>DUM_Joint0</x:String>
 							<x:String>DUM_Joint1</x:String>
@@ -488,7 +500,7 @@
 
 						<ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
 						          Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-						          x:Name="RightFootJointOptionBox"
+						          x:Name="RightFootJointOptionBox" SelectionChanged="RightFootJointOptionBox_SelectionChanged"
 						          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
 							<x:String>DUM_Joint0</x:String>
 							<x:String>DUM_Joint1</x:String>
