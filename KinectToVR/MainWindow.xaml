@@ -42,8 +42,8 @@
 		                     FontWeight="Bold">
 
 			<muxc:NavigationView.PaneHeader>
-				<TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,10,0">
-					KinectToVR
+				<TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,10,0">
+					Amethyst
 				</TextBlock>
 			</muxc:NavigationView.PaneHeader>
 

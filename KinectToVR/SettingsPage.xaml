@@ -241,7 +241,7 @@
 						           Text="Enabling or disabling a tracker requires restarting SteamVR"
 						           Margin="0,0,0,0" Foreground="LightGray" />
 						<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
-						           Text="and K2EX for changes to take effect."
+						           Text="and Amethyst for changes to take effect."
 						           Margin="0,0,0,0" Foreground="LightGray" />
 					</StackPanel>
 
