@@ -16,8 +16,8 @@ You'll need:
  - Docker Desktop set to use Windows containers
 
 Notes:
- - The build process contains no caching is one-run **and will take some time**.<br>
-   Everything that's downloaded, set up and not saved will be gone.
+ - The build process contains no caching, is one-run, **and will take some time**.<br>
+   Everything that's downloaded, set up, and not saved will be gone.
 
 Follow these steps:
   ```powershell
