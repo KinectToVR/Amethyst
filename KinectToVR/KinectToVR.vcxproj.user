@@ -13,7 +13,7 @@
     <PackageLogoSource>F:\repos\K2App\KinectToVR\Assets\ktvr.png</PackageLogoSource>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DebuggerType>NativeWithManagedCore</DebuggerType>
+    <DebuggerType>NativeOnly</DebuggerType>
     <DebuggerFlavor>AppHostLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
