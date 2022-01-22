@@ -39,7 +39,14 @@ namespace TrackingDevices
 	inline auto getCurrentDevice()
 	{
 		// trackingDeviceID is always >= 0 anyway
-		return TrackingDevicesVector.at(k2app::interfacing::trackingDeviceID);
+		return TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
+	}
+
+	// Extract the current device (variant of it)
+	inline auto getCurrentOverrideDevice()
+	{
+		// trackingDeviceID is always >= 0 anyway
+		return TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
 	}
 	
 	// Select proper tracking device in the UI
