@@ -58,19 +58,6 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 	OffsetsView().IsPaneOpen(true);
 }
 
-//void CalibrationButton_Click()
-//{
-//	AutoCalibrationPane().Visibility(Visibility::Collapsed);
-//	ManualCalibrationPane().Visibility(Visibility::Collapsed);
-//	CalibrationSelectionPane().Visibility(Visibility::Visible);
-//
-//	CalibrationView().IsPaneOpen(true);
-//
-//	show_skeleton_previous = show_skeleton_current; // Back up
-//	show_skeleton_current = true; // Change to show
-//	SkeletonToggleButton().IsChecked(true); // Change to show
-//}
-
 
 void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Checked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
