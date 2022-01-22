@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -112,6 +112,21 @@ namespace winrt::KinectToVR::implementation
 	MainWindow::MainWindow()
 	{
 		InitializeComponent();
+
+		// Set up logging
+		google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("KinectToVR_K2App").c_str());
+		// Log everything >=INFO to same file
+		google::SetLogDestination(google::GLOG_INFO, ktvr::GetK2AppDataLogFileDir("KinectToVR_K2App").c_str());
+		google::SetLogFilenameExtension(".log");
+
+		FLAGS_logbufsecs = 0; //Set max timeout
+		FLAGS_minloglevel = google::GLOG_INFO;
+
+		LOG(INFO) << "~~~KinectToVR new logging session begins here!~~~";
+
+		// Read settings
+		LOG(INFO) << "Now reading saved settings...";
+		k2app::K2Settings.readSettings();
 
 		// Cache needed UI elements
 		updateIconDot = std::make_shared<Controls::FontIcon>(UpdateIconDot());
