@@ -92,18 +92,30 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
-      <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOGDI;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\Kinect;$(SolutionDir)external\openvr\headers;$(SolutionDir)KinectToVR_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">KinectToVR_API.lib;WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">KinectToVR_API.lib;WindowsApp.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)"
+
+xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(OutDir)AppX\"
+xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)AppX\"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)AppX\"
+
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)devices"
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)AppX\devices"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
-      <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOGDI;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\Kinect;$(SolutionDir)external\openvr\headers;$(SolutionDir)KinectToVR_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp20</LanguageStandard>
@@ -112,8 +124,20 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">KinectToVR_API.lib;WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">KinectToVR_API.lib;WindowsApp.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)"
+
+xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(OutDir)AppX\"
+xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)AppX\"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)AppX\"
+
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)devices"
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)AppX\devices"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Manifest Include="app.manifest" />
@@ -131,6 +155,7 @@
       <DependentUpon>InfoPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="K2Settings.h" />
     <ClInclude Include="K2Shared.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
