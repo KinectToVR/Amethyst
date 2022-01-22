@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "K2Settings.h"
 
 namespace k2app
 {
