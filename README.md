@@ -107,4 +107,4 @@ The whole output can be found in ```x64/Release``` directory<br>
  - The assembled ```K2Driver``` is inside the ```driver/``` folder
  - Devices (plugins) are inside ```devices/``` folder
  - Deployed app is inside ```KinectToVR/AppX/``` folder<br>
-      You'll likely need to copy the ```devices/``` folder there to run OK.
+   You don't need to copy the ```devices/``` folder there, it's automatic.
