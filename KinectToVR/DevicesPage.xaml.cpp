@@ -449,9 +449,6 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-	setAsOverrideButton.get()->IsEnabled(false);
-	setAsBaseButton.get()->IsEnabled(true);
-
 	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
@@ -485,6 +482,10 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	}
 
 	/* Update local statuses */
+	setAsOverrideButton.get()->IsEnabled(false);
+	setAsBaseButton.get()->IsEnabled(true);
+	SetDeviceTypeFlyout().Hide(); // Hide the flyout
+
 	overrideDeviceName.get()->Text(wstring_cast(deviceName));
 
 	LOG(INFO) << "Changed the current tracking device (Override) to " << deviceName;
@@ -521,9 +522,6 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-	setAsOverrideButton.get()->IsEnabled(false);
-	setAsBaseButton.get()->IsEnabled(false);
-
 	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
@@ -547,7 +545,6 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 		// Joints Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 		deviceName = device->getDeviceName();
-
 		device->initialize(); // Init the device as we'll be using it
 		device_status = device->statusResultString(device->getStatusResult());
 
@@ -561,6 +558,10 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 	}
 
 	/* Update local statuses */
+	setAsOverrideButton.get()->IsEnabled(false);
+	setAsBaseButton.get()->IsEnabled(false);
+	SetDeviceTypeFlyout().Hide(); // Hide the flyout
+
 	baseDeviceName.get()->Text(wstring_cast(deviceName));
 	if (overrideDeviceName.get()->Text() == wstring_cast(deviceName))
 		overrideDeviceName.get()->Text(L"No Overrides");
