@@ -442,6 +442,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 
 	// Update the GeneralPage status
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
+	AlternativeConnectionOptionsFlyout().Hide();
 }
 
 
