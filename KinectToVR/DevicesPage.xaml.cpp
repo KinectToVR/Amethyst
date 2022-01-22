@@ -151,7 +151,7 @@ namespace winrt::KinectToVR::implementation
 
 		// Set currently tracking device & selected device
 		// RadioButton is set on ItemChanged
-		TrackingDeviceListView().SelectedIndex(0);
+		TrackingDeviceListView().SelectedIndex(k2app::K2Settings.trackingDeviceID);
 
 		// Register tracking devices' list
 		TrackingDeviceListView().ItemsSource(m_TrackingDevicesViewModels);
