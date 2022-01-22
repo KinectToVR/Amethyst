@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "DevicesPage.xaml.h"
 #if __has_include("DevicesPage.g.cpp")
 #include "DevicesPage.g.cpp"
@@ -15,7 +15,7 @@ bool devices_tab_setup_finished = false;
 void devices_update_current()
 {
 	{
-		auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::trackingDeviceID);
+		auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
 
 		std::string deviceName = "[UNKNOWN]";
 
@@ -38,8 +38,8 @@ void devices_update_current()
 			overrideDeviceName.get()->Text(L"No Overrides");
 	}
 	{
-		if (k2app::interfacing::overrideDeviceID < 0)return;
-		auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::overrideDeviceID);
+		if (k2app::K2Settings.overrideDeviceID < 0)return;
+		auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
 
 		std::string deviceName = "[UNKNOWN]";
 
@@ -114,12 +114,12 @@ namespace winrt::KinectToVR::implementation
 			    Windows::Foundation::Collections::IVectorChangedEventArgs const& args)
 			{
 				// Report a registration and parse
-				OutputDebugString(sender.GetAt(sender.Size() - 1).DeviceName().c_str());
-				OutputDebugString(L"'s been registered as a tracking device. [UI Node]\n");
+				LOG(INFO) << string_cast(sender.GetAt(sender.Size() - 1).DeviceName().c_str()) <<
+					"'s been registered as a tracking device. [UI Node]";
 
 				// Set the current device
-				if (sender.Size() > k2app::interfacing::trackingDeviceID)
-					sender.GetAt(k2app::interfacing::trackingDeviceID).Current(true);
+				if (sender.Size() > k2app::K2Settings.trackingDeviceID)
+					sender.GetAt(k2app::K2Settings.trackingDeviceID).Current(true);
 
 				// Re-set all indexes
 				for (uint32_t i = 0; i < sender.Size(); i++)
@@ -143,9 +143,8 @@ namespace winrt::KinectToVR::implementation
 				break;
 			}
 
-			OutputDebugString(L"Appending ");
-			OutputDebugString(wstring_cast(deviceName).c_str());
-			OutputDebugString(L" to UI Node's tracking devices' list...\n");
+			LOG(INFO) << "Appending " << deviceName <<
+				" to UI Node's tracking devices' list...";
 			m_TrackingDevicesViewModels.Append(
 				make<TrackingDevicesView>(wstring_cast(deviceName).c_str()));
 		}
@@ -163,7 +162,7 @@ namespace winrt::KinectToVR::implementation
 			/* Update the device in devices tab */
 
 			if (devicesListView.get() != nullptr &&
-				m_TrackingDevicesViewModels.Size() > k2app::interfacing::trackingDeviceID)
+				m_TrackingDevicesViewModels.Size() > k2app::K2Settings.trackingDeviceID)
 			{
 				while (true)
 				{
@@ -174,15 +173,11 @@ namespace winrt::KinectToVR::implementation
 					// Only when ready
 					if (devices_tab_setup_finished)
 					{
-						DispatcherQueue().TryEnqueue(Microsoft::UI::Dispatching::DispatcherQueuePriority::High,
-						                             [&, this]
-						                             {
-							                             OutputDebugString(L"ID IS ");
-							                             OutputDebugString(
-								                             std::to_wstring(k2app::interfacing::trackingDeviceID).
-								                             c_str());
-							                             OutputDebugString(L"\n");
-						                             });
+						DispatcherQueue().TryEnqueue(
+							Microsoft::UI::Dispatching::DispatcherQueuePriority::High, [&, this]
+							{
+								LOG(INFO) << "ID IS " << k2app::K2Settings.trackingDeviceID;
+							});
 					}
 				}
 			}
@@ -236,13 +231,13 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 		//	at least when the device is online
 		jointBasisControls.get()->Visibility(
 			(device_status.find("S_OK") != std::string::npos &&
-				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(
 			(device_status.find("S_OK") != std::string::npos &&
-				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 	}
@@ -265,18 +260,18 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
 	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 
-	if (selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+	if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 	{
-		OutputDebugString(L"Selected a base\n");
+		LOG(INFO) << "Selected a base";
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(false);
 
 		overridesLabel.get()->Visibility(Visibility::Collapsed);
 		overridesControls.get()->Visibility(Visibility::Collapsed);
 	}
-	else if (selectedTrackingDeviceID == k2app::interfacing::overrideDeviceID)
+	else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 	{
-		OutputDebugString(L"Selected an override\n");
+		LOG(INFO) << "Selected an override";
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(true);
 
@@ -285,7 +280,7 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 	}
 	else
 	{
-		OutputDebugString(L"Selected a [none]\n");
+		LOG(INFO) << "Selected a [none]";
 		setAsOverrideButton.get()->IsEnabled(true);
 		setAsBaseButton.get()->IsEnabled(true);
 
@@ -293,11 +288,7 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 		overridesControls.get()->Visibility(Visibility::Collapsed);
 	}
 
-	OutputDebugString(L"Changed the currently selected device to ");
-	OutputDebugString(wstring_cast(deviceName).c_str());
-	OutputDebugString(L"\n");
-
-	// Ask for a device change
+	LOG(INFO) << "Changed the currently selected device to " << deviceName;
 }
 
 
@@ -309,7 +300,7 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
-	OutputDebugString(L"Now reconnecting the tracking device...\n");
+	LOG(INFO) << "Now reconnecting the tracking device...";
 
 	if (trackingDevice.index() == 0)
 	{
@@ -335,13 +326,13 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 		//	at least when the device is online
 		jointBasisControls.get()->Visibility(
 			(device_status.find("S_OK") != std::string::npos &&
-				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(
 			(device_status.find("S_OK") != std::string::npos &&
-				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 	}
@@ -367,7 +358,7 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 
 	// Update the GeneralPage status
-	TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
+	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
 }
 
 // *Nearly* the same as reconnect
@@ -379,7 +370,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
-	OutputDebugString(L"Now reconnecting the tracking device...\n");
+	LOG(INFO) << "Now reconnecting the tracking device...";
 
 	if (trackingDevice.index() == 0)
 	{
@@ -405,13 +396,13 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 		//	at least when the device is online
 		jointBasisControls.get()->Visibility(
 			(device_status.find("S_OK") != std::string::npos &&
-				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(
 			(device_status.find("S_OK") != std::string::npos &&
-				selectedTrackingDeviceID == k2app::interfacing::trackingDeviceID)
+				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 	}
@@ -437,7 +428,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 
 	// Update the GeneralPage status
-	TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
+	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
 }
 
 
@@ -482,9 +473,7 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	/* Update local statuses */
 	overrideDeviceName.get()->Text(wstring_cast(deviceName));
 
-	OutputDebugString(L"Changed the current tracking device (Override) to ");
-	OutputDebugString(wstring_cast(deviceName).c_str());
-	OutputDebugString(L"\n");
+	LOG(INFO) << "Changed the current tracking device (Override) to " << deviceName;
 
 	overridesLabel.get()->Visibility(Visibility::Visible);
 	overridesControls.get()->Visibility(Visibility::Visible);
@@ -510,8 +499,8 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
 	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 
-	k2app::interfacing::overrideDeviceID = selectedTrackingDeviceID;
-	//TrackingDevices::updateOverrideDeviceUI(k2app::interfacing::overrideDeviceID); // Not yet
+	k2app::K2Settings.overrideDeviceID = selectedTrackingDeviceID;
+	//TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Not yet TODO
 }
 
 
@@ -562,9 +551,7 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 	if (overrideDeviceName.get()->Text() == wstring_cast(deviceName))
 		overrideDeviceName.get()->Text(L"No Overrides");
 
-	OutputDebugString(L"Changed the current tracking device (Base) to ");
-	OutputDebugString(wstring_cast(deviceName).c_str());
-	OutputDebugString(L"\n");
+	LOG(INFO) << "Changed the current tracking device (Base) to " << deviceName;
 
 	overridesLabel.get()->Visibility(Visibility::Collapsed);
 	overridesControls.get()->Visibility(Visibility::Collapsed);
@@ -590,11 +577,11 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
 	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 
-	k2app::interfacing::trackingDeviceID = selectedTrackingDeviceID;
-	if (k2app::interfacing::overrideDeviceID == k2app::interfacing::trackingDeviceID)
-		k2app::interfacing::overrideDeviceID = -1; // Reset the override
+	k2app::K2Settings.trackingDeviceID = selectedTrackingDeviceID;
+	if (k2app::K2Settings.overrideDeviceID == k2app::K2Settings.trackingDeviceID)
+		k2app::K2Settings.overrideDeviceID = -1; // Reset the override
 
-	TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
+	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
 }
 
 /* For JointBasis device type: joints selector */
@@ -605,7 +592,7 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_Selecti
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (waistJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::interfacing::selectedTrackedJointID[0] = waistJointOptionBox.get()->SelectedIndex();
+		k2app::K2Settings.selectedTrackedJointID[0] = waistJointOptionBox.get()->SelectedIndex();
 }
 
 
@@ -615,7 +602,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_Sele
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (leftFootJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::interfacing::selectedTrackedJointID[1] = leftFootJointOptionBox.get()->SelectedIndex();
+		k2app::K2Settings.selectedTrackedJointID[1] = leftFootJointOptionBox.get()->SelectedIndex();
 }
 
 void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_SelectionChanged(
@@ -624,7 +611,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_Sel
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (rightFootJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::interfacing::selectedTrackedJointID[1] = rightFootJointOptionBox.get()->SelectedIndex();
+		k2app::K2Settings.selectedTrackedJointID[1] = rightFootJointOptionBox.get()->SelectedIndex();
 }
 
 /* For *Override* device type: position & rotation joints selector */
@@ -634,9 +621,9 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOption
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::interfacing::isPositionOverriddenJoint[0] &&
+	if (k2app::K2Settings.isPositionOverriddenJoint[0] &&
 		waistPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::interfacing::positionOverrideJointID[0] = waistPositionOverrideOptionBox.get()->SelectedIndex();
+		k2app::K2Settings.positionOverrideJointID[0] = waistPositionOverrideOptionBox.get()->SelectedIndex();
 }
 
 
@@ -645,9 +632,9 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOption
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::interfacing::isRotationOverriddenJoint[0] &&
+	if (k2app::K2Settings.isRotationOverriddenJoint[0] &&
 		waistRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::interfacing::rotationOverrideJointID[0] = waistRotationOverrideOptionBox.get()->SelectedIndex();
+		k2app::K2Settings.rotationOverrideJointID[0] = waistRotationOverrideOptionBox.get()->SelectedIndex();
 }
 
 
@@ -656,9 +643,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOpt
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::interfacing::isPositionOverriddenJoint[1] &&
+	if (k2app::K2Settings.isPositionOverriddenJoint[1] &&
 		leftFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::interfacing::positionOverrideJointID[1] = leftFootPositionOverrideOptionBox.get()->SelectedIndex();
+		k2app::K2Settings.positionOverrideJointID[1] = leftFootPositionOverrideOptionBox.get()->SelectedIndex();
 }
 
 
@@ -667,9 +654,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOpt
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::interfacing::isRotationOverriddenJoint[1] &&
+	if (k2app::K2Settings.isRotationOverriddenJoint[1] &&
 		leftFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::interfacing::rotationOverrideJointID[1] = leftFootRotationOverrideOptionBox.get()->SelectedIndex();
+		k2app::K2Settings.rotationOverrideJointID[1] = leftFootRotationOverrideOptionBox.get()->SelectedIndex();
 }
 
 
@@ -678,9 +665,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOp
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::interfacing::isPositionOverriddenJoint[2] &&
+	if (k2app::K2Settings.isPositionOverriddenJoint[2] &&
 		rightFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::interfacing::positionOverrideJointID[2] = rightFootPositionOverrideOptionBox.get()->SelectedIndex();
+		k2app::K2Settings.positionOverrideJointID[2] = rightFootPositionOverrideOptionBox.get()->SelectedIndex();
 }
 
 
@@ -689,9 +676,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOp
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::interfacing::isRotationOverriddenJoint[2] &&
+	if (k2app::K2Settings.isRotationOverriddenJoint[2] &&
 		rightFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::interfacing::rotationOverrideJointID[2] = rightFootRotationOverrideOptionBox.get()->SelectedIndex();
+		k2app::K2Settings.rotationOverrideJointID[2] = rightFootRotationOverrideOptionBox.get()->SelectedIndex();
 }
 
 /* For *Override* device type: override elements for joints selector */
@@ -700,7 +687,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::interfacing::isPositionOverriddenJoint[0] = overrideWaistPosition.get()->IsChecked();
+	k2app::K2Settings.isPositionOverriddenJoint[0] = overrideWaistPosition.get()->IsChecked();
 }
 
 
@@ -708,7 +695,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::interfacing::isRotationOverriddenJoint[0] = overrideWaistRotation.get()->IsChecked();
+	k2app::K2Settings.isRotationOverriddenJoint[0] = overrideWaistRotation.get()->IsChecked();
 }
 
 
@@ -716,7 +703,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Cl
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::interfacing::isPositionOverriddenJoint[1] = overrideLeftFootPosition.get()->IsChecked();
+	k2app::K2Settings.isPositionOverriddenJoint[1] = overrideLeftFootPosition.get()->IsChecked();
 }
 
 
@@ -724,7 +711,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Cl
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::interfacing::isRotationOverriddenJoint[1] = overrideLeftFootRotation.get()->IsChecked();
+	k2app::K2Settings.isRotationOverriddenJoint[1] = overrideLeftFootRotation.get()->IsChecked();
 }
 
 
@@ -732,7 +719,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_C
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::interfacing::isPositionOverriddenJoint[2] = overrideRightFootPosition.get()->IsChecked();
+	k2app::K2Settings.isPositionOverriddenJoint[2] = overrideRightFootPosition.get()->IsChecked();
 }
 
 
@@ -740,5 +727,5 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_C
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::interfacing::isRotationOverriddenJoint[2] = overrideRightFootRotation.get()->IsChecked();
+	k2app::K2Settings.isRotationOverriddenJoint[2] = overrideRightFootRotation.get()->IsChecked();
 }

@@ -137,6 +137,7 @@ namespace winrt::KinectToVR::implementation
 		this->ExtendsContentIntoTitleBar(true);
 		this->SetTitleBar(DragElement());
 
+		LOG(INFO) << "Pushing control pages to window...";
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"general", winrt::xaml_typename<GeneralPage>()));
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
@@ -149,14 +150,12 @@ namespace winrt::KinectToVR::implementation
 		// Scan for tracking devices
 		std::thread([&]
 			{
-				OutputDebugString(L"Searching for tracking devices\n");
+				LOG(INFO) << "Searching for tracking devices";
 
 				using namespace boost::filesystem;
 				using namespace std::string_literals;
 
-				OutputDebugString(L"Current path is: ");
-				OutputDebugString(boost::dll::program_location().parent_path().c_str());
-				OutputDebugString(L"\n");
+				LOG(INFO) << "Current path is: " << boost::dll::program_location().parent_path().string();
 
 				if (exists(boost::dll::program_location().parent_path() / "devices"))
 				{
@@ -171,8 +170,7 @@ namespace winrt::KinectToVR::implementation
 							if (root.find("device_name") == root.not_found() ||
 								root.find("device_type") == root.not_found())
 							{
-								OutputDebugString(entry.path().stem().c_str());
-								OutputDebugString(L"'s manifest was invalid ヽ(≧□≦)ノ\n");
+								LOG(ERROR) << entry.path().stem().string() << "'s manifest was invalid ヽ(≧□≦)ノ";
 								continue;
 							}
 
@@ -184,23 +182,18 @@ namespace winrt::KinectToVR::implementation
 							if (root.find("linked_dll_path") == root.not_found())
 								linked_dll_path = "none"; // Self-fix or smth?
 
-							OutputDebugString(L"Found tracking device with:\n - name: ");
-							OutputDebugString(std::wstring(device_name.begin(), device_name.end()).c_str());
-							OutputDebugString(L"\n - type: ");
-							OutputDebugString(std::wstring(device_type.begin(), device_type.end()).c_str());
-							OutputDebugString(L"\n - linked dll: ");
-							OutputDebugString(std::wstring(linked_dll_path.begin(), linked_dll_path.end()).c_str());
-							OutputDebugString(L"\n");
+							LOG(INFO) << "Found tracking device with:\n - name: " << device_name <<
+								"\n - type: " << device_type << "\n - linked dll: " << linked_dll_path;
 
 							auto deviceDllPath = entry.path() / "bin" / "win64" / ("device_" + device_name + ".dll");
 
 							if (exists(deviceDllPath))
 							{
-								OutputDebugString(L"Found the device's driver dll, now checking dependencies...\n");
+								LOG(INFO) << "Found the device's driver dll, now checking dependencies...";
 
 								if (exists(linked_dll_path) || linked_dll_path == "none")
 								{
-									OutputDebugString(L"Found the device's dependency dll, now loading...\n");
+									LOG(INFO) << "Found the device's dependency dll, now loading...";
 
 									HINSTANCE hLibraryInstance;
 									BOOL fRunTimeLinkSuccess = FALSE;
@@ -221,8 +214,7 @@ namespace winrt::KinectToVR::implementation
 										if (nullptr != hDeviceFactory)
 										{
 											fRunTimeLinkSuccess = TRUE;
-											OutputDebugString(
-												L"Device library loaded, now checking interface...\n");
+											LOG(INFO) << "Device library loaded, now checking interface...";
 
 											int returnCode = ktvr::K2InitError_Invalid;
 											std::string stat = "E_UNKNOWN";
@@ -267,124 +259,78 @@ namespace winrt::KinectToVR::implementation
 											{
 											case ktvr::K2InitError_None:
 												{
-													OutputDebugString(
-														L"Interface version OK, now constructing...\n");
+													LOG(INFO) << "Interface version OK, now constructing...";
 
-													OutputDebugString(
-														L"Registered tracking device with:\n - name: ");
-													OutputDebugString(
-														std::wstring(device_name.begin(), device_name.end()).c_str());
-													OutputDebugString(L"\n - type: ");
-													OutputDebugString(
-														std::wstring(device_type.begin(), device_type.end()).
-														c_str());
-													OutputDebugString(L"\n - linked dll: ");
-													OutputDebugString(
-														std::wstring(linked_dll_path.begin(), linked_dll_path.end())
-														.c_str());
-													OutputDebugString(L"\n - blocks flip: ");
-													OutputDebugString(
-														std::to_wstring(blocks_flip)
-														.c_str());
-													OutputDebugString(L"\n - supports math-based orientation: ");
-													OutputDebugString(
-														std::to_wstring(supports_math)
-														.c_str());
+													LOG(INFO) << "Registered tracking device with:\n - name: " << 
+														device_name << "\n - type: " << device_type <<
+														"\n - linked dll: " << linked_dll_path <<
+														"\n - blocks flip: " << blocks_flip <<
+														"\n - supports math-based orientation: " << supports_math <<
 
-													OutputDebugString(L"\nat index ");
-													OutputDebugString(std::to_wstring(
-														TrackingDevices::TrackingDevicesVector.size() - 1).c_str());
-													OutputDebugString(L".\n");
+														"\nat index " << TrackingDevices::TrackingDevicesVector.size() -
+														1;
 
-													OutputDebugString(
-														L"Device status (should be 'not initialized'): \n[\n");
-													OutputDebugString(std::wstring(
-														stat.begin(),
-														stat.end()).c_str());
-													OutputDebugString(L"\n]\n");
+													LOG(INFO) << "Device status (should be 'not initialized'): \n[\n" <<
+														stat << "\n]\n";
 												}
 												break;
 											case ktvr::K2InitError_BadInterface:
 												{
-													OutputDebugString(
-														std::wstring(
-															("Device's interface is incompatible with current K2API"s
-																+
-																ktvr::IK2API_Version +
-																", it's probably outdated.\n").
-															begin(),
-															("Device's interface is incompatible with current K2API"s
-																+
-																ktvr::IK2API_Version +
-																", it's probably outdated.\n").
-															end())
-														.c_str());
+													LOG(ERROR) <<
+														"Device's interface is incompatible with current K2API"
+														<<
+														ktvr::IK2API_Version <<
+														", it's probably outdated.";
 												}
 												break;
 											case ktvr::K2InitError_Invalid:
 												{
-													OutputDebugString(
-														L"Device either didn't give any return code or it's factory malfunctioned. You can only about it...");
+													LOG(ERROR) <<
+														"Device either didn't give any return code or it's factory malfunctioned. You can only cry about it...";
 												}
 												break;
 											}
 										}
 										else
 										{
-											OutputDebugString(
-												std::wstring(
-													("Device's interface is incompatible with current K2API"s
-														+
-														ktvr::IK2API_Version +
-														", it's probably outdated.\n").
-													begin(),
-													("Device's interface is incompatible with current K2API"s
-														+
-														ktvr::IK2API_Version +
-														", it's probably outdated.\n").
-													end())
-												.c_str());
+											LOG(ERROR) << "Device's interface is incompatible with current K2API" <<
+												ktvr::IK2API_Version <<
+												", it's probably outdated.";
 										}
 									}
 									else
-										OutputDebugString(
-											L"There was an error linking with the device library! (►＿◄)\n");
+										LOG(ERROR) << "There was an error linking with the device library! (►＿◄)";
 
 									// If unable to call the DLL function, use an alternative.
 									if (!fRunTimeLinkSuccess)
-										OutputDebugString(
-											L"There was an error calling the device factory... (⊙_⊙)？\n");
+										LOG(ERROR) << "There was an error calling the device factory... (⊙_⊙)？";
 								}
 								else
-									OutputDebugString(
-										L"Device's dependency dll (external linked dll) was not found (┬┬﹏┬┬)\n");
+									LOG(ERROR) << "Device's dependency dll (external linked dll) was not found (┬┬﹏┬┬)";
 							}
 							else
-								OutputDebugString(
-									L"Device's driver dll (bin/win64/device_[device].dll) was not found o(≧口≦)o\n");
+								LOG(ERROR) << "Device's driver dll (bin/win64/device_[device].dll) was not found o(≧口≦)o";
 						}
 						else
 						{
-							OutputDebugString(entry.path().stem().c_str());
-							OutputDebugString(L"'s manifest was not found :/\n");
+							LOG(ERROR) << entry.path().stem().string() << "'s manifest was not found :/";
 						}
 					}
 
-					OutputDebugString(
-						L"Registration of tracking devices has ended, there are ");
-					OutputDebugString(std::to_wstring(TrackingDevices::TrackingDevicesVector.size()).c_str());
-					OutputDebugString(L" tracking devices in total.\n");
+					LOG(INFO) << "Registration of tracking devices has ended, there are " <<
+						TrackingDevices::TrackingDevicesVector.size() <<
+						" tracking devices in total.";
 
 					// Now select the proper device
-					// TODO k2app::interfacing::trackingDeviceID must be read from settings before!
+					// k2app::K2Settings.trackingDeviceID must be read from settings before!
 					if (TrackingDevices::TrackingDevicesVector.size() > 0)
 					{
-						if (TrackingDevices::TrackingDevicesVector.size() <= k2app::interfacing::trackingDeviceID)
-							k2app::interfacing::trackingDeviceID = 0; // Select the first one
+						if (TrackingDevices::TrackingDevicesVector.size() <= k2app::K2Settings.trackingDeviceID)
+							k2app::K2Settings.trackingDeviceID = 0; // Select the first one
 
-						// Init the device
+						// Init the device (base)
 						auto const& trackingDevice =
-							TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::trackingDeviceID);
+							TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
 						switch (trackingDevice.index())
 						{
 						case 0:
@@ -408,7 +354,7 @@ namespace winrt::KinectToVR::implementation
 							{
 								switch (auto const& _trackingDevice =
 										TrackingDevices::TrackingDevicesVector.at(
-											k2app::interfacing::trackingDeviceID);
+											k2app::K2Settings.trackingDeviceID);
 									_trackingDevice.index())
 								{
 								case 0:
@@ -428,12 +374,12 @@ namespace winrt::KinectToVR::implementation
 								}
 							}
 							// Override
-							if (k2app::interfacing::overrideDeviceID > -1 &&
-								k2app::interfacing::overrideDeviceID != k2app::interfacing::trackingDeviceID)
+							if (k2app::K2Settings.overrideDeviceID > -1 &&
+								k2app::K2Settings.overrideDeviceID != k2app::K2Settings.trackingDeviceID)
 							{
 								switch (auto const& _trackingDevice =
 										TrackingDevices::TrackingDevicesVector.at(
-											k2app::interfacing::overrideDeviceID);
+											k2app::K2Settings.overrideDeviceID);
 									_trackingDevice.index())
 								{
 								case 0:
@@ -452,22 +398,22 @@ namespace winrt::KinectToVR::implementation
 									break;
 								}
 							}
-							else k2app::interfacing::overrideDeviceID = -1; // Set to NONE
+							else k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
 						}).detach();
 
 						// Update the UI
-						TrackingDevices::updateTrackingDeviceUI(k2app::interfacing::trackingDeviceID);
-						//TrackingDevices::updateOverrideDeviceUI(k2app::interfacing::overrideDeviceID); // Not yet
+						TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
+						//TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Not yet
 					}
 					else // Log and exit, we have nothing to do
 					{
-						OutputDebugString(L"No proper tracking devices (K2Devices) found :/\n");
+						LOG(ERROR) << "No proper tracking devices (K2Devices) found :/";
 						exit(-12); // -12 is for NO_DEVICES
 					}
 				}
 				else // Log and exit, we have nothing to do
 				{
-					OutputDebugString(L"No tracking devices (K2Devices) found :/\n");
+					LOG(ERROR) << "No tracking devices (K2Devices) found :/";
 					exit(-12);
 				}
 			}
