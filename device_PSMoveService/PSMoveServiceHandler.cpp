@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "PSMoveServiceHandler.h"
 
 #define M_PI_2 1.57079632679
@@ -39,12 +39,11 @@ void PSMoveServiceHandler::initialize()
 {
 	try
 	{
-		if (startup())
-		{
-			initialized = true;
-			return;
-		}
-		LOG(INFO) << "PSMoveService is not running.";
+		shutdown(); // Clean up first
+		startup(); // Try start up
+
+		initialized = PSM_GetIsConnected();
+		LOG(INFO) << (initialized ? "PSMoveService init OK." : "PSMoveService is not running.");
 	}
 	catch (std::exception& e)
 	{
@@ -76,11 +75,6 @@ void PSMoveServiceHandler::shutdown()
 {
 	try
 	{
-		if (!PSM_GetIsConnected())
-		{
-			LOG(ERROR) << "Attempted PSM shutdown on disconnected PSMoveService!";
-			return;
-		}
 		if (controllerList.count > 0)
 		{
 			for (int i = 0; i < controllerList.count; ++i)
