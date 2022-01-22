@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "PSMoveServiceHandler.h"
 
 #define M_PI_2 1.57079632679
@@ -29,7 +29,7 @@ std::string PSMoveServiceHandler::statusResultString(HRESULT stat)
 	{
 	case S_OK: return "Success!\nS_OK\nEverything's good!";
 	case E_PSMS_NOT_RUNNING: return
-			"Connection error!\nE_PSMS_NOT_RUNNING\nCheck if PSMoveService is running and accessible by clients.";
+			"Connection error!\nE_PSMS_NOT_RUNNING\nCheck if PSMoveService is running, working and accessible by clients.";
 	default: return "Undefined: " + std::to_string(stat) +
 			"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
