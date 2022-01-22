@@ -82,12 +82,14 @@ namespace ktvr {
 	// Device types for joints [KINECT]
 	enum ITrackingDeviceCharacteristics
 	{
+		// Not set???
 		K2_Character_Unknown,
-		K2_Character_Basic,
 		// NO mathbased, only [ head, waist, ankles ]
-		K2_Character_Simple,
+		K2_Character_Basic,
 		// SUP mathbased, only [ head, waist, knees, ankles, foot_tips ]
-		K2_Character_Full // SUP mathbased, [ everything ]
+		K2_Character_Simple,
+		// SUP mathbased, [ everything ]
+		K2_Character_Full 
 	};
 
 	// Alias for code readability
@@ -195,6 +197,7 @@ namespace ktvr {
 		Eigen::Quaternionf getJointOrientation() { return jointOrientation; }
 		JointTrackingState getTrackingState() { return trackingState; }
 
+		// For servers!
 		void update(Eigen::Vector3f position,
 			Eigen::Quaternionf orientation,
 			JointTrackingState state)
@@ -204,6 +207,7 @@ namespace ktvr {
 			trackingState = state;
 		}
 
+		// For servers!
 		void update(JointTrackingState state)
 		{
 			trackingState = state;
