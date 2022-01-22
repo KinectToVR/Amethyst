@@ -836,6 +836,114 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
+
+		// Set up combos if the device's OK
+		if (device_status.find("S_OK") != std::string::npos)
+		{
+			// If we're reconnecting a base device, also refresh joints
+			if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+			{
+				// Clear items
+				// Waist
+				waistJointOptionBox.get()->Items().Clear();
+				// LeftF
+				leftFootJointOptionBox.get()->Items().Clear();
+				// RightF
+				rightFootJointOptionBox.get()->Items().Clear();
+
+				// Append all joints to all combos
+				for (auto& _joint : device->getTrackedJoints())
+				{
+					// Get the name into string
+					auto _jointname = _joint.getJointName();
+
+					// Push the name to all combos
+					// Waist
+					waistJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					// LeftF
+					leftFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					// RightF
+					rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+				}
+
+				// Select the first (or next, if exists) joint
+				// Set the placeholder text on disabled combos
+				// Waist
+				waistJointOptionBox.get()->SelectedIndex(k2app::K2Settings.selectedTrackedJointID[0]);
+				// LeftF
+				leftFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.selectedTrackedJointID[1]);
+				// RightF
+				rightFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.selectedTrackedJointID[2]);
+			}
+			// If we're reconnecting an override device, also refresh joints
+			else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+			{
+				// Clear items
+				// Waist
+				waistPositionOverrideOptionBox.get()->Items().Clear();
+				waistRotationOverrideOptionBox.get()->Items().Clear();
+
+				// LeftF
+				leftFootPositionOverrideOptionBox.get()->Items().Clear();
+				leftFootRotationOverrideOptionBox.get()->Items().Clear();
+
+				// RightF
+				rightFootPositionOverrideOptionBox.get()->Items().Clear();
+				rightFootRotationOverrideOptionBox.get()->Items().Clear();
+
+				// Append all joints to all combos
+				for (auto& _joint : device->getTrackedJoints())
+				{
+					// Get the name into string
+					auto _jointname = _joint.getJointName();
+
+					// Push the name to all combos
+					// Waist
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+
+					// LeftF
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+
+					// RightF
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+				}
+
+				// Select the first (or next, if exists) joint
+				// Set the placeholder text on disabled combos
+				// Waist
+				waistPositionOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isPositionOverriddenJoint[0]
+						? k2app::K2Settings.positionOverrideJointID[0]
+						: -1);
+				waistRotationOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isRotationOverriddenJoint[0]
+						? k2app::K2Settings.rotationOverrideJointID[0]
+						: -1);
+
+				// LeftF
+				leftFootPositionOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isPositionOverriddenJoint[1]
+						? k2app::K2Settings.positionOverrideJointID[1]
+						: -1);
+				leftFootRotationOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isRotationOverriddenJoint[1]
+						? k2app::K2Settings.rotationOverrideJointID[1]
+						: -1);
+
+				// RightF
+				rightFootPositionOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isPositionOverriddenJoint[2]
+						? k2app::K2Settings.positionOverrideJointID[2]
+						: -1);
+				rightFootRotationOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isRotationOverriddenJoint[2]
+						? k2app::K2Settings.rotationOverrideJointID[2]
+						: -1);
+			}
+		}
 	}
 
 	/* Update local statuses */
@@ -1145,8 +1253,71 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 		// Joints Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 		deviceName = device->getDeviceName();
-
 		device->initialize(); // Init the device as we'll be using it
+
+		// Abort if there are no joints
+		if (device->getTrackedJoints().empty())
+		{
+			NoJointsFlyout().ShowAt(SelectedDeviceNameLabel());
+			return; // Don't set up any overrides (yet)
+		}
+
+		// Also refresh joints
+
+		// Clear items
+		// Waist
+		waistPositionOverrideOptionBox.get()->Items().Clear();
+		waistRotationOverrideOptionBox.get()->Items().Clear();
+
+		// LeftF
+		leftFootPositionOverrideOptionBox.get()->Items().Clear();
+		leftFootRotationOverrideOptionBox.get()->Items().Clear();
+
+		// RightF
+		rightFootPositionOverrideOptionBox.get()->Items().Clear();
+		rightFootRotationOverrideOptionBox.get()->Items().Clear();
+
+		// Append all joints to all combos
+		for (auto& _joint : device->getTrackedJoints())
+		{
+			// Get the name into string
+			auto _jointname = _joint.getJointName();
+
+			// Push the name to all combos
+			// Waist
+			waistPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			waistRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+
+			// LeftF
+			leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+
+			// RightF
+			rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+		}
+
+		// Select the first (or next, if exists) joint
+		// Set the placeholder text on disabled combos
+		// Waist
+		waistPositionOverrideOptionBox.get()->SelectedIndex(
+			k2app::K2Settings.isPositionOverriddenJoint[0] ? k2app::K2Settings.positionOverrideJointID[0] : -1);
+		waistRotationOverrideOptionBox.get()->SelectedIndex(
+			k2app::K2Settings.isRotationOverriddenJoint[0] ? k2app::K2Settings.rotationOverrideJointID[0] : -1);
+
+		// LeftF
+		leftFootPositionOverrideOptionBox.get()->SelectedIndex(
+			k2app::K2Settings.isPositionOverriddenJoint[1] ? k2app::K2Settings.positionOverrideJointID[1] : -1);
+		leftFootRotationOverrideOptionBox.get()->SelectedIndex(
+			k2app::K2Settings.isRotationOverriddenJoint[1] ? k2app::K2Settings.rotationOverrideJointID[1] : -1);
+
+		// RightF
+		rightFootPositionOverrideOptionBox.get()->SelectedIndex(
+			k2app::K2Settings.isPositionOverriddenJoint[2] ? k2app::K2Settings.positionOverrideJointID[2] : -1);
+		rightFootRotationOverrideOptionBox.get()->SelectedIndex(
+			k2app::K2Settings.isRotationOverriddenJoint[2] ? k2app::K2Settings.rotationOverrideJointID[2] : -1);
+
+		// Backup the status
 		device_status = device->statusResultString(device->getStatusResult());
 
 		// We've selected an override device, so this should be hidden
@@ -1219,6 +1390,42 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 		deviceName = device->getDeviceName();
 		device->initialize(); // Init the device as we'll be using it
+
+		// Also refresh joints
+
+		// Clear items
+		// Waist
+		waistJointOptionBox.get()->Items().Clear();
+		// LeftF
+		leftFootJointOptionBox.get()->Items().Clear();
+		// RightF
+		rightFootJointOptionBox.get()->Items().Clear();
+
+		// Append all joints to all combos
+		for (auto& _joint : device->getTrackedJoints())
+		{
+			// Get the name into string
+			auto _jointname = _joint.getJointName();
+
+			// Push the name to all combos
+			// Waist
+			waistJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			// LeftF
+			leftFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			// RightF
+			rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+		}
+
+		// Select the first (or next, if exists) joint
+		// Set the placeholder text on disabled combos
+		// Waist
+		waistJointOptionBox.get()->SelectedIndex(k2app::K2Settings.selectedTrackedJointID[0]);
+		// LeftF
+		leftFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.selectedTrackedJointID[1]);
+		// RightF
+		rightFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.selectedTrackedJointID[2]);
+
+		// Update the status
 		device_status = device->statusResultString(device->getStatusResult());
 
 		// We've selected a jointsbasis device, so this should be visible
