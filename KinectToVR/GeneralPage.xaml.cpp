@@ -10,7 +10,8 @@ using namespace Microsoft::UI::Xaml;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 bool show_skeleton_current = true,
-     show_skeleton_previous = true;
+     show_skeleton_previous = true,
+     general_tab_setup_finished = false;
 
 namespace winrt::KinectToVR::implementation
 {
@@ -718,7 +719,7 @@ void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	// If no overrides
-	if (k2app::interfacing::overrideDeviceID < 0)
+	if (k2app::K2Settings.overrideDeviceID < 0)
 	{
 		AutoCalibrationPane().Visibility(Visibility::Collapsed);
 		ManualCalibrationPane().Visibility(Visibility::Collapsed);
@@ -740,7 +741,8 @@ void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::BaseCalibration_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::BaseCalibration_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	ChooseDeviceFlyout().Hide();
 
@@ -755,17 +757,19 @@ void winrt::KinectToVR::implementation::GeneralPage::BaseCalibration_Click(winrt
 	SkeletonToggleButton().IsChecked(true); // Change to show
 
 	// Eventually enable the auto calibration
-	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::trackingDeviceID);
+	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceCharacteristics() == ktvr::K2_Character_Full)
+		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceCharacteristics() ==
+			ktvr::K2_Character_Full)
 			AutoCalibrationButton().IsEnabled(true);
 	}
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	ChooseDeviceFlyout().Hide();
 
@@ -780,11 +784,12 @@ void winrt::KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(w
 	SkeletonToggleButton().IsChecked(true); // Change to show
 
 	// Eventually enable the auto calibration
-	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::interfacing::overrideDeviceID);
+	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceCharacteristics() == ktvr::K2_Character_Full)
+		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceCharacteristics() ==
+			ktvr::K2_Character_Full)
 			AutoCalibrationButton().IsEnabled(true);
 	}
 }
