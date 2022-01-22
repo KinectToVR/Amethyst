@@ -20,6 +20,7 @@ class PSMoveServiceHandler : public ktvr::K2TrackingDeviceBase_JointsBasis
 public:
 	PSMoveServiceHandler()
 	{
+		// Called from the app now
 		//PSMoveServiceHandler::initialize();
 		PSMoveServiceHandler::initLogging();
 
@@ -44,16 +45,18 @@ private:
 	/* Configure logging and print first message */
 	static void initLogging()
 	{
-		// ktvr::GetK2AppDataFileDir will create all directories by itself
-
-		/* Initialize logging */
+		/* This is now called from the K2App itself
+		 * and will cause errors when called internally!
+		
+		// Initialize logging
 		google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("device_PSMoveService").c_str());
-		/* Log everything >=INFO to same file */
+		// Log everything >=INFO to same file
 		google::SetLogDestination(google::GLOG_INFO, ktvr::GetK2AppDataLogFileDir("device_PSMoveService").c_str());
 		google::SetLogFilenameExtension(".log");
 
 		FLAGS_logbufsecs = 0; //Set max timeout
 		FLAGS_minloglevel = google::GLOG_INFO;
+		*/
 
 		LOG(INFO) << "~~~K2App / PSMS new logging session begins here!~~~";
 	}
