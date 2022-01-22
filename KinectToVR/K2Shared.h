@@ -18,6 +18,28 @@ namespace k2app
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
 				errorButtonsGrid,
 				errorWhatGrid;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::NumberBox>
+				waistRollNumberBox,
+				waistYawNumberBox,
+				waistPitchNumberBox,
+				waistXNumberBox,
+				waistYNumberBox,
+				waistZNumberBox,
+
+				leftFootRollNumberBox,
+				leftFootYawNumberBox,
+				leftFootPitchNumberBox,
+				leftFootXNumberBox,
+				leftFootYNumberBox,
+				leftFootZNumberBox,
+
+				rightFootRollNumberBox,
+				rightFootYawNumberBox,
+				rightFootPitchNumberBox,
+				rightFootXNumberBox,
+				rightFootYNumberBox,
+				rightFootZNumberBox;
 		}
 
 		namespace devices
