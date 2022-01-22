@@ -197,11 +197,24 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
 {
+	if (!devices_tab_setup_finished)return; // Block dummy selects
+
 	selectedTrackingDeviceID = sender.as<Controls::ListView>().SelectedIndex();
 	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string deviceName = "[UNKNOWN]";
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+
+	// Only if override -> select enabled combos
+	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID) {
+		overrideWaistPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[0]);
+		overrideLeftFootPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[1]);
+		overrideRightFootPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[2]);
+
+		overrideWaistRotation.get()->IsChecked(k2app::K2Settings.isRotationOverriddenJoint[0]);
+		overrideLeftFootRotation.get()->IsChecked(k2app::K2Settings.isRotationOverriddenJoint[1]);
+		overrideRightFootRotation.get()->IsChecked(k2app::K2Settings.isRotationOverriddenJoint[2]);
+	}
 
 	if (trackingDevice.index() == 0)
 	{
