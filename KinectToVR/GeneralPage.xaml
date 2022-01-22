@@ -16,42 +16,49 @@
 		           DisplayMode="Overlay" CornerRadius="10">
 			<SplitView.Pane>
 
-				<Grid>
+				<Grid Margin="40,10">
 					<Grid.RowDefinitions>
-						<RowDefinition Height="5" />
-						<RowDefinition Height="*" />
+						<RowDefinition Height="0" />
+						<RowDefinition Height="*" MinHeight="580"/>
+						<RowDefinition Height="75" />
 					</Grid.RowDefinitions>
 
 					<Pivot Grid.Row="1">
-						<PivotItem Header="Waist">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="230" />
-									<ColumnDefinition Width="30" />
-									<ColumnDefinition Width="230" />
-								</Grid.ColumnDefinitions>
+                        <PivotItem Header="Waist">
+                            <Grid>
+                                <Grid.RowDefinitions>
+									<RowDefinition Height="20" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+									<RowDefinition Height="20" />
+									<RowDefinition Height="50" />
+									<RowDefinition Height="20" />
+									<RowDefinition Height="50" />
 
-								<Grid.RowDefinitions>
-									<RowDefinition Height="20" />
-									<RowDefinition Height="40" />
-									<RowDefinition Height="50" />
-									<RowDefinition Height="20" />
-									<RowDefinition Height="50" />
+									<RowDefinition Height="30" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
 									<RowDefinition Height="20" />
 									<RowDefinition Height="50" />
+									<RowDefinition Height="20" />
+									<RowDefinition Height="50" />
+
 								</Grid.RowDefinitions>
 
-								<TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20" FontWeight="Medium" />
-								<Grid Grid.Column="0" Grid.Row="2">
+                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20" 
+                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees."/>
+
+                                <Grid Grid.Column="0" Grid.Row="2">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
+										<ColumnDefinition Width="270" />
 									</Grid.ColumnDefinitions>
-									<TextBlock Text="Roll:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
+									<TextBlock Text="Roll (Z):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
 									<muxc:NumberBox x:Name="WaistRollNumberBox"
+													ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -68,13 +75,14 @@
 								<Grid Grid.Column="0" Grid.Row="4">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
+										<ColumnDefinition Width="270" />
 									</Grid.ColumnDefinitions>
-									<TextBlock Text="Yaw:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="WaistYawNumberBox"
+									<TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="WaistYawNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -91,13 +99,14 @@
 								<Grid Grid.Column="0" Grid.Row="6">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
+										<ColumnDefinition Width="270" />
 									</Grid.ColumnDefinitions>
-									<TextBlock Text="Pitch:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="WaistPitchNumberBox"
+									<TextBlock Text="Pitch (X):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="WaistPitchNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -112,17 +121,20 @@
 									                LargeChange="10" />
 								</Grid>
 
-								<TextBlock Text="Position:" Grid.Row="1" Grid.Column="2" FontSize="20" FontWeight="Medium" />
-								<Grid Grid.Column="2" Grid.Row="2">
+                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
+
+                                <Grid Grid.Column="0" Grid.Row="9">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
+										<ColumnDefinition Width="270" />
 									</Grid.ColumnDefinitions>
-									<TextBlock Text="X:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="WaistXNumberBox"
+                                    <TextBlock Text="X (Right):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left" 
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="WaistXNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -136,16 +148,17 @@
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
 								</Grid>
-								<Grid Grid.Column="2" Grid.Row="4">
+								<Grid Grid.Column="0" Grid.Row="11">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
+										<ColumnDefinition Width="270" />
 									</Grid.ColumnDefinitions>
-									<TextBlock Text="Y:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="WaistYNumberBox"
+									<TextBlock Text="Y (Up):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="WaistYNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -159,16 +172,17 @@
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
 								</Grid>
-								<Grid Grid.Column="2" Grid.Row="6">
+								<Grid Grid.Column="0" Grid.Row="13">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
+										<ColumnDefinition Width="270" />
 									</Grid.ColumnDefinitions>
-									<TextBlock Text="Z:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="WaistZNumberBox"
+									<TextBlock Text="Z (Front):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="WaistZNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -185,34 +199,40 @@
 							</Grid>
 						</PivotItem>
 						<PivotItem Header="Left Foot">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="230" />
-									<ColumnDefinition Width="30" />
-									<ColumnDefinition Width="230" />
-								</Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
 
-								<Grid.RowDefinitions>
-									<RowDefinition Height="20" />
-									<RowDefinition Height="40" />
-									<RowDefinition Height="50" />
-									<RowDefinition Height="20" />
-									<RowDefinition Height="50" />
-									<RowDefinition Height="20" />
-									<RowDefinition Height="50" />
-								</Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
 
-								<TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20" FontWeight="Medium" />
-								<Grid Grid.Column="0" Grid.Row="2">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Roll:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="LeftFootRollNumberBox"
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20" 
+                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees."/>
+
+                                <Grid Grid.Column="0" Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Roll (Z):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftFootRollNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -225,17 +245,18 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="0" Grid.Row="4">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Yaw:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="LeftFootYawNumberBox"
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftFootYawNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -248,17 +269,18 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="0" Grid.Row="6">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Pitch:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="LeftFootPitchNumberBox"
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Pitch (X):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftFootPitchNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -271,19 +293,22 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
+                                </Grid>
 
-								<TextBlock Text="Position:" Grid.Row="1" Grid.Column="2" FontSize="20" FontWeight="Medium" />
-								<Grid Grid.Column="2" Grid.Row="2">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="X:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="LeftFootXNumberBox"
+                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
+
+                                <Grid Grid.Column="0" Grid.Row="9">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="X (Right):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left" 
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftFootXNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -296,17 +321,18 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="2" Grid.Row="4">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Y:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="LeftFootYNumberBox"
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Y (Up):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftFootYNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -319,17 +345,18 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="2" Grid.Row="6">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Z:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="LeftFootZNumberBox"
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="13">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Z (Front):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftFootZNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -342,38 +369,44 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
-							</Grid>
-						</PivotItem>
+                                </Grid>
+                            </Grid>
+                        </PivotItem>
 						<PivotItem Header="Right Foot">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="230" />
-									<ColumnDefinition Width="30" />
-									<ColumnDefinition Width="230" />
-								</Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
 
-								<Grid.RowDefinitions>
-									<RowDefinition Height="20" />
-									<RowDefinition Height="40" />
-									<RowDefinition Height="50" />
-									<RowDefinition Height="20" />
-									<RowDefinition Height="50" />
-									<RowDefinition Height="20" />
-									<RowDefinition Height="50" />
-								</Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
 
-								<TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20" FontWeight="Medium" />
-								<Grid Grid.Column="0" Grid.Row="2">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Roll:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="RightFootRollNumberBox"
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20" 
+                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees."/>
+
+                                <Grid Grid.Column="0" Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Roll (Z):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightFootRollNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -386,17 +419,18 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="0" Grid.Row="4">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Yaw:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="RightFootYawNumberBox"
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightFootYawNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -409,17 +443,18 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="0" Grid.Row="6">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Pitch:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="RightFootPitchNumberBox"
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Pitch (X):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightFootPitchNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -432,19 +467,22 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
+                                </Grid>
 
-								<TextBlock Text="Position:" Grid.Row="1" Grid.Column="2" FontSize="20" FontWeight="Medium" />
-								<Grid Grid.Column="2" Grid.Row="2">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="X:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="RightFootXNumberBox"
+                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
+
+                                <Grid Grid.Column="0" Grid.Row="9">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="X (Right):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left" 
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightFootXNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -457,17 +495,18 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="2" Grid.Row="4">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Y:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="RightFootYNumberBox"
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Y (Up):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightFootYNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -480,17 +519,18 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="2" Grid.Row="6">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="180" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Z:" VerticalAlignment="Center"
-									           HorizontalAlignment="Right"
-									           Grid.Column="0"
-									           FontSize="17" FontWeight="Normal" />
-									<muxc:NumberBox x:Name="RightFootZNumberBox"
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="13">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Z (Front):" VerticalAlignment="Center"
+									           HorizontalAlignment="Left"
+									           Grid.Column="0" Margin="20,0,0,0"
+									           FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightFootZNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
 									                FontSize="26"
 									                FontWeight="Normal"
 									                Grid.Column="1"
@@ -503,17 +543,17 @@
 									                SmallChange="1"
 									                Margin="10,0,0,0"
 									                LargeChange="10" />
-								</Grid>
-							</Grid>
-						</PivotItem>
+                                </Grid>
+                            </Grid>
+                        </PivotItem>
 					</Pivot>
 
-					<Grid Grid.Row="2" Margin="0,303,0,0" VerticalAlignment="Top">
+					<Grid Grid.Row="2" Margin="0,0,0,10" VerticalAlignment="Top">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="332" />
+							<ColumnDefinition Width="250" />
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="13" />
+							<ColumnDefinition Width="7" />
 						</Grid.ColumnDefinitions>
 						<Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="3" FontSize="14" Content="Save"
 						        Height="50" Grid.Column="2" Style="{StaticResource AccentButtonStyle}" FontWeight="Medium"
@@ -728,11 +768,11 @@
 
 											<Button FontSize="15" x:Name="BaseCalibration" Click="BaseCalibration_Click"
 											        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Base"
-											        Margin="10,10,10,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
+											        Margin="5,10,0,0" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
 											        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
 											<Button FontSize="15" x:Name="OverrideCalibration" Click="OverrideCalibration_Click"
 											        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Override"
-											        Margin="10,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
+											        Margin="0,10,5,0" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
 											        VerticalAlignment="Stretch" />
 
 										</Grid>
