@@ -343,6 +343,26 @@ namespace winrt::KinectToVR::implementation
 							break;
 						}
 
+						// Init the device (override, optionally)
+						if (k2app::K2Settings.overrideDeviceID > -1 &&
+							k2app::K2Settings.overrideDeviceID != k2app::K2Settings.trackingDeviceID)
+						{
+							auto const& overrideDevice =
+								TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
+							switch (overrideDevice.index())
+							{
+							case 0:
+								// Kinect Basis
+								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(overrideDevice)->initialize();
+								break;
+							case 1:
+								// Joints Basis
+								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(overrideDevice)->initialize();
+								break;
+							}
+						}
+						else k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
+
 						// Second check and try after 3 seconds
 						std::thread([&]
 						{
