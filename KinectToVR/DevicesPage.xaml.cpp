@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "DevicesPage.xaml.h"
 #if __has_include("DevicesPage.g.cpp")
 #include "DevicesPage.g.cpp"
@@ -186,9 +186,6 @@ namespace winrt::KinectToVR::implementation
 		}).detach();
 
 		devices_update_current();
-
-		// Notify of the setup's end
-		devices_tab_setup_finished = true;
 	}
 }
 
@@ -1360,6 +1357,9 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 
 	k2app::K2Settings.overrideDeviceID = selectedTrackingDeviceID;
 	//TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Not yet TODO
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
@@ -1477,6 +1477,9 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 		k2app::K2Settings.overrideDeviceID = -1; // Reset the override
 
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 /* For JointBasis device type: joints selector */
@@ -1488,6 +1491,9 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_Selecti
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (waistJointOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.selectedTrackedJointID[0] = waistJointOptionBox.get()->SelectedIndex();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
@@ -1498,6 +1504,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_Sele
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (leftFootJointOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.selectedTrackedJointID[1] = leftFootJointOptionBox.get()->SelectedIndex();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_SelectionChanged(
@@ -1507,6 +1516,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_Sel
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (rightFootJointOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.selectedTrackedJointID[1] = rightFootJointOptionBox.get()->SelectedIndex();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 /* For *Override* device type: position & rotation joints selector */
@@ -1519,6 +1531,9 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOption
 	if (k2app::K2Settings.isPositionOverriddenJoint[0] &&
 		waistPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.positionOverrideJointID[0] = waistPositionOverrideOptionBox.get()->SelectedIndex();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
@@ -1530,6 +1545,9 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOption
 	if (k2app::K2Settings.isRotationOverriddenJoint[0] &&
 		waistRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.rotationOverrideJointID[0] = waistRotationOverrideOptionBox.get()->SelectedIndex();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
@@ -1541,6 +1559,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOpt
 	if (k2app::K2Settings.isPositionOverriddenJoint[1] &&
 		leftFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.positionOverrideJointID[1] = leftFootPositionOverrideOptionBox.get()->SelectedIndex();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
@@ -1552,6 +1573,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOpt
 	if (k2app::K2Settings.isRotationOverriddenJoint[1] &&
 		leftFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.rotationOverrideJointID[1] = leftFootRotationOverrideOptionBox.get()->SelectedIndex();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
@@ -1563,6 +1587,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOp
 	if (k2app::K2Settings.isPositionOverriddenJoint[2] &&
 		rightFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.positionOverrideJointID[2] = rightFootPositionOverrideOptionBox.get()->SelectedIndex();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
@@ -1574,6 +1601,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOp
 	if (k2app::K2Settings.isRotationOverriddenJoint[2] &&
 		rightFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.rotationOverrideJointID[2] = rightFootRotationOverrideOptionBox.get()->SelectedIndex();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 /* For *Override* device type: override elements for joints selector */
@@ -1581,46 +1611,616 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOp
 void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+	{
+		OverrideWaistPosition().IsChecked(false);
+		NoJointsFlyout().ShowAt(OverridesLabel());
+		return; // Don't set up any overrides (yet)
+	}
+
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	k2app::K2Settings.isPositionOverriddenJoint[0] = overrideWaistPosition.get()->IsChecked();
+
+	// If we've disabled the override, set the placeholder text
+	waistPositionOverrideOptionBox.get()->SelectedIndex(
+		overrideWaistPosition.get()->IsChecked() ? k2app::K2Settings.positionOverrideJointID[0] : -1);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+	{
+		OverrideWaistRotation().IsChecked(false);
+		NoJointsFlyout().ShowAt(OverridesLabel());
+		return; // Don't set up any overrides (yet)
+	}
+
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	k2app::K2Settings.isRotationOverriddenJoint[0] = overrideWaistRotation.get()->IsChecked();
+
+	// If we've disabled the override, set the placeholder text
+	waistRotationOverrideOptionBox.get()->SelectedIndex(
+		overrideWaistRotation.get()->IsChecked() ? k2app::K2Settings.rotationOverrideJointID[0] : -1);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+	{
+		OverrideLeftFootPosition().IsChecked(false);
+		NoJointsFlyout().ShowAt(OverridesLabel());
+		return; // Don't set up any overrides (yet)
+	}
+
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	k2app::K2Settings.isPositionOverriddenJoint[1] = overrideLeftFootPosition.get()->IsChecked();
+
+	// If we've disabled the override, set the placeholder text
+	leftFootPositionOverrideOptionBox.get()->SelectedIndex(
+		overrideLeftFootPosition.get()->IsChecked() ? k2app::K2Settings.positionOverrideJointID[1] : -1);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+	{
+		OverrideLeftFootRotation().IsChecked(false);
+		NoJointsFlyout().ShowAt(OverridesLabel());
+		return; // Don't set up any overrides (yet)
+	}
+
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	k2app::K2Settings.isRotationOverriddenJoint[1] = overrideLeftFootRotation.get()->IsChecked();
+
+	// If we've disabled the override, set the placeholder text
+	leftFootRotationOverrideOptionBox.get()->SelectedIndex(
+		overrideLeftFootRotation.get()->IsChecked() ? k2app::K2Settings.rotationOverrideJointID[1] : -1);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+	{
+		OverrideRightFootPosition().IsChecked(false);
+		NoJointsFlyout().ShowAt(OverridesLabel());
+		return; // Don't set up any overrides (yet)
+	}
+
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	k2app::K2Settings.isPositionOverriddenJoint[2] = overrideRightFootPosition.get()->IsChecked();
+
+	// If we've disabled the override, set the placeholder text
+	rightFootPositionOverrideOptionBox.get()->SelectedIndex(
+		overrideRightFootPosition.get()->IsChecked() ? k2app::K2Settings.positionOverrideJointID[2] : -1);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+	{
+		OverrideRightFootRotation().IsChecked(false);
+		NoJointsFlyout().ShowAt(OverridesLabel());
+		return; // Don't set up any overrides (yet)
+	}
+
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	k2app::K2Settings.isRotationOverriddenJoint[2] = overrideRightFootRotation.get()->IsChecked();
+
+	// If we've disabled the override, set the placeholder text
+	rightFootRotationOverrideOptionBox.get()->SelectedIndex(
+		overrideRightFootRotation.get()->IsChecked() ? k2app::K2Settings.rotationOverrideJointID[2] : -1);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+/* For comboboxes: update before opening */
+
+void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_DropDownOpened(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_DropDownOpened(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_DropDownOpened(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_DropDownOpened(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_DropDownOpened(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_DropDownOpened(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_DropDownOpened(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_DropDownOpened(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_DropDownOpened(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::DismissOverrideTipNoJointsButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	NoJointsFlyout().Hide();
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Notify of the setup's end
+	devices_tab_setup_finished = true;
+
+	// Run the on-selected routine
+	selectedTrackingDeviceID = k2app::K2Settings.trackingDeviceID;
+	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
+
+	std::string deviceName = "[UNKNOWN]";
+	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+
+	// Only if override -> select enabled combos
+	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID) {
+		overrideWaistPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[0]);
+		overrideLeftFootPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[1]);
+		overrideRightFootPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[2]);
+
+		overrideWaistRotation.get()->IsChecked(k2app::K2Settings.isRotationOverriddenJoint[0]);
+		overrideLeftFootRotation.get()->IsChecked(k2app::K2Settings.isRotationOverriddenJoint[1]);
+		overrideRightFootRotation.get()->IsChecked(k2app::K2Settings.isRotationOverriddenJoint[2]);
+	}
+
+	if (trackingDevice.index() == 0)
+	{
+		// Kinect Basis
+		const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+
+		deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
+		device_status = device->statusResultString(device->getStatusResult());
+
+		deviceName = device->getDeviceName();
+
+		// We've selected a kinectbasis device, so this should be hidden
+		jointBasisControls.get()->Visibility(Visibility::Collapsed);
+		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+
+		// Set up combos if the device's OK
+		if (device_status.find("S_OK") != std::string::npos)
+		{
+			// If we're reconnecting an override device, also refresh joints
+			if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+			{
+				// Clear items
+				// Waist
+				waistPositionOverrideOptionBox.get()->Items().Clear();
+				waistRotationOverrideOptionBox.get()->Items().Clear();
+
+				// LeftF
+				leftFootPositionOverrideOptionBox.get()->Items().Clear();
+				leftFootRotationOverrideOptionBox.get()->Items().Clear();
+
+				// RightF
+				rightFootPositionOverrideOptionBox.get()->Items().Clear();
+				rightFootRotationOverrideOptionBox.get()->Items().Clear();
+
+				// Append all joints to all combos, depend on characteristics
+				switch (device->getDeviceCharacteristics())
+				{
+				case ktvr::K2_Character_Basic:
+				{
+					// Waist
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					// LFoot
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					// RFoot
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+				}
+				break;
+				case ktvr::K2_Character_Simple:
+				{
+					// Waist
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					// LFoot
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					// RFoot
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+				}
+				break;
+				case ktvr::K2_Character_Full:
+				{
+					// Waist
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					// LFoot
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					// RFoot
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+				}
+				break;
+				}
+
+				// Select the first (or next, if exists) joint
+				// Set the placeholder text on disabled combos
+				// Waist
+				waistPositionOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isPositionOverriddenJoint[0]
+					? k2app::K2Settings.positionOverrideJointID[0]
+					: -1);
+				waistRotationOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isRotationOverriddenJoint[0]
+					? k2app::K2Settings.rotationOverrideJointID[0]
+					: -1);
+
+				// LeftF
+				leftFootPositionOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isPositionOverriddenJoint[1]
+					? k2app::K2Settings.positionOverrideJointID[1]
+					: -1);
+				leftFootRotationOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isRotationOverriddenJoint[1]
+					? k2app::K2Settings.rotationOverrideJointID[1]
+					: -1);
+
+				// RightF
+				rightFootPositionOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isPositionOverriddenJoint[2]
+					? k2app::K2Settings.positionOverrideJointID[2]
+					: -1);
+				rightFootRotationOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isRotationOverriddenJoint[2]
+					? k2app::K2Settings.rotationOverrideJointID[2]
+					: -1);
+			}
+		}
+	}
+	else if (trackingDevice.index() == 1)
+	{
+		// Joints Basis
+		const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+
+		deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
+		device_status = device->statusResultString(device->getStatusResult());
+
+		deviceName = device->getDeviceName();
+
+		// We've selected a jointsbasis device, so this should be visible
+		//	at least when the device is online
+		jointBasisControls.get()->Visibility(
+			(device_status.find("S_OK") != std::string::npos &&
+				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		jointBasisLabel.get()->Visibility(
+			(device_status.find("S_OK") != std::string::npos &&
+				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Set up combos if the device's OK
+		if (device_status.find("S_OK") != std::string::npos)
+		{
+			// If we're reconnecting a base device, also refresh joints
+			if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+			{
+				// Clear items
+				// Waist
+				waistJointOptionBox.get()->Items().Clear();
+				// LeftF
+				leftFootJointOptionBox.get()->Items().Clear();
+				// RightF
+				rightFootJointOptionBox.get()->Items().Clear();
+
+				// Append all joints to all combos
+				for (auto& _joint : device->getTrackedJoints())
+				{
+					// Get the name into string
+					auto _jointname = _joint.getJointName();
+
+					// Push the name to all combos
+					// Waist
+					waistJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					// LeftF
+					leftFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					// RightF
+					rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+				}
+
+				// Select the first (or next, if exists) joint
+				// Set the placeholder text on disabled combos
+				// Waist
+				waistJointOptionBox.get()->SelectedIndex(k2app::K2Settings.selectedTrackedJointID[0]);
+				// LeftF
+				leftFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.selectedTrackedJointID[1]);
+				// RightF
+				rightFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.selectedTrackedJointID[2]);
+			}
+			// If we're reconnecting an override device, also refresh joints
+			else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+			{
+				// Clear items
+				// Waist
+				waistPositionOverrideOptionBox.get()->Items().Clear();
+				waistRotationOverrideOptionBox.get()->Items().Clear();
+
+				// LeftF
+				leftFootPositionOverrideOptionBox.get()->Items().Clear();
+				leftFootRotationOverrideOptionBox.get()->Items().Clear();
+
+				// RightF
+				rightFootPositionOverrideOptionBox.get()->Items().Clear();
+				rightFootRotationOverrideOptionBox.get()->Items().Clear();
+
+				// Append all joints to all combos
+				for (auto& _joint : device->getTrackedJoints())
+				{
+					// Get the name into string
+					auto _jointname = _joint.getJointName();
+
+					// Push the name to all combos
+					// Waist
+					waistPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					waistRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+
+					// LeftF
+					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+
+					// RightF
+					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+				}
+
+				// Select the first (or next, if exists) joint
+				// Set the placeholder text on disabled combos
+				// Waist
+				waistPositionOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isPositionOverriddenJoint[0]
+					? k2app::K2Settings.positionOverrideJointID[0]
+					: -1);
+				waistRotationOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isRotationOverriddenJoint[0]
+					? k2app::K2Settings.rotationOverrideJointID[0]
+					: -1);
+
+				// LeftF
+				leftFootPositionOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isPositionOverriddenJoint[1]
+					? k2app::K2Settings.positionOverrideJointID[1]
+					: -1);
+				leftFootRotationOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isRotationOverriddenJoint[1]
+					? k2app::K2Settings.rotationOverrideJointID[1]
+					: -1);
+
+				// RightF
+				rightFootPositionOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isPositionOverriddenJoint[2]
+					? k2app::K2Settings.positionOverrideJointID[2]
+					: -1);
+				rightFootRotationOverrideOptionBox.get()->SelectedIndex(
+					k2app::K2Settings.isRotationOverriddenJoint[2]
+					? k2app::K2Settings.rotationOverrideJointID[2]
+					: -1);
+			}
+		}
+	}
+
+	// Update the status here
+	const bool status_ok = device_status.find("S_OK") != std::string::npos;
+
+	errorWhatText.get()->Visibility(
+		status_ok ? Visibility::Collapsed : Visibility::Visible);
+	deviceErrorGrid.get()->Visibility(
+		status_ok ? Visibility::Collapsed : Visibility::Visible);
+	trackingDeviceErrorLabel.get()->Visibility(
+		status_ok ? Visibility::Collapsed : Visibility::Visible);
+
+	trackingDeviceChangePanel.get()->Visibility(
+		status_ok ? Visibility::Visible : Visibility::Collapsed);
+
+	// Split status and message by \n
+	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
+	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
+	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+
+	if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+	{
+		LOG(INFO) << "Selected a base";
+		setAsOverrideButton.get()->IsEnabled(false);
+		setAsBaseButton.get()->IsEnabled(false);
+
+		overridesLabel.get()->Visibility(Visibility::Collapsed);
+		overridesControls.get()->Visibility(Visibility::Collapsed);
+	}
+	else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+	{
+		LOG(INFO) << "Selected an override";
+		setAsOverrideButton.get()->IsEnabled(false);
+		setAsBaseButton.get()->IsEnabled(true);
+
+		overridesLabel.get()->Visibility(Visibility::Visible);
+		overridesControls.get()->Visibility(Visibility::Visible);
+	}
+	else
+	{
+		LOG(INFO) << "Selected a [none]";
+		setAsOverrideButton.get()->IsEnabled(true);
+		setAsBaseButton.get()->IsEnabled(true);
+
+		overridesLabel.get()->Visibility(Visibility::Collapsed);
+		overridesControls.get()->Visibility(Visibility::Collapsed);
+	}
+
+	LOG(INFO) << "Changed the currently selected device to " << deviceName;
 }
