@@ -7,6 +7,11 @@ inline std::wstring wstring_cast(std::string const& s)
 	return std::wstring(s.begin(), s.end());
 }
 
+inline std::string string_cast(std::wstring const& s)
+{
+	return std::string(s.begin(), s.end());
+}
+
 inline std::array<std::string, 3> split_status(std::string const& s)
 {
 	// If there are 3 strings separated by \n
