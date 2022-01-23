@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -261,7 +261,7 @@ namespace winrt::KinectToVR::implementation
 												{
 													LOG(INFO) << "Interface version OK, now constructing...";
 
-													LOG(INFO) << "Registered tracking device with:\n - name: " << 
+													LOG(INFO) << "Registered tracking device with:\n - name: " <<
 														device_name << "\n - type: " << device_type <<
 														"\n - linked dll: " << linked_dll_path <<
 														"\n - blocks flip: " << blocks_flip <<
