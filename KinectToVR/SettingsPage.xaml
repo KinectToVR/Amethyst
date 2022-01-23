@@ -32,7 +32,8 @@
 						<ColumnDefinition Width="2*" />
 					</Grid.ColumnDefinitions>
 
-					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium" Opacity="1"
+							   x:Name="FlipCheckBoxLabel"
 					           Text="Mirror trackers when turning away from the Kinect" Margin="30,0,0,10" Grid.Column="0" />
 					<CheckBox x:Name="FlipCheckBox"
 					          Checked="FlipCheckBox_Checked"
