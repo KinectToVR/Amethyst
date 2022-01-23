@@ -8,7 +8,9 @@
 	mc:Ignorable="d" Loaded="SettingsPage_Loaded"
 	NavigationCacheMode="Required"
 	xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-	xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
+	xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity">
 
     <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
 		<Grid.ColumnDefinitions>
