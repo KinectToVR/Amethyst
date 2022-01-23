@@ -2,8 +2,50 @@
 #include "pch.h"
 #include "K2Settings.h"
 
+inline std::wstring wstring_cast(std::string const& s)
+{
+	return std::wstring(s.begin(), s.end());
+}
+
+inline std::string string_cast(std::wstring const& s)
+{
+	return std::string(s.begin(), s.end());
+}
+
 namespace k2app
 {
+	namespace interfacing
+	{
+		inline void ShowToast(std::string const& header, std::string const& text)
+		{
+			using namespace winrt::Windows::UI::Notifications;
+			using namespace winrt::Windows::Data::Xml::Dom;
+
+			// Construct the XML toast template
+			XmlDocument document;
+			document.LoadXml(L"\
+				<toast>\
+					<visual>\
+				        <binding template=\"ToastGeneric\">\
+				            <text></text>\
+				            <text></text>\
+				        </binding>\
+				    </visual>\
+				</toast>");
+
+			// Populate with text and values
+			document.SelectSingleNode(L"//text[1]").InnerText(wstring_cast(header));
+			document.SelectSingleNode(L"//text[2]").InnerText(wstring_cast(text));
+
+			// Construct the notification
+			ToastNotification notification{document};
+			ToastNotifier toastNotifier{ToastNotificationManager::CreateToastNotifier()};
+
+			// And show it!
+			toastNotifier.Show(notification);
+		}
+	}
+
 	namespace shared
 	{
 		namespace general
