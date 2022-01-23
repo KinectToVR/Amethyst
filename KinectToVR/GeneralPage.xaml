@@ -122,7 +122,7 @@
 								</Grid>
 
                                 <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in meters."/>
 
                                 <Grid Grid.Column="0" Grid.Row="9">
 									<Grid.ColumnDefinitions>
@@ -144,9 +144,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
+									                SmallChange="0.01"
 									                Margin="10,0,0,0"
-									                LargeChange="10" />
+									                LargeChange="0.10" />
 								</Grid>
 								<Grid Grid.Column="0" Grid.Row="11">
 									<Grid.ColumnDefinitions>
@@ -168,9 +168,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
+									                SmallChange="0.01"
 									                Margin="10,0,0,0"
-									                LargeChange="10" />
+									                LargeChange="0.10" />
 								</Grid>
 								<Grid Grid.Column="0" Grid.Row="13">
 									<Grid.ColumnDefinitions>
@@ -192,9 +192,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
+									                SmallChange="0.01"
 									                Margin="10,0,0,0"
-									                LargeChange="10" />
+									                LargeChange="0.10" />
 								</Grid>
 							</Grid>
 						</PivotItem>
@@ -296,7 +296,7 @@
                                 </Grid>
 
                                 <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in meters."/>
 
                                 <Grid Grid.Column="0" Grid.Row="9">
                                     <Grid.ColumnDefinitions>
@@ -318,9 +318,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
+									                SmallChange="0.01"
 									                Margin="10,0,0,0"
-									                LargeChange="10" />
+									                LargeChange="0.10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="11">
                                     <Grid.ColumnDefinitions>
@@ -342,9 +342,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
+									                SmallChange="0.01"
 									                Margin="10,0,0,0"
-									                LargeChange="10" />
+									                LargeChange="0.10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="13">
                                     <Grid.ColumnDefinitions>
@@ -366,9 +366,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
+									                SmallChange="0.01"
 									                Margin="10,0,0,0"
-									                LargeChange="10" />
+									                LargeChange="0.10" />
                                 </Grid>
                             </Grid>
                         </PivotItem>
@@ -470,7 +470,7 @@
                                 </Grid>
 
                                 <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in meters."/>
 
                                 <Grid Grid.Column="0" Grid.Row="9">
                                     <Grid.ColumnDefinitions>
@@ -492,9 +492,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
+									                SmallChange="0.01"
 									                Margin="10,0,0,0"
-									                LargeChange="10" />
+									                LargeChange="0.10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="11">
                                     <Grid.ColumnDefinitions>
@@ -516,9 +516,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
+									                SmallChange="0.01"
 									                Margin="10,0,0,0"
-									                LargeChange="10" />
+									                LargeChange="0.10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="13">
                                     <Grid.ColumnDefinitions>
@@ -540,9 +540,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
+									                SmallChange="0.01"
 									                Margin="10,0,0,0"
-									                LargeChange="10" />
+									                LargeChange="0.10" />
                                 </Grid>
                             </Grid>
                         </PivotItem>
