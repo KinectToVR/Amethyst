@@ -96,10 +96,9 @@ Follow these steps:
   Alternatively you can open the developer powershell for Visual Studio (or BuildTools) 2022 and:
   ```powershell
   > msbuild KinectToVR.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
-  > msbuild KinectToVR.sln /t:KinectToVR_API "/p:Configuration=Release;Platform=x64"
   > msbuild KinectToVR.sln "/p:Configuration=Release;Platform=x64"
   ```
-  There are 3 commands since the first will only restore ```NuGet```, the second build ```K2API``` and then the whole thing will be built.
+  There are 3 commands since the first will only restore ```NuGet```,  then the whole thing will be built.
 
 ## **Deploy**
 The whole output can be found in ```x64/Release``` directory<br>
@@ -107,4 +106,5 @@ The whole output can be found in ```x64/Release``` directory<br>
  - The assembled ```K2Driver``` is inside the ```driver/``` folder
  - Devices (plugins) are inside ```devices/``` folder
  - Deployed app is inside ```KinectToVR/AppX/``` folder<br>
-   You don't need to copy the ```devices/``` folder there, it's automatic.
+   You don't need to copy the ```devices/``` folder there, it's automatic.<br>
+   **Notice!** You won't be able to run it yet, since it's not published!

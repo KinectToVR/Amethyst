@@ -4,5 +4,4 @@ $msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Se
     -replace('"installationPath": "','') -replace('",',''))".Trim() + "\\MSBuild\\Current\\Bin\\MSBuild.exe"
 
 &"$msbuild" KinectToVR.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
-&"$msbuild" KinectToVR.sln /t:KinectToVR_API "/p:Configuration=Release;Platform=x64"
 &"$msbuild" KinectToVR.sln "/p:Configuration=Release;Platform=x64"
