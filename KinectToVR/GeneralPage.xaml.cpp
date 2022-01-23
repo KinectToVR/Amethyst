@@ -93,29 +93,29 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
 	// Discard backend offsets' values by re-reading them from settings
 	k2app::K2Settings.readSettings();
 
-	k2app::shared::general::waistXNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].x() * 100.f));
-	k2app::shared::general::waistYNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].y() * 100.f));
-	k2app::shared::general::waistZNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].z() * 100.f));
+	k2app::shared::general::waistXNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[0].x());
+	k2app::shared::general::waistYNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[0].y());
+	k2app::shared::general::waistZNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[0].z());
 
-	k2app::shared::general::leftFootXNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[1].x() * 100.f));
-	k2app::shared::general::leftFootYNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[1].y() * 100.f));
-	k2app::shared::general::leftFootZNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[1].z() * 100.f));
+	k2app::shared::general::leftFootXNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[1].x());
+	k2app::shared::general::leftFootYNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[1].y());
+	k2app::shared::general::leftFootZNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[1].z());
 
-	k2app::shared::general::rightFootXNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[2].x() * 100.f));
-	k2app::shared::general::rightFootYNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[2].y() * 100.f));
-	k2app::shared::general::rightFootZNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[2].z() * 100.f));
+	k2app::shared::general::rightFootXNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[2].x());
+	k2app::shared::general::rightFootYNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[2].y());
+	k2app::shared::general::rightFootZNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[2].z());
 
-	k2app::shared::general::waistPitchNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].x()));
-	k2app::shared::general::waistYawNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].y()));
-	k2app::shared::general::waistRollNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].z()));
+	k2app::shared::general::waistPitchNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].x())));
+	k2app::shared::general::waistYawNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].y())));
+	k2app::shared::general::waistRollNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].z())));
 
-	k2app::shared::general::leftFootPitchNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].x()));
-	k2app::shared::general::leftFootYawNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].y()));
-	k2app::shared::general::leftFootRollNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].z()));
+	k2app::shared::general::leftFootPitchNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].x())));
+	k2app::shared::general::leftFootYawNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].y())));
+	k2app::shared::general::leftFootRollNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].z())));
 
-	k2app::shared::general::rightFootPitchNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].x()));
-	k2app::shared::general::rightFootYawNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].y()));
-	k2app::shared::general::rightFootRollNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].z()));
+	k2app::shared::general::rightFootPitchNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].x())));
+	k2app::shared::general::rightFootYawNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].y())));
+	k2app::shared::general::rightFootRollNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].z())));
 }
 
 
@@ -126,17 +126,17 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsFrontendValueChanged
 	if (!general_tab_setup_finished)return; // Don't react to dummy changes
 
 	// Update backend offsets with new values BUT NOT SAVE
-	k2app::K2Settings.positionJointsOffsets[0].x() = float(k2app::shared::general::waistXNumberBox.get()->Value()) / 100.f;
-	k2app::K2Settings.positionJointsOffsets[0].y() = float(k2app::shared::general::waistYNumberBox.get()->Value()) / 100.f;
-	k2app::K2Settings.positionJointsOffsets[0].z() = float(k2app::shared::general::waistZNumberBox.get()->Value()) / 100.f;
+	k2app::K2Settings.positionJointsOffsets[0].x() = double(k2app::shared::general::waistXNumberBox.get()->Value()) / 100.0;
+	k2app::K2Settings.positionJointsOffsets[0].y() = double(k2app::shared::general::waistYNumberBox.get()->Value()) / 100.0;
+	k2app::K2Settings.positionJointsOffsets[0].z() = double(k2app::shared::general::waistZNumberBox.get()->Value()) / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[1].x() = float(k2app::shared::general::leftFootXNumberBox.get()->Value()) / 100.f;
-	k2app::K2Settings.positionJointsOffsets[1].y() = float(k2app::shared::general::leftFootYNumberBox.get()->Value()) / 100.f;
-	k2app::K2Settings.positionJointsOffsets[1].z() = float(k2app::shared::general::leftFootZNumberBox.get()->Value()) / 100.f;
+	k2app::K2Settings.positionJointsOffsets[1].x() = double(k2app::shared::general::leftFootXNumberBox.get()->Value()) / 100.0;
+	k2app::K2Settings.positionJointsOffsets[1].y() = double(k2app::shared::general::leftFootYNumberBox.get()->Value()) / 100.0;
+	k2app::K2Settings.positionJointsOffsets[1].z() = double(k2app::shared::general::leftFootZNumberBox.get()->Value()) / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[2].x() = float(k2app::shared::general::rightFootXNumberBox.get()->Value()) / 100.f;
-	k2app::K2Settings.positionJointsOffsets[2].y() = float(k2app::shared::general::rightFootYNumberBox.get()->Value()) / 100.f;
-	k2app::K2Settings.positionJointsOffsets[2].z() = float(k2app::shared::general::rightFootZNumberBox.get()->Value()) / 100.f;
+	k2app::K2Settings.positionJointsOffsets[2].x() = double(k2app::shared::general::rightFootXNumberBox.get()->Value()) / 100.0;
+	k2app::K2Settings.positionJointsOffsets[2].y() = double(k2app::shared::general::rightFootYNumberBox.get()->Value()) / 100.0;
+	k2app::K2Settings.positionJointsOffsets[2].z() = double(k2app::shared::general::rightFootZNumberBox.get()->Value()) / 100.0;
 
 	k2app::K2Settings.rotationJointsOffsets[0].x() = degreesToRadians(k2app::shared::general::waistPitchNumberBox.get()->Value());
 	k2app::K2Settings.rotationJointsOffsets[0].y() = degreesToRadians(k2app::shared::general::waistYawNumberBox.get()->Value());
@@ -399,29 +399,29 @@ void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
 
 	// Load values into number boxes
-	k2app::shared::general::waistXNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].x() * 100.f));
-	k2app::shared::general::waistYNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].y() * 100.f));
-	k2app::shared::general::waistZNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].z() * 100.f));
+	k2app::shared::general::waistXNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[0].x());
+	k2app::shared::general::waistYNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[0].y());
+	k2app::shared::general::waistZNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[0].z());
 
-	k2app::shared::general::leftFootXNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[1].x() * 100.f));
-	k2app::shared::general::leftFootYNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[1].y() * 100.f));
-	k2app::shared::general::leftFootZNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[1].z() * 100.f));
+	k2app::shared::general::leftFootXNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[1].x());
+	k2app::shared::general::leftFootYNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[1].y());
+	k2app::shared::general::leftFootZNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[1].z());
 
-	k2app::shared::general::rightFootXNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[2].x() * 100.f));
-	k2app::shared::general::rightFootYNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[2].y() * 100.f));
-	k2app::shared::general::rightFootZNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[2].z() * 100.f));
+	k2app::shared::general::rightFootXNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[2].x());
+	k2app::shared::general::rightFootYNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[2].y());
+	k2app::shared::general::rightFootZNumberBox.get()->Value(k2app::K2Settings.positionJointsOffsets[2].z());
 
-	k2app::shared::general::waistPitchNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].x()));
-	k2app::shared::general::waistYawNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].y()));
-	k2app::shared::general::waistRollNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].z()));
+	k2app::shared::general::waistPitchNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].x())));
+	k2app::shared::general::waistYawNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].y())));
+	k2app::shared::general::waistRollNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].z())));
 
-	k2app::shared::general::leftFootPitchNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].x()));
-	k2app::shared::general::leftFootYawNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].y()));
-	k2app::shared::general::leftFootRollNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].z()));
+	k2app::shared::general::leftFootPitchNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].x())));
+	k2app::shared::general::leftFootYawNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].y())));
+	k2app::shared::general::leftFootRollNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].z())));
 
-	k2app::shared::general::rightFootPitchNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].x()));
-	k2app::shared::general::rightFootYawNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].y()));
-	k2app::shared::general::rightFootRollNumberBox.get()->Value((int)radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].z()));
+	k2app::shared::general::rightFootPitchNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].x())));
+	k2app::shared::general::rightFootYawNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].y())));
+	k2app::shared::general::rightFootRollNumberBox.get()->Value((int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].z())));
 
 	// Notify of the setup's end
 	general_tab_setup_finished = true;
