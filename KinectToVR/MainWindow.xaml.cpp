@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -335,11 +335,41 @@ namespace winrt::KinectToVR::implementation
 						{
 						case 0:
 							// Kinect Basis
-							std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
+							{
+								// Update options for the device
+								if (k2app::K2Settings.jointRotationTrackingOption[1] ==
+									k2app::k2_SoftwareCalculatedRotation &&
+									!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+									isAppOrientationSupported())
+									k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
+
+								if (k2app::K2Settings.jointRotationTrackingOption[2] ==
+									k2app::k2_SoftwareCalculatedRotation &&
+									!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+									isAppOrientationSupported())
+									k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
+								
+								//Init
+								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
+							}
 							break;
 						case 1:
 							// Joints Basis
-							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
+							{
+								// Update options for the device
+								if (k2app::K2Settings.jointRotationTrackingOption[1] ==
+									k2app::k2_SoftwareCalculatedRotation)
+									k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
+
+								if (k2app::K2Settings.jointRotationTrackingOption[2] ==
+									k2app::k2_SoftwareCalculatedRotation)
+									k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
+
+								k2app::K2Settings.isFlipEnabled = false;
+
+								// Init
+								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
+							}
 							break;
 						}
 

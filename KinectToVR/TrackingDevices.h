@@ -93,7 +93,57 @@ namespace TrackingDevices
 			::k2app::shared::general::errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 		}
 
-		// Update the devices tab
-		k2app::shared::devices::smphSignalCurrentUpdate.release();
+		/* Update the device in devices tab */
+
+		::k2app::shared::devices::smphSignalCurrentUpdate.release();
+
+		/* Update the device in settings tab */
+
+		if(::k2app::shared::settings::softwareRotationItem.get() !=nullptr)
+		{
+			if (trackingDevice.index() == 0)
+			{
+				// Kinect Basis
+				::k2app::shared::settings::flipCheckBox.get()->IsChecked(k2app::K2Settings.isFlipEnabled);
+				::k2app::shared::settings::softwareRotationItem.get()->IsEnabled(
+					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported());
+				::k2app::shared::settings::flipCheckBox.get()->IsEnabled(
+					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+				::k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(
+					::k2app::shared::settings::flipCheckBox.get()->IsEnabled() ? 1 : 0.5);
+
+				if(!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported() &&
+					(k2app::K2Settings.jointRotationTrackingOption[1] == k2app::k2_SoftwareCalculatedRotation ||
+					k2app::K2Settings.jointRotationTrackingOption[2] == k2app::k2_SoftwareCalculatedRotation))
+				{
+					k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
+					k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
+
+					k2app::shared::settings::feetRotationOptionBox.get()->SelectedIndex(
+						k2app::K2Settings.jointRotationTrackingOption[1]); // Feet
+				}
+			}
+			else if (trackingDevice.index() == 1)
+			{
+				// Joints Basis
+				k2app::K2Settings.isFlipEnabled = false;
+				::k2app::shared::settings::softwareRotationItem.get()->IsEnabled(false);
+				::k2app::shared::settings::flipCheckBox.get()->IsEnabled(false);
+				::k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(0.5);
+
+				if (k2app::K2Settings.jointRotationTrackingOption[1] == k2app::k2_SoftwareCalculatedRotation ||
+					k2app::K2Settings.jointRotationTrackingOption[2] == k2app::k2_SoftwareCalculatedRotation)
+				{
+					k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
+					k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
+
+					k2app::shared::settings::feetRotationOptionBox.get()->SelectedIndex(
+						k2app::K2Settings.jointRotationTrackingOption[1]); // Feet
+				}
+			}
+		}
+
+		// Save settings
+		k2app::K2Settings.saveSettings();
 	}
 }
