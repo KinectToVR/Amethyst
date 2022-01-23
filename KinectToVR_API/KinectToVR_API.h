@@ -66,18 +66,18 @@ namespace boost::serialization
 	template <class Archive, typename _Scalar>
 	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
 	{
-		ar & BOOST_SERIALIZATION_NVP(q.w())
-			& BOOST_SERIALIZATION_NVP(q.x())
-			& BOOST_SERIALIZATION_NVP(q.y())
-			& BOOST_SERIALIZATION_NVP(q.z());
+		ar & make_nvp("w", q.w())
+			& make_nvp("x", q.x())
+			& make_nvp("y", q.y())
+			& make_nvp("z", q.z());
 	}
 
 	template <class Archive, typename _Scalar>
 	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
 	{
-		ar & BOOST_SERIALIZATION_NVP(v.x())
-			& BOOST_SERIALIZATION_NVP(v.y())
-			& BOOST_SERIALIZATION_NVP(v.z());
+		ar & make_nvp("x", v.x())
+			& make_nvp("y", v.y())
+			& make_nvp("z", v.z());
 	}
 }
 

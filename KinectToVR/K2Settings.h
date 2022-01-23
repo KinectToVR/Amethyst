@@ -67,7 +67,7 @@ namespace k2app
 				std::ofstream output(ktvr::GetK2AppDataFileDir("KinectToVR_settings.xml"));
 
 				boost::archive::xml_oarchive archive(output);
-				archive << BOOST_SERIALIZATION_NVP(*this);
+				archive << boost::serialization::make_nvp("K2AppSettings", *this);
 				LOG(INFO) << "Settings have been saved to file \"KinectToVR_settings.xml\" (inside K2AppData)";
 			}
 			catch (boost::archive::archive_exception const& e)
@@ -84,7 +84,7 @@ namespace k2app
 				std::ifstream input(ktvr::GetK2AppDataFileDir("KinectToVR_settings.xml"));
 
 				boost::archive::xml_iarchive archive(input);
-				archive >> BOOST_SERIALIZATION_NVP(*this);
+				archive >> boost::serialization::make_nvp("K2AppSettings", *this);
 				LOG(INFO) << "Settings have been saved to file \"KinectToVR_settings.xml\" (inside K2AppData)";
 			}
 			catch (boost::archive::archive_exception const& e)
