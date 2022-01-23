@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include "SettingsPage.g.h"
+#include "K2Shared.h"
+#include "TrackingDevices.h"
 
 namespace winrt::KinectToVR::implementation
 {
