@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <windows.h>
 #include <unknwn.h>
 #include <restrictederrorinfo.h>
@@ -62,5 +62,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
+#include <boost/serialization/array.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
