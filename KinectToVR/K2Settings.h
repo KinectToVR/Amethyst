@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "K2AppTracker.h"
 #define degreesToRadians(angleDegrees) ((angleDegrees) * 3.14159265358979323846 / 180.0)
 #define radiansToDegrees(angleRadians) ((angleRadians) * 180.0 / 3.14159265358979323846)
 
@@ -13,13 +14,19 @@ namespace k2app
 		template <class Archive>
 		void serialize(Archive& archive, unsigned int version)
 		{
-			archive & BOOST_SERIALIZATION_NVP(trackingDeviceID)
+			archive& BOOST_SERIALIZATION_NVP(trackingDeviceID)
 				& BOOST_SERIALIZATION_NVP(overrideDeviceID)
 				& BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
 				& BOOST_SERIALIZATION_NVP(positionOverrideJointID)
 				& BOOST_SERIALIZATION_NVP(rotationOverrideJointID)
 				& BOOST_SERIALIZATION_NVP(isPositionOverriddenJoint)
-				& BOOST_SERIALIZATION_NVP(isRotationOverriddenJoint);
+				& BOOST_SERIALIZATION_NVP(isRotationOverriddenJoint)
+				& BOOST_SERIALIZATION_NVP(positionJointsOffsets)
+				& BOOST_SERIALIZATION_NVP(rotationJointsOffsets)
+				& BOOST_SERIALIZATION_NVP(jointRotationTrackingOption)
+				& BOOST_SERIALIZATION_NVP(positionFilterOption)
+				& BOOST_SERIALIZATION_NVP(rotationFilterOption)
+				& BOOST_SERIALIZATION_NVP(isFlipEnabled);
 		}
 
 	public:
@@ -45,17 +52,33 @@ namespace k2app
 			isRotationOverriddenJoint = {true, false, false};
 
 		// Joint offsets: W,L,R and pos/meters | rot/eulers(rad)
-		std::array<Eigen::Vector3f, 3>
+		std::array<Eigen::Vector3d, 3>
 			positionJointsOffsets = {
-				Eigen::Vector3f(0, 0, 0),
-				Eigen::Vector3f(0, 0, 0),
-				Eigen::Vector3f(0, 0, 0)
+				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0)
 			},
 			rotationJointsOffsets = {
-				Eigen::Vector3f(0, 0, 0),
-				Eigen::Vector3f(0, 0, 0),
-				Eigen::Vector3f(0, 0, 0)
+				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0)
 			};
+
+		// Rotation tracking options: W,L,R and Internal is the default
+		std::array<JointRotationTrackingOption, 3> jointRotationTrackingOption = {
+			k2_DeviceInferredRotation,
+			k2_DeviceInferredRotation,
+			k2_DeviceInferredRotation
+		};
+
+		// Joint filter pos options: One-For-All and LERP is the default
+		PositionTrackingFilterOption positionFilterOption = k2_PositionTrackingFilter_LERP;
+
+		// Joint filter rot options: One-For-All and SLERP (normal) is the default
+		RotationTrackingFilterOption rotationFilterOption = k2_OrientationTrackingFilter_SLERP;
+
+		// Skeleton flip when facing away: One-For-All and on is the default
+		bool isFlipEnabled = true;
 
 		/* Saving and loading part */
 
