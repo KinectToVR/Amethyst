@@ -130,5 +130,19 @@ namespace k2app
 			inline std::binary_semaphore smphSignalCurrentUpdate{0};
 			inline uint32_t selectedTrackingDeviceID = 0;
 		}
+
+		namespace settings
+		{
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBox>
+				waistRotationOptionBox,
+				feetRotationOptionBox,
+				positionFilterOptionBox;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem> softwareRotationItem;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox> flipCheckBox;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock> flipCheckBoxLabel;
+		}
 	}
 }
