@@ -11,13 +11,17 @@
     <SplashScreenSource>F:\repos\K2App\KinectToVR\Assets\ktvr.png</SplashScreenSource>
     <BadgeLogoSource>F:\repos\K2App\KinectToVR\Assets\ktvr.png</BadgeLogoSource>
     <PackageLogoSource>F:\repos\K2App\KinectToVR\Assets\ktvr.png</PackageLogoSource>
+    <UapAppxPackageBuildMode>SideloadOnly</UapAppxPackageBuildMode>
+    <AppxShowAllApps>False</AppxShowAllApps>
+    <AppxBuildConfigurationSelection>x64</AppxBuildConfigurationSelection>
+    <PackageOptionalProjectsInIdeBuilds>False</PackageOptionalProjectsInIdeBuilds>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerType>NativeOnly</DebuggerType>
     <DebuggerFlavor>AppHostLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DebuggerType>NativeWithManagedCore</DebuggerType>
+    <DebuggerType>NativeOnly</DebuggerType>
     <DebuggerFlavor>AppHostLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>
