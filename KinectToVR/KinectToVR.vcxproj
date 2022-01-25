@@ -112,15 +112,13 @@
 xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)"
 
-xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(OutDir)AppX\"
-xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)AppX\"
-xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)AppX\"
-
-xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)devices"
-xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)AppX\devices"</Command>
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)devices"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(DevEnvDir)devenv" "$(SolutionDir)KinectToVR.sln" /Build $(configuration) /project "$(SolutionDir)KinectToVR_API\KinectToVR_API.vcxproj"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">del "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\MddBootstrapAutoInitializer.cpp"
+xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\"
+
+"$(DevEnvDir)devenv" "$(SolutionDir)KinectToVR.sln" /Build $(configuration) /project "$(SolutionDir)KinectToVR_API\KinectToVR_API.vcxproj"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
@@ -141,15 +139,13 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)Ap
 xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)"
 
-xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(OutDir)AppX\"
-xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)AppX\"
-xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)AppX\"
-
-xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)devices"
-xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)AppX\devices"</Command>
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)devices"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(DevEnvDir)devenv" "$(SolutionDir)KinectToVR.sln" /Build $(configuration) /project "$(SolutionDir)KinectToVR_API\KinectToVR_API.vcxproj"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">del "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\MddBootstrapAutoInitializer.cpp"
+xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\"
+
+"$(DevEnvDir)devenv" "$(SolutionDir)KinectToVR.sln" /Build $(configuration) /project "$(SolutionDir)KinectToVR_API\KinectToVR_API.vcxproj"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

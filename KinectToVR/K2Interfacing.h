@@ -8,31 +8,33 @@ namespace k2app
 	{
 		inline void ShowToast(std::string const& header, std::string const& text)
 		{
-			using namespace winrt::Windows::UI::Notifications;
-			using namespace winrt::Windows::Data::Xml::Dom;
+			// Unsupported in AppSDK 1.0
 
-			// Construct the XML toast template
-			XmlDocument document;
-			document.LoadXml(L"\
-				<toast>\
-					<visual>\
-				        <binding template=\"ToastGeneric\">\
-				            <text></text>\
-				            <text></text>\
-				        </binding>\
-				    </visual>\
-				</toast>");
+			//using namespace winrt::Windows::UI::Notifications;
+			//using namespace winrt::Windows::Data::Xml::Dom;
 
-			// Populate with text and values
-			document.SelectSingleNode(L"//text[1]").InnerText(wstring_cast(header));
-			document.SelectSingleNode(L"//text[2]").InnerText(wstring_cast(text));
+			//// Construct the XML toast template
+			//XmlDocument document;
+			//document.LoadXml(L"\
+			//	<toast>\
+			//		<visual>\
+			//	        <binding template=\"ToastGeneric\">\
+			//	            <text></text>\
+			//	            <text></text>\
+			//	        </binding>\
+			//	    </visual>\
+			//	</toast>");
 
-			// Construct the notification
-			ToastNotification notification{ document };
-			ToastNotifier toastNotifier{ ToastNotificationManager::CreateToastNotifier() };
+			//// Populate with text and values
+			//document.SelectSingleNode(L"//text[1]").InnerText(wstring_cast(header));
+			//document.SelectSingleNode(L"//text[2]").InnerText(wstring_cast(text));
 
-			// And show it!
-			toastNotifier.Show(notification);
+			//// Construct the notification
+			//ToastNotification notification{ document };
+			//ToastNotifier toastNotifier{ ToastNotificationManager::CreateToastNotifier() };
+
+			//// And show it!
+			//toastNotifier.Show(notification);
 		}
 
 		inline bool SpawnDefaultEnabledTrackers()
