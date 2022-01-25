@@ -50,13 +50,38 @@ void trackersConfigChanged()
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
 
+	// If this is the first time, also show the notification
+	if (!k2app::shared::settings::restartButton.get()->IsEnabled())
+		k2app::interfacing::ShowToast("Trackers configuration has changed",
+		                              "Restart SteamVR for changes to take effect");
+
+	// If all trackers were turned off then SCREAM
+	if (!k2app::K2Settings.isJointEnabled[0] &&
+		!k2app::K2Settings.isJointEnabled[1] &&
+		!k2app::K2Settings.isJointEnabled[2])
+		k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
+		                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU THAT YOU DID THIS YOU STUPID BITCH");
+
 	// Compare with saved settings and unlock the restart
-	restartButton.get()->IsEnabled(true);
+	k2app::shared::settings::restartButton.get()->IsEnabled(true);
+
+	// Also turn off feet rot combo if both feet are turned off
+	k2app::shared::settings::
+		feetRotationOptionBox.get()->IsEnabled(
+			k2app::K2Settings.isJointEnabled[1] ||
+			k2app::K2Settings.isJointEnabled[2]);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 void winrt::KinectToVR::implementation::SettingsPage::WaistOnToggle_Checked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[0] = true;
 	trackersConfigChanged();
 }
 
@@ -64,6 +89,10 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistOnToggle_Checked(
 void winrt::KinectToVR::implementation::SettingsPage::WaistOnToggle_Unchecked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[0] = false;
 	trackersConfigChanged();
 }
 
@@ -71,6 +100,10 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistOnToggle_Unchecked(
 void winrt::KinectToVR::implementation::SettingsPage::LeftFootOnToggle_Checked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[1] = true;
 	trackersConfigChanged();
 }
 
@@ -78,6 +111,10 @@ void winrt::KinectToVR::implementation::SettingsPage::LeftFootOnToggle_Checked(
 void winrt::KinectToVR::implementation::SettingsPage::LeftFootOnToggle_Unchecked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[1] = false;
 	trackersConfigChanged();
 }
 
@@ -85,6 +122,10 @@ void winrt::KinectToVR::implementation::SettingsPage::LeftFootOnToggle_Unchecked
 void winrt::KinectToVR::implementation::SettingsPage::RightFootOnToggle_Checked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[2] = true;
 	trackersConfigChanged();
 }
 
@@ -92,6 +133,10 @@ void winrt::KinectToVR::implementation::SettingsPage::RightFootOnToggle_Checked(
 void winrt::KinectToVR::implementation::SettingsPage::RightFootOnToggle_Unchecked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[2] = false;
 	trackersConfigChanged();
 }
 
@@ -219,6 +264,10 @@ void winrt::KinectToVR::implementation::SettingsPage::PositionFilterOptionBox_Se
 void winrt::KinectToVR::implementation::SettingsPage::WaistEnabledToggle_Toggled(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointTurnedOn[0] = WaistEnabledToggle().IsOn();
 	// Save settings
 	k2app::K2Settings.saveSettings();
 }
@@ -227,6 +276,10 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistEnabledToggle_Toggled
 void winrt::KinectToVR::implementation::SettingsPage::LeftFootEnabledToggle_Toggled(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointTurnedOn[1] = LeftFootEnabledToggle().IsOn();
 	// Save settings
 	k2app::K2Settings.saveSettings();
 }
@@ -235,6 +288,10 @@ void winrt::KinectToVR::implementation::SettingsPage::LeftFootEnabledToggle_Togg
 void winrt::KinectToVR::implementation::SettingsPage::RightFootEnabledToggle_Toggled(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointTurnedOn[2] = RightFootEnabledToggle().IsOn();
 	// Save settings
 	k2app::K2Settings.saveSettings();
 }
