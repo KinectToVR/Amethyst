@@ -296,7 +296,7 @@
                                 </Grid>
 
                                 <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in meters."/>
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
 
                                 <Grid Grid.Column="0" Grid.Row="9">
                                     <Grid.ColumnDefinitions>
@@ -470,7 +470,7 @@
                                 </Grid>
 
                                 <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in meters."/>
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
 
                                 <Grid Grid.Column="0" Grid.Row="9">
                                     <Grid.ColumnDefinitions>
