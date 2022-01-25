@@ -66,6 +66,8 @@
 					<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
 					          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
 					          x:Name="WaistRotationOptionBox"
+                              IsEnabled="{Binding ElementName=WaistOnToggle, 
+									Path=IsChecked,TargetNullValue=False}"
 					          SelectionChanged="WaistRotationOptionBox_SelectionChanged"
 					          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
 						<x:String>Device-inferred Rotation</x:String>
@@ -251,7 +253,7 @@
 					<Grid Grid.Column="0" Grid.Row="1" Margin="0,20,0,0">
 						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
 						           Text="Automatically connect enabled trackers at launch" Margin="30,0,0,10" />
-						<CheckBox x:Name="AutoSpawnCheckBox"
+                        <CheckBox x:Name="AutoSpawnCheckBox" Checked="AutoSpawn_Checked" Unchecked="AutoSpawn_Unchecked"
 						          HorizontalAlignment="Left" VerticalAlignment="Center"
 						          MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="False" />
 					</Grid>
@@ -263,14 +265,15 @@
 				<Grid Grid.Column="0" Grid.Row="1" Margin="0,15,0,0">
 					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
 					           Text="Enable app sounds" Margin="30,0,0,10" />
-					<CheckBox x:Name="SoundsEnabledCheckBox"
+                    <CheckBox x:Name="SoundsEnabledCheckBox" 
+                              Checked="EnableSounds_Checked" Unchecked="EnableSounds_Unchecked"
 					          HorizontalAlignment="Left" VerticalAlignment="Center"
 					          MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="True" />
 				</Grid>
 
 				<Slider Grid.Row="1" HorizontalAlignment="Left" Width="400" Value="69"
 				        IsEnabled="{Binding ElementName=SoundsEnabledCheckBox, Path=IsChecked,TargetNullValue=False}"
-				        x:Name="SoundsVolumeSlider" />
+				        x:Name="SoundsVolumeSlider" ValueChanged="SoundsVolumeSlider_ValueChanged" />
 
 				<StackPanel Orientation="Vertical" Margin="0,0,5,0">
 					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
