@@ -38,7 +38,25 @@ namespace TrackingDevices
 		// trackingDeviceID is always >= 0 anyway
 		return TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
 	}
-	
+
+	// Extract the current device (variant of it)
+	inline std::pair<
+		bool, std::variant<
+			ktvr::K2TrackingDeviceBase_KinectBasis*,
+			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe()
+	{
+		bool _exists = k2app::K2Settings.overrideDeviceID >= 0 &&
+			TrackingDevicesVector.size() > k2app::K2Settings.overrideDeviceID;
+
+		// Assuming that the caller will test in pair.first is true,
+		// we can push the id0 device here as well if pair.first is gonna be false
+		uint32_t _deviceID = _exists ? k2app::K2Settings.overrideDeviceID : 0;
+
+		// trackingDeviceID is always >= 0 anyway
+		return std::make_pair(_exists,
+		                      TrackingDevicesVector.at(_deviceID));
+	}
+
 	// Select proper tracking device in the UI
 	inline void updateTrackingDeviceUI(uint32_t const& index)
 	{
