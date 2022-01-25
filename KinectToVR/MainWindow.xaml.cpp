@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -127,6 +127,13 @@ namespace winrt::KinectToVR::implementation
 		// Read settings
 		LOG(INFO) << "Now reading saved settings...";
 		k2app::K2Settings.readSettings();
+
+		// Load sounds config into main
+		ElementSoundPlayer::State(k2app::K2Settings.enableAppSounds
+			                          ? ElementSoundPlayerState::On
+			                          : ElementSoundPlayerState::Off);
+		ElementSoundPlayer::Volume(std::clamp(
+			double(k2app::K2Settings.appSoundsVolume) / 100.0, 0.0, 100.0));
 
 		// Cache needed UI elements
 		updateIconDot = std::make_shared<Controls::FontIcon>(UpdateIconDot());
