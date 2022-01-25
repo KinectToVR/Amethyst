@@ -59,6 +59,9 @@
     <ClInclude Include="EigenUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="K2Interfacing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
