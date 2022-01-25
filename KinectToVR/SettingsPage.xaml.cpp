@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SettingsPage.xaml.h"
 
 #if __has_include("SettingsPage.g.cpp")
@@ -10,10 +10,6 @@ using namespace Microsoft::UI::Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-
-// LMAO Eat Dirt Micro&Soft
-// Imma just cache object before the fancy UWP delegation reownership
-std::shared_ptr<Controls::Button> restartButton;
 
 // Helper local variables
 bool settings_localInitFinished = false;
@@ -40,8 +36,19 @@ namespace winrt::KinectToVR::implementation
 			std::make_shared<Controls::ComboBoxItem>(SoftwareRotationItem());
 
 		flipCheckBox = std::make_shared<Controls::CheckBox>(FlipCheckBox());
+		waistOnCheckbox = std::make_shared<Controls::CheckBox>(WaistOnToggle());
+		leftFootOnCheckbox = std::make_shared<Controls::CheckBox>(LeftFootOnToggle());
+		rightFootOnCheckbox = std::make_shared<Controls::CheckBox>(RightFootOnToggle());
+		autoSpawnCheckbox = std::make_shared<Controls::CheckBox>(AutoSpawnCheckBox());
+		enableSoundsCheckbox = std::make_shared<Controls::CheckBox>(SoundsEnabledCheckBox());
 
 		flipCheckBoxLabel = std::make_shared<Controls::TextBlock>(FlipCheckBoxLabel());
+
+		waistEnabledToggle = std::make_shared<Controls::ToggleSwitch>(WaistEnabledToggle());
+		leftFootEnabledToggle = std::make_shared<Controls::ToggleSwitch>(LeftFootEnabledToggle());
+		rightFootEnabledToggle = std::make_shared<Controls::ToggleSwitch>(RightFootEnabledToggle());
+
+		soundsVolumeSlider = std::make_shared<Controls::Slider>(SoundsVolumeSlider());
 	}
 }
 

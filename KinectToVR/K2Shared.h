@@ -51,6 +51,9 @@ namespace k2app
 		namespace general
 		{
 			// General Page
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>
+				toggleTrackersButton;
+
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
 				deviceNameLabel,
 				deviceStatusLabel,
@@ -133,6 +136,8 @@ namespace k2app
 
 		namespace settings
 		{
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button> restartButton;
+
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBox>
 				waistRotationOptionBox,
 				feetRotationOptionBox,
@@ -140,9 +145,22 @@ namespace k2app
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem> softwareRotationItem;
 
-			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox> flipCheckBox;
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
+				flipCheckBox,
+				waistOnCheckbox,
+				leftFootOnCheckbox,
+				rightFootOnCheckbox,
+				autoSpawnCheckbox,
+				enableSoundsCheckbox;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock> flipCheckBoxLabel;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
+				waistEnabledToggle,
+				leftFootEnabledToggle,
+				rightFootEnabledToggle;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Slider> soundsVolumeSlider;
 		}
 	}
 }
