@@ -26,7 +26,12 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(jointRotationTrackingOption)
 				& BOOST_SERIALIZATION_NVP(positionFilterOption)
 				& BOOST_SERIALIZATION_NVP(rotationFilterOption)
-				& BOOST_SERIALIZATION_NVP(isFlipEnabled);
+				& BOOST_SERIALIZATION_NVP(isFlipEnabled)
+				& BOOST_SERIALIZATION_NVP(isJointEnabled)
+				& BOOST_SERIALIZATION_NVP(isJointTurnedOn)
+				& BOOST_SERIALIZATION_NVP(autoSpawnEnabledJoints)
+				& BOOST_SERIALIZATION_NVP(enableAppSounds)
+				& BOOST_SERIALIZATION_NVP(appSoundsVolume);
 		}
 
 	public:
@@ -80,6 +85,21 @@ namespace k2app
 		// Skeleton flip when facing away: One-For-All and on is the default
 		bool isFlipEnabled = true;
 
+		// Currently enabled (spawn-able) joints: W,L,R and true is the default
+		// Currently turned on (marked-as-online) joints: W,L,R and true is the default
+		std::array<bool, 3>
+			isJointEnabled = { true, true, true },
+			isJointTurnedOn = { true, true, true };
+
+		// Automatically spawn enabled trackers on startup and off is the default
+		bool autoSpawnEnabledJoints = false;
+
+		// Enable application sounds and on is the default
+		bool enableAppSounds = true;
+
+		// App sounds' volume and *nice* is the default
+		uint32_t appSoundsVolume = 69; // Always 0<x<100
+
 		/* Saving and loading part */
 
 		// Save settings with boost and output file stream
@@ -108,7 +128,12 @@ namespace k2app
 
 				boost::archive::xml_iarchive archive(input);
 				archive >> boost::serialization::make_nvp("K2AppSettings", *this);
-				LOG(INFO) << "Settings have been saved to file \"KinectToVR_settings.xml\" (inside K2AppData)";
+				LOG(INFO) << "Settings have been read from file \"KinectToVR_settings.xml\" (inside K2AppData)";
+
+				// Optionally fix volume if too big somehow
+				appSoundsVolume = std::clamp(
+					appSoundsVolume, (uint32_t)0, (uint32_t)100);
+
 			}
 			catch (boost::archive::archive_exception const& e)
 			{
