@@ -105,6 +105,5 @@ The whole output can be found in ```x64/Release``` directory<br>
 (or ```x64/Debug``` if you're building for ```Debug```, naturally) and:
  - The assembled ```K2Driver``` is inside the ```driver/``` folder
  - Devices (plugins) are inside ```devices/``` folder
- - Deployed app is inside ```KinectToVR/AppX/``` folder<br>
-   You don't need to copy the ```devices/``` folder there, it's automatic.<br>
-   **Notice!** You won't be able to run it yet, since it's not published!
+ - Deployed app is inside ```KinectToVR/``` folder, along with devices (plugins)<br>
+ - To run the deployed app you'll need to install the [Windows App Runtime](https://aka.ms/windowsappsdk/1.0-stable/msix-installer).

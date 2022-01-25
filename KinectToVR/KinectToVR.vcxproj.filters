@@ -275,9 +275,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="KinectToVR.rc" />
   </ItemGroup>
 </Project>
