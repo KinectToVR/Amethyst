@@ -354,6 +354,95 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 		flipCheckBoxLabel.get()->Opacity(0.5);
 	}
 
+	// Load the tracker configuration
+	waistEnabledToggle.get()->IsOn(k2app::K2Settings.isJointTurnedOn[0]);
+	leftFootEnabledToggle.get()->IsOn(k2app::K2Settings.isJointTurnedOn[1]);
+	rightFootEnabledToggle.get()->IsOn(k2app::K2Settings.isJointTurnedOn[2]);
+
+	waistOnCheckbox.get()->IsChecked(k2app::K2Settings.isJointEnabled[0]);
+	leftFootOnCheckbox.get()->IsChecked(k2app::K2Settings.isJointEnabled[1]);
+	rightFootOnCheckbox.get()->IsChecked(k2app::K2Settings.isJointEnabled[2]);
+
+	// Also turn off feet rot combo if both feet are turned off
+	feetRotationOptionBox.get()->IsEnabled(
+		k2app::K2Settings.isJointEnabled[1] ||
+		k2app::K2Settings.isJointEnabled[2]);
+
+	// Load auto-spawn and sounds config
+	autoSpawnCheckbox->IsChecked(k2app::K2Settings.autoSpawnEnabledJoints);
+	enableSoundsCheckbox->IsChecked(k2app::K2Settings.enableAppSounds);
+	soundsVolumeSlider.get()->Value(k2app::K2Settings.appSoundsVolume);
+
 	// Notify of the setup end
 	settings_localInitFinished = true;
+}
+
+void winrt::KinectToVR::implementation::SettingsPage::AutoSpawn_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.autoSpawnEnabledJoints = true;
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::AutoSpawn_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.autoSpawnEnabledJoints = false;
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::EnableSounds_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	// Turn sounds on
+	k2app::K2Settings.enableAppSounds = true;
+	ElementSoundPlayer::State(ElementSoundPlayerState::On);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::EnableSounds_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	// Turn sounds on
+	k2app::K2Settings.enableAppSounds = false;
+	ElementSoundPlayer::State(ElementSoundPlayerState::Off);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	// Change sounds level
+	k2app::K2Settings.appSoundsVolume = k2app::shared::settings::soundsVolumeSlider.get()->Value();
+	ElementSoundPlayer::Volume(std::clamp(
+		double(k2app::K2Settings.appSoundsVolume) / 100.0, 0.0, 100.0));
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
