@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "SettingsPage.xaml.h"
 
 #if __has_include("SettingsPage.g.cpp")
@@ -283,19 +283,21 @@ void winrt::KinectToVR::implementation::SettingsPage::ResetButton_Click(
 		if (system(_cmd.c_str()) < 0)
 		{
 			LOG(ERROR) << "App will not be restarted due to new process creation error.";
-			k2app::interfacing::ShowToast("We couldn't restart KinectToVR for you!", "Please try restarting it manually.");
+			k2app::interfacing::ShowToast("We couldn't restart KinectToVR for you!",
+			                              "Please try restarting it manually");
 			return;
 		}
 
 		// Exit the app
 		LOG(INFO) << "Configuration has been reset, exiting...";
-		k2app::interfacing::ShowToast("KinectToVR restart pending...", "The app will restart automatically in 3 seconds.");
+		k2app::interfacing::ShowToast("KinectToVR restart pending...",
+		                              "The app will restart automatically in 3 seconds");
 		exit(0);
 	}
 	else
 	{
 		LOG(ERROR) << "App will not be restarted due to caller process identification error.";
-		k2app::interfacing::ShowToast("We couldn't restart KinectToVR for you!", "Please try restarting it manually.");
+		k2app::interfacing::ShowToast("We couldn't restart KinectToVR for you!", "Please try restarting it manually");
 	}
 }
 

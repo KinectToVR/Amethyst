@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "DevicesPage.xaml.h"
 #if __has_include("DevicesPage.g.cpp")
 #include "DevicesPage.g.cpp"
@@ -203,7 +203,8 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
 
 	// Only if override -> select enabled combos
-	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID) {
+	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+	{
 		overrideWaistPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[0]);
 		overrideLeftFootPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[1]);
 		overrideRightFootPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[2]);
@@ -250,137 +251,137 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 				switch (device->getDeviceCharacteristics())
 				{
 				case ktvr::K2_Character_Basic:
-				{
-					// Waist
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					{
+						// Waist
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// LFoot
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// LFoot
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// RFoot
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// RFoot
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
-				}
-				break;
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					}
+					break;
 				case ktvr::K2_Character_Simple:
-				{
-					// Waist
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					{
+						// Waist
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// LFoot
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// LFoot
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// RFoot
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// RFoot
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
-				}
-				break;
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					}
+					break;
 				case ktvr::K2_Character_Full:
-				{
-					// Waist
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					{
+						// Waist
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// LFoot
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// LFoot
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// RFoot
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// RFoot
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
-				}
-				break;
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					}
+					break;
 				}
 
 				// Select the first (or next, if exists) joint
@@ -388,32 +389,32 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 				// Waist
 				waistPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[0]
-					? k2app::K2Settings.positionOverrideJointID[0]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[0]
+						: -1);
 				waistRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[0]
-					? k2app::K2Settings.rotationOverrideJointID[0]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[0]
+						: -1);
 
 				// LeftF
 				leftFootPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[1]
-					? k2app::K2Settings.positionOverrideJointID[1]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[1]
+						: -1);
 				leftFootRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[1]
-					? k2app::K2Settings.rotationOverrideJointID[1]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[1]
+						: -1);
 
 				// RightF
 				rightFootPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[2]
-					? k2app::K2Settings.positionOverrideJointID[2]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[2]
+						: -1);
 				rightFootRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[2]
-					? k2app::K2Settings.rotationOverrideJointID[2]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[2]
+						: -1);
 			}
 		}
 	}
@@ -520,32 +521,32 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 				// Waist
 				waistPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[0]
-					? k2app::K2Settings.positionOverrideJointID[0]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[0]
+						: -1);
 				waistRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[0]
-					? k2app::K2Settings.rotationOverrideJointID[0]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[0]
+						: -1);
 
 				// LeftF
 				leftFootPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[1]
-					? k2app::K2Settings.positionOverrideJointID[1]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[1]
+						: -1);
 				leftFootRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[1]
-					? k2app::K2Settings.rotationOverrideJointID[1]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[1]
+						: -1);
 
 				// RightF
 				rightFootPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[2]
-					? k2app::K2Settings.positionOverrideJointID[2]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[2]
+						: -1);
 				rightFootRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[2]
-					? k2app::K2Settings.rotationOverrideJointID[2]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[2]
+						: -1);
 			}
 		}
 	}
@@ -1829,7 +1830,8 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
 
 	// Only if override -> select enabled combos
-	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID) {
+	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+	{
 		overrideWaistPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[0]);
 		overrideLeftFootPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[1]);
 		overrideRightFootPosition.get()->IsChecked(k2app::K2Settings.isPositionOverriddenJoint[2]);
@@ -1876,137 +1878,137 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 				switch (device->getDeviceCharacteristics())
 				{
 				case ktvr::K2_Character_Basic:
-				{
-					// Waist
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					{
+						// Waist
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// LFoot
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// LFoot
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// RFoot
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// RFoot
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
-				}
-				break;
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					}
+					break;
 				case ktvr::K2_Character_Simple:
-				{
-					// Waist
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					{
+						// Waist
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// LFoot
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// LFoot
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// RFoot
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// RFoot
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
-				}
-				break;
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					}
+					break;
 				case ktvr::K2_Character_Full:
-				{
-					// Waist
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					{
+						// Waist
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						waistRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// LFoot
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// LFoot
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						leftFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					// RFoot
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+						// RFoot
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
 
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
-					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
-				}
-				break;
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Chest"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Elbow"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Elbow"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Waist"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Knee"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Knee"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Left Foot"));
+						rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(L"Right Foot"));
+					}
+					break;
 				}
 
 				// Select the first (or next, if exists) joint
@@ -2014,32 +2016,32 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 				// Waist
 				waistPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[0]
-					? k2app::K2Settings.positionOverrideJointID[0]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[0]
+						: -1);
 				waistRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[0]
-					? k2app::K2Settings.rotationOverrideJointID[0]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[0]
+						: -1);
 
 				// LeftF
 				leftFootPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[1]
-					? k2app::K2Settings.positionOverrideJointID[1]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[1]
+						: -1);
 				leftFootRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[1]
-					? k2app::K2Settings.rotationOverrideJointID[1]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[1]
+						: -1);
 
 				// RightF
 				rightFootPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[2]
-					? k2app::K2Settings.positionOverrideJointID[2]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[2]
+						: -1);
 				rightFootRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[2]
-					? k2app::K2Settings.rotationOverrideJointID[2]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[2]
+						: -1);
 			}
 		}
 	}
@@ -2058,14 +2060,14 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		jointBasisControls.get()->Visibility(
 			(device_status.find("S_OK") != std::string::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-			? Visibility::Visible
-			: Visibility::Collapsed);
+				? Visibility::Visible
+				: Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(
 			(device_status.find("S_OK") != std::string::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-			? Visibility::Visible
-			: Visibility::Collapsed);
+				? Visibility::Visible
+				: Visibility::Collapsed);
 
 		// Set up combos if the device's OK
 		if (device_status.find("S_OK") != std::string::npos)
@@ -2146,32 +2148,32 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 				// Waist
 				waistPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[0]
-					? k2app::K2Settings.positionOverrideJointID[0]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[0]
+						: -1);
 				waistRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[0]
-					? k2app::K2Settings.rotationOverrideJointID[0]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[0]
+						: -1);
 
 				// LeftF
 				leftFootPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[1]
-					? k2app::K2Settings.positionOverrideJointID[1]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[1]
+						: -1);
 				leftFootRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[1]
-					? k2app::K2Settings.rotationOverrideJointID[1]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[1]
+						: -1);
 
 				// RightF
 				rightFootPositionOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isPositionOverriddenJoint[2]
-					? k2app::K2Settings.positionOverrideJointID[2]
-					: -1);
+						? k2app::K2Settings.positionOverrideJointID[2]
+						: -1);
 				rightFootRotationOverrideOptionBox.get()->SelectedIndex(
 					k2app::K2Settings.isRotationOverriddenJoint[2]
-					? k2app::K2Settings.rotationOverrideJointID[2]
-					: -1);
+						? k2app::K2Settings.rotationOverrideJointID[2]
+						: -1);
 			}
 		}
 	}

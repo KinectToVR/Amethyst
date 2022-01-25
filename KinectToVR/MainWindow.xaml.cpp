@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -170,7 +170,7 @@ namespace winrt::KinectToVR::implementation
 							if (root.find("device_name") == root.not_found() ||
 								root.find("device_type") == root.not_found())
 							{
-								LOG(ERROR) << entry.path().stem().string() << "'s manifest was invalid ヽ(≧□≦)ノ";
+								LOG(ERROR) << entry.path().stem().string() << "'s manifest was invalid!";
 								continue;
 							}
 
@@ -299,17 +299,17 @@ namespace winrt::KinectToVR::implementation
 										}
 									}
 									else
-										LOG(ERROR) << "There was an error linking with the device library! (►＿◄)";
+										LOG(ERROR) << "There was an error linking with the device library!";
 
 									// If unable to call the DLL function, use an alternative.
 									if (!fRunTimeLinkSuccess)
-										LOG(ERROR) << "There was an error calling the device factory... (⊙_⊙)？";
+										LOG(ERROR) << "There was an error calling the device factory...";
 								}
 								else
-									LOG(ERROR) << "Device's dependency dll (external linked dll) was not found (┬┬﹏┬┬)";
+									LOG(ERROR) << "Device's dependency dll (external linked dll) was not found!";
 							}
 							else
-								LOG(ERROR) << "Device's driver dll (bin/win64/device_[device].dll) was not found o(≧口≦)o";
+								LOG(ERROR) << "Device's driver dll (bin/win64/device_[device].dll) was not found!";
 						}
 						else
 						{
@@ -348,7 +348,7 @@ namespace winrt::KinectToVR::implementation
 									!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
 									isAppOrientationSupported())
 									k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
-								
+
 								//Init
 								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
 							}

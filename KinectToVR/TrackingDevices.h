@@ -74,8 +74,8 @@ namespace TrackingDevices
 		using namespace winrt::Microsoft::UI::Xaml;
 
 		// Check with this one, should be the same for all anyway
-		if (::k2app::shared::general::errorWhatText.get() != nullptr) {
-
+		if (::k2app::shared::general::errorWhatText.get() != nullptr)
+		{
 			::k2app::shared::general::errorWhatText.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
 			::k2app::shared::general::errorWhatGrid.get()->Visibility(
@@ -99,7 +99,7 @@ namespace TrackingDevices
 
 		/* Update the device in settings tab */
 
-		if(::k2app::shared::settings::softwareRotationItem.get() !=nullptr)
+		if (::k2app::shared::settings::softwareRotationItem.get() != nullptr)
 		{
 			if (trackingDevice.index() == 0)
 			{
@@ -112,9 +112,9 @@ namespace TrackingDevices
 				::k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(
 					::k2app::shared::settings::flipCheckBox.get()->IsEnabled() ? 1 : 0.5);
 
-				if(!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported() &&
+				if (!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported() &&
 					(k2app::K2Settings.jointRotationTrackingOption[1] == k2app::k2_SoftwareCalculatedRotation ||
-					k2app::K2Settings.jointRotationTrackingOption[2] == k2app::k2_SoftwareCalculatedRotation))
+						k2app::K2Settings.jointRotationTrackingOption[2] == k2app::k2_SoftwareCalculatedRotation))
 				{
 					k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
 					k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
