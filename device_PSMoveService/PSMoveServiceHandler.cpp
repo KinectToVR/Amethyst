@@ -199,7 +199,8 @@ void PSMoveServiceHandler::signalJoint(uint32_t at)
 {
 	try
 	{
-		v_controllers.at(at).flashNow = true;
+		if (v_controllers.size() > at)
+			v_controllers.at(at).flashNow = true;
 	}
 	catch (std::exception const& e)
 	{
@@ -405,15 +406,16 @@ void PSMoveServiceHandler::processKeyInputs()
 
 		const bool bStartVRRatioCalibrationTriggered = (controller.CrossButton == PSMButtonState_PRESSED) &&
 			(controller.CircleButton == PSMButtonState_PRESSED);
-		
+
 		// Recenter (capture)
-		if(controller.SelectButton == PSMButtonState_PRESSED)
+		if (controller.SelectButton == PSMButtonState_PRESSED)
 			wrapper.orientationOffset = PSMSToEigen(controller.Pose.Orientation);
 
 		// Update joint's position
 		trackedJoints.at(wrapper.controller->ControllerID).
 		              update(PSMSToEigen(controller.Pose.Position),
-		                     wrapper.orientationOffset.inverse() * PSMSToEigen(controller.Pose.Orientation), // Recenter (offset)
+		                     wrapper.orientationOffset.inverse() * PSMSToEigen(controller.Pose.Orientation),
+		                     // Recenter (offset)
 		                     ktvr::State_Tracked);
 
 		// Optionally signal the joint
