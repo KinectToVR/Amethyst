@@ -122,7 +122,7 @@
 								</Grid>
 
                                 <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in meters."/>
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
 
                                 <Grid Grid.Column="0" Grid.Row="9">
 									<Grid.ColumnDefinitions>
@@ -144,9 +144,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="0.01"
+									                SmallChange="1"
 									                Margin="10,0,0,0"
-									                LargeChange="0.10" />
+									                LargeChange="10" />
 								</Grid>
 								<Grid Grid.Column="0" Grid.Row="11">
 									<Grid.ColumnDefinitions>
@@ -168,9 +168,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="0.01"
+									                SmallChange="1"
 									                Margin="10,0,0,0"
-									                LargeChange="0.10" />
+									                LargeChange="10" />
 								</Grid>
 								<Grid Grid.Column="0" Grid.Row="13">
 									<Grid.ColumnDefinitions>
@@ -192,9 +192,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="0.01"
+									                SmallChange="1"
 									                Margin="10,0,0,0"
-									                LargeChange="0.10" />
+									                LargeChange="10" />
 								</Grid>
 							</Grid>
 						</PivotItem>
@@ -318,9 +318,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="0.01"
+									                SmallChange="1"
 									                Margin="10,0,0,0"
-									                LargeChange="0.10" />
+									                LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="11">
                                     <Grid.ColumnDefinitions>
@@ -342,9 +342,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="0.01"
+									                SmallChange="1"
 									                Margin="10,0,0,0"
-									                LargeChange="0.10" />
+									                LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="13">
                                     <Grid.ColumnDefinitions>
@@ -366,9 +366,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="0.01"
+									                SmallChange="1"
 									                Margin="10,0,0,0"
-									                LargeChange="0.10" />
+									                LargeChange="10" />
                                 </Grid>
                             </Grid>
                         </PivotItem>
@@ -492,9 +492,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="0.01"
+									                SmallChange="1"
 									                Margin="10,0,0,0"
-									                LargeChange="0.10" />
+									                LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="11">
                                     <Grid.ColumnDefinitions>
@@ -516,9 +516,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="0.01"
+									                SmallChange="1"
 									                Margin="10,0,0,0"
-									                LargeChange="0.10" />
+									                LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="13">
                                     <Grid.ColumnDefinitions>
@@ -540,9 +540,9 @@
 									                HorizontalContentAlignment="Stretch"
 									                VerticalAlignment="Stretch"
 									                SpinButtonPlacementMode="Inline"
-									                SmallChange="0.01"
+									                SmallChange="1"
 									                Margin="10,0,0,0"
-									                LargeChange="0.10" />
+									                LargeChange="10" />
                                 </Grid>
                             </Grid>
                         </PivotItem>
@@ -871,9 +871,9 @@
 
 						<StackPanel Orientation="Horizontal" Margin="40,5,20,0">
 							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="KinectToVR Version:" Margin="0,0,0,0" Foreground="LightGray" />
+							           Text="Amethyst Version:" Margin="0,0,0,0" Foreground="LightGray" />
 							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="v1.0.0 (K2App)" Margin="5,0,0,0" x:Name="VersionLabel" />
+							           Text="v1.0.0 (Ame0)" Margin="5,0,0,0" x:Name="VersionLabel" />
 						</StackPanel>
 
 					</StackPanel>
