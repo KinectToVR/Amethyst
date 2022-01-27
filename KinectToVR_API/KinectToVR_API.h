@@ -259,7 +259,7 @@ namespace ktvr
 	{
 	public:
 		std::string serial; // Must be set manually
-		int role = 0; // Handed Tracker
+		uint32_t role = 0; // Handed Tracker
 		bool isActive = false;
 
 		template <class Archive>
