@@ -12,6 +12,81 @@ using namespace ::k2app::shared::devices;
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 bool devices_tab_setup_finished = false;
 
+void devices_check_override_ids(uint32_t const& id)
+{
+	// Take down IDs if they're too big
+	if (auto const& device_pair = TrackingDevices::getCurrentOverrideDevice_Safe(id); device_pair.first)
+	{
+		if (device_pair.second.index() == 1) // If Joints
+		{
+			// Note: num_joints should never be 0
+			const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
+				(device_pair.second)->getTrackedJoints().size();
+
+			if (k2app::K2Settings.positionOverrideJointID[0] > (num_joints - 1))
+				k2app::K2Settings.positionOverrideJointID[0] = 0;
+			if (k2app::K2Settings.positionOverrideJointID[1] > (num_joints - 1))
+				k2app::K2Settings.positionOverrideJointID[1] = 0;
+			if (k2app::K2Settings.positionOverrideJointID[2] > (num_joints - 1))
+				k2app::K2Settings.positionOverrideJointID[2] = 0;
+
+			if (k2app::K2Settings.rotationOverrideJointID[0] > (num_joints - 1))
+				k2app::K2Settings.rotationOverrideJointID[0] = 0;
+			if (k2app::K2Settings.rotationOverrideJointID[1] > (num_joints - 1))
+				k2app::K2Settings.rotationOverrideJointID[1] = 0;
+			if (k2app::K2Settings.rotationOverrideJointID[2] > (num_joints - 1))
+				k2app::K2Settings.rotationOverrideJointID[2] = 0;
+		}
+		else if (device_pair.second.index() == 0) // If Kinect
+		{
+			// Note: switch based on device characteristics
+			const auto characteristics = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
+				(device_pair.second)->getDeviceCharacteristics();
+			uint32_t num_joints = -1; // To set later
+
+			if (characteristics == ktvr::K2_Character_Full)
+				num_joints = 8;
+			else if (characteristics == ktvr::K2_Character_Simple)
+				num_joints = 5;
+			else if (characteristics == ktvr::K2_Character_Basic)
+				num_joints = 3;
+
+			if (k2app::K2Settings.positionOverrideJointID[0] > (num_joints - 1))
+				k2app::K2Settings.positionOverrideJointID[0] = 0;
+			if (k2app::K2Settings.positionOverrideJointID[1] > (num_joints - 1))
+				k2app::K2Settings.positionOverrideJointID[1] = 0;
+			if (k2app::K2Settings.positionOverrideJointID[2] > (num_joints - 1))
+				k2app::K2Settings.positionOverrideJointID[2] = 0;
+
+			if (k2app::K2Settings.rotationOverrideJointID[0] > (num_joints - 1))
+				k2app::K2Settings.rotationOverrideJointID[0] = 0;
+			if (k2app::K2Settings.rotationOverrideJointID[1] > (num_joints - 1))
+				k2app::K2Settings.rotationOverrideJointID[1] = 0;
+			if (k2app::K2Settings.rotationOverrideJointID[2] > (num_joints - 1))
+				k2app::K2Settings.rotationOverrideJointID[2] = 0;
+		}
+	}
+}
+
+void devices_check_base_ids(uint32_t const& id)
+{
+	// Take down IDs if they're too big
+	if (auto const& device_pair = TrackingDevices::getCurrentDevice(id);
+		device_pair.index() == 1) // If Joints
+	{
+		// Note: num_joints should never be 0
+		const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
+			(device_pair)->getTrackedJoints().size();
+
+		if (k2app::K2Settings.selectedTrackedJointID[0] > num_joints)
+			k2app::K2Settings.selectedTrackedJointID[0] = 0;
+		if (k2app::K2Settings.selectedTrackedJointID[1] > num_joints)
+			k2app::K2Settings.selectedTrackedJointID[1] = 0;
+		if (k2app::K2Settings.selectedTrackedJointID[2] > num_joints)
+			k2app::K2Settings.selectedTrackedJointID[2] = 0;
+	}
+}
+
 void devices_update_current()
 {
 	{
@@ -384,6 +459,9 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 					break;
 				}
 
+				// Try fix override IDs if wrong
+				devices_check_override_ids(selectedTrackingDeviceID);
+
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
 				// Waist
@@ -471,6 +549,9 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 					rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 				}
 
+				// Check base IDs if wrong
+				devices_check_base_ids(selectedTrackingDeviceID);
+
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
 				// Waist
@@ -515,6 +596,9 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 				}
+
+				// Try fix override IDs if wrong
+				devices_check_override_ids(selectedTrackingDeviceID);
 
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
@@ -779,6 +863,9 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 					break;
 				}
 
+				// Try fix override IDs if wrong
+				devices_check_override_ids(selectedTrackingDeviceID);
+
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
 				// Waist
@@ -864,6 +951,9 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 					rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 				}
 
+				// Check base IDs if wrong
+				devices_check_base_ids(selectedTrackingDeviceID);
+
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
 				// Waist
@@ -908,6 +998,9 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 				}
+
+				// Try fix override IDs if wrong
+				devices_check_override_ids(selectedTrackingDeviceID);
 
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
@@ -1207,6 +1300,9 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 			break;
 		}
 
+		// Try fix override IDs if wrong
+		devices_check_override_ids(selectedTrackingDeviceID);
+
 		// Select the first (or next, if exists) joint
 		// Set the placeholder text on disabled combos
 		// Waist
@@ -1294,6 +1390,9 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 			rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 			rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 		}
+
+		// Try fix override IDs if wrong
+		devices_check_override_ids(selectedTrackingDeviceID);
 
 		// Select the first (or next, if exists) joint
 		// Set the placeholder text on disabled combos
@@ -1416,6 +1515,9 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 			// RightF
 			rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 		}
+
+		// Check base IDs if wrong
+		devices_check_base_ids(selectedTrackingDeviceID);
 
 		// Select the first (or next, if exists) joint
 		// Set the placeholder text on disabled combos
@@ -2070,6 +2172,9 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 					break;
 				}
 
+				// Try fix override IDs if wrong
+				devices_check_override_ids(selectedTrackingDeviceID);
+
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
 				// Waist
@@ -2157,6 +2262,9 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 					rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 				}
 
+				// Check base IDs if wrong
+				devices_check_base_ids(selectedTrackingDeviceID);
+
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
 				// Waist
@@ -2201,6 +2309,9 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 					rightFootPositionOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 					rightFootRotationOverrideOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
 				}
+
+				// Try fix override IDs if wrong
+				devices_check_override_ids(selectedTrackingDeviceID);
 
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
