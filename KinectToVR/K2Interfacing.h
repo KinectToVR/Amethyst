@@ -1,11 +1,19 @@
 #pragma once
 #include "pch.h"
+
+#include "K2EVRInput.h"
 #include "K2Shared.h"
 
 namespace k2app
 {
 	namespace interfacing
 	{
+		inline std::vector<K2AppTracker> K2TrackersVector{
+			K2AppTracker("LHR-CB9AD1T0", ktvr::Tracker_Waist),
+			K2AppTracker("LHR-CB9AD1T1", ktvr::Tracker_LeftFoot),
+			K2AppTracker("LHR-CB9AD1T2", ktvr::Tracker_RightFoot)
+		};
+
 		inline void ShowToast(std::string const& header, std::string const& text)
 		{
 			// Unsupported in AppSDK 1.0
