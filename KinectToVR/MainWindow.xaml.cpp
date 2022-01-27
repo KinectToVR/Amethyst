@@ -122,21 +122,13 @@ namespace winrt::KinectToVR::implementation
 		FLAGS_logbufsecs = 0; //Set max timeout
 		FLAGS_minloglevel = google::GLOG_INFO;
 
-		LOG(INFO) << "~~~KinectToVR new logging session begins here!~~~";
-
-		// Read settings
-		LOG(INFO) << "Now reading saved settings...";
-		k2app::K2Settings.readSettings();
-
-		// Load sounds config into main
-		ElementSoundPlayer::State(k2app::K2Settings.enableAppSounds
-			                          ? ElementSoundPlayerState::On
-			                          : ElementSoundPlayerState::Off);
-		ElementSoundPlayer::Volume(std::clamp(
-			double(k2app::K2Settings.appSoundsVolume) / 100.0, 0.0, 100.0));
-
 		// Cache needed UI elements
 		updateIconDot = std::make_shared<Controls::FontIcon>(UpdateIconDot());
+
+		k2app::shared::main::generalItem = std::make_shared<Controls::NavigationViewItem>(GeneralItem());
+		k2app::shared::main::settingsItem = std::make_shared<Controls::NavigationViewItem>(SettingsItem());
+		k2app::shared::main::devicesItem = std::make_shared<Controls::NavigationViewItem>(DevicesItem());
+		k2app::shared::main::infoItem = std::make_shared<Controls::NavigationViewItem>(InfoItem());
 
 		// Set up
 		this->Title(L"KinectToVR");
@@ -153,6 +145,34 @@ namespace winrt::KinectToVR::implementation
 			(L"devices", winrt::xaml_typename<DevicesPage>()));
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"info", winrt::xaml_typename<InfoPage>()));
+
+		LOG(INFO) << "~~~KinectToVR new logging session begins here!~~~";
+
+		// Priority: Connect to OpenVR
+		if (!k2app::interfacing::OpenVRStartup())
+		{
+			LOG(ERROR) << "Could not connect to OpenVR! The app will be shut down.";
+			exit(-11); // OpenVR is critical, so exit
+		}
+
+		// Priority: Set up VR Input Actions
+		if (!k2app::interfacing::EVRActionsStartup())
+			LOG(ERROR) << "Could not set up VR Input Actions! The app will lack some functionality.";
+
+		// Priority: Set up the K2API & Server
+		static std::thread serverStatusThread(k2app::interfacing::K2ServerDriverSetup);
+		serverStatusThread.detach();
+
+		// Read settings
+		LOG(INFO) << "Now reading saved settings...";
+		k2app::K2Settings.readSettings();
+
+		// Load sounds config into main
+		ElementSoundPlayer::State(k2app::K2Settings.enableAppSounds
+			                          ? ElementSoundPlayerState::On
+			                          : ElementSoundPlayerState::Off);
+		ElementSoundPlayer::Volume(std::clamp(
+			double(k2app::K2Settings.appSoundsVolume) / 100.0, 0.0, 100.0));
 
 		// Scan for tracking devices
 		std::thread([&]
