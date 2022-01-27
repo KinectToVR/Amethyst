@@ -46,6 +46,33 @@ namespace k2app
 	class K2AppTracker : public ktvr::K2TrackerBase
 	{
 	public:
+		// Default constructors
+		K2AppTracker() :
+			lastLERPPosition{ pose.position },
+			lastSLERPOrientation{ pose.orientation },
+			lastSLERPSlowOrientation{ pose.orientation }
+		{
+			// Init the Kalman filter
+			for (auto& filter : kalmanFilter)
+				filter.init();
+		}
+		~K2AppTracker() = default;
+
+		// Custom constructor for role+serial
+		K2AppTracker(std::string const& _serial, ktvr::ITrackerType const& _role) :
+			lastLERPPosition{ pose.position },
+			lastSLERPOrientation{ pose.orientation },
+			lastSLERPSlowOrientation{ pose.orientation }
+		{
+			// Copy serial and role
+			data.serial = _serial;
+			data.role = _role;
+
+			// Init the Kalman filter
+			for (auto& filter : kalmanFilter)
+				filter.init();
+		}
+
 		// Position filter update option
 		int positionTrackingFilterOption = k2_NoPositionTrackingFilter,
 		    orientationTrackingFilterOption = k2_NoOrientationTrackingFilter;
@@ -275,18 +302,6 @@ namespace k2app
 		Eigen::Vector3f lastLERPPosition;
 		Eigen::Quaternionf lastSLERPOrientation,
 		                   lastSLERPSlowOrientation;
-
-		// Default constructors
-		K2AppTracker() :
-			lastLERPPosition{pose.position},
-			lastSLERPOrientation{pose.orientation},
-			lastSLERPSlowOrientation{pose.orientation}
-		{
-			// Init the Kalman filter
-			for (auto& filter : kalmanFilter)
-				filter.init();
-		}
-		~K2AppTracker() = default;
 
 		template <class Archive>
 		void serialize(Archive& ar, const unsigned int version)
