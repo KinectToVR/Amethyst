@@ -1,204 +1,204 @@
 ﻿<Page
-	x:Class="KinectToVR.GeneralPage"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	mc:Ignorable="d"
-	Loaded="GeneralPage_Loaded"
-	xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-	NavigationCacheMode="Required">
+    x:Class="KinectToVR.GeneralPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="GeneralPage_Loaded"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    NavigationCacheMode="Required">
 
-	<Grid>
-		<SplitView Canvas.ZIndex="1" x:Name="OffsetsView"
-		           PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-		           PaneClosing="OffsetsView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520" CompactPaneLength="48"
-		           DisplayMode="Overlay" CornerRadius="10">
-			<SplitView.Pane>
+    <Grid>
+        <SplitView Canvas.ZIndex="1" x:Name="OffsetsView"
+                   PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                   PaneClosing="OffsetsView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520" CompactPaneLength="48"
+                   DisplayMode="Overlay" CornerRadius="10">
+            <SplitView.Pane>
 
-				<Grid Margin="40,10">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="0" />
-						<RowDefinition Height="*" MinHeight="580"/>
-						<RowDefinition Height="75" />
-					</Grid.RowDefinitions>
+                <Grid Margin="40,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0" />
+                        <RowDefinition Height="*" MinHeight="580" />
+                        <RowDefinition Height="75" />
+                    </Grid.RowDefinitions>
 
-					<Pivot Grid.Row="1">
+                    <Pivot Grid.Row="1">
                         <PivotItem Header="Waist">
                             <Grid>
                                 <Grid.RowDefinitions>
-									<RowDefinition Height="20" />
+                                    <RowDefinition Height="20" />
                                     <RowDefinition Height="40" />
                                     <RowDefinition Height="50" />
-									<RowDefinition Height="20" />
-									<RowDefinition Height="50" />
-									<RowDefinition Height="20" />
-									<RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
 
-									<RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
                                     <RowDefinition Height="40" />
                                     <RowDefinition Height="50" />
-									<RowDefinition Height="20" />
-									<RowDefinition Height="50" />
-									<RowDefinition Height="20" />
-									<RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
 
-								</Grid.RowDefinitions>
+                                </Grid.RowDefinitions>
 
-                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees."/>
+                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees." />
 
                                 <Grid Grid.Column="0" Grid.Row="2">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="270" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Roll (Z):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
-									<muxc:NumberBox x:Name="WaistRollNumberBox"
-													ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="360"
-									                Minimum="0"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="0" Grid.Row="4">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="270" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Roll (Z):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="WaistRollNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="WaistYawNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="360"
-									                Minimum="0"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="0" Grid.Row="6">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="270" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Pitch (X):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Pitch (X):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="WaistPitchNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="360"
-									                Minimum="0"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
-								</Grid>
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
 
-                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
+                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters." />
 
                                 <Grid Grid.Column="0" Grid.Row="9">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="270" />
-									</Grid.ColumnDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
                                     <TextBlock Text="X (Right):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left" 
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="WaistXNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="1000"
-									                Minimum="-1000"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="0" Grid.Row="11">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="270" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Y (Up):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Y (Up):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="WaistYNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="1000"
-									                Minimum="-1000"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
-								</Grid>
-								<Grid Grid.Column="0" Grid.Row="13">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="270" />
-									</Grid.ColumnDefinitions>
-									<TextBlock Text="Z (Front):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="13">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Z (Front):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="WaistZNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="1000"
-									                Minimum="-1000"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
-								</Grid>
-							</Grid>
-						</PivotItem>
-						<PivotItem Header="Left Foot">
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                            </Grid>
+                        </PivotItem>
+                        <PivotItem Header="Left Foot">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="20" />
@@ -219,8 +219,8 @@
 
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees."/>
+                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees." />
 
                                 <Grid Grid.Column="0" Grid.Row="2">
                                     <Grid.ColumnDefinitions>
@@ -228,23 +228,23 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Roll (Z):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="LeftFootRollNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="360"
-									                Minimum="0"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="4">
                                     <Grid.ColumnDefinitions>
@@ -252,23 +252,23 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="LeftFootYawNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="360"
-									                Minimum="0"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="6">
                                     <Grid.ColumnDefinitions>
@@ -276,27 +276,27 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Pitch (X):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="LeftFootPitchNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="360"
-									                Minimum="0"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
 
-                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
+                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters." />
 
                                 <Grid Grid.Column="0" Grid.Row="9">
                                     <Grid.ColumnDefinitions>
@@ -304,23 +304,23 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="X (Right):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left" 
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="LeftFootXNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="1000"
-									                Minimum="-1000"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="11">
                                     <Grid.ColumnDefinitions>
@@ -328,23 +328,23 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Y (Up):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="LeftFootYNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="1000"
-									                Minimum="-1000"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="13">
                                     <Grid.ColumnDefinitions>
@@ -352,27 +352,27 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Z (Front):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="LeftFootZNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="1000"
-									                Minimum="-1000"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
                             </Grid>
                         </PivotItem>
-						<PivotItem Header="Right Foot">
+                        <PivotItem Header="Right Foot">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="20" />
@@ -393,8 +393,8 @@
 
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees."/>
+                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees." />
 
                                 <Grid Grid.Column="0" Grid.Row="2">
                                     <Grid.ColumnDefinitions>
@@ -402,23 +402,23 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Roll (Z):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="RightFootRollNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="360"
-									                Minimum="0"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="4">
                                     <Grid.ColumnDefinitions>
@@ -426,23 +426,23 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="RightFootYawNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="360"
-									                Minimum="0"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="6">
                                     <Grid.ColumnDefinitions>
@@ -450,27 +450,27 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Pitch (X):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="RightFootPitchNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="360"
-									                Minimum="0"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
 
-                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20" 
-                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters."/>
+                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters." />
 
                                 <Grid Grid.Column="0" Grid.Row="9">
                                     <Grid.ColumnDefinitions>
@@ -478,23 +478,23 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="X (Right):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left" 
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="RightFootXNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="1000"
-									                Minimum="-1000"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="11">
                                     <Grid.ColumnDefinitions>
@@ -502,23 +502,23 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Y (Up):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="RightFootYNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="1000"
-									                Minimum="-1000"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
                                 <Grid Grid.Column="0" Grid.Row="13">
                                     <Grid.ColumnDefinitions>
@@ -526,436 +526,494 @@
                                         <ColumnDefinition Width="270" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Z (Front):" VerticalAlignment="Center"
-									           HorizontalAlignment="Left"
-									           Grid.Column="0" Margin="20,0,0,0"
-									           FontSize="17" FontWeight="SemiBold" />
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
                                     <muxc:NumberBox x:Name="RightFootZNumberBox"
                                                     ValueChanged="OffsetsFrontendValueChanged"
-									                FontSize="26"
-									                FontWeight="Normal"
-									                Grid.Column="1"
-									                Maximum="1000"
-									                Minimum="-1000"
-									                Value="0"
-									                HorizontalContentAlignment="Stretch"
-									                VerticalAlignment="Stretch"
-									                SpinButtonPlacementMode="Inline"
-									                SmallChange="1"
-									                Margin="10,0,0,0"
-									                LargeChange="10" />
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
                                 </Grid>
                             </Grid>
                         </PivotItem>
-					</Pivot>
-
-					<Grid Grid.Row="2" Margin="0,0,0,10" VerticalAlignment="Top">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="250" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="7" />
-						</Grid.ColumnDefinitions>
-						<Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="3" FontSize="14" Content="Save"
-						        Height="50" Grid.Column="2" Style="{StaticResource AccentButtonStyle}" FontWeight="Medium"
-						        Margin="5,15,5,0" HorizontalAlignment="Stretch" />
-						<Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="3" FontSize="14"
-						        Content="Discard" Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0"
-						        HorizontalAlignment="Stretch" />
-					</Grid>
-
-				</Grid>
-
-			</SplitView.Pane>
-		</SplitView>
-
-		<SplitView Canvas.ZIndex="1" x:Name="CalibrationView"
-		           PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-		           PaneClosing="CalibrationView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520" CompactPaneLength="48"
-		           DisplayMode="Overlay" CornerRadius="10">
-			<SplitView.Pane>
-				<Grid>
-					<Grid x:Name="CalibrationSelectionPane">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="70" />
-							<RowDefinition Height="*" />
-						</Grid.RowDefinitions>
-
-						<TextBlock Text="Pick a calibration mode" Margin="0,15,0,0"
-						           HorizontalAlignment="Center" FontSize="26"
-						           Style="{StaticResource BaseTextBlockStyle}" />
-
-						<Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
-						      Background="{StaticResource SystemControlAcrylicElementBrush}">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="*" />
-								<RowDefinition Height="*" />
-							</Grid.RowDefinitions>
-
-							<Button x:Name="AutoCalibrationButton" Grid.Row="0" MaxWidth="320" Margin="20,20,20,10"
-							        Click="AutoCalibrationButton_Click" HorizontalAlignment="Center">
-								<Image Source="ms-appx:///Assets/autocalibration.png" />
-							</Button>
-
-							<Button x:Name="ManualCalibrationButton" Grid.Row="1" MaxWidth="320" Margin="20,10,20,20"
-							        Click="ManualCalibrationButton_Click" HorizontalAlignment="Center">
-								<Image Source="ms-appx:///Assets/manualcalibration.png" />
-							</Button>
-						</Grid>
-					</Grid>
-
-					<Grid x:Name="AutoCalibrationPane">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="70" />
-							<RowDefinition Height="*" />
-						</Grid.RowDefinitions>
-
-						<TextBlock Text="Automatic Calibration" Margin="0,15,0,0"
-						           HorizontalAlignment="Center" FontSize="26"
-						           Style="{StaticResource BaseTextBlockStyle}" />
-
-						<Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
-						      Background="{StaticResource SystemControlAcrylicElementBrush}">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="70" />
-								<RowDefinition Height="*" />
-								<RowDefinition Height="170" />
-								<RowDefinition Height="5*" />
-							</Grid.RowDefinitions>
-
-							<TextBlock Text="Follow the directions" Margin="0,40,0,0"
-							           HorizontalAlignment="Center" FontSize="20" Grid.Row="0"
-							           Style="{StaticResource BaseTextBlockStyle}" />
-
-							<Border CornerRadius="75"
-							        Grid.Row="2" Width="150"
-							        Height="150" Margin="10"
-							        Padding="0,20,0,0"
-							        HorizontalAlignment="Center"
-							        VerticalAlignment="Center"
-							        Background="{StaticResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}">
-								<TextBlock x:Name="CalibrationCountdownLabel" HorizontalAlignment="Center"
-								           VerticalAlignment="Center"
-								           Margin="0,0,0,30"
-								           Text="~" FontSize="75" FontWeight="Bold" />
-							</Border>
-
-							<TextBlock x:Name="CalibrationInstructionsLabel"
-							           Text="Start the calibration" Margin="0,15,0,0"
-							           HorizontalAlignment="Center" FontSize="27" Grid.Row="3"
-							           Style="{StaticResource BaseTextBlockStyle}" />
-
-							<Grid Grid.Row="5" VerticalAlignment="Bottom" Margin="0,0,0,20">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="*" />
-								</Grid.ColumnDefinitions>
-
-								<Button x:Name="StartAutoCalibrationButton"
-								        Click="StartAutoCalibrationButton_Click" CornerRadius="3" FontSize="14"
-								        Content="Start" Height="50" Grid.Column="1" Width="130"
-								        Style="{StaticResource AccentButtonStyle}"
-								        FontWeight="Medium" Margin="5,15,5,0" HorizontalAlignment="Left" />
-								<Button x:Name="DiscardAutoCalibrationButton"
-								        Click="DiscardAutoCalibrationButton_Click" CornerRadius="3" FontSize="14"
-								        Content="Cancel" Height="50" Grid.Column="0" Width="130"
-								        FontWeight="Medium" Margin="0,15,5,0" HorizontalAlignment="Right" />
-							</Grid>
-
-						</Grid>
-					</Grid>
-
-					<Grid x:Name="ManualCalibrationPane">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="70" />
-							<RowDefinition Height="*" />
-						</Grid.RowDefinitions>
-
-						<TextBlock Text="Manual Calibration" Margin="0,15,0,0"
-						           HorizontalAlignment="Center" FontSize="26"
-						           Style="{StaticResource BaseTextBlockStyle}" />
-
-						<Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
-						      Background="{StaticResource SystemControlAcrylicElementBrush}">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="*" />
-								<RowDefinition Height="100" />
-							</Grid.RowDefinitions>
-
-							<Image Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,40,0,10"
-							       MaxWidth="350"
-							       Source="ms-appx:///Assets/manualcalibrationinstructions.png" />
-
-							<Grid Grid.Row="1" VerticalAlignment="Bottom" Margin="0,0,0,20">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="*" />
-								</Grid.ColumnDefinitions>
-
-								<Button x:Name="StartManualCalibrationButton"
-								        Click="StartManualCalibrationButton_Click" CornerRadius="3" FontSize="14"
-								        Content="Start" Height="50" Grid.Column="1" Width="130"
-								        Style="{StaticResource AccentButtonStyle}"
-								        FontWeight="Medium" Margin="5,15,5,0" HorizontalAlignment="Left" />
-								<Button x:Name="DiscardManualCalibrationButton"
-								        Click="DiscardManualCalibrationButton_Click" CornerRadius="3" FontSize="14"
-								        Content="Cancel" Height="50" Grid.Column="0" Width="130"
-								        FontWeight="Medium" Margin="0,15,5,0" HorizontalAlignment="Right" />
-							</Grid>
-
-						</Grid>
-					</Grid>
-
-				</Grid>
-			</SplitView.Pane>
-		</SplitView>
-
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="520" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
-
-			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-			      Grid.Column="0" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
-
-				<Grid.RowDefinitions>
-					<RowDefinition Height="60" />
-					<RowDefinition Height="170" />
-					<RowDefinition Height="*" />
-					<RowDefinition Height="0" />
-					<RowDefinition Height="300" />
-					<RowDefinition Height="60" />
-					<RowDefinition Height="90" />
-				</Grid.RowDefinitions>
-
-				<TextBlock FontWeight="SemiBold" Text="Trackers" FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
-
-				<Grid HorizontalAlignment="Stretch" Grid.Row="1">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="*" />
-						<RowDefinition Height="*" />
-					</Grid.RowDefinitions>
-
-					<Grid Grid.Row="1">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-
-						<Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
-						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Begin Calibration"
-						        Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
-						        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}">
-							<FlyoutBase.AttachedFlyout>
-								<Flyout x:Name="ChooseDeviceFlyout">
-									<Grid>
-										<Grid.ColumnDefinitions>
-											<ColumnDefinition Width="*" />
-										</Grid.ColumnDefinitions>
-										<Grid.RowDefinitions>
-											<RowDefinition Height="*" />
-											<RowDefinition Height="*" />
-										</Grid.RowDefinitions>
-
-										<Grid Grid.Row="1">
-											<Grid.ColumnDefinitions>
-												<ColumnDefinition Width="*" />
-												<ColumnDefinition Width="*" />
-											</Grid.ColumnDefinitions>
-
-											<Button FontSize="15" x:Name="BaseCalibration" Click="BaseCalibration_Click"
-											        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Base"
-											        Margin="5,10,0,0" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
-											        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
-											<Button FontSize="15" x:Name="OverrideCalibration" Click="OverrideCalibration_Click"
-											        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Override"
-											        Margin="0,10,5,0" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
-											        VerticalAlignment="Stretch" />
-
-										</Grid>
-
-										<TextBlock FontSize="15" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-										           Grid.Row="0" FontWeight="SemiBold"
-										           Style="{ThemeResource BaseTextBlockStyle}"
-										           Text="You have tracking overrides set up.&#x0a;Which device do you want to calibrate?" />
-
-
-									</Grid>
-								</Flyout>
-							</FlyoutBase.AttachedFlyout>
-						</Button>
-						<Button FontSize="15" x:Name="OffsetsButton" Click="OffsetsButton_Click"
-						        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Adjust Offsets"
-						        Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
-						        VerticalAlignment="Stretch" />
-
-					</Grid>
-
-					<ToggleButton FontSize="15" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked"
-					              Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center"
-					              FontWeight="SemiBold" Content="Connect Trackers" Margin="40,10" CornerRadius="3"
-					              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
-
-				</Grid>
-
-				<Grid Grid.Row="4">
-					<StackPanel Orientation="Vertical" Margin="0,5,0,0" VerticalAlignment="Bottom">
-						<TextBlock FontWeight="SemiBold" Text="Device" FontSize="25"
-						           Margin="40,20,0,10" Grid.Row="3" />
-
-						<StackPanel Orientation="Horizontal" Margin="40,0,20,0">
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="Current Device:" Margin="0,0,0,0" Foreground="LightGray" />
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="Xbox One Kinect (V2)" Margin="5,0,0,0" x:Name="SelectedDeviceNameLabel" />
-						</StackPanel>
-
-						<StackPanel Orientation="Horizontal" Margin="40,5,20,0">
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="Not Powered" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
-						</StackPanel>
-
-						<Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
-						      Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
-
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-							           Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
-							           x:Name="TrackingDeviceErrorLabel"
-							           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
-
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-							           x:Name="ErrorWhatText"
-							           Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
-								<TextBlock.Text>
-									There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
-								</TextBlock.Text>
-							</TextBlock>
-						</Grid>
-
-						<Grid Margin="0,12,0,0" x:Name="ErrorButtonsGrid">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
-
-							<Button FontSize="15" x:Name="OpenDiscordButton" Click="OpenDiscordButton_Click" Height="65"
-							        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Get help on Discord"
-							        Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
-							        VerticalAlignment="Stretch" />
-							<Button FontSize="15" x:Name="OpenDocsButton" Click="OpenDocsButton_Click" Height="65"
-							        VerticalContentAlignment="Center" FontWeight="SemiBold" Content="View Online Docs"
-							        Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
-							        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
-
-						</Grid>
-
-					</StackPanel>
-				</Grid>
-
-				<TextBlock FontWeight="SemiBold" Text="Status" FontSize="25" Margin="40,20,0,0" Grid.Row="5" />
-
-				<Grid Grid.Row="6">
-					<StackPanel Orientation="Vertical" Margin="0,5,0,0">
-
-						<StackPanel Orientation="Horizontal" Margin="40,0,20,0">
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="SteamVR Driver:" Margin="0,0,0,0" Foreground="LightGray" />
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="Success! (Code 10)" Margin="5,0,0,0" x:Name="DriverStatusLabel" />
-						</StackPanel>
-
-						<StackPanel Orientation="Horizontal" Margin="40,5,20,0">
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="Amethyst Version:" Margin="0,0,0,0" Foreground="LightGray" />
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-							           Text="v1.0.0 (Ame0)" Margin="5,0,0,0" x:Name="VersionLabel" />
-						</StackPanel>
-
-					</StackPanel>
-				</Grid>
-
-			</Grid>
-
-			<!--Skeleton canvas-->
-			<Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Canvas.ZIndex="-1"
-			        x:Name="SkeletonDrawingCanvas" Loaded="SkeletonDrawingCanvas_Loaded" />
-
-			<!--Background-->
-			<Grid Background="Black" Grid.Column="1" Canvas.ZIndex="-2"
-			      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-
-			<!--No Skeleton-->
-			<Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
-			         VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-				<StackPanel Grid.Column="1" x:Name="NotTrackedNotice"
-				            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
-
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-						<FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" />
-						<TextBlock Margin="10,0,0,7" Text="No skeleton found" FontSize="50" FontWeight="SemiBold" />
-					</StackPanel>
-
-					<TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-						<Run>Make sure the device works properly</Run>
-					</TextBlock>
-
-					<TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-						<Run>and can see your body for tracking.</Run>
-					</TextBlock>
-
-				</StackPanel>
-			</Viewbox>
-
-			<!--Skeleton Disabled-->
-			<Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
-			         VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-				<StackPanel Grid.Column="1" x:Name="SkeletonHiddenNotice" Visibility="Collapsed"
-				            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
-
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-						<FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
-						<TextBlock Margin="10,0,0,7" Text="Skeleton preview disabled" FontSize="50" FontWeight="SemiBold" />
-					</StackPanel>
-
-					<TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-						<Run>To re-enable it please click the</Run>
-					</TextBlock>
-
-					<TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-						<Run>"Show/Hide Skeleton" button.</Run>
-					</TextBlock>
-
-				</StackPanel>
-			</Viewbox>
-
-			<Grid Background="Transparent" Grid.Column="1">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="20" />
-					<RowDefinition Height="45" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
-
-				<Grid Grid.Row="1">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="180" />
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="400" />
-					</Grid.ColumnDefinitions>
-
-					<ToggleButton x:Name="SkeletonToggleButton" Checked="SkeletonToggleButton_Checked"
-					              Unchecked="SkeletonToggleButton_Unchecked" IsChecked="True"
-					              VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Show/Hide Skeleton"
-					              Margin="20,0,0,10" CornerRadius="3" Grid.Column="0"
-					              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-
-				</Grid>
-			</Grid>
-
-		</Grid>
-	</Grid>
+                    </Pivot>
+
+                    <Grid Grid.Row="2" Margin="0,0,0,10" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="7" />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="3"
+                                FontSize="14" Content="Save"
+                                Height="50" Grid.Column="2" Style="{StaticResource AccentButtonStyle}"
+                                FontWeight="Medium"
+                                Margin="5,15,5,0" HorizontalAlignment="Stretch" />
+                        <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="3"
+                                FontSize="14"
+                                Content="Discard" Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0"
+                                HorizontalAlignment="Stretch" />
+                    </Grid>
+
+                </Grid>
+
+            </SplitView.Pane>
+        </SplitView>
+
+        <SplitView Canvas.ZIndex="1" x:Name="CalibrationView"
+                   PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                   PaneClosing="CalibrationView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
+                   CompactPaneLength="48"
+                   DisplayMode="Overlay" CornerRadius="10">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid x:Name="CalibrationSelectionPane">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="70" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Pick a calibration mode" Margin="0,15,0,0"
+                                   HorizontalAlignment="Center" FontSize="26"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
+                              Background="{StaticResource SystemControlAcrylicElementBrush}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Button x:Name="AutoCalibrationButton" Grid.Row="0" MaxWidth="320" Margin="20,20,20,10"
+                                    Click="AutoCalibrationButton_Click" HorizontalAlignment="Center">
+                                <Image Source="ms-appx:///Assets/autocalibration.png" />
+                            </Button>
+
+                            <Button x:Name="ManualCalibrationButton" Grid.Row="1" MaxWidth="320" Margin="20,10,20,20"
+                                    Click="ManualCalibrationButton_Click" HorizontalAlignment="Center">
+                                <Image Source="ms-appx:///Assets/manualcalibration.png" />
+                            </Button>
+                        </Grid>
+                    </Grid>
+
+                    <Grid x:Name="AutoCalibrationPane">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="70" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Automatic Calibration" Margin="0,15,0,0"
+                                   HorizontalAlignment="Center" FontSize="26"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
+                              Background="{StaticResource SystemControlAcrylicElementBrush}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="70" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="170" />
+                                <RowDefinition Height="5*" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Follow the directions" Margin="0,40,0,0"
+                                       HorizontalAlignment="Center" FontSize="20" Grid.Row="0"
+                                       Style="{StaticResource BaseTextBlockStyle}" />
+
+                            <Border CornerRadius="75"
+                                    Grid.Row="2" Width="150"
+                                    Height="150" Margin="10"
+                                    Padding="0,20,0,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Background="{StaticResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}">
+                                <TextBlock x:Name="CalibrationCountdownLabel" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,0,30"
+                                           Text="~" FontSize="75" FontWeight="Bold" />
+                            </Border>
+
+                            <TextBlock x:Name="CalibrationInstructionsLabel"
+                                       Text="Start the calibration" Margin="0,15,0,0"
+                                       HorizontalAlignment="Center" FontSize="27" Grid.Row="3"
+                                       Style="{StaticResource BaseTextBlockStyle}" />
+
+                            <Grid Grid.Row="5" VerticalAlignment="Bottom" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button x:Name="StartAutoCalibrationButton"
+                                        Click="StartAutoCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                        Content="Start" Height="50" Grid.Column="1" Width="130"
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        FontWeight="Medium" Margin="5,15,5,0" HorizontalAlignment="Left" />
+                                <Button x:Name="DiscardAutoCalibrationButton"
+                                        Click="DiscardAutoCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                        Content="Cancel" Height="50" Grid.Column="0" Width="130"
+                                        FontWeight="Medium" Margin="0,15,5,0" HorizontalAlignment="Right" />
+                            </Grid>
+
+                        </Grid>
+                    </Grid>
+
+                    <Grid x:Name="ManualCalibrationPane">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="70" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Manual Calibration" Margin="0,15,0,0"
+                                   HorizontalAlignment="Center" FontSize="26"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
+                              Background="{StaticResource SystemControlAcrylicElementBrush}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="100" />
+                            </Grid.RowDefinitions>
+
+                            <Image Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,40,0,10"
+                                   MaxWidth="350"
+                                   Source="ms-appx:///Assets/manualcalibrationinstructions.png" />
+
+                            <Grid Grid.Row="1" VerticalAlignment="Bottom" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button x:Name="StartManualCalibrationButton"
+                                        Click="StartManualCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                        Content="Start" Height="50" Grid.Column="1" Width="130"
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        FontWeight="Medium" Margin="5,15,5,0" HorizontalAlignment="Left" />
+                                <Button x:Name="DiscardManualCalibrationButton"
+                                        Click="DiscardManualCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                        Content="Cancel" Height="50" Grid.Column="0" Width="130"
+                                        FontWeight="Medium" Margin="0,15,5,0" HorizontalAlignment="Right" />
+                            </Grid>
+
+                        </Grid>
+                    </Grid>
+
+                </Grid>
+            </SplitView.Pane>
+        </SplitView>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="520" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  Grid.Column="0" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="170" />
+                    <RowDefinition Height="0" />
+                    <RowDefinition Height="0" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock FontWeight="SemiBold" Text="Trackers" FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
+
+                <Grid HorizontalAlignment="Stretch" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
+                                VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Begin Calibration"
+                                Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}">
+                            <FlyoutBase.AttachedFlyout>
+                                <Flyout x:Name="ChooseDeviceFlyout">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+
+                                        <Grid Grid.Row="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Button FontSize="15" x:Name="BaseCalibration"
+                                                    Click="BaseCalibration_Click"
+                                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                                    Content="Base"
+                                                    Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Style="{StaticResource AccentButtonStyle}" />
+                                            <Button FontSize="15" x:Name="OverrideCalibration"
+                                                    Click="OverrideCalibration_Click"
+                                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                                    Content="Override"
+                                                    Margin="0,10,5,0" CornerRadius="3" Grid.Column="0"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch" />
+
+                                        </Grid>
+
+                                        <TextBlock FontSize="15" HorizontalAlignment="Stretch"
+                                                   VerticalAlignment="Stretch"
+                                                   Grid.Row="0" FontWeight="SemiBold"
+                                                   Style="{ThemeResource BaseTextBlockStyle}"
+                                                   Text="You have tracking overrides set up.&#x0a;Which device do you want to calibrate?" />
+
+
+                                    </Grid>
+                                </Flyout>
+                            </FlyoutBase.AttachedFlyout>
+                        </Button>
+                        <Button FontSize="15" x:Name="OffsetsButton" Click="OffsetsButton_Click"
+                                VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Adjust Offsets"
+                                Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
+
+                    </Grid>
+
+                    <ToggleButton FontSize="15" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked"
+                                  Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center"
+                                  FontWeight="SemiBold" Content="Connect Trackers" Margin="40,10" CornerRadius="3"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
+
+                </Grid>
+
+                <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                              Grid.Row="4" VerticalScrollBarVisibility="Visible" >
+
+                    <StackPanel Grid.Row="4" Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,0,0,30">
+
+                        <StackPanel Orientation="Vertical" Margin="0,5,0,0" VerticalAlignment="Bottom">
+                            <TextBlock FontWeight="SemiBold" Text="Device" FontSize="25"
+                                   Margin="40,20,0,10" Grid.Row="3" />
+
+                            <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="Current Device:" Margin="0,0,0,0" Foreground="LightGray" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="Xbox One Kinect (V2)" Margin="5,0,0,0" x:Name="SelectedDeviceNameLabel" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="Not Powered" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
+                            </StackPanel>
+
+                            <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
+                              Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                       Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
+                                       x:Name="TrackingDeviceErrorLabel"
+                                       Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                       x:Name="ErrorWhatText"
+                                       Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+                                    <TextBlock.Text>
+                                        There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Grid>
+
+                            <Grid Margin="0,12,0,0" x:Name="ErrorButtonsGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button FontSize="15" x:Name="OpenDiscordButton" Click="OpenDiscordButton_Click"
+                                    Height="65"
+                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                    Content="Get help on Discord"
+                                    Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch" />
+                                <Button FontSize="15" x:Name="OpenDocsButton" Click="ServerOpenDocsButton_Click"
+                                    Height="65"
+                                    VerticalContentAlignment="Center" FontWeight="SemiBold" Content="View Online Docs"
+                                    Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
+
+                            </Grid>
+
+                        </StackPanel>
+
+                        <Grid Height="60" VerticalAlignment="Bottom">
+                            <TextBlock FontWeight="SemiBold" Text="Status" FontSize="25" Margin="40,20,0,0" Grid.Row="5" />
+                        </Grid>
+
+                        <StackPanel Orientation="Vertical" Margin="0,5,0,0" VerticalAlignment="Bottom">
+
+                            <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="SteamVR Driver:" Margin="0,0,0,0" Foreground="LightGray" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="Success! (Code 1)" Margin="5,0,0,0" x:Name="ServerStatusLabel" />
+                            </StackPanel>
+
+                            <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
+                              Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3" x:Name="ServerErrorWhatGrid">
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                       Text="CODE_MINUS10" Margin="10,7,0,0" FontFamily="Consolas"
+                                       x:Name="ServerErrorLabel"
+                                       Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                       x:Name="ServerErrorWhatText"
+                                       Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+                                    <TextBlock.Text>
+                                        There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Grid>
+
+                            <Grid Margin="0,12,0,0" x:Name="ServerErrorButtonsGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button FontSize="15" x:Name="ServerOpenDiscordButton" Click="OpenDiscordButton_Click"
+                                    Height="65"
+                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                    Content="Get help on Discord"
+                                    Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch" />
+                                <Button FontSize="15" x:Name="ServerOpenDocsButton" Click="OpenDocsButton_Click"
+                                    Height="65"
+                                    VerticalContentAlignment="Center" FontWeight="SemiBold" Content="View Online Docs"
+                                    Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
+
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="Amethyst Version:" Margin="0,0,0,0" Foreground="LightGray" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="v1.0.0 (Ame0)" Margin="5,0,0,0" x:Name="VersionLabel" />
+                            </StackPanel>
+
+                        </StackPanel>
+
+                    </StackPanel>
+
+                </ScrollViewer>
+
+            </Grid>
+
+            <!--Skeleton canvas-->
+            <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Canvas.ZIndex="-1"
+                    x:Name="SkeletonDrawingCanvas" Loaded="SkeletonDrawingCanvas_Loaded" />
+
+            <!--Background-->
+            <Grid Background="Black" Grid.Column="1" Canvas.ZIndex="-2"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+            <!--No Skeleton-->
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
+                     VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
+                <StackPanel Grid.Column="1" x:Name="NotTrackedNotice"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" />
+                        <TextBlock Margin="10,0,0,7" Text="No skeleton found" FontSize="50" FontWeight="SemiBold" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+                        <Run>Make sure the device works properly</Run>
+                    </TextBlock>
+
+                    <TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+                        <Run>and can see your body for tracking.</Run>
+                    </TextBlock>
+
+                </StackPanel>
+            </Viewbox>
+
+            <!--Skeleton Disabled-->
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
+                     VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
+                <StackPanel Grid.Column="1" x:Name="SkeletonHiddenNotice" Visibility="Collapsed"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
+                        <TextBlock Margin="10,0,0,7" Text="Skeleton preview disabled" FontSize="50"
+                                   FontWeight="SemiBold" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+                        <Run>To re-enable it please click the</Run>
+                    </TextBlock>
+
+                    <TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+                        <Run>"Show/Hide Skeleton" button.</Run>
+                    </TextBlock>
+
+                </StackPanel>
+            </Viewbox>
+
+            <Grid Background="Transparent" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="45" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="400" />
+                    </Grid.ColumnDefinitions>
+
+                    <ToggleButton x:Name="SkeletonToggleButton" Checked="SkeletonToggleButton_Checked"
+                                  Unchecked="SkeletonToggleButton_Unchecked" IsChecked="True"
+                                  VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Show/Hide Skeleton"
+                                  Margin="20,0,0,10" CornerRadius="3" Grid.Column="0"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+                </Grid>
+            </Grid>
+
+        </Grid>
+    </Grid>
 </Page>

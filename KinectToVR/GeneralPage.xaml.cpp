@@ -25,13 +25,21 @@ namespace winrt::KinectToVR::implementation
 
 		toggleTrackersButton = std::make_shared<Controls::Primitives::ToggleButton>(ToggleTrackersButton());
 
+		calibrationButton = std::make_shared<Controls::Button>(CalibrationButton());
+		offsetsButton = std::make_shared<Controls::Button>(OffsetsButton());
+
 		deviceNameLabel = std::make_shared<Controls::TextBlock>(SelectedDeviceNameLabel());
 		deviceStatusLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceStatusLabel());
 		errorWhatText = std::make_shared<Controls::TextBlock>(ErrorWhatText());
 		trackingDeviceErrorLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceErrorLabel());
+		serverStatusLabel = std::make_shared<Controls::TextBlock>(ServerStatusLabel());
+		serverErrorLabel = std::make_shared<Controls::TextBlock>(ServerErrorLabel());
+		serverErrorWhatText = std::make_shared<Controls::TextBlock>(ServerErrorWhatText());
 
 		errorButtonsGrid = std::make_shared<Controls::Grid>(ErrorButtonsGrid());
 		errorWhatGrid = std::make_shared<Controls::Grid>(ErrorWhatGrid());
+		serverErrorWhatGrid = std::make_shared<Controls::Grid>(ServerErrorWhatGrid());
+		serverErrorButtonsGrid = std::make_shared<Controls::Grid>(ServerErrorButtonsGrid());
 
 		waistRollNumberBox = std::make_shared<Controls::NumberBox>(WaistRollNumberBox());
 		waistYawNumberBox = std::make_shared<Controls::NumberBox>(WaistYawNumberBox());
@@ -538,20 +546,35 @@ void winrt::KinectToVR::implementation::GeneralPage::OpenDocsButton_Click(
 }
 
 
+void winrt::KinectToVR::implementation::GeneralPage::ServerOpenDocsButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+}
+
+
 void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	// Try auto-spawning trackers if stated so
-	if (k2app::K2Settings.autoSpawnEnabledJoints)
+	if (!general_tab_setup_finished && // If first-time
+		k2app::interfacing::isServerDriverPresent && // If the driver's ok
+		k2app::K2Settings.autoSpawnEnabledJoints) // If autospawn
 	{
 		if (k2app::interfacing::SpawnDefaultEnabledTrackers()) // Mark as spawned
 			k2app::shared::general::toggleTrackersButton->IsChecked(true);
 
-		else // Cry about it
+		// Cry about it
+		else
+		{
+			k2app::interfacing::serverDriverFailure = true; // WAAAAAAA
+			k2app::interfacing::K2ServerDriverSetup(); // Refresh
 			k2app::interfacing::ShowToast("We couldn't spawn trackers automatically!",
 			                              "A server failure occurred and body trackers couldn't be spawned");
+		}
 	}
 
+	// Update things
+	k2app::interfacing::UpdateServerStatusUI();
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
 
 	// Notice that we're gonna change some values
