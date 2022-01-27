@@ -25,6 +25,13 @@ namespace TrackingDevices
 	}
 
 	// Extract the current device (variant of it)
+	inline auto getCurrentDevice(uint32_t const& id)
+	{
+		// trackingDeviceID is always >= 0 anyway
+		return TrackingDevicesVector.at(id);
+	}
+
+	// Extract the current device (variant of it)
 	inline auto getCurrentOverrideDevice()
 	{
 		// trackingDeviceID is always >= 0 anyway
@@ -43,6 +50,23 @@ namespace TrackingDevices
 		// Assuming that the caller will test in pair.first is true,
 		// we can push the id0 device here as well if pair.first is gonna be false
 		uint32_t _deviceID = _exists ? k2app::K2Settings.overrideDeviceID : 0;
+
+		// trackingDeviceID is always >= 0 anyway
+		return std::make_pair(_exists,
+		                      TrackingDevicesVector.at(_deviceID));
+	}
+
+	// Extract the current device (variant of it)
+	inline std::pair<
+		bool, std::variant<
+			ktvr::K2TrackingDeviceBase_KinectBasis*,
+			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe(uint32_t const& id)
+	{
+		bool _exists = TrackingDevicesVector.size() > id;
+
+		// Assuming that the caller will test in pair.first is true,
+		// we can push the id0 device here as well if pair.first is gonna be false
+		uint32_t _deviceID = _exists ? id : 0;
 
 		// trackingDeviceID is always >= 0 anyway
 		return std::make_pair(_exists,
@@ -80,12 +104,15 @@ namespace TrackingDevices
 		/* Update the device in general tab */
 
 		// Update the status here
-		const bool status_ok = device_status.find("S_OK") != std::string::npos;
+		bool status_ok = device_status.find("S_OK") != std::string::npos;
 		using namespace winrt::Microsoft::UI::Xaml;
 
 		// Check with this one, should be the same for all anyway
 		if (::k2app::shared::general::errorWhatText.get() != nullptr)
 		{
+			// Don't show device errors if we've got a server error
+			if (k2app::interfacing::serverDriverFailure)status_ok = true;
+
 			::k2app::shared::general::errorWhatText.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
 			::k2app::shared::general::errorWhatGrid.get()->Visibility(
