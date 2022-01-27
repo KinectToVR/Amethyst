@@ -1,16 +1,8 @@
 #pragma once
 #include "pch.h"
-#include "K2Shared.h"
 
-inline std::array<std::string, 3> split_status(std::string const& s)
-{
-	// If there are 3 strings separated by \n
-	return std::array<std::string, 3>{
-		s.substr(0, s.find("\n")),
-		s.substr(s.find("\n") + 1, s.rfind("\n") - (s.find("\n") + 1)),
-		s.substr(s.rfind("\n") + 1)
-	};
-}
+#include "K2Interfacing.h"
+#include "K2Shared.h"
 
 namespace TrackingDevices
 {
