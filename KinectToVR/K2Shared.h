@@ -12,25 +12,53 @@ inline std::string string_cast(std::wstring const& s)
 	return std::string(s.begin(), s.end());
 }
 
+inline std::array<std::string, 3> split_status(std::string const& s)
+{
+	// If there are 3 strings separated by \n
+	return std::array<std::string, 3>{
+		s.substr(0, s.find("\n")),
+		s.substr(s.find("\n") + 1, s.rfind("\n") - (s.find("\n") + 1)),
+		s.substr(s.rfind("\n") + 1)
+	};
+}
+
 namespace k2app
 {
 	namespace shared
 	{
+		namespace main
+		{
+			// Main Window
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem>
+				generalItem,
+				settingsItem,
+				devicesItem,
+				infoItem;
+		}
+
 		namespace general
 		{
 			// General Page
-			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>
-				toggleTrackersButton;
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton> toggleTrackersButton;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
+				calibrationButton,
+				offsetsButton;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
 				deviceNameLabel,
 				deviceStatusLabel,
 				errorWhatText,
-				trackingDeviceErrorLabel;
+				trackingDeviceErrorLabel,
+				serverStatusLabel,
+				serverErrorLabel,
+				serverErrorWhatText;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
 				errorButtonsGrid,
-				errorWhatGrid;
+				errorWhatGrid,
+				serverErrorWhatGrid,
+				serverErrorButtonsGrid;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::NumberBox>
 				waistRollNumberBox,
