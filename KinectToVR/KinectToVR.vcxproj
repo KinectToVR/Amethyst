@@ -105,13 +105,14 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\Kinect;$(SolutionDir)external\openvr\headers;$(SolutionDir)KinectToVR_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">KinectToVR_API.lib;WindowsApp.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)external\openvr\lib\win64</AdditionalLibraryDirectories>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">KinectToVR_API.lib;WindowsApp.lib;openvr_api.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(OutDir)"
 xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)external\openvr\bin\win64\openvr_api.dll" "$(OutDir)"
 
 xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)devices"</Command>
     </PostBuildEvent>
@@ -132,13 +133,14 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">KinectToVR_API.lib;WindowsApp.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)external\openvr\lib\win64</AdditionalLibraryDirectories>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">KinectToVR_API.lib;WindowsApp.lib;openvr_api.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(OutDir)"
 xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)external\openvr\bin\win64\openvr_api.dll" "$(OutDir)"
 
 xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)devices"</Command>
     </PostBuildEvent>
@@ -167,6 +169,7 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="K2AppTracker.h" />
+    <ClInclude Include="K2EVRInput.h" />
     <ClInclude Include="K2Interfacing.h" />
     <ClInclude Include="K2Settings.h" />
     <ClInclude Include="K2Shared.h" />

@@ -57,6 +57,9 @@
 
 #include <KinectToVR_API.h>
 
+#include <openvr.h>
+
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/dll.hpp>
 #include <boost/property_tree/ptree.hpp>
