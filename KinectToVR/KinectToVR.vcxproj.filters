@@ -65,6 +65,9 @@
     <ClInclude Include="K2EVRInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="K2Main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

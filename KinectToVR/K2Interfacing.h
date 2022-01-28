@@ -45,9 +45,127 @@ namespace k2app
 			//toastNotifier.Show(notification);
 		}
 
+		// Input actions' handler
+		inline K2EVRInput::SteamEVRInput evr_input;
+
+		// If trackers are added / initialized
+		inline bool K2AppTrackersSpawned = false,
+		            K2AppTrackersInitialized = false;
+
+		// Is the tracking paused
+		inline bool isTrackingFrozen = false;
+
+		// Server checking threads number, max num of them
+		inline uint32_t pingCheckingThreadsNumber = 0,
+		                maxPingCheckingThreads = 3;
+
+		// Server interfacing data
+		inline int serverDriverStatusCode = 0;
+		inline uint32_t pingTime = 0, parsingTime = 0;
+		inline bool isServerDriverPresent = false,
+		            serverDriverFailure = false;
+		inline std::string serverStatusString = " \n \n ";
+
+		// For manual calibration
+		inline bool calibration_confirm,
+		            calibration_modeSwap,
+		            calibration_fineTune;
+
+		// For manual calibration: L, R -> X, Y
+		inline std::array<std::array<float, 2>, 2>
+		calibration_joystick_positions;
+
+		// Function to spawn default' enabled trackers
 		inline bool SpawnDefaultEnabledTrackers()
 		{
-			return false; // TODO
+			if (!K2AppTrackersSpawned)
+			{
+				LOG(INFO) << "[K2Interfacing] Registering trackers now...";
+
+				// K2Driver is now auto-adding default lower body trackers.
+				// That means that ids are: W-0 L-1 R-2
+				// We may skip downloading them then ^_~
+
+				// Setup default IDs
+				K2TrackersVector.at(0).id = 0; // W
+				K2TrackersVector.at(1).id = 1; // L
+				K2TrackersVector.at(2).id = 2; // R
+
+				LOG(INFO) << "[K2Interfacing] App will be using K2Driver's default prepended trackers!";
+
+				// Helper bool array
+				std::array<bool, 3> spawned = {false, false, false};
+
+				// Try 3 times
+				for (int i = 0; i < 3; i++)
+				{
+					// Add only default trackers from the vector (0-2)
+					for (int t = 0; t < 3; t++)
+					{
+						if (k2app::K2Settings.isJointEnabled[t])
+						{
+							if (K2TrackersVector.at(t).id != -1)
+							{
+								if (const auto& m_result =
+										ktvr::set_tracker_state(K2TrackersVector.at(t).id, true); // We WANT a reply
+									m_result.id == K2TrackersVector.at(t).id && m_result.success)
+								{
+									LOG(INFO) << "Tracker with serial " + K2TrackersVector.at(t).data.serial +
+										" and id " +
+										std::to_string(
+											K2TrackersVector.at(t).id) +
+										" was successfully updated with status [active]";
+									spawned[t] = true;
+								}
+
+								else if (m_result.id != K2TrackersVector.at(t).id && m_result.success)
+									LOG(ERROR) << "Tracker with serial " + K2TrackersVector.at(t).data.serial + " and id "
+										+
+										std::to_string(
+											K2TrackersVector.at(t).id) +
+										" could not be spawned due to ID mismatch.";
+
+								else
+								{
+									LOG(ERROR) << "Tracker with serial " + K2TrackersVector.at(t).data.serial +
+										" and id " +
+										std::to_string(
+											K2TrackersVector.at(t).id) +
+										" could not be spawned due to internal server error.";
+									if (!ktvr::GetLastError().empty())
+										LOG(ERROR) << "Last K2API error: " + ktvr::GetLastError();
+								}
+							}
+							else
+								LOG(ERROR) << "Not spawning active tracker since its id is -1";
+						}
+						else
+						{
+							spawned[t] = true; // Hacky hack
+							LOG(INFO) << "Not spawning tracker with serial " + K2TrackersVector.at(t).data.serial +
+								" because it is disabled in settings.";
+						}
+					}
+				}
+
+				// If one or more trackers failed to spawn
+				if (std::ranges::find(spawned.begin(), spawned.end(), false) != spawned.end())
+				{
+					LOG(INFO) << "One or more trackers couldn't be spawned after 3 tries. Giving up...";
+
+					// Cause not checking anymore
+					serverDriverFailure = true;
+					K2AppTrackersSpawned = false;
+					K2AppTrackersInitialized = false;
+
+					return false;
+				}
+			}
+
+			// Notify that we're good now
+			K2AppTrackersSpawned = true;
+			K2AppTrackersInitialized = true;
+			return true;
 		}
 
 		/**
@@ -85,8 +203,6 @@ namespace k2app
 		{
 			LOG(INFO) << "Attempting to set up EVR Input Actions...";
 
-			K2EVRInput::SteamEVRInput evr_input;
-
 			if (!evr_input.InitInputActions())
 			{
 				LOG(ERROR) << "Could not set up Input Actions. Please check the upper log for further information.";
@@ -103,17 +219,6 @@ namespace k2app
 			LOG(INFO) << "EVR Input Actions set up OK";
 			return true;
 		}
-
-		// Server checking threads number, max num of them
-		inline uint32_t pingCheckingThreadsNumber = 0,
-		                maxPingCheckingThreads = 3;
-
-		// Server interfacing data
-		inline int serverDriverStatusCode = 0;
-		inline uint32_t pingTime = 0, parsingTime = 0;
-		inline bool isServerDriverPresent = false,
-		            serverDriverFailure = false;
-		inline std::string serverStatusString = " \n \n ";
 
 		/**
 		 * \brief This will init K2API and server driver
@@ -293,14 +398,14 @@ namespace k2app
 		{
 			// Update the status here
 			using namespace winrt::Microsoft::UI::Xaml;
-			
+
 			// Disable UI (partially) if we've encountered an error
 			if (::k2app::shared::main::devicesItem.get() != nullptr)
 			{
 				//::k2app::shared::main::settingsItem.get()->IsEnabled(isServerDriverPresent);
 				::k2app::shared::main::devicesItem.get()->IsEnabled(isServerDriverPresent);
 			}
-			
+
 			// Check with this one, should be the same for all anyway
 			if (::k2app::shared::general::serverErrorWhatText.get() != nullptr)
 			{

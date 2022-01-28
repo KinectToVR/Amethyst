@@ -523,6 +523,24 @@ void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checke
 {
 	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
 	ToggleTrackersButton().Content(box_value(L"Disconnect Trackers"));
+
+	// Optionally spawn trackers
+	if (!k2app::interfacing::K2AppTrackersSpawned)
+	{
+		if (!k2app::interfacing::SpawnDefaultEnabledTrackers()) // Mark as spawned
+		{
+			k2app::interfacing::serverDriverFailure = true; // WAAAAAAA
+			k2app::interfacing::K2ServerDriverSetup(); // Refresh
+			k2app::interfacing::ShowToast("We couldn't spawn trackers automatically!",
+			                              "A server failure occurred and body trackers couldn't be spawned");
+		}
+
+		// Update things
+		k2app::interfacing::UpdateServerStatusUI();
+	}
+
+	// Mark trackers as active
+	k2app::interfacing::K2AppTrackersInitialized = true;
 }
 
 
@@ -531,6 +549,9 @@ void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchec
 {
 	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
 	ToggleTrackersButton().Content(box_value(L"Reconnect Trackers"));
+
+	// Mark trackers as active
+	k2app::interfacing::K2AppTrackersInitialized = false;
 }
 
 
@@ -712,8 +733,6 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 			{
 				auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
-				device->update(); // TODO: call this in K2Main
-
 				const auto joints = device->getJointPositions();
 				const auto states = device->getTrackingStates();
 
@@ -849,8 +868,6 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 		//case 1: // TODO: Other device types
 		//	{
 		//		auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
-
-		//		device->update();
 
 		//		const auto joints = device->getTrackedJoints();
 
