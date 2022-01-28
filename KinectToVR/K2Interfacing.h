@@ -63,7 +63,7 @@ namespace k2app
 
 			if (eError != vr::VRInitError_None)
 			{
-				LOG(ERROR) << "IVRSystem could not be initialised: EVRInitError Code " << static_cast<int>(eError);
+				LOG(ERROR) << "IVRSystem could not be initialized: EVRInitError Code " << static_cast<int>(eError);
 				MessageBoxA(nullptr,
 				            std::string(
 					            "Couldn't initialise VR system. (Code " + std::to_string(eError) +
