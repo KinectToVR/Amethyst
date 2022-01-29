@@ -32,6 +32,8 @@ namespace k2app::main
 			isTrackingFrozen = !isTrackingFrozen;
 
 			// Play a Sound and Update UI
+			winrt::Microsoft::UI::Xaml::ElementSoundPlayer::Play(
+				winrt::Microsoft::UI::Xaml::ElementSoundKind::Invoke);
 		}
 
 		// Update the Flip Toggle : toggle
@@ -59,6 +61,9 @@ namespace k2app::main
 			K2Settings.saveSettings();
 
 			// Play a Sound and Update UI
+			winrt::Microsoft::UI::Xaml::ElementSoundPlayer::Play(
+				winrt::Microsoft::UI::Xaml::ElementSoundKind::Invoke);
+
 			if (shared::settings::flipCheckBox.get())
 				shared::settings::flipCheckBox.get()->IsChecked(K2Settings.isFlipEnabled);
 		}
