@@ -26,6 +26,12 @@ public:
 	[[nodiscard]] vr::TrackedDeviceIndex_t get_index() const;
 
 	/**
+	 * \brief Get device role in K2 / OVR
+	 * \return K2 tracker type / role
+	 */
+	[[nodiscard]] ktvr::ITrackerType get_role() const;
+
+	/**
 	 * \brief Update void for server driver
 	 */
 	void update();

@@ -224,7 +224,7 @@ namespace ktvr
 			// although this time it'll be -1,
 			// forcing the driver to check if we've provided a serial
 			K2Message message = K2Message();
-			message.messageType = K2Message_DownloadTracker;
+			message.messageType = static_cast<int>(K2MessageType::K2Message_DownloadTracker);
 			message.tracker_data.serial = tracker_serial;
 
 			return send_message(message);
@@ -248,12 +248,34 @@ namespace ktvr
 		}
 	}
 
+	K2ResponseMessage download_tracker(const ITrackerType& tracker_role) noexcept
+	{
+		try
+		{
+			// Send and grab the response
+			// Send the message and return
+			// Normally, we'd set some id to grab tracker from,
+			// although this time it'll be skipped,
+			// the driver will check message_string and download via role
+			K2Message message = K2Message();
+			message.messageType = static_cast<int>(K2MessageType::K2Message_DownloadTracker);
+			message.message_string = "role";
+			message.tracker_data.role = static_cast<uint32_t>(tracker_role);
+
+			return send_message(message);
+		}
+		catch (std::exception const& e)
+		{
+			return K2ResponseMessage(); // Success is set to false by default
+		}
+	}
+
 	std::tuple<K2ResponseMessage, long long, long long> test_connection() noexcept
 	{
 		try
 		{
 			K2Message message = K2Message();
-			message.messageType = K2Message_Ping;
+			message.messageType = static_cast<int>(K2MessageType::K2Message_Ping);
 
 			// Grab the current time and send the message
 			const long long send_time = K2API_GET_TIMESTAMP_NOW;

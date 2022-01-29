@@ -38,7 +38,7 @@ public:
 			ktvr::K2TrackerPose(), // Default pose 
 			ktvr::K2TrackerData(
 				"LHR-CB9AD1T0", // Serial
-				ktvr::Tracker_Waist, // Role
+				ktvr::ITrackerType::Tracker_Waist, // Role
 				false // AutoAdd
 			)
 		)),
@@ -48,7 +48,7 @@ public:
 			ktvr::K2TrackerPose(), // Default pose 
 			ktvr::K2TrackerData(
 				"LHR-CB9AD1T1", // Serial
-				ktvr::Tracker_LeftFoot, // Role
+				ktvr::ITrackerType::Tracker_LeftFoot, // Role
 				false // AutoAdd
 			)
 		)),
@@ -58,7 +58,7 @@ public:
 			ktvr::K2TrackerPose(), // Default pose 
 			ktvr::K2TrackerData(
 				"LHR-CB9AD1T2", // Serial
-				ktvr::Tracker_RightFoot, // Role
+				ktvr::ITrackerType::Tracker_RightFoot, // Role
 				false // AutoAdd
 			)
 		))

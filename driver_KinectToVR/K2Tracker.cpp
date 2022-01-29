@@ -146,6 +146,11 @@ vr::TrackedDeviceIndex_t K2Tracker::get_index() const
 	return _index;
 }
 
+ktvr::ITrackerType K2Tracker::get_role() const
+{
+	return static_cast<ktvr::ITrackerType>(_role);
+}
+
 void K2Tracker::process_event(const vr::VREvent_t& event)
 {
 }
