@@ -12,6 +12,11 @@ RUN powershell.exe -Command \
     Set-ExecutionPolicy Bypass -Scope Process -Force; \
     Invoke-Expression (Get-Content .dockerprepchoco -Raw)
 
+# Prepare the environment : kienct sdks
+RUN powershell.exe -Command \
+    Set-ExecutionPolicy Bypass -Scope Process -Force; \
+    Invoke-Expression (Get-Content .dockerkinect -Raw)
+
 # Prepare the environment
 RUN powershell.exe -Command \
     Set-ExecutionPolicy Bypass -Scope Process -Force; \

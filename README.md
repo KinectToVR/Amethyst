@@ -28,7 +28,7 @@ Follow these steps:
   > $id = $(docker create k2app)
   # Copy Release files to the host machine
   > mkdir ./x64/Release
-  > docker cp $id:/x64/Release ./x64/Release
+  > docker cp ${id}:/x64/Release ./x64/Release
 
   # Release (remove) the dummy container
   > docker rm -v $id
@@ -98,7 +98,7 @@ Follow these steps:
   > msbuild KinectToVR.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
   > msbuild KinectToVR.sln "/p:Configuration=Release;Platform=x64"
   ```
-  There are 3 commands since the first will only restore ```NuGet```,  then the whole thing will be built.
+  There are 2 commands since the first will only restore ```NuGet```,  then the whole thing will be built.
 
 ## **Deploy**
 The whole output can be found in ```x64/Release``` directory<br>
