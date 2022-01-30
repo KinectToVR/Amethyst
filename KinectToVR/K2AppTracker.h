@@ -66,7 +66,7 @@ namespace k2app
 		{
 			// Copy serial and role
 			data.serial = _serial;
-			data.role = _role;
+			data.role = static_cast<uint32_t>(_role);
 
 			// Init the Kalman filter
 			for (auto& filter : kalmanFilter)

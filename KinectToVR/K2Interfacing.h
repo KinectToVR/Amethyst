@@ -9,9 +9,9 @@ namespace k2app
 	namespace interfacing
 	{
 		inline std::vector<K2AppTracker> K2TrackersVector{
-			K2AppTracker("LHR-CB9AD1T0", ktvr::Tracker_Waist),
-			K2AppTracker("LHR-CB9AD1T1", ktvr::Tracker_LeftFoot),
-			K2AppTracker("LHR-CB9AD1T2", ktvr::Tracker_RightFoot)
+			K2AppTracker("LHR-CB9AD1T0", ktvr::ITrackerType::Tracker_Waist),
+			K2AppTracker("LHR-CB9AD1T1", ktvr::ITrackerType::Tracker_LeftFoot),
+			K2AppTracker("LHR-CB9AD1T2", ktvr::ITrackerType::Tracker_RightFoot)
 		};
 
 		inline void ShowToast(std::string const& header, std::string const& text)
