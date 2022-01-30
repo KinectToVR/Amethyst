@@ -5,6 +5,9 @@ $msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Se
 
 git clone https://github.com/ValveSoftware/openvr "${env:GITHUB_WORKSPACE}/external/openvr"
 git clone https://gitlab.com/libeigen/eigen "${env:GITHUB_WORKSPACE}/external/eigen"
+cd "${env:GITHUB_WORKSPACE}/external/eigen"
+git reset --hard 1fd5ce1002a6f30e1169b529b291216a18be2f7e
+cd ../..
 
 git clone https://github.com/google/glog.git "${env:GITHUB_WORKSPACE}/external/glog"
 cd "${env:GITHUB_WORKSPACE}/external/glog"
