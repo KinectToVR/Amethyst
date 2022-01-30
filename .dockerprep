@@ -5,6 +5,10 @@ cd C:/vcpkg
 ./vcpkg install `
     boost-serialization:x64-windows `
     boost-assign:x64-windows `
+    boost-filesystem:x64-windows `
+    boost-dll:x64-windows `
+    boost-property-tree:x64-windows `
+    boost-foreach:x64-windows `
     boost-lexical-cast:x64-windows `
     boost-unordered:x64-windows `
     boost-math:x64-windows `

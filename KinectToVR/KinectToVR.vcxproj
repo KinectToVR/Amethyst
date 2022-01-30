@@ -120,7 +120,7 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)de
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">del "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\MddBootstrapAutoInitializer.cpp"
 xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\"
 
-"$(DevEnvDir)devenv" "$(SolutionDir)KinectToVR.sln" /Build $(configuration) /project "$(SolutionDir)KinectToVR_API\KinectToVR_API.vcxproj"</Command>
+"$(MSBuildBinPath)/MSBuild.exe" $(SolutionPath) "/t:KinectToVR_API" "/p:Configuration=$(Configuration);Platform=$(Platform)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
@@ -148,7 +148,7 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)de
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">del "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\MddBootstrapAutoInitializer.cpp"
 xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\"
 
-"$(DevEnvDir)devenv" "$(SolutionDir)KinectToVR.sln" /Build $(configuration) /project "$(SolutionDir)KinectToVR_API\KinectToVR_API.vcxproj"</Command>
+"$(MSBuildBinPath)/MSBuild.exe" $(SolutionPath) "/t:KinectToVR_API" "/p:Configuration=$(Configuration);Platform=$(Platform)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
