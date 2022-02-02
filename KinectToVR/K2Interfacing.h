@@ -509,9 +509,9 @@ namespace k2app
 					// Extract pose from the returns
 					const auto hmdPose = devicePose[HMD_INDEX];
 
-					// Get pos & rot
-					auto position = GetVRPositionFromMatrix(hmdPose.mDeviceToAbsoluteTracking);
-					auto quaternion = GetVRRotationFromMatrix(hmdPose.mDeviceToAbsoluteTracking);
+					// Get pos & rot -> EigenUtils' gonna do this stuff for us
+					auto position = EigenUtils::p_cast_type<Eigen::Vector3f>(hmdPose.mDeviceToAbsoluteTracking);
+					auto quaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(hmdPose.mDeviceToAbsoluteTracking);
 
 					// Get the yaw
 					double yaw = std::atan2(hmdPose.mDeviceToAbsoluteTracking.m[0][2],

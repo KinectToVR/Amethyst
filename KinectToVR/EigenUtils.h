@@ -166,7 +166,7 @@ namespace EigenUtils
 
 		/* To Eigen Vector3f */
 		else if constexpr (std::is_same<Ret, Eigen::Vector3f>::value && std::is_same<T, vr::HmdVector3d_t>::value)
-			return Eigen::Vector3f(in.x, in.y, in.z);
+			return Eigen::Vector3f(in.v[0], in.v[1], in.v[2]);
 
 		else if constexpr (std::is_same<Ret, Eigen::Vector3f>::value && std::is_same<T, vr::HmdMatrix34_t>::value)
 			return Eigen::Vector3f(in.m[0][3], in.m[1][3], in.m[2][3]);
