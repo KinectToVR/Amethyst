@@ -15,8 +15,8 @@
  *
  */
 
-namespace ktvr {
-
+namespace ktvr
+{
 	// Interace Version
 	static const char* IK2API_Devices_Version = "IK2API_Version_003";
 
@@ -89,7 +89,7 @@ namespace ktvr {
 		// SUP mathbased, only [ head, waist, knees, ankles, foot_tips ]
 		K2_Character_Simple,
 		// SUP mathbased, [ everything ]
-		K2_Character_Full 
+		K2_Character_Full
 	};
 
 	// Alias for code readability
@@ -154,6 +154,11 @@ namespace ktvr {
 		[[nodiscard]] bool isFlipSupported() const { return flipSupported; } // Flip block
 		[[nodiscard]] bool isAppOrientationSupported() const { return appOrientationSupported; } // Math-based
 
+		/* Helper functions which may be internally called by the device plugin */
+		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
+		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
+		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
+
 	protected:
 		K2DeviceCharacteristics deviceCharacteristics = K2_Character_Unknown;
 
@@ -166,9 +171,9 @@ namespace ktvr {
 		bool flipSupported = true;
 		bool appOrientationSupported = true;
 
-		std::array<Eigen::Vector3f, 25> jointPositions = { Eigen::Vector3f(0.f, 0.f, 0.f) };
-		std::array<Eigen::Quaternionf, 25> jointOrientations = { Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f) };
-		std::array<JointTrackingState, 25> trackingStates = { State_NotTracked };
+		std::array<Eigen::Vector3f, 25> jointPositions = {Eigen::Vector3f(0.f, 0.f, 0.f)};
+		std::array<Eigen::Quaternionf, 25> jointOrientations = {Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f)};
+		std::array<JointTrackingState, 25> trackingStates = {State_NotTracked};
 
 		class FailedKinectInitialization : public std::exception
 		{
@@ -187,7 +192,8 @@ namespace ktvr {
 		K2TrackedJoint()
 		{
 		}
-		K2TrackedJoint(std::string name) : jointName{ std::move(name) }
+
+		K2TrackedJoint(std::string name) : jointName{std::move(name)}
 		{
 		}
 
@@ -199,8 +205,8 @@ namespace ktvr {
 
 		// For servers!
 		void update(Eigen::Vector3f position,
-			Eigen::Quaternionf orientation,
-			JointTrackingState state)
+		            Eigen::Quaternionf orientation,
+		            JointTrackingState state)
 		{
 			jointPosition = position;
 			jointOrientation = orientation;
@@ -275,6 +281,11 @@ namespace ktvr {
 		//    if set to false at runtime somewhen
 		[[nodiscard]] bool isSkeletonTracked() const { return skeletonTracked; }
 
+		/* Helper functions which may be internally called by the device plugin */
+		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
+		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
+		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
+
 	protected:
 		K2DeviceType deviceType = K2_Unknown;
 		std::string deviceName = "Name not set";
@@ -282,7 +293,7 @@ namespace ktvr {
 		bool initialized = false;
 		bool skeletonTracked = false;
 
-		std::vector<K2TrackedJoint> trackedJoints = { K2TrackedJoint() };
+		std::vector<K2TrackedJoint> trackedJoints = {K2TrackedJoint()};
 
 		class FailedJointsInitialization : public std::exception
 		{
@@ -292,5 +303,4 @@ namespace ktvr {
 			}
 		} FailedJointsInitialization;
 	};
-
 }
