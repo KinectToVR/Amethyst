@@ -9,6 +9,7 @@
 
 #include "TrackingDevices.h"
 #include "K2Interfacing.h"
+#include "K2Main.h"
 
 namespace muxc
 {

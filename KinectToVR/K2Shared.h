@@ -126,7 +126,8 @@ namespace k2app
 				overrideRightFootPosition,
 				overrideRightFootRotation;
 
-			inline std::binary_semaphore smphSignalCurrentUpdate{0};
+			inline std::binary_semaphore smphSignalCurrentUpdate{0},
+			                             smphSignalStartMain{0};
 			inline uint32_t selectedTrackingDeviceID = 0;
 		}
 

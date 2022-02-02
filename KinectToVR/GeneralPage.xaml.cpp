@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "GeneralPage.xaml.h"
 #if __has_include("GeneralPage.g.cpp")
 #include "GeneralPage.g.cpp"
@@ -576,6 +576,9 @@ void winrt::KinectToVR::implementation::GeneralPage::ServerOpenDocsButton_Click(
 void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Start the main loop since we're done with basic setup
+	::k2app::shared::devices::smphSignalStartMain.release();
+
 	// Try auto-spawning trackers if stated so
 	if (!general_tab_setup_finished && // If first-time
 		k2app::interfacing::isServerDriverPresent && // If the driver's ok

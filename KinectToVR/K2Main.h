@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -167,14 +167,17 @@ namespace k2app::main
 	inline void K2UpdateAppTrackers()
 	{
 		// TODO PARSE AND COMPOSE POSES & ROTS
+		// this is gonna take the most time I guess...
 	}
 
 	// The main program loop
 	inline void K2MainLoop()
 	{
 		// Warning: this is meant to work as fire-and-forget
-		LOG(INFO) << "[K2Main] Starting the main app loop now...";
+		LOG(INFO) << "[K2Main] Waiting for the start sem to open..";
+		shared::devices::smphSignalStartMain.acquire();
 
+		LOG(INFO) << "[K2Main] Starting the main app loop now...";
 		while (true)
 		{
 			auto loop_start_time = std::chrono::high_resolution_clock::now();

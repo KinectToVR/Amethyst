@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -12,7 +12,6 @@ using namespace Microsoft::UI::Xaml;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-// LMAO Eat Dirt Micro&Soft
 // Imma just cache object before the fancy UWP delegation reownership
 std::shared_ptr<Controls::FontIcon> updateIconDot;
 
@@ -166,6 +165,9 @@ namespace winrt::KinectToVR::implementation
 		// Read settings
 		LOG(INFO) << "Now reading saved settings...";
 		k2app::K2Settings.readSettings();
+
+		// Start the main loop
+		std::thread(k2app::main::K2MainLoop).detach();
 
 		// Load sounds config into main
 		ElementSoundPlayer::State(k2app::K2Settings.enableAppSounds
