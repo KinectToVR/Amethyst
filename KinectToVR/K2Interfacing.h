@@ -488,8 +488,8 @@ namespace k2app
 		>
 		vrHMDPose
 		{
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f), // Init as non-empty
 			Eigen::Vector3f(0.f, 0.f, 0.f), // Init as zero
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f), // Init as non-empty
 			0.f // Init as facing front
 		};
 
