@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GeneralPage.xaml.h"
 #if __has_include("GeneralPage.g.cpp")
 #include "GeneralPage.g.cpp"
@@ -700,6 +700,63 @@ void winrt::KinectToVR::implementation::GeneralPage::sk_line(
 }
 
 
+void winrt::KinectToVR::implementation::GeneralPage::sk_dot(
+	Shapes::Line& line1,
+	Shapes::Line& line2,
+	Eigen::Vector3f const& joint,
+	ktvr::JointTrackingState const& state)
+{
+	constexpr double s_mat_width_default = 700,
+	                 s_mat_height_default = 600;
+
+	double s_mat_width = SkeletonDrawingCanvas().ActualWidth(),
+	       s_mat_height = SkeletonDrawingCanvas().ActualHeight();
+
+	// Eventually fix sizes
+	if (s_mat_height < 1)s_mat_height = s_mat_height_default;
+	if (s_mat_height < 1)s_mat_width = s_mat_width_default;
+
+	// Where to scale by 1.0 in perspective
+	constexpr double s_normal_distance = 3;
+
+	// Compose perspective constants, make it 70%
+	const double s_multiply = .7 * (s_normal_distance / (joint.z() > 0. ? joint.z() : 3.));
+
+	auto a = Media::AcrylicBrush();
+	auto ui = Windows::UI::ViewManagement::UISettings();
+
+	line1.StrokeThickness(5);
+	line2.StrokeThickness(5);
+	a.TintColor(ui.GetColorValue(Windows::UI::ViewManagement::UIColorType::Accent));
+
+	if (state != ktvr::State_Tracked)
+	{
+		line1.Stroke(a);
+		line2.Stroke(a);
+	}
+	else
+	{
+		line1.Stroke(Media::SolidColorBrush(Windows::UI::Colors::White()));
+		line2.Stroke(Media::SolidColorBrush(Windows::UI::Colors::White()));
+	}
+
+	// Select the smaller scale to preserve somewhat uniform skeleton scaling
+	const double s_scale_w = s_mat_width / s_mat_width_default,
+	             s_scale_h = s_mat_height / s_mat_height_default;
+
+	// Draw something like X with center on the tracker point
+	line1.X1((joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_width / 2.) - 10.);
+	line1.Y1((joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_height / 3.) - 10.);
+	line1.X2((joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_width / 2.) + 10.);
+	line1.Y2((joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_height / 3.) + 10.);
+
+	line2.X1((joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_width / 2.) - 10.);
+	line2.Y1((joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_height / 3.) + 10.);
+	line2.X2((joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_width / 2.) + 10.);
+	line2.Y2((joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_height / 3.) - 10.);
+}
+
+
 void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
@@ -729,6 +786,10 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 
 		SkeletonHiddenNotice().Visibility(Visibility::Collapsed); // Else hide
 		auto const& trackingDevice = TrackingDevices::getCurrentDevice();
+
+		// TODO when we get normal rendering in winui 3
+		// draw e.g. small blue/red dot on overwritten joints,
+		// aoi for position and aka for rotation
 
 		switch (trackingDevice.index())
 		{
@@ -790,10 +851,10 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 					{
 						// Draw the skeleton with from-to lines
 						// Head
-						sk_line(boneLines[0], joints, states, ktvr::Joint_Head, ktvr::Joint_SpineWaist);
+						sk_dot(boneLines[0], boneLines[1],
+						       joints[ktvr::Joint_Head], states[ktvr::Joint_Head]);
 
 						// Empty lines
-						boneLines[1] = Shapes::Line();
 						boneLines[2] = Shapes::Line();
 						boneLines[3] = Shapes::Line();
 						boneLines[4] = Shapes::Line();
@@ -808,16 +869,16 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 						boneLines[13] = Shapes::Line();
 						boneLines[14] = Shapes::Line();
 						boneLines[15] = Shapes::Line();
+						boneLines[16] = Shapes::Line();
+						boneLines[17] = Shapes::Line();
 
 						// Lower left limb
-						sk_line(boneLines[16], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_HipLeft);
-						sk_line(boneLines[17], joints, states, ktvr::Joint_HipLeft, ktvr::Joint_KneeLeft);
-						sk_line(boneLines[18], joints, states, ktvr::Joint_KneeLeft, ktvr::Joint_AnkleLeft);
-						sk_line(boneLines[19], joints, states, ktvr::Joint_AnkleLeft, ktvr::Joint_FootLeft);
+						sk_line(boneLines[18], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_KneeLeft);
+						sk_line(boneLines[19], joints, states, ktvr::Joint_KneeLeft, ktvr::Joint_AnkleLeft);
+						sk_line(boneLines[20], joints, states, ktvr::Joint_AnkleLeft, ktvr::Joint_FootLeft);
 
 						// Lower right limb
-						sk_line(boneLines[20], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_HipRight);
-						sk_line(boneLines[21], joints, states, ktvr::Joint_HipRight, ktvr::Joint_KneeRight);
+						sk_line(boneLines[21], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_KneeRight);
 						sk_line(boneLines[22], joints, states, ktvr::Joint_KneeRight, ktvr::Joint_AnkleRight);
 						sk_line(boneLines[23], joints, states, ktvr::Joint_AnkleRight, ktvr::Joint_FootRight);
 					}
@@ -825,12 +886,13 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 					{
 						// Draw the skeleton with from-to lines
 						// Head
-						sk_line(boneLines[0], joints, states, ktvr::Joint_Head, ktvr::Joint_SpineWaist);
+						sk_dot(boneLines[0], boneLines[1],
+						       joints[ktvr::Joint_Head], states[ktvr::Joint_Head]);
+
+						sk_dot(boneLines[2], boneLines[3],
+						       joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist]);
 
 						// Empty lines
-						boneLines[1] = Shapes::Line();
-						boneLines[2] = Shapes::Line();
-						boneLines[3] = Shapes::Line();
 						boneLines[4] = Shapes::Line();
 						boneLines[5] = Shapes::Line();
 						boneLines[6] = Shapes::Line();
@@ -845,18 +907,18 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 						boneLines[15] = Shapes::Line();
 
 						// Lower left limb
-						sk_line(boneLines[16], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_AnkleLeft);
+						sk_dot(boneLines[16], boneLines[17],
+						       joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft]);
 
 						// Empty lines
-						boneLines[17] = Shapes::Line();
 						boneLines[18] = Shapes::Line();
 						boneLines[19] = Shapes::Line();
 
 						// Lower right limb
-						sk_line(boneLines[20], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_AnkleRight);
+						sk_dot(boneLines[20], boneLines[21],
+						       joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight]);
 
 						// Empty lines
-						boneLines[21] = Shapes::Line();
 						boneLines[22] = Shapes::Line();
 						boneLines[23] = Shapes::Line();
 					}
@@ -868,66 +930,38 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 				}
 			}
 			break;
-		//case 1: // TODO: Other device types
-		//	{
-		//		auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+		case 1:
+			{
+				auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
-		//		const auto joints = device->getTrackedJoints();
+				auto joints = device->getTrackedJoints();
 
-		//		if (device->isSkeletonTracked())
-		//		{
-		//			// Don't waste cpu & ram, ok?
+				if (device->isSkeletonTracked() && !joints.empty())
+				{
+					// Don't waste cpu & ram, ok?
 
-		//			// Show the UI
-		//			SkeletonDrawingCanvas().Visibility(Visibility::Visible);
-		//			NotTrackedNotice().Visibility(Visibility::Collapsed);
+					// Show the UI
+					SkeletonDrawingCanvas().Visibility(Visibility::Visible);
+					NotTrackedNotice().Visibility(Visibility::Collapsed);
 
-		//			{
-		//				// Draw the skeleton with from-to lines
-		//				// Head
-		//				sk_line(boneLines[0], joints, states, ktvr::Joint_Head, ktvr::Joint_SpineWaist);
+					{
+						// Clear bones
+						for (auto& l : boneLines)
+							l = Shapes::Line();
 
-		//				// Empty lines
-		//				boneLines[1] = Shapes::Line();
-		//				boneLines[2] = Shapes::Line();
-		//				boneLines[3] = Shapes::Line();
-		//				boneLines[4] = Shapes::Line();
-		//				boneLines[5] = Shapes::Line();
-		//				boneLines[6] = Shapes::Line();
-		//				boneLines[7] = Shapes::Line();
-		//				boneLines[8] = Shapes::Line();
-		//				boneLines[9] = Shapes::Line();
-		//				boneLines[10] = Shapes::Line();
-		//				boneLines[11] = Shapes::Line();
-		//				boneLines[12] = Shapes::Line();
-		//				boneLines[13] = Shapes::Line();
-		//				boneLines[14] = Shapes::Line();
-		//				boneLines[15] = Shapes::Line();
-
-		//				// Lower left limb
-		//				sk_line(boneLines[16], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_AnkleLeft);
-
-		//				// Empty lines
-		//				boneLines[17] = Shapes::Line();
-		//				boneLines[18] = Shapes::Line();
-		//				boneLines[19] = Shapes::Line();
-
-		//				// Lower right limb
-		//				sk_line(boneLines[20], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_AnkleRight);
-
-		//				// Empty lines
-		//				boneLines[21] = Shapes::Line();
-		//				boneLines[22] = Shapes::Line();
-		//				boneLines[23] = Shapes::Line();
-		//			}
-		//		}
-		//		else
-		//		{
-		//			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
-		//			NotTrackedNotice().Visibility(Visibility::Visible);
-		//		}
-		//	}
-		//	break;
+						// Get joints and draw points
+						for (uint32_t j = 0; j < std::min((uint32_t)joints.size(), (uint32_t)ktvr::Joint_Total); j++)
+							sk_dot(boneLines[(2 * j)], boneLines[(2 * j + 1)],
+							       joints.at(j).getJointPosition(), joints.at(j).getTrackingState());
+					}
+				}
+				else
+				{
+					SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
+					NotTrackedNotice().Visibility(Visibility::Visible);
+				}
+			}
+			break;
 		}
 	});
 

@@ -10,11 +10,16 @@ namespace winrt::KinectToVR::implementation
 {
     struct GeneralPage : GeneralPageT<GeneralPage>
     {
-        // Helper defines
-        bool CalibrationPending = false;
-        void sk_line(Microsoft::UI::Xaml::Shapes::Line& line, std::array<Eigen::Vector3f, 25> const& joints,
-                     std::array<ktvr::JointTrackingState, 25> const& states,
-                     ktvr::ITrackedJointType const& from, ktvr::ITrackedJointType const& to);
+		// Helper defines
+		bool CalibrationPending = false;
+		void sk_line(Microsoft::UI::Xaml::Shapes::Line& line, std::array<Eigen::Vector3f, 25> const& joints,
+					 std::array<ktvr::JointTrackingState, 25> const& states,
+					 ktvr::ITrackedJointType const& from, ktvr::ITrackedJointType const& to);
+
+        void sk_dot(Microsoft::UI::Xaml::Shapes::Line& line1,
+					Microsoft::UI::Xaml::Shapes::Line& line2,
+					Eigen::Vector3f const& joint,
+					ktvr::JointTrackingState const& state);
 
         // WinUI things
         GeneralPage();
