@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -6,7 +6,8 @@ namespace k2app::main
 {
 	inline void K2UpdateVRPositions()
 	{
-		// TODO GRAB HEAD POS HERE
+		// Grab and save vr head pose here
+		interfacing::updateHMDPosAndRot();
 	}
 
 	inline void K2UpdateInputBindings()
