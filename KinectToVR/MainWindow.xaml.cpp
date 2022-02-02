@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -257,6 +257,17 @@ namespace winrt::KinectToVR::implementation
 
 												if (returnCode == ktvr::K2InitError_None)
 												{
+													LOG(INFO) << "Interface version OK, now constructing...";
+
+													// Push helper functions to the device
+													pDevice->getHMDPosition =
+														k2app::interfacing::plugins::plugins_getHMDPosition;
+													pDevice->getHMDOrientation =
+														k2app::interfacing::plugins::plugins_getHMDOrientation;
+													pDevice->getHMDOrientationYaw =
+														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
+
+													// Push the device to pointers' vector
 													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
 
 													stat = pDevice->statusResultString(
@@ -274,6 +285,17 @@ namespace winrt::KinectToVR::implementation
 
 												if (returnCode == ktvr::K2InitError_None)
 												{
+													LOG(INFO) << "Interface version OK, now constructing...";
+
+													// Push helper functions to the device
+													pDevice->getHMDPosition =
+														k2app::interfacing::plugins::plugins_getHMDPosition;
+													pDevice->getHMDOrientation =
+														k2app::interfacing::plugins::plugins_getHMDOrientation;
+													pDevice->getHMDOrientationYaw =
+														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
+
+													// Push the device to pointers' vector
 													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
 
 													stat = pDevice->statusResultString(
@@ -288,16 +310,13 @@ namespace winrt::KinectToVR::implementation
 											{
 											case ktvr::K2InitError_None:
 												{
-													LOG(INFO) << "Interface version OK, now constructing...";
-
 													LOG(INFO) << "Registered tracking device with:\n - name: " <<
 														device_name << "\n - type: " << device_type <<
 														"\n - linked dll: " << linked_dll_path <<
 														"\n - blocks flip: " << blocks_flip <<
 														"\n - supports math-based orientation: " << supports_math <<
 
-														"\nat index " << TrackingDevices::TrackingDevicesVector.size() -
-														1;
+														"\nat index " << TrackingDevices::TrackingDevicesVector.size() - 1;
 
 													LOG(INFO) << "Device status (should be 'not initialized'): \n[\n" <<
 														stat << "\n]\n";
