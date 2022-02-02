@@ -452,5 +452,98 @@ namespace k2app
 				}
 			}
 		}
+
+		// Get the quaternion representing the rotation
+		inline Eigen::Quaternionf GetVRRotationFromMatrix(vr::HmdMatrix34_t matrix)
+		{
+			vr::HmdQuaternion_t q;
+
+			q.w = sqrt(fmax(0, 1 + matrix.m[0][0] + matrix.m[1][1] + matrix.m[2][2])) / 2;
+			q.x = sqrt(fmax(0, 1 + matrix.m[0][0] - matrix.m[1][1] - matrix.m[2][2])) / 2;
+			q.y = sqrt(fmax(0, 1 - matrix.m[0][0] + matrix.m[1][1] - matrix.m[2][2])) / 2;
+			q.z = sqrt(fmax(0, 1 - matrix.m[0][0] - matrix.m[1][1] + matrix.m[2][2])) / 2;
+			q.x = copysign(q.x, matrix.m[2][1] - matrix.m[1][2]);
+			q.y = copysign(q.y, matrix.m[0][2] - matrix.m[2][0]);
+			q.z = copysign(q.z, matrix.m[1][0] - matrix.m[0][1]);
+			return EigenUtils::p_cast_type<Eigen::Quaternionf>(q);
+		}
+
+		// Get the vector representing the position
+		inline Eigen::Vector3f GetVRPositionFromMatrix(vr::HmdMatrix34_t matrix)
+		{
+			vr::HmdVector3d_t v;
+
+			v.v[0] = matrix.m[0][3];
+			v.v[1] = matrix.m[1][3];
+			v.v[2] = matrix.m[2][3];
+			return EigenUtils::p_cast_type<Eigen::Vector3f>(v);
+		}
+
+		// HMD pose in OpenVR
+		inline std::tuple
+		<
+			Eigen::Vector3f, // Position
+			Eigen::Quaternionf, // Rotation
+			float // Rotation - Yaw
+		>
+		vrHMDPose
+		{
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f), // Init as non-empty
+			Eigen::Vector3f(0.f, 0.f, 0.f), // Init as zero
+			0.f // Init as facing front
+		};
+
+		// Update HMD pose from OpenVR -> called in K2Main
+		inline void updateHMDPosAndRot()
+		{
+			vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
+			vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(vr::ETrackingUniverseOrigin::TrackingUniverseStanding, 0,
+			                                                devicePose,
+			                                                vr::k_unMaxTrackedDeviceCount);
+
+			if (constexpr int HMD_INDEX = 0;
+				devicePose[HMD_INDEX].bPoseIsValid)
+			{
+				if (vr::VRSystem()->GetTrackedDeviceClass(HMD_INDEX) == vr::TrackedDeviceClass_HMD)
+				{
+					// Extract pose from the returns
+					const auto hmdPose = devicePose[HMD_INDEX];
+
+					// Get pos & rot
+					auto position = GetVRPositionFromMatrix(hmdPose.mDeviceToAbsoluteTracking);
+					auto quaternion = GetVRRotationFromMatrix(hmdPose.mDeviceToAbsoluteTracking);
+
+					// Get the yaw
+					double yaw = std::atan2(hmdPose.mDeviceToAbsoluteTracking.m[0][2],
+					                        hmdPose.mDeviceToAbsoluteTracking.m[2][2]);
+
+					// Fix the yaw
+					if (yaw < 0.0)
+					{
+						yaw = 2 * 3.14159265358979323846 + yaw;
+					}
+
+					vrHMDPose = std::tie(position, quaternion, yaw);
+				}
+			}
+		}
+
+		namespace plugins
+		{
+			inline Eigen::Vector3f plugins_getHMDPosition()
+			{
+				return std::get<Eigen::Vector3f>(vrHMDPose);
+			}
+
+			inline Eigen::Quaternionf plugins_getHMDOrientation()
+			{
+				return std::get<Eigen::Quaternionf>(vrHMDPose);
+			}
+
+			inline float plugins_getHMDOrientationYaw()
+			{
+				return std::get<float>(vrHMDPose);
+			}
+		}
 	}
 }
