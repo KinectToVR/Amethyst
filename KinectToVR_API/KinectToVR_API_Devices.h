@@ -18,7 +18,7 @@
 namespace ktvr
 {
 	// Interace Version
-	static const char* IK2API_Devices_Version = "IK2API_Version_003";
+	static const char* IK2API_Devices_Version = "IK2API_Version_004";
 
 	// Return messaging types
 	enum K2InitErrorType
