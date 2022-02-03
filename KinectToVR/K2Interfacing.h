@@ -14,6 +14,15 @@ namespace k2app
 			K2AppTracker("LHR-CB9AD1T2", ktvr::ITrackerType::Tracker_RightFoot)
 		};
 
+		inline std::pair<Eigen::Vector3f, Eigen::Vector3f> // Position helpers for k2 devices -> Base, Override
+			kinectHeadPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}, // But this one's kinect-only
+			kinectWaistPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}; // This one applies to both bases
+
+		// OpenVR playspace position
+		inline Eigen::Vector3f vrPlayspaceTranslation = Eigen::Vector3f(0, 0, 0);
+		// OpenVR playspace rotation
+		inline float vrPlayspaceOrientation = 0.f; // Note: radians
+
 		inline void ShowToast(std::string const& header, std::string const& text)
 		{
 			// Unsupported in AppSDK 1.0

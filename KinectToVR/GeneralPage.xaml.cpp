@@ -14,6 +14,12 @@ bool show_skeleton_current = true,
      general_tab_setup_finished = false,
      pending_offsets_update = false;
 
+enum class general_calibrating_device
+{
+	K2_BaseDevice,
+	K2_OverrideDevice
+} general_current_calibrating_device;
+
 namespace winrt::KinectToVR::implementation
 {
 	GeneralPage::GeneralPage()
@@ -351,19 +357,77 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 	// Set the [calibration pending] bool
 	CalibrationPending = true;
 
+	// Play a nice sound - starting
+	ElementSoundPlayer::Play(ElementSoundKind::Show);
+
 	// Disable the start button and change [cancel]'s text
 	StartAutoCalibrationButton().IsEnabled(false);
 	DiscardAutoCalibrationButton().Content(box_value(L"Abort"));
 
-	// Loop over total 3 points (may change)
-	for (int point = 0; point < 3; point++)
+	// Ref current matrices to helper pointers
+	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.calibrationRotationMatrices.first
+			: &k2app::K2Settings.calibrationRotationMatrices.second;
+	Eigen::Matrix<double, 1, 3>* calibrationTranslation = // Translation
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.calibrationTranslationVectors.first
+			: &k2app::K2Settings.calibrationTranslationVectors.second;
+	Eigen::Vector3d* calibrationOrigin = // Origin
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.calibrationOrigins.first
+			: &k2app::K2Settings.calibrationOrigins.second;
+	double* calibrationYaw = // Yaw
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.calibrationYaws.first
+			: &k2app::K2Settings.calibrationYaws.second;
+	double* calibrationPitch = // Pitch
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.calibrationPitches.first
+			: &k2app::K2Settings.calibrationPitches.second;
+	bool* isMatrixCalibrated = // Are we calibrated?
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.isMatrixCalibrated.first
+			: &k2app::K2Settings.isMatrixCalibrated.second;
+	bool* autoCalibration = // Which calibration method did we use
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.autoCalibration.first
+			: &k2app::K2Settings.autoCalibration.second;
+
+	// Mark what are we doing
+	*autoCalibration = true;
+
+	// Mark as calibrated for no preview
+	*isMatrixCalibrated = false;
+
+	// Reset the origin
+	*calibrationOrigin = Eigen::Vector3d(0, 0, 0);
+
+	// Setup helper variables
+	std::vector<Eigen::Vector3d> vrHMDPositions, kinectHeadPositions;
+
+	// Sleep on UI
+	winrt::apartment_context ui_thread;
+	co_await winrt::resume_background();
+	Sleep(1000);
+	co_await ui_thread;
+
+	// Loop over total 3 points (by default)
+	for (int point = 0; point < k2app::K2Settings.calibrationPointsNumber; point++)
 	{
+		// Setup helper variables - inside each point
+		Eigen::Vector3d vrHMDPosition;
+
 		// Wait for the user to move
 		CalibrationInstructionsLabel().Text(L"Move somewhere else");
 		for (int i = 3; i >= 0; i--)
 		{
 			CalibrationCountdownLabel().Text(std::to_wstring(i));
 			if (!CalibrationPending)break; // Check for exiting
+
+			// Play a nice sound - tick / move
+			if (i > 0) // Don't play the last one!
+				ElementSoundPlayer::Play(ElementSoundKind::Focus);
 
 			{
 				// Sleep on UI
@@ -381,10 +445,30 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 			CalibrationCountdownLabel().Text(std::to_wstring(i));
 			if (!CalibrationPending)break; // Check for exiting
 
-			// Capture user's position at [1]
+			// Play a nice sound - tick / stand
+			if (i > 0) // Don't play the last one!
+				ElementSoundPlayer::Play(ElementSoundKind::Focus);
+
+			// Capture user's position at t_end-1
 			if (i == 1)
 			{
-				// Capture
+				// Capture positions
+				vrHMDPosition = (k2app::interfacing::plugins::plugins_getHMDPosition() -
+					k2app::interfacing::vrPlayspaceTranslation).cast<double>();
+
+				Eigen::AngleAxisd rollAngle(0.f, Eigen::Vector3d::UnitZ());
+				Eigen::AngleAxisd yawAngle(-k2app::interfacing::vrPlayspaceOrientation, Eigen::Vector3d::UnitY());
+				Eigen::AngleAxisd pitchAngle(0.f, Eigen::Vector3d::UnitX());
+
+				Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
+				vrHMDPosition = q * vrHMDPosition;
+
+				vrHMDPositions.push_back(vrHMDPosition);
+				kinectHeadPositions.push_back(
+					(general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+						 ? k2app::interfacing::kinectHeadPosition.first
+						 : k2app::interfacing::kinectHeadPosition.second
+					).cast<double>());
 			}
 
 			// Wait and eventually break
@@ -398,14 +482,95 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 			if (!CalibrationPending)break; // Check for exiting
 		}
 
+		// Play a nice sound - tick / captured
+		ElementSoundPlayer::Play(ElementSoundKind::Invoke);
+
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(1000);
+		co_await ui_thread;
+
 		// Exit if aborted
 		if (!CalibrationPending)break;
+	}
+
+	// Do the actual calibration after capturing points
+	if (CalibrationPending)
+	{
+		Eigen::Matrix<double, 3, Eigen::Dynamic>
+			vrPoints(3, k2app::K2Settings.calibrationPointsNumber),
+			kinectPoints(3, k2app::K2Settings.calibrationPointsNumber);
+
+		for (uint32_t i_point = 0; i_point < k2app::K2Settings.calibrationPointsNumber; i_point++)
+		{
+			vrPoints(0, i_point) = vrHMDPositions.at(i_point).x();
+			vrPoints(1, i_point) = vrHMDPositions.at(i_point).y();
+			vrPoints(2, i_point) = vrHMDPositions.at(i_point).z();
+
+			kinectPoints(0, i_point) = kinectHeadPositions.at(i_point).x();
+			kinectPoints(1, i_point) = kinectHeadPositions.at(i_point).y();
+			kinectPoints(2, i_point) = kinectHeadPositions.at(i_point).z();
+			if (!CalibrationPending) break;
+		}
+
+		EigenUtils::PointSet A = kinectPoints, B = vrPoints;
+		const auto [return_Rotation, return_Translation] =
+			EigenUtils::rigid_transform_3D(A, B); // MVP Korejan
+
+		LOG(INFO) <<
+			"Head points\n" << A <<
+			"\nSteamvr points\n" << B <<
+			"\nTranslation\n" << return_Translation <<
+			"\nRotation\n" << return_Rotation;
+
+		EigenUtils::PointSet B2 = (return_Rotation * A).colwise() + return_Translation;
+
+		EigenUtils::PointSet err = B2 - B;
+		err = err.cwiseProduct(err);
+
+		std::cout <<
+			"Orginal points\n" << B <<
+			"\nMy result\n" << B2;
+
+		*calibrationRotation = return_Rotation;
+		*calibrationTranslation = return_Translation;
+
+		Eigen::Vector3d KinectDirectionEigenMatEuler =
+			return_Rotation.eulerAngles(0, 1, 2);
+
+		LOG(INFO) << "Retrieved playspace Yaw rotation [mat, radians]: ";
+		LOG(INFO) << KinectDirectionEigenMatEuler.x();
+		LOG(INFO) << KinectDirectionEigenMatEuler.y();
+		LOG(INFO) << KinectDirectionEigenMatEuler.z();
+
+		*calibrationYaw = KinectDirectionEigenMatEuler.y(); // Note: radians
+		*calibrationPitch = 0.; // 0 in auto
+		*calibrationOrigin = Eigen::Vector3d(0, 0, 0);
+
+		*isMatrixCalibrated = true;
+
+		// Settings will be saved below
+	}
+
+	// Reset by re-reading the settings if aborted
+	if (!CalibrationPending)
+	{
+		*isMatrixCalibrated = false;
+		k2app::K2Settings.readSettings();
+	}
+	// Else save I guess
+	else
+	{
+		k2app::K2Settings.saveSettings();
+		ElementSoundPlayer::Play(ElementSoundKind::Show);
 	}
 
 	// Notify that we're finished
 	CalibrationInstructionsLabel().Text(
 		CalibrationPending ? L"Calibration done!" : L"Calibration aborted!");
 	CalibrationCountdownLabel().Text(L"~");
+
 	{
 		// Sleep on UI
 		winrt::apartment_context ui_thread;
@@ -430,6 +595,9 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardAutoCalibrationButto
 	{
 		CalibrationView().IsPaneOpen(false);
 
+		// Play a nice sound - exiting
+		ElementSoundPlayer::Play(ElementSoundKind::GoBack);
+
 		show_skeleton_current = show_skeleton_previous; // Change to whatever
 		SkeletonToggleButton().IsChecked(show_skeleton_previous); // Change to whatever
 	}
@@ -444,47 +612,161 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 	// Set the [calibration pending] bool
 	CalibrationPending = true;
 
+	// Play a nice sound - starting
+	ElementSoundPlayer::Play(ElementSoundKind::Show);
+
 	// Disable the start button and change [cancel]'s text
 	StartManualCalibrationButton().IsEnabled(false);
 	DiscardManualCalibrationButton().Content(box_value(L"Abort"));
 
+	// Ref current matrices to helper pointers
+	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.calibrationRotationMatrices.first
+			: &k2app::K2Settings.calibrationRotationMatrices.second;
+	Eigen::Matrix<double, 1, 3>* calibrationTranslation = // Translation
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.calibrationTranslationVectors.first
+			: &k2app::K2Settings.calibrationTranslationVectors.second;
+	Eigen::Vector3d* calibrationOrigin = // Origin
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.calibrationOrigins.first
+			: &k2app::K2Settings.calibrationOrigins.second;
+	double* calibrationYaw = // Yaw
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.calibrationYaws.first
+			: &k2app::K2Settings.calibrationYaws.second;
+	double* calibrationPitch = // Pitch
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.calibrationPitches.first
+			: &k2app::K2Settings.calibrationPitches.second;
+	bool* isMatrixCalibrated = // Are we calibrated?
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.isMatrixCalibrated.first
+			: &k2app::K2Settings.isMatrixCalibrated.second;
+	bool* autoCalibration = // Which calibration method did we use
+		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+			? &k2app::K2Settings.autoCalibration.first
+			: &k2app::K2Settings.autoCalibration.second;
+
+	// Mark what are we doing
+	*autoCalibration = false;
+
+	// Mark as calibrated for the preview
+	*isMatrixCalibrated = true;
+
+	// Set up (a lot of) helper variables
+	bool calibration_first_time = true;
+
+	Eigen::AngleAxisd rollAngle(0.f, Eigen::Vector3d::UnitZ());
+	Eigen::AngleAxisd yawAngle(0.f, Eigen::Vector3d::UnitY());
+	Eigen::AngleAxisd pitchAngle(0.f, Eigen::Vector3d::UnitX());
+	Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
+
+	Eigen::Matrix3d rotationMatrix = q.matrix();
+	double temp_yaw = 0, temp_pitch = 0;
+
+	// Copy the empty matrices to settings
+	*calibrationRotation = rotationMatrix;
+
 	// Loop over until finished
-	while (true /*!confirm*/)
+	while (!k2app::interfacing::calibration_confirm)
 	{
 		// Wait for a mode switch
-		while (true /*!modeswap && !confirm*/)
+		while (!k2app::interfacing::calibration_modeSwap && !k2app::interfacing::calibration_confirm)
 		{
-			// TMP
-			{
-				// Sleep on UI
-				winrt::apartment_context ui_thread;
-				co_await winrt::resume_background();
-				Sleep(1000);
-				co_await ui_thread;
-			}
+			const double _multiplexer = k2app::interfacing::calibration_fineTune ? .001 : .01;
+
+			(*calibrationTranslation)(0) +=
+				k2app::interfacing::calibration_joystick_positions[0][0] * _multiplexer; // Left X
+			(*calibrationTranslation)(1) +=
+				k2app::interfacing::calibration_joystick_positions[1][1] * _multiplexer; // Right Y
+			(*calibrationTranslation)(2) += -
+				k2app::interfacing::calibration_joystick_positions[0][1] * _multiplexer; // Left Y
+
+			// Sleep on UI
+			winrt::apartment_context ui_thread;
+			co_await winrt::resume_background();
+			Sleep(5);
+			co_await ui_thread;
 
 			// Exit if aborted
 			if (!CalibrationPending)break;
 		}
+
+		// Play mode swap sound
+		if (CalibrationPending && !k2app::interfacing::calibration_confirm)
+			ElementSoundPlayer::Play(ElementSoundKind::Invoke);
+
+		// Set up the calibration origin
+		if (calibration_first_time)
+			*calibrationOrigin = (
+				general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
+					? k2app::interfacing::kinectWaistPosition.first
+					: k2app::interfacing::kinectWaistPosition.second
+			).cast<double>();
+
+		// Cache the calibration first_time
+		calibration_first_time = false;
+
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(300);
+		co_await ui_thread;
 
 		// Wait for a mode switch
-		while (true /*!modeswap && !confirm*/)
+		while (!k2app::interfacing::calibration_modeSwap && !k2app::interfacing::calibration_confirm)
 		{
-			// TMP
-			{
-				// Sleep on UI
-				winrt::apartment_context ui_thread;
-				co_await winrt::resume_background();
-				Sleep(1000);
-				co_await ui_thread;
-			}
+			const double _multiplexer = k2app::interfacing::calibration_fineTune ? 1.0 : 0.1;
+
+			temp_yaw +=
+				(k2app::interfacing::calibration_joystick_positions[0][0] * 3.14159265358979323846 / 280.) *
+				_multiplexer; // Left X
+			temp_pitch +=
+				(k2app::interfacing::calibration_joystick_positions[1][1] * 3.14159265358979323846 / 280.) *
+				_multiplexer; // Right Y
+
+			Eigen::AngleAxisd rollAngle(0.f, Eigen::Vector3d::UnitZ());
+			Eigen::AngleAxisd yawAngle(temp_yaw, Eigen::Vector3d::UnitY());
+			Eigen::AngleAxisd pitchAngle(temp_pitch, Eigen::Vector3d::UnitX());
+			Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
+
+			Eigen::Matrix3d rotationMatrix = q.matrix();
+			*calibrationRotation = rotationMatrix;
+
+			*calibrationYaw = temp_yaw; // Note: radians
+			*calibrationPitch = temp_pitch; // Note: radians
+
+			// Sleep on UI
+			winrt::apartment_context ui_thread;
+			co_await winrt::resume_background();
+			Sleep(5);
+			co_await ui_thread;
 
 			// Exit if aborted
 			if (!CalibrationPending)break;
 		}
+
+		// Play mode swap sound
+		if (CalibrationPending && !k2app::interfacing::calibration_confirm)
+			ElementSoundPlayer::Play(ElementSoundKind::Invoke);
 
 		// Exit if aborted
 		if (!CalibrationPending)break;
+	}
+
+	// Reset by re-reading the settings if aborted
+	if (!CalibrationPending)
+	{
+		*isMatrixCalibrated = false;
+		k2app::K2Settings.readSettings();
+	}
+	// Else save I guess
+	else
+	{
+		k2app::K2Settings.saveSettings();
+		ElementSoundPlayer::Play(ElementSoundKind::Show);
 	}
 
 	{
@@ -494,6 +776,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 		Sleep(1000); // Just right
 		co_await ui_thread;
 	}
+
 	// Exit the pane
 	CalibrationView().IsPaneOpen(false);
 
@@ -509,6 +792,9 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardManualCalibrationBut
 	if (!CalibrationPending)
 	{
 		CalibrationView().IsPaneOpen(false);
+
+		// Play a nice sound - exiting
+		ElementSoundPlayer::Play(ElementSoundKind::GoBack);
 
 		show_skeleton_current = show_skeleton_previous; // Change to whatever
 		SkeletonToggleButton().IsChecked(show_skeleton_previous); // Change to whatever
@@ -1019,6 +1305,9 @@ void winrt::KinectToVR::implementation::GeneralPage::BaseCalibration_Click(
 			ktvr::K2_Character_Full)
 			AutoCalibrationButton().IsEnabled(true);
 	}
+
+	// Set the current device for scripts
+	general_current_calibrating_device = general_calibrating_device::K2_BaseDevice;
 }
 
 
@@ -1046,4 +1335,7 @@ void winrt::KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
 			ktvr::K2_Character_Full)
 			AutoCalibrationButton().IsEnabled(true);
 	}
+
+	// Set the current device for scripts
+	general_current_calibrating_device = general_calibrating_device::K2_OverrideDevice;
 }

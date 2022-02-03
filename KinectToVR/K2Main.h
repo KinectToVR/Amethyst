@@ -100,10 +100,20 @@ namespace k2app::main
 			getCurrentDevice(); device.index())
 		{
 		case 0:
-			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device)->update();
+		{
+			auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device);
+			pDevice->update(); // Update the device
+			interfacing::kinectHeadPosition.first = pDevice->getJointPositions()[ktvr::Joint_Head];
+			interfacing::kinectWaistPosition.first = pDevice->getJointPositions()[ktvr::Joint_SpineWaist];
+		}
 			break;
 		case 1:
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device)->update();
+		{
+			auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
+			pDevice->update(); // Update the device
+			if (K2Settings.selectedTrackedJointID[0] < pDevice->getTrackedJoints().size())
+				interfacing::kinectWaistPosition.first = pDevice->getTrackedJoints().at(K2Settings.selectedTrackedJointID[0]).getJointPosition();
+		}
 			break;
 		}
 
@@ -112,11 +122,20 @@ namespace k2app::main
 			getCurrentOverrideDevice_Safe(); device_pair.first)
 			switch (device_pair.second.index())
 			{
-			case 0:
-				std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device_pair.second)->update();
+			case 0: 
+			{
+				auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device_pair.second);
+				interfacing::kinectHeadPosition.first = pDevice->getJointPositions()[ktvr::Joint_Head];
+				interfacing::kinectWaistPosition.first = pDevice->getJointPositions()[ktvr::Joint_SpineWaist];
+			}
 				break;
 			case 1:
-				std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device_pair.second)->update();
+			{
+				auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device_pair.second);
+				pDevice->update(); // Update the device
+				if (K2Settings.selectedTrackedJointID[0] < pDevice->getTrackedJoints().size())
+					interfacing::kinectWaistPosition.first = pDevice->getTrackedJoints().at(K2Settings.selectedTrackedJointID[0]).getJointPosition();
+			}
 				break;
 			}
 	}
@@ -129,6 +148,8 @@ namespace k2app::main
 		if (interfacing::K2AppTrackersSpawned &&
 			!interfacing::serverDriverFailure)
 		{
+			// TODO Update poses, also
+
 			// Update status 1/1000 loops / ~8s
 			// or right after any change
 			for (int i = 0; i < 3; i++)

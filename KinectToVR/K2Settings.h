@@ -31,7 +31,15 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(isJointTurnedOn)
 				& BOOST_SERIALIZATION_NVP(autoSpawnEnabledJoints)
 				& BOOST_SERIALIZATION_NVP(enableAppSounds)
-				& BOOST_SERIALIZATION_NVP(appSoundsVolume);
+				& BOOST_SERIALIZATION_NVP(appSoundsVolume)
+				& BOOST_SERIALIZATION_NVP(isMatrixCalibrated)
+				& BOOST_SERIALIZATION_NVP(calibrationRotationMatrices)
+				& BOOST_SERIALIZATION_NVP(calibrationTranslationVectors)
+				& BOOST_SERIALIZATION_NVP(calibrationOrigins)
+				& BOOST_SERIALIZATION_NVP(calibrationYaws)
+				& BOOST_SERIALIZATION_NVP(calibrationPitches)
+				& BOOST_SERIALIZATION_NVP(calibrationPointsNumber)
+				& BOOST_SERIALIZATION_NVP(autoCalibration);
 		}
 
 	public:
@@ -88,8 +96,8 @@ namespace k2app
 		// Currently enabled (spawn-able) joints: W,L,R and true is the default
 		// Currently turned on (marked-as-online) joints: W,L,R and true is the default
 		std::array<bool, 3>
-			isJointEnabled = { true, true, true },
-			isJointTurnedOn = { true, true, true };
+			isJointEnabled = {true, true, true},
+			isJointTurnedOn = {true, true, true};
 
 		// Automatically spawn enabled trackers on startup and off is the default
 		bool autoSpawnEnabledJoints = false;
@@ -99,6 +107,21 @@ namespace k2app
 
 		// App sounds' volume and *nice* is the default
 		uint32_t appSoundsVolume = 69; // Always 0<x<100
+
+		// Calibration - if we're calibrated
+		std::pair<bool, bool> isMatrixCalibrated{false, false};
+
+		// Calibration matrices : Base, Override
+		std::pair<Eigen::Matrix<double, 3, 3>, Eigen::Matrix<double, 3, 3>> calibrationRotationMatrices;
+		std::pair<Eigen::Matrix<double, 1, 3>, Eigen::Matrix<double, 1, 3>> calibrationTranslationVectors;
+		std::pair<Eigen::Vector3d, Eigen::Vector3d> calibrationOrigins; // always 0,0,0 for auto
+		std::pair<double, double> calibrationYaws{0., 0.};
+		std::pair<double, double> calibrationPitches{0., 0.};
+
+		// Calibration helpers - points number
+		uint32_t calibrationPointsNumber = 3; // Always 3<=x<=5
+		// Calibration helpers - calibration method: auto?
+		std::pair<bool, bool> autoCalibration{false, false};
 
 		/* Saving and loading part */
 
@@ -134,6 +157,9 @@ namespace k2app
 				appSoundsVolume = std::clamp(
 					appSoundsVolume, (uint32_t)0, (uint32_t)100);
 
+				// Optionally fix calibration points
+				calibrationPointsNumber = std::clamp(
+					calibrationPointsNumber, (uint32_t)3, (uint32_t)5);
 			}
 			catch (boost::archive::archive_exception const& e)
 			{

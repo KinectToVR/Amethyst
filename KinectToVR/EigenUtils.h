@@ -156,32 +156,32 @@ namespace EigenUtils
 		/* If somehow same */
 		if constexpr (std::is_same<Ret, T>::value) return in;
 
-		/* To Eigen Quaternion */
+			/* To Eigen Quaternion */
 		else if constexpr (std::is_same<Ret, Eigen::Quaternionf>::value && std::is_same<T, vr::HmdQuaternion_t>::value)
 			return Eigen::Quaternionf(in.w, in.x, in.y, in.z);
 
-		/* To OpenVR Quaternion */
+			/* To OpenVR Quaternion */
 		else if constexpr (std::is_same<Ret, vr::HmdQuaternion_t>::value && std::is_same<T, Eigen::Quaternionf>::value)
-			return vr::HmdQuaternion_t{ in.w(), in.x(), in.y(), in.z() };
+			return vr::HmdQuaternion_t{in.w(), in.x(), in.y(), in.z()};
 
-		/* To Eigen Vector3f */
+			/* To Eigen Vector3f */
 		else if constexpr (std::is_same<Ret, Eigen::Vector3f>::value && std::is_same<T, vr::HmdVector3d_t>::value)
 			return Eigen::Vector3f(in.v[0], in.v[1], in.v[2]);
 
 		else if constexpr (std::is_same<Ret, Eigen::Vector3f>::value && std::is_same<T, vr::HmdMatrix34_t>::value)
 			return Eigen::Vector3f(in.m[0][3], in.m[1][3], in.m[2][3]);
 
-		/* To OpenVR HmdVector3d_t */
+			/* To OpenVR HmdVector3d_t */
 		else if constexpr (std::is_same<Ret, vr::HmdVector3d_t>::value && std::is_same<T, Eigen::Vector3f>::value)
-			return vr::HmdVector3d_t{ in.x(), in.y(), in.z() };
+			return vr::HmdVector3d_t{in.x(), in.y(), in.z()};
 
 		else if constexpr (std::is_same<Ret, vr::HmdVector3d_t>::value && std::is_same<T, vr::HmdMatrix34_t>::value)
-			return vr::HmdVector3d_t{ in.m[0][3], in.m[1][3], in.m[2][3] };
+			return vr::HmdVector3d_t{in.m[0][3], in.m[1][3], in.m[2][3]};
 
-		/* From OpenVR Matrix to OpenVR Quaternion */
+			/* From OpenVR Matrix to OpenVR Quaternion */
 		else if constexpr (std::is_same<Ret, vr::HmdQuaternion_t>::value && std::is_same<T, vr::HmdMatrix34_t>::value)
 		{
-			auto q = vr::HmdQuaternion_t{ 1., 0., 0., 0. };
+			auto q = vr::HmdQuaternion_t{1., 0., 0., 0.};
 			q.w = sqrt(fmax(0, 1 + in.m[0][0] + in.m[1][1] + in.m[2][2])) / 2;
 			q.x = sqrt(fmax(0, 1 + in.m[0][0] - in.m[1][1] - in.m[2][2])) / 2;
 			q.y = sqrt(fmax(0, 1 - in.m[0][0] + in.m[1][1] - in.m[2][2])) / 2;
@@ -195,5 +195,48 @@ namespace EigenUtils
 		/* From OpenVR Matrix to Eigen Quaternion */
 		else if constexpr (std::is_same<Ret, Eigen::Quaternionf>::value && std::is_same<T, vr::HmdMatrix34_t>::value)
 			return p_cast_type<Eigen::Quaternionf>(p_cast_type<vr::HmdQuaternion_t>(in));
+	}
+
+	using PointSet = Eigen::Matrix<double, 3, Eigen::Dynamic>;
+
+	inline std::tuple<Eigen::Matrix3d, Eigen::Vector3d>
+		rigid_transform_3D(const PointSet& A, const PointSet& B)
+	{
+		static_assert(PointSet::RowsAtCompileTime == 3);
+		assert(A.cols() == B.cols());
+
+		// find mean column wise
+		const Eigen::Vector3d centroid_A = A.rowwise().mean();
+		const Eigen::Vector3d centroid_B = B.rowwise().mean();
+
+		// subtract mean
+		PointSet Am = A.colwise() - centroid_A;
+		PointSet Bm = B.colwise() - centroid_B;
+
+		PointSet H = Am * Bm.transpose();
+
+		//
+		//# sanity check
+		//#if linalg.matrix_rank(H) < 3:
+		//	#    raise ValueError("rank of H = {}, expecting 3".format(linalg.matrix_rank(H)))
+		//
+
+		// find rotation
+		Eigen::JacobiSVD<Eigen::Matrix3Xd> svd = H.jacobiSvd(
+			Eigen::DecompositionOptions::ComputeFullU | Eigen::DecompositionOptions::ComputeFullV);
+		const Eigen::Matrix3d& U = svd.matrixU();
+		Eigen::MatrixXd V = svd.matrixV();
+		Eigen::Matrix3d R = V * U.transpose();
+
+		// special reflection case
+		if (R.determinant() < 0.0f)
+		{
+			V.col(2) *= -1.0f;
+			R = V * U.transpose();
+		}
+
+		const Eigen::Vector3d t = -R * centroid_A + centroid_B;
+
+		return std::make_tuple(R, t);
 	}
 }

@@ -116,7 +116,8 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 	FLAGS_minloglevel = google::GLOG_INFO;
 
 	LOG(INFO) << "~~~KinectToVR OpenVR Driver new logging session begins here!~~~";
-	LOG(INFO) << "Interface name: " << pInterfaceName;
+	LOG(INFO) << "Interface version name: " << pInterfaceName;
+	LOG(INFO) << "K2API version name: " << ktvr::IK2API_Version;
 
 	static k2_driver::K2ServerProvider k2_server_provider;
 	static K2WatchdogDriver k2_watchdog_driver;
