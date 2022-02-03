@@ -43,7 +43,7 @@ jobs:
       - name: Build Amethyst
         run: |
           Set-ExecutionPolicy Bypass -Scope Process -Force
-          Invoke-Expression (Get-Content .dockerbuild -Raw)
+          Invoke-Expression (Get-Content .dockerbuild_gh -Raw)
 
       - name: Get short commit SHA
         id: slug
