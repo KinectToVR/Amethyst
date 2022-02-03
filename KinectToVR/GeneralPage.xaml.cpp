@@ -550,7 +550,7 @@ void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchec
 	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
 	ToggleTrackersButton().Content(box_value(L"Reconnect Trackers"));
 
-	// Mark trackers as active
+	// Mark trackers as inactive
 	k2app::interfacing::K2AppTrackersInitialized = false;
 }
 

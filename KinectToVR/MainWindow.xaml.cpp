@@ -696,6 +696,12 @@ void KinectToVR::implementation::MainWindow::InstallNowButton_Click(
 void KinectToVR::implementation::MainWindow::ExitButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Mark trackers as inactive
+	k2app::interfacing::K2AppTrackersInitialized = false;
+
+	// Wait a moment
+	Sleep(500);
+
 	// Save and Exit with 0
 	exit(0);
 }
