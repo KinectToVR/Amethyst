@@ -11,4 +11,4 @@ $msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Se
 
 &"$msbuild" KinectToVR.sln /t:driver_KinectToVR "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
 
-&"$msbuild" KinectToVR.sln "/m:5" "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
+&"$msbuild" KinectToVR.sln /t:KinectToVR "/p:Configuration=Release;Platform=x64;BuildInParallel=true"

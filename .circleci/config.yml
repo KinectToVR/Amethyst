@@ -1,0 +1,60 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+# The Windows orb gives you everything you
+# need to start using the Windows executor.
+orbs:
+  win: circleci/windows@2.4.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  build:
+    executor: win/default
+
+    steps:
+      - checkout
+      
+      - run:
+          name: Build Amethyst
+          command: docker build -t k2app .
+
+      - run:
+          name: Prepare Artifacts
+          command: |
+              $id = $(docker create k2app)
+
+              mkdir ./x64/Release
+              docker cp ${id}:/x64/Release ./x64/Release
+
+              docker rm -v $id
+              docker rmi --force $(docker images -q 'k2app')
+
+              New-Item -Name "K2Driver-Release" -ItemType "directory"
+              New-Item -Name "K2Devices-Release" -ItemType "directory"
+              New-Item -Name "Amethyst-Release" -ItemType "directory"
+
+              Copy-Item -Path "x64/Release/driver" -Destination "K2Driver-Release" -Recurse
+              Copy-Item -Path "x64/Release/devices" -Destination "K2Devices-Release" -Recurse
+              Copy-Item -Path "x64/Release/KinectToVR" -Destination "Amethyst-Release" -Recurse
+              
+              cd K2Driver-Release; 7z a "K2Driver-Release.zip" *
+              cd ../K2Devices-Release; 7z a "K2Devices-Release.zip" *
+              cd ../Amethyst-Release; 7z a "Amethyst-Release.zip" *
+
+      - store_artifacts:
+          path: C:/Users/circleci/project/Release/K2Driver-Release.zip
+
+      - store_artifacts:
+          path: C:/Users/circleci/project/Release/K2Devices-Release.zip
+
+      - store_artifacts:
+          path: C:/Users/circleci/project/Release/Amethyst-Release.zip
+
+workflows:
+  version: 2
+  run-all:
+    jobs:
+      - build:
+          context: Default

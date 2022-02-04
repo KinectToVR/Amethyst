@@ -1,0 +1,23 @@
+git clone https://github.com/Microsoft/vcpkg.git C:/vcpkg
+cd C:/vcpkg
+./bootstrap-vcpkg.bat
+./vcpkg integrate install
+./vcpkg install `
+    boost-serialization:x64-windows `
+    boost-assign:x64-windows `
+    boost-filesystem:x64-windows `
+    boost-dll:x64-windows `
+    boost-property-tree:x64-windows `
+    boost-foreach:x64-windows `
+    boost-lexical-cast:x64-windows `
+    boost-unordered:x64-windows `
+    boost-math:x64-windows `
+    boost-algorithm:x64-windows `
+    curlpp:x64-windows `
+    kinectsdk1:x64-windows `
+    kinectsdk2:x64-windows
+
+cd ..
+
+sed -e 's/Kinect10.lib;//g' -i "device_KinectV1/device_KinectV1.vcxproj"
+sed -e 's/Kinect20.lib;//g' -i "device_KinectV2/device_KinectV2.vcxproj"

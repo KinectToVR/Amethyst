@@ -12,8 +12,15 @@ Start-Process ./vs_buildtools.exe -ArgumentList `
     --add Microsoft.VisualStudio.Component.Windows10SDK.19041 `
     --add Microsoft.VisualStudio.Component.VC.CMake.Project `
     --add Microsoft.VisualStudio.Component.TestTools.BuildTools `
+    --add Microsoft.Net.Component.4.8.SDK `
     --add Microsoft.VisualStudio.Component.VC.ASAN `
     --add Microsoft.VisualStudio.Component.TextTemplating `
     --add Microsoft.VisualStudio.Component.VC.CoreIde `
     --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core `
-    --add Microsoft.VisualStudio.Workload.VCTools' -Wait -PassThru
+    --add Microsoft.VisualStudio.Workload.VCTools `
+    --add Microsoft.VisualStudio.Component.NuGet.BuildTools `
+    --add Microsoft.NetCore.Component.Runtime.6.0 `
+    --add Microsoft.NetCore.Component.SDK `
+    --add Microsoft.Component.NetFX.Native `
+    --add Microsoft.VisualStudio.ComponentGroup.UWP.BuildTools `
+    --add Microsoft.VisualStudio.Workload.UniversalBuildTools' -Wait -PassThru
