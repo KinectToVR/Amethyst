@@ -15,9 +15,10 @@ jobs:
 
     steps:
       - checkout
-      
+
       - run:
           name: Build Amethyst
+          no_output_timeout: 40m
           command: docker build -t k2app .
 
       - run:
