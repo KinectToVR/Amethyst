@@ -15,7 +15,10 @@ RUN powershell.exe -Command \
 # Prepare the environment
 RUN powershell.exe -Command \
     Set-ExecutionPolicy Bypass -Scope Process -Force; \
-    Invoke-Expression (Get-Content .dockerprep_nolink -Raw)
+    Invoke-Expression (Get-Content .dockerprep_nolink -Raw); \
+    powershell.exe -Command "&"C:/vcpkg/vcpkg.exe" install kinectsdk1:x64-windows kinectsdk2:x64-windows"; ` \
+    sed -e 's/Kinect10.lib;//g' -i "device_KinectV1/device_KinectV1.vcxproj"; ` \
+    sed -e 's/Kinect20.lib;//g' -i "device_KinectV2/device_KinectV2.vcxproj"
 
 # Download dependencies
 RUN powershell.exe -Command \

@@ -104,9 +104,7 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)de
     </PostBuildEvent>
     <PreBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">del "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\MddBootstrapAutoInitializer.cpp"
-xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\"
-
-"$(MSBuildBinPath)/MSBuild.exe" $(SolutionPath) "/t:KinectToVR_API" "/p:Configuration=$(Configuration);Platform=$(Platform)"</Command>
+xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
@@ -132,9 +130,7 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices" "$(OutDir)de
     </PostBuildEvent>
     <PreBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">del "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\MddBootstrapAutoInitializer.cpp"
-xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\"
-
-"$(MSBuildBinPath)/MSBuild.exe" $(SolutionPath) "/t:KinectToVR_API" "/p:Configuration=$(Configuration);Platform=$(Platform)"</Command>
+xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -329,6 +325,11 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="KinectToVR.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KinectToVR_API\KinectToVR_API.vcxproj">
+      <Project>{3fb99a4e-d168-4efc-b909-ce2951543cf8}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

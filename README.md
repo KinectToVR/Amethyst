@@ -96,7 +96,7 @@ Follow these steps:
   Alternatively you can open the developer powershell for Visual Studio (or BuildTools) 2022 and:
   ```powershell
   > msbuild KinectToVR.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
-  > msbuild KinectToVR.sln "/p:Configuration=Release;Platform=x64"
+  > msbuild KinectToVR.sln /m:3 "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
   ```
   There are 2 commands since the first will only restore ```NuGet```,  then the whole thing will be built.
 

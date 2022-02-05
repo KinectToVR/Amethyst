@@ -1,0 +1,65 @@
+name: K2App (Amethyst) Workflow
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2.1.0
+        id: checkout_code
+
+      - name: Install Chocolatey Packages
+        run: choco install cmake 7zip.install sed git
+
+      - name: Restore or install vcpkg
+        uses: lukka/run-vcpkg@v10
+        with:
+          setupOnly: true
+          vcpkgGitCommitId: 6ba505cf2c1752d8ea5abb21427e23ff89dc486f
+
+      - name: Install vcpkg integration
+        run: vcpkg integrate install
+
+      - name: Install Libraries
+        run: |
+          vcpkg install boost-serialization:x64-windows boost-assign:x64-windows `
+          boost-filesystem:x64-windows boost-dll:x64-windows `
+          boost-property-tree:x64-windows boost-foreach:x64-windows `
+          boost-lexical-cast:x64-windows boost-unordered:x64-windows `
+          boost-math:x64-windows boost-algorithm:x64-windows `
+          curlpp:x64-windows kinectsdk1:x64-windows kinectsdk2:x64-windows
+
+          sed -e 's/Kinect10.lib;//g' -i "device_KinectV1/device_KinectV1.vcxproj"
+          sed -e 's/Kinect20.lib;//g' -i "device_KinectV2/device_KinectV2.vcxproj"
+
+      - name: Clear vcpkg Downloads
+        shell: powershell
+        run: |
+          Remove-Item -LiteralPath "vcpkg/buildtrees" -Force -Recurse -ErrorAction Ignore
+          Remove-Item -LiteralPath "vcpkg/downloads" -Force -Recurse -ErrorAction Ignore
+
+      - name: Setup Dependencies
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          Invoke-Expression (Get-Content .dockerdeps -Raw)
+
+      - name: Build Amethyst
+        run: |
+          sed -e 's,/bigobj,/bigobj /Zm2000,g' -i "KinectToVR/KinectToVR.vcxproj"
+          sed -e 's/;BuildInParallel=true//g' -i "KinectToVR/KinectToVR.vcxproj"
+          sed -e 's,/m:3 ,,g' -i ".dockerbuild"
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          Invoke-Expression (Get-Content .dockerbuild -Raw)
+
+      - name: Get short commit SHA
+        id: slug
+        run: "$slug = '::set-output name=slug::' + $env:GITHUB_SHA.SubString(0,7); echo $slug"
+
+      - name: Upload Amethyst's Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: K2App-Release-${{ steps.slug.outputs.slug }}
+          path: x64/Release
+          if-no-files-found: error

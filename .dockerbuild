@@ -4,11 +4,4 @@ $msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Se
     -replace('"installationPath": "','') -replace('",',''))".Trim() + "\\MSBuild\\Current\\Bin\\MSBuild.exe"
 
 &"$msbuild" KinectToVR.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
-
-&"$msbuild" KinectToVR.sln /t:device_KinectV1 "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
-&"$msbuild" KinectToVR.sln /t:device_KinectV2 "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
-&"$msbuild" KinectToVR.sln /t:device_PSMoveService "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
-
-&"$msbuild" KinectToVR.sln /t:driver_KinectToVR "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
-
-&"$msbuild" KinectToVR.sln /t:KinectToVR "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
+&"$msbuild" KinectToVR.sln /m:3 "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
