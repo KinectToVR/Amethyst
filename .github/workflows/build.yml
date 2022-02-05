@@ -47,7 +47,6 @@ jobs:
 
       - name: Build Amethyst
         run: |
-          sed -e 's,/bigobj,/bigobj /Zm2000,g' -i "KinectToVR/KinectToVR.vcxproj"
           sed -e 's/;BuildInParallel=true//g' -i "KinectToVR/KinectToVR.vcxproj"
           sed -e 's,/m:3 ,,g' -i ".dockerbuild"
           Set-ExecutionPolicy Bypass -Scope Process -Force
