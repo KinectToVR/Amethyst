@@ -107,4 +107,4 @@ The whole output can be found in ```x64/Release``` directory<br>
  - Devices (plugins) are inside ```devices/``` folder
  - Deployed app is inside ```KinectToVR/``` folder, along with devices (plugins)<br>
  - To run the deployed app you'll need to install the [Windows App Runtime](https://aka.ms/windowsappsdk/1.0-stable/msix-installer).
- - **Note:** you can't interface a ```Release``` driver with a ```Debug``` app!
+ - **Note:** you can't interface a ```Release``` devices with a ```Debug``` app! (driver yes tho)
