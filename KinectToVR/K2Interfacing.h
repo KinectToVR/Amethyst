@@ -473,6 +473,68 @@ namespace k2app
 			}
 		}
 
+		// Check if we've disabled any joints from spawning and disable they're mods
+		inline void devices_check_disabled_joints()
+		{
+			using namespace shared::devices;
+
+			// Optionally fix combos for disabled trackers -> joint selectors for base
+			waistJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0]);
+			if (!k2app::K2Settings.isJointEnabled[0])
+				waistJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+
+			leftFootJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			if (!k2app::K2Settings.isJointEnabled[1])
+				leftFootJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+
+			rightFootJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2]);
+			if (!k2app::K2Settings.isJointEnabled[2])
+				rightFootJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+
+			// Optionally fix combos for disabled trackers -> joint selectors for override
+			waistPositionOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0] && k2app::K2Settings.isPositionOverriddenJoint[0]);
+			waistRotationOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0] && k2app::K2Settings.isRotationOverriddenJoint[0]);
+
+			overrideWaistPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0]);
+			overrideWaistRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0]);
+
+			if (!k2app::K2Settings.isJointEnabled[0]) {
+				overrideWaistPosition.get()->IsChecked(false);
+				overrideWaistRotation.get()->IsChecked(false);
+
+				waistPositionOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+				waistRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+			}
+
+			leftFootPositionOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+			leftFootRotationOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+
+			overrideLeftFootPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			overrideLeftFootRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+
+			if (!k2app::K2Settings.isJointEnabled[1]) {
+				overrideLeftFootPosition.get()->IsChecked(false);
+				overrideLeftFootRotation.get()->IsChecked(false);
+
+				leftFootPositionOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+				leftFootRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+			}
+
+			rightFootPositionOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2] && k2app::K2Settings.isPositionOverriddenJoint[2]);
+			rightFootRotationOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2] && k2app::K2Settings.isRotationOverriddenJoint[2]);
+
+			overrideRightFootPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2]);
+			overrideRightFootRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2]);
+
+			if (!k2app::K2Settings.isJointEnabled[2]) {
+				overrideRightFootPosition.get()->IsChecked(false);
+				overrideRightFootRotation.get()->IsChecked(false);
+
+				rightFootPositionOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+				rightFootRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+			}
+		}
+
 		// Get the quaternion representing the rotation
 		inline Eigen::Quaternionf GetVRRotationFromMatrix(vr::HmdMatrix34_t matrix)
 		{
