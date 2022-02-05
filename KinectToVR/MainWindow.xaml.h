@@ -11,6 +11,12 @@
 #include "K2Interfacing.h"
 #include "K2Main.h"
 
+#include <openvr.h>
+
+#include <boost/algorithm/string.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
 namespace muxc
 {
     using namespace winrt::Microsoft::UI::Xaml::Controls;

@@ -55,17 +55,3 @@
 
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>
-
-#include <KinectToVR_API.h>
-
-#include <openvr.h>
-
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/dll.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/foreach.hpp>
-#include <boost/serialization/array.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>

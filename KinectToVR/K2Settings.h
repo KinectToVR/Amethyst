@@ -1,5 +1,15 @@
 #pragma once
 #include "pch.h"
+#include <KinectToVR_API.h>
+
+#include <fstream>
+
+#include <boost/foreach.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/serialization/array.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+
 #include "K2AppTracker.h"
 #define degreesToRadians(angleDegrees) ((angleDegrees) * 3.14159265358979323846 / 180.0)
 #define radiansToDegrees(angleRadians) ((angleRadians) * 180.0 / 3.14159265358979323846)

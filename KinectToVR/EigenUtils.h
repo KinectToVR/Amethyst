@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "pch.h"
+#include <Eigen/Dense>
+#include <openvr.h>
 
 namespace EigenUtils
 {

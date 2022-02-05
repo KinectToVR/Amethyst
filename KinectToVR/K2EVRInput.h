@@ -1,6 +1,11 @@
 #pragma once
 #include "pch.h"
 
+#include <openvr.h>
+
+#include <boost/filesystem.hpp>
+#include <boost/dll.hpp>
+
 namespace k2app::K2EVRInput
 {
 	// Error strings, **assuming they can't change**
