@@ -124,10 +124,18 @@
 
                                 <SplitButton.Flyout>
                                     <Flyout Placement="Bottom" x:Name="AlternativeConnectionOptionsFlyout">
+                                        <StackPanel Orientation="Vertical">
                                         <Button FontWeight="SemiBold" Content="Disconnect"
-                                                CornerRadius="3" Height="35"
+                                                CornerRadius="3" Height="35" HorizontalAlignment="Stretch"
                                                 x:Name="DisconnectDeviceButton"
                                                 Click="DisconnectDeviceButton_Click" />
+                                        <Button FontWeight="SemiBold" Content="Deselect"
+                                                CornerRadius="3" Height="35"
+                                                Margin="0,15,0,0" HorizontalAlignment="Stretch"
+                                                x:Name="DeselectDeviceButton"
+                                                Click="DeselectDeviceButton_Click" 
+                                                ToolTipService.ToolTip="Deselecting this device will&#x0a;unset it from Override role." />
+                                        </StackPanel>
                                     </Flyout>
                                 </SplitButton.Flyout>
 
@@ -553,6 +561,7 @@
                         <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
                                   Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
                                   DropDownOpened="WaistJointOptionBox_DropDownOpened"
+                                  PlaceholderText="Joint Disabled"
                                   x:Name="WaistJointOptionBox" SelectionChanged="WaistJointOptionBox_SelectionChanged"
                                   Grid.Column="3" Grid.Row="1" Margin="0,0,0,0">
                             <x:String>DUM_Joint0</x:String>
@@ -567,6 +576,7 @@
                         <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
                                   Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
                                   DropDownOpened="LeftFootJointOptionBox_DropDownOpened"
+                                  PlaceholderText="Joint Disabled"
                                   x:Name="LeftFootJointOptionBox"
                                   SelectionChanged="LeftFootJointOptionBox_SelectionChanged"
                                   Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
@@ -582,6 +592,7 @@
                         <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
                                   Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
                                   DropDownOpened="RightFootJointOptionBox_DropDownOpened"
+                                  PlaceholderText="Joint Disabled"
                                   x:Name="RightFootJointOptionBox"
                                   SelectionChanged="RightFootJointOptionBox_SelectionChanged"
                                   Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">

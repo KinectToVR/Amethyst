@@ -161,6 +161,7 @@ namespace winrt::KinectToVR::implementation
 
 		setAsOverrideButton = std::make_shared<Controls::Button>(SetAsOverrideButton());
 		setAsBaseButton = std::make_shared<Controls::Button>(SetAsBaseButton());
+		deselectDeviceButton = std::make_shared<Controls::Button>(DeselectDeviceButton());
 
 		waistJointOptionBox = std::make_shared<Controls::ComboBox>(WaistJointOptionBox());
 		leftFootJointOptionBox = std::make_shared<Controls::ComboBox>(LeftFootJointOptionBox());
@@ -231,34 +232,6 @@ namespace winrt::KinectToVR::implementation
 		// Register tracking devices' list
 		TrackingDeviceListView().ItemsSource(m_TrackingDevicesViewModels);
 		NavigationCacheMode(Navigation::NavigationCacheMode::Required);
-
-		std::thread([&, this]() -> Windows::Foundation::IAsyncAction
-		{
-			/* Update the device in devices tab */
-
-			if (devicesListView.get() != nullptr &&
-				m_TrackingDevicesViewModels.Size() > k2app::K2Settings.trackingDeviceID)
-			{
-				while (true)
-				{
-					// wait for a signal from the main proc
-					// by attempting to decrement the semaphore
-					smphSignalCurrentUpdate.acquire();
-
-					// Only when ready
-					if (devices_tab_setup_finished)
-					{
-						DispatcherQueue().TryEnqueue(
-							Microsoft::UI::Dispatching::DispatcherQueuePriority::High, [&, this]
-							{
-								LOG(INFO) << "ID IS " << k2app::K2Settings.trackingDeviceID;
-							});
-					}
-				}
-			}
-
-			return Windows::Foundation::IAsyncAction(); // UWU
-		}).detach();
 
 		devices_update_current();
 	}
@@ -635,6 +608,9 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 		}
 	}
 
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
 	// Update the status here
 	const bool status_ok = device_status.find("S_OK") != std::string::npos;
 
@@ -661,6 +637,7 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 
 		overridesLabel.get()->Visibility(Visibility::Collapsed);
 		overridesControls.get()->Visibility(Visibility::Collapsed);
+		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 	{
@@ -670,6 +647,7 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 
 		overridesLabel.get()->Visibility(Visibility::Visible);
 		overridesControls.get()->Visibility(Visibility::Visible);
+		deselectDeviceButton.get()->Visibility(Visibility::Visible);
 	}
 	else
 	{
@@ -679,6 +657,7 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 
 		overridesLabel.get()->Visibility(Visibility::Collapsed);
 		overridesControls.get()->Visibility(Visibility::Collapsed);
+		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 	}
 
 	LOG(INFO) << "Changed the currently selected device to " << deviceName;
@@ -689,7 +668,7 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 	winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args)
 {
-	auto _index = devicesListView->SelectedIndex();
+	auto _index = devicesListView.get()->SelectedIndex();
 
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
@@ -1037,6 +1016,9 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 		}
 	}
 
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
 	/* Update local statuses */
 
 	// Update the status here
@@ -1059,6 +1041,7 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 
 	// Update the GeneralPage status
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
+	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
 }
 
 // *Nearly* the same as reconnect
@@ -1066,7 +1049,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-	auto _index = devicesListView->SelectedIndex();
+	auto _index = devicesListView.get()->SelectedIndex();
 
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
@@ -1129,9 +1112,74 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 
 	// Update the GeneralPage status
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
+	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
+
 	AlternativeConnectionOptionsFlyout().Hide();
 }
 
+// Mark override device as -1 -> deselect it
+void winrt::KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	auto _index = devicesListView.get()->SelectedIndex();
+
+	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
+	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+	LOG(INFO) << "Now reconnecting the tracking device...";
+
+	jointBasisControls.get()->Visibility(Visibility::Collapsed);
+	jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+
+	setAsOverrideButton.get()->IsEnabled(true);
+	setAsBaseButton.get()->IsEnabled(true);
+
+	overridesLabel.get()->Visibility(Visibility::Collapsed);
+	overridesControls.get()->Visibility(Visibility::Collapsed);
+	deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
+
+	if (trackingDevice.index() == 0)
+	{
+		// Kinect Basis
+		auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		device_status = device->statusResultString(device->getStatusResult());
+	}
+	else if (trackingDevice.index() == 1)
+	{
+		// Joints Basis
+		auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+		device_status = device->statusResultString(device->getStatusResult());
+	}
+	
+	/* Update local statuses */
+
+	// Update the status here
+	const bool status_ok = device_status.find("S_OK") != std::string::npos;
+
+	errorWhatText.get()->Visibility(
+		status_ok ? Visibility::Collapsed : Visibility::Visible);
+	deviceErrorGrid.get()->Visibility(
+		status_ok ? Visibility::Collapsed : Visibility::Visible);
+	trackingDeviceErrorLabel.get()->Visibility(
+		status_ok ? Visibility::Collapsed : Visibility::Visible);
+
+	trackingDeviceChangePanel.get()->Visibility(
+		status_ok ? Visibility::Visible : Visibility::Collapsed);
+
+	// Split status and message by \n
+	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
+	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
+	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+
+	// Deselect the device
+	k2app::K2Settings.overrideDeviceID = -1; // Only acceptable for an Override
+	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+
+	AlternativeConnectionOptionsFlyout().Hide();
+}
 
 void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
@@ -1422,6 +1470,9 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
 
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
 	/* Update local statuses */
 	setAsOverrideButton.get()->IsEnabled(false);
 	setAsBaseButton.get()->IsEnabled(true);
@@ -1433,6 +1484,7 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 
 	overridesLabel.get()->Visibility(Visibility::Visible);
 	overridesControls.get()->Visibility(Visibility::Visible);
+	deselectDeviceButton.get()->Visibility(Visibility::Visible);
 
 	// Register and etc
 	/* Update local statuses */
@@ -1456,7 +1508,7 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 
 	k2app::K2Settings.overrideDeviceID = selectedTrackingDeviceID;
-	//TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Not yet TODO
+	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -1540,6 +1592,9 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 			(device_status.find("S_OK") != std::string::npos) ? Visibility::Visible : Visibility::Collapsed);
 	}
 
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
 	/* Update local statuses */
 	setAsOverrideButton.get()->IsEnabled(false);
 	setAsBaseButton.get()->IsEnabled(false);
@@ -1553,6 +1608,7 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 
 	overridesLabel.get()->Visibility(Visibility::Collapsed);
 	overridesControls.get()->Visibility(Visibility::Collapsed);
+	deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 
 	// Register and etc
 	/* Update local statuses */
@@ -1580,6 +1636,9 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 		k2app::K2Settings.overrideDeviceID = -1; // Reset the override
 
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
+
+	// This is here too cause an override might've became a base... -_-
+	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -1980,11 +2039,16 @@ void winrt::KinectToVR::implementation::DevicesPage::DismissOverrideTipNoJointsB
 void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// If it's the first time loading, select the base device
+	selectedTrackingDeviceID =
+		devices_tab_setup_finished
+			? devicesListView.get()->SelectedIndex()
+			: k2app::K2Settings.trackingDeviceID;
+
 	// Notify of the setup's end
 	devices_tab_setup_finished = true;
 
 	// Run the on-selected routine
-	selectedTrackingDeviceID = k2app::K2Settings.trackingDeviceID;
 	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string deviceName = "[UNKNOWN]";
@@ -2348,6 +2412,9 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		}
 	}
 
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
 	// Update the status here
 	const bool status_ok = device_status.find("S_OK") != std::string::npos;
 
@@ -2374,6 +2441,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 		overridesLabel.get()->Visibility(Visibility::Collapsed);
 		overridesControls.get()->Visibility(Visibility::Collapsed);
+		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 	{
@@ -2383,6 +2451,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 		overridesLabel.get()->Visibility(Visibility::Visible);
 		overridesControls.get()->Visibility(Visibility::Visible);
+		deselectDeviceButton.get()->Visibility(Visibility::Visible);
 	}
 	else
 	{
@@ -2392,6 +2461,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 		overridesLabel.get()->Visibility(Visibility::Collapsed);
 		overridesControls.get()->Visibility(Visibility::Collapsed);
+		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 	}
 
 	LOG(INFO) << "Changed the currently selected device to " << deviceName;

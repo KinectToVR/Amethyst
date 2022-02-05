@@ -111,7 +111,8 @@ namespace k2app
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
 				setAsOverrideButton,
-				setAsBaseButton;
+				setAsBaseButton,
+				deselectDeviceButton; // This one's override-only
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBox>
 				waistJointOptionBox,
