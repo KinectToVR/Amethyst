@@ -50,6 +50,10 @@ namespace k2app
 				deviceStatusLabel,
 				errorWhatText,
 				trackingDeviceErrorLabel,
+				overrideDeviceNameLabel,
+				overrideDeviceStatusLabel,
+				overrideErrorWhatText,
+				overrideDeviceErrorLabel,
 				serverStatusLabel,
 				serverErrorLabel,
 				serverErrorWhatText;
@@ -57,6 +61,8 @@ namespace k2app
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
 				errorButtonsGrid,
 				errorWhatGrid,
+				overrideErrorButtonsGrid,
+				overrideErrorWhatGrid,
 				serverErrorWhatGrid,
 				serverErrorButtonsGrid;
 

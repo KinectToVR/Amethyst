@@ -811,40 +811,43 @@
 
                 </Grid>
 
-                <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                              Grid.Row="4" VerticalScrollBarVisibility="Visible" >
+                <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                              Grid.Row="4" VerticalScrollBarVisibility="Visible">
 
                     <StackPanel Grid.Row="4" Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,0,0,30">
 
                         <StackPanel Orientation="Vertical" Margin="0,5,0,0" VerticalAlignment="Bottom">
                             <TextBlock FontWeight="SemiBold" Text="Device" FontSize="25"
-                                   Margin="40,20,0,10" Grid.Row="3" />
+                                       Margin="40,20,0,10" Grid.Row="3" />
+
+                            <!--Base Status-->
 
                             <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Current Device:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           Text="Current Device:" Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Xbox One Kinect (V2)" Margin="5,0,0,0" x:Name="SelectedDeviceNameLabel" />
+                                           Text="Xbox One Kinect (V2)" Margin="5,0,0,0"
+                                           x:Name="SelectedDeviceNameLabel" />
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Not Powered" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
+                                           Text="Not Powered" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
                             </StackPanel>
 
                             <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
-                              Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
+                                  Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                       Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
-                                       x:Name="TrackingDeviceErrorLabel"
-                                       Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
+                                           Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
+                                           x:Name="TrackingDeviceErrorLabel"
+                                           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                       x:Name="ErrorWhatText"
-                                       Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+                                           x:Name="ErrorWhatText"
+                                           Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
                                     <TextBlock.Text>
                                         There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
                                     </TextBlock.Text>
@@ -858,45 +861,114 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Button FontSize="15" x:Name="OpenDiscordButton" Click="OpenDiscordButton_Click"
-                                    Height="65"
-                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                    Content="Get help on Discord"
-                                    Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch" />
+                                        Height="65"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Content="Get help on Discord"
+                                        Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
                                 <Button FontSize="15" x:Name="OpenDocsButton" Click="ServerOpenDocsButton_Click"
-                                    Height="65"
-                                    VerticalContentAlignment="Center" FontWeight="SemiBold" Content="View Online Docs"
-                                    Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
+                                        Height="65"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Content="View Online Docs"
+                                        Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
+
+                            </Grid>
+
+                            <!--Override Status-->
+
+                            <StackPanel Orientation="Horizontal" Margin="40,10,20,0"
+                                        Visibility="{Binding ElementName=SelectedOverrideDeviceNameLabel, 
+									Path=Visibility,TargetNullValue=Collapsed}">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Override Device:" Margin="0,0,0,0" Foreground="LightGray" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Xbox One Kinect (V2)" Margin="5,0,0,0"
+                                           x:Name="SelectedOverrideDeviceNameLabel" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="40,5,20,0"
+                                        Visibility="{Binding ElementName=SelectedOverrideDeviceNameLabel, 
+									Path=Visibility,TargetNullValue=Collapsed}">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Not Powered" Margin="5,0,0,0" x:Name="OverrideDeviceStatusLabel" />
+                            </StackPanel>
+
+                            <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
+                                  Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3"
+                                  x:Name="OverrideErrorWhatGrid">
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                           Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
+                                           x:Name="OverrideTrackingDeviceErrorLabel"
+                                           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                           x:Name="OverrideErrorWhatText"
+                                           Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+                                    <TextBlock.Text>
+                                        There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Grid>
+
+                            <Grid Margin="0,12,0,0" x:Name="OverrideErrorButtonsGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button FontSize="15" x:Name="OverrideOpenDiscordButton"
+                                        Click="OpenDiscordButton_Click"
+                                        Height="65"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Content="Get help on Discord"
+                                        Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
+                                <Button FontSize="15" x:Name="OverrideOpenDocsButton"
+                                        Click="ServerOpenDocsButton_Click"
+                                        Height="65"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Content="View Online Docs"
+                                        Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
 
                             </Grid>
 
                         </StackPanel>
 
                         <Grid Height="60" VerticalAlignment="Bottom">
-                            <TextBlock FontWeight="SemiBold" Text="Status" FontSize="25" Margin="40,20,0,0" Grid.Row="5" />
+                            <TextBlock FontWeight="SemiBold" Text="Status" FontSize="25" Margin="40,20,0,0"
+                                       Grid.Row="5" />
                         </Grid>
 
                         <StackPanel Orientation="Vertical" Margin="0,5,0,0" VerticalAlignment="Bottom">
 
                             <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="SteamVR Driver:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           Text="SteamVR Driver:" Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Success! (Code 1)" Margin="5,0,0,0" x:Name="ServerStatusLabel" />
+                                           Text="Success! (Code 1)" Margin="5,0,0,0" x:Name="ServerStatusLabel" />
                             </StackPanel>
 
                             <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
-                              Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3" x:Name="ServerErrorWhatGrid">
+                                  Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3"
+                                  x:Name="ServerErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                       Text="CODE_MINUS10" Margin="10,7,0,0" FontFamily="Consolas"
-                                       x:Name="ServerErrorLabel"
-                                       Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
+                                           Text="CODE_MINUS10" Margin="10,7,0,0" FontFamily="Consolas"
+                                           x:Name="ServerErrorLabel"
+                                           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                       x:Name="ServerErrorWhatText"
-                                       Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+                                           x:Name="ServerErrorWhatText"
+                                           Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
                                     <TextBlock.Text>
                                         There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
                                     </TextBlock.Text>
@@ -910,24 +982,27 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Button FontSize="15" x:Name="ServerOpenDiscordButton" Click="OpenDiscordButton_Click"
-                                    Height="65"
-                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                    Content="Get help on Discord"
-                                    Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch" />
+                                        Height="65"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Content="Get help on Discord"
+                                        Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
                                 <Button FontSize="15" x:Name="ServerOpenDocsButton" Click="OpenDocsButton_Click"
-                                    Height="65"
-                                    VerticalContentAlignment="Center" FontWeight="SemiBold" Content="View Online Docs"
-                                    Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
+                                        Height="65"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Content="View Online Docs"
+                                        Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
 
                             </Grid>
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Amethyst Version:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           Text="Amethyst Version:" Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="v1.0.0 (Ame0)" Margin="5,0,0,0" x:Name="VersionLabel" />
+                                           Text="v1.0.0 (Ame0)" Margin="5,0,0,0" x:Name="VersionLabel" />
                             </StackPanel>
 
                         </StackPanel>

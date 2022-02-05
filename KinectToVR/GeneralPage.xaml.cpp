@@ -38,12 +38,18 @@ namespace winrt::KinectToVR::implementation
 		deviceStatusLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceStatusLabel());
 		errorWhatText = std::make_shared<Controls::TextBlock>(ErrorWhatText());
 		trackingDeviceErrorLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceErrorLabel());
+		overrideDeviceNameLabel = std::make_shared<Controls::TextBlock>(SelectedOverrideDeviceNameLabel());
+		overrideDeviceStatusLabel = std::make_shared<Controls::TextBlock>(OverrideDeviceStatusLabel());
+		overrideErrorWhatText = std::make_shared<Controls::TextBlock>(OverrideErrorWhatText());
+		overrideDeviceErrorLabel = std::make_shared<Controls::TextBlock>(OverrideTrackingDeviceErrorLabel());
 		serverStatusLabel = std::make_shared<Controls::TextBlock>(ServerStatusLabel());
 		serverErrorLabel = std::make_shared<Controls::TextBlock>(ServerErrorLabel());
 		serverErrorWhatText = std::make_shared<Controls::TextBlock>(ServerErrorWhatText());
 
 		errorButtonsGrid = std::make_shared<Controls::Grid>(ErrorButtonsGrid());
 		errorWhatGrid = std::make_shared<Controls::Grid>(ErrorWhatGrid());
+		overrideErrorButtonsGrid = std::make_shared<Controls::Grid>(OverrideErrorButtonsGrid());
+		overrideErrorWhatGrid = std::make_shared<Controls::Grid>(OverrideErrorWhatGrid());
 		serverErrorWhatGrid = std::make_shared<Controls::Grid>(ServerErrorWhatGrid());
 		serverErrorButtonsGrid = std::make_shared<Controls::Grid>(ServerErrorButtonsGrid());
 
@@ -886,6 +892,7 @@ void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	// Update things
 	k2app::interfacing::UpdateServerStatusUI();
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
+	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
 
 	// Notice that we're gonna change some values
 	pending_offsets_update = true;
