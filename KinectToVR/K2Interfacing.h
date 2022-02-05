@@ -201,7 +201,18 @@ namespace k2app
 
 				return false; // Fail
 			}
-			else return true; // OK
+
+			// Since we're ok, capture playspace details
+			const auto trackingOrigin = m_VRSystem->GetRawZeroPoseToStandingAbsoluteTrackingPose();
+
+			vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
+
+			double yaw = std::atan2(trackingOrigin.m[0][2], trackingOrigin.m[2][2]);
+			if (yaw < 0.0)
+				yaw = 2 * 3.14159265358979323846 + yaw;
+
+			vrPlayspaceOrientation = yaw;
+			return true; // OK
 		}
 
 		/**
