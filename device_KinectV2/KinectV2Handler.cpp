@@ -20,7 +20,6 @@ HRESULT KinectV2Handler::getStatusResult()
 			return S_OK;
 	}
 	return S_FALSE;
-	// Hresult only actually determines whether the function worked, the bool is the true value....
 }
 
 std::string KinectV2Handler::statusResultString(HRESULT stat)
