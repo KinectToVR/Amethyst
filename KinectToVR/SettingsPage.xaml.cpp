@@ -275,6 +275,10 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistEnabledToggle_Toggled
 	if (!settings_localInitFinished)return;
 
 	k2app::K2Settings.isJointTurnedOn[0] = WaistEnabledToggle().IsOn();
+
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
 	// Save settings
 	k2app::K2Settings.saveSettings();
 }
@@ -287,6 +291,10 @@ void winrt::KinectToVR::implementation::SettingsPage::LeftFootEnabledToggle_Togg
 	if (!settings_localInitFinished)return;
 
 	k2app::K2Settings.isJointTurnedOn[1] = LeftFootEnabledToggle().IsOn();
+
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
 	// Save settings
 	k2app::K2Settings.saveSettings();
 }
@@ -299,6 +307,10 @@ void winrt::KinectToVR::implementation::SettingsPage::RightFootEnabledToggle_Tog
 	if (!settings_localInitFinished)return;
 
 	k2app::K2Settings.isJointTurnedOn[2] = RightFootEnabledToggle().IsOn();
+
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
 	// Save settings
 	k2app::K2Settings.saveSettings();
 }
