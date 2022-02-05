@@ -501,7 +501,7 @@ namespace winrt::KinectToVR::implementation
 
 						// Update the UI
 						TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-						//TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Not yet
+						TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
 					}
 					else // Log and exit, we have nothing to do
 					{
