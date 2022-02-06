@@ -82,7 +82,10 @@ xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt
 
 xcopy /y /d "$(SolutionDir)external\PSMoveService\bin\PSMoveClient_CAPI.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
 xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"</Command>
+xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
+
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService" "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR\devices\PSMoveService"
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -116,7 +119,10 @@ xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt
 
 xcopy /y /d "$(SolutionDir)external\PSMoveService\bin\PSMoveClient_CAPI.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
 xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"</Command>
+xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
+
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService" "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR\devices\PSMoveService"
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

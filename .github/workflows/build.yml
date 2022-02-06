@@ -57,8 +57,6 @@ jobs:
       - name: Build Amethyst
         shell: pwsh
         run: |
-          sed -e 's/;BuildInParallel=true//g' -i "KinectToVR/KinectToVR.vcxproj"
-          sed -e 's,/m:3 ,,g' -i ".dockerbuild"
           Set-ExecutionPolicy Bypass -Scope Process -Force
           Invoke-Expression (Get-Content .dockerbuild -Raw)
 

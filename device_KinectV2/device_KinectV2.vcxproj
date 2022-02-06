@@ -79,6 +79,8 @@
 xcopy /y /d "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV2\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV2\bin\win64\"
+
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV2" "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR\devices\KinectV2"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -110,6 +112,8 @@ xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt
 xcopy /y /d "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV2\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV2\bin\win64\"
+
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV2" "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR\devices\KinectV2"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
