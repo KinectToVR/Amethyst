@@ -15,7 +15,7 @@ git reset --hard f8c8e99fdfb998c2ba96cfb470decccf418f0b30
 mkdir vcbuild; cd ./vcbuild
 &"C:/Program Files/CMake/bin/cmake.exe" .. -DBUILD_SHARED_LIBS=ON
 &"$msbuild" glog.vcxproj "/p:Configuration=Release;Platform=x64"
-cd ../..
+cd ../../..
 
 git clone https://github.com/gflags/gflags.git ./external/gflags
 cd ./external/gflags
