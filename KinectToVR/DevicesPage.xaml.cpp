@@ -1848,6 +1848,9 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click
 	waistPositionOverrideOptionBox.get()->SelectedIndex(
 		overrideWaistPosition.get()->IsChecked() ? k2app::K2Settings.positionOverrideJointID[0] : -1);
 
+	// Check for errors and disable combos
+	k2app::interfacing::devices_check_disabled_joints();
+
 	// Save settings
 	k2app::K2Settings.saveSettings();
 }
@@ -1871,6 +1874,9 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click
 	// If we've disabled the override, set the placeholder text
 	waistRotationOverrideOptionBox.get()->SelectedIndex(
 		overrideWaistRotation.get()->IsChecked() ? k2app::K2Settings.rotationOverrideJointID[0] : -1);
+
+	// Check for errors and disable combos
+	k2app::interfacing::devices_check_disabled_joints();
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -1896,6 +1902,9 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Cl
 	leftFootPositionOverrideOptionBox.get()->SelectedIndex(
 		overrideLeftFootPosition.get()->IsChecked() ? k2app::K2Settings.positionOverrideJointID[1] : -1);
 
+	// Check for errors and disable combos
+	k2app::interfacing::devices_check_disabled_joints();
+
 	// Save settings
 	k2app::K2Settings.saveSettings();
 }
@@ -1919,6 +1928,9 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Cl
 	// If we've disabled the override, set the placeholder text
 	leftFootRotationOverrideOptionBox.get()->SelectedIndex(
 		overrideLeftFootRotation.get()->IsChecked() ? k2app::K2Settings.rotationOverrideJointID[1] : -1);
+
+	// Check for errors and disable combos
+	k2app::interfacing::devices_check_disabled_joints();
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -1944,6 +1956,9 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_C
 	rightFootPositionOverrideOptionBox.get()->SelectedIndex(
 		overrideRightFootPosition.get()->IsChecked() ? k2app::K2Settings.positionOverrideJointID[2] : -1);
 
+	// Check for errors and disable combos
+	k2app::interfacing::devices_check_disabled_joints();
+
 	// Save settings
 	k2app::K2Settings.saveSettings();
 }
@@ -1967,6 +1982,9 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_C
 	// If we've disabled the override, set the placeholder text
 	rightFootRotationOverrideOptionBox.get()->SelectedIndex(
 		overrideRightFootRotation.get()->IsChecked() ? k2app::K2Settings.rotationOverrideJointID[2] : -1);
+
+	// Check for errors and disable combos
+	k2app::interfacing::devices_check_disabled_joints();
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
