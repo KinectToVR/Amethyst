@@ -1,0 +1,8 @@
+namespace KinectToVR
+{
+    [default_interface]
+    runtimeclass ConsolePage : Microsoft.UI.Xaml.Controls.Page
+    {
+        ConsolePage();
+    }
+}

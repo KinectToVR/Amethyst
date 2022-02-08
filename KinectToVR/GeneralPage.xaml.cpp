@@ -1084,6 +1084,11 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 		// draw e.g. small blue/red dot on overwritten joints,
 		// aoi for position and aka for rotation
 
+		// TODO draw override device skeleton too
+
+		// TODO try to use less cpu by not drawing if not in focus
+		//      (maybe also display an info that we're not in focus...?)
+
 		switch (trackingDevice.index())
 		{
 		case 0:

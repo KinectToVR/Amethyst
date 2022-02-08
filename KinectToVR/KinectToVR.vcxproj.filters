@@ -17,6 +17,9 @@
     <Page Include="InfoPage.xaml">
       <Filter>Pages</Filter>
     </Page>
+    <Page Include="ConsolePage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -254,6 +257,9 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\ktvr.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\hug.gif">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

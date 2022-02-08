@@ -6,6 +6,7 @@
 #include "SettingsPage.g.h"
 #include "DevicesPage.g.h"
 #include "InfoPage.g.h"
+#include "ConsolePage.g.h"
 
 #include "TrackingDevices.h"
 #include "K2Interfacing.h"

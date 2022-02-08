@@ -133,6 +133,10 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConsolePage.xaml.h">
+      <DependentUpon>ConsolePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="DevicesPage.xaml.h">
       <DependentUpon>DevicesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -171,6 +175,9 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
+    <Page Include="ConsolePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="DevicesPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -186,6 +193,10 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConsolePage.xaml.cpp">
+      <DependentUpon>ConsolePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="DevicesPage.xaml.cpp">
       <DependentUpon>DevicesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -218,6 +229,10 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <Midl Include="App.idl">
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
+    </Midl>
+    <Midl Include="ConsolePage.idl">
+      <DependentUpon>ConsolePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
     <Midl Include="DevicesPage.idl">
       <DependentUpon>DevicesPage.xaml</DependentUpon>
@@ -255,6 +270,7 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <Image Include="Assets\BadgeLogo.scale-400.png" />
     <Image Include="Assets\flat_ktvr.ico" />
     <Image Include="Assets\flat_ktvr.png" />
+    <Image Include="Assets\hug.gif" />
     <Image Include="Assets\ktvr.ico" />
     <Image Include="Assets\ktvr.png" />
     <Image Include="Assets\LargeTile.scale-100.png" />

@@ -33,7 +33,8 @@ namespace k2app
 				generalItem,
 				settingsItem,
 				devicesItem,
-				infoItem;
+				infoItem,
+				consoleItem;
 		}
 
 		namespace general

@@ -19,6 +19,10 @@ std::shared_ptr<Controls::FontIcon> updateIconDot;
 bool updateFound = false,
      main_localInitFinished = false;
 
+// TODO actually check for deez updates
+
+// TODO discord and reregister buttons
+
 // Updates checking function
 Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkUpdates(
 	const UIElement& show_el, const bool show, const DWORD delay_ms)
@@ -128,6 +132,7 @@ namespace winrt::KinectToVR::implementation
 		k2app::shared::main::settingsItem = std::make_shared<Controls::NavigationViewItem>(SettingsItem());
 		k2app::shared::main::devicesItem = std::make_shared<Controls::NavigationViewItem>(DevicesItem());
 		k2app::shared::main::infoItem = std::make_shared<Controls::NavigationViewItem>(InfoItem());
+		k2app::shared::main::consoleItem = std::make_shared<Controls::NavigationViewItem>(ConsoleItem());
 
 		// Set up
 		this->Title(L"KinectToVR");
@@ -144,6 +149,8 @@ namespace winrt::KinectToVR::implementation
 			(L"devices", winrt::xaml_typename<DevicesPage>()));
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"info", winrt::xaml_typename<InfoPage>()));
+		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
+			(L"console", winrt::xaml_typename<ConsolePage>()));
 
 		LOG(INFO) << "~~~KinectToVR new logging session begins here!~~~";
 

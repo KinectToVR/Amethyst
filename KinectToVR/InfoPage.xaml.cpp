@@ -12,8 +12,16 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::KinectToVR::implementation
 {
-    InfoPage::InfoPage()
-    {
-        InitializeComponent();
-    }
+	InfoPage::InfoPage()
+	{
+		InitializeComponent();
+	}
+
+	void InfoPage::K2DoubleTapped(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& e)
+	{
+		// Also show a notification when we get to winui 1.1
+		k2app::shared::main::consoleItem.get()->Visibility(Visibility::Visible);
+	}
 }

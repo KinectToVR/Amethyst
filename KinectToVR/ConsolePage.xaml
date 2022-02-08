@@ -1,0 +1,70 @@
+﻿<Page
+    x:Class="KinectToVR.ConsolePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:KinectToVR"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Required"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
+
+
+    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="700" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
+                      VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
+
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="110" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="370" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="200" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="まあ？ ようこそ！❤️" FontSize="85" Margin="0,0,0,0" Grid.Row="1"
+                           HorizontalAlignment="Center" ToolTipService.ToolTip="" />
+
+                <Image Source="ms-appx:///Assets/hug.gif" HorizontalAlignment="Center"
+                       VerticalAlignment="Center" Margin="25" Grid.Row="3" />
+
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                            Orientation="Vertical" Grid.Row="5">
+
+                    <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29" Margin="0,5,0,0">
+                        <Run xml:space="preserve">あなたがここにいることをとても嬉しく思っています、私たちは。</Run>
+                    </TextBlock>
+
+                    <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29" Margin="0,5,0,0">
+                        <Run xml:space="preserve">ここで終わってしまうとは、鋭いですねぇ。でも誰？あなただ！</Run>
+                    </TextBlock>
+
+                    <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29" Margin="0,5,0,0">
+                        <Run xml:space="preserve">私たちの会員になりたい？あのねぇ....... 大勢の人を助ける。</Run>
+                    </TextBlock>
+
+                    <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29" Margin="0,5,0,0">
+                        <Run xml:space="preserve">そうだよ。かもね？そう… </Run>
+                        <Hyperlink NavigateUri="https://discord.gg/YBQCRDG" UnderlineStyle="None">ここで</Hyperlink>
+                        <Run xml:space="preserve">会いましょう！</Run>
+                    </TextBlock>
+                </StackPanel>
+
+            </Grid>
+
+        </ScrollViewer>
+
+    </Grid>
+
+</Page>

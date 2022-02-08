@@ -27,7 +27,7 @@
 
 	            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal">
 		            <Image Source="ms-appx:///Assets/ktvr.png" Height="200" Width="200" HorizontalAlignment="Left" 
-		                   VerticalAlignment="Center" ToolTipService.ToolTip="Pls donate if you like us! ˶ᵔ ᵕ ᵔ˶"/>
+		                   VerticalAlignment="Center" ToolTipService.ToolTip="What 'bout a double-tap?" DoubleTapped="K2DoubleTapped"/>
                     <TextBlock Margin="30,0,0,7" Text="Amethyst" FontSize="85" VerticalAlignment="Center" 
                                HorizontalAlignment="Right" ToolTipService.ToolTip="Pls donate if you like us! ˶ᵔ ᵕ ᵔ˶"/>
 	            </StackPanel>
