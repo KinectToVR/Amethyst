@@ -11,8 +11,19 @@
 #include <boost/archive/xml_oarchive.hpp>
 
 #include "K2AppTracker.h"
-#define degreesToRadians(angleDegrees) ((angleDegrees) * 3.14159265358979323846 / 180.0)
-#define radiansToDegrees(angleRadians) ((angleRadians) * 180.0 / 3.14159265358979323846)
+#define _PI 3.14159265358979323846
+
+template<typename T>
+T degreesToRadians(T angleDegrees)
+{
+	return angleDegrees * _PI / 180.0;
+}
+
+template<typename T>
+T radiansToDegrees(T angleRadians)
+{
+	return angleRadians * 180.0 / _PI;
+}
 
 namespace k2app
 {

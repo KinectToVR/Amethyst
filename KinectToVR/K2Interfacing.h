@@ -622,6 +622,7 @@ namespace k2app
 				return std::get<Eigen::Quaternionf>(vrHMDPose);
 			}
 
+			// Note: this is in radians
 			inline float plugins_getHMDOrientationYaw()
 			{
 				return std::get<float>(vrHMDPose);

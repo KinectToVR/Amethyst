@@ -72,7 +72,7 @@ namespace TrackingDevices
 		return std::make_pair(_exists,
 		                      TrackingDevicesVector.at(_deviceID));
 	}
-
+	
 	// Select proper tracking device in the UI
 	inline void updateTrackingDeviceUI(uint32_t const& index)
 	{

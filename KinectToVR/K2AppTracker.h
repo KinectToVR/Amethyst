@@ -7,6 +7,7 @@
 namespace k2app
 {
 	// Rotation tracking option enumeration
+	// THIS IS FOR THE APP ONLY, NOT USED BY K2APPTRACKER
 	enum JointRotationTrackingOption
 	{
 		// Default - internal
