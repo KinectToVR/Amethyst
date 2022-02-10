@@ -39,9 +39,6 @@ namespace winrt::KinectToVR::implementation
         void NavView_BackRequested(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewBackRequestedEventArgs const& args);
         void ContentFrame_NavigationFailed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs const& e);
 
-        // NavView_SelectionChanged is not used in this example, but is shown for completeness.
-        // You'll typically handle either ItemInvoked or SelectionChanged to perform navigation,
-        // but not both.
         void NavView_Navigate(
             std::wstring navItemTag,
             Microsoft::UI::Xaml::Media::Animation::NavigationTransitionInfo const& transitionInfo);

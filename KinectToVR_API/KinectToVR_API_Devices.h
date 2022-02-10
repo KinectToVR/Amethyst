@@ -171,9 +171,63 @@ namespace ktvr
 		bool flipSupported = true;
 		bool appOrientationSupported = true;
 
-		std::array<Eigen::Vector3f, 25> jointPositions = {Eigen::Vector3f(0.f, 0.f, 0.f)};
-		std::array<Eigen::Quaternionf, 25> jointOrientations = {Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f)};
-		std::array<JointTrackingState, 25> trackingStates = {State_NotTracked};
+		std::array<Eigen::Vector3f, 25> jointPositions = {
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f),
+			Eigen::Vector3f(0.f, 0.f, 0.f)
+		};
+
+		std::array<Eigen::Quaternionf, 25> jointOrientations = {
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
+			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f)
+		};
+
+		std::array<JointTrackingState, 25> trackingStates = {}; // State_NotTracked
 
 		class FailedKinectInitialization : public std::exception
 		{

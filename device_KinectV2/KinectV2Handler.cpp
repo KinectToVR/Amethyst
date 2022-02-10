@@ -199,6 +199,9 @@ void KinectV2Handler::updateParseFrame()
 			/* Copy joint orientations */
 			for (int k = 0; k < ktvr::Joint_Total; ++k)
 			{
+				// Don't copy ankle rotations - we're SLERP'ing them
+				if (k == ktvr::Joint_AnkleLeft || k == JointType_AnkleRight)continue;
+
 				jointOrientations[k].w() = boneOrientations[globalIndex[k]].Orientation.
 				                                                            w;
 				jointOrientations[k].x() = boneOrientations[globalIndex[k]].Orientation.
@@ -208,6 +211,49 @@ void KinectV2Handler::updateParseFrame()
 				jointOrientations[k].z() = boneOrientations[globalIndex[k]].Orientation.
 				                                                            z;
 			}
+
+			/* Fix feet orientation */
+
+			// Yes, dear mathematician...
+			// I'm applying the main rotation to the actual offset, quite the reverse innit?
+			// So, MS has decided that we're all are crabs. No jokes here. We're damn crabs.
+			// And so, I've decided to ditch this trend and still stay vampi.. I mean human.
+
+			// Anyway, slerp is slowing down the afterparty kinect v2 which wants everyone
+			// to shake and express self greatness 
+			// (or just tracks every damn molecule which shakes due to the internal heat)
+
+			jointOrientations[ktvr::Joint_AnkleLeft] =
+				jointOrientations[ktvr::Joint_AnkleLeft].slerp(
+					0.7f, Eigen::Quaternionf(
+						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
+						Orientation.w,
+						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
+						Orientation.x,
+						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
+						Orientation.y,
+						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
+						Orientation.z
+					)) *
+				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+					* Eigen::AngleAxisf(3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+					* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+
+			jointOrientations[ktvr::Joint_AnkleRight] =
+				jointOrientations[ktvr::Joint_AnkleRight].slerp(
+					0.7f, Eigen::Quaternionf(
+						boneOrientations[globalIndex[
+							ktvr::Joint_AnkleRight]].Orientation.w,
+						boneOrientations[globalIndex[
+							ktvr::Joint_AnkleRight]].Orientation.x,
+						boneOrientations[globalIndex[
+							ktvr::Joint_AnkleRight]].Orientation.y,
+						boneOrientations[globalIndex[
+							ktvr::Joint_AnkleRight]].Orientation.z
+					)) *
+				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+					* Eigen::AngleAxisf(-3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+					* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
 
 			newBodyFrameArrived = false;
 			break; // Only first skeleton

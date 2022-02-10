@@ -681,7 +681,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 		// Wait for a mode switch
 		while (!k2app::interfacing::calibration_modeSwap && !k2app::interfacing::calibration_confirm)
 		{
-			const double _multiplexer = k2app::interfacing::calibration_fineTune ? .001 : .01;
+			const double _multiplexer = k2app::interfacing::calibration_fineTune ? .0015 : .015;
 
 			(*calibrationTranslation)(0) +=
 				k2app::interfacing::calibration_joystick_positions[0][0] * _multiplexer; // Left X
@@ -715,16 +715,18 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 		// Cache the calibration first_time
 		calibration_first_time = false;
 
-		// Sleep on UI
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
-		Sleep(300);
-		co_await ui_thread;
+		// Sleep on UI -> wait for mode switch
+		{
+			winrt::apartment_context ui_thread;
+			co_await winrt::resume_background();
+			Sleep(300);
+			co_await ui_thread;
+		}
 
 		// Wait for a mode switch
 		while (!k2app::interfacing::calibration_modeSwap && !k2app::interfacing::calibration_confirm)
 		{
-			const double _multiplexer = k2app::interfacing::calibration_fineTune ? 1.0 : 0.1;
+			const double _multiplexer = k2app::interfacing::calibration_fineTune ? 0.1 : 1.0;
 
 			temp_yaw +=
 				(k2app::interfacing::calibration_joystick_positions[0][0] * 3.14159265358979323846 / 280.) *
@@ -752,6 +754,14 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 
 			// Exit if aborted
 			if (!CalibrationPending)break;
+		}
+
+		// Sleep on UI -> wait for mode switch
+		{
+			winrt::apartment_context ui_thread;
+			co_await winrt::resume_background();
+			Sleep(300);
+			co_await ui_thread;
 		}
 
 		// Play mode swap sound

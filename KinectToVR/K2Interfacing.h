@@ -478,6 +478,9 @@ namespace k2app
 		{
 			using namespace shared::devices;
 
+			// Ditch this if not loaded yet
+			if (waistJointOptionBox.get() == nullptr)return;
+
 			// Optionally fix combos for disabled trackers -> joint selectors for base
 			waistJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0]);
 			if (!k2app::K2Settings.isJointEnabled[0])

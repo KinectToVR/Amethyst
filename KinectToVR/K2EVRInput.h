@@ -58,14 +58,12 @@ namespace k2app::K2EVRInput
 		bool InitInputActions()
 		{
 			// Find the absolute path of manifest
-			boost::filesystem::path absoluteManifestPath;
-			try
+			boost::filesystem::path absoluteManifestPath =
+				boost::dll::program_location().parent_path() / m_actionManifestPath;
+
+			if (!exists(absoluteManifestPath))
 			{
-				absoluteManifestPath = boost::filesystem::canonical(m_actionManifestPath);
-			}
-			catch (...)
-			{
-				LOG(ERROR) << "Action manifest was not found in the current directory.";
+				LOG(ERROR) << "Action manifest was not found in the program (exe) directory.";
 				return false;
 			}
 

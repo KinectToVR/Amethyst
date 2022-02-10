@@ -115,7 +115,7 @@ namespace winrt::KinectToVR::implementation
 	MainWindow::MainWindow()
 	{
 		InitializeComponent();
-
+		
 		// Set up logging
 		google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("KinectToVR_K2App").c_str());
 		// Log everything >=INFO to same file

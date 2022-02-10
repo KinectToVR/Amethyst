@@ -30,7 +30,7 @@ namespace k2app
 		// Extended Kalman
 		k2_PositionTrackingFilter_Kalman,
 		// Filter Off
-		k2_NoPositionTrackingFilter 
+		k2_NoPositionTrackingFilter
 	};
 
 	// Tracking filter option enumeration - rotation
@@ -41,29 +41,24 @@ namespace k2app
 		// Spherical interpolation, but slower
 		k2_OrientationTrackingFilter_SLERP_Slow,
 		// Filter Off
-		k2_NoOrientationTrackingFilter 
+		k2_NoOrientationTrackingFilter
 	};
 
 	class K2AppTracker : public ktvr::K2TrackerBase
 	{
 	public:
 		// Default constructors
-		K2AppTracker() :
-			lastLERPPosition{ pose.position },
-			lastSLERPOrientation{ pose.orientation },
-			lastSLERPSlowOrientation{ pose.orientation }
+		K2AppTracker()
 		{
 			// Init the Kalman filter
 			for (auto& filter : kalmanFilter)
 				filter.init();
 		}
+
 		~K2AppTracker() = default;
 
 		// Custom constructor for role+serial
-		K2AppTracker(std::string const& _serial, ktvr::ITrackerType const& _role) :
-			lastLERPPosition{ pose.position },
-			lastSLERPOrientation{ pose.orientation },
-			lastSLERPSlowOrientation{ pose.orientation }
+		K2AppTracker(std::string const& _serial, ktvr::ITrackerType const& _role)
 		{
 			// Copy serial and role
 			data.serial = _serial;
@@ -90,15 +85,16 @@ namespace k2app
 		{
 			/* Update the Kalman filter */
 			Eigen::VectorXd y[3] = {
-					Eigen::VectorXd(1), Eigen::VectorXd(1), Eigen::VectorXd(1)
-			}, u(1); // c == 1
+				                Eigen::VectorXd(1), Eigen::VectorXd(1), Eigen::VectorXd(1)
+			                }, u(1); // c == 1
 
 			y[0] << pose.position.x();
 			y[1] << pose.position.y();
 			y[2] << pose.position.z();
 			u << 0; // zero control input
 
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 3; i++)
+			{
 				kalmanFilter[i].predict(u);
 				kalmanFilter[i].update(y[i]);
 			}
@@ -293,16 +289,17 @@ namespace k2app
 		}
 
 		// Internal filters' datas
-		Eigen::Vector3f kalmanPosition = Eigen::Vector3f(),
-		                lowPassPosition = Eigen::Vector3f(), LERPPosition = Eigen::Vector3f();
+		Eigen::Vector3f kalmanPosition = Eigen::Vector3f(0, 0, 0),
+		                lowPassPosition = Eigen::Vector3f(0, 0, 0),
+		                LERPPosition = Eigen::Vector3f(0, 0, 0);
 
-		Eigen::Quaternionf SLERPOrientation = Eigen::Quaternionf(),
-		                   SLERPSlowOrientation = Eigen::Quaternionf();
+		Eigen::Quaternionf SLERPOrientation = Eigen::Quaternionf(1, 0, 0, 0),
+		                   SLERPSlowOrientation = Eigen::Quaternionf(1, 0, 0, 0);
 
 		// LERP data's backup
-		Eigen::Vector3f lastLERPPosition;
-		Eigen::Quaternionf lastSLERPOrientation,
-		                   lastSLERPSlowOrientation;
+		Eigen::Vector3f lastLERPPosition = Eigen::Vector3f(0, 0, 0);
+		Eigen::Quaternionf lastSLERPOrientation = Eigen::Quaternionf(1, 0, 0, 0),
+		                   lastSLERPSlowOrientation = Eigen::Quaternionf(1, 0, 0, 0);
 
 		template <class Archive>
 		void serialize(Archive& ar, const unsigned int version)
