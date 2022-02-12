@@ -151,7 +151,11 @@ namespace ktvr
 		[[nodiscard]] bool isSkeletonTracked() const { return skeletonTracked; }
 
 		// Should be set up at construction
+		// Mark this as false ALSO if your device supports 360 tracking by itself
 		[[nodiscard]] bool isFlipSupported() const { return flipSupported; } // Flip block
+		
+		// Should be set up at construction
+		// This will allow Amethyst to calculate rotations by itself, additionally
 		[[nodiscard]] bool isAppOrientationSupported() const { return appOrientationSupported; } // Math-based
 
 		/* Helper functions which may be internally called by the device plugin */

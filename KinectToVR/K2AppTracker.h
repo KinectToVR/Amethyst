@@ -117,13 +117,15 @@ namespace k2app
 
 		void updateOrientationFilters()
 		{
+			// ik that's a bunch of normalizations but we really idk what tf can happen sometimes
+
 			/* Update the SLERP filter */
-			SLERPOrientation = lastSLERPOrientation.slerp(0.6, pose.orientation);
-			lastSLERPOrientation = pose.orientation; // Backup the orientation
+			SLERPOrientation = lastSLERPOrientation.normalized().slerp(0.5, pose.orientation.normalized());
+			lastSLERPOrientation = pose.orientation.normalized(); // Backup the orientation
 
 			/* Update the Slower SLERP filter */
-			SLERPSlowOrientation = lastSLERPSlowOrientation.slerp(0.3, pose.orientation);
-			lastSLERPSlowOrientation = pose.orientation; // Backup the orientation
+			SLERPSlowOrientation = lastSLERPSlowOrientation.normalized().slerp(0.2, pose.orientation.normalized());
+			lastSLERPSlowOrientation = pose.orientation.normalized(); // Backup the orientation
 		}
 
 		// Get filtered data

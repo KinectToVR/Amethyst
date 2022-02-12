@@ -495,13 +495,16 @@ namespace k2app
 				rightFootJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
 			// Optionally fix combos for disabled trackers -> joint selectors for override
-			waistPositionOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0] && k2app::K2Settings.isPositionOverriddenJoint[0]);
-			waistRotationOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0] && k2app::K2Settings.isRotationOverriddenJoint[0]);
+			waistPositionOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[0] && k2app::K2Settings.isPositionOverriddenJoint[0]);
+			waistRotationOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[0] && k2app::K2Settings.isRotationOverriddenJoint[0]);
 
 			overrideWaistPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0]);
 			overrideWaistRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0]);
 
-			if (!k2app::K2Settings.isJointEnabled[0]) {
+			if (!k2app::K2Settings.isJointEnabled[0])
+			{
 				overrideWaistPosition.get()->IsChecked(false);
 				overrideWaistRotation.get()->IsChecked(false);
 
@@ -509,13 +512,16 @@ namespace k2app
 				waistRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 			}
 
-			leftFootPositionOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1] && k2app::K2Settings.isPositionOverriddenJoint[1]);
-			leftFootRotationOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+			leftFootPositionOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[1] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+			leftFootRotationOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[1] && k2app::K2Settings.isRotationOverriddenJoint[1]);
 
 			overrideLeftFootPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
 			overrideLeftFootRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
 
-			if (!k2app::K2Settings.isJointEnabled[1]) {
+			if (!k2app::K2Settings.isJointEnabled[1])
+			{
 				overrideLeftFootPosition.get()->IsChecked(false);
 				overrideLeftFootRotation.get()->IsChecked(false);
 
@@ -523,13 +529,16 @@ namespace k2app
 				leftFootRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 			}
 
-			rightFootPositionOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2] && k2app::K2Settings.isPositionOverriddenJoint[2]);
-			rightFootRotationOverrideOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2] && k2app::K2Settings.isRotationOverriddenJoint[2]);
+			rightFootPositionOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[2] && k2app::K2Settings.isPositionOverriddenJoint[2]);
+			rightFootRotationOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[2] && k2app::K2Settings.isRotationOverriddenJoint[2]);
 
 			overrideRightFootPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2]);
 			overrideRightFootRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2]);
 
-			if (!k2app::K2Settings.isJointEnabled[2]) {
+			if (!k2app::K2Settings.isJointEnabled[2])
+			{
 				overrideRightFootPosition.get()->IsChecked(false);
 				overrideRightFootRotation.get()->IsChecked(false);
 
@@ -629,6 +638,53 @@ namespace k2app
 			inline float plugins_getHMDOrientationYaw()
 			{
 				return std::get<float>(vrHMDPose);
+			}
+		}
+
+		namespace overrides
+		{
+			inline ktvr::ITrackedJointType getFlippedJointType(ktvr::ITrackedJointType _joint, bool _flip = true)
+			{
+				if (!_flip)return _joint; // Just return the same one
+
+				// Return the flipped joint
+				switch (_joint)
+				{
+				default: return ktvr::Joint_Head;
+
+				case ktvr::Joint_Head: return ktvr::Joint_Head;
+				case ktvr::Joint_Neck: return ktvr::Joint_Neck;
+				case ktvr::Joint_SpineShoulder: return ktvr::Joint_SpineShoulder;
+
+				case ktvr::Joint_ShoulderLeft: return ktvr::Joint_ShoulderRight;
+				case ktvr::Joint_ElbowLeft: return ktvr::Joint_ElbowRight;
+				case ktvr::Joint_WristLeft: return ktvr::Joint_WristRight;
+				case ktvr::Joint_HandLeft: return ktvr::Joint_HandRight;
+				case ktvr::Joint_HandTipLeft: return ktvr::Joint_HandTipRight;
+				case ktvr::Joint_ThumbLeft: return ktvr::Joint_ThumbRight;
+
+				case ktvr::Joint_ShoulderRight: return ktvr::Joint_ShoulderLeft;
+				case ktvr::Joint_ElbowRight: return ktvr::Joint_ElbowLeft;
+				case ktvr::Joint_WristRight: return ktvr::Joint_WristLeft;
+				case ktvr::Joint_HandRight: return ktvr::Joint_HandLeft;
+				case ktvr::Joint_HandTipRight: return ktvr::Joint_HandTipLeft;
+				case ktvr::Joint_ThumbRight: return ktvr::Joint_ThumbLeft;
+
+				case ktvr::Joint_SpineMiddle: return ktvr::Joint_SpineMiddle;
+				case ktvr::Joint_SpineWaist: return ktvr::Joint_SpineWaist;
+
+				case ktvr::Joint_HipLeft: return ktvr::Joint_HipRight;
+				case ktvr::Joint_KneeLeft: return ktvr::Joint_KneeRight;
+				case ktvr::Joint_AnkleLeft: return ktvr::Joint_AnkleRight;
+				case ktvr::Joint_FootLeft: return ktvr::Joint_FootRight;
+
+				case ktvr::Joint_HipRight: return ktvr::Joint_HipLeft;
+				case ktvr::Joint_KneeRight: return ktvr::Joint_KneeLeft;
+				case ktvr::Joint_AnkleRight: return ktvr::Joint_AnkleLeft;
+				case ktvr::Joint_FootRight: return ktvr::Joint_FootLeft;
+
+				case ktvr::Joint_Total: return ktvr::Joint_Total;
+				}
 			}
 		}
 	}
