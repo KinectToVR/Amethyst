@@ -86,7 +86,7 @@ namespace ktvr
 		K2_Character_Unknown,
 		// NO mathbased, only [ head, waist, ankles ]
 		K2_Character_Basic,
-		// SUP mathbased, only [ head, waist, knees, ankles, foot_tips ]
+		// SUP mathbased, only [ head, elbows, waist, knees, ankles, foot_tips ]
 		K2_Character_Simple,
 		// SUP mathbased, [ everything ]
 		K2_Character_Full
@@ -94,6 +94,57 @@ namespace ktvr
 
 	// Alias for code readability
 	typedef int JointTrackingState, K2DeviceType, K2DeviceCharacteristics, MessageType, MessageCode;
+
+	// Tracking Device Joint class for client plugins
+	class K2TrackedJoint
+	{
+		// Named joint, provides pos, rot, state and ofc name
+	public:
+		K2TrackedJoint()
+		{
+		}
+
+		K2TrackedJoint(std::string name) : jointName{std::move(name)}
+		{
+		}
+
+		K2TrackedJoint(Eigen::Vector3f const& pos, Eigen::Quaternionf const& rot,
+		               JointTrackingState const& state, std::string const& name) :
+			jointOrientation{rot}, jointPosition{pos},
+			trackingState{state}, jointName{name}
+		{
+		}
+
+		std::string getJointName() { return jointName; } // Custom name
+
+		Eigen::Vector3f getJointPosition() { return jointPosition; }
+		Eigen::Quaternionf getJointOrientation() { return jointOrientation; }
+		JointTrackingState getTrackingState() { return trackingState; }
+
+		// For servers!
+		void update(Eigen::Vector3f position,
+		            Eigen::Quaternionf orientation,
+		            JointTrackingState state)
+		{
+			jointPosition = position;
+			jointOrientation = orientation;
+			trackingState = state;
+		}
+
+		// For servers!
+		void update(JointTrackingState state)
+		{
+			trackingState = state;
+		}
+
+	protected:
+		// Tracker should be centered automatically
+		Eigen::Quaternionf jointOrientation = Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f);
+		Eigen::Vector3f jointPosition = Eigen::Vector3f(0.f, 0.f, 0.f);
+		JointTrackingState trackingState = State_NotTracked;
+
+		std::string jointName = "Name not set";
+	};
 
 	// Tracking Device class for client plugins to base on [KINECT]
 	class K2TrackingDeviceBase_KinectBasis
@@ -153,7 +204,7 @@ namespace ktvr
 		// Should be set up at construction
 		// Mark this as false ALSO if your device supports 360 tracking by itself
 		[[nodiscard]] bool isFlipSupported() const { return flipSupported; } // Flip block
-		
+
 		// Should be set up at construction
 		// This will allow Amethyst to calculate rotations by itself, additionally
 		[[nodiscard]] bool isAppOrientationSupported() const { return appOrientationSupported; } // Math-based
@@ -162,6 +213,14 @@ namespace ktvr
 		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
 		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
 		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
+
+		/*
+		 * Helper to get all joints' positions from the app,
+		 * which are sent to the openvr server driver.
+		 * Note: if joint's unused, its trackingState will be 0
+		 * Note: Waist,LFoot,RFoot,LElbow,RElbow,LKnee,RKnee
+		 */
+		std::array<K2TrackedJoint, 7> (*getAppJointPoses)();
 
 	protected:
 		K2DeviceCharacteristics deviceCharacteristics = K2_Character_Unknown;
@@ -242,50 +301,6 @@ namespace ktvr
 		} FailedKinectInitialization;
 	};
 
-	// Tracking Device Joint class for client plugins to base on [PSMS]
-	class K2TrackedJoint
-	{
-		// Named joint, provides pos, rot, state and ofc name
-	public:
-		K2TrackedJoint()
-		{
-		}
-
-		K2TrackedJoint(std::string name) : jointName{std::move(name)}
-		{
-		}
-
-		std::string getJointName() { return jointName; } // Custom name
-
-		Eigen::Vector3f getJointPosition() { return jointPosition; }
-		Eigen::Quaternionf getJointOrientation() { return jointOrientation; }
-		JointTrackingState getTrackingState() { return trackingState; }
-
-		// For servers!
-		void update(Eigen::Vector3f position,
-		            Eigen::Quaternionf orientation,
-		            JointTrackingState state)
-		{
-			jointPosition = position;
-			jointOrientation = orientation;
-			trackingState = state;
-		}
-
-		// For servers!
-		void update(JointTrackingState state)
-		{
-			trackingState = state;
-		}
-
-	protected:
-		// Tracker should be centered automatically
-		Eigen::Quaternionf jointOrientation = Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f);
-		Eigen::Vector3f jointPosition = Eigen::Vector3f(0.f, 0.f, 0.f);
-		JointTrackingState trackingState = State_NotTracked;
-
-		std::string jointName = "Name not set";
-	};
-
 	// Tracking Device class for client plugins to base on [PSMS]
 	class K2TrackingDeviceBase_JointsBasis
 	{
@@ -343,6 +358,14 @@ namespace ktvr
 		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
 		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
 		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
+
+		/*
+		 * Helper to get all joints' positions from the app,
+		 * which are sent to the openvr server driver.
+		 * Note: if joint's unused, its trackingState will be 0
+		 * Note: Waist,LFoot,RFoot,LElbow,RElbow,LKnee,RKnee
+		 */
+		std::array<K2TrackedJoint, 7> (*getAppJointPoses)();
 
 	protected:
 		K2DeviceType deviceType = K2_Unknown;

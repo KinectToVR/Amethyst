@@ -11,7 +11,11 @@ namespace k2app
 		inline std::vector<K2AppTracker> K2TrackersVector{
 			K2AppTracker("LHR-CB9AD1T0", ktvr::ITrackerType::Tracker_Waist),
 			K2AppTracker("LHR-CB9AD1T1", ktvr::ITrackerType::Tracker_LeftFoot),
-			K2AppTracker("LHR-CB9AD1T2", ktvr::ITrackerType::Tracker_RightFoot)
+			K2AppTracker("LHR-CB9AD1T2", ktvr::ITrackerType::Tracker_RightFoot),
+			K2AppTracker("LHR-CB9AD1T3", ktvr::ITrackerType::Tracker_LeftElbow),
+			K2AppTracker("LHR-CB9AD1T4", ktvr::ITrackerType::Tracker_RightElbow),
+			K2AppTracker("LHR-CB9AD1T5", ktvr::ITrackerType::Tracker_LeftKnee),
+			K2AppTracker("LHR-CB9AD1T6", ktvr::ITrackerType::Tracker_RightKnee)
 		};
 
 		inline std::pair<Eigen::Vector3f, Eigen::Vector3f> // Position helpers for k2 devices -> Base, Override
@@ -100,16 +104,21 @@ namespace k2app
 				K2TrackersVector.at(1).id = 1; // L
 				K2TrackersVector.at(2).id = 2; // R
 
+				K2TrackersVector.at(3).id = 2; // LE
+				K2TrackersVector.at(4).id = 2; // RE
+				K2TrackersVector.at(5).id = 2; // LK
+				K2TrackersVector.at(6).id = 2; // RK
+
 				LOG(INFO) << "[K2Interfacing] App will be using K2Driver's default prepended trackers!";
 
 				// Helper bool array
-				std::array<bool, 3> spawned = {false, false, false};
+				std::array<bool, 7> spawned = {false, false, false, false, false, false, false};
 
 				// Try 3 times
 				for (int i = 0; i < 3; i++)
 				{
-					// Add only default trackers from the vector (0-2)
-					for (int t = 0; t < 3; t++)
+					// Add only default trackers from the vector (0-2) & (3-6)
+					for (int t = 0; t < 7; t++)
 					{
 						if (k2app::K2Settings.isJointEnabled[t])
 						{
@@ -147,12 +156,6 @@ namespace k2app
 							}
 							else
 								LOG(ERROR) << "Not spawning active tracker since its id is -1";
-						}
-						else
-						{
-							spawned[t] = true; // Hacky hack
-							LOG(INFO) << "Not spawning tracker with serial " + K2TrackersVector.at(t).data.serial +
-								" because it is disabled in settings.";
 						}
 					}
 				}
@@ -494,6 +497,22 @@ namespace k2app
 			if (!k2app::K2Settings.isJointEnabled[2])
 				rightFootJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
+			leftElbowJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[3]);
+			if (!k2app::K2Settings.isJointEnabled[3])
+				leftElbowJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+
+			rightElbowJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[4]);
+			if (!k2app::K2Settings.isJointEnabled[4])
+				rightElbowJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+
+			leftKneeJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[5]);
+			if (!k2app::K2Settings.isJointEnabled[5])
+				leftKneeJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+
+			rightKneeJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[6]);
+			if (!k2app::K2Settings.isJointEnabled[6])
+				rightKneeJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+			
 			// Optionally fix combos for disabled trackers -> joint selectors for override
 			waistPositionOverrideOptionBox.get()->IsEnabled(
 				k2app::K2Settings.isJointEnabled[0] && k2app::K2Settings.isPositionOverriddenJoint[0]);
@@ -545,6 +564,75 @@ namespace k2app
 				rightFootPositionOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 				rightFootRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 			}
+
+			leftElbowPositionOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[3] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+			leftElbowRotationOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[3] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+
+			overrideLeftElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			overrideLeftElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+
+			if (!k2app::K2Settings.isJointEnabled[3])
+			{
+				overrideLeftElbowPosition.get()->IsChecked(false);
+				overrideLeftElbowRotation.get()->IsChecked(false);
+
+				leftElbowPositionOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+				leftElbowRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+			}
+
+			rightElbowPositionOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[4] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+			rightElbowRotationOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[4] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+
+			overrideRightElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			overrideRightElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+
+			if (!k2app::K2Settings.isJointEnabled[4])
+			{
+				overrideRightElbowPosition.get()->IsChecked(false);
+				overrideRightElbowRotation.get()->IsChecked(false);
+
+				rightElbowPositionOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+				rightElbowRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+			}
+
+			leftKneePositionOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[5] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+			leftKneeRotationOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[5] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+
+			overrideLeftKneePosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			overrideLeftKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+
+			if (!k2app::K2Settings.isJointEnabled[5])
+			{
+				overrideLeftKneePosition.get()->IsChecked(false);
+				overrideLeftKneeRotation.get()->IsChecked(false);
+
+				leftKneePositionOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+				leftKneeRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+			}
+
+			rightKneePositionOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[6] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+			rightKneeRotationOverrideOptionBox.get()->IsEnabled(
+				k2app::K2Settings.isJointEnabled[6] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+
+			overrideRightKneePosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			overrideRightKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+
+			if (!k2app::K2Settings.isJointEnabled[6])
+			{
+				overrideRightKneePosition.get()->IsChecked(false);
+				overrideRightKneeRotation.get()->IsChecked(false);
+
+				rightKneePositionOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+				rightKneeRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
+			}
+
 		}
 
 		// Get the quaternion representing the rotation
@@ -638,6 +726,20 @@ namespace k2app
 			inline float plugins_getHMDOrientationYaw()
 			{
 				return std::get<float>(vrHMDPose);
+			}
+
+			inline std::array<ktvr::K2TrackedJoint, 7> plugins_getAppJointPoses()
+			{
+				return std::array<ktvr::K2TrackedJoint, 7>
+				{
+					K2TrackersVector.at(0).getK2TrackedJoint(K2Settings.isJointEnabled[0], "Waist"),
+					K2TrackersVector.at(1).getK2TrackedJoint(K2Settings.isJointEnabled[1], "Left Foot"),
+					K2TrackersVector.at(2).getK2TrackedJoint(K2Settings.isJointEnabled[2], "Right Foot"),
+					K2TrackersVector.at(3).getK2TrackedJoint(K2Settings.isJointEnabled[3], "Left Elbow"),
+					K2TrackersVector.at(4).getK2TrackedJoint(K2Settings.isJointEnabled[4], "Right Elbow"),
+					K2TrackersVector.at(5).getK2TrackedJoint(K2Settings.isJointEnabled[5], "Left Knee"),
+					K2TrackersVector.at(6).getK2TrackedJoint(K2Settings.isJointEnabled[6], "Right Knee"),
+				};
 			}
 		}
 

@@ -1162,11 +1162,15 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 						sk_dot(boneLines[0], boneLines[1],
 						       joints[ktvr::Joint_Head], states[ktvr::Joint_Head]);
 
+						// Left Elbow
+						sk_dot(boneLines[2], boneLines[3],
+							joints[ktvr::Joint_ElbowLeft], states[ktvr::Joint_ElbowLeft]);
+
+						// Right Elbow
+						sk_dot(boneLines[4], boneLines[5],
+							joints[ktvr::Joint_ElbowRight], states[ktvr::Joint_ElbowRight]);
+
 						// Empty lines
-						boneLines[2] = Shapes::Line();
-						boneLines[3] = Shapes::Line();
-						boneLines[4] = Shapes::Line();
-						boneLines[5] = Shapes::Line();
 						boneLines[6] = Shapes::Line();
 						boneLines[7] = Shapes::Line();
 						boneLines[8] = Shapes::Line();

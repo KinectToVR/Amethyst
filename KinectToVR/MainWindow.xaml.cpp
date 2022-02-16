@@ -115,7 +115,7 @@ namespace winrt::KinectToVR::implementation
 	MainWindow::MainWindow()
 	{
 		InitializeComponent();
-		
+
 		// Set up logging
 		google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("KinectToVR_K2App").c_str());
 		// Log everything >=INFO to same file
@@ -213,13 +213,7 @@ namespace winrt::KinectToVR::implementation
 							auto device_name = root.get<std::string>("device_name");
 							auto device_type = root.get<std::string>("device_type");
 
-							auto linked_dll_path = root.get<std::string>("linked_dll_path");
-
-							if (root.find("linked_dll_path") == root.not_found())
-								linked_dll_path = "none"; // Self-fix or smth?
-
-							LOG(INFO) << "Found tracking device with:\n - name: " << device_name <<
-								"\n - type: " << device_type << "\n - linked dll: " << linked_dll_path;
+							LOG(INFO) << "Found tracking device with:\n - name: " << device_name;
 
 							auto deviceDllPath = entry.path() / "bin" / "win64" / ("device_" + device_name + ".dll");
 
@@ -227,7 +221,23 @@ namespace winrt::KinectToVR::implementation
 							{
 								LOG(INFO) << "Found the device's driver dll, now checking dependencies...";
 
-								if (exists(linked_dll_path) || linked_dll_path == "none")
+								bool _found = true; // assume success
+
+								// Check for deez dlls
+								if (root.find("linked_dll_path") != root.not_found())
+								{
+									BOOST_FOREACH(boost::property_tree::ptree::value_type & v,
+									              root.get_child("linked_dll_path"))
+										if (!exists(v.second.get_value<std::string>()))
+										{
+											_found = false; // Mark as failed
+											LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
+												std::string>();
+										}
+								}
+								// Else continue
+
+								if (_found)
 								{
 									LOG(INFO) << "Found the device's dependency dll, now loading...";
 
@@ -274,6 +284,9 @@ namespace winrt::KinectToVR::implementation
 													pDevice->getHMDOrientationYaw =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
 
+													pDevice->getAppJointPoses =
+														k2app::interfacing::plugins::plugins_getAppJointPoses;
+
 													// Push the device to pointers' vector
 													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
 
@@ -302,6 +315,9 @@ namespace winrt::KinectToVR::implementation
 													pDevice->getHMDOrientationYaw =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
 
+													pDevice->getAppJointPoses =
+														k2app::interfacing::plugins::plugins_getAppJointPoses;
+
 													// Push the device to pointers' vector
 													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
 
@@ -319,11 +335,11 @@ namespace winrt::KinectToVR::implementation
 												{
 													LOG(INFO) << "Registered tracking device with:\n - name: " <<
 														device_name << "\n - type: " << device_type <<
-														"\n - linked dll: " << linked_dll_path <<
 														"\n - blocks flip: " << blocks_flip <<
 														"\n - supports math-based orientation: " << supports_math <<
 
-														"\nat index " << TrackingDevices::TrackingDevicesVector.size() - 1;
+														"\nat index " << TrackingDevices::TrackingDevicesVector.size() -
+														1;
 
 													LOG(INFO) << "Device status (should be 'not initialized'): \n[\n" <<
 														stat << "\n]\n";
@@ -380,7 +396,7 @@ namespace winrt::KinectToVR::implementation
 					// k2app::K2Settings.trackingDeviceID must be read from settings before!
 					if (TrackingDevices::TrackingDevicesVector.size() > 0)
 					{
-						if (TrackingDevices::TrackingDevicesVector.size() <= k2app::K2Settings.trackingDeviceID)
+						if (TrackingDevices::TrackingDevicesVector.size() < k2app::K2Settings.trackingDeviceID)
 							k2app::K2Settings.trackingDeviceID = 0; // Select the first one
 
 						// Init the device (base)
@@ -508,7 +524,8 @@ namespace winrt::KinectToVR::implementation
 
 						// Update the UI
 						TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-						TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
+						TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
+						// Auto-handles if none
 					}
 					else // Log and exit, we have nothing to do
 					{

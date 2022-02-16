@@ -5,7 +5,7 @@
     xmlns:local="using:KinectToVR"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
+    mc:Ignorable="d" Loaded="ConsolePage_Loaded"
     NavigationCacheMode="Required"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
@@ -18,7 +18,84 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+        <CheckBox Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top"
+                  Checked="ExpCheckBox_Checked" Unchecked="ExpCheckBox_Unchecked"
+                  Margin="0,20,55,0" />
+
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
+                      x:Name="ExpScrollViewer" Visibility="Collapsed"
+                      VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
+
+            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
+
+                <TextBlock FontWeight="SemiBold" Text="Experimental Features"
+                           FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
+
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="9*" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+                               Opacity="1" Text="Enable additional tracking points (elbows and knees)"
+                               Margin="30,0,0,10" Grid.Column="0" />
+                    <CheckBox HorizontalAlignment="Left" VerticalAlignment="Center"
+                              MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="True" x:Name="ToggleMoreTrackers"
+                              Checked="ToggleMoreTrackers_Checked" Unchecked="ToggleMoreTrackers_Unchecked"/>
+                </Grid>
+
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="5*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                               Text="Language:" Margin="0,0,20,0" Grid.Column="0" />
+
+                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                              Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                              x:Name="LanguageOptionBox" Grid.Column="1">
+                        <x:String>English</x:String>
+                    </ComboBox>
+                </Grid>
+
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="9*" />
+                        <ColumnDefinition Width="2.8*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+
+                    <ToggleButton Grid.Column="1" Height="40" x:Name="ToggleTrackingButton"
+                                  Checked="ToggleTrackingButton_Checked"
+                                  Unchecked="ToggleTrackingButton_Unchecked"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                  Content="Freeze Tracking" FontSize="16" />
+
+                    <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
+                                   Text="You can freeze tracking for trackers to stop moving,"
+                                   Margin="0,0,0,0" Foreground="LightGray" />
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
+                                   Text="this is not saved or session-persistent."
+                                   Margin="0,0,0,0" Foreground="LightGray" />
+                    </StackPanel>
+
+                </Grid>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+
+        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
+                      x:Name="ThanksScrollViewer"
                       VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -34,12 +111,12 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="まあ？ ようこそ！❤️" FontSize="85" Margin="0,0,0,0" Grid.Row="1"
-                           HorizontalAlignment="Center" ToolTipService.ToolTip="" />
+                           HorizontalAlignment="Center" />
 
                 <Image Source="ms-appx:///Assets/hug.gif" HorizontalAlignment="Center"
                        VerticalAlignment="Center" Margin="25" Grid.Row="3" />
 
-                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                             Orientation="Vertical" Grid.Row="5">
 
                     <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29" Margin="0,5,0,0">

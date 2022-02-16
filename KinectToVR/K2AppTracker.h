@@ -69,6 +69,12 @@ namespace k2app
 				filter.init();
 		}
 
+		ktvr::K2TrackedJoint getK2TrackedJoint(bool const& _state, std::string const& _name)
+		{
+			return ktvr::K2TrackedJoint(pose.position, pose.orientation, 
+				_state ? ktvr::State_Tracked : ktvr::State_NotTracked, _name);
+		}
+
 		// Position filter update option
 		int positionTrackingFilterOption = k2_NoPositionTrackingFilter,
 		    orientationTrackingFilterOption = k2_NoOrientationTrackingFilter;

@@ -106,7 +106,15 @@ namespace k2app
 				deviceErrorGrid,
 				trackingDeviceChangePanel,
 				overridesControls,
-				jointBasisControls;
+				overridesControls_1,
+				jointBasisControls,
+				jointBasisControls_1;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander>
+				jointBasisDropDown,
+				jointBasisDropDown_1,
+				overridesDropDown,
+				overridesDropDown_1;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ListView> devicesListView;
 
@@ -119,12 +127,24 @@ namespace k2app
 				waistJointOptionBox,
 				leftFootJointOptionBox,
 				rightFootJointOptionBox,
+				leftElbowJointOptionBox,
+				rightElbowJointOptionBox,
+				leftKneeJointOptionBox,
+				rightKneeJointOptionBox,
 				rightFootPositionOverrideOptionBox,
 				rightFootRotationOverrideOptionBox,
 				leftFootRotationOverrideOptionBox,
 				leftFootPositionOverrideOptionBox,
 				waistRotationOverrideOptionBox,
-				waistPositionOverrideOptionBox;
+				waistPositionOverrideOptionBox,
+				leftElbowPositionOverrideOptionBox,
+				leftElbowRotationOverrideOptionBox,
+				rightElbowPositionOverrideOptionBox,
+				rightElbowRotationOverrideOptionBox,
+				leftKneePositionOverrideOptionBox,
+				leftKneeRotationOverrideOptionBox,
+				rightKneePositionOverrideOptionBox,
+				rightKneeRotationOverrideOptionBox;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>
 				overrideWaistPosition,
@@ -132,7 +152,15 @@ namespace k2app
 				overrideLeftFootPosition,
 				overrideLeftFootRotation,
 				overrideRightFootPosition,
-				overrideRightFootRotation;
+				overrideRightFootRotation,
+				overrideLeftElbowPosition,
+				overrideLeftElbowRotation,
+				overrideRightElbowPosition,
+				overrideRightElbowRotation,
+				overrideLeftKneePosition,
+				overrideLeftKneeRotation,
+				overrideRightKneePosition,
+				overrideRightKneeRotation;
 
 			inline std::binary_semaphore smphSignalCurrentUpdate{0},
 			                             smphSignalStartMain{0};

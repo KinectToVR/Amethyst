@@ -61,6 +61,46 @@ public:
 				ktvr::ITrackerType::Tracker_RightFoot, // Role
 				false // AutoAdd
 			)
+		)),
+
+		K2Tracker( // LEFT ELBOW TRACKER
+			ktvr::K2TrackerBase(
+			ktvr::K2TrackerPose(), // Default pose 
+			ktvr::K2TrackerData(
+				"LHR-CB9AD1T3", // Serial
+				ktvr::ITrackerType::Tracker_LeftElbow, // Role
+				false // AutoAdd
+			)
+		)),
+
+		K2Tracker( // RIGHT ELBOW TRACKER
+			ktvr::K2TrackerBase(
+			ktvr::K2TrackerPose(), // Default pose 
+			ktvr::K2TrackerData(
+				"LHR-CB9AD1T4", // Serial
+				ktvr::ITrackerType::Tracker_RightElbow, // Role
+				false // AutoAdd
+			)
+		)),
+
+		K2Tracker( // LEFT KNEE TRACKER
+			ktvr::K2TrackerBase(
+			ktvr::K2TrackerPose(), // Default pose 
+			ktvr::K2TrackerData(
+				"LHR-CB9AD1T5", // Serial
+				ktvr::ITrackerType::Tracker_LeftKnee, // Role
+				false // AutoAdd
+			)
+		)),
+
+		K2Tracker( // RIGHT KNEE TRACKER
+			ktvr::K2TrackerBase(
+			ktvr::K2TrackerPose(), // Default pose 
+			ktvr::K2TrackerData(
+				"LHR-CB9AD1T6", // Serial
+				ktvr::ITrackerType::Tracker_RightKnee, // Role
+				false // AutoAdd
+			)
 		))
 	};
 };

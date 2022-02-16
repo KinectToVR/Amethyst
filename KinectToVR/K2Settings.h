@@ -13,13 +13,13 @@
 #include "K2AppTracker.h"
 #define _PI 3.14159265358979323846
 
-template<typename T>
+template <typename T>
 T degreesToRadians(T angleDegrees)
 {
 	return angleDegrees * _PI / 180.0;
 }
 
-template<typename T>
+template <typename T>
 T radiansToDegrees(T angleRadians)
 {
 	return angleRadians * 180.0 / _PI;
@@ -35,7 +35,7 @@ namespace k2app
 		template <class Archive>
 		void serialize(Archive& archive, unsigned int version)
 		{
-			archive& BOOST_SERIALIZATION_NVP(trackingDeviceID)
+			archive & BOOST_SERIALIZATION_NVP(trackingDeviceID)
 				& BOOST_SERIALIZATION_NVP(overrideDeviceID)
 				& BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
 				& BOOST_SERIALIZATION_NVP(positionOverrideJointID)
@@ -72,22 +72,29 @@ namespace k2app
 
 		// Joint tracking device selected joints: 0s are the defaults
 		// On the first time refresh the joints are assigned like W0 L1 R2
-		std::array<uint32_t, 3> // W,L,R -> always >= 0
-		selectedTrackedJointID = {0, 0, 0};
+		std::array<uint32_t, 7> // W,L,R -> always >= 0
+		selectedTrackedJointID = {0, 0, 0, 0, 0, 0, 0};
+
+		// Waist, Left Foot, Right Foot,
+		// Left Elbow, Right Elbow, Left Knee, Right Knee
 
 		// Current override joints: W,L,R and 0 is the default for waist
-		std::array<uint32_t, 3> // W,L,R -> always >= 0
-			positionOverrideJointID = {0, 0, 0},
-			rotationOverrideJointID = {0, 0, 0};
+		std::array<uint32_t, 7> // W,L,R -> always >= 0
+			positionOverrideJointID = {0, 0, 0, 0, 0, 0, 0},
+			rotationOverrideJointID = {0, 0, 0, 0, 0, 0, 0};
 
 		// Current override joints: W,L,R and true is the default for waist
-		std::array<bool, 3>
-			isPositionOverriddenJoint = {true, false, false},
-			isRotationOverriddenJoint = {true, false, false};
+		std::array<bool, 7>
+			isPositionOverriddenJoint = {true, false, false, false, false, false, false},
+			isRotationOverriddenJoint = {true, false, false, false, false, false, false};
 
 		// Joint offsets: W,L,R and pos/meters | rot/eulers(rad)
-		std::array<Eigen::Vector3d, 3>
+		std::array<Eigen::Vector3d, 7>
 			positionJointsOffsets = {
+				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0),
 				Eigen::Vector3d(0, 0, 0),
 				Eigen::Vector3d(0, 0, 0),
 				Eigen::Vector3d(0, 0, 0)
@@ -95,11 +102,19 @@ namespace k2app
 			rotationJointsOffsets = {
 				Eigen::Vector3d(0, 0, 0),
 				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0),
+				Eigen::Vector3d(0, 0, 0),
 				Eigen::Vector3d(0, 0, 0)
 			};
 
 		// Rotation tracking options: W,L,R and Internal is the default
-		std::array<JointRotationTrackingOption, 3> jointRotationTrackingOption = {
+		std::array<JointRotationTrackingOption, 7> jointRotationTrackingOption = {
+			k2_DeviceInferredRotation,
+			k2_DeviceInferredRotation,
+			k2_DeviceInferredRotation,
+			k2_DeviceInferredRotation,
 			k2_DeviceInferredRotation,
 			k2_DeviceInferredRotation,
 			k2_DeviceInferredRotation
@@ -116,9 +131,9 @@ namespace k2app
 
 		// Currently enabled (spawn-able) joints: W,L,R and true is the default
 		// Currently turned on (marked-as-online) joints: W,L,R and true is the default
-		std::array<bool, 3>
-			isJointEnabled = {true, true, true},
-			isJointTurnedOn = {true, true, true};
+		std::array<bool, 7>
+			isJointEnabled = {true, true, true, false, false, false, false},
+			isJointTurnedOn = {true, true, true, false, false, false, false};
 
 		// Automatically spawn enabled trackers on startup and off is the default
 		bool autoSpawnEnabledJoints = false;
@@ -143,7 +158,7 @@ namespace k2app
 		uint32_t calibrationPointsNumber = 3; // Always 3<=x<=5
 		// Calibration helpers - calibration method: auto?
 		std::pair<bool, bool> autoCalibration{false, false};
-
+		
 		/* Saving and loading part */
 
 		// Save settings with boost and output file stream
