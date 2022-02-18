@@ -278,19 +278,23 @@ namespace winrt::KinectToVR::implementation
 			});
 
 		// Add tracking devices here
-		for (auto const& trackingDevice : TrackingDevices::TrackingDevicesVector)
+		for (auto const& device : TrackingDevices::TrackingDevicesVector)
 		{
 			std::string deviceName = "[UNKNOWN]";
 
-			switch (trackingDevice.index())
+			switch (device.index())
 			{
 			case 0:
-				deviceName = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
-					(trackingDevice)->getDeviceName();
+				{
+					auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device);
+					deviceName = pDevice->getDeviceName();
+				}
 				break;
 			case 1:
-				deviceName = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
-					(trackingDevice)->getDeviceName();
+				{
+					auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
+					deviceName = pDevice->getDeviceName();
+				}
 				break;
 			}
 
