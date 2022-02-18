@@ -250,6 +250,11 @@ namespace winrt::KinectToVR::implementation
 		overrideRightKneePosition = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideRightKneePosition());
 		overrideRightKneeRotation = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideRightKneeRotation());
 
+		overridesDropDown = std::make_shared<Controls::Expander>(OverridesDropDown());
+		overridesDropDown_1 = std::make_shared<Controls::Expander>(OverridesDropDown_1());
+		jointBasisDropDown = std::make_shared<Controls::Expander>(JointBasisDropDown());
+		jointBasisDropDown_1 = std::make_shared<Controls::Expander>(JointBasisDropDown_1());
+
 		// Create tracking devices' list
 		static auto m_TrackingDevicesViewModels =
 			multi_threaded_observable_vector<KinectToVR::TrackingDevicesView>();
@@ -4682,4 +4687,40 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 	}
 
 	LOG(INFO) << "Changed the currently selected device to " << deviceName;
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::OverridesDropDown_Expanding(
+	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	overridesDropDown_1.get()->IsExpanded(false);
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::OverridesDropDown_1_Expanding(
+	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	overridesDropDown.get()->IsExpanded(false);
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::JointBasisDropDown_Expanding(
+	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	jointBasisDropDown_1.get()->IsExpanded(false);
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::JointBasisDropDown_1_Expanding(
+	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+{
+	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+	jointBasisDropDown.get()->IsExpanded(false);
 }

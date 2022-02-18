@@ -73,6 +73,34 @@ namespace winrt::KinectToVR::implementation
 		rightFootXNumberBox = std::make_shared<Controls::NumberBox>(RightFootXNumberBox());
 		rightFootYNumberBox = std::make_shared<Controls::NumberBox>(RightFootYNumberBox());
 		rightFootZNumberBox = std::make_shared<Controls::NumberBox>(RightFootZNumberBox());
+
+		leftElbowRollNumberBox = std::make_shared<Controls::NumberBox>(LeftElbowRollNumberBox());
+		leftElbowYawNumberBox = std::make_shared<Controls::NumberBox>(LeftElbowYawNumberBox());
+		leftElbowPitchNumberBox = std::make_shared<Controls::NumberBox>(LeftElbowPitchNumberBox());
+		leftElbowXNumberBox = std::make_shared<Controls::NumberBox>(LeftElbowXNumberBox());
+		leftElbowYNumberBox = std::make_shared<Controls::NumberBox>(LeftElbowYNumberBox());
+		leftElbowZNumberBox = std::make_shared<Controls::NumberBox>(LeftElbowZNumberBox());
+
+		rightElbowRollNumberBox = std::make_shared<Controls::NumberBox>(RightElbowRollNumberBox());
+		rightElbowYawNumberBox = std::make_shared<Controls::NumberBox>(RightElbowYawNumberBox());
+		rightElbowPitchNumberBox = std::make_shared<Controls::NumberBox>(RightElbowPitchNumberBox());
+		rightElbowXNumberBox = std::make_shared<Controls::NumberBox>(RightElbowXNumberBox());
+		rightElbowYNumberBox = std::make_shared<Controls::NumberBox>(RightElbowYNumberBox());
+		rightElbowZNumberBox = std::make_shared<Controls::NumberBox>(RightElbowZNumberBox());
+
+		leftKneeRollNumberBox = std::make_shared<Controls::NumberBox>(LeftKneeRollNumberBox());
+		leftKneeYawNumberBox = std::make_shared<Controls::NumberBox>(LeftKneeYawNumberBox());
+		leftKneePitchNumberBox = std::make_shared<Controls::NumberBox>(LeftKneePitchNumberBox());
+		leftKneeXNumberBox = std::make_shared<Controls::NumberBox>(LeftKneeXNumberBox());
+		leftKneeYNumberBox = std::make_shared<Controls::NumberBox>(LeftKneeYNumberBox());
+		leftKneeZNumberBox = std::make_shared<Controls::NumberBox>(LeftKneeZNumberBox());
+
+		rightKneeRollNumberBox = std::make_shared<Controls::NumberBox>(RightKneeRollNumberBox());
+		rightKneeYawNumberBox = std::make_shared<Controls::NumberBox>(RightKneeYawNumberBox());
+		rightKneePitchNumberBox = std::make_shared<Controls::NumberBox>(RightKneePitchNumberBox());
+		rightKneeXNumberBox = std::make_shared<Controls::NumberBox>(RightKneeXNumberBox());
+		rightKneeYNumberBox = std::make_shared<Controls::NumberBox>(RightKneeYNumberBox());
+		rightKneeZNumberBox = std::make_shared<Controls::NumberBox>(RightKneeZNumberBox());
 	}
 }
 
@@ -106,6 +134,34 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 	k2app::shared::general::rightFootZNumberBox.get()->Value(
 		int(k2app::K2Settings.positionJointsOffsets[2].z() * 100.0));
 
+	k2app::shared::general::leftElbowXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[3].x() * 100.0));
+	k2app::shared::general::leftElbowYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[3].y() * 100.0));
+	k2app::shared::general::leftElbowZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[3].z() * 100.0));
+
+	k2app::shared::general::rightElbowXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[4].x() * 100.0));
+	k2app::shared::general::rightElbowYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[4].y() * 100.0));
+	k2app::shared::general::rightElbowZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[4].z() * 100.0));
+
+	k2app::shared::general::leftKneeXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[5].x() * 100.0));
+	k2app::shared::general::leftKneeYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[5].y() * 100.0));
+	k2app::shared::general::leftKneeZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[5].z() * 100.0));
+
+	k2app::shared::general::rightKneeXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[6].x() * 100.0));
+	k2app::shared::general::rightKneeYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[6].y() * 100.0));
+	k2app::shared::general::rightKneeZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[6].z() * 100.0));
+
 	k2app::shared::general::waistPitchNumberBox.get()->Value(
 		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].x())));
 	k2app::shared::general::waistYawNumberBox.get()->Value(
@@ -126,6 +182,34 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].y())));
 	k2app::shared::general::rightFootRollNumberBox.get()->Value(
 		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].z())));
+
+	k2app::shared::general::leftElbowRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].x())));
+	k2app::shared::general::leftElbowYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].y())));
+	k2app::shared::general::leftElbowPitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].z())));
+
+	k2app::shared::general::rightElbowRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].x())));
+	k2app::shared::general::rightElbowYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].y())));
+	k2app::shared::general::rightElbowPitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].z())));
+
+	k2app::shared::general::leftKneeRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].x())));
+	k2app::shared::general::leftKneeYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].y())));
+	k2app::shared::general::leftKneePitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].z())));
+
+	k2app::shared::general::rightKneeRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].x())));
+	k2app::shared::general::rightKneeYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].y())));
+	k2app::shared::general::rightKneePitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].z())));
 
 	// Notice that we're finished
 	pending_offsets_update = false;
@@ -168,16 +252,19 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
 	// Notice that we're gonna change some values
 	pending_offsets_update = true;
 
-	k2app::shared::general::waistXNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].x() * 100.0));
-	k2app::shared::general::waistYNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].y() * 100.0));
-	k2app::shared::general::waistZNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].z() * 100.0));
+	k2app::shared::general::waistXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[0].x() * 100.0));
+	k2app::shared::general::waistYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[0].y() * 100.0));
+	k2app::shared::general::waistZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[0].z() * 100.0));
 
-	k2app::shared::general::leftFootXNumberBox.get()->
-	                                           Value(int(k2app::K2Settings.positionJointsOffsets[1].x() * 100.0));
-	k2app::shared::general::leftFootYNumberBox.get()->
-	                                           Value(int(k2app::K2Settings.positionJointsOffsets[1].y() * 100.0));
-	k2app::shared::general::leftFootZNumberBox.get()->
-	                                           Value(int(k2app::K2Settings.positionJointsOffsets[1].z() * 100.0));
+	k2app::shared::general::leftFootXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[1].x() * 100.0));
+	k2app::shared::general::leftFootYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[1].y() * 100.0));
+	k2app::shared::general::leftFootZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[1].z() * 100.0));
 
 	k2app::shared::general::rightFootXNumberBox.get()->Value(
 		int(k2app::K2Settings.positionJointsOffsets[2].x() * 100.0));
@@ -185,6 +272,34 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
 		int(k2app::K2Settings.positionJointsOffsets[2].y() * 100.0));
 	k2app::shared::general::rightFootZNumberBox.get()->Value(
 		int(k2app::K2Settings.positionJointsOffsets[2].z() * 100.0));
+
+	k2app::shared::general::leftElbowXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[3].x() * 100.0));
+	k2app::shared::general::leftElbowYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[3].y() * 100.0));
+	k2app::shared::general::leftElbowZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[3].z() * 100.0));
+
+	k2app::shared::general::rightElbowXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[4].x() * 100.0));
+	k2app::shared::general::rightElbowYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[4].y() * 100.0));
+	k2app::shared::general::rightElbowZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[4].z() * 100.0));
+
+	k2app::shared::general::leftKneeXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[5].x() * 100.0));
+	k2app::shared::general::leftKneeYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[5].y() * 100.0));
+	k2app::shared::general::leftKneeZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[5].z() * 100.0));
+
+	k2app::shared::general::rightKneeXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[6].x() * 100.0));
+	k2app::shared::general::rightKneeYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[6].y() * 100.0));
+	k2app::shared::general::rightKneeZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[6].z() * 100.0));
 
 	k2app::shared::general::waistPitchNumberBox.get()->Value(
 		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].x())));
@@ -206,6 +321,34 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
 		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].y())));
 	k2app::shared::general::rightFootRollNumberBox.get()->Value(
 		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].z())));
+
+	k2app::shared::general::leftElbowRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].x())));
+	k2app::shared::general::leftElbowYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].y())));
+	k2app::shared::general::leftElbowPitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].z())));
+
+	k2app::shared::general::rightElbowRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].x())));
+	k2app::shared::general::rightElbowYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].y())));
+	k2app::shared::general::rightElbowPitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].z())));
+
+	k2app::shared::general::leftKneeRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].x())));
+	k2app::shared::general::leftKneeYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].y())));
+	k2app::shared::general::leftKneePitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].z())));
+
+	k2app::shared::general::rightKneeRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].x())));
+	k2app::shared::general::rightKneeYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].y())));
+	k2app::shared::general::rightKneePitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].z())));
 
 	// Notice that we're finished
 	pending_offsets_update = false;
@@ -246,6 +389,34 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsFrontendValueChanged
 	if (isnan(k2app::shared::general::rightFootZNumberBox.get()->Value()))
 		k2app::shared::general::rightFootZNumberBox.get()->Value(0.0);
 
+	if (isnan(k2app::shared::general::leftElbowXNumberBox.get()->Value()))
+		k2app::shared::general::leftElbowXNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::leftElbowYNumberBox.get()->Value()))
+		k2app::shared::general::leftElbowYNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::leftElbowZNumberBox.get()->Value()))
+		k2app::shared::general::leftElbowZNumberBox.get()->Value(0.0);
+
+	if (isnan(k2app::shared::general::rightElbowXNumberBox.get()->Value()))
+		k2app::shared::general::rightElbowXNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::rightElbowYNumberBox.get()->Value()))
+		k2app::shared::general::rightElbowYNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::rightElbowZNumberBox.get()->Value()))
+		k2app::shared::general::rightElbowZNumberBox.get()->Value(0.0);
+
+	if (isnan(k2app::shared::general::leftKneeXNumberBox.get()->Value()))
+		k2app::shared::general::leftKneeXNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::leftKneeYNumberBox.get()->Value()))
+		k2app::shared::general::leftKneeYNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::leftKneeZNumberBox.get()->Value()))
+		k2app::shared::general::leftKneeZNumberBox.get()->Value(0.0);
+
+	if (isnan(k2app::shared::general::rightKneeXNumberBox.get()->Value()))
+		k2app::shared::general::rightKneeXNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::rightKneeYNumberBox.get()->Value()))
+		k2app::shared::general::rightKneeYNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::rightKneeZNumberBox.get()->Value()))
+		k2app::shared::general::rightKneeZNumberBox.get()->Value(0.0);
+
 	if (isnan(k2app::shared::general::waistPitchNumberBox.get()->Value()))
 		k2app::shared::general::waistPitchNumberBox.get()->Value(0.0);
 	if (isnan(k2app::shared::general::waistYawNumberBox.get()->Value()))
@@ -266,6 +437,34 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsFrontendValueChanged
 		k2app::shared::general::rightFootYawNumberBox.get()->Value(0.0);
 	if (isnan(k2app::shared::general::rightFootRollNumberBox.get()->Value()))
 		k2app::shared::general::rightFootRollNumberBox.get()->Value(0.0);
+
+	if (isnan(k2app::shared::general::leftElbowPitchNumberBox.get()->Value()))
+		k2app::shared::general::leftElbowPitchNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::leftElbowYawNumberBox.get()->Value()))
+		k2app::shared::general::leftElbowYawNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::leftElbowRollNumberBox.get()->Value()))
+		k2app::shared::general::leftElbowRollNumberBox.get()->Value(0.0);
+
+	if (isnan(k2app::shared::general::rightElbowPitchNumberBox.get()->Value()))
+		k2app::shared::general::rightElbowPitchNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::rightElbowYawNumberBox.get()->Value()))
+		k2app::shared::general::rightElbowYawNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::rightElbowRollNumberBox.get()->Value()))
+		k2app::shared::general::rightElbowRollNumberBox.get()->Value(0.0);
+
+	if (isnan(k2app::shared::general::leftKneePitchNumberBox.get()->Value()))
+		k2app::shared::general::leftKneePitchNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::leftKneeYawNumberBox.get()->Value()))
+		k2app::shared::general::leftKneeYawNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::leftKneeRollNumberBox.get()->Value()))
+		k2app::shared::general::leftKneeRollNumberBox.get()->Value(0.0);
+
+	if (isnan(k2app::shared::general::rightKneePitchNumberBox.get()->Value()))
+		k2app::shared::general::rightKneePitchNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::rightKneeYawNumberBox.get()->Value()))
+		k2app::shared::general::rightKneeYawNumberBox.get()->Value(0.0);
+	if (isnan(k2app::shared::general::rightKneeRollNumberBox.get()->Value()))
+		k2app::shared::general::rightKneeRollNumberBox.get()->Value(0.0);
 
 	// Notice that we're finished
 	pending_offsets_update = false;
@@ -292,6 +491,34 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsFrontendValueChanged
 	k2app::K2Settings.positionJointsOffsets[2].z() = double(k2app::shared::general::rightFootZNumberBox.get()->Value())
 		/ 100.0;
 
+	k2app::K2Settings.positionJointsOffsets[3].x() = double(k2app::shared::general::leftElbowXNumberBox.get()->Value())
+		/ 100.0;
+	k2app::K2Settings.positionJointsOffsets[3].y() = double(k2app::shared::general::leftElbowYNumberBox.get()->Value())
+		/ 100.0;
+	k2app::K2Settings.positionJointsOffsets[3].z() = double(k2app::shared::general::leftElbowZNumberBox.get()->Value())
+		/ 100.0;
+
+	k2app::K2Settings.positionJointsOffsets[4].x() = double(k2app::shared::general::rightElbowXNumberBox.get()->Value())
+		/ 100.0;
+	k2app::K2Settings.positionJointsOffsets[4].y() = double(k2app::shared::general::rightElbowYNumberBox.get()->Value())
+		/ 100.0;
+	k2app::K2Settings.positionJointsOffsets[4].z() = double(k2app::shared::general::rightElbowZNumberBox.get()->Value())
+		/ 100.0;
+
+	k2app::K2Settings.positionJointsOffsets[5].x() = double(k2app::shared::general::leftKneeXNumberBox.get()->Value()) /
+		100.0;
+	k2app::K2Settings.positionJointsOffsets[5].y() = double(k2app::shared::general::leftKneeYNumberBox.get()->Value()) /
+		100.0;
+	k2app::K2Settings.positionJointsOffsets[5].z() = double(k2app::shared::general::leftKneeZNumberBox.get()->Value()) /
+		100.0;
+
+	k2app::K2Settings.positionJointsOffsets[6].x() = double(k2app::shared::general::rightKneeXNumberBox.get()->Value())
+		/ 100.0;
+	k2app::K2Settings.positionJointsOffsets[6].y() = double(k2app::shared::general::rightKneeYNumberBox.get()->Value())
+		/ 100.0;
+	k2app::K2Settings.positionJointsOffsets[6].z() = double(k2app::shared::general::rightKneeZNumberBox.get()->Value())
+		/ 100.0;
+
 	k2app::K2Settings.rotationJointsOffsets[0].x() = degreesToRadians(
 		k2app::shared::general::waistPitchNumberBox.get()->Value());
 	k2app::K2Settings.rotationJointsOffsets[0].y() = degreesToRadians(
@@ -312,6 +539,34 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsFrontendValueChanged
 		k2app::shared::general::rightFootYawNumberBox.get()->Value());
 	k2app::K2Settings.rotationJointsOffsets[2].z() = degreesToRadians(
 		k2app::shared::general::rightFootRollNumberBox.get()->Value());
+
+	k2app::K2Settings.rotationJointsOffsets[3].x() = degreesToRadians(
+		k2app::shared::general::leftElbowPitchNumberBox.get()->Value());
+	k2app::K2Settings.rotationJointsOffsets[3].y() = degreesToRadians(
+		k2app::shared::general::leftElbowYawNumberBox.get()->Value());
+	k2app::K2Settings.rotationJointsOffsets[3].z() = degreesToRadians(
+		k2app::shared::general::leftElbowRollNumberBox.get()->Value());
+
+	k2app::K2Settings.rotationJointsOffsets[4].x() = degreesToRadians(
+		k2app::shared::general::rightElbowPitchNumberBox.get()->Value());
+	k2app::K2Settings.rotationJointsOffsets[4].y() = degreesToRadians(
+		k2app::shared::general::rightElbowYawNumberBox.get()->Value());
+	k2app::K2Settings.rotationJointsOffsets[4].z() = degreesToRadians(
+		k2app::shared::general::rightElbowRollNumberBox.get()->Value());
+
+	k2app::K2Settings.rotationJointsOffsets[5].x() = degreesToRadians(
+		k2app::shared::general::leftKneePitchNumberBox.get()->Value());
+	k2app::K2Settings.rotationJointsOffsets[5].y() = degreesToRadians(
+		k2app::shared::general::leftKneeYawNumberBox.get()->Value());
+	k2app::K2Settings.rotationJointsOffsets[5].z() = degreesToRadians(
+		k2app::shared::general::leftKneeRollNumberBox.get()->Value());
+
+	k2app::K2Settings.rotationJointsOffsets[6].x() = degreesToRadians(
+		k2app::shared::general::rightKneePitchNumberBox.get()->Value());
+	k2app::K2Settings.rotationJointsOffsets[6].y() = degreesToRadians(
+		k2app::shared::general::rightKneeYawNumberBox.get()->Value());
+	k2app::K2Settings.rotationJointsOffsets[6].z() = degreesToRadians(
+		k2app::shared::general::rightKneeRollNumberBox.get()->Value());
 }
 
 
@@ -908,16 +1163,19 @@ void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	pending_offsets_update = true;
 
 	// Load values into number boxes
-	k2app::shared::general::waistXNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].x() * 100.0));
-	k2app::shared::general::waistYNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].y() * 100.0));
-	k2app::shared::general::waistZNumberBox.get()->Value(int(k2app::K2Settings.positionJointsOffsets[0].z() * 100.0));
+	k2app::shared::general::waistXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[0].x() * 100.0));
+	k2app::shared::general::waistYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[0].y() * 100.0));
+	k2app::shared::general::waistZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[0].z() * 100.0));
 
-	k2app::shared::general::leftFootXNumberBox.get()->
-	                                           Value(int(k2app::K2Settings.positionJointsOffsets[1].x() * 100.0));
-	k2app::shared::general::leftFootYNumberBox.get()->
-	                                           Value(int(k2app::K2Settings.positionJointsOffsets[1].y() * 100.0));
-	k2app::shared::general::leftFootZNumberBox.get()->
-	                                           Value(int(k2app::K2Settings.positionJointsOffsets[1].z() * 100.0));
+	k2app::shared::general::leftFootXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[1].x() * 100.0));
+	k2app::shared::general::leftFootYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[1].y() * 100.0));
+	k2app::shared::general::leftFootZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[1].z() * 100.0));
 
 	k2app::shared::general::rightFootXNumberBox.get()->Value(
 		int(k2app::K2Settings.positionJointsOffsets[2].x() * 100.0));
@@ -925,6 +1183,34 @@ void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 		int(k2app::K2Settings.positionJointsOffsets[2].y() * 100.0));
 	k2app::shared::general::rightFootZNumberBox.get()->Value(
 		int(k2app::K2Settings.positionJointsOffsets[2].z() * 100.0));
+
+	k2app::shared::general::leftElbowXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[3].x() * 100.0));
+	k2app::shared::general::leftElbowYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[3].y() * 100.0));
+	k2app::shared::general::leftElbowZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[3].z() * 100.0));
+
+	k2app::shared::general::rightElbowXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[4].x() * 100.0));
+	k2app::shared::general::rightElbowYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[4].y() * 100.0));
+	k2app::shared::general::rightElbowZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[4].z() * 100.0));
+
+	k2app::shared::general::leftKneeXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[5].x() * 100.0));
+	k2app::shared::general::leftKneeYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[5].y() * 100.0));
+	k2app::shared::general::leftKneeZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[5].z() * 100.0));
+
+	k2app::shared::general::rightKneeXNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[6].x() * 100.0));
+	k2app::shared::general::rightKneeYNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[6].y() * 100.0));
+	k2app::shared::general::rightKneeZNumberBox.get()->Value(
+		int(k2app::K2Settings.positionJointsOffsets[6].z() * 100.0));
 
 	k2app::shared::general::waistPitchNumberBox.get()->Value(
 		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].x())));
@@ -946,6 +1232,34 @@ void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].y())));
 	k2app::shared::general::rightFootRollNumberBox.get()->Value(
 		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].z())));
+
+	k2app::shared::general::leftElbowRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].x())));
+	k2app::shared::general::leftElbowYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].y())));
+	k2app::shared::general::leftElbowPitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].z())));
+
+	k2app::shared::general::rightElbowRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].x())));
+	k2app::shared::general::rightElbowYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].y())));
+	k2app::shared::general::rightElbowPitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].z())));
+
+	k2app::shared::general::leftKneeRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].x())));
+	k2app::shared::general::leftKneeYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].y())));
+	k2app::shared::general::leftKneePitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].z())));
+
+	k2app::shared::general::rightKneeRollNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].x())));
+	k2app::shared::general::rightKneeYawNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].y())));
+	k2app::shared::general::rightKneePitchNumberBox.get()->Value(
+		(int)round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].z())));
 
 	// Notice that we're finished
 	pending_offsets_update = false;
@@ -1164,11 +1478,11 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 
 						// Left Elbow
 						sk_dot(boneLines[2], boneLines[3],
-							joints[ktvr::Joint_ElbowLeft], states[ktvr::Joint_ElbowLeft]);
+						       joints[ktvr::Joint_ElbowLeft], states[ktvr::Joint_ElbowLeft]);
 
 						// Right Elbow
 						sk_dot(boneLines[4], boneLines[5],
-							joints[ktvr::Joint_ElbowRight], states[ktvr::Joint_ElbowRight]);
+						       joints[ktvr::Joint_ElbowRight], states[ktvr::Joint_ElbowRight]);
 
 						// Empty lines
 						boneLines[6] = Shapes::Line();

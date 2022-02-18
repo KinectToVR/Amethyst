@@ -280,7 +280,7 @@
                         <!--W,L,R-->
 
                         <Expander Margin="40,15,30,0" IsExpanded="True" x:Name="OverridesDropDown"
-                                  ExpandDirection="Down" Visibility="Collapsed"
+                                  ExpandDirection="Down" Visibility="Collapsed" Expanding="OverridesDropDown_Expanding"
                                   HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
                             <Expander.Header>
@@ -306,6 +306,46 @@
                                         <RowDefinition Height="50" />
                                         <RowDefinition Height="50" />
                                     </Grid.RowDefinitions>
+
+                                    <!-- Background -->
+                                    <Grid Grid.Column="1" Grid.Row="0"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          CornerRadius="5,0,0,0" Canvas.ZIndex="-1" />
+                                    <Grid Grid.Column="2" Grid.Row="0"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          Canvas.ZIndex="-1" />
+                                    <Grid Grid.Column="3" Grid.Row="0"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          Canvas.ZIndex="-1" />
+                                    <Grid Grid.Column="4" Grid.Row="0"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          Canvas.ZIndex="-1" />
+                                    <Grid Grid.Column="5" Grid.Row="0"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          Canvas.ZIndex="-1" />
+                                    <Grid Grid.Column="6" Grid.Row="0"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          CornerRadius="0,5,0,0" Canvas.ZIndex="-1" />
+
+                                    <!-- Background -->
+                                    <Grid Grid.Column="1" Grid.Row="2"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          Canvas.ZIndex="-1" />
+                                    <Grid Grid.Column="2" Grid.Row="2"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          Canvas.ZIndex="-1" />
+                                    <Grid Grid.Column="3" Grid.Row="2"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          Canvas.ZIndex="-1" />
+                                    <Grid Grid.Column="4" Grid.Row="2"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          Canvas.ZIndex="-1" />
+                                    <Grid Grid.Column="5" Grid.Row="2"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          Canvas.ZIndex="-1" />
+                                    <Grid Grid.Column="6" Grid.Row="2"
+                                          Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
+                                          Canvas.ZIndex="-1" />
 
 
                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -494,7 +534,7 @@
                         <!--LE,RE,LK,RK-->
 
                         <Expander Margin="40,15,30,0" IsExpanded="False" x:Name="OverridesDropDown_1"
-                                  ExpandDirection="Down" Visibility="Collapsed"
+                                  ExpandDirection="Down" Visibility="Collapsed" Expanding="OverridesDropDown_1_Expanding"
                                   HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
                             <Expander.Header>
@@ -828,7 +868,7 @@
 
                         <Expander Margin="40,15,30,0" IsExpanded="True" x:Name="JointBasisDropDown"
                                   ExpandDirection="Down" Visibility="Collapsed" HorizontalContentAlignment="Stretch"
-                                  HorizontalAlignment="Stretch">
+                                  HorizontalAlignment="Stretch" Expanding="JointBasisDropDown_Expanding">
 
                             <Expander.Header>
                                 <TextBlock FontWeight="SemiBold" Text="Waist and Feet Trackers" />
@@ -939,7 +979,7 @@
 
                         <Expander Margin="40,15,30,0" IsExpanded="False" x:Name="JointBasisDropDown_1"
                                   ExpandDirection="Down" Visibility="Collapsed" HorizontalContentAlignment="Stretch"
-                                  HorizontalAlignment="Stretch">
+                                  HorizontalAlignment="Stretch" Expanding="JointBasisDropDown_1_Expanding">
 
                             <Expander.Header>
                                 <TextBlock FontWeight="SemiBold" Text="Elbow and Knee Trackers" />
@@ -1006,7 +1046,7 @@
 
                                     <TextBlock Grid.Column="1" Grid.Row="1" Width="130" Margin="0,0,0,0"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                               FontWeight="SemiBold" Text="Waist" HorizontalTextAlignment="Center" />
+                                               FontWeight="SemiBold" Text="Left Elbow" HorizontalTextAlignment="Center" />
 
                                     <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
                                               Height="45" Width="150" FontSize="15" FontWeight="SemiBold"
@@ -1022,7 +1062,7 @@
 
                                     <TextBlock Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                               FontWeight="SemiBold" Text="Left Foot" HorizontalTextAlignment="Center" />
+                                               FontWeight="SemiBold" Text="Right Elbow" HorizontalTextAlignment="Center" />
 
                                     <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
                                               Height="45" Width="150" FontSize="15" FontWeight="SemiBold"
@@ -1038,7 +1078,7 @@
 
                                     <TextBlock Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                               FontWeight="SemiBold" Text="Right Foot" HorizontalTextAlignment="Center" />
+                                               FontWeight="SemiBold" Text="Left Knee" HorizontalTextAlignment="Center" />
 
                                     <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
                                               Height="45" Width="150" FontSize="15" FontWeight="SemiBold"
@@ -1054,7 +1094,7 @@
 
                                     <TextBlock Grid.Column="1" Grid.Row="4" Width="130" Margin="0,0,0,0"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                               FontWeight="SemiBold" Text="Right Foot" HorizontalTextAlignment="Center" />
+                                               FontWeight="SemiBold" Text="Right Knee" HorizontalTextAlignment="Center" />
 
                                     <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0"
                                               Height="45" Width="150" FontSize="15" FontWeight="SemiBold"

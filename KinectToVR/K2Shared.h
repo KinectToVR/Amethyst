@@ -87,7 +87,35 @@ namespace k2app
 				rightFootPitchNumberBox,
 				rightFootXNumberBox,
 				rightFootYNumberBox,
-				rightFootZNumberBox;
+				rightFootZNumberBox,
+
+				leftElbowRollNumberBox,
+				leftElbowYawNumberBox,
+				leftElbowPitchNumberBox,
+				leftElbowXNumberBox,
+				leftElbowYNumberBox,
+				leftElbowZNumberBox,
+
+				rightElbowRollNumberBox,
+				rightElbowYawNumberBox,
+				rightElbowPitchNumberBox,
+				rightElbowXNumberBox,
+				rightElbowYNumberBox,
+				rightElbowZNumberBox,
+				leftKneeRollNumberBox,
+
+				leftKneeYawNumberBox,
+				leftKneePitchNumberBox,
+				leftKneeXNumberBox,
+				leftKneeYNumberBox,
+				leftKneeZNumberBox,
+
+				rightKneeRollNumberBox,
+				rightKneeYawNumberBox,
+				rightKneePitchNumberBox,
+				rightKneeXNumberBox,
+				rightKneeYNumberBox,
+				rightKneeZNumberBox;
 		}
 
 		namespace devices
@@ -174,6 +202,8 @@ namespace k2app
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBox>
 				waistRotationOptionBox,
 				feetRotationOptionBox,
+				elbowRotationOptionBox,
+				kneeRotationOptionBox,
 				positionFilterOptionBox;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem> softwareRotationItem;
@@ -183,6 +213,10 @@ namespace k2app
 				waistOnCheckbox,
 				leftFootOnCheckbox,
 				rightFootOnCheckbox,
+				leftElbowOnCheckBox,
+				rightElbowOnCheckBox,
+				leftKneeOnCheckBox,
+				rightKneeOnCheckBox,
 				autoSpawnCheckbox,
 				enableSoundsCheckbox;
 
@@ -191,9 +225,19 @@ namespace k2app
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
 				waistEnabledToggle,
 				leftFootEnabledToggle,
-				rightFootEnabledToggle;
+				rightFootEnabledToggle,
+				leftElbowEnabledToggle,
+				rightElbowEnabledToggle,
+				leftKneeEnabledToggle,
+				rightKneeEnabledToggle;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Slider> soundsVolumeSlider;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander>
+				rotationDropDown,
+				expRotationDropDown,
+				trackersDropDown,
+				expTrackersDropDown;
 		}
 	}
 }

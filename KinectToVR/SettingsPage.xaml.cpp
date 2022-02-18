@@ -29,6 +29,10 @@ namespace winrt::KinectToVR::implementation
 			std::make_shared<Controls::ComboBox>(WaistRotationOptionBox());
 		feetRotationOptionBox =
 			std::make_shared<Controls::ComboBox>(FeetRotationOptionBox());
+		elbowRotationOptionBox =
+			std::make_shared<Controls::ComboBox>(ElbowRotationOptionBox());
+		kneeRotationOptionBox =
+			std::make_shared<Controls::ComboBox>(KneeRotationOptionBox());
 		positionFilterOptionBox =
 			std::make_shared<Controls::ComboBox>(PositionFilterOptionBox());
 
@@ -39,6 +43,10 @@ namespace winrt::KinectToVR::implementation
 		waistOnCheckbox = std::make_shared<Controls::CheckBox>(WaistOnToggle());
 		leftFootOnCheckbox = std::make_shared<Controls::CheckBox>(LeftFootOnToggle());
 		rightFootOnCheckbox = std::make_shared<Controls::CheckBox>(RightFootOnToggle());
+		leftElbowOnCheckBox = std::make_shared<Controls::CheckBox>(LeftElbowOnToggle());
+		rightElbowOnCheckBox = std::make_shared<Controls::CheckBox>(RightElbowOnToggle());
+		leftKneeOnCheckBox = std::make_shared<Controls::CheckBox>(LeftKneeOnToggle());
+		rightKneeOnCheckBox = std::make_shared<Controls::CheckBox>(RightKneeOnToggle());
 		autoSpawnCheckbox = std::make_shared<Controls::CheckBox>(AutoSpawnCheckBox());
 		enableSoundsCheckbox = std::make_shared<Controls::CheckBox>(SoundsEnabledCheckBox());
 
@@ -47,6 +55,15 @@ namespace winrt::KinectToVR::implementation
 		waistEnabledToggle = std::make_shared<Controls::ToggleSwitch>(WaistEnabledToggle());
 		leftFootEnabledToggle = std::make_shared<Controls::ToggleSwitch>(LeftFootEnabledToggle());
 		rightFootEnabledToggle = std::make_shared<Controls::ToggleSwitch>(RightFootEnabledToggle());
+		leftElbowEnabledToggle = std::make_shared<Controls::ToggleSwitch>(LeftElbowEnabledToggle());
+		rightElbowEnabledToggle = std::make_shared<Controls::ToggleSwitch>(RightElbowEnabledToggle());
+		leftKneeEnabledToggle = std::make_shared<Controls::ToggleSwitch>(LeftKneeEnabledToggle());
+		rightKneeEnabledToggle = std::make_shared<Controls::ToggleSwitch>(RightKneeEnabledToggle());
+
+		rotationDropDown = std::make_shared<Controls::Expander>(RotationDropDown());
+		expRotationDropDown = std::make_shared<Controls::Expander>(ExpRotationDropDown());
+		trackersDropDown = std::make_shared<Controls::Expander>(TrackersDropDown());
+		expTrackersDropDown = std::make_shared<Controls::Expander>(ExpTrackersDropDown());
 
 		soundsVolumeSlider = std::make_shared<Controls::Slider>(SoundsVolumeSlider());
 	}
@@ -72,11 +89,28 @@ void trackersConfigChanged()
 	// Compare with saved settings and unlock the restart
 	k2app::shared::settings::restartButton.get()->IsEnabled(true);
 
+	// Also turn off waist rot combo if waist is turned off
+	k2app::shared::settings::
+		waistRotationOptionBox.get()->IsEnabled(
+			k2app::K2Settings.isJointEnabled[0]);
+
 	// Also turn off feet rot combo if both feet are turned off
 	k2app::shared::settings::
 		feetRotationOptionBox.get()->IsEnabled(
 			k2app::K2Settings.isJointEnabled[1] ||
 			k2app::K2Settings.isJointEnabled[2]);
+
+	// Also turn off elbow rot combo if both elbows are turned off
+	k2app::shared::settings::
+		elbowRotationOptionBox.get()->IsEnabled(
+			k2app::K2Settings.isJointEnabled[3] ||
+			k2app::K2Settings.isJointEnabled[4]);
+
+	// Also turn off knee rot combo if both knees are turned off
+	k2app::shared::settings::
+		kneeRotationOptionBox.get()->IsEnabled(
+			k2app::K2Settings.isJointEnabled[5] ||
+			k2app::K2Settings.isJointEnabled[6]);
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -144,6 +178,94 @@ void winrt::KinectToVR::implementation::SettingsPage::RightFootOnToggle_Unchecke
 	if (!settings_localInitFinished)return;
 
 	k2app::K2Settings.isJointEnabled[2] = false;
+	trackersConfigChanged();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::LeftElbowOnToggle_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[3] = true;
+	trackersConfigChanged();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::LeftElbowOnToggle_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[3] = false;
+	trackersConfigChanged();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::RightElbowOnToggle_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[4] = true;
+	trackersConfigChanged();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::RightElbowOnToggle_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[4] = false;
+	trackersConfigChanged();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::LeftKneeOnToggle_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[5] = true;
+	trackersConfigChanged();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::LeftKneeOnToggle_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[5] = false;
+	trackersConfigChanged();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::RightKneeOnToggle_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[6] = true;
+	trackersConfigChanged();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::RightKneeOnToggle_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointEnabled[6] = false;
 	trackersConfigChanged();
 }
 
@@ -236,6 +358,68 @@ void winrt::KinectToVR::implementation::SettingsPage::FeetRotationOptionBox_Sele
 }
 
 
+void winrt::KinectToVR::implementation::SettingsPage::ElbowRotationOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	switch (const uint32_t index = k2app::shared::settings::elbowRotationOptionBox.get()->SelectedIndex(); index)
+	{
+	// Device
+	case 0:
+		k2app::K2Settings.jointRotationTrackingOption[3] = k2app::k2_DeviceInferredRotation;
+		k2app::K2Settings.jointRotationTrackingOption[4] = k2app::k2_DeviceInferredRotation;
+		break;
+	// Headset
+	case 1:
+		k2app::K2Settings.jointRotationTrackingOption[3] = k2app::k2_FollowHMDRotation;
+		k2app::K2Settings.jointRotationTrackingOption[4] = k2app::k2_FollowHMDRotation;
+		break;
+	// Disable
+	case 2:
+		k2app::K2Settings.jointRotationTrackingOption[3] = k2app::k2_DisableJointRotation;
+		k2app::K2Settings.jointRotationTrackingOption[4] = k2app::k2_DisableJointRotation;
+		break;
+	}
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::KneeRotationOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	switch (const uint32_t index = k2app::shared::settings::kneeRotationOptionBox.get()->SelectedIndex(); index)
+	{
+	// Device
+	case 0:
+		k2app::K2Settings.jointRotationTrackingOption[5] = k2app::k2_DeviceInferredRotation;
+		k2app::K2Settings.jointRotationTrackingOption[6] = k2app::k2_DeviceInferredRotation;
+		break;
+	// Headset
+	case 1:
+		k2app::K2Settings.jointRotationTrackingOption[5] = k2app::k2_FollowHMDRotation;
+		k2app::K2Settings.jointRotationTrackingOption[6] = k2app::k2_FollowHMDRotation;
+		break;
+	// Disable
+	case 2:
+		k2app::K2Settings.jointRotationTrackingOption[5] = k2app::k2_DisableJointRotation;
+		k2app::K2Settings.jointRotationTrackingOption[6] = k2app::k2_DisableJointRotation;
+		break;
+	}
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
 void winrt::KinectToVR::implementation::SettingsPage::PositionFilterOptionBox_SelectionChanged(
 	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
@@ -307,6 +491,70 @@ void winrt::KinectToVR::implementation::SettingsPage::RightFootEnabledToggle_Tog
 	if (!settings_localInitFinished)return;
 
 	k2app::K2Settings.isJointTurnedOn[2] = RightFootEnabledToggle().IsOn();
+
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::LeftElbowEnabledToggle_Toggled(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointTurnedOn[3] = LeftElbowEnabledToggle().IsOn();
+
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::RightElbowEnabledToggle_Toggled(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointTurnedOn[4] = RightElbowEnabledToggle().IsOn();
+
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::LeftKneeEnabledToggle_Toggled(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointTurnedOn[5] = LeftKneeEnabledToggle().IsOn();
+
+	// Check if we've disabled any joints from spawning and disable they're mods
+	k2app::interfacing::devices_check_disabled_joints();
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::RightKneeEnabledToggle_Toggled(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	k2app::K2Settings.isJointTurnedOn[6] = RightKneeEnabledToggle().IsOn();
 
 	// Check if we've disabled any joints from spawning and disable they're mods
 	k2app::interfacing::devices_check_disabled_joints();
@@ -391,6 +639,7 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	positionFilterOptionBox.get()->SelectedIndex(
 		k2app::K2Settings.positionFilterOption); // Position
 
+	// Waist
 	switch (k2app::K2Settings.jointRotationTrackingOption[0]) // Waist
 	{
 	default:
@@ -410,6 +659,52 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	// Disable
 	case k2app::k2_DisableJointRotation:
 		waistRotationOptionBox.get()->SelectedIndex(k2app::k2_DisableJointRotation - 1); // -1 to skip app-based rot
+		break;
+	}
+
+	// Elbows
+	switch (k2app::K2Settings.jointRotationTrackingOption[3]) // LElbow
+	{
+	default:
+		elbowRotationOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
+	// Device
+	case k2app::k2_DeviceInferredRotation:
+		elbowRotationOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
+		break;
+	// Software
+	case k2app::k2_SoftwareCalculatedRotation: // If somehow...
+		elbowRotationOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
+		break;
+	// Headset
+	case k2app::k2_FollowHMDRotation:
+		elbowRotationOptionBox.get()->SelectedIndex(k2app::k2_FollowHMDRotation - 1); // -1 to skip app-based rot
+		break;
+	// Disable
+	case k2app::k2_DisableJointRotation:
+		elbowRotationOptionBox.get()->SelectedIndex(k2app::k2_DisableJointRotation - 1); // -1 to skip app-based rot
+		break;
+	}
+
+	// Knees
+	switch (k2app::K2Settings.jointRotationTrackingOption[3]) // LKnee
+	{
+	default:
+		kneeRotationOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
+	// Device
+	case k2app::k2_DeviceInferredRotation:
+		kneeRotationOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
+		break;
+	// Software
+	case k2app::k2_SoftwareCalculatedRotation: // If somehow...
+		kneeRotationOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
+		break;
+	// Headset
+	case k2app::k2_FollowHMDRotation:
+		kneeRotationOptionBox.get()->SelectedIndex(k2app::k2_FollowHMDRotation - 1); // -1 to skip app-based rot
+		break;
+	// Disable
+	case k2app::k2_DisableJointRotation:
+		kneeRotationOptionBox.get()->SelectedIndex(k2app::k2_DisableJointRotation - 1); // -1 to skip app-based rot
 		break;
 	}
 
@@ -434,10 +729,18 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	waistEnabledToggle.get()->IsOn(k2app::K2Settings.isJointTurnedOn[0]);
 	leftFootEnabledToggle.get()->IsOn(k2app::K2Settings.isJointTurnedOn[1]);
 	rightFootEnabledToggle.get()->IsOn(k2app::K2Settings.isJointTurnedOn[2]);
+	leftElbowEnabledToggle.get()->IsOn(k2app::K2Settings.isJointTurnedOn[3]);
+	rightElbowEnabledToggle.get()->IsOn(k2app::K2Settings.isJointTurnedOn[4]);
+	leftKneeEnabledToggle.get()->IsOn(k2app::K2Settings.isJointTurnedOn[5]);
+	rightKneeEnabledToggle.get()->IsOn(k2app::K2Settings.isJointTurnedOn[6]);
 
 	waistOnCheckbox.get()->IsChecked(k2app::K2Settings.isJointEnabled[0]);
 	leftFootOnCheckbox.get()->IsChecked(k2app::K2Settings.isJointEnabled[1]);
 	rightFootOnCheckbox.get()->IsChecked(k2app::K2Settings.isJointEnabled[2]);
+	leftElbowOnCheckBox.get()->IsChecked(k2app::K2Settings.isJointEnabled[3]);
+	rightElbowOnCheckBox.get()->IsChecked(k2app::K2Settings.isJointEnabled[4]);
+	leftKneeOnCheckBox.get()->IsChecked(k2app::K2Settings.isJointEnabled[5]);
+	rightKneeOnCheckBox.get()->IsChecked(k2app::K2Settings.isJointEnabled[6]);
 
 	// Also turn off feet rot combo if both feet are turned off
 	feetRotationOptionBox.get()->IsEnabled(
@@ -521,4 +824,39 @@ void winrt::KinectToVR::implementation::SettingsPage::SoundsVolumeSlider_ValueCh
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
+}
+
+void winrt::KinectToVR::implementation::SettingsPage::RotationDropDown_Expanding(
+	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+{
+	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
+	k2app::shared::settings::expRotationDropDown.get()->IsExpanded(false);
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::ExpRotationDropDown_Expanding(
+	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+{
+	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
+	k2app::shared::settings::rotationDropDown.get()->IsExpanded(false);
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::TrackersDropDown_Expanding(
+	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+{
+	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
+	k2app::shared::settings::expTrackersDropDown.get()->IsExpanded(false);
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::ExpTrackersDropDown_Expanding(
+	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+{
+	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
+	k2app::shared::settings::trackersDropDown.get()->IsExpanded(false);
 }

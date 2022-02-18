@@ -546,6 +546,702 @@
                                 </Grid>
                             </Grid>
                         </PivotItem>
+                        <PivotItem Header="Left Elbow">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees." />
+
+                                <Grid Grid.Column="0" Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Roll (Z):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftElbowRollNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftElbowYawNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Pitch (X):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftElbowPitchNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+
+                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters." />
+
+                                <Grid Grid.Column="0" Grid.Row="9">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="X (Right):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftElbowXNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Y (Up):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftElbowYNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="13">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Z (Front):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftElbowZNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                            </Grid>
+                        </PivotItem>
+                        <PivotItem Header="Right Elbow">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees." />
+
+                                <Grid Grid.Column="0" Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Roll (Z):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightElbowRollNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightElbowYawNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Pitch (X):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightElbowPitchNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+
+                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters." />
+
+                                <Grid Grid.Column="0" Grid.Row="9">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="X (Right):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightElbowXNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Y (Up):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightElbowYNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="13">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Z (Front):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightElbowZNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                            </Grid>
+                        </PivotItem>
+                        <PivotItem Header="Left Knee">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees." />
+
+                                <Grid Grid.Column="0" Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Roll (Z):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftKneeRollNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftKneeYawNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Pitch (X):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftKneePitchNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+
+                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters." />
+
+                                <Grid Grid.Column="0" Grid.Row="9">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="X (Right):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftKneeXNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Y (Up):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftKneeYNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="13">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Z (Front):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="LeftKneeZNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                            </Grid>
+                        </PivotItem>
+                        <PivotItem Header="Right Knee">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="50" />
+
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Rotation:" Grid.Row="1" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Rotation is in degrees." />
+
+                                <Grid Grid.Column="0" Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Roll (Z):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightKneeRollNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Yaw (Y):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightKneeYawNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Pitch (X):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightKneePitchNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="360"
+                                                    Minimum="0"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+
+                                <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20"
+                                           FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters." />
+
+                                <Grid Grid.Column="0" Grid.Row="9">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="X (Right):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightKneeXNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Y (Up):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightKneeYNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                                <Grid Grid.Column="0" Grid.Row="13">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="270" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Z (Front):" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0" Margin="20,0,0,0"
+                                               FontSize="17" FontWeight="SemiBold" />
+                                    <muxc:NumberBox x:Name="RightKneeZNumberBox"
+                                                    ValueChanged="OffsetsFrontendValueChanged"
+                                                    FontSize="26"
+                                                    FontWeight="Normal"
+                                                    Grid.Column="1"
+                                                    Maximum="1000"
+                                                    Minimum="-1000"
+                                                    Value="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    SpinButtonPlacementMode="Inline"
+                                                    SmallChange="1"
+                                                    Margin="10,0,0,0"
+                                                    LargeChange="10" />
+                                </Grid>
+                            </Grid>
+                        </PivotItem>
                     </Pivot>
 
                     <Grid Grid.Row="2" Margin="0,0,0,10" VerticalAlignment="Top">
