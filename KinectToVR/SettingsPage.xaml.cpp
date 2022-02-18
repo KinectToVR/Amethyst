@@ -686,7 +686,7 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	}
 
 	// Knees
-	switch (k2app::K2Settings.jointRotationTrackingOption[3]) // LKnee
+	switch (k2app::K2Settings.jointRotationTrackingOption[5]) // LKnee
 	{
 	default:
 		kneeRotationOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
