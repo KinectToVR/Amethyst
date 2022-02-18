@@ -104,10 +104,10 @@ namespace k2app
 				K2TrackersVector.at(1).id = 1; // L
 				K2TrackersVector.at(2).id = 2; // R
 
-				K2TrackersVector.at(3).id = 2; // LE
-				K2TrackersVector.at(4).id = 2; // RE
-				K2TrackersVector.at(5).id = 2; // LK
-				K2TrackersVector.at(6).id = 2; // RK
+				K2TrackersVector.at(3).id = 3; // LE
+				K2TrackersVector.at(4).id = 4; // RE
+				K2TrackersVector.at(5).id = 5; // LK
+				K2TrackersVector.at(6).id = 6; // RK
 
 				LOG(INFO) << "[K2Interfacing] App will be using K2Driver's default prepended trackers!";
 
@@ -156,6 +156,11 @@ namespace k2app
 							}
 							else
 								LOG(ERROR) << "Not spawning active tracker since its id is -1";
+						}
+						else
+						{
+							LOG(ERROR) << "Not spawning this tracker since it's disabled, marking as success.";
+							spawned[t] = true;
 						}
 					}
 				}
