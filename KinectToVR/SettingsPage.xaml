@@ -582,11 +582,13 @@
                 <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
                         x:Name="ResetButton" Width="270" Click="ResetButton_Click"
                         Content="Delete configuration and restart" FontSize="16" />
+
+                <!--TODO Re-enable and impl them-->
                 <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
-                        x:Name="ReRegisterButton" Width="270"
+                        x:Name="ReRegisterButton" Width="270" IsEnabled="False"
                         Content="Re-register SteamVR driver entry" FontSize="16" />
                 <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
-                        x:Name="ReManifestButton" Width="340"
+                        x:Name="ReManifestButton" Width="340" IsEnabled="False"
                         Content="Reinstall SteamVR input binding manifests" FontSize="16" />
 
             </StackPanel>

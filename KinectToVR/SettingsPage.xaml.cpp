@@ -567,6 +567,7 @@ void winrt::KinectToVR::implementation::SettingsPage::RightKneeEnabledToggle_Tog
 void winrt::KinectToVR::implementation::SettingsPage::RestartButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	ktvr::request_vr_restart<false>("SteamVR needs to be restarted to enable/disable trackers properly.");
 }
 
 

@@ -179,13 +179,14 @@
 
                                 <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Content="View Docs" Margin="0,0,3,5" CornerRadius="3"
-                                        x:Name="OpenDocsButton"
+                                        x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
                                         Height="55" Width="140" Style="{StaticResource AccentButtonStyle}"
                                         HorizontalAlignment="Right" VerticalAlignment="Top" />
 
                                 <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Content="Join Discord" Margin="0,0,3,0" CornerRadius="3"
                                         Height="55" Width="140" x:Name="OpenDiscordButton"
+                                        Click="OpenDiscordButton_Click" 
                                         HorizontalAlignment="Right" VerticalAlignment="Top" />
 
                             </StackPanel>

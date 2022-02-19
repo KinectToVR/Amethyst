@@ -21,8 +21,6 @@ bool updateFound = false,
 
 // TODO actually check for deez updates
 
-// TODO discord and reregister buttons
-
 // Updates checking function
 Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkUpdates(
 	const UIElement& show_el, const bool show, const DWORD delay_ms)

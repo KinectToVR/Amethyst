@@ -4728,3 +4728,17 @@ void winrt::KinectToVR::implementation::DevicesPage::JointBasisDropDown_1_Expand
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	jointBasisDropDown.get()->IsExpanded(false);
 }
+
+
+void winrt::KinectToVR::implementation::DevicesPage::OpenDiscordButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	ShellExecuteA(0, 0, "https://discord.gg/YBQCRDG", 0, 0, SW_SHOW);
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::OpenDocsButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	ShellExecuteA(0, 0, "https://k2vr.tech/docs/", 0, 0, SW_SHOW);
+}

@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "GeneralPage.xaml.h"
 #if __has_include("GeneralPage.g.cpp")
 #include "GeneralPage.g.cpp"
@@ -1115,18 +1115,21 @@ void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchec
 void winrt::KinectToVR::implementation::GeneralPage::OpenDiscordButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	ShellExecuteA(0, 0, "https://discord.gg/YBQCRDG", 0, 0, SW_SHOW);
 }
 
 
 void winrt::KinectToVR::implementation::GeneralPage::OpenDocsButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	ShellExecuteA(0, 0, "https://k2vr.tech/docs/", 0, 0, SW_SHOW);
 }
 
 
 void winrt::KinectToVR::implementation::GeneralPage::ServerOpenDocsButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	ShellExecuteA(0, 0, "https://k2vr.tech/docs/minus10", 0, 0, SW_SHOW);
 }
 
 
