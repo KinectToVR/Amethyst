@@ -40,7 +40,9 @@ namespace k2app
 		namespace general
 		{
 			// General Page
-			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton> toggleTrackersButton;
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>
+				toggleTrackersButton,
+				skeletonToggleButton;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
 				calibrationButton,

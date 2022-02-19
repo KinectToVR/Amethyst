@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GeneralPage.xaml.h"
 #if __has_include("GeneralPage.g.cpp")
 #include "GeneralPage.g.cpp"
@@ -20,6 +20,13 @@ enum class general_calibrating_device
 	K2_OverrideDevice
 } general_current_calibrating_device;
 
+void skeleton_visibility_set_ui(bool const& v)
+{
+	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
+	k2app::shared::general::skeletonToggleButton.get()->IsChecked(v);
+	k2app::shared::general::skeletonToggleButton.get()->Content(box_value(v ? L"Hide Skeleton" : L"Show Skeleton"));
+}
+
 namespace winrt::KinectToVR::implementation
 {
 	GeneralPage::GeneralPage()
@@ -30,6 +37,7 @@ namespace winrt::KinectToVR::implementation
 		using namespace ::k2app::shared::general;
 
 		toggleTrackersButton = std::make_shared<Controls::Primitives::ToggleButton>(ToggleTrackersButton());
+		skeletonToggleButton = std::make_shared<Controls::Primitives::ToggleButton>(SkeletonToggleButton());
 
 		calibrationButton = std::make_shared<Controls::Button>(CalibrationButton());
 		offsetsButton = std::make_shared<Controls::Button>(OffsetsButton());
@@ -222,6 +230,8 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Checked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
+	k2app::shared::general::skeletonToggleButton.get()->Content(box_value(L"Hide Skeleton"));
 	show_skeleton_current = true;
 }
 
@@ -229,6 +239,8 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Checke
 void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Unchecked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
+	k2app::shared::general::skeletonToggleButton.get()->Content(box_value(L"Show Skeleton"));
 	show_skeleton_current = false;
 }
 
@@ -844,7 +856,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 	CalibrationView().IsPaneOpen(false);
 
 	show_skeleton_current = show_skeleton_previous; // Change to whatever
-	SkeletonToggleButton().IsChecked(show_skeleton_previous); // Change to whatever
+	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 }
 
 
@@ -860,7 +872,7 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardAutoCalibrationButto
 		ElementSoundPlayer::Play(ElementSoundKind::GoBack);
 
 		show_skeleton_current = show_skeleton_previous; // Change to whatever
-		SkeletonToggleButton().IsChecked(show_skeleton_previous); // Change to whatever
+		skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 	}
 	// Begin abort
 	else CalibrationPending = false;
@@ -1052,7 +1064,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 	CalibrationView().IsPaneOpen(false);
 
 	show_skeleton_current = show_skeleton_previous; // Change to whatever
-	SkeletonToggleButton().IsChecked(show_skeleton_previous); // Change to whatever
+	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 }
 
 
@@ -1068,7 +1080,7 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardManualCalibrationBut
 		ElementSoundPlayer::Play(ElementSoundKind::GoBack);
 
 		show_skeleton_current = show_skeleton_previous; // Change to whatever
-		SkeletonToggleButton().IsChecked(show_skeleton_previous); // Change to whatever
+		skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 	}
 	// Begin abort
 	else CalibrationPending = false;
@@ -1612,7 +1624,7 @@ void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
 
 		show_skeleton_previous = show_skeleton_current; // Back up
 		show_skeleton_current = true; // Change to show
-		SkeletonToggleButton().IsChecked(true); // Change to show
+		skeleton_visibility_set_ui(true); // Change to show
 	}
 	else
 	{
@@ -1637,7 +1649,7 @@ void winrt::KinectToVR::implementation::GeneralPage::BaseCalibration_Click(
 
 	show_skeleton_previous = show_skeleton_current; // Back up
 	show_skeleton_current = true; // Change to show
-	SkeletonToggleButton().IsChecked(true); // Change to show
+	skeleton_visibility_set_ui(true); // Change to show
 
 	// Eventually enable the auto calibration
 	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
@@ -1667,7 +1679,7 @@ void winrt::KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
 
 	show_skeleton_previous = show_skeleton_current; // Back up
 	show_skeleton_current = true; // Change to show
-	SkeletonToggleButton().IsChecked(true); // Change to show
+	skeleton_visibility_set_ui(true); // Change to show
 
 	// Eventually enable the auto calibration
 	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
