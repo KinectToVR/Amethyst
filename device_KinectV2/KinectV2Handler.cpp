@@ -200,7 +200,9 @@ void KinectV2Handler::updateParseFrame()
 			for (int k = 0; k < ktvr::Joint_Total; ++k)
 			{
 				// Don't copy ankle rotations - we're SLERP'ing them
-				if (k == ktvr::Joint_AnkleLeft || k == JointType_AnkleRight)continue;
+				if (k == ktvr::Joint_AnkleLeft || k == JointType_AnkleRight ||
+					k == ktvr::Joint_ElbowLeft || k == ktvr::Joint_ElbowRight ||
+					k == ktvr::Joint_KneeLeft || k == ktvr::Joint_KneeRight)continue;
 
 				jointOrientations[k].w() = boneOrientations[globalIndex[k]].Orientation.
 				                                                            w;
@@ -250,6 +252,38 @@ void KinectV2Handler::updateParseFrame()
 							ktvr::Joint_AnkleRight]].Orientation.y,
 						boneOrientations[globalIndex[
 							ktvr::Joint_AnkleRight]].Orientation.z
+					)) *
+				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+					* Eigen::AngleAxisf(-3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+					* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+
+			jointOrientations[ktvr::Joint_KneeLeft] =
+				jointOrientations[ktvr::Joint_KneeLeft].slerp(
+					0.7f, Eigen::Quaternionf(
+						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
+						Orientation.w,
+						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
+						Orientation.x,
+						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
+						Orientation.y,
+						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
+						Orientation.z
+					)) *
+				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+					* Eigen::AngleAxisf(3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+					* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+
+			jointOrientations[ktvr::Joint_KneeRight] =
+				jointOrientations[ktvr::Joint_KneeRight].slerp(
+					0.7f, Eigen::Quaternionf(
+						boneOrientations[globalIndex[
+							ktvr::Joint_KneeRight]].Orientation.w,
+						boneOrientations[globalIndex[
+							ktvr::Joint_KneeRight]].Orientation.x,
+						boneOrientations[globalIndex[
+							ktvr::Joint_KneeRight]].Orientation.y,
+						boneOrientations[globalIndex[
+							ktvr::Joint_KneeRight]].Orientation.z
 					)) *
 				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
 					* Eigen::AngleAxisf(-3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
