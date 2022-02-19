@@ -129,11 +129,11 @@ namespace k2app
 		// Skeleton flip when facing away: One-For-All and on is the default
 		bool isFlipEnabled = true;
 
-		// Currently enabled (spawn-able) joints: W,L,R and true is the default
-		// Currently turned on (marked-as-online) joints: W,L,R and true is the default
+		// Currently enabled (spawn-able) joints: W,L,R and true is the default, LE,RE,LK,RK
+		// Currently turned on (marked-as-online) joints: W,L,R,LE,RE,LK,RK and true is the default
 		std::array<bool, 7>
 			isJointEnabled = {true, true, true, false, false, false, false},
-			isJointTurnedOn = {true, true, true, false, false, false, false};
+			isJointTurnedOn = {true, true, true, true, true, true, true };
 
 		// Automatically spawn enabled trackers on startup and off is the default
 		bool autoSpawnEnabledJoints = false;
