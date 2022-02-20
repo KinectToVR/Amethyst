@@ -1,0 +1,16 @@
+{
+	"source" : "builtin",
+	"applications": [{
+		"app_key": "k2app",
+		"launch_type": "binary",
+		"binary_path_windows": "KinectToVR.exe",
+		"is_dashboard_overlay": true,
+
+		"strings": {
+			"en_us": {
+				"name": "KinectToVR (Amethyst)",
+				"description": "Full-Body Tracking"
+			}
+		}
+	}]
+}
