@@ -99,7 +99,7 @@
 xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)"
 xcopy /y /d "$(SolutionDir)external\openvr\bin\win64\openvr_api.dll" "$(OutDir)"
-xcopy /y /d "$(SolutionDir)external\app_resources\*" "$(OutDir)"</Command>
+xcopy /y /d /s /i "$(SolutionDir)external\app_resources\*" "$(OutDir)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">del "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\MddBootstrapAutoInitializer.cpp"
@@ -124,7 +124,7 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
 xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(OutDir)"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR_API.dll" "$(OutDir)"
 xcopy /y /d "$(SolutionDir)external\openvr\bin\win64\openvr_api.dll" "$(OutDir)"
-xcopy /y /d "$(SolutionDir)external\app_resources\*" "$(OutDir)"</Command>
+xcopy /y /d /s /i "$(SolutionDir)external\app_resources\*" "$(OutDir)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">del "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\MddBootstrapAutoInitializer.cpp"
