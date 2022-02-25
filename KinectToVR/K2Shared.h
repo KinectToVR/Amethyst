@@ -35,6 +35,8 @@ namespace k2app
 				devicesItem,
 				infoItem,
 				consoleItem;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Window> thisAppWindow;
 		}
 
 		namespace general
