@@ -103,7 +103,7 @@ jobs:
 
           ### Deployment requirements:
           - Install [VCRedist 2022](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-          - Install the [Windows App SDK](https://aka.ms/windowsappsdk/1.0-stable/msix-installer)
+          - Install the [Windows App SDK Runtime](https://aka.ms/windowsappsdk/1.0-stable/msix-installer)
 
           ### Setup for testing:
           - Delete **everything** in ```C:/K2EX``` (or wherever is it installed)

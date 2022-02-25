@@ -16,3 +16,5 @@ external/glog/
 external/openvr/
 
 KinectToVR/Release/
+
+K2CrashHandler/obj/

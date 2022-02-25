@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "driver_KinectToVR", "driver
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "device_PSMoveService", "device_PSMoveService\device_PSMoveService.vcxproj", "{6C477205-E3C1-4B3A-9B57-94D73010B77D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "K2CrashHandler", "K2CrashHandler\K2CrashHandler.csproj", "{23B53935-CFBA-4E05-B129-8CF3BD826A6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -47,6 +49,10 @@ Global
 		{6C477205-E3C1-4B3A-9B57-94D73010B77D}.Debug|x64.Build.0 = Debug|x64
 		{6C477205-E3C1-4B3A-9B57-94D73010B77D}.Release|x64.ActiveCfg = Release|x64
 		{6C477205-E3C1-4B3A-9B57-94D73010B77D}.Release|x64.Build.0 = Release|x64
+		{23B53935-CFBA-4E05-B129-8CF3BD826A6E}.Debug|x64.ActiveCfg = Debug|x64
+		{23B53935-CFBA-4E05-B129-8CF3BD826A6E}.Debug|x64.Build.0 = Debug|x64
+		{23B53935-CFBA-4E05-B129-8CF3BD826A6E}.Release|x64.ActiveCfg = Release|x64
+		{23B53935-CFBA-4E05-B129-8CF3BD826A6E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
