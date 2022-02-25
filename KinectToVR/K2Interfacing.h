@@ -185,6 +185,19 @@ namespace k2app
 			// Notify that we're good now
 			K2AppTrackersSpawned = true;
 			K2AppTrackersInitialized = true;
+
+			/*
+			 * Trackers are stealing input from controllers when first added,
+			 * due to some weird wonky stuff happening and OpenVR not expecting them.
+			 * We're gonna de-spawn them for 8 frames (100ms) and re-spawn after another
+			 */
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			K2AppTrackersInitialized = false;
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			K2AppTrackersInitialized = true;
+
 			return true;
 		}
 
@@ -202,13 +215,13 @@ namespace k2app
 			if (eError != vr::VRInitError_None)
 			{
 				LOG(ERROR) << "IVRSystem could not be initialized: EVRInitError Code " << static_cast<int>(eError);
-				MessageBoxA(nullptr,
+				/*MessageBoxA(nullptr,
 				            std::string(
 					            "Couldn't initialise VR system. (Code " + std::to_string(eError) +
 					            ")\n\nPlease check if SteamVR is installed (or running) and try again."
 				            ).c_str(),
 				            "IVRSystem Init Failure!",
-				            MB_OK);
+				            MB_OK);*/
 
 				return false; // Fail
 			}
