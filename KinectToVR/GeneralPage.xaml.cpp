@@ -42,6 +42,7 @@ namespace winrt::KinectToVR::implementation
 		calibrationButton = std::make_shared<Controls::Button>(CalibrationButton());
 		offsetsButton = std::make_shared<Controls::Button>(OffsetsButton());
 
+		versionLabel = std::make_shared<Controls::TextBlock>(VersionLabel());
 		deviceNameLabel = std::make_shared<Controls::TextBlock>(SelectedDeviceNameLabel());
 		deviceStatusLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceStatusLabel());
 		errorWhatText = std::make_shared<Controls::TextBlock>(ErrorWhatText());
@@ -1151,6 +1152,11 @@ void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	// Start the main loop since we're done with basic setup
 	::k2app::shared::devices::smphSignalStartMain.release();
 
+	// Update the internal version
+	if (k2app::shared::general::versionLabel.get() != nullptr)
+		k2app::shared::general::versionLabel.get()->Text(
+			L"v1.0.0 (Ame" + std::to_wstring(k2app::interfacing::K2InternalVersion) + L")");
+
 	// Try auto-spawning trackers if stated so
 	if (!general_tab_setup_finished && // If first-time
 		k2app::interfacing::isServerDriverPresent && // If the driver's ok
@@ -1329,17 +1335,22 @@ void winrt::KinectToVR::implementation::GeneralPage::sk_line(
 
 	line.X2(joints[to].x() * 300. * std::min(s_scale_w, s_scale_h) * s_to_multiply + s_mat_width / 2.);
 	line.Y2(joints[to].y() * -300. * std::min(s_scale_w, s_scale_h) * s_to_multiply + s_mat_height / 3.);
+
+	line.Visibility(Visibility::Visible);
 }
 
 
+// the tuple goes like <position, rotation>
 void winrt::KinectToVR::implementation::GeneralPage::sk_dot(
-	Shapes::Line& line1,
-	Shapes::Line& line2,
+	Shapes::Ellipse& ellipse,
 	Eigen::Vector3f const& joint,
-	ktvr::JointTrackingState const& state)
+	ktvr::JointTrackingState const& state,
+	std::pair<bool, bool> const& isOverridden)
 {
 	constexpr double s_mat_width_default = 700,
 	                 s_mat_height_default = 600;
+
+	constexpr double s_ellipse_wh = 12, s_ellipse_stroke = 2;
 
 	double s_mat_width = SkeletonDrawingCanvas().ActualWidth(),
 	       s_mat_height = SkeletonDrawingCanvas().ActualHeight();
@@ -1357,35 +1368,124 @@ void winrt::KinectToVR::implementation::GeneralPage::sk_dot(
 	auto a = Media::AcrylicBrush();
 	auto ui = Windows::UI::ViewManagement::UISettings();
 
-	line1.StrokeThickness(5);
-	line2.StrokeThickness(5);
+	ellipse.StrokeThickness(s_ellipse_stroke);
+	ellipse.Width(s_ellipse_wh);
+	ellipse.Height(s_ellipse_wh);
+
 	a.TintColor(ui.GetColorValue(Windows::UI::ViewManagement::UIColorType::Accent));
 
 	if (state != ktvr::State_Tracked)
 	{
-		line1.Stroke(a);
-		line2.Stroke(a);
+		ellipse.Stroke(a);
+		ellipse.Fill(a);
 	}
 	else
 	{
-		line1.Stroke(Media::SolidColorBrush(Windows::UI::Colors::White()));
-		line2.Stroke(Media::SolidColorBrush(Windows::UI::Colors::White()));
+		ellipse.Stroke(Media::SolidColorBrush(Windows::UI::Colors::White()));
+		ellipse.Fill(Media::SolidColorBrush(Windows::UI::Colors::White()));
 	}
+
+	// Change the stroke based on overrides
+	if (isOverridden.first && isOverridden.second) // Both
+		ellipse.Stroke(Media::SolidColorBrush(Windows::UI::Colors::BlueViolet()));
+	if (isOverridden.first && !isOverridden.second) // Rotation
+		ellipse.Stroke(Media::SolidColorBrush(Windows::UI::Colors::DarkOliveGreen()));
+	if (!isOverridden.first && isOverridden.second) // Position
+		ellipse.Stroke(Media::SolidColorBrush(Windows::UI::Colors::IndianRed()));
 
 	// Select the smaller scale to preserve somewhat uniform skeleton scaling
 	const double s_scale_w = s_mat_width / s_mat_width_default,
 	             s_scale_h = s_mat_height / s_mat_height_default;
 
-	// Draw something like X with center on the tracker point
-	line1.X1((joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_width / 2.) - 10.);
-	line1.Y1((joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_height / 3.) - 10.);
-	line1.X2((joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_width / 2.) + 10.);
-	line1.Y2((joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_height / 3.) + 10.);
+	// Move the ellipse to the appropriate point
+	auto thicc = Thickness();
 
-	line2.X1((joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_width / 2.) - 10.);
-	line2.Y1((joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_height / 3.) + 10.);
-	line2.X2((joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_width / 2.) + 10.);
-	line2.Y2((joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply + s_mat_height / 3.) - 10.);
+	thicc.Left = joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply +
+		s_mat_width / 2. - (s_ellipse_wh + s_ellipse_stroke) / 2.;
+
+	thicc.Top = joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply +
+		s_mat_height / 3. - (s_ellipse_wh + s_ellipse_stroke) / 2.;
+
+	ellipse.Margin(thicc);
+	ellipse.Visibility(Visibility::Visible);
+}
+
+
+std::pair<HWND, hresult> GetHWNDFromWindow(winrt::Microsoft::UI::Xaml::Window const& window)
+{
+	HWND nativeWindow{nullptr};
+	hresult result = window.as<IWindowNative>()->get_WindowHandle(&nativeWindow);
+	return std::make_pair(nativeWindow, result);
+}
+
+
+bool IsCurrentWindowActive()
+{
+	if (k2app::shared::main::thisAppWindow.get() == nullptr)
+		return true; // Give up k?
+
+	if (const auto [handle, result] =
+			GetHWNDFromWindow(*k2app::shared::main::thisAppWindow);
+
+		result < 0) // From winrt::check_hresult
+		return true; // Give up k?
+	else
+		return GetActiveWindow() == handle;
+}
+
+
+bool IsDashboardOpen()
+{
+	// Check if we're running on null
+	char system_name[1024];
+	vr::VRSystem()->GetStringTrackedDeviceProperty(
+		vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_TrackingSystemName_String, system_name, 1024);
+
+	// Just return true for debug reasons
+	if (strcmp(system_name, "null") == 0)
+		return true;
+
+	// Check if the dashboard is open
+	return vr::VROverlay()->IsDashboardVisible();
+}
+
+
+std::pair<bool, bool> IsJointUsedAsOverride(uint32_t const& joint)
+{
+	std::pair<bool, bool> _o{false, false};
+
+	// Scan for position overrides
+	for (auto const& _j_p : k2app::K2Settings.positionOverrideJointID)
+		if (joint == _j_p)_o.first = true;
+
+	// Scan for rotation overrides
+	for (auto const& _j_r : k2app::K2Settings.rotationOverrideJointID)
+		if (joint == _j_r)_o.second = true;
+
+	return (k2app::K2Settings.overrideDeviceID >= 0)
+		       ? _o
+		       : std::make_pair(false, false);
+}
+
+
+std::pair<bool, bool> IsJointOverriden(uint32_t const& joint)
+{
+	return (k2app::K2Settings.overrideDeviceID >= 0)
+		       ? std::make_pair(
+				   k2app::K2Settings.isPositionOverriddenJoint[joint],
+				   k2app::K2Settings.isRotationOverriddenJoint[joint])
+		       : std::make_pair(false, false);
+}
+
+
+// Skip checking if the overlay is open
+bool overlay_hidden_dismiss = false;
+
+
+void winrt::KinectToVR::implementation::GeneralPage::ResumePreviewButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	overlay_hidden_dismiss = true;
 }
 
 
@@ -1393,6 +1493,7 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	static auto boneLines = std::array<Shapes::Line, 24>();
+	static auto jointDots = std::array<Shapes::Ellipse, 25>(); // For now this is MAX
 
 	SkeletonDrawingCanvas().Children().Clear();
 	for (auto& l : boneLines)
@@ -1400,33 +1501,63 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 		l = Shapes::Line();
 		SkeletonDrawingCanvas().Children().Append(l);
 	}
+	for (auto& el : jointDots)
+	{
+		el = Shapes::Ellipse();
+		SkeletonDrawingCanvas().Children().Append(el);
+	}
 
 	auto timer = DispatcherTimer();
 	timer.Interval(std::chrono::milliseconds(33));
 
 	timer.Tick([&, this](IInspectable const& sender, IInspectable const& e)
 	{
+		// If we've disabled the preview
 		if (!show_skeleton_current)
 		{
 			// Hide the UI, only show that viewing is disabled
 			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
 			NotTrackedNotice().Visibility(Visibility::Collapsed);
+			NotInFocusNotice().Visibility(Visibility::Collapsed);
+			DashboardClosedNotice().Visibility(Visibility::Collapsed);
 
 			SkeletonHiddenNotice().Visibility(Visibility::Visible);
 			return; // Nothing more to do anyway
 		}
 
+		// If the dashboard's closed
+		if (show_skeleton_current && !overlay_hidden_dismiss && !IsDashboardOpen())
+		{
+			// Hide the UI, only show that viewing is disabled
+			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
+			NotTrackedNotice().Visibility(Visibility::Collapsed);
+			SkeletonHiddenNotice().Visibility(Visibility::Collapsed);
+			NotInFocusNotice().Visibility(Visibility::Collapsed);
+
+			DashboardClosedNotice().Visibility(Visibility::Visible);
+			return; // Nothing more to do anyway
+		}
+
+		// If we're out of focus TODO skip if we're in VROverlay
+		if (show_skeleton_current && !IsCurrentWindowActive())
+		{
+			// Reset the overlay_hidden_dismiss
+			overlay_hidden_dismiss = false;
+
+			// Hide the UI, only show that viewing is disabled
+			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
+			NotTrackedNotice().Visibility(Visibility::Collapsed);
+			SkeletonHiddenNotice().Visibility(Visibility::Collapsed);
+			DashboardClosedNotice().Visibility(Visibility::Collapsed);
+
+			NotInFocusNotice().Visibility(Visibility::Visible);
+			return; // Nothing more to do anyway
+		}
+
 		SkeletonHiddenNotice().Visibility(Visibility::Collapsed); // Else hide
+		NotInFocusNotice().Visibility(Visibility::Collapsed); // Else hide
+
 		auto const& trackingDevice = TrackingDevices::getCurrentDevice();
-
-		// TODO when we get normal rendering in winui 3
-		// draw e.g. small blue/red dot on overwritten joints,
-		// aoi for position and aka for rotation
-
-		// TODO draw override device skeleton too
-
-		// TODO try to use less cpu by not drawing if not in focus
-		//      (maybe also display an info that we're not in focus...?)
 
 		switch (trackingDevice.index())
 		{
@@ -1447,6 +1578,10 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 
 					if (device->getDeviceCharacteristics() == ktvr::K2_Character_Full)
 					{
+						// Clear joints
+						for (auto& l : jointDots)
+							l.Visibility(Visibility::Collapsed);
+
 						// Draw the skeleton with from-to lines
 						// Head
 						sk_line(boneLines[0], joints, states, ktvr::Joint_Head, ktvr::Joint_Neck);
@@ -1483,23 +1618,81 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 						sk_line(boneLines[21], joints, states, ktvr::Joint_HipRight, ktvr::Joint_KneeRight);
 						sk_line(boneLines[22], joints, states, ktvr::Joint_KneeRight, ktvr::Joint_AnkleRight);
 						sk_line(boneLines[23], joints, states, ktvr::Joint_AnkleRight, ktvr::Joint_FootRight);
+
+						// Waist
+						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist],
+							IsJointOverriden(0));
+
+						// Left Foot
+						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft],
+							IsJointOverriden(1));
+
+						// Right Foot
+						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight],
+							IsJointOverriden(2));
+
+						// Left Elbow
+						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft], states[ktvr::Joint_ElbowLeft],
+							IsJointOverriden(3));
+
+						// Right Elbow
+						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight], states[ktvr::Joint_ElbowRight],
+							IsJointOverriden(4));
+
+						// Left Knee
+						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft], states[ktvr::Joint_KneeLeft],
+							IsJointOverriden(5));
+
+						// Right Knee
+						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight], states[ktvr::Joint_KneeRight],
+							IsJointOverriden(6));
 					}
 					else if (device->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
 					{
+						// Clear joints
+						for (auto& l : jointDots)
+							l.Visibility(Visibility::Collapsed);
+
 						// Draw the skeleton with from-to lines
 						// Head
-						sk_dot(boneLines[0], boneLines[1],
-						       joints[ktvr::Joint_Head], states[ktvr::Joint_Head]);
+						sk_dot(jointDots[0], joints[ktvr::Joint_Head], states[ktvr::Joint_Head],
+						       std::make_pair(false, false));
+						
+						// Waist
+						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist],
+							IsJointOverriden(0));
+
+						// Left Foot
+						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft],
+							IsJointOverriden(1));
+
+						// Right Foot
+						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight],
+							IsJointOverriden(2));
 
 						// Left Elbow
-						sk_dot(boneLines[2], boneLines[3],
-						       joints[ktvr::Joint_ElbowLeft], states[ktvr::Joint_ElbowLeft]);
+						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft], states[ktvr::Joint_ElbowLeft],
+							IsJointOverriden(3));
 
 						// Right Elbow
-						sk_dot(boneLines[4], boneLines[5],
-						       joints[ktvr::Joint_ElbowRight], states[ktvr::Joint_ElbowRight]);
+						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight], states[ktvr::Joint_ElbowRight],
+							IsJointOverriden(4));
+
+						// Left Knee
+						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft], states[ktvr::Joint_KneeLeft],
+							IsJointOverriden(5));
+
+						// Right Knee
+						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight], states[ktvr::Joint_KneeRight],
+							IsJointOverriden(6));
 
 						// Empty lines
+						boneLines[0] = Shapes::Line();
+						boneLines[1] = Shapes::Line();
+						boneLines[2] = Shapes::Line();
+						boneLines[3] = Shapes::Line();
+						boneLines[4] = Shapes::Line();
+						boneLines[5] = Shapes::Line();
 						boneLines[6] = Shapes::Line();
 						boneLines[7] = Shapes::Line();
 						boneLines[8] = Shapes::Line();
@@ -1525,43 +1718,30 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 					}
 					else if (device->getDeviceCharacteristics() == ktvr::K2_Character_Basic)
 					{
+						// Clear bones
+						for (auto& l : boneLines)
+							l.Visibility(Visibility::Collapsed);
+
+						// Clear joints
+						for (auto& l : jointDots)
+							l.Visibility(Visibility::Collapsed);
+
 						// Draw the skeleton with from-to lines
 						// Head
-						sk_dot(boneLines[0], boneLines[1],
-						       joints[ktvr::Joint_Head], states[ktvr::Joint_Head]);
+						sk_dot(jointDots[0], joints[ktvr::Joint_Head], states[ktvr::Joint_Head],
+						       std::make_pair(false, false));
+						
+						// Waist
+						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist],
+							IsJointOverriden(0));
 
-						sk_dot(boneLines[2], boneLines[3],
-						       joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist]);
+						// Left Foot
+						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft],
+							IsJointOverriden(1));
 
-						// Empty lines
-						boneLines[4] = Shapes::Line();
-						boneLines[5] = Shapes::Line();
-						boneLines[6] = Shapes::Line();
-						boneLines[7] = Shapes::Line();
-						boneLines[8] = Shapes::Line();
-						boneLines[9] = Shapes::Line();
-						boneLines[10] = Shapes::Line();
-						boneLines[11] = Shapes::Line();
-						boneLines[12] = Shapes::Line();
-						boneLines[13] = Shapes::Line();
-						boneLines[14] = Shapes::Line();
-						boneLines[15] = Shapes::Line();
-
-						// Lower left limb
-						sk_dot(boneLines[16], boneLines[17],
-						       joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft]);
-
-						// Empty lines
-						boneLines[18] = Shapes::Line();
-						boneLines[19] = Shapes::Line();
-
-						// Lower right limb
-						sk_dot(boneLines[20], boneLines[21],
-						       joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight]);
-
-						// Empty lines
-						boneLines[22] = Shapes::Line();
-						boneLines[23] = Shapes::Line();
+						// Right Foot
+						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight],
+							IsJointOverriden(2));
 					}
 				}
 				else
@@ -1588,12 +1768,18 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 					{
 						// Clear bones
 						for (auto& l : boneLines)
-							l = Shapes::Line();
+							l.Visibility(Visibility::Collapsed);
+
+						// Clear joints
+						for (auto& l : jointDots)
+							l.Visibility(Visibility::Collapsed);
 
 						// Get joints and draw points
 						for (uint32_t j = 0; j < std::min((uint32_t)joints.size(), (uint32_t)ktvr::Joint_Total); j++)
-							sk_dot(boneLines[(2 * j)], boneLines[(2 * j + 1)],
-							       joints.at(j).getJointPosition(), joints.at(j).getTrackingState());
+							sk_dot(jointDots[j],
+							       joints.at(j).getJointPosition(),
+							       joints.at(j).getTrackingState(),
+							       IsJointUsedAsOverride(j));
 					}
 				}
 				else

@@ -1762,6 +1762,56 @@
                 </StackPanel>
             </Viewbox>
 
+            <!--Outta focus-->
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
+                     VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
+                <StackPanel Grid.Column="1" x:Name="NotInFocusNotice" Visibility="Collapsed"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
+                        <TextBlock Margin="10,0,0,7" Text="Window is out of focus" FontSize="50"
+                                   FontWeight="SemiBold" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+                        <Run>The preview's stopped to save resources</Run>
+                    </TextBlock>
+
+                    <TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+                        <Run>and will run again when you're back.</Run>
+                    </TextBlock>
+
+                </StackPanel>
+            </Viewbox>
+
+            <!--Dashboard is closed-->
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
+                     VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
+                <StackPanel Grid.Column="1" x:Name="DashboardClosedNotice" Visibility="Collapsed"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
+                        <TextBlock Margin="10,0,0,7" Text="The dashboard is closed" FontSize="50"
+                                   FontWeight="SemiBold" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+                        <Run>The preview's stopped to save resources</Run>
+                    </TextBlock>
+
+                    <TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
+                        <Run>and will run again when you're back.</Run>
+                    </TextBlock>
+
+                    <Button Content="Resume Anyway" HorizontalAlignment="Center"
+                            Margin="0,12,0,0" FontWeight="SemiBold" CornerRadius="3"
+                            x:Name="ResumePreviewButton" Click="ResumePreviewButton_Click" />
+
+                </StackPanel>
+            </Viewbox>
+
             <Grid Background="Transparent" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="20" />

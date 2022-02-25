@@ -51,6 +51,7 @@ namespace k2app
 				offsetsButton;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
+				versionLabel,
 				deviceNameLabel,
 				deviceStatusLabel,
 				errorWhatText,
