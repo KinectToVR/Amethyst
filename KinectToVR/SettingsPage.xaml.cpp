@@ -605,7 +605,7 @@ void winrt::KinectToVR::implementation::SettingsPage::ResetButton_Click(
 
 
 		// Restart the app
-		if (system(_cmd.c_str()) < 0)
+		if (WinExec(_cmd.c_str(), SW_HIDE) != NO_ERROR)
 		{
 			LOG(ERROR) << "App will not be restarted due to new process creation error.";
 			k2app::interfacing::ShowToast("We couldn't restart KinectToVR for you!",
