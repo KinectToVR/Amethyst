@@ -8,6 +8,9 @@ namespace k2app
 {
 	namespace interfacing
 	{
+		// Internal version number (AmeX numbering)
+		inline uint32_t K2InternalVersion = 3; // Ame[ver]
+
 		inline std::vector<K2AppTracker> K2TrackersVector{
 			K2AppTracker("LHR-CB9AD1T0", ktvr::ITrackerType::Tracker_Waist),
 			K2AppTracker("LHR-CB9AD1T1", ktvr::ITrackerType::Tracker_LeftFoot),

@@ -19,7 +19,9 @@ std::shared_ptr<Controls::FontIcon> updateIconDot;
 bool updateFound = false,
      main_localInitFinished = false;
 
-// TODO actually check for deez updates
+// Assume we're up to date
+uint32_t latest_version =
+	k2app::interfacing::K2InternalVersion;
 
 // Updates checking function
 Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkUpdates(
@@ -49,8 +51,50 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 			auto start_time = std::chrono::high_resolution_clock::now();
 
 			// Check now
-			srand(time(nullptr)); // Generate somewhat random up-to-date or not
-			updateFound = rand() & 1;
+			updateFound = false;
+
+			try
+			{
+				// TODO UNTIL FULL RELEASE THIS WILL BE INCREMENTED BEFORE EVERY PUSH
+				// TODO ALSO IMPLEMENT THE vX.X.X SYSTEM SOMEDAY
+
+				curlpp::options::Url myUrl(
+					std::string("https://github.com/KinectToVR/Amethyst-Releases/releases/latest"));
+				curlpp::Easy myRequest;
+				myRequest.setOpt(myUrl);
+				myRequest.setOpt(cURLpp::Options::FollowLocation(true));
+
+				std::ostringstream os;
+				curlpp::options::WriteStream ws(&os);
+				myRequest.setOpt(ws);
+				myRequest.perform();
+
+				os << myRequest;
+
+				if (std::string read_buffer = os.str(); !read_buffer.empty())
+				{
+					LOG(INFO) << "Update-check successful, string:\n" << read_buffer;
+
+					// Find the first ameX occurrence in a tag
+					std::string split = read_buffer.substr(read_buffer.find("tag/ame") + sizeof "tag/ame" - 1);
+					// And crop it to the first " character
+					std::string version = split.substr(0, split.find("\""));
+					// And make it a number (multi-digit numbers are ok too)
+					latest_version = boost::lexical_cast<uint32_t>(version);
+
+					LOG(INFO) << "Remote version number: " << latest_version;
+					LOG(INFO) << "Local version number: " << k2app::interfacing::K2InternalVersion;
+
+					// Compare to the current version
+					updateFound = (k2app::interfacing::K2InternalVersion < latest_version);
+				}
+				else
+					LOG(ERROR) << "Update failed, string was empty.";
+			}
+			catch (...)
+			{
+				LOG(ERROR) << "Update failed, an exception occurred.";
+			}
 
 			// Limit time to (min) 1s
 			if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -64,8 +108,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 			if (updateFound)
 			{
 				FlyoutHeader().Text(L"New Update Available");
-				FlyoutFooter().Text(L"KinectToVR v1.0.1");
-				FlyoutContent().Text(L"- OpenSSL Library update\n- Several Kinect V2 fixes");
+				FlyoutFooter().Text(L"KinectToVR v1.0.0 (Ame" + std::to_wstring(latest_version) + L")");
+				FlyoutContent().Text(L"- You expected a changelog,\n- But it was me, DIO!");
 
 				auto thickness = Thickness();
 				thickness.Left = 0;
@@ -138,6 +182,9 @@ namespace winrt::KinectToVR::implementation
 		this->ExtendsContentIntoTitleBar(true);
 		this->SetTitleBar(DragElement());
 
+		LOG(INFO) << "Making the app window available for children views...";
+		k2app::shared::main::thisAppWindow = std::make_shared<Window>(this->try_as<Window>());
+
 		LOG(INFO) << "Pushing control pages to window...";
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"general", winrt::xaml_typename<GeneralPage>()));
@@ -151,6 +198,21 @@ namespace winrt::KinectToVR::implementation
 			(L"console", winrt::xaml_typename<ConsolePage>()));
 
 		LOG(INFO) << "~~~KinectToVR new logging session begins here!~~~";
+
+		// Priority: Launch the crash handler
+		LOG(INFO) << "Starting the crash handler passing the app PID...";
+
+		if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
+		{
+			std::thread([]
+			{
+				ShellExecuteA(NULL, "open", 
+					(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
+					.string().c_str(), (std::string("pid ") + std::to_string(GetCurrentProcessId())).c_str(), NULL, SW_SHOWDEFAULT);
+			}).detach();
+		}
+		else
+			LOG(WARNING) << "Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!";
 
 		// Priority: Connect to OpenVR
 		if (!k2app::interfacing::OpenVRStartup())
