@@ -73,3 +73,42 @@ void winrt::KinectToVR::implementation::ConsolePage::ToggleTrackingButton_Unchec
 	// Mark trackers as frozen
 	k2app::interfacing::isTrackingFrozen = false;
 }
+
+void winrt::KinectToVR::implementation::ConsolePage::DevicesCrashButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	exit(-12);
+}
+
+
+void winrt::KinectToVR::implementation::ConsolePage::OpenVRCrashButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	exit(-11);
+}
+
+
+void winrt::KinectToVR::implementation::ConsolePage::HRESULTCrashButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	winrt::check_hresult(FALSE);
+}
+
+
+void winrt::KinectToVR::implementation::ConsolePage::DelegateCrashButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	throw winrt::hresult_illegal_delegate_assignment();
+}
+
+
+void winrt::KinectToVR::implementation::ConsolePage::NullCrashButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// This is only a sample, null pointer exceptions
+	//      actually happen sometimes, e.g. if an element
+	//      in UI is referenced before even constructing it
+
+	int* _pointer = nullptr;
+	*_pointer = 420;
+}
