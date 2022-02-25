@@ -2968,7 +2968,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_Sel
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (rightFootJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.selectedTrackedJointID[1] = rightFootJointOptionBox.get()->SelectedIndex();
+		k2app::K2Settings.selectedTrackedJointID[2] = rightFootJointOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
