@@ -46,6 +46,8 @@
 #include <winrt/Windows.UI.Core.h>
 #include "winrt/Windows.UI.Input.h"
 
+#include <Microsoft.UI.Xaml.Window.h>
+
 #include <thread>
 #include <string>
 #include <sstream>
@@ -56,3 +58,7 @@
 
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>
+
+#include <curlpp/cURLpp.hpp>
+#include <curlpp/Easy.hpp>
+#include <curlpp/Options.hpp>
