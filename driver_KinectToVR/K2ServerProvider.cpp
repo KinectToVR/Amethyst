@@ -52,7 +52,8 @@ namespace k2_driver
 		// It's running every frame
 		void RunFrame() override
 		{
-
+			// Run a server loop
+			smphFrameUpdate.release();
 		}
 
 		bool ShouldBlockStandbyMode() override
