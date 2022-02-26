@@ -1485,6 +1485,7 @@ bool overlay_hidden_dismiss = false;
 void winrt::KinectToVR::implementation::GeneralPage::ResumePreviewButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Dismiss (one time)
 	overlay_hidden_dismiss = true;
 }
 
@@ -1556,6 +1557,7 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 
 		SkeletonHiddenNotice().Visibility(Visibility::Collapsed); // Else hide
 		NotInFocusNotice().Visibility(Visibility::Collapsed); // Else hide
+		DashboardClosedNotice().Visibility(Visibility::Collapsed); // Else hide
 
 		auto const& trackingDevice = TrackingDevices::getCurrentDevice();
 
