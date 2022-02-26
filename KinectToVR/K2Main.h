@@ -202,6 +202,9 @@ namespace k2app::main
 				interfacing::K2TrackersVector.at(5).updatePositionFilters();
 				interfacing::K2TrackersVector.at(6).updatePositionFilters();
 
+				// Create a dummy update vector
+				std::vector<ktvr::K2TrackerBase> k2_tracker_bases;
+
 				// Update pose w/ filtering, options and calibration
 				// Note: only position gets calibrated INSIDE trackers
 
@@ -212,7 +215,7 @@ namespace k2app::main
 					if (!K2Settings.isPositionOverriddenJoint[0] || K2Settings.overrideDeviceID < 0)
 					{
 						if (K2Settings.isMatrixCalibrated.first)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(0).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
@@ -222,7 +225,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(0).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -233,7 +236,7 @@ namespace k2app::main
 					else
 					{
 						if (K2Settings.isMatrixCalibrated.second)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(0).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
@@ -243,7 +246,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(0).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -260,7 +263,7 @@ namespace k2app::main
 					if (!K2Settings.isPositionOverriddenJoint[1] || K2Settings.overrideDeviceID < 0)
 					{
 						if (K2Settings.isMatrixCalibrated.first)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(1).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
@@ -270,7 +273,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(1).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -281,7 +284,7 @@ namespace k2app::main
 					else
 					{
 						if (K2Settings.isMatrixCalibrated.second)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(1).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
@@ -291,7 +294,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(1).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -308,7 +311,7 @@ namespace k2app::main
 					if (!K2Settings.isPositionOverriddenJoint[2] || K2Settings.overrideDeviceID < 0)
 					{
 						if (K2Settings.isMatrixCalibrated.first)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(2).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
@@ -318,7 +321,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(2).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -329,7 +332,7 @@ namespace k2app::main
 					else
 					{
 						if (K2Settings.isMatrixCalibrated.second)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(2).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
@@ -339,7 +342,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(2).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -356,7 +359,7 @@ namespace k2app::main
 					if (!K2Settings.isPositionOverriddenJoint[3] || K2Settings.overrideDeviceID < 0)
 					{
 						if (K2Settings.isMatrixCalibrated.first)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(3).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
@@ -366,7 +369,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(3).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -377,7 +380,7 @@ namespace k2app::main
 					else
 					{
 						if (K2Settings.isMatrixCalibrated.second)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(3).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
@@ -387,7 +390,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(3).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -404,7 +407,7 @@ namespace k2app::main
 					if (!K2Settings.isPositionOverriddenJoint[4] || K2Settings.overrideDeviceID < 0)
 					{
 						if (K2Settings.isMatrixCalibrated.first)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(4).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
@@ -414,7 +417,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(4).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -425,7 +428,7 @@ namespace k2app::main
 					else
 					{
 						if (K2Settings.isMatrixCalibrated.second)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(4).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
@@ -435,7 +438,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(4).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -452,7 +455,7 @@ namespace k2app::main
 					if (!K2Settings.isPositionOverriddenJoint[5] || K2Settings.overrideDeviceID < 0)
 					{
 						if (K2Settings.isMatrixCalibrated.first)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(5).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
@@ -462,7 +465,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(5).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -473,7 +476,7 @@ namespace k2app::main
 					else
 					{
 						if (K2Settings.isMatrixCalibrated.second)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(5).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
@@ -483,7 +486,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(5).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -500,7 +503,7 @@ namespace k2app::main
 					if (!K2Settings.isPositionOverriddenJoint[6] || K2Settings.overrideDeviceID < 0)
 					{
 						if (K2Settings.isMatrixCalibrated.first)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(6).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
@@ -510,7 +513,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(6).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -521,7 +524,7 @@ namespace k2app::main
 					else
 					{
 						if (K2Settings.isMatrixCalibrated.second)
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(6).getTrackerBase
 								(
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
@@ -531,7 +534,7 @@ namespace k2app::main
 									K2Settings.rotationFilterOption
 								));
 						else
-							ktvr::update_tracker_pose<false>(
+							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(6).getTrackerBase
 								(
 									K2Settings.positionFilterOption,
@@ -539,6 +542,10 @@ namespace k2app::main
 								));
 					}
 				}
+
+				// Now update the trackers
+				if (!k2_tracker_bases.empty())
+					ktvr::update_tracker_vector(k2_tracker_bases);
 			}
 
 			// Update status 1/1000 loops / ~8s
@@ -1193,12 +1200,12 @@ namespace k2app::main
 					if (K2Settings.jointRotationTrackingOption[3] == k2_DeviceInferredRotation)
 						pitchShift_EL = _PI / 4.f; // Normal offset
 					if (K2Settings.jointRotationTrackingOption[4] == k2_DeviceInferredRotation)
-
 						pitchShift_ER = _PI / 4.f; // Normal offset
+
 					if (K2Settings.jointRotationTrackingOption[5] == k2_DeviceInferredRotation)
-						pitchShift_KL = _PI / 4.f; // Normal offset
+						pitchShift_KL = _PI / 9.f; // Normal offset
 					if (K2Settings.jointRotationTrackingOption[6] == k2_DeviceInferredRotation)
-						pitchShift_KR = _PI / 4.f; // Normal offset
+						pitchShift_KR = _PI / 9.f; // Normal offset
 
 					// Waist
 					if (K2Settings.jointRotationTrackingOption[0] != k2_FollowHMDRotation)
