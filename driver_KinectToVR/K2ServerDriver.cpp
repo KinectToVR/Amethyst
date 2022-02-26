@@ -78,9 +78,6 @@ int K2ServerDriver::init_ServerDriver(
 
 	std::thread([&]()
 	{
-		// create chrono for limiting loop timing
-		using clock = std::chrono::steady_clock;
-		auto next_frame = clock::now();
 		LOG(INFO) << "Server thread started";
 
 		// Errors' case
@@ -96,8 +93,8 @@ int K2ServerDriver::init_ServerDriver(
 				{
 					while (_isActive)
 					{
-						// measure loop time, let's run at 140/s
-						next_frame += std::chrono::milliseconds(1000 / 140);
+						// Wait for the loop start
+						smphFrameUpdate.acquire();
 
 						// Wait for the client to request a read
 						while (WaitForSingleObject(k2api_start_Semaphore, 15000L) != WAIT_OBJECT_0)
@@ -171,9 +168,6 @@ int K2ServerDriver::init_ServerDriver(
 						{
 							LOG(ERROR) << "Global parsing error: " << e.what();
 						}
-
-						//Sleep until next frame, if time haven't passed yet
-						std::this_thread::sleep_until(next_frame);
 					}
 					// if we're currently not running, just wait
 					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
