@@ -117,7 +117,7 @@ namespace k2app
 				lowPassFilter[2].update(pose.position.z()));
 
 			/* Update the LERP (mix) filter */
-			LERPPosition = EigenUtils::lerp(lastLERPPosition, pose.position, 0.15);
+			LERPPosition = EigenUtils::lerp(lastLERPPosition, pose.position, 0.25);
 			lastLERPPosition = LERPPosition; // Backup the position
 		}
 
