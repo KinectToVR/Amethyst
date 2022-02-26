@@ -270,7 +270,7 @@ void KinectV2Handler::updateParseFrame()
 						Orientation.z
 					)) *
 				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-					* Eigen::AngleAxisf(3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+					* Eigen::AngleAxisf(3.14159265358979323846 / 3.0, Eigen::Vector3f::UnitY())
 					* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
 
 			jointOrientations[ktvr::Joint_KneeRight] =
@@ -286,8 +286,34 @@ void KinectV2Handler::updateParseFrame()
 							ktvr::Joint_KneeRight]].Orientation.z
 					)) *
 				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-					* Eigen::AngleAxisf(-3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+					* Eigen::AngleAxisf(-3.14159265358979323846 / 3.0, Eigen::Vector3f::UnitY())
 					* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+
+			jointOrientations[ktvr::Joint_ElbowLeft] =
+				jointOrientations[ktvr::Joint_ElbowLeft].slerp(
+					0.7f, Eigen::Quaternionf(
+						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
+						Orientation.w,
+						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
+						Orientation.x,
+						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
+						Orientation.y,
+						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
+						Orientation.z
+					));
+
+			jointOrientations[ktvr::Joint_ElbowRight] =
+				jointOrientations[ktvr::Joint_ElbowRight].slerp(
+					0.7f, Eigen::Quaternionf(
+						boneOrientations[globalIndex[
+							ktvr::Joint_ElbowRight]].Orientation.w,
+						boneOrientations[globalIndex[
+							ktvr::Joint_ElbowRight]].Orientation.x,
+						boneOrientations[globalIndex[
+							ktvr::Joint_ElbowRight]].Orientation.y,
+						boneOrientations[globalIndex[
+							ktvr::Joint_ElbowRight]].Orientation.z
+					));
 
 			newBodyFrameArrived = false;
 			break; // Only first skeleton
