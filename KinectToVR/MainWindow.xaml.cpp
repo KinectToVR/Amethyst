@@ -208,7 +208,7 @@ namespace winrt::KinectToVR::implementation
 			{
 				ShellExecuteA(NULL, "open", 
 					(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
-					.string().c_str(), (std::string("pid ") + std::to_string(GetCurrentProcessId())).c_str(), NULL, SW_SHOWDEFAULT);
+					.string().c_str(), std::to_string(GetCurrentProcessId()).c_str(), NULL, SW_SHOWDEFAULT);
 			}).detach();
 		}
 		else
@@ -456,8 +456,11 @@ namespace winrt::KinectToVR::implementation
 					// k2app::K2Settings.trackingDeviceID must be read from settings before!
 					if (TrackingDevices::TrackingDevicesVector.size() > 0)
 					{
-						if (TrackingDevices::TrackingDevicesVector.size() < k2app::K2Settings.trackingDeviceID)
+						// Check the base device index
+						if (k2app::K2Settings.trackingDeviceID >= TrackingDevices::TrackingDevicesVector.size()) {
+							LOG(INFO) << "Previous tracking device ID was too big, it's been reset to 0";
 							k2app::K2Settings.trackingDeviceID = 0; // Select the first one
+						}
 
 						// Init the device (base)
 						auto const& trackingDevice =
@@ -502,6 +505,12 @@ namespace winrt::KinectToVR::implementation
 								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
 							}
 							break;
+						}
+
+						// Check the override device index
+						if (k2app::K2Settings.overrideDeviceID >= TrackingDevices::TrackingDevicesVector.size()) {
+							LOG(INFO) << "Previous tracking device ID was too big, it's been reset to [none]";
+							k2app::K2Settings.overrideDeviceID = -1; // Select the first one
 						}
 
 						// Init the device (override, optionally)
