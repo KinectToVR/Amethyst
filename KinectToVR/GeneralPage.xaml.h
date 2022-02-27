@@ -21,15 +21,16 @@ namespace winrt::KinectToVR::implementation
 		            ktvr::JointTrackingState const& state, std::pair<bool, bool> const& isOverridden);
 
 		// WinUI things
-		GeneralPage
-		(
-		);
+		GeneralPage();
+
 		void OffsetsButton_Click(winrt::Windows::Foundation::IInspectable const& sender,
 		                         winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void SkeletonToggleButton_Checked(winrt::Windows::Foundation::IInspectable const& sender,
-		                                  winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void SkeletonToggleButton_Unchecked(winrt::Windows::Foundation::IInspectable const& sender,
-		                                    winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void SkeletonToggleButton_Click(winrt::Windows::Foundation::IInspectable const& sender,
+		                                winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& e);
+		void ForceRenderCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender,
+		                                 winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void ForceRenderCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender,
+		                                   winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void SaveOffsetsButton_Click(winrt::Windows::Foundation::IInspectable const& sender,
 		                             winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void DiscardOffsetsButton_Click(winrt::Windows::Foundation::IInspectable const& sender,

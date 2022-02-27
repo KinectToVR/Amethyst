@@ -45,8 +45,13 @@ namespace k2app
 		{
 			// General Page
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>
-				toggleTrackersButton,
+				toggleTrackersButton;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSplitButton>
 				skeletonToggleButton;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
+				forceRenderCheckBox;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
 				calibrationButton,
@@ -64,7 +69,8 @@ namespace k2app
 				overrideDeviceErrorLabel,
 				serverStatusLabel,
 				serverErrorLabel,
-				serverErrorWhatText;
+				serverErrorWhatText,
+				forceRenderText;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
 				errorButtonsGrid,

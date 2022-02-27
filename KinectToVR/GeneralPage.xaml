@@ -1817,16 +1817,38 @@
 
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="175" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="400" />
                     </Grid.ColumnDefinitions>
 
-                    <ToggleButton x:Name="SkeletonToggleButton" Checked="SkeletonToggleButton_Checked"
-                                  Unchecked="SkeletonToggleButton_Unchecked" IsChecked="True"
-                                  VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Hide Skeleton"
-                                  Margin="20,0,0,10" CornerRadius="3" Grid.Column="0"
-                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    <ToggleSplitButton x:Name="SkeletonToggleButton" Click="SkeletonToggleButton_Click"
+                                       IsChecked="True" VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                       Content="Hide Skeleton" Margin="20,0,0,10" CornerRadius="3" Grid.Column="0"
+                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                        <ToggleSplitButton.Flyout>
+                            <Flyout Placement="Bottom">
+                                <Grid Margin="0,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" />
+                                        <ColumnDefinition Width="2*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Opacity="1"
+                                               FontWeight="Medium" Text="Force Preview" Margin="30,0,0,2"
+                                               Grid.Column="0" x:Name="ForceRenderText" />
+                                    <CheckBox x:Name="ForceRenderCheckBox"
+                                              Checked="ForceRenderCheckBox_Checked"
+                                              Unchecked="ForceRenderCheckBox_Unchecked"
+                                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                                              MinWidth="0" MinHeight="0" Margin="0,0,0,0" IsChecked="False" />
+
+                                </Grid>
+                            </Flyout>
+                        </ToggleSplitButton.Flyout>
+
+                    </ToggleSplitButton>
 
                 </Grid>
             </Grid>

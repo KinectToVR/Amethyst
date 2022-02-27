@@ -35,7 +35,7 @@ namespace k2app
 		template <class Archive>
 		void serialize(Archive& archive, unsigned int version)
 		{
-			archive & BOOST_SERIALIZATION_NVP(trackingDeviceID)
+			archive& BOOST_SERIALIZATION_NVP(trackingDeviceID)
 				& BOOST_SERIALIZATION_NVP(overrideDeviceID)
 				& BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
 				& BOOST_SERIALIZATION_NVP(positionOverrideJointID)
@@ -60,7 +60,9 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(calibrationYaws)
 				& BOOST_SERIALIZATION_NVP(calibrationPitches)
 				& BOOST_SERIALIZATION_NVP(calibrationPointsNumber)
-				& BOOST_SERIALIZATION_NVP(autoCalibration);
+				& BOOST_SERIALIZATION_NVP(autoCalibration)
+				& BOOST_SERIALIZATION_NVP(skeletonPreviewEnabled)
+				& BOOST_SERIALIZATION_NVP(forceSkeletonPreview);
 		}
 
 	public:
@@ -158,6 +160,11 @@ namespace k2app
 		uint32_t calibrationPointsNumber = 3; // Always 3<=x<=5
 		// Calibration helpers - calibration method: auto?
 		std::pair<bool, bool> autoCalibration{false, false};
+
+		// Save the skeleton preview state
+		bool skeletonPreviewEnabled = true;
+		// If we wanna dismiss all warnings during the preview
+		bool forceSkeletonPreview = false;
 		
 		/* Saving and loading part */
 

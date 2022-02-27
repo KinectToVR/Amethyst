@@ -9,8 +9,7 @@ using namespace Microsoft::UI::Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-bool show_skeleton_current = true,
-     show_skeleton_previous = true,
+bool show_skeleton_previous = true,
      general_tab_setup_finished = false,
      pending_offsets_update = false;
 
@@ -25,6 +24,15 @@ void skeleton_visibility_set_ui(bool const& v)
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	k2app::shared::general::skeletonToggleButton.get()->IsChecked(v);
 	k2app::shared::general::skeletonToggleButton.get()->Content(box_value(v ? L"Hide Skeleton" : L"Show Skeleton"));
+
+	k2app::shared::general::forceRenderCheckBox.get()->IsEnabled(v);
+	k2app::shared::general::forceRenderText.get()->Opacity(v ? 1.0 : 0.5);
+}
+
+void skeleton_force_set_ui(bool const& v)
+{
+	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
+	k2app::shared::general::forceRenderCheckBox.get()->IsChecked(v);
 }
 
 namespace winrt::KinectToVR::implementation
@@ -37,7 +45,10 @@ namespace winrt::KinectToVR::implementation
 		using namespace ::k2app::shared::general;
 
 		toggleTrackersButton = std::make_shared<Controls::Primitives::ToggleButton>(ToggleTrackersButton());
-		skeletonToggleButton = std::make_shared<Controls::Primitives::ToggleButton>(SkeletonToggleButton());
+
+		skeletonToggleButton = std::make_shared<Controls::ToggleSplitButton>(SkeletonToggleButton());
+
+		forceRenderCheckBox = std::make_shared<Controls::CheckBox>(ForceRenderCheckBox());
 
 		calibrationButton = std::make_shared<Controls::Button>(CalibrationButton());
 		offsetsButton = std::make_shared<Controls::Button>(OffsetsButton());
@@ -54,6 +65,7 @@ namespace winrt::KinectToVR::implementation
 		serverStatusLabel = std::make_shared<Controls::TextBlock>(ServerStatusLabel());
 		serverErrorLabel = std::make_shared<Controls::TextBlock>(ServerErrorLabel());
 		serverErrorWhatText = std::make_shared<Controls::TextBlock>(ServerErrorWhatText());
+		forceRenderText = std::make_shared<Controls::TextBlock>(ForceRenderText());
 
 		errorButtonsGrid = std::make_shared<Controls::Grid>(ErrorButtonsGrid());
 		errorWhatGrid = std::make_shared<Controls::Grid>(ErrorWhatGrid());
@@ -228,23 +240,42 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Checked(
+void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& e)
+{
+	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
+	k2app::K2Settings.skeletonPreviewEnabled = k2app::shared::general::skeletonToggleButton.get()->IsChecked();
+
+	k2app::shared::general::skeletonToggleButton.get()->Content(
+		k2app::K2Settings.skeletonPreviewEnabled
+			? box_value(L"Hide Skeleton")
+			: box_value(L"Show Skeleton"));
+
+	k2app::shared::general::forceRenderCheckBox.get()->IsEnabled(
+		k2app::shared::general::skeletonToggleButton.get()->IsChecked());
+	k2app::shared::general::forceRenderText.get()->Opacity(
+		k2app::shared::general::skeletonToggleButton.get()->IsChecked() ? 1.0 : 0.5);
+
+	k2app::K2Settings.saveSettings();
+}
+
+void winrt::KinectToVR::implementation::GeneralPage::ForceRenderCheckBox_Checked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
-	k2app::shared::general::skeletonToggleButton.get()->Content(box_value(L"Hide Skeleton"));
-	show_skeleton_current = true;
+	k2app::K2Settings.forceSkeletonPreview = true;
+	skeleton_force_set_ui(k2app::K2Settings.forceSkeletonPreview);
+	k2app::K2Settings.saveSettings();
 }
 
-
-void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Unchecked(
+void winrt::KinectToVR::implementation::GeneralPage::ForceRenderCheckBox_Unchecked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
-	k2app::shared::general::skeletonToggleButton.get()->Content(box_value(L"Show Skeleton"));
-	show_skeleton_current = false;
+	k2app::K2Settings.forceSkeletonPreview = false;
+	skeleton_force_set_ui(k2app::K2Settings.forceSkeletonPreview);
+	k2app::K2Settings.saveSettings();
 }
-
 
 void winrt::KinectToVR::implementation::GeneralPage::SaveOffsetsButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
@@ -856,7 +887,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 	// Exit the pane
 	CalibrationView().IsPaneOpen(false);
 
-	show_skeleton_current = show_skeleton_previous; // Change to whatever
+	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 }
 
@@ -872,7 +903,7 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardAutoCalibrationButto
 		// Play a nice sound - exiting
 		ElementSoundPlayer::Play(ElementSoundKind::GoBack);
 
-		show_skeleton_current = show_skeleton_previous; // Change to whatever
+		k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 		skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 	}
 	// Begin abort
@@ -1064,7 +1095,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 	// Exit the pane
 	CalibrationView().IsPaneOpen(false);
 
-	show_skeleton_current = show_skeleton_previous; // Change to whatever
+	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 }
 
@@ -1080,7 +1111,7 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardManualCalibrationBut
 		// Play a nice sound - exiting
 		ElementSoundPlayer::Play(ElementSoundKind::GoBack);
 
-		show_skeleton_current = show_skeleton_previous; // Change to whatever
+		k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 		skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 	}
 	// Begin abort
@@ -1287,6 +1318,10 @@ void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 
 	// Notify of the setup's end
 	general_tab_setup_finished = true;
+
+	// Setup the preview button
+	skeleton_visibility_set_ui(k2app::K2Settings.skeletonPreviewEnabled);
+	skeleton_force_set_ui(k2app::K2Settings.forceSkeletonPreview);
 }
 
 
@@ -1508,7 +1543,7 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 	timer.Tick([&, this](IInspectable const& sender, IInspectable const& e)
 	{
 		// If we've disabled the preview
-		if (!show_skeleton_current)
+		if (!k2app::K2Settings.skeletonPreviewEnabled)
 		{
 			// Hide the UI, only show that viewing is disabled
 			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
@@ -1520,30 +1555,34 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 			return; // Nothing more to do anyway
 		}
 
-		// If the dashboard's closed
-		if (show_skeleton_current && !IsDashboardOpen())
+		// If the preview isn't forced
+		if (!k2app::K2Settings.forceSkeletonPreview)
 		{
-			// Hide the UI, only show that viewing is disabled
-			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
-			NotTrackedNotice().Visibility(Visibility::Collapsed);
-			SkeletonHiddenNotice().Visibility(Visibility::Collapsed);
-			NotInFocusNotice().Visibility(Visibility::Collapsed);
+			// If the dashboard's closed
+			if (k2app::K2Settings.skeletonPreviewEnabled && !IsDashboardOpen())
+			{
+				// Hide the UI, only show that viewing is disabled
+				SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
+				NotTrackedNotice().Visibility(Visibility::Collapsed);
+				SkeletonHiddenNotice().Visibility(Visibility::Collapsed);
+				NotInFocusNotice().Visibility(Visibility::Collapsed);
 
-			DashboardClosedNotice().Visibility(Visibility::Visible);
-			return; // Nothing more to do anyway
-		}
+				DashboardClosedNotice().Visibility(Visibility::Visible);
+				return; // Nothing more to do anyway
+			}
 
-		// If we're out of focus TODO skip if we're in VROverlay
-		if (show_skeleton_current && !IsCurrentWindowActive())
-		{
-			// Hide the UI, only show that viewing is disabled
-			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
-			NotTrackedNotice().Visibility(Visibility::Collapsed);
-			SkeletonHiddenNotice().Visibility(Visibility::Collapsed);
-			DashboardClosedNotice().Visibility(Visibility::Collapsed);
+			// If we're out of focus TODO skip if we're in VROverlay
+			if (k2app::K2Settings.skeletonPreviewEnabled && !IsCurrentWindowActive())
+			{
+				// Hide the UI, only show that viewing is disabled
+				SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
+				NotTrackedNotice().Visibility(Visibility::Collapsed);
+				SkeletonHiddenNotice().Visibility(Visibility::Collapsed);
+				DashboardClosedNotice().Visibility(Visibility::Collapsed);
 
-			NotInFocusNotice().Visibility(Visibility::Visible);
-			return; // Nothing more to do anyway
+				NotInFocusNotice().Visibility(Visibility::Visible);
+				return; // Nothing more to do anyway
+			}
 		}
 
 		SkeletonHiddenNotice().Visibility(Visibility::Collapsed); // Else hide
@@ -1801,8 +1840,8 @@ void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
 
 		CalibrationView().IsPaneOpen(true);
 
-		show_skeleton_previous = show_skeleton_current; // Back up
-		show_skeleton_current = true; // Change to show
+		show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
+		k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
 		skeleton_visibility_set_ui(true); // Change to show
 	}
 	else
@@ -1826,8 +1865,8 @@ void winrt::KinectToVR::implementation::GeneralPage::BaseCalibration_Click(
 
 	CalibrationView().IsPaneOpen(true);
 
-	show_skeleton_previous = show_skeleton_current; // Back up
-	show_skeleton_current = true; // Change to show
+	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
+	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
 	skeleton_visibility_set_ui(true); // Change to show
 
 	// Eventually enable the auto calibration
@@ -1856,8 +1895,8 @@ void winrt::KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
 
 	CalibrationView().IsPaneOpen(true);
 
-	show_skeleton_previous = show_skeleton_current; // Back up
-	show_skeleton_current = true; // Change to show
+	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
+	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
 	skeleton_visibility_set_ui(true); // Change to show
 
 	// Eventually enable the auto calibration
