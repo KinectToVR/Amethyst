@@ -797,7 +797,8 @@ void KinectToVR::implementation::MainWindow::ExitButton_Click(
 	Sleep(500);
 
 	// Save and Exit with 0
-	exit(0);
+	//exit(0);
+	Application::Current().Exit();
 }
 
 

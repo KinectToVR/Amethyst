@@ -617,7 +617,8 @@ void winrt::KinectToVR::implementation::SettingsPage::ResetButton_Click(
 		LOG(INFO) << "Configuration has been reset, exiting...";
 		k2app::interfacing::ShowToast("KinectToVR restart pending...",
 		                              "The app will restart automatically in 3 seconds");
-		exit(0);
+		//exit(0);
+		Application::Current().Exit();
 	}
 	else
 	{
