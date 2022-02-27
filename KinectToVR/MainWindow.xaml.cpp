@@ -596,8 +596,11 @@ namespace winrt::KinectToVR::implementation
 						}).detach();
 
 						// Update the UI
-						TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-						TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
+						k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue([&, this]
+						{
+							TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
+							TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
+						});
 
 						std::thread([&]
 						{
@@ -605,9 +608,12 @@ namespace winrt::KinectToVR::implementation
 							std::this_thread::sleep_for(std::chrono::seconds(5));
 
 							// Update the UI
-							TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-							TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
-						});
+							k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue([&, this]
+							{
+								TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
+								TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
+							});
+						}).detach();
 						// Auto-handles if none
 					}
 					else // Log and exit, we have nothing to do
