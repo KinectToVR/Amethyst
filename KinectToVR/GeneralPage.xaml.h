@@ -75,7 +75,6 @@ namespace winrt::KinectToVR::implementation
 		                               winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void OffsetsFrontendValueChanged(winrt::Windows::Foundation::IInspectable const& sender,
 		                                 winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& e);
-		void ResumePreviewButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 	};
 }
 

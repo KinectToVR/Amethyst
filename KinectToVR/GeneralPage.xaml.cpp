@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "GeneralPage.xaml.h"
 #if __has_include("GeneralPage.g.cpp")
 #include "GeneralPage.g.cpp"
@@ -1472,21 +1472,9 @@ std::pair<bool, bool> IsJointOverriden(uint32_t const& joint)
 {
 	return (k2app::K2Settings.overrideDeviceID >= 0)
 		       ? std::make_pair(
-				   k2app::K2Settings.isPositionOverriddenJoint[joint],
-				   k2app::K2Settings.isRotationOverriddenJoint[joint])
+			       k2app::K2Settings.isPositionOverriddenJoint[joint],
+			       k2app::K2Settings.isRotationOverriddenJoint[joint])
 		       : std::make_pair(false, false);
-}
-
-
-// Skip checking if the overlay is open
-bool overlay_hidden_dismiss = false;
-
-
-void winrt::KinectToVR::implementation::GeneralPage::ResumePreviewButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-	// Dismiss (one time)
-	overlay_hidden_dismiss = true;
 }
 
 
@@ -1527,7 +1515,7 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 		}
 
 		// If the dashboard's closed
-		if (show_skeleton_current && !overlay_hidden_dismiss && !IsDashboardOpen())
+		if (show_skeleton_current && !IsDashboardOpen())
 		{
 			// Hide the UI, only show that viewing is disabled
 			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
@@ -1542,9 +1530,6 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 		// If we're out of focus TODO skip if we're in VROverlay
 		if (show_skeleton_current && !IsCurrentWindowActive())
 		{
-			// Reset the overlay_hidden_dismiss
-			overlay_hidden_dismiss = false;
-
 			// Hide the UI, only show that viewing is disabled
 			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
 			NotTrackedNotice().Visibility(Visibility::Collapsed);

@@ -1805,10 +1805,6 @@
                         <Run>and will run again when you're back.</Run>
                     </TextBlock>
 
-                    <Button Content="Resume Anyway" HorizontalAlignment="Center"
-                            Margin="0,12,0,0" FontWeight="SemiBold" CornerRadius="3"
-                            x:Name="ResumePreviewButton" Click="ResumePreviewButton_Click" />
-
                 </StackPanel>
             </Viewbox>
 
