@@ -176,6 +176,18 @@ void devices_update_current()
 	}
 }
 
+void devices_clear_combo(std::shared_ptr<Controls::ComboBox> const& cbox)
+{
+	try
+	{
+		cbox.get()->Items().Clear();
+	}
+	catch (...)
+	{
+		LOG(WARNING) << "Couldn't clear a ComboBox. You better call an exorcist.";
+	}
+}
+
 namespace winrt::KinectToVR::implementation
 {
 	DevicesPage::DevicesPage()
@@ -377,33 +389,33 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 			if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 			{
 				// Clear items
-				// Waist
-				waistPositionOverrideOptionBox.get()->Items().Clear();
-				waistRotationOverrideOptionBox.get()->Items().Clear();
+				// // Waist
+				devices_clear_combo(waistPositionOverrideOptionBox);
+				devices_clear_combo(waistRotationOverrideOptionBox);
 
 				// LeftF
-				leftFootPositionOverrideOptionBox.get()->Items().Clear();
-				leftFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftFootPositionOverrideOptionBox);
+				devices_clear_combo(leftFootRotationOverrideOptionBox);
 
 				// RightF
-				rightFootPositionOverrideOptionBox.get()->Items().Clear();
-				rightFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightFootPositionOverrideOptionBox);
+				devices_clear_combo(rightFootRotationOverrideOptionBox);
 
 				// LeftEL
-				leftElbowPositionOverrideOptionBox.get()->Items().Clear();
-				leftElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftElbowPositionOverrideOptionBox);
+				devices_clear_combo(leftElbowRotationOverrideOptionBox);
 
 				// RightEL
-				rightElbowPositionOverrideOptionBox.get()->Items().Clear();
-				rightElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightElbowPositionOverrideOptionBox);
+				devices_clear_combo(rightElbowRotationOverrideOptionBox);
 
 				// LeftK
-				leftKneePositionOverrideOptionBox.get()->Items().Clear();
-				leftKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftKneePositionOverrideOptionBox);
+				devices_clear_combo(leftKneeRotationOverrideOptionBox);
 
 				// RightK
-				rightKneePositionOverrideOptionBox.get()->Items().Clear();
-				rightKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightKneePositionOverrideOptionBox);
+				devices_clear_combo(rightKneeRotationOverrideOptionBox);
 
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
@@ -875,19 +887,19 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 			{
 				// Clear items
 				// Waist
-				waistJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(waistJointOptionBox);
 				// LeftF
-				leftFootJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftFootJointOptionBox);
 				// RightF
-				rightFootJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightFootJointOptionBox);
 				// LeftEL
-				leftElbowJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftElbowJointOptionBox);
 				// RightEL
-				rightElbowJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightElbowJointOptionBox);
 				// LeftK
-				leftKneeJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftKneeJointOptionBox);
 				// RightK
-				rightKneeJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightKneeJointOptionBox);
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
@@ -937,32 +949,32 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 			{
 				// Clear items
 				// Waist
-				waistPositionOverrideOptionBox.get()->Items().Clear();
-				waistRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(waistPositionOverrideOptionBox);
+				devices_clear_combo(waistRotationOverrideOptionBox);
 
 				// LeftF
-				leftFootPositionOverrideOptionBox.get()->Items().Clear();
-				leftFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftFootPositionOverrideOptionBox);
+				devices_clear_combo(leftFootRotationOverrideOptionBox);
 
 				// RightF
-				rightFootPositionOverrideOptionBox.get()->Items().Clear();
-				rightFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightFootPositionOverrideOptionBox);
+				devices_clear_combo(rightFootRotationOverrideOptionBox);
 
 				// LeftEL
-				leftElbowPositionOverrideOptionBox.get()->Items().Clear();
-				leftElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftElbowPositionOverrideOptionBox);
+				devices_clear_combo(leftElbowRotationOverrideOptionBox);
 
 				// RightEL
-				rightElbowPositionOverrideOptionBox.get()->Items().Clear();
-				rightElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightElbowPositionOverrideOptionBox);
+				devices_clear_combo(rightElbowRotationOverrideOptionBox);
 
 				// LeftK
-				leftKneePositionOverrideOptionBox.get()->Items().Clear();
-				leftKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftKneePositionOverrideOptionBox);
+				devices_clear_combo(leftKneeRotationOverrideOptionBox);
 
 				// RightK
-				rightKneePositionOverrideOptionBox.get()->Items().Clear();
-				rightKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightKneePositionOverrideOptionBox);
+				devices_clear_combo(rightKneeRotationOverrideOptionBox);
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
@@ -1176,32 +1188,32 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 			{
 				// Clear items
 				// Waist
-				waistPositionOverrideOptionBox.get()->Items().Clear();
-				waistRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(waistPositionOverrideOptionBox);
+				devices_clear_combo(waistRotationOverrideOptionBox);
 
 				// LeftF
-				leftFootPositionOverrideOptionBox.get()->Items().Clear();
-				leftFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftFootPositionOverrideOptionBox);
+				devices_clear_combo(leftFootRotationOverrideOptionBox);
 
 				// RightF
-				rightFootPositionOverrideOptionBox.get()->Items().Clear();
-				rightFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightFootPositionOverrideOptionBox);
+				devices_clear_combo(rightFootRotationOverrideOptionBox);
 
 				// LeftEL
-				leftElbowPositionOverrideOptionBox.get()->Items().Clear();
-				leftElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftElbowPositionOverrideOptionBox);
+				devices_clear_combo(leftElbowRotationOverrideOptionBox);
 
 				// RightEL
-				rightElbowPositionOverrideOptionBox.get()->Items().Clear();
-				rightElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightElbowPositionOverrideOptionBox);
+				devices_clear_combo(rightElbowRotationOverrideOptionBox);
 
 				// LeftK
-				leftKneePositionOverrideOptionBox.get()->Items().Clear();
-				leftKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftKneePositionOverrideOptionBox);
+				devices_clear_combo(leftKneeRotationOverrideOptionBox);
 
 				// RightK
-				rightKneePositionOverrideOptionBox.get()->Items().Clear();
-				rightKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightKneePositionOverrideOptionBox);
+				devices_clear_combo(rightKneeRotationOverrideOptionBox);
 
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
@@ -1671,19 +1683,19 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 			{
 				// Clear items
 				// Waist
-				waistJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(waistJointOptionBox);
 				// LeftF
-				leftFootJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftFootJointOptionBox);
 				// RightF
-				rightFootJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightFootJointOptionBox);
 				// LeftEL
-				leftElbowJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftElbowJointOptionBox);
 				// RightEL
-				rightElbowJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightElbowJointOptionBox);
 				// LeftK
-				leftKneeJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftKneeJointOptionBox);
 				// RightK
-				rightKneeJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightKneeJointOptionBox);
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
@@ -1733,32 +1745,32 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 			{
 				// Clear items
 				// Waist
-				waistPositionOverrideOptionBox.get()->Items().Clear();
-				waistRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(waistPositionOverrideOptionBox);
+				devices_clear_combo(waistRotationOverrideOptionBox);
 
 				// LeftF
-				leftFootPositionOverrideOptionBox.get()->Items().Clear();
-				leftFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftFootPositionOverrideOptionBox);
+				devices_clear_combo(leftFootRotationOverrideOptionBox);
 
 				// RightF
-				rightFootPositionOverrideOptionBox.get()->Items().Clear();
-				rightFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightFootPositionOverrideOptionBox);
+				devices_clear_combo(rightFootRotationOverrideOptionBox);
 
 				// LeftEL
-				leftElbowPositionOverrideOptionBox.get()->Items().Clear();
-				leftElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftElbowPositionOverrideOptionBox);
+				devices_clear_combo(leftElbowRotationOverrideOptionBox);
 
 				// RightEL
-				rightElbowPositionOverrideOptionBox.get()->Items().Clear();
-				rightElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightElbowPositionOverrideOptionBox);
+				devices_clear_combo(rightElbowRotationOverrideOptionBox);
 
 				// LeftK
-				leftKneePositionOverrideOptionBox.get()->Items().Clear();
-				leftKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftKneePositionOverrideOptionBox);
+				devices_clear_combo(leftKneeRotationOverrideOptionBox);
 
 				// RightK
-				rightKneePositionOverrideOptionBox.get()->Items().Clear();
-				rightKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightKneePositionOverrideOptionBox);
+				devices_clear_combo(rightKneeRotationOverrideOptionBox);
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
@@ -2066,6 +2078,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 	AlternativeConnectionOptionsFlyout().Hide();
 }
 
+
 void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
@@ -2085,32 +2098,32 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 
 		// Clear items
 		// Waist
-		waistPositionOverrideOptionBox.get()->Items().Clear();
-		waistRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(waistPositionOverrideOptionBox);
+		devices_clear_combo(waistRotationOverrideOptionBox);
 
 		// LeftF
-		leftFootPositionOverrideOptionBox.get()->Items().Clear();
-		leftFootRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(leftFootPositionOverrideOptionBox);
+		devices_clear_combo(leftFootRotationOverrideOptionBox);
 
 		// RightF
-		rightFootPositionOverrideOptionBox.get()->Items().Clear();
-		rightFootRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(rightFootPositionOverrideOptionBox);
+		devices_clear_combo(rightFootRotationOverrideOptionBox);
 
 		// LeftEL
-		leftElbowPositionOverrideOptionBox.get()->Items().Clear();
-		leftElbowRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(leftElbowPositionOverrideOptionBox);
+		devices_clear_combo(leftElbowRotationOverrideOptionBox);
 
 		// RightEL
-		rightElbowPositionOverrideOptionBox.get()->Items().Clear();
-		rightElbowRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(rightElbowPositionOverrideOptionBox);
+		devices_clear_combo(rightElbowRotationOverrideOptionBox);
 
 		// LeftK
-		leftKneePositionOverrideOptionBox.get()->Items().Clear();
-		leftKneeRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(leftKneePositionOverrideOptionBox);
+		devices_clear_combo(leftKneeRotationOverrideOptionBox);
 
 		// RightK
-		rightKneePositionOverrideOptionBox.get()->Items().Clear();
-		rightKneeRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(rightKneePositionOverrideOptionBox);
+		devices_clear_combo(rightKneeRotationOverrideOptionBox);
 
 		// Append all joints to all combos, depend on characteristics
 		switch (device->getDeviceCharacteristics())
@@ -2558,32 +2571,32 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 
 		// Clear items
 		// Waist
-		waistPositionOverrideOptionBox.get()->Items().Clear();
-		waistRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(waistPositionOverrideOptionBox);
+		devices_clear_combo(waistRotationOverrideOptionBox);
 
 		// LeftF
-		leftFootPositionOverrideOptionBox.get()->Items().Clear();
-		leftFootRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(leftFootPositionOverrideOptionBox);
+		devices_clear_combo(leftFootRotationOverrideOptionBox);
 
 		// RightF
-		rightFootPositionOverrideOptionBox.get()->Items().Clear();
-		rightFootRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(rightFootPositionOverrideOptionBox);
+		devices_clear_combo(rightFootRotationOverrideOptionBox);
 
 		// LeftEL
-		leftElbowPositionOverrideOptionBox.get()->Items().Clear();
-		leftElbowRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(leftElbowPositionOverrideOptionBox);
+		devices_clear_combo(leftElbowRotationOverrideOptionBox);
 
 		// RightEL
-		rightElbowPositionOverrideOptionBox.get()->Items().Clear();
-		rightElbowRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(rightElbowPositionOverrideOptionBox);
+		devices_clear_combo(rightElbowRotationOverrideOptionBox);
 
 		// LeftK
-		leftKneePositionOverrideOptionBox.get()->Items().Clear();
-		leftKneeRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(leftKneePositionOverrideOptionBox);
+		devices_clear_combo(leftKneeRotationOverrideOptionBox);
 
 		// RightK
-		rightKneePositionOverrideOptionBox.get()->Items().Clear();
-		rightKneeRotationOverrideOptionBox.get()->Items().Clear();
+		devices_clear_combo(rightKneePositionOverrideOptionBox);
+		devices_clear_combo(rightKneeRotationOverrideOptionBox);
 
 		// Append all joints to all combos
 		for (auto& _joint : device->getTrackedJoints())
@@ -2790,19 +2803,19 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 
 		// Clear items
 		// Waist
-		waistJointOptionBox.get()->Items().Clear();
+		devices_clear_combo(waistJointOptionBox);
 		// LeftF
-		leftFootJointOptionBox.get()->Items().Clear();
+		devices_clear_combo(leftFootJointOptionBox);
 		// RightF
-		rightFootJointOptionBox.get()->Items().Clear();
+		devices_clear_combo(rightFootJointOptionBox);
 		// LeftEL
-		leftElbowJointOptionBox.get()->Items().Clear();
+		devices_clear_combo(leftElbowJointOptionBox);
 		// RightEL
-		rightElbowJointOptionBox.get()->Items().Clear();
+		devices_clear_combo(rightElbowJointOptionBox);
 		// LeftK
-		leftKneeJointOptionBox.get()->Items().Clear();
+		devices_clear_combo(leftKneeJointOptionBox);
 		// RightK
-		rightKneeJointOptionBox.get()->Items().Clear();
+		devices_clear_combo(rightKneeJointOptionBox);
 
 		// Append all joints to all combos
 		for (auto& _joint : device->getTrackedJoints())
@@ -3929,32 +3942,32 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 			{
 				// Clear items
 				// Waist
-				waistPositionOverrideOptionBox.get()->Items().Clear();
-				waistRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(waistPositionOverrideOptionBox);
+				devices_clear_combo(waistRotationOverrideOptionBox);
 
 				// LeftF
-				leftFootPositionOverrideOptionBox.get()->Items().Clear();
-				leftFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftFootPositionOverrideOptionBox);
+				devices_clear_combo(leftFootRotationOverrideOptionBox);
 
 				// RightF
-				rightFootPositionOverrideOptionBox.get()->Items().Clear();
-				rightFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightFootPositionOverrideOptionBox);
+				devices_clear_combo(rightFootRotationOverrideOptionBox);
 
 				// LeftEL
-				leftElbowPositionOverrideOptionBox.get()->Items().Clear();
-				leftElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftElbowPositionOverrideOptionBox);
+				devices_clear_combo(leftElbowRotationOverrideOptionBox);
 
 				// RightEL
-				rightElbowPositionOverrideOptionBox.get()->Items().Clear();
-				rightElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightElbowPositionOverrideOptionBox);
+				devices_clear_combo(rightElbowRotationOverrideOptionBox);
 
 				// LeftK
-				leftKneePositionOverrideOptionBox.get()->Items().Clear();
-				leftKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftKneePositionOverrideOptionBox);
+				devices_clear_combo(leftKneeRotationOverrideOptionBox);
 
 				// RightK
-				rightKneePositionOverrideOptionBox.get()->Items().Clear();
-				rightKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightKneePositionOverrideOptionBox);
+				devices_clear_combo(rightKneeRotationOverrideOptionBox);
 
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
@@ -4426,19 +4439,19 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 			{
 				// Clear items
 				// Waist
-				waistJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(waistJointOptionBox);
 				// LeftF
-				leftFootJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftFootJointOptionBox);
 				// RightF
-				rightFootJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightFootJointOptionBox);
 				// LeftEL
-				leftElbowJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftElbowJointOptionBox);
 				// RightEL
-				rightElbowJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightElbowJointOptionBox);
 				// LeftK
-				leftKneeJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftKneeJointOptionBox);
 				// RightK
-				rightKneeJointOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightKneeJointOptionBox);
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
@@ -4488,32 +4501,32 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 			{
 				// Clear items
 				// Waist
-				waistPositionOverrideOptionBox.get()->Items().Clear();
-				waistRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(waistPositionOverrideOptionBox);
+				devices_clear_combo(waistRotationOverrideOptionBox);
 
 				// LeftF
-				leftFootPositionOverrideOptionBox.get()->Items().Clear();
-				leftFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftFootPositionOverrideOptionBox);
+				devices_clear_combo(leftFootRotationOverrideOptionBox);
 
 				// RightF
-				rightFootPositionOverrideOptionBox.get()->Items().Clear();
-				rightFootRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightFootPositionOverrideOptionBox);
+				devices_clear_combo(rightFootRotationOverrideOptionBox);
 
 				// LeftEL
-				leftElbowPositionOverrideOptionBox.get()->Items().Clear();
-				leftElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftElbowPositionOverrideOptionBox);
+				devices_clear_combo(leftElbowRotationOverrideOptionBox);
 
 				// RightEL
-				rightElbowPositionOverrideOptionBox.get()->Items().Clear();
-				rightElbowRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightElbowPositionOverrideOptionBox);
+				devices_clear_combo(rightElbowRotationOverrideOptionBox);
 
 				// LeftK
-				leftKneePositionOverrideOptionBox.get()->Items().Clear();
-				leftKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(leftKneePositionOverrideOptionBox);
+				devices_clear_combo(leftKneeRotationOverrideOptionBox);
 
 				// RightK
-				rightKneePositionOverrideOptionBox.get()->Items().Clear();
-				rightKneeRotationOverrideOptionBox.get()->Items().Clear();
+				devices_clear_combo(rightKneePositionOverrideOptionBox);
+				devices_clear_combo(rightKneeRotationOverrideOptionBox);
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
