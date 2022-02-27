@@ -37,6 +37,8 @@ namespace k2app
 				consoleItem;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Window> thisAppWindow;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Dispatching::DispatcherQueue> thisDispatcherQueue;
 		}
 
 		namespace general

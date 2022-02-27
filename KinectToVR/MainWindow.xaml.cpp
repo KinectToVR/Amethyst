@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -184,6 +184,7 @@ namespace winrt::KinectToVR::implementation
 
 		LOG(INFO) << "Making the app window available for children views...";
 		k2app::shared::main::thisAppWindow = std::make_shared<Window>(this->try_as<Window>());
+		k2app::shared::main::thisDispatcherQueue = std::make_shared<winrt::Microsoft::UI::Dispatching::DispatcherQueue>(DispatcherQueue());
 
 		LOG(INFO) << "Pushing control pages to window...";
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
