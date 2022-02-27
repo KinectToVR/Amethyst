@@ -21,6 +21,9 @@ namespace winrt::KinectToVR::implementation
 	ConsolePage::ConsolePage()
 	{
 		InitializeComponent();
+
+		k2app::shared::other::toggleFreezeButton = std::make_shared<
+			winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>(ToggleTrackingButton());
 	}
 }
 
@@ -29,6 +32,10 @@ void winrt::KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	console_setup_finished = true;
+	k2app::shared::other::toggleFreezeButton->IsChecked(k2app::interfacing::isTrackingFrozen);
+	k2app::shared::other::toggleFreezeButton->Content(k2app::interfacing::isTrackingFrozen
+		                                                  ? box_value(L"Unfreeze Tracking")
+		                                                  : box_value(L"Freeze Tracking"));
 	LOG(INFO) << "Experiments page setup finished.";
 }
 

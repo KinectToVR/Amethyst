@@ -246,5 +246,10 @@ namespace k2app
 				trackersDropDown,
 				expTrackersDropDown;
 		}
+
+		namespace other
+		{
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton> toggleFreezeButton;
+		}
 	}
 }
