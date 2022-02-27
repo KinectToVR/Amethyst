@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -783,6 +783,7 @@ void KinectToVR::implementation::MainWindow::InstallLaterButton_Click(
 void KinectToVR::implementation::MainWindow::InstallNowButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	ShellExecuteA(0, 0, "https://github.com/KinectToVR/Amethyst-Releases/releases/latest", 0, 0, SW_SHOW);
 	UpdateFlyout().Hide();
 }
 
