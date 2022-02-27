@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GeneralPage.xaml.h"
 #if __has_include("GeneralPage.g.cpp")
 #include "GeneralPage.g.cpp"
@@ -1445,6 +1445,12 @@ bool IsDashboardOpen()
 	if (strcmp(system_name, "null") == 0)
 		return true;
 
+	// Also check if we're not idle / standby
+	const auto stat = vr::VRSystem()->GetTrackedDeviceActivityLevel(vr::k_unTrackedDeviceIndex_Hmd);
+	if (stat != vr::k_EDeviceActivityLevel_UserInteraction &&
+		stat != vr::k_EDeviceActivityLevel_UserInteraction_Timeout)
+		return true;
+
 	// Check if the dashboard is open
 	return vr::VROverlay()->IsDashboardVisible();
 }
@@ -1608,31 +1614,31 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 
 						// Waist
 						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist],
-							IsJointOverriden(0));
+						       IsJointOverriden(0));
 
 						// Left Foot
 						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft],
-							IsJointOverriden(1));
+						       IsJointOverriden(1));
 
 						// Right Foot
 						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight],
-							IsJointOverriden(2));
+						       IsJointOverriden(2));
 
 						// Left Elbow
 						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft], states[ktvr::Joint_ElbowLeft],
-							IsJointOverriden(3));
+						       IsJointOverriden(3));
 
 						// Right Elbow
 						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight], states[ktvr::Joint_ElbowRight],
-							IsJointOverriden(4));
+						       IsJointOverriden(4));
 
 						// Left Knee
 						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft], states[ktvr::Joint_KneeLeft],
-							IsJointOverriden(5));
+						       IsJointOverriden(5));
 
 						// Right Knee
 						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight], states[ktvr::Joint_KneeRight],
-							IsJointOverriden(6));
+						       IsJointOverriden(6));
 					}
 					else if (device->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
 					{
@@ -1644,34 +1650,34 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 						// Head
 						sk_dot(jointDots[0], joints[ktvr::Joint_Head], states[ktvr::Joint_Head],
 						       std::make_pair(false, false));
-						
+
 						// Waist
 						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist],
-							IsJointOverriden(0));
+						       IsJointOverriden(0));
 
 						// Left Foot
 						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft],
-							IsJointOverriden(1));
+						       IsJointOverriden(1));
 
 						// Right Foot
 						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight],
-							IsJointOverriden(2));
+						       IsJointOverriden(2));
 
 						// Left Elbow
 						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft], states[ktvr::Joint_ElbowLeft],
-							IsJointOverriden(3));
+						       IsJointOverriden(3));
 
 						// Right Elbow
 						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight], states[ktvr::Joint_ElbowRight],
-							IsJointOverriden(4));
+						       IsJointOverriden(4));
 
 						// Left Knee
 						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft], states[ktvr::Joint_KneeLeft],
-							IsJointOverriden(5));
+						       IsJointOverriden(5));
 
 						// Right Knee
 						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight], states[ktvr::Joint_KneeRight],
-							IsJointOverriden(6));
+						       IsJointOverriden(6));
 
 						// Empty lines
 						boneLines[0] = Shapes::Line();
@@ -1717,18 +1723,18 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 						// Head
 						sk_dot(jointDots[0], joints[ktvr::Joint_Head], states[ktvr::Joint_Head],
 						       std::make_pair(false, false));
-						
+
 						// Waist
 						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist],
-							IsJointOverriden(0));
+						       IsJointOverriden(0));
 
 						// Left Foot
 						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft],
-							IsJointOverriden(1));
+						       IsJointOverriden(1));
 
 						// Right Foot
 						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight],
-							IsJointOverriden(2));
+						       IsJointOverriden(2));
 					}
 				}
 				else
