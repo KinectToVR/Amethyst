@@ -1,20 +1,41 @@
-
+# IDE files
 .vs/
-
-x64/
+.vscode/
+.idea/
 
 KinectToVR/Generated Files/
 
+# Nuget i think
 packages/
 
+# Dependencies
 external/eigen/
-
 external/gflags/
-
 external/glog/
-
 external/openvr/
 
 KinectToVR/Release/
-
 K2CrashHandler/obj/
+
+# Should cut out most binaries
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+AnyCPU/
+x64/
+x86/
+
+# Binaries JUST IN CASE bruh
+*.exe
+*.dll
+*.lib
+*.pdb
+*.obj
+
+# Visual Studio user files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
