@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "SettingsPage.xaml.h"
 
 #if __has_include("SettingsPage.g.cpp")
@@ -69,25 +69,22 @@ namespace winrt::KinectToVR::implementation
 	}
 }
 
-void trackersConfigChanged()
+void trackersConfig_UpdateIsEnabled()
 {
-	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	// Also turn off basie trackers pose filter if they are off
+	k2app::shared::settings::
+		positionFilterOptionBox.get()->IsEnabled(
+			k2app::K2Settings.isJointEnabled[0] ||
+			k2app::K2Settings.isJointEnabled[1] ||
+			k2app::K2Settings.isJointEnabled[2]);
 
-	// If this is the first time, also show the notification
-	if (!k2app::shared::settings::restartButton.get()->IsEnabled())
-		k2app::interfacing::ShowToast("Trackers configuration has changed",
-		                              "Restart SteamVR for changes to take effect");
-
-	// If all trackers were turned off then SCREAM
-	if (!k2app::K2Settings.isJointEnabled[0] &&
-		!k2app::K2Settings.isJointEnabled[1] &&
-		!k2app::K2Settings.isJointEnabled[2])
-		k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
-		                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU THAT YOU DID THIS YOU STUPID BITCH");
-
-	// Compare with saved settings and unlock the restart
-	k2app::shared::settings::restartButton.get()->IsEnabled(true);
+	// Also turn off extra trackers pose filter if they are off
+	k2app::shared::settings::
+		positionFilterOptionBox_1.get()->IsEnabled(
+			k2app::K2Settings.isJointEnabled[3] ||
+			k2app::K2Settings.isJointEnabled[4] ||
+			k2app::K2Settings.isJointEnabled[5] ||
+			k2app::K2Settings.isJointEnabled[6]);
 
 	// Also turn off waist rot combo if waist is turned off
 	k2app::shared::settings::
@@ -111,6 +108,30 @@ void trackersConfigChanged()
 		kneeRotationOptionBox.get()->IsEnabled(
 			k2app::K2Settings.isJointEnabled[5] ||
 			k2app::K2Settings.isJointEnabled[6]);
+}
+
+void trackersConfigChanged()
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	// If this is the first time, also show the notification
+	if (!k2app::shared::settings::restartButton.get()->IsEnabled())
+		k2app::interfacing::ShowToast("Trackers configuration has changed",
+		                              "Restart SteamVR for changes to take effect");
+
+	// If all trackers were turned off then SCREAM
+	if (!k2app::K2Settings.isJointEnabled[0] &&
+		!k2app::K2Settings.isJointEnabled[1] &&
+		!k2app::K2Settings.isJointEnabled[2])
+		k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
+		                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU THAT YOU DID THIS YOU STUPID BITCH");
+
+	// Compare with saved settings and unlock the restart
+	k2app::shared::settings::restartButton.get()->IsEnabled(true);
+
+	// Enable/Disable combos
+	trackersConfig_UpdateIsEnabled();
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -431,19 +452,51 @@ void winrt::KinectToVR::implementation::SettingsPage::PositionFilterOptionBox_Se
 	{
 	// LERP
 	case 0:
-		k2app::K2Settings.positionFilterOption = k2app::k2_PositionTrackingFilter_LERP;
+		k2app::K2Settings.positionFilterOption_basic = k2app::k2_PositionTrackingFilter_LERP;
 		break;
 	// Lowpass
 	case 1:
-		k2app::K2Settings.positionFilterOption = k2app::k2_PositionTrackingFilter_Lowpass;
+		k2app::K2Settings.positionFilterOption_basic = k2app::k2_PositionTrackingFilter_Lowpass;
 		break;
 	// Kalman
 	case 2:
-		k2app::K2Settings.positionFilterOption = k2app::k2_PositionTrackingFilter_Kalman;
+		k2app::K2Settings.positionFilterOption_basic = k2app::k2_PositionTrackingFilter_Kalman;
 		break;
 	// Disable
 	case 3:
-		k2app::K2Settings.positionFilterOption = k2app::k2_NoPositionTrackingFilter;
+		k2app::K2Settings.positionFilterOption_basic = k2app::k2_NoPositionTrackingFilter;
+		break;
+	}
+
+	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::PositionFilterOptionBox_1_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	switch (const uint32_t index = k2app::shared::settings::positionFilterOptionBox_1.get()->SelectedIndex(); index)
+	{
+	// LERP
+	case 0:
+		k2app::K2Settings.positionFilterOption_ext = k2app::k2_PositionTrackingFilter_LERP;
+		break;
+	// Lowpass
+	case 1:
+		k2app::K2Settings.positionFilterOption_ext = k2app::k2_PositionTrackingFilter_Lowpass;
+		break;
+	// Kalman
+	case 2:
+		k2app::K2Settings.positionFilterOption_ext = k2app::k2_PositionTrackingFilter_Kalman;
+		break;
+	// Disable
+	case 3:
+		k2app::K2Settings.positionFilterOption_ext = k2app::k2_NoPositionTrackingFilter;
 		break;
 	}
 

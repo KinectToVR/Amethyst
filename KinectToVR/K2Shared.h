@@ -217,7 +217,8 @@ namespace k2app
 				feetRotationOptionBox,
 				elbowRotationOptionBox,
 				kneeRotationOptionBox,
-				positionFilterOptionBox;
+				positionFilterOptionBox,
+				positionFilterOptionBox_1;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem> softwareRotationItem;
 

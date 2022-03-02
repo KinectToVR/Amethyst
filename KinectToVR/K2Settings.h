@@ -35,7 +35,7 @@ namespace k2app
 		template <class Archive>
 		void serialize(Archive& archive, unsigned int version)
 		{
-			archive& BOOST_SERIALIZATION_NVP(trackingDeviceID)
+			archive & BOOST_SERIALIZATION_NVP(trackingDeviceID)
 				& BOOST_SERIALIZATION_NVP(overrideDeviceID)
 				& BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
 				& BOOST_SERIALIZATION_NVP(positionOverrideJointID)
@@ -45,7 +45,8 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(positionJointsOffsets)
 				& BOOST_SERIALIZATION_NVP(rotationJointsOffsets)
 				& BOOST_SERIALIZATION_NVP(jointRotationTrackingOption)
-				& BOOST_SERIALIZATION_NVP(positionFilterOption)
+				& BOOST_SERIALIZATION_NVP(positionFilterOption_basic)
+				& BOOST_SERIALIZATION_NVP(positionFilterOption_ext)
 				& BOOST_SERIALIZATION_NVP(rotationFilterOption)
 				& BOOST_SERIALIZATION_NVP(isFlipEnabled)
 				& BOOST_SERIALIZATION_NVP(isJointEnabled)
@@ -123,7 +124,8 @@ namespace k2app
 		};
 
 		// Joint filter pos options: One-For-All and LERP is the default
-		PositionTrackingFilterOption positionFilterOption = k2_PositionTrackingFilter_LERP;
+		PositionTrackingFilterOption positionFilterOption_basic = k2_PositionTrackingFilter_LERP,
+		                             positionFilterOption_ext = k2_PositionTrackingFilter_LERP;
 
 		// Joint filter rot options: One-For-All and SLERP (normal) is the default
 		RotationTrackingFilterOption rotationFilterOption = k2_OrientationTrackingFilter_SLERP;
@@ -135,7 +137,7 @@ namespace k2app
 		// Currently turned on (marked-as-online) joints: W,L,R,LE,RE,LK,RK and true is the default
 		std::array<bool, 7>
 			isJointEnabled = {true, true, true, false, false, false, false},
-			isJointTurnedOn = {true, true, true, true, true, true, true };
+			isJointTurnedOn = {true, true, true, true, true, true, true};
 
 		// Automatically spawn enabled trackers on startup and off is the default
 		bool autoSpawnEnabledJoints = false;

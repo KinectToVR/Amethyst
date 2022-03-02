@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -39,11 +39,12 @@ namespace k2app::main
 					winrt::Microsoft::UI::Xaml::ElementSoundKind::Invoke);
 			});
 
-			if (shared::other::toggleFreezeButton.get() != nullptr) {
+			if (shared::other::toggleFreezeButton.get() != nullptr)
+			{
 				shared::other::toggleFreezeButton.get()->IsChecked(isTrackingFrozen);
 				k2app::shared::other::toggleFreezeButton->Content(k2app::interfacing::isTrackingFrozen
-					? winrt::box_value(L"Unfreeze Tracking")
-					: winrt::box_value(L"Freeze Tracking"));
+					                                                  ? winrt::box_value(L"Unfreeze Tracking")
+					                                                  : winrt::box_value(L"Freeze Tracking"));
 			}
 		}
 
@@ -234,14 +235,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(0).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -255,14 +256,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(0).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -282,14 +283,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(1).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -303,14 +304,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(1).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -330,14 +331,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(2).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -351,14 +352,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(2).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_basic,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -378,14 +379,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(3).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -399,14 +400,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(3).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -426,14 +427,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(4).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -447,14 +448,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(4).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -474,14 +475,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(5).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -495,14 +496,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(5).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -522,14 +523,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(6).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -543,14 +544,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(6).getTrackerBase
 								(
-									K2Settings.positionFilterOption,
+									K2Settings.positionFilterOption_ext,
 									K2Settings.rotationFilterOption
 								));
 					}
