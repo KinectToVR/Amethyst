@@ -224,6 +224,7 @@ namespace k2app
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
 				flipCheckBox,
+				externalFlipCheckBox,
 				waistOnCheckbox,
 				leftFootOnCheckbox,
 				rightFootOnCheckbox,
@@ -234,7 +235,9 @@ namespace k2app
 				autoSpawnCheckbox,
 				enableSoundsCheckbox;
 
-			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock> flipCheckBoxLabel;
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
+				flipCheckBoxLabel,
+				externalFlipCheckBoxLabel;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
 				waistEnabledToggle,

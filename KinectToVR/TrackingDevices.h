@@ -72,7 +72,56 @@ namespace TrackingDevices
 		return std::make_pair(_exists,
 		                      TrackingDevicesVector.at(_deviceID));
 	}
-	
+
+	// autoCheck->true will force the function to cehck and false will assume unsupported
+	inline void settings_set_external_flip_is_enabled(bool autoCheck = true)
+	{
+		if (k2app::shared::settings::externalFlipCheckBox.get() == nullptr)return;
+
+		if (autoCheck)
+		{
+			bool isFlipSupported = false;
+
+			auto const& trackingDevice =
+				TrackingDevices::getCurrentDevice();
+
+			if (trackingDevice.index() == 0)
+				isFlipSupported = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+					trackingDevice)->isFlipSupported();
+
+			bool isExternalFlipSupported = false;
+
+			auto const& overrideDevice =
+				TrackingDevices::getCurrentOverrideDevice_Safe();
+
+			if (overrideDevice.first)
+			{
+				if (overrideDevice.second.index() == 0)
+					isExternalFlipSupported = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+						overrideDevice.second)->isFlipSupported();
+
+				else if (overrideDevice.second.index() == 1)
+					isExternalFlipSupported = true;
+			}
+
+			k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(
+				isFlipSupported && isExternalFlipSupported &&
+				k2app::K2Settings.isFlipEnabled);
+		}
+		else
+			k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(false);
+
+		k2app::shared::settings::externalFlipCheckBoxLabel.get()->Opacity(
+			k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled() ? 1 : 0.5);
+
+		if (!k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled())
+		{
+			k2app::shared::settings::externalFlipCheckBox.get()->IsChecked(false);
+			k2app::K2Settings.isExternalFlipEnabled = false;
+			k2app::K2Settings.saveSettings();
+		}
+	}
+
 	// Select proper tracking device in the UI
 	inline void updateTrackingDeviceUI(uint32_t const& index)
 	{
@@ -149,6 +198,8 @@ namespace TrackingDevices
 				::k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(
 					::k2app::shared::settings::flipCheckBox.get()->IsEnabled() ? 1 : 0.5);
 
+				settings_set_external_flip_is_enabled();
+
 				if (!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported() &&
 					(k2app::K2Settings.jointRotationTrackingOption[1] == k2app::k2_SoftwareCalculatedRotation ||
 						k2app::K2Settings.jointRotationTrackingOption[2] == k2app::k2_SoftwareCalculatedRotation))
@@ -167,6 +218,8 @@ namespace TrackingDevices
 				::k2app::shared::settings::softwareRotationItem.get()->IsEnabled(false);
 				::k2app::shared::settings::flipCheckBox.get()->IsEnabled(false);
 				::k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(0.5);
+
+				settings_set_external_flip_is_enabled(false);
 
 				if (k2app::K2Settings.jointRotationTrackingOption[1] == k2app::k2_SoftwareCalculatedRotation ||
 					k2app::K2Settings.jointRotationTrackingOption[2] == k2app::k2_SoftwareCalculatedRotation)
@@ -220,6 +273,10 @@ namespace TrackingDevices
 
 			status_ok = device_status.find("S_OK") != std::string::npos;
 		}
+
+		/* Update the device in settings tab */
+
+		settings_set_external_flip_is_enabled();
 
 		/* Update the device in general tab */
 

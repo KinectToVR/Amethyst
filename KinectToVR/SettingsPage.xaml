@@ -1,16 +1,11 @@
 ﻿<Page
     x:Class="KinectToVR.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:KinectToVR"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Loaded="SettingsPage_Loaded"
-    NavigationCacheMode="Required"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
-    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity">
+    NavigationCacheMode="Required">
 
     <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
         <Grid.ColumnDefinitions>
@@ -24,7 +19,7 @@
 
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
 
-                <TextBlock FontWeight="SemiBold" Text="Tracking" FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
+                <TextBlock FontWeight="SemiBold" Text="Skeleton Flip" FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
 
                 <Grid Margin="0,15,0,0">
                     <Grid.ColumnDefinitions>
@@ -44,34 +39,44 @@
 
                 </Grid>
 
-                <Grid>
+                <StackPanel Orientation="Horizontal">
+
+                <Grid Margin="0,5,0,0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="9*" />
                         <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="5*" />
                     </Grid.ColumnDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="80" />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Positional Tracking Filter:"
-                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
-
-                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                      x:Name="PositionFilterOptionBox"
-                                      SelectionChanged="PositionFilterOptionBox_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                        <x:String>Linear Interpolation</x:String>
-                        <x:String>Low Pass Filter</x:String>
-                        <x:String>Extended Kalman Filter</x:String>
-                        <x:String>Disable Filter</x:String>
-                    </ComboBox>
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium" Opacity="0.5"
+                               x:Name="ExternalFlipCheckBoxLabel"
+                               Text="Use external waist tracking data instead of the Headset" Margin="30,0,0,10"
+                               Grid.Column="0" />
+                    <CheckBox x:Name="ExternalFlipCheckBox" IsEnabled="False"
+                              Checked="ExternalFlipCheckBox_Checked"
+                              Unchecked="ExternalFlipCheckBox_Unchecked"
+                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                              MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="False" />
 
                 </Grid>
 
-                <Expander Margin="0,10,0,0" IsExpanded="True" x:Name="RotationDropDown" Expanding="RotationDropDown_Expanding"
+                    <AppBarButton IsCompact="True" Width="35" Height="65" Margin="5,17,0,0" 
+                                  ToolTipService.ToolTip="Calibration" 
+                                  IsEnabled="{Binding ElementName=ExternalFlipCheckBox, 
+									Path=IsChecked,TargetNullValue=False}">
+                        <AppBarButton.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Face the Kinect!" FontWeight="Medium" IsHitTestVisible="False"/>
+                                <MenuFlyoutItem Text="Click to calibrate" Tag="Calibrate" Click="CalibrateExternalFlipMenuFlyoutItem_Click"/>
+                            </MenuFlyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+
+                </StackPanel>
+
+                <TextBlock FontWeight="SemiBold" Text="Filters" FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
+
+                <Expander Margin="0,10,0,0" IsExpanded="True" x:Name="RotationDropDown"
+                          Expanding="RotationDropDown_Expanding"
                           ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
                     <Expander.Header>
@@ -88,14 +93,30 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="80" />
                                 <RowDefinition Height="80" />
+                                <RowDefinition Height="80" />
                             </Grid.RowDefinitions>
 
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Waist Rotation:"
+                                       Text="Position Tracking Filter:"
                                        Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
+
+                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                      x:Name="PositionFilterOptionBox"
+                                      SelectionChanged="PositionFilterOptionBox_SelectionChanged"
+                                      Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                                <x:String>Linear Interpolation</x:String>
+                                <x:String>Low Pass Filter</x:String>
+                                <x:String>Extended Kalman Filter</x:String>
+                                <x:String>Disable Filter</x:String>
+                            </ComboBox>
+
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="Waist Rotation:"
+                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                        Text="Feet Rotation:"
-                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
+                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="2" />
 
                             <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
                                       Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
@@ -103,7 +124,7 @@
                                       IsEnabled="{Binding ElementName=WaistOnToggle, 
 									Path=IsChecked,TargetNullValue=False}"
                                       SelectionChanged="WaistRotationOptionBox_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                                      Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
                                 <x:String>Device-inferred Rotation</x:String>
                                 <x:String>Follow Headset</x:String>
                                 <x:String>Disable Rotation</x:String>
@@ -113,7 +134,7 @@
                                       Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
                                       x:Name="FeetRotationOptionBox"
                                       SelectionChanged="FeetRotationOptionBox_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+                                      Grid.Column="1" Grid.Row="2" Margin="0,0,0,0">
                                 <ComboBoxItem>Device-inferred Rotation</ComboBoxItem>
                                 <ComboBoxItem x:Name="SoftwareRotationItem" IsEnabled="True">Software-calculated Rotation</ComboBoxItem>
                                 <ComboBoxItem>Follow Headset</ComboBoxItem>
@@ -124,7 +145,8 @@
                     </Expander.Content>
                 </Expander>
 
-                <Expander Margin="0,15,0,0" IsExpanded="False" x:Name="ExpRotationDropDown" Expanding="ExpRotationDropDown_Expanding"
+                <Expander Margin="0,15,0,0" IsExpanded="False" x:Name="ExpRotationDropDown"
+                          Expanding="ExpRotationDropDown_Expanding"
                           ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
                     <Expander.Header>
@@ -141,14 +163,30 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="80" />
                                 <RowDefinition Height="80" />
+                                <RowDefinition Height="80" />
                             </Grid.RowDefinitions>
 
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Elbow Rotation:"
+                                       Text="Position Tracking Filter:"
                                        Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
+
+                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                      x:Name="PositionFilterOptionBox_1"
+                                      SelectionChanged="PositionFilterOptionBox_1_SelectionChanged"
+                                      Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                                <x:String>Linear Interpolation</x:String>
+                                <x:String>Low Pass Filter</x:String>
+                                <x:String>Extended Kalman Filter</x:String>
+                                <x:String>Disable Filter</x:String>
+                            </ComboBox>
+
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="Elbow Rotation:"
+                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                        Text="Knee Rotation:"
-                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
+                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="2" />
 
                             <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
                                       Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
@@ -156,7 +194,7 @@
                                       IsEnabled="{Binding ElementName=WaistOnToggle, 
 									Path=IsChecked,TargetNullValue=False}"
                                       SelectionChanged="ElbowRotationOptionBox_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                                      Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
                                 <x:String>Device-inferred Rotation</x:String>
                                 <x:String>Follow Headset</x:String>
                                 <x:String>Disable Rotation</x:String>
@@ -166,7 +204,7 @@
                                       Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
                                       x:Name="KneeRotationOptionBox"
                                       SelectionChanged="KneeRotationOptionBox_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+                                      Grid.Column="1" Grid.Row="2" Margin="0,0,0,0">
                                 <ComboBoxItem>Device-inferred Rotation</ComboBoxItem>
                                 <ComboBoxItem>Follow Headset</ComboBoxItem>
                                 <ComboBoxItem>Disable Rotation</ComboBoxItem>
@@ -178,7 +216,8 @@
 
                 <TextBlock FontWeight="SemiBold" Text="Tracker Configuration" FontSize="25" Margin="0,30,0,0" />
 
-                <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="TrackersDropDown" Expanding="TrackersDropDown_Expanding"
+                <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="TrackersDropDown"
+                          Expanding="TrackersDropDown_Expanding"
                           ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
                     <Expander.Header>
@@ -325,7 +364,8 @@
                     </Expander.Content>
                 </Expander>
 
-                <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="ExpTrackersDropDown" Expanding="ExpTrackersDropDown_Expanding"
+                <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="ExpTrackersDropDown"
+                          Expanding="ExpTrackersDropDown_Expanding"
                           ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
                     <Expander.Header>

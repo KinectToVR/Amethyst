@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -653,8 +653,20 @@ namespace k2app::main
 			// Get the currently tracking device
 			auto const& _device = TrackingDevices::getCurrentDevice();
 
+			// Compose the yaw neutral and current
+			const double _neutral_yaw =
+				(K2Settings.isExternalFlipEnabled
+					? radiansToDegrees(K2Settings.externalFlipCalibrationYaw) // Ext
+					: radiansToDegrees(K2Settings.calibrationYaws.first)); // Default
+
+			const double _current_yaw =
+				(K2Settings.isExternalFlipEnabled
+					? radiansToDegrees(EigenUtils::QuatToEulers( // Ext
+						interfacing::K2TrackersVector.at(0).pose.orientation).y())
+					: _yaw); // Default
+
 			// Compose flip
-			const float _facing = _yaw - radiansToDegrees(K2Settings.calibrationYaws.first);
+			const float _facing = (_current_yaw - _neutral_yaw);
 			bool _flip = false; // Assume non flipped
 
 			if ( //facing <= 25 && facing >= -25 || //if we use -180+180
@@ -1514,8 +1526,20 @@ namespace k2app::main
 				// Get the current override device
 				auto const& _device = TrackingDevices::getCurrentOverrideDevice();
 
+				// Compose the yaw neutral and current
+				const double _neutral_yaw =
+					(K2Settings.isExternalFlipEnabled
+						? radiansToDegrees(K2Settings.externalFlipCalibrationYaw) // Ext
+						: radiansToDegrees(K2Settings.calibrationYaws.second)); // Default
+
+				const double _current_yaw =
+					(K2Settings.isExternalFlipEnabled
+						? radiansToDegrees(EigenUtils::QuatToEulers( // Ext
+							interfacing::K2TrackersVector.at(0).pose.orientation).y())
+						: _yaw); // Default
+
 				// Compose flip
-				const float _facing = _yaw - radiansToDegrees(K2Settings.calibrationYaws.second);
+				const float _facing = (_current_yaw - _neutral_yaw);
 				bool _flip = false; // Assume non flipped
 
 				if ( //facing <= 25 && facing >= -25 || //if we use -180+180

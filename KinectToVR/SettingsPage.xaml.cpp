@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SettingsPage.xaml.h"
 
 #if __has_include("SettingsPage.g.cpp")
@@ -13,6 +13,49 @@ using namespace Microsoft::UI::Xaml;
 
 // Helper local variables
 bool settings_localInitFinished = false;
+
+// autoCheck->true will force the function to check and false will assume unsupported
+void settings_set_external_flip_is_enabled(bool autoCheck = true)
+{
+	if (!settings_localInitFinished)return;
+
+	if (autoCheck)
+	{
+		bool isFlipSupported = false;
+
+		auto const& trackingDevice =
+			TrackingDevices::getCurrentDevice();
+
+		if (trackingDevice.index() == 0)
+			isFlipSupported = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+				trackingDevice)->isFlipSupported();
+
+		bool isExternalFlipSupported = false;
+
+		auto const& overrideDevice =
+			TrackingDevices::getCurrentOverrideDevice_Safe();
+
+		if (overrideDevice.first)
+		{
+			// If the override device is a kinect then it HAN NOT TO support flip
+			if (overrideDevice.second.index() == 0)
+				isExternalFlipSupported = !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+					overrideDevice.second)->isFlipSupported();
+
+				// If the override device is a joints then it's always ok
+			else if (overrideDevice.second.index() == 1)
+				isExternalFlipSupported = true;
+		}
+
+		k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(
+			isFlipSupported && isExternalFlipSupported);
+	}
+	else
+		k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(false);
+
+	k2app::shared::settings::externalFlipCheckBoxLabel.get()->Opacity(
+		k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled() ? 1 : 0.5);
+}
 
 namespace winrt::KinectToVR::implementation
 {
@@ -35,11 +78,14 @@ namespace winrt::KinectToVR::implementation
 			std::make_shared<Controls::ComboBox>(KneeRotationOptionBox());
 		positionFilterOptionBox =
 			std::make_shared<Controls::ComboBox>(PositionFilterOptionBox());
+		positionFilterOptionBox_1 =
+			std::make_shared<Controls::ComboBox>(PositionFilterOptionBox_1());
 
 		softwareRotationItem =
 			std::make_shared<Controls::ComboBoxItem>(SoftwareRotationItem());
 
 		flipCheckBox = std::make_shared<Controls::CheckBox>(FlipCheckBox());
+		externalFlipCheckBox = std::make_shared<Controls::CheckBox>(ExternalFlipCheckBox());
 		waistOnCheckbox = std::make_shared<Controls::CheckBox>(WaistOnToggle());
 		leftFootOnCheckbox = std::make_shared<Controls::CheckBox>(LeftFootOnToggle());
 		rightFootOnCheckbox = std::make_shared<Controls::CheckBox>(RightFootOnToggle());
@@ -51,6 +97,7 @@ namespace winrt::KinectToVR::implementation
 		enableSoundsCheckbox = std::make_shared<Controls::CheckBox>(SoundsEnabledCheckBox());
 
 		flipCheckBoxLabel = std::make_shared<Controls::TextBlock>(FlipCheckBoxLabel());
+		externalFlipCheckBoxLabel = std::make_shared<Controls::TextBlock>(ExternalFlipCheckBoxLabel());
 
 		waistEnabledToggle = std::make_shared<Controls::ToggleSwitch>(WaistEnabledToggle());
 		leftFootEnabledToggle = std::make_shared<Controls::ToggleSwitch>(LeftFootEnabledToggle());
@@ -299,6 +346,7 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipCheckBox_Checked(
 
 	// Cache flip to settings and save
 	k2app::K2Settings.isFlipEnabled = true; // Checked
+	TrackingDevices::settings_set_external_flip_is_enabled();
 	k2app::K2Settings.saveSettings();
 }
 
@@ -311,6 +359,31 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipCheckBox_Unchecked(
 
 	// Cache flip to settings and save
 	k2app::K2Settings.isFlipEnabled = false; // Unchecked
+	TrackingDevices::settings_set_external_flip_is_enabled();
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	// Cache flip to settings and save
+	k2app::K2Settings.isExternalFlipEnabled = true; // Checked
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	// Cache flip to settings and save
+	k2app::K2Settings.isExternalFlipEnabled = false; // Unchecked
 	k2app::K2Settings.saveSettings();
 }
 
@@ -688,11 +761,14 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 
 	// Select saved flip, position and rotation options
 	flipCheckBox.get()->IsChecked(k2app::K2Settings.isFlipEnabled);
+	externalFlipCheckBox.get()->IsChecked(k2app::K2Settings.isExternalFlipEnabled);
 
 	feetRotationOptionBox.get()->SelectedIndex(
 		k2app::K2Settings.jointRotationTrackingOption[1]); // Feet
 	positionFilterOptionBox.get()->SelectedIndex(
-		k2app::K2Settings.positionFilterOption); // Position
+		k2app::K2Settings.positionFilterOption_basic); // Position
+	positionFilterOptionBox_1.get()->SelectedIndex(
+		k2app::K2Settings.positionFilterOption_ext); // Position
 
 	// Waist
 	switch (k2app::K2Settings.jointRotationTrackingOption[0]) // Waist
@@ -771,6 +847,7 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 		flipCheckBox.get()->IsEnabled(
 			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
 		flipCheckBoxLabel.get()->Opacity(flipCheckBox.get()->IsEnabled() ? 1 : 0.5);
+		TrackingDevices::settings_set_external_flip_is_enabled();
 	}
 	else if (trackingDevice.index() == 1)
 	{
@@ -778,6 +855,7 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 		softwareRotationItem.get()->IsEnabled(false);
 		flipCheckBox.get()->IsEnabled(false);
 		flipCheckBoxLabel.get()->Opacity(0.5);
+		TrackingDevices::settings_set_external_flip_is_enabled(false);
 	}
 
 	// Load the tracker configuration
@@ -806,6 +884,9 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	autoSpawnCheckbox->IsChecked(k2app::K2Settings.autoSpawnEnabledJoints);
 	enableSoundsCheckbox->IsChecked(k2app::K2Settings.enableAppSounds);
 	soundsVolumeSlider.get()->Value(k2app::K2Settings.appSoundsVolume);
+
+	// Load tracker settings/enabled
+	trackersConfig_UpdateIsEnabled();
 
 	// Notify of the setup end
 	settings_localInitFinished = true;
@@ -914,4 +995,18 @@ void winrt::KinectToVR::implementation::SettingsPage::ExpTrackersDropDown_Expand
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 	k2app::shared::settings::trackersDropDown.get()->IsExpanded(false);
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem_Click(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	k2app::K2Settings.externalFlipCalibrationYaw =
+		EigenUtils::QuatToEulers(
+			k2app::interfacing::K2TrackersVector.at(0).pose.orientation).y();
+
+	LOG(INFO) << "Captured yaw for external flip: " <<
+		radiansToDegrees(k2app::K2Settings.externalFlipCalibrationYaw) << "deg";
+	k2app::K2Settings.saveSettings();
 }

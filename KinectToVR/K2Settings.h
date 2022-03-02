@@ -49,6 +49,8 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(positionFilterOption_ext)
 				& BOOST_SERIALIZATION_NVP(rotationFilterOption)
 				& BOOST_SERIALIZATION_NVP(isFlipEnabled)
+				& BOOST_SERIALIZATION_NVP(isExternalFlipEnabled)
+				& BOOST_SERIALIZATION_NVP(externalFlipCalibrationYaw)
 				& BOOST_SERIALIZATION_NVP(isJointEnabled)
 				& BOOST_SERIALIZATION_NVP(isJointTurnedOn)
 				& BOOST_SERIALIZATION_NVP(autoSpawnEnabledJoints)
@@ -133,6 +135,9 @@ namespace k2app
 		// Skeleton flip when facing away: One-For-All and on is the default
 		bool isFlipEnabled = true;
 
+		// Skeleton flip based on non-flip override devices' waist tracker
+		bool isExternalFlipEnabled = false;
+
 		// Currently enabled (spawn-able) joints: W,L,R and true is the default, LE,RE,LK,RK
 		// Currently turned on (marked-as-online) joints: W,L,R,LE,RE,LK,RK and true is the default
 		std::array<bool, 7>
@@ -167,7 +172,10 @@ namespace k2app
 		bool skeletonPreviewEnabled = true;
 		// If we wanna dismiss all warnings during the preview
 		bool forceSkeletonPreview = false;
-		
+
+		// External flip device's calibration yaw
+		double externalFlipCalibrationYaw = 0.;
+
 		/* Saving and loading part */
 
 		// Save settings with boost and output file stream
