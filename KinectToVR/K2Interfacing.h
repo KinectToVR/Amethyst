@@ -15,8 +15,8 @@ namespace k2app
 			K2AppTracker("LHR-CB9AD1T0", ktvr::ITrackerType::Tracker_Waist),
 			K2AppTracker("LHR-CB9AD1T1", ktvr::ITrackerType::Tracker_LeftFoot),
 			K2AppTracker("LHR-CB9AD1T2", ktvr::ITrackerType::Tracker_RightFoot),
-			K2AppTracker("LHR-CB9AD1T3", ktvr::ITrackerType::Tracker_LeftElbow),
-			K2AppTracker("LHR-CB9AD1T4", ktvr::ITrackerType::Tracker_RightElbow),
+			K2AppTracker("LHR-CB9AD1T3", ktvr::ITrackerType::Tracker_LeftElbow, 0.35),
+			K2AppTracker("LHR-CB9AD1T4", ktvr::ITrackerType::Tracker_RightElbow, 0.35),
 			K2AppTracker("LHR-CB9AD1T5", ktvr::ITrackerType::Tracker_LeftKnee),
 			K2AppTracker("LHR-CB9AD1T6", ktvr::ITrackerType::Tracker_RightKnee)
 		};

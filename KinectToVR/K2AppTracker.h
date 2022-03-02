@@ -69,6 +69,21 @@ namespace k2app
 				filter.init();
 		}
 
+		// Custom constructor for role+serial+filter const
+		K2AppTracker(std::string const& _serial, ktvr::ITrackerType const& _role, double const& m_lerp_const)
+		{
+			// Copy serial and role
+			data.serial = _serial;
+			data.role = static_cast<uint32_t>(_role);
+
+			// Init the Kalman filter
+			for (auto& filter : kalmanFilter)
+				filter.init();
+
+			// Overwrite the lerp const
+			_lerp_const = m_lerp_const;
+		}
+
 		ktvr::K2TrackedJoint getK2TrackedJoint(bool const& _state, std::string const& _name)
 		{
 			return ktvr::K2TrackedJoint(pose.position, pose.orientation, 
@@ -335,5 +350,8 @@ namespace k2app
 		KalmanFilter kalmanFilter[3] = {
 			KalmanFilter(), KalmanFilter(), KalmanFilter()
 		};
+
+		// LERP filter const
+		double _lerp_const = 0.25;
 	};
 }
