@@ -227,7 +227,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_AnkleLeft] =
 				jointOrientations[ktvr::Joint_AnkleLeft].slerp(
-					0.7f, Eigen::Quaternionf(
+					0.5f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
 						Orientation.w,
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
@@ -243,7 +243,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_AnkleRight] =
 				jointOrientations[ktvr::Joint_AnkleRight].slerp(
-					0.7f, Eigen::Quaternionf(
+					0.5f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[
 							ktvr::Joint_AnkleRight]].Orientation.w,
 						boneOrientations[globalIndex[
@@ -259,7 +259,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_KneeLeft] =
 				jointOrientations[ktvr::Joint_KneeLeft].slerp(
-					0.7f, Eigen::Quaternionf(
+					0.5f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
 						Orientation.w,
 						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
@@ -275,7 +275,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_KneeRight] =
 				jointOrientations[ktvr::Joint_KneeRight].slerp(
-					0.7f, Eigen::Quaternionf(
+					0.5f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[
 							ktvr::Joint_KneeRight]].Orientation.w,
 						boneOrientations[globalIndex[
@@ -291,7 +291,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_ElbowLeft] =
 				jointOrientations[ktvr::Joint_ElbowLeft].slerp(
-					0.7f, Eigen::Quaternionf(
+					0.5f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 						Orientation.w,
 						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
@@ -304,7 +304,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_ElbowRight] =
 				jointOrientations[ktvr::Joint_ElbowRight].slerp(
-					0.7f, Eigen::Quaternionf(
+					0.5f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[
 							ktvr::Joint_ElbowRight]].Orientation.w,
 						boneOrientations[globalIndex[
