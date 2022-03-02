@@ -117,20 +117,20 @@ namespace k2app
 				lowPassFilter[2].update(pose.position.z()));
 
 			/* Update the LERP (mix) filter */
-			LERPPosition = EigenUtils::lerp(lastLERPPosition, pose.position, 0.25);
+			LERPPosition = EigenUtils::lerp(lastLERPPosition, pose.position, _lerp_const);
 			lastLERPPosition = LERPPosition; // Backup the position
 		}
 
 		void updateOrientationFilters()
 		{
-			// ik that's a bunch of normalizations but we really idk what tf can happen sometimes
+			// ik that's a bunch of normalizations but we really em, weird things happen sometimes
 
 			/* Update the SLERP filter */
-			SLERPOrientation = lastSLERPOrientation.normalized().slerp(0.5, pose.orientation.normalized());
+			SLERPOrientation = lastSLERPOrientation.normalized().slerp(0.25, pose.orientation.normalized());
 			lastSLERPOrientation = pose.orientation.normalized(); // Backup the orientation
 
 			/* Update the Slower SLERP filter */
-			SLERPSlowOrientation = lastSLERPSlowOrientation.normalized().slerp(0.2, pose.orientation.normalized());
+			SLERPSlowOrientation = lastSLERPSlowOrientation.normalized().slerp(0.15, pose.orientation.normalized());
 			lastSLERPSlowOrientation = pose.orientation.normalized(); // Backup the orientation
 		}
 
