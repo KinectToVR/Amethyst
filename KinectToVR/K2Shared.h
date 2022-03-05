@@ -255,11 +255,15 @@ namespace k2app
 				expRotationDropDown,
 				trackersDropDown,
 				expTrackersDropDown;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel>
+				externalFlipStackPanel;
 		}
 
 		namespace other
 		{
-			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton> toggleFreezeButton;
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSplitButton> toggleFreezeButton;
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox> freezeOnlyLowerCheckBox;
 		}
 	}
 }

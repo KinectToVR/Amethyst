@@ -23,7 +23,10 @@ namespace winrt::KinectToVR::implementation
 		InitializeComponent();
 
 		k2app::shared::other::toggleFreezeButton = std::make_shared<
-			winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>(ToggleTrackingButton());
+			winrt::Microsoft::UI::Xaml::Controls::ToggleSplitButton>(ToggleTrackingButton());
+
+		k2app::shared::other::freezeOnlyLowerCheckBox = std::make_shared<
+			winrt::Microsoft::UI::Xaml::Controls::CheckBox>(FreezeOnlyLowerCheckBox());
 	}
 }
 
@@ -34,8 +37,9 @@ void winrt::KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
 	console_setup_finished = true;
 	k2app::shared::other::toggleFreezeButton->IsChecked(k2app::interfacing::isTrackingFrozen);
 	k2app::shared::other::toggleFreezeButton->Content(k2app::interfacing::isTrackingFrozen
-		                                                  ? box_value(L"Unfreeze Tracking")
-		                                                  : box_value(L"Freeze Tracking"));
+		                                                  ? box_value(L"Unfreeze")
+		                                                  : box_value(L"Freeze"));
+	k2app::shared::other::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
 	LOG(INFO) << "Experiments page setup finished.";
 }
 
@@ -59,27 +63,6 @@ void winrt::KinectToVR::implementation::ConsolePage::ExpCheckBox_Unchecked(
 	ThanksScrollViewer().Visibility(Visibility::Visible);
 }
 
-
-void winrt::KinectToVR::implementation::ConsolePage::ToggleTrackingButton_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
-	ToggleTrackingButton().Content(box_value(L"Unfreeze Tracking"));
-
-	// Mark tracking as unfrozen
-	k2app::interfacing::isTrackingFrozen = true;
-}
-
-
-void winrt::KinectToVR::implementation::ConsolePage::ToggleTrackingButton_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
-	ToggleTrackingButton().Content(box_value(L"Freeze Tracking"));
-
-	// Mark trackers as frozen
-	k2app::interfacing::isTrackingFrozen = false;
-}
 
 void winrt::KinectToVR::implementation::ConsolePage::DevicesCrashButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
@@ -118,4 +101,29 @@ void winrt::KinectToVR::implementation::ConsolePage::NullCrashButton_Click(
 
 	int* _pointer = nullptr;
 	*_pointer = 420;
+}
+
+
+void winrt::KinectToVR::implementation::ConsolePage::ToggleTrackingButton_Click(winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args)
+{
+	k2app::interfacing::isTrackingFrozen = !k2app::interfacing::isTrackingFrozen;
+
+	k2app::shared::other::toggleFreezeButton->IsChecked(k2app::interfacing::isTrackingFrozen);
+	k2app::shared::other::toggleFreezeButton->Content(k2app::interfacing::isTrackingFrozen
+		? box_value(L"Unfreeze")
+		: box_value(L"Freeze"));
+}
+
+
+void winrt::KinectToVR::implementation::ConsolePage::FreezeOnlyLowerCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	k2app::K2Settings.freezeLowerOnly = true;
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::ConsolePage::FreezeOnlyLowerCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	k2app::K2Settings.freezeLowerOnly = false;
+	k2app::K2Settings.saveSettings();
 }

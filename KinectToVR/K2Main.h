@@ -165,7 +165,7 @@ namespace k2app::main
 			!interfacing::serverDriverFailure)
 		{
 			// If tracking is frozen, only refresh
-			if (interfacing::isTrackingFrozen)
+			if (interfacing::isTrackingFrozen && !K2Settings.freezeLowerOnly)
 			{
 				// Waist Tracker (NF_0)
 				if (K2Settings.isJointEnabled[0])
@@ -222,8 +222,35 @@ namespace k2app::main
 				// Update pose w/ filtering, options and calibration
 				// Note: only position gets calibrated INSIDE trackers
 
+				// If we've frozen everything but elbows
+				bool _updateLowerBody = true;
+				if (interfacing::isTrackingFrozen && K2Settings.freezeLowerOnly)
+				{
+					_updateLowerBody = false;
+
+					// Waist Tracker (NF_0)
+					if (K2Settings.isJointEnabled[0])
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(0).id);
+
+					// Left Foot tracker (NF_1)
+					if (K2Settings.isJointEnabled[1])
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(1).id);
+
+					// Right Foot tracker (NF_2)
+					if (K2Settings.isJointEnabled[2])
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(2).id);
+
+					// Left Knee tracker (NF_5)
+					if (K2Settings.isJointEnabled[5])
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(5).id);
+
+					// Right Knee tracker (NF_6)
+					if (K2Settings.isJointEnabled[6])
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(6).id);
+				}
+
 				// Waist tracker (NF_0)
-				if (K2Settings.isJointEnabled[0])
+				if (K2Settings.isJointEnabled[0] && _updateLowerBody)
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[0] || K2Settings.overrideDeviceID < 0)
@@ -271,7 +298,7 @@ namespace k2app::main
 
 				// Left Foot tracker (NF_1)
 				// If not overridden by second device
-				if (K2Settings.isJointEnabled[1])
+				if (K2Settings.isJointEnabled[1] && _updateLowerBody)
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[1] || K2Settings.overrideDeviceID < 0)
@@ -319,7 +346,7 @@ namespace k2app::main
 
 				// Right Foot tracker (NF_2)
 				// If not overridden by second device
-				if (K2Settings.isJointEnabled[2])
+				if (K2Settings.isJointEnabled[2] && _updateLowerBody)
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[2] || K2Settings.overrideDeviceID < 0)
@@ -463,7 +490,7 @@ namespace k2app::main
 
 				// Left Knee tracker (NF_5)
 				// If not overridden by second device
-				if (K2Settings.isJointEnabled[5])
+				if (K2Settings.isJointEnabled[5] && _updateLowerBody)
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[5] || K2Settings.overrideDeviceID < 0)
@@ -511,7 +538,7 @@ namespace k2app::main
 
 				// Right Knee tracker (NF_6)
 				// If not overridden by second device
-				if (K2Settings.isJointEnabled[6])
+				if (K2Settings.isJointEnabled[6] && _updateLowerBody)
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[6] || K2Settings.overrideDeviceID < 0)
@@ -655,15 +682,15 @@ namespace k2app::main
 
 			// Compose the yaw neutral and current
 			const double _neutral_yaw =
-				(K2Settings.isExternalFlipEnabled
-					? radiansToDegrees(K2Settings.externalFlipCalibrationYaw) // Ext
-					: radiansToDegrees(K2Settings.calibrationYaws.first)); // Default
+			(K2Settings.isExternalFlipEnabled
+				 ? radiansToDegrees(K2Settings.externalFlipCalibrationYaw) // Ext
+				 : radiansToDegrees(K2Settings.calibrationYaws.first)); // Default
 
 			const double _current_yaw =
-				(K2Settings.isExternalFlipEnabled
-					? radiansToDegrees(EigenUtils::QuatToEulers( // Ext
-						interfacing::K2TrackersVector.at(0).pose.orientation).y())
-					: _yaw); // Default
+			(K2Settings.isExternalFlipEnabled
+				 ? radiansToDegrees(EigenUtils::QuatToEulers( // Ext
+					 interfacing::K2TrackersVector.at(0).pose.orientation).y())
+				 : _yaw); // Default
 
 			// Compose flip
 			const float _facing = (_current_yaw - _neutral_yaw);
@@ -1528,15 +1555,15 @@ namespace k2app::main
 
 				// Compose the yaw neutral and current
 				const double _neutral_yaw =
-					(K2Settings.isExternalFlipEnabled
-						? radiansToDegrees(K2Settings.externalFlipCalibrationYaw) // Ext
-						: radiansToDegrees(K2Settings.calibrationYaws.second)); // Default
+				(K2Settings.isExternalFlipEnabled
+					 ? radiansToDegrees(K2Settings.externalFlipCalibrationYaw) // Ext
+					 : radiansToDegrees(K2Settings.calibrationYaws.second)); // Default
 
 				const double _current_yaw =
-					(K2Settings.isExternalFlipEnabled
-						? radiansToDegrees(EigenUtils::QuatToEulers( // Ext
-							interfacing::K2TrackersVector.at(0).pose.orientation).y())
-						: _yaw); // Default
+				(K2Settings.isExternalFlipEnabled
+					 ? radiansToDegrees(EigenUtils::QuatToEulers( // Ext
+						 interfacing::K2TrackersVector.at(0).pose.orientation).y())
+					 : _yaw); // Default
 
 				// Compose flip
 				const float _facing = (_current_yaw - _neutral_yaw);
@@ -2277,25 +2304,47 @@ namespace k2app::main
 		shared::devices::smphSignalStartMain.acquire();
 
 		LOG(INFO) << "[K2Main] Starting the main app loop now...";
-		while (true)
+		// Errors' case
+		bool server_giveUp = false;
+		int server_tries = 0;
+
+		while (!server_giveUp)
 		{
-			auto loop_start_time = std::chrono::high_resolution_clock::now();
+			try
+			{
+				// run until termination
+				while (true)
+				{
+					auto loop_start_time = std::chrono::high_resolution_clock::now();
 
-			/* Update things here */
+					/* Update things here */
 
-			K2UpdateVRPositions(); // Update HMD poses
-			K2UpdateInputBindings(); // Update input
+					K2UpdateVRPositions(); // Update HMD poses
+					K2UpdateInputBindings(); // Update input
 
-			K2UpdateTrackingDevices(); // Update actual tracking
-			K2UpdateAppTrackers(); // Track joints from raw data
+					K2UpdateTrackingDevices(); // Update actual tracking
+					K2UpdateAppTrackers(); // Track joints from raw data
 
-			K2UpdateServerTrackers(); // Send it to the server
+					K2UpdateServerTrackers(); // Send it to the server
 
-			// Wait until certain loop time has passed
-			if (auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(
-					std::chrono::high_resolution_clock::now() - loop_start_time).count();
-				duration <= 12222222.f) // If we were too fast, sleep peacefully @80hz
-				std::this_thread::sleep_for(std::chrono::nanoseconds(12222222 - duration));
+					// Wait until certain loop time has passed
+					if (auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(
+							std::chrono::high_resolution_clock::now() - loop_start_time).count();
+						duration <= 12222222.f) // If we were too fast, sleep peacefully @80hz
+						std::this_thread::sleep_for(std::chrono::nanoseconds(12222222 - duration));
+				}
+			}
+			catch (...) // Catch everything
+			{
+				LOG(ERROR) << "The main loop has crashed! Restarting it now...";
+				server_tries++; // One more?
+				if (server_tries > 3)
+				{
+					// We've crashed the third time now. Somethin's off.. really...
+					LOG(ERROR) << "Server loop has already crashed 3 times. Giving up...";
+					server_giveUp = true;
+				}
+			}
 		}
 	}
 }

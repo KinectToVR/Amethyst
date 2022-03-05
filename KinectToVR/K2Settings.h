@@ -65,7 +65,8 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(calibrationPointsNumber)
 				& BOOST_SERIALIZATION_NVP(autoCalibration)
 				& BOOST_SERIALIZATION_NVP(skeletonPreviewEnabled)
-				& BOOST_SERIALIZATION_NVP(forceSkeletonPreview);
+				& BOOST_SERIALIZATION_NVP(forceSkeletonPreview)
+				& BOOST_SERIALIZATION_NVP(freezeLowerOnly);
 		}
 
 	public:
@@ -175,6 +176,10 @@ namespace k2app
 
 		// External flip device's calibration yaw
 		double externalFlipCalibrationYaw = 0.;
+
+		// If we wanna freeze only lower body trackers or all
+		// TODO Will be removed and handled differently
+		bool freezeLowerOnly = false;
 
 		/* Saving and loading part */
 
