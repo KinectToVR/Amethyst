@@ -39,34 +39,36 @@
 
                 </Grid>
 
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" x:Name="ExternalFlipStackPanel" Visibility="Collapsed">
 
-                <Grid Margin="0,5,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="9*" />
-                        <ColumnDefinition Width="2*" />
-                    </Grid.ColumnDefinitions>
+                    <Grid Margin="0,5,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
 
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium" Opacity="0.5"
-                               x:Name="ExternalFlipCheckBoxLabel"
-                               Text="Use external waist tracking data instead of the Headset" Margin="30,0,0,10"
-                               Grid.Column="0" />
-                    <CheckBox x:Name="ExternalFlipCheckBox" IsEnabled="False"
-                              Checked="ExternalFlipCheckBox_Checked"
-                              Unchecked="ExternalFlipCheckBox_Unchecked"
-                              HorizontalAlignment="Left" VerticalAlignment="Center"
-                              MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="False" />
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+                                   Opacity="0.5"
+                                   x:Name="ExternalFlipCheckBoxLabel"
+                                   Text="Use external waist tracking data instead of the Headset" Margin="30,0,0,10"
+                                   Grid.Column="0" />
+                        <CheckBox x:Name="ExternalFlipCheckBox" IsEnabled="False"
+                                  Checked="ExternalFlipCheckBox_Checked"
+                                  Unchecked="ExternalFlipCheckBox_Unchecked"
+                                  HorizontalAlignment="Left" VerticalAlignment="Center"
+                                  MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="False" />
 
-                </Grid>
+                    </Grid>
 
-                    <AppBarButton IsCompact="True" Width="35" Height="65" Margin="5,17,0,0" 
-                                  ToolTipService.ToolTip="Calibration" 
+                    <AppBarButton IsCompact="True" Width="35" Height="65" Margin="5,17,0,0"
+                                  ToolTipService.ToolTip="Calibration"
                                   IsEnabled="{Binding ElementName=ExternalFlipCheckBox, 
 									Path=IsChecked,TargetNullValue=False}">
                         <AppBarButton.Flyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem Text="Face the Kinect!" FontWeight="Medium" IsHitTestVisible="False"/>
-                                <MenuFlyoutItem Text="Click to calibrate" Tag="Calibrate" Click="CalibrateExternalFlipMenuFlyoutItem_Click"/>
+                                <MenuFlyoutItem Text="Face the Kinect!" FontWeight="Medium" IsHitTestVisible="False" />
+                                <MenuFlyoutItem Text="Click to calibrate" Tag="Calibrate"
+                                                Click="CalibrateExternalFlipMenuFlyoutItem_Click" />
                             </MenuFlyout>
                         </AppBarButton.Flyout>
                     </AppBarButton>

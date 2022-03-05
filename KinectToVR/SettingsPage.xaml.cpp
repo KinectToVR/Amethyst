@@ -113,6 +113,8 @@ namespace winrt::KinectToVR::implementation
 		expTrackersDropDown = std::make_shared<Controls::Expander>(ExpTrackersDropDown());
 
 		soundsVolumeSlider = std::make_shared<Controls::Slider>(SoundsVolumeSlider());
+
+		externalFlipStackPanel = std::make_shared<Controls::StackPanel>(ExternalFlipStackPanel());
 	}
 }
 
@@ -887,6 +889,9 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 
 	// Load tracker settings/enabled
 	trackersConfig_UpdateIsEnabled();
+
+	// Hide/Show external flip depending on exp_options
+	externalFlipStackPanel->Visibility(k2app::shared::main::consoleItem.get()->Visibility());
 
 	// Notify of the setup end
 	settings_localInitFinished = true;
