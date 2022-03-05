@@ -14,15 +14,18 @@ std::string KinectV1Handler::statusResultString(HRESULT stat)
 	switch (stat)
 	{
 	case S_OK: return "Success!\nS_OK\nEverything's good!";
-	case S_NUI_INITIALIZING: return "INITIALIZING\nS_NUI_INITIALIZING\nThe device is connected, but still initializing.";
+	case S_NUI_INITIALIZING: return
+			"INITIALIZING\nS_NUI_INITIALIZING\nThe device is connected, but still initializing.";
 	case E_NUI_NOTCONNECTED: return "NOTCONNECTED\nE_NUI_NOTCONNECTED\nThe device is not connected.";
 	case E_NUI_NOTGENUINE: return "NOTGENUINE\nE_NUI_NOTGENUINE\nThe device is not a valid Kinect.";
 	case E_NUI_NOTSUPPORTED: return "NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nThe device is an unsupported model.";
 	case E_NUI_INSUFFICIENTBANDWIDTH: return
 			"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nThe device is connected to a hub without the necessary bandwidth requirements.";
-	case E_NUI_NOTPOWERED: return "NOTPOWERED\nE_NUI_NOTPOWERED\nThere is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.";
+	case E_NUI_NOTPOWERED: return
+			"NOTPOWERED\nE_NUI_NOTPOWERED\nThere is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.";
 	case E_NUI_NOTREADY: return "NOTREADY\nE_NUI_NOTREADY\nThere was some other unspecified error.";
-	default: return "Undefined: " + std::to_string(stat) + "\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
+	default: return "Undefined: " + std::to_string(stat) +
+			"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
 }
 
@@ -96,30 +99,6 @@ void KinectV1Handler::updateSkeletalData()
 {
 	if (kinectSensor->NuiSkeletonGetNextFrame(0, &skeletonFrame) >= 0)
 	{
-		// Parameters for ms' filter.
-		// There may be a need to experiment with it,
-		// Since it's the first filter happening
-
-		/* We have our own filters */
-		//NUI_TRANSFORM_SMOOTH_PARAMETERS params;
-		///*
-		//params.fCorrection = .25f;
-		//params.fJitterRadius = .4f;
-		//params.fMaxDeviationRadius = .25f;
-		//params.fPrediction = .25f;
-		//params.fSmoothing = .25f;
-		////*/
-		/////*
-		//params.fSmoothing = .15f;
-		//params.fCorrection = .25f;
-		//params.fMaxDeviationRadius = .17f;
-		//params.fJitterRadius = .11f;
-		//params.fPrediction = .17f;
-		////*/
-
-		//kinectSensor->NuiTransformSmooth(&skeletonFrame, &params); //Smooths jittery tracking
-		/* We have our own filters */
-
 		for (int i = 0; i < NUI_SKELETON_COUNT; ++i)
 		{
 			NUI_SKELETON_TRACKING_STATE trackingState = skeletonFrame.SkeletonData[i].eTrackingState;
@@ -152,6 +131,12 @@ void KinectV1Handler::updateSkeletalData()
 				/* Copy joint orientations */
 				for (int k = 0; k < ktvr::Joint_Total; ++k)
 				{
+					// Don't copy ankle rotations - we're SLERP'ing them
+					if (k == ktvr::Joint_AnkleLeft || k == ktvr::Joint_AnkleRight ||
+						k == ktvr::Joint_ElbowLeft || k == ktvr::Joint_ElbowRight ||
+						k == ktvr::Joint_KneeLeft || k == ktvr::Joint_KneeRight)
+						continue;
+
 					jointOrientations[k].w() = boneOrientations[globalIndex[k]].
 					                           absoluteRotation.
 					                           rotationQuaternion.w;
@@ -165,6 +150,101 @@ void KinectV1Handler::updateSkeletalData()
 					                           absoluteRotation.
 					                           rotationQuaternion.z;
 				}
+
+				// Anyway, slerp is slowing down the afterparty kinect v1 which wants everyone
+				// to shake and express self greatness 
+				// (or just tracks every damn molecule which shakes due to the internal heat)
+
+				jointOrientations[ktvr::Joint_AnkleLeft] =
+					jointOrientations[ktvr::Joint_AnkleLeft].slerp(
+						0.5f, Eigen::Quaternionf(
+							boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
+							absoluteRotation.rotationQuaternion.w,
+							boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
+							absoluteRotation.rotationQuaternion.x,
+							boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
+							absoluteRotation.rotationQuaternion.y,
+							boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
+							absoluteRotation.rotationQuaternion.z
+						)) *
+					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+						* Eigen::AngleAxisf(3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+
+				jointOrientations[ktvr::Joint_AnkleRight] =
+					jointOrientations[ktvr::Joint_AnkleRight].slerp(
+						0.5f, Eigen::Quaternionf(
+							boneOrientations[globalIndex[
+								ktvr::Joint_AnkleRight]].absoluteRotation.rotationQuaternion.w,
+							boneOrientations[globalIndex[
+								ktvr::Joint_AnkleRight]].absoluteRotation.rotationQuaternion.x,
+							boneOrientations[globalIndex[
+								ktvr::Joint_AnkleRight]].absoluteRotation.rotationQuaternion.y,
+							boneOrientations[globalIndex[
+								ktvr::Joint_AnkleRight]].absoluteRotation.rotationQuaternion.z
+						)) *
+					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+						* Eigen::AngleAxisf(-3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+
+				jointOrientations[ktvr::Joint_KneeLeft] =
+					jointOrientations[ktvr::Joint_KneeLeft].slerp(
+						0.5f, Eigen::Quaternionf(
+							boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
+							absoluteRotation.rotationQuaternion.w,
+							boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
+							absoluteRotation.rotationQuaternion.x,
+							boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
+							absoluteRotation.rotationQuaternion.y,
+							boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
+							absoluteRotation.rotationQuaternion.z
+						)) *
+					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+						* Eigen::AngleAxisf(3.14159265358979323846 / 3.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+
+				jointOrientations[ktvr::Joint_KneeRight] =
+					jointOrientations[ktvr::Joint_KneeRight].slerp(
+						0.5f, Eigen::Quaternionf(
+							boneOrientations[globalIndex[
+								ktvr::Joint_KneeRight]].absoluteRotation.rotationQuaternion.w,
+							boneOrientations[globalIndex[
+								ktvr::Joint_KneeRight]].absoluteRotation.rotationQuaternion.x,
+							boneOrientations[globalIndex[
+								ktvr::Joint_KneeRight]].absoluteRotation.rotationQuaternion.y,
+							boneOrientations[globalIndex[
+								ktvr::Joint_KneeRight]].absoluteRotation.rotationQuaternion.z
+						)) *
+					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+						* Eigen::AngleAxisf(-3.14159265358979323846 / 3.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+
+				jointOrientations[ktvr::Joint_ElbowLeft] =
+					jointOrientations[ktvr::Joint_ElbowLeft].slerp(
+						0.5f, Eigen::Quaternionf(
+							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
+							absoluteRotation.rotationQuaternion.w,
+							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
+							absoluteRotation.rotationQuaternion.x,
+							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
+							absoluteRotation.rotationQuaternion.y,
+							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
+							absoluteRotation.rotationQuaternion.z
+						));
+
+				jointOrientations[ktvr::Joint_ElbowRight] =
+					jointOrientations[ktvr::Joint_ElbowRight].slerp(
+						0.5f, Eigen::Quaternionf(
+							boneOrientations[globalIndex[
+								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.w,
+							boneOrientations[globalIndex[
+								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.x,
+							boneOrientations[globalIndex[
+								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.y,
+							boneOrientations[globalIndex[
+								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.z
+						));
+
 				break; // Only first skeleton
 			}
 			skeletonTracked = false;
