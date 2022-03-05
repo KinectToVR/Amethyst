@@ -200,7 +200,7 @@ void KinectV2Handler::updateParseFrame()
 			for (int k = 0; k < ktvr::Joint_Total; ++k)
 			{
 				// Don't copy ankle rotations - we're SLERP'ing them
-				if (k == ktvr::Joint_AnkleLeft || k == JointType_AnkleRight ||
+				if (k == ktvr::Joint_AnkleLeft || k == ktvr::Joint_AnkleRight ||
 					k == ktvr::Joint_ElbowLeft || k == ktvr::Joint_ElbowRight ||
 					k == ktvr::Joint_KneeLeft || k == ktvr::Joint_KneeRight)continue;
 
