@@ -35,8 +35,8 @@ void winrt::KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	console_setup_finished = true;
-	k2app::shared::other::toggleFreezeButton->IsChecked(k2app::interfacing::isTrackingFrozen);
-	k2app::shared::other::toggleFreezeButton->Content(k2app::interfacing::isTrackingFrozen
+	k2app::shared::other::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
+	k2app::shared::other::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
 		                                                  ? box_value(L"Unfreeze")
 		                                                  : box_value(L"Freeze"));
 	k2app::shared::other::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
@@ -108,8 +108,8 @@ void winrt::KinectToVR::implementation::ConsolePage::ToggleTrackingButton_Click(
 {
 	k2app::interfacing::isTrackingFrozen = !k2app::interfacing::isTrackingFrozen;
 
-	k2app::shared::other::toggleFreezeButton->IsChecked(k2app::interfacing::isTrackingFrozen);
-	k2app::shared::other::toggleFreezeButton->Content(k2app::interfacing::isTrackingFrozen
+	k2app::shared::other::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
+	k2app::shared::other::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
 		? box_value(L"Unfreeze")
 		: box_value(L"Freeze"));
 }

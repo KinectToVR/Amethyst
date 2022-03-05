@@ -37,15 +37,15 @@ namespace k2app::main
 			{
 				winrt::Microsoft::UI::Xaml::ElementSoundPlayer::Play(
 					winrt::Microsoft::UI::Xaml::ElementSoundKind::Invoke);
-			});
 
-			if (shared::other::toggleFreezeButton.get() != nullptr)
-			{
-				shared::other::toggleFreezeButton.get()->IsChecked(isTrackingFrozen);
-				k2app::shared::other::toggleFreezeButton->Content(k2app::interfacing::isTrackingFrozen
-					                                                  ? winrt::box_value(L"Unfreeze Tracking")
-					                                                  : winrt::box_value(L"Freeze Tracking"));
-			}
+				if (shared::other::toggleFreezeButton.get() != nullptr)
+				{
+					shared::other::toggleFreezeButton.get()->IsChecked(isTrackingFrozen);
+					shared::other::toggleFreezeButton.get()->Content(isTrackingFrozen
+						                                                 ? winrt::box_value(L"Unfreeze")
+						                                                 : winrt::box_value(L"Freeze"));
+				}
+			});
 		}
 
 		// Update the Flip Toggle : toggle
