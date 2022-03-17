@@ -615,6 +615,13 @@ namespace winrt::KinectToVR::implementation
 							});
 						}).detach();
 						// Auto-handles if none
+
+						// Update the backend extflip value
+						if (!TrackingDevices::isExternalFlipSupportable())
+						{
+							k2app::K2Settings.isExternalFlipEnabled = false;
+							k2app::K2Settings.saveSettings();
+						}
 					}
 					else // Log and exit, we have nothing to do
 					{
