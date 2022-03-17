@@ -237,7 +237,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_AnkleLeft] =
 				jointOrientations[ktvr::Joint_AnkleLeft].slerp(
-					0.35f, Eigen::Quaternionf(
+					0.3f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
 						Orientation.w,
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
@@ -246,14 +246,14 @@ void KinectV2Handler::updateParseFrame()
 						Orientation.y,
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
 						Orientation.z
-					)) *
-				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-					* Eigen::AngleAxisf(3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
-					* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+					) *
+					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+						* Eigen::AngleAxisf(3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
 
 			jointOrientations[ktvr::Joint_AnkleRight] =
 				jointOrientations[ktvr::Joint_AnkleRight].slerp(
-					0.35f, Eigen::Quaternionf(
+					0.3f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[
 							ktvr::Joint_AnkleRight]].Orientation.w,
 						boneOrientations[globalIndex[
@@ -262,10 +262,10 @@ void KinectV2Handler::updateParseFrame()
 							ktvr::Joint_AnkleRight]].Orientation.y,
 						boneOrientations[globalIndex[
 							ktvr::Joint_AnkleRight]].Orientation.z
-					)) *
-				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-					* Eigen::AngleAxisf(-3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
-					* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+					) *
+					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+						* Eigen::AngleAxisf(-3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
 
 			jointOrientations[ktvr::Joint_KneeLeft] =
 				jointOrientations[ktvr::Joint_KneeLeft].slerp(
@@ -278,10 +278,10 @@ void KinectV2Handler::updateParseFrame()
 						Orientation.y,
 						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
 						Orientation.z
-					)) *
-				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-					* Eigen::AngleAxisf(3.14159265358979323846 / 3.0, Eigen::Vector3f::UnitY())
-					* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+					) *
+					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+						* Eigen::AngleAxisf(3.14159265358979323846 / 3.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
 
 			jointOrientations[ktvr::Joint_KneeRight] =
 				jointOrientations[ktvr::Joint_KneeRight].slerp(
@@ -294,10 +294,10 @@ void KinectV2Handler::updateParseFrame()
 							ktvr::Joint_KneeRight]].Orientation.y,
 						boneOrientations[globalIndex[
 							ktvr::Joint_KneeRight]].Orientation.z
-					)) *
-				Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-					* Eigen::AngleAxisf(-3.14159265358979323846 / 3.0, Eigen::Vector3f::UnitY())
-					* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()));
+					) *
+					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+						* Eigen::AngleAxisf(-3.14159265358979323846 / 3.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
 
 			jointOrientations[ktvr::Joint_ElbowLeft] =
 				jointOrientations[ktvr::Joint_ElbowLeft].slerp(
