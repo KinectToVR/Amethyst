@@ -438,6 +438,92 @@ namespace k2app
 			serverStatusString = server_status;
 		}
 
+		/**
+		 * \brief This will check if there's any tracker with waist role in steamvr
+		 * \return Success?
+		 */
+		inline bool findStringIC(const std::string& strHaystack, const std::string& strNeedle)
+		{
+			auto it = std::ranges::search(
+				strHaystack.begin(), strHaystack.end(),
+				strNeedle.begin(), strNeedle.end(),
+				[](const char ch1, const char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
+			);
+			return !it.empty();
+		}
+
+		/**
+		 * \brief This will check if there's any tracker with waist role in steamvr
+		 * \_log Should we print logs?
+		 * \return <Success?, id>
+		 */
+		inline std::pair<bool, uint32_t> findVRWaistTracker(const bool _log = true)
+		{
+			// Loop through all devices
+			for (uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; i++)
+			{
+				char buf[1024];
+				vr::VRSystem()->GetStringTrackedDeviceProperty(i, vr::Prop_ControllerType_String, buf, sizeof buf);
+
+				if (strlen(buf) > 0) // If we've found anything
+					LOG_IF(INFO, _log) << "Found a device with roleHint: " << buf;
+				else continue; // Don't waste our time
+
+				// If we've actually found the one
+				if (findStringIC(buf, "waist"))
+				{
+					char buf_p[1024];
+					vr::VRSystem()->
+						GetStringTrackedDeviceProperty(i, vr::Prop_SerialNumber_String, buf_p, sizeof buf_p);
+
+					// Log that we're finished
+					LOG_IF(INFO, _log) <<
+						"\nFound an active waist tracker with:\n    hint: " <<
+						buf << "\n    serial: " <<
+						buf_p << "\n    id: " << i;
+
+					// Return what we've got
+					return std::make_pair(true, i);
+				}
+			}
+
+			// We've failed if the loop's finished
+			LOG_IF(WARNING, _log) <<
+				"Didn't find any waist tracker in SteamVR with a proper role hint (Prop_ControllerType_String)";
+			return std::make_pair(false, vr::k_unTrackedDeviceIndexInvalid);
+		}
+
+		/**
+		 * \brief Pull pose data from SteamVR's waist tracker (if any)
+		 * \_log Should we print logs? Default: no
+		 * \return <Position, Rotation>
+		 */
+		inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> getVRWaistTrackerPose(const bool _log = false)
+		{
+			vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
+			vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(vr::ETrackingUniverseOrigin::TrackingUniverseStanding, 0,
+			                                                devicePose,
+			                                                vr::k_unMaxTrackedDeviceCount);
+
+			const auto waistPair = findVRWaistTracker(_log);
+
+			if (waistPair.first)
+			{
+				// Extract pose from the returns
+				// We don't care if it's invalid by any chance
+				const auto waistPose = devicePose[waistPair.second];
+
+				// Get pos & rot -> EigenUtils' gonna do this stuff for us
+				return std::make_pair(EigenUtils::p_cast_type<Eigen::Vector3f>(waistPose.mDeviceToAbsoluteTracking),
+				                      EigenUtils::p_cast_type<Eigen::Quaternionf>(waistPose.mDeviceToAbsoluteTracking));
+			}
+
+			LOG_IF(WARNING, _log) <<
+					"Either waist tracker doesn't exist or its role hint (Prop_ControllerType_String) was invalid";
+
+			return std::make_pair(Eigen::Vector3f::Zero(), Eigen::Quaternionf(1, 0, 0, 0));
+		}
+
 		inline void UpdateServerStatusUI()
 		{
 			// Update the status here
@@ -533,7 +619,7 @@ namespace k2app
 			rightKneeJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[6]);
 			if (!k2app::K2Settings.isJointEnabled[6])
 				rightKneeJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
-			
+
 			// Optionally fix combos for disabled trackers -> joint selectors for override
 			waistPositionOverrideOptionBox.get()->IsEnabled(
 				k2app::K2Settings.isJointEnabled[0] && k2app::K2Settings.isPositionOverriddenJoint[0]);
@@ -653,7 +739,6 @@ namespace k2app
 				rightKneePositionOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 				rightKneeRotationOverrideOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 			}
-
 		}
 
 		// Get the quaternion representing the rotation
