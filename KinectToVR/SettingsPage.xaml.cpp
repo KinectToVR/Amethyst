@@ -21,37 +21,17 @@ void settings_set_external_flip_is_enabled(bool autoCheck = true)
 
 	if (autoCheck)
 	{
-		bool isFlipSupported = false;
+		const bool _supported = TrackingDevices::isExternalFlipSupportable();
+		k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(_supported);
 
-		auto const& trackingDevice =
-			TrackingDevices::getCurrentDevice();
-
-		if (trackingDevice.index() == 0)
-			isFlipSupported = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
-				trackingDevice)->isFlipSupported();
-
-		bool isExternalFlipSupported = false;
-
-		auto const& overrideDevice =
-			TrackingDevices::getCurrentOverrideDevice_Safe();
-
-		if (overrideDevice.first)
-		{
-			// If the override device is a kinect then it HAN NOT TO support flip
-			if (overrideDevice.second.index() == 0)
-				isExternalFlipSupported = !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
-					overrideDevice.second)->isFlipSupported();
-
-				// If the override device is a joints then it's always ok
-			else if (overrideDevice.second.index() == 1)
-				isExternalFlipSupported = true;
-		}
-
-		k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(
-			isFlipSupported && isExternalFlipSupported);
+		if (!_supported)
+			k2app::shared::settings::externalFlipCheckBox.get()->IsChecked(false);
 	}
 	else
+	{
 		k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(false);
+		k2app::shared::settings::externalFlipCheckBox.get()->IsChecked(false);
+	}
 
 	k2app::shared::settings::externalFlipCheckBoxLabel.get()->Opacity(
 		k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled() ? 1 : 0.5);
