@@ -820,6 +820,34 @@ void KinectToVR::implementation::MainWindow::ExitButton_Click(
 	// Mark trackers as inactive
 	k2app::interfacing::K2AppTrackersInitialized = false;
 
+	// Disconnect all tracking devices and don't care about any errors
+	[&, this]
+	{
+		try
+		{
+			for (auto& trackingDevice : TrackingDevices::TrackingDevicesVector)
+			{
+				LOG(INFO) << "Now disconnecting the tracking device...";
+
+				if (trackingDevice.index() == 0)
+				{
+					// Kinect Basis
+					auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+					device->shutdown();
+				}
+				else if (trackingDevice.index() == 1)
+				{
+					// Joints Basis
+					auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+					device->shutdown();
+				}
+			}
+		}
+		catch (...)
+		{
+		}
+	}();
+
 	// Wait a moment
 	Sleep(500);
 
