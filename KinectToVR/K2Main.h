@@ -689,7 +689,7 @@ namespace k2app::main
 			const double _current_yaw =
 			(K2Settings.isExternalFlipEnabled
 				 ? radiansToDegrees(EigenUtils::QuatToEulers( // Ext
-					 interfacing::K2TrackersVector.at(0).pose.orientation).y())
+					 interfacing::getVRWaistTrackerPose().second).y())
 				 : _yaw); // Default
 
 			// Compose flip
@@ -1562,7 +1562,7 @@ namespace k2app::main
 				const double _current_yaw =
 				(K2Settings.isExternalFlipEnabled
 					 ? radiansToDegrees(EigenUtils::QuatToEulers( // Ext
-						 interfacing::K2TrackersVector.at(0).pose.orientation).y())
+						 interfacing::getVRWaistTrackerPose().second).y())
 					 : _yaw); // Default
 
 				// Compose flip
