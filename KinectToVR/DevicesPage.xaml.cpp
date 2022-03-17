@@ -1157,7 +1157,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
-	LOG(INFO) << "Now reconnecting the tracking device...";
+	LOG(INFO) << "Now disconnecting the tracking device...";
 
 	if (trackingDevice.index() == 0)
 	{
@@ -1251,7 +1251,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
-	LOG(INFO) << "Now reconnecting the tracking device...";
+	LOG(INFO) << "Now deselecting the tracking device...";
 
 	jointBasisControls.get()->Visibility(Visibility::Collapsed);
 	jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
