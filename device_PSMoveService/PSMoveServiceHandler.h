@@ -22,7 +22,7 @@ public:
 	{
 		// Called from the app now
 		//PSMoveServiceHandler::initialize();
-		PSMoveServiceHandler::initLogging();
+		LOG(INFO) << "Constructing the PSMS Handler for JointsBasis K2TrackingDevice...";
 
 		K2TrackingDeviceBase_JointsBasis::deviceType = ktvr::K2_Joints;
 		K2TrackingDeviceBase_JointsBasis::deviceName = "PSMove Service";
@@ -41,26 +41,7 @@ public:
 	std::string statusResultString(HRESULT stat) override;
 
 private:
-
-	/* Configure logging and print first message */
-	static void initLogging()
-	{
-		/* This is now called from the K2App itself
-		 * and will cause errors when called internally!
-		
-		// Initialize logging
-		google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("device_PSMoveService").c_str());
-		// Log everything >=INFO to same file
-		google::SetLogDestination(google::GLOG_INFO, ktvr::GetK2AppDataLogFileDir("device_PSMoveService").c_str());
-		google::SetLogFilenameExtension(".log");
-
-		FLAGS_logbufsecs = 0; //Set max timeout
-		FLAGS_minloglevel = google::GLOG_INFO;
-		*/
-
-		LOG(INFO) << "~~~K2App / PSMS new logging session begins here!~~~";
-	}
-
+	
 	bool startup();
 	void processKeyInputs();
 	void rebuildPSMoveLists();
