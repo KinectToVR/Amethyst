@@ -34,6 +34,10 @@ void KinectV1Handler::initialize()
 	try
 	{
 		initialized = initKinect();
+
+		LOG(INFO) << "Initializing: updated Kinect V1 status with: " <<
+			statusResultString(getStatusResult());
+
 		if (!initialized) throw FailedKinectInitialization;
 	}
 	catch (std::exception& e)
@@ -45,12 +49,30 @@ void KinectV1Handler::shutdown()
 {
 	try
 	{
+		LOG(INFO) << "Shutting down: Kinect V1 streams' termination pending...";
+
 		// Shut down the sensor (Only NUI API)
 		if (kinectSensor) // Protect from null call
-			kinectSensor->NuiShutdown();
+			[&, this]
+			{
+				__try
+				{
+					kinectSensor->NuiShutdown();
+				}
+				__except (EXCEPTION_EXECUTE_HANDLER)
+				{
+					[&, this]
+					{
+						LOG(INFO) <<
+							"Shutting down: V1 kinectSensor's termination failed! The device may misbehave until the next reconnection.";
+					}();
+				}
+			}();
 	}
 	catch (std::exception& e)
 	{
+		LOG(INFO) <<
+			"Shutting down: Kinect V1 streams' termination failed! The device may misbehave until the next reconnection.";
 	}
 }
 
@@ -157,7 +179,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				jointOrientations[ktvr::Joint_AnkleLeft] =
 					jointOrientations[ktvr::Joint_AnkleLeft].slerp(
-						0.5f, Eigen::Quaternionf(
+						0.35f, Eigen::Quaternionf(
 							boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
 							absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
@@ -173,7 +195,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				jointOrientations[ktvr::Joint_AnkleRight] =
 					jointOrientations[ktvr::Joint_AnkleRight].slerp(
-						0.5f, Eigen::Quaternionf(
+						0.35f, Eigen::Quaternionf(
 							boneOrientations[globalIndex[
 								ktvr::Joint_AnkleRight]].absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[
@@ -189,7 +211,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				jointOrientations[ktvr::Joint_KneeLeft] =
 					jointOrientations[ktvr::Joint_KneeLeft].slerp(
-						0.5f, Eigen::Quaternionf(
+						0.35f, Eigen::Quaternionf(
 							boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
 							absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
@@ -205,7 +227,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				jointOrientations[ktvr::Joint_KneeRight] =
 					jointOrientations[ktvr::Joint_KneeRight].slerp(
-						0.5f, Eigen::Quaternionf(
+						0.35f, Eigen::Quaternionf(
 							boneOrientations[globalIndex[
 								ktvr::Joint_KneeRight]].absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[
@@ -221,7 +243,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				jointOrientations[ktvr::Joint_ElbowLeft] =
 					jointOrientations[ktvr::Joint_ElbowLeft].slerp(
-						0.5f, Eigen::Quaternionf(
+						0.35f, Eigen::Quaternionf(
 							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 							absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
@@ -234,7 +256,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				jointOrientations[ktvr::Joint_ElbowRight] =
 					jointOrientations[ktvr::Joint_ElbowRight].slerp(
-						0.5f, Eigen::Quaternionf(
+						0.35f, Eigen::Quaternionf(
 							boneOrientations[globalIndex[
 								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[

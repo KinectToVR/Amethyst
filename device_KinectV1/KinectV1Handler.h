@@ -6,7 +6,11 @@
 #include <NuiSensor.h>
 #include <NuiSkeleton.h>
 
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#include <glog/logging.h>
+
 #include "KinectToVR_API_Devices.h"
+#include "KinectToVR_API_Paths.h"
 
 /* Not exported */
 
@@ -17,6 +21,8 @@ public:
 	KinectV1Handler()
 	{
 		//KinectV1Handler::initialize();
+		LOG(INFO) << "Constructing the Kinect V1 (X360) Handler for KinectBasis K2TrackingDevice...";
+
 		K2TrackingDeviceBase_KinectBasis::deviceType = ktvr::K2_Kinect;
 		K2TrackingDeviceBase_KinectBasis::deviceName = "Xbox 360 Kinect";
 

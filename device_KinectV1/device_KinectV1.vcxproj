@@ -71,7 +71,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(KINECTSDK10_DIR)lib\amd64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Kinect10.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Kinect10.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags_debug.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1"
@@ -79,6 +79,9 @@
 xcopy /y /d "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
+
+xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
+xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
 
 xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1" "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR\devices\KinectV1"
 
@@ -97,6 +100,7 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1" "$(
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\Kinect;$(SolutionDir)external\openvr\headers;$(SolutionDir)KinectToVR_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(KINECTSDK10_DIR)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -105,7 +109,7 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1" "$(
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(KINECTSDK10_DIR)lib\amd64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Kinect10.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Kinect10.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1"
@@ -113,6 +117,9 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1" "$(
 xcopy /y /d "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
+
+xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
+xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1\bin\win64\"
 
 xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1" "$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR\devices\KinectV1"
 

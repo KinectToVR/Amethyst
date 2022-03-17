@@ -39,6 +39,10 @@ void KinectV2Handler::initialize()
 	try
 	{
 		initialized = initKinect();
+
+		LOG(INFO) << "Initializing: updated Kinect V2 status with: " <<
+			statusResultString(getStatusResult());
+
 		// initializeColor();
 		// Commented both image frames out, as most people use the kinect for skeletal data
 		// Updating all of the arrays uses a shit ton of CPU, but then again, it's still WIP
@@ -80,8 +84,13 @@ void KinectV2Handler::terminateSkeleton()
 			CloseHandle((HANDLE)h_bodyFrameEvent);
 			bodyFrameReader->Release();
 		}
-		__except (EXCEPTION_INVALID_HANDLE)
+		__except (EXCEPTION_EXECUTE_HANDLER)
 		{
+			[&, this]
+			{
+				LOG(INFO) <<
+					"Shutting down: V2 bodyFrameReader's termination failed! The device may misbehave until the next reconnection.";
+			}();
 		}
 		h_bodyFrameEvent = NULL;
 		bodyFrameReader = nullptr;
@@ -202,7 +211,8 @@ void KinectV2Handler::updateParseFrame()
 				// Don't copy ankle rotations - we're SLERP'ing them
 				if (k == ktvr::Joint_AnkleLeft || k == ktvr::Joint_AnkleRight ||
 					k == ktvr::Joint_ElbowLeft || k == ktvr::Joint_ElbowRight ||
-					k == ktvr::Joint_KneeLeft || k == ktvr::Joint_KneeRight)continue;
+					k == ktvr::Joint_KneeLeft || k == ktvr::Joint_KneeRight)
+					continue;
 
 				jointOrientations[k].w() = boneOrientations[globalIndex[k]].Orientation.
 				                                                            w;
@@ -227,7 +237,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_AnkleLeft] =
 				jointOrientations[ktvr::Joint_AnkleLeft].slerp(
-					0.5f, Eigen::Quaternionf(
+					0.35f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
 						Orientation.w,
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
@@ -243,7 +253,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_AnkleRight] =
 				jointOrientations[ktvr::Joint_AnkleRight].slerp(
-					0.5f, Eigen::Quaternionf(
+					0.35f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[
 							ktvr::Joint_AnkleRight]].Orientation.w,
 						boneOrientations[globalIndex[
@@ -259,7 +269,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_KneeLeft] =
 				jointOrientations[ktvr::Joint_KneeLeft].slerp(
-					0.5f, Eigen::Quaternionf(
+					0.35f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
 						Orientation.w,
 						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
@@ -275,7 +285,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_KneeRight] =
 				jointOrientations[ktvr::Joint_KneeRight].slerp(
-					0.5f, Eigen::Quaternionf(
+					0.35f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[
 							ktvr::Joint_KneeRight]].Orientation.w,
 						boneOrientations[globalIndex[
@@ -291,7 +301,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_ElbowLeft] =
 				jointOrientations[ktvr::Joint_ElbowLeft].slerp(
-					0.5f, Eigen::Quaternionf(
+					0.35f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 						Orientation.w,
 						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
@@ -304,7 +314,7 @@ void KinectV2Handler::updateParseFrame()
 
 			jointOrientations[ktvr::Joint_ElbowRight] =
 				jointOrientations[ktvr::Joint_ElbowRight].slerp(
-					0.5f, Eigen::Quaternionf(
+					0.35f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[
 							ktvr::Joint_ElbowRight]].Orientation.w,
 						boneOrientations[globalIndex[
@@ -356,6 +366,8 @@ void KinectV2Handler::shutdown()
 {
 	try
 	{
+		LOG(INFO) << "Shutting down: Kinect V2 streams' termination pending...";
+
 		// Release the Kinect sensor, called form k2vr
 		// OR from the crash handler
 		if (kinectSensor)
@@ -363,11 +375,27 @@ void KinectV2Handler::shutdown()
 			// Protect from null call
 			terminateSkeleton();
 
-			kinectSensor->Close();
-			kinectSensor->Release();
+			[&, this]
+			{
+				__try
+				{
+					kinectSensor->Close();
+					kinectSensor->Release();
+				}
+				__except (EXCEPTION_EXECUTE_HANDLER)
+				{
+					[&,this]
+					{
+						LOG(INFO) <<
+							"Shutting down: V2 kinectSensor's termination failed! The device may misbehave until the next reconnection.";
+					}();
+				}
+			}();
 		}
 	}
-	catch (std::exception& e)
+	catch (std::exception const& e)
 	{
+		LOG(INFO) <<
+			"Shutting down: Kinect V2 streams' termination failed! The device may misbehave until the next reconnection.";
 	}
 }

@@ -2,7 +2,11 @@
 #include <Kinect.h>
 #include <Windows.h>
 
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#include <glog/logging.h>
+
 #include "KinectToVR_API_Devices.h"
+#include "KinectToVR_API_Paths.h"
 
 /* Not exported */
 
@@ -12,6 +16,8 @@ public:
 	KinectV2Handler()
 	{
 		//KinectV2Handler::initialize();
+		LOG(INFO) << "Constructing the Kinect V2 (XBONE) Handler for KinectBasis K2TrackingDevice...";
+
 		K2TrackingDeviceBase_KinectBasis::deviceType = ktvr::K2_Kinect;
 		K2TrackingDeviceBase_KinectBasis::deviceName = "Xbox One Kinect";
 
