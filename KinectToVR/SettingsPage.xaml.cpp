@@ -14,29 +14,6 @@ using namespace Microsoft::UI::Xaml;
 // Helper local variables
 bool settings_localInitFinished = false;
 
-// autoCheck->true will force the function to check and false will assume unsupported
-void settings_set_external_flip_is_enabled(bool autoCheck = true)
-{
-	if (!settings_localInitFinished)return;
-
-	if (autoCheck)
-	{
-		const bool _supported = TrackingDevices::isExternalFlipSupportable();
-		k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(_supported);
-
-		if (!_supported)
-			k2app::shared::settings::externalFlipCheckBox.get()->IsChecked(false);
-	}
-	else
-	{
-		k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(false);
-		k2app::shared::settings::externalFlipCheckBox.get()->IsChecked(false);
-	}
-
-	k2app::shared::settings::externalFlipCheckBoxLabel.get()->Opacity(
-		k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled() ? 1 : 0.5);
-}
-
 namespace winrt::KinectToVR::implementation
 {
 	SettingsPage::SettingsPage()
@@ -161,6 +138,9 @@ void trackersConfigChanged()
 
 	// Enable/Disable combos
 	trackersConfig_UpdateIsEnabled();
+
+	// Enable/Disable ExtFlip
+	TrackingDevices::settings_set_external_flip_is_enabled();
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
