@@ -330,25 +330,29 @@ namespace TrackingDevices
 				trackingDevice)->isFlipSupported();
 
 		bool isExternalFlipSupported = false, // inapp - overridden/disabled
-			isExternalFlipSupported_Global = false; // global - steamvr
+		     isExternalFlipSupported_Global = false; // global - steamvr
 
-	   /* Now check if either waist tracker is overridden or disabled
-		* And then search in OpenVR for a one with waist role */
+		/* Now check if either waist tracker is overridden or disabled
+		 * And then search in OpenVR for a one with waist role */
 
 		auto const& overrideDevice =
 			TrackingDevices::getCurrentOverrideDevice_Safe();
 
 		if (overrideDevice.first)
 		{
-			// If the override device is a kinect then it HAN NOT TO support flip
+			// If the override device is a kinect then it HAS NOT TO support flip
 			if (overrideDevice.second.index() == 0)
 				isExternalFlipSupported = !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
 					overrideDevice.second)->isFlipSupported();
 
-			// If the override device is a joints then it's always ok
+				// If the override device is a joints then it's always ok
 			else if (overrideDevice.second.index() == 1)
 				isExternalFlipSupported = true;
 		}
+
+		// If isExternalFlipSupported is still false, also check if the waist is disabled by any chance
+		if (!isExternalFlipSupported)
+			isExternalFlipSupported = k2app::K2Settings.isJointEnabled[0];
 
 		/* Here check if there's a proper waist tracker in steamvr to pull data from */
 		if (isExternalFlipSupported)
