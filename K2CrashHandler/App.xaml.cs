@@ -34,7 +34,7 @@ namespace K2CrashHandler
         public App()
         {
             this.RequestedTheme = ApplicationTheme.Dark;
-
+            
             this.InitializeComponent();
         }
 
