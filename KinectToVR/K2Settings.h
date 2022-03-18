@@ -139,10 +139,10 @@ namespace k2app
 		// Skeleton flip based on non-flip override devices' waist tracker
 		bool isExternalFlipEnabled = false;
 
-		// Currently enabled (spawn-able) joints: W,L,R and true is the default, LE,RE,LK,RK
-		// Currently turned on (marked-as-online) joints: W,L,R,LE,RE,LK,RK and true is the default
 		std::array<bool, 7>
+			// Currently enabled (spawn-able) joints: W,L,R and true is the default, LE,RE,LK,RK
 			isJointEnabled = {true, true, true, false, false, false, false},
+			// Currently turned on (marked-as-online) joints: W,L,R,LE,RE,LK,RK and true is the default
 			isJointTurnedOn = {true, true, true, true, true, true, true};
 
 		// Automatically spawn enabled trackers on startup and off is the default
