@@ -80,38 +80,3 @@ jobs:
           cp -r ../x64/Release/KinectToVR/* ./
           cp -r ../x64/Release/driver/KinectToVR/* ./KinectToVR
           7z a "Amethyst-Release-${{ steps.slug.outputs.slug }}.zip" *
-
-      - name: Log in to GitHub
-        run: |
-          Invoke-Expression 'cmd /c "echo ${{ secrets.pat }} | `"C:/Program Files/GitHub CLI/gh.exe`" auth login --hostname GitHub.com --with-token || exit 0"'
-
-      - name: Check Release Version
-        id: release_version
-        run: |
-          $release_version = '::set-output name=release_version::' + $([int]$([regex]::Match($(curl --silent --location https://github.com/KinectToVR/Amethyst-Releases/releases/latest), "/ame(.*?)`"").Groups[1].Value) + 1); echo $release_version
-
-      - name: Create Release
-        run: |
-          &"C:/Program Files/GitHub CLI/gh.exe" release create ame${{ steps.release_version.outputs.release_version }} --notes `
-          @"
-          ### KinectToVR v1.0.0 / Ame${{ steps.release_version.outputs.release_version }} Technical Preview
-          Short Commit ID: ${{ steps.slug.outputs.slug }}
-
-          Please note that this is an automated release.
-          Setup instructions are also available on discord
-          For help with please hit ```公彦赤屋先#5023``` or ```#development```
-
-          ### Deployment requirements:
-          - Install [VCRedist 2022](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-          - Install the [Windows App SDK Runtime](https://aka.ms/windowsappsdk/1.0-stable/msix-installer)
-
-          ### Setup for testing:
-          - Delete **everything** in ```C:/K2EX``` (or wherever is it installed)
-          - Put Release zip in ```C:/K2EX``` (or wherever is it installed)
-          - Just extract the zip there. __File tree has to remain the same as before__
-
-          ### Reports: 
-          - Go to discord and post log files from ``````%AppData%/KinectToVR/logs``````
-          "@ --repo KinectToVR/Amethyst-Releases `
-          --target main --title "Amethyst Technical Preview (Ame${{ steps.release_version.outputs.release_version }})" `
-          "Release/Amethyst-Release-${{ steps.slug.outputs.slug }}.zip"
