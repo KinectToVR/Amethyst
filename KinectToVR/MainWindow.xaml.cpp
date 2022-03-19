@@ -20,7 +20,7 @@ bool updateFound = false,
      main_localInitFinished = false;
 
 // Assume we're up to date
-uint32_t latest_version =
+std::string K2RemoteVersion =
 	k2app::interfacing::K2InternalVersion;
 
 // Updates checking function
@@ -55,9 +55,6 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 
 			try
 			{
-				// TODO UNTIL FULL RELEASE THIS WILL BE INCREMENTED BEFORE EVERY PUSH
-				// TODO ALSO IMPLEMENT THE vX.X.X SYSTEM SOMEDAY
-
 				curlpp::options::Url myUrl(
 					std::string("https://github.com/KinectToVR/Amethyst-Releases/releases/latest"));
 				curlpp::Easy myRequest;
@@ -71,22 +68,38 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 
 				os << myRequest;
 
+				// If the read string isn't empty, proceed to checking for updates
 				if (std::string read_buffer = os.str(); !read_buffer.empty())
 				{
 					LOG(INFO) << "Update-check successful, string:\n" << read_buffer;
 
-					// Find the first ameX occurrence in a tag
-					std::string split = read_buffer.substr(read_buffer.find("tag/ame") + sizeof "tag/ame" - 1);
+					// Find the first KTVRX.X.X.X occurrence, most likey in the tag
+					std::string split = read_buffer.substr(read_buffer.find("tag/KTVR") + sizeof "tag/KTVR" - 1);
 					// And crop it to the first " character
-					std::string version = split.substr(0, split.find("\""));
-					// And make it a number (multi-digit numbers are ok too)
-					latest_version = boost::lexical_cast<uint32_t>(version);
+					K2RemoteVersion = split.substr(0, split.find("\""));
 
-					LOG(INFO) << "Remote version number: " << latest_version;
-					LOG(INFO) << "Local version number: " << k2app::interfacing::K2InternalVersion;
+					/* Now split the gathered string into the version number */
+
+					// Split version strings into integers
+					std::vector<std::string> local_version_num, remote_version_num;
+					boost::split(local_version_num, k2app::interfacing::K2InternalVersion, boost::is_any_of("."));
+					boost::split(remote_version_num, K2RemoteVersion, boost::is_any_of("."));
 
 					// Compare to the current version
-					updateFound = (k2app::interfacing::K2InternalVersion < latest_version);
+					for (uint32_t i = 0; i < 4; i++)
+					{
+						// Check the version
+						if (const auto _ver = boost::lexical_cast<uint32_t>(remote_version_num.at(i));
+							_ver > boost::lexical_cast<uint32_t>(local_version_num.at(i)))
+							updateFound = true;
+
+						// Not to false-alarm in situations like 1.0.1.5 (local) vs 1.0.1.0 (remote)
+						else if (_ver < boost::lexical_cast<uint32_t>(local_version_num.at(i))) break;
+					}
+
+					// And maybe log it too
+					LOG(INFO) << "Remote version number: " << K2RemoteVersion;
+					LOG(INFO) << "Local version number: " << k2app::interfacing::K2InternalVersion;
 				}
 				else
 					LOG(ERROR) << "Update failed, string was empty.";
@@ -108,8 +121,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 			if (updateFound)
 			{
 				FlyoutHeader().Text(L"New Update Available");
-				FlyoutFooter().Text(L"KinectToVR v1.0.0 (Ame" + std::to_wstring(latest_version) + L")");
-				FlyoutContent().Text(L"- You expected a changelog,\n- But it was me, DIO!");
+				FlyoutFooter().Text(L"KinectToVR v" + wstring_cast(K2RemoteVersion));
+				FlyoutContent().Text(L"  You expected a changelog,\n  But it was me, DIO!");
 
 				auto thickness = Thickness();
 				thickness.Left = 0;
@@ -126,7 +139,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 			else
 			{
 				FlyoutHeader().Text(L"You're Up To Date");
-				FlyoutFooter().Text(L"KinectToVR v1.0.0");
+				FlyoutFooter().Text(L"KinectToVR v" + wstring_cast(k2app::interfacing::K2InternalVersion));
 				FlyoutContent().Text(L"Please tell us if you have any ideas\nfor the next KinectToVR update.");
 
 				auto thickness = Thickness();
