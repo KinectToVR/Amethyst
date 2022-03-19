@@ -673,12 +673,12 @@ namespace k2app
 			}
 
 			leftElbowPositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[3] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+				k2app::K2Settings.isJointEnabled[3] && k2app::K2Settings.isPositionOverriddenJoint[3]);
 			leftElbowRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[3] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+				k2app::K2Settings.isJointEnabled[3] && k2app::K2Settings.isRotationOverriddenJoint[3]);
 
-			overrideLeftElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
-			overrideLeftElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			overrideLeftElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[3]);
+			overrideLeftElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[3]);
 
 			if (!k2app::K2Settings.isJointEnabled[3])
 			{
@@ -690,12 +690,12 @@ namespace k2app
 			}
 
 			rightElbowPositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[4] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+				k2app::K2Settings.isJointEnabled[4] && k2app::K2Settings.isPositionOverriddenJoint[4]);
 			rightElbowRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[4] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+				k2app::K2Settings.isJointEnabled[4] && k2app::K2Settings.isRotationOverriddenJoint[4]);
 
-			overrideRightElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
-			overrideRightElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			overrideRightElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[4]);
+			overrideRightElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[4]);
 
 			if (!k2app::K2Settings.isJointEnabled[4])
 			{
@@ -707,12 +707,12 @@ namespace k2app
 			}
 
 			leftKneePositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[5] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+				k2app::K2Settings.isJointEnabled[5] && k2app::K2Settings.isPositionOverriddenJoint[5]);
 			leftKneeRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[5] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+				k2app::K2Settings.isJointEnabled[5] && k2app::K2Settings.isRotationOverriddenJoint[5]);
 
-			overrideLeftKneePosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
-			overrideLeftKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			overrideLeftKneePosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[5]);
+			overrideLeftKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[5]);
 
 			if (!k2app::K2Settings.isJointEnabled[5])
 			{
@@ -724,12 +724,12 @@ namespace k2app
 			}
 
 			rightKneePositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[6] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+				k2app::K2Settings.isJointEnabled[6] && k2app::K2Settings.isPositionOverriddenJoint[6]);
 			rightKneeRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[6] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+				k2app::K2Settings.isJointEnabled[6] && k2app::K2Settings.isRotationOverriddenJoint[6]);
 
-			overrideRightKneePosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
-			overrideRightKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			overrideRightKneePosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[6]);
+			overrideRightKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[6]);
 
 			if (!k2app::K2Settings.isJointEnabled[6])
 			{
