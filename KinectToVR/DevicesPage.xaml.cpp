@@ -311,85 +311,85 @@ void devices_select_combobox()
 	devices_select_combobox_safe(
 		waistPositionOverrideOptionBox,
 		k2app::K2Settings.isPositionOverriddenJoint[0]
-		? k2app::K2Settings.positionOverrideJointID[0]
-		: -1);
+			? k2app::K2Settings.positionOverrideJointID[0]
+			: -1);
 	devices_select_combobox_safe(
 		waistRotationOverrideOptionBox,
 		k2app::K2Settings.isRotationOverriddenJoint[0]
-		? k2app::K2Settings.rotationOverrideJointID[0]
-		: -1);
+			? k2app::K2Settings.rotationOverrideJointID[0]
+			: -1);
 
 	// LeftF
 	devices_select_combobox_safe(
 		leftFootPositionOverrideOptionBox,
 		k2app::K2Settings.isPositionOverriddenJoint[1]
-		? k2app::K2Settings.positionOverrideJointID[1]
-		: -1);
+			? k2app::K2Settings.positionOverrideJointID[1]
+			: -1);
 	devices_select_combobox_safe(
 		leftFootRotationOverrideOptionBox,
 		k2app::K2Settings.isRotationOverriddenJoint[1]
-		? k2app::K2Settings.rotationOverrideJointID[1]
-		: -1);
+			? k2app::K2Settings.rotationOverrideJointID[1]
+			: -1);
 
 	// RightF
 	devices_select_combobox_safe(
 		rightFootPositionOverrideOptionBox,
 		k2app::K2Settings.isPositionOverriddenJoint[2]
-		? k2app::K2Settings.positionOverrideJointID[2]
-		: -1);
+			? k2app::K2Settings.positionOverrideJointID[2]
+			: -1);
 	devices_select_combobox_safe(
 		rightFootRotationOverrideOptionBox,
 		k2app::K2Settings.isRotationOverriddenJoint[2]
-		? k2app::K2Settings.rotationOverrideJointID[2]
-		: -1);
+			? k2app::K2Settings.rotationOverrideJointID[2]
+			: -1);
 
 	// LeftEL
 	devices_select_combobox_safe(
 		leftElbowPositionOverrideOptionBox,
 		k2app::K2Settings.isPositionOverriddenJoint[3]
-		? k2app::K2Settings.positionOverrideJointID[3]
-		: -1);
+			? k2app::K2Settings.positionOverrideJointID[3]
+			: -1);
 	devices_select_combobox_safe(
 		leftElbowRotationOverrideOptionBox,
 		k2app::K2Settings.isRotationOverriddenJoint[3]
-		? k2app::K2Settings.rotationOverrideJointID[3]
-		: -1);
+			? k2app::K2Settings.rotationOverrideJointID[3]
+			: -1);
 
 	// RightEL
 	devices_select_combobox_safe(
 		rightElbowPositionOverrideOptionBox,
 		k2app::K2Settings.isPositionOverriddenJoint[4]
-		? k2app::K2Settings.positionOverrideJointID[4]
-		: -1);
+			? k2app::K2Settings.positionOverrideJointID[4]
+			: -1);
 	devices_select_combobox_safe(
 		rightElbowRotationOverrideOptionBox,
 		k2app::K2Settings.isRotationOverriddenJoint[4]
-		? k2app::K2Settings.rotationOverrideJointID[4]
-		: -1);
+			? k2app::K2Settings.rotationOverrideJointID[4]
+			: -1);
 
 	// LeftK
 	devices_select_combobox_safe(
 		leftKneePositionOverrideOptionBox,
 		k2app::K2Settings.isPositionOverriddenJoint[5]
-		? k2app::K2Settings.positionOverrideJointID[5]
-		: -1);
+			? k2app::K2Settings.positionOverrideJointID[5]
+			: -1);
 	devices_select_combobox_safe(
 		leftKneeRotationOverrideOptionBox,
 		k2app::K2Settings.isRotationOverriddenJoint[5]
-		? k2app::K2Settings.rotationOverrideJointID[5]
-		: -1);
+			? k2app::K2Settings.rotationOverrideJointID[5]
+			: -1);
 
 	// RightK
 	devices_select_combobox_safe(
 		rightKneePositionOverrideOptionBox,
 		k2app::K2Settings.isPositionOverriddenJoint[6]
-		? k2app::K2Settings.positionOverrideJointID[6]
-		: -1);
+			? k2app::K2Settings.positionOverrideJointID[6]
+			: -1);
 	devices_select_combobox_safe(
 		rightKneeRotationOverrideOptionBox,
 		k2app::K2Settings.isRotationOverriddenJoint[6]
-		? k2app::K2Settings.rotationOverrideJointID[6]
-		: -1);
+			? k2app::K2Settings.rotationOverrideJointID[6]
+			: -1);
 }
 
 namespace winrt::KinectToVR::implementation

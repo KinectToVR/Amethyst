@@ -1186,7 +1186,7 @@ void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	// Update the internal version
 	if (k2app::shared::general::versionLabel.get() != nullptr)
 		k2app::shared::general::versionLabel.get()->Text(
-			L"v1.0.0 (Ame" + std::to_wstring(k2app::interfacing::K2InternalVersion) + L")");
+			L"v" + wstring_cast(k2app::interfacing::K2InternalVersion));
 
 	// Try auto-spawning trackers if stated so
 	if (!general_tab_setup_finished && // If first-time
