@@ -339,4 +339,134 @@ namespace TrackingDevices
 			::k2app::shared::general::overrideErrorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 		}
 	}
+
+	inline int32_t devices_override_joint_id(int32_t const& id)
+	{
+		auto const& _override = TrackingDevices::getCurrentOverrideDevice_Safe();
+		bool _is_kinect = false; // 1: isSet, 2: isKinect
+
+		if (_override.first)
+			_is_kinect = _override.second.index() == 0;
+
+		if (
+			(id < 0) || // If id is invalid
+			(_override.first && !_is_kinect) // If we're using a jointsbasis
+			)
+			return id;
+
+		if (
+			_override.first && _is_kinect // If we're using a kinectbasis
+			)
+		{
+			if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+				_override.second)->getDeviceCharacteristics()
+			> ktvr::K2_Character_Basic)
+			{
+				switch (id)
+				{
+				case 0:
+					return ktvr::Joint_SpineShoulder;
+				case 1:
+					return ktvr::Joint_ElbowLeft;
+				case 2:
+					return ktvr::Joint_ElbowRight;
+				case 3:
+					return ktvr::Joint_SpineWaist;
+				case 4:
+					return ktvr::Joint_KneeLeft;
+				case 5:
+					return ktvr::Joint_KneeRight;
+				case 6:
+					return ktvr::Joint_AnkleLeft;
+				case 7:
+					return ktvr::Joint_AnkleRight;
+				default:
+					return -1;
+				}
+			}
+			else
+			{
+				switch (id)
+				{
+				case 0:
+					return ktvr::Joint_SpineShoulder;
+				case 1:
+					return ktvr::Joint_SpineWaist;
+				case 2:
+					return ktvr::Joint_AnkleLeft;
+				case 3:
+					return ktvr::Joint_AnkleRight;
+				default:
+					return -1;
+				}
+			}
+		}
+
+		return -1; // Return invalid
+	}
+
+	inline int32_t devices_override_joint_id_reverse(int32_t const& id)
+	{
+		auto const& _override = TrackingDevices::getCurrentOverrideDevice_Safe();
+		bool _is_kinect = false; // 1: isSet, 2: isKinect
+
+		if (_override.first)
+			_is_kinect = _override.second.index() == 0;
+
+		if (
+			(id < 0) || // If id is invalid
+			(_override.first && !_is_kinect) // If we're using a jointsbasis
+			)
+			return id;
+
+		if (
+			_override.first && _is_kinect // If we're using a kinectbasis
+			)
+		{
+			if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+				_override.second)->getDeviceCharacteristics()
+			> ktvr::K2_Character_Basic)
+			{
+				switch (id)
+				{
+				case ktvr::Joint_SpineShoulder:
+					return 0;
+				case ktvr::Joint_ElbowLeft:
+					return 1;
+				case ktvr::Joint_ElbowRight:
+					return 2;
+				case ktvr::Joint_SpineWaist:
+					return 3;
+				case ktvr::Joint_KneeLeft:
+					return 4;
+				case ktvr::Joint_KneeRight:
+					return 5;
+				case ktvr::Joint_AnkleLeft:
+					return 6;
+				case ktvr::Joint_AnkleRight:
+					return 7;
+				default:
+					return -1;
+				}
+			}
+			else
+			{
+				switch (id)
+				{
+				case ktvr::Joint_SpineShoulder:
+					return 0;
+				case ktvr::Joint_SpineWaist:
+					return 1;
+				case ktvr::Joint_AnkleLeft:
+					return 2;
+				case ktvr::Joint_AnkleRight:
+					return 3;
+				default:
+					return -1;
+				}
+			}
+		}
+
+		return -1; // Return invalid
+	}
 }
