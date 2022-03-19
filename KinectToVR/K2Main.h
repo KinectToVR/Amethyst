@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -2227,9 +2227,11 @@ namespace k2app::main
 				}
 
 				// Slow down the rotation a bit
+				/* Commented cause we're gonna need a separate filter update call for this one *
+				
 				if (K2Settings.isRotationOverriddenJoint[0])
 					interfacing::K2TrackersVector.at(0).pose.orientation =
-						_flip
+						override_flip
 							? interfacing::K2TrackersVector.
 							  at(0).SLERPSlowOrientation
 							: interfacing::K2TrackersVector.
@@ -2237,7 +2239,7 @@ namespace k2app::main
 
 				if (K2Settings.isRotationOverriddenJoint[1])
 					interfacing::K2TrackersVector.at(1).pose.orientation =
-						_flip
+						override_flip
 							? interfacing::K2TrackersVector.
 							  at(1).SLERPSlowOrientation
 							: interfacing::K2TrackersVector.
@@ -2245,7 +2247,7 @@ namespace k2app::main
 
 				if (K2Settings.isRotationOverriddenJoint[2])
 					interfacing::K2TrackersVector.at(2).pose.orientation =
-						_flip
+						override_flip
 							? interfacing::K2TrackersVector.
 							  at(2).SLERPSlowOrientation
 							: interfacing::K2TrackersVector.
@@ -2253,7 +2255,7 @@ namespace k2app::main
 
 				if (K2Settings.isRotationOverriddenJoint[3])
 					interfacing::K2TrackersVector.at(3).pose.orientation =
-						_flip
+						override_flip
 							? interfacing::K2TrackersVector.
 							  at(3).SLERPSlowOrientation
 							: interfacing::K2TrackersVector.
@@ -2261,7 +2263,7 @@ namespace k2app::main
 
 				if (K2Settings.isRotationOverriddenJoint[4])
 					interfacing::K2TrackersVector.at(4).pose.orientation =
-						_flip
+						override_flip
 							? interfacing::K2TrackersVector.
 							  at(4).SLERPSlowOrientation
 							: interfacing::K2TrackersVector.
@@ -2269,7 +2271,7 @@ namespace k2app::main
 
 				if (K2Settings.isRotationOverriddenJoint[5])
 					interfacing::K2TrackersVector.at(5).pose.orientation =
-						_flip
+						override_flip
 							? interfacing::K2TrackersVector.
 							  at(5).SLERPSlowOrientation
 							: interfacing::K2TrackersVector.
@@ -2277,11 +2279,12 @@ namespace k2app::main
 
 				if (K2Settings.isRotationOverriddenJoint[6])
 					interfacing::K2TrackersVector.at(6).pose.orientation =
-						_flip
+						override_flip
 							? interfacing::K2TrackersVector.
 							  at(6).SLERPSlowOrientation
 							: interfacing::K2TrackersVector.
 							  at(6).SLERPOrientation;
+				*/
 			}
 		}
 
