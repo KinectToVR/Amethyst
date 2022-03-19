@@ -140,6 +140,7 @@ namespace k2app::main
 			case 0:
 				{
 					auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device_pair.second);
+					pDevice->update(); // Update the device
 					interfacing::kinectHeadPosition.second = pDevice->getJointPositions()[ktvr::Joint_Head];
 					interfacing::kinectWaistPosition.second = pDevice->getJointPositions()[ktvr::Joint_SpineWaist];
 				}
