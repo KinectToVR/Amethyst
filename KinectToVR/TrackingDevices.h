@@ -184,7 +184,7 @@ namespace TrackingDevices
 		if (::k2app::shared::general::errorWhatText.get() != nullptr)
 		{
 			// Don't show device errors if we've got a server error
-			if (k2app::interfacing::serverDriverFailure)status_ok = true;
+			if (!k2app::interfacing::isServerDriverPresent)status_ok = true;
 
 			::k2app::shared::general::errorWhatText.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -313,7 +313,7 @@ namespace TrackingDevices
 			using namespace winrt::Microsoft::UI::Xaml;
 
 			// Don't show device errors if we've got a server error or base error OR no o_device
-			if (k2app::interfacing::serverDriverFailure || !base_status_ok || !_show)status_ok = true;
+			if (!k2app::interfacing::isServerDriverPresent || !base_status_ok || !_show)status_ok = true;
 
 			// Don't show ANYTHING if we 'ven 't selected an override device
 			::k2app::shared::general::overrideDeviceNameLabel.get()->Visibility(
