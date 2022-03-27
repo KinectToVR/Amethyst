@@ -92,9 +92,9 @@ void K2Tracker::set_data(ktvr::K2DataPacket const& data)
 				if (!_added && !_activated)
 				{
 					LOG(INFO) << "Updating tracker's role: " << 
-						ktvr::ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(_role)) << 
+						ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(_role)) << 
 						" to: " << 
-						ktvr::ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(data.role));
+						ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(data.role));
 					
 					_role = data.role;
 					if(!data.serial.empty())
@@ -110,7 +110,7 @@ void K2Tracker::set_data(ktvr::K2DataPacket const& data)
 						// Spawn and set the state
 						spawn();
 						LOG(INFO) << "Tracker autospawned! Serial: " + get_serial() +
-							" Role: " + ktvr::ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(_role));
+							" Role: " + ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(_role));
 					}
 				}
 				else LOG(ERROR) << "Couldn't set tracker data. It has been already added.";
@@ -248,7 +248,7 @@ vr::EVRInitError K2Tracker::Activate(vr::TrackedDeviceIndex_t index)
 	vr::VRProperties()->SetBoolProperty(_props, vr::Prop_HasVirtualDisplayComponent_Bool, false);
 
 	/*Get tracker role*/
-	const std::string role_enum_string = ktvr::ITrackerType_String.at(static_cast<ktvr::ITrackerType>(_role));
+	const std::string role_enum_string = ITrackerType_String.at(static_cast<ktvr::ITrackerType>(_role));
 
 	/*Update controller type and input path*/
 	const std::string input_path =
@@ -264,7 +264,7 @@ vr::EVRInitError K2Tracker::Activate(vr::TrackedDeviceIndex_t index)
 	l_registeredDevice.append(_serial);
 	
 	vr::VRSettings()->SetString(vr::k_pch_Trackers_Section, l_registeredDevice.c_str(),
-		ktvr::ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(_role)));
+		ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(_role)));
 
 	/*Mark tracker as activated*/
 	_activated = true;

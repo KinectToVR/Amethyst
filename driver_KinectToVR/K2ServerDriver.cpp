@@ -23,7 +23,7 @@ int K2ServerDriver::init_ServerDriver(
 			NULL, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
-			"Global\\k2api_to_sem"); //Semaphore Name
+			k2_to_sem.c_str()); //Semaphore Name
 
 		if (nullptr == k2api_to_Semaphore)
 		{
@@ -41,7 +41,7 @@ int K2ServerDriver::init_ServerDriver(
 			NULL, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
-			"Global\\k2api_from_sem"); //Semaphore Name
+			k2_from_sem.c_str()); //Semaphore Name
 
 		if (nullptr == k2api_from_Semaphore)
 		{
@@ -56,7 +56,7 @@ int K2ServerDriver::init_ServerDriver(
 			NULL, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
-			"Global\\k2api_start_sem"); //Semaphore Name
+			k2_start_sem.c_str()); //Semaphore Name
 
 		if (nullptr == k2api_start_Semaphore)
 		{
@@ -76,7 +76,7 @@ int K2ServerDriver::init_ServerDriver(
 	for (auto& _tracker : trackerVector)
 		LOG(INFO) << "Registered a pre-added tracker: " << _tracker.get_serial();
 
-	std::thread([&]()
+	std::thread([&](const std::string _k2_to_pipe)
 	{
 		LOG(INFO) << "Server thread started";
 
@@ -107,8 +107,8 @@ int K2ServerDriver::init_ServerDriver(
 
 						// Here, read from the *TO* pipe
 						// Create the pipe file
-						std::optional<HANDLE> ReaderPipe = CreateFile(
-							TEXT("\\\\.\\pipe\\k2api_to_pipe"),
+						std::optional<HANDLE> ReaderPipe = CreateFileA(
+							_k2_to_pipe.c_str(),
 							GENERIC_READ | GENERIC_WRITE,
 							0, nullptr, OPEN_EXISTING, 0, nullptr);
 
@@ -185,7 +185,7 @@ int K2ServerDriver::init_ServerDriver(
 				}
 			}
 		}
-	}).detach();
+	}, k2_to_pipe).detach();
 
 	// if everything went ok, return 0
 	return 0;
@@ -237,7 +237,7 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 							trackerVector.emplace_back(K2Tracker(message.tracker_base.value()));
 
 							LOG(INFO) << "New tracker added! Serial: " + message.tracker_base.value().data.serial +
-								" Role: " + ktvr::ITrackerType_Role_String.at(
+								" Role: " + ITrackerType_Role_String.at(
 									static_cast<ktvr::ITrackerType>(message.tracker_base.value().data.role));
 
 							if (message.tracker_base.value().data.isActive && // If autospawn is desired
@@ -251,14 +251,14 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 
 									LOG(INFO) << "Tracker autospawned! Serial: " + message.tracker_base.value().data.
 										serial +
-										" Role: " + ktvr::ITrackerType_Role_String.at(
+										" Role: " + ITrackerType_Role_String.at(
 											static_cast<ktvr::ITrackerType>(message.tracker_base.value().data.role));
 								}
 								else
 								{
 									LOG(INFO) << "Tracker autospawn exception! Serial: " + message.tracker_base.value().
 										data.serial +
-										" Role: " + ktvr::ITrackerType_Role_String.at(
+										" Role: " + ITrackerType_Role_String.at(
 											static_cast<ktvr::ITrackerType>(message.tracker_base.value().data.role));
 									_response.result = static_cast<int>(
 										ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
@@ -676,7 +676,7 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 	{
 		// Here, write to the *from* pipe
 		HANDLE WriterPipe = CreateNamedPipe(
-			TEXT("\\\\.\\pipe\\k2api_from_pipe"),
+			TEXT("\\\\.\\pipe\\k2api_ame_from_pipe"),
 			PIPE_ACCESS_INBOUND | PIPE_ACCESS_OUTBOUND,
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
 			1, 4096, 4096, 1000L, nullptr);
