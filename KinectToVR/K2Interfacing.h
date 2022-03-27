@@ -15,8 +15,8 @@ namespace k2app
 			K2AppTracker("LHR-CB9AD1T0", ktvr::ITrackerType::Tracker_Waist),
 			K2AppTracker("LHR-CB9AD1T1", ktvr::ITrackerType::Tracker_LeftFoot),
 			K2AppTracker("LHR-CB9AD1T2", ktvr::ITrackerType::Tracker_RightFoot),
-			K2AppTracker("LHR-CB9AD1T3", ktvr::ITrackerType::Tracker_LeftElbow, 0.35),
-			K2AppTracker("LHR-CB9AD1T4", ktvr::ITrackerType::Tracker_RightElbow, 0.35),
+			K2AppTracker("LHR-CB9AD1T3", ktvr::ITrackerType::Tracker_LeftElbow, 0.41),
+			K2AppTracker("LHR-CB9AD1T4", ktvr::ITrackerType::Tracker_RightElbow, 0.41),
 			K2AppTracker("LHR-CB9AD1T5", ktvr::ITrackerType::Tracker_LeftKnee),
 			K2AppTracker("LHR-CB9AD1T6", ktvr::ITrackerType::Tracker_RightKnee)
 		};
@@ -233,7 +233,7 @@ namespace k2app
 
 			double yaw = std::atan2(trackingOrigin.m[0][2], trackingOrigin.m[2][2]);
 			if (yaw < 0.0)
-				yaw = 2 * 3.14159265358979323846 + yaw;
+				yaw = 2 * _PI + yaw;
 
 			vrPlayspaceOrientation = yaw;
 			return true; // OK
@@ -808,7 +808,7 @@ namespace k2app
 					// Fix the yaw
 					if (yaw < 0.0)
 					{
-						yaw = 2 * 3.14159265358979323846 + yaw;
+						yaw = 2 * _PI + yaw;
 					}
 
 					vrHMDPose = std::tie(position, quaternion, yaw);

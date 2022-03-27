@@ -352,6 +352,6 @@ namespace k2app
 		};
 
 		// LERP filter const
-		double _lerp_const = 0.25;
+		double _lerp_const = 0.31;
 	};
 }
