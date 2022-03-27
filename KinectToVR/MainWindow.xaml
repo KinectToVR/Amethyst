@@ -45,7 +45,7 @@
 
             <muxc:NavigationView.PaneHeader>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,10,0">
-                    Amethyst
+                    KinectToVR
                 </TextBlock>
             </muxc:NavigationView.PaneHeader>
 

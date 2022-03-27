@@ -1696,7 +1696,7 @@
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Amethyst Version:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           Text="KinectToVR Version:" Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="v1.0.0 (Ame0)" Margin="5,0,0,0" x:Name="VersionLabel" />
                             </StackPanel>
