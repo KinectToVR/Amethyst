@@ -77,7 +77,7 @@ namespace winrt::KinectToVR::implementation
 
 void trackersConfig_UpdateIsEnabled()
 {
-	// Also turn off basie trackers pose filter if they are off
+	// Also turn off basic trackers pose filter if they are off
 	k2app::shared::settings::
 		positionFilterOptionBox.get()->IsEnabled(
 			k2app::K2Settings.isJointEnabled[0] ||
@@ -114,6 +114,33 @@ void trackersConfig_UpdateIsEnabled()
 		kneeRotationOptionBox.get()->IsEnabled(
 			k2app::K2Settings.isJointEnabled[5] ||
 			k2app::K2Settings.isJointEnabled[6]);
+
+	// Turn off the base expander if base joints are off
+	k2app::shared::settings::
+		rotationDropDown.get()->IsEnabled(
+			k2app::K2Settings.isJointEnabled[0] ||
+			k2app::K2Settings.isJointEnabled[1] ||
+			k2app::K2Settings.isJointEnabled[2]);
+
+	// Also collapse it if so
+	if(!k2app::shared::settings::
+		rotationDropDown.get()->IsEnabled())
+		k2app::shared::settings::
+		rotationDropDown.get()->IsExpanded(false);
+
+	// Turn off the extra expander if extra joints are off
+	k2app::shared::settings::
+		expRotationDropDown.get()->IsEnabled(
+			k2app::K2Settings.isJointEnabled[3] ||
+			k2app::K2Settings.isJointEnabled[4] ||
+			k2app::K2Settings.isJointEnabled[5] ||
+			k2app::K2Settings.isJointEnabled[6]);
+
+	// Also collapse it if so
+	if (!k2app::shared::settings::
+		expRotationDropDown.get()->IsEnabled())
+		k2app::shared::settings::
+		expRotationDropDown.get()->IsExpanded(false);
 }
 
 void trackersConfigChanged()
