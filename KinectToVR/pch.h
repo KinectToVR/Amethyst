@@ -55,6 +55,7 @@
 #include <future>
 #include <semaphore>
 #include <tuple>
+#include <variant>
 
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>

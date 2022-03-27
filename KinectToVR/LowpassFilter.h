@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "pch.h"
+#define _PI 3.14159265358979323846
 
 class LowPassFilter
 {
@@ -13,7 +14,7 @@ public:
 
 	LowPassFilter(double iCutOffFrequency, double iDeltaTime) :
 		output(0),
-		ePow(1.0 - exp(-iDeltaTime * 2.0 * 3.14159265358979323846 * iCutOffFrequency))
+		ePow(1.0 - exp(-iDeltaTime * 2.0 * _PI * iCutOffFrequency))
 	{
 		if (iDeltaTime <= 0)
 		{
@@ -46,7 +47,7 @@ public:
 		{
 			ePow = 0;
 		}
-		ePow = 1 - exp(-deltaTime * 2.0 * 3.14159265358979323846 * cutoffFrequency);
+		ePow = 1 - exp(-deltaTime * 2.0 * _PI * cutoffFrequency);
 	}
 
 private:

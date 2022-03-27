@@ -5,8 +5,16 @@
 #include <fstream>
 
 #include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/vector.hpp>
 #include <boost/serialization/array.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/optional.hpp>
+
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 
@@ -23,6 +31,37 @@ template <typename T>
 T radiansToDegrees(T angleRadians)
 {
 	return angleRadians * 180.0 / _PI;
+}
+
+namespace boost::serialization
+{
+	// Eigen serialization
+	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
+	void serialize(Archive& ar,
+		Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
+		const unsigned int file_version
+	)
+	{
+		for (size_t i = 0; i < t.size(); i++)
+			ar& make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
+	}
+
+	template <class Archive, typename _Scalar>
+	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
+	{
+		ar& make_nvp("w", q.w())
+			& make_nvp("x", q.x())
+			& make_nvp("y", q.y())
+			& make_nvp("z", q.z());
+	}
+
+	template <class Archive, typename _Scalar>
+	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
+	{
+		ar& make_nvp("x", v.x())
+			& make_nvp("y", v.y())
+			& make_nvp("z", v.z());
+	}
 }
 
 namespace k2app
