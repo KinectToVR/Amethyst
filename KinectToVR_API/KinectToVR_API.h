@@ -7,24 +7,11 @@
 #include <iomanip>
 #include <string>
 #include <chrono>
-
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/export.hpp>
-
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/array.hpp>
-#include <boost/serialization/utility.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/serialization/optional.hpp>
-
-#include <boost/assign/list_of.hpp>
-#include <boost/assign.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <cmath>
 
 #include <Eigen/Dense>
+
+#include <boost/optional.hpp>
 
 #include "KinectToVR_API_Devices.h"
 #include "KinectToVR_API_Paths.h"
@@ -32,12 +19,12 @@
 /*
  * Default IPC defines are:
  *
- * \\\\.\\pipe\\k2api_to_pipe
- * \\\\.\\pipe\\k2api_from_pipe
+ * \\\\.\\pipe\\k2api_ame_to_pipe
+ * \\\\.\\pipe\\k2api_ame_from_pipe
  *
- * Global\\k2api_to_sem
- * Global\\k2api_from_sem
- * Global\\k2api_start_sem
+ * Global\\k2api_ame_to_sem
+ * Global\\k2api_ame_from_sem
+ * Global\\k2api_ame_start_sem
  */
 
 #define K2API_GET_TIMESTAMP_NOW \
@@ -50,41 +37,10 @@
 #define KTVR_API __declspec(dllimport)
 #endif
 
-namespace boost::serialization
-{
-	// Eigen serialization
-	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
-	void serialize(Archive& ar,
-	               Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
-	               const unsigned int file_version
-	)
-	{
-		for (size_t i = 0; i < t.size(); i++)
-			ar & make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
-	}
-
-	template <class Archive, typename _Scalar>
-	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
-	{
-		ar & make_nvp("w", q.w())
-			& make_nvp("x", q.x())
-			& make_nvp("y", q.y())
-			& make_nvp("z", q.z());
-	}
-
-	template <class Archive, typename _Scalar>
-	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
-	{
-		ar & make_nvp("x", v.x())
-			& make_nvp("y", v.y())
-			& make_nvp("z", v.z());
-	}
-}
-
 namespace ktvr
 {
 	// Interace Version
-	static const char* IK2API_Version = "IK2API_Version_004";
+	static const char* IK2API_Version = "IK2API_Version_005";
 
 	// OpenVR Tracker types
 	enum class ITrackerType
@@ -166,47 +122,15 @@ namespace ktvr
 	// Alias for code readability
 	typedef int JointTrackingState, MessageType, MessageCode;
 
-	// Mapping enum to string for eliminating if-else loop
-	const boost::unordered_map<ITrackerType, const char*>
-		ITrackerType_String = boost::assign::map_list_of
-			(ITrackerType::Tracker_Handed, "vive_tracker_handed")
-			(ITrackerType::Tracker_LeftFoot, "vive_tracker_left_foot")
-			(ITrackerType::Tracker_RightFoot, "vive_tracker_right_foot")
-			(ITrackerType::Tracker_LeftShoulder, "vive_tracker_left_Shoulder")
-			(ITrackerType::Tracker_RightShoulder, "vive_tracker_right_shoulder")
-			(ITrackerType::Tracker_LeftElbow, "vive_tracker_left_elbow")
-			(ITrackerType::Tracker_RightElbow, "vive_tracker_right_elbow")
-			(ITrackerType::Tracker_LeftKnee, "vive_tracker_left_knee")
-			(ITrackerType::Tracker_RightKnee, "vive_tracker_right_knee")
-			(ITrackerType::Tracker_Waist, "vive_tracker_waist")
-			(ITrackerType::Tracker_Chest, "vive_tracker_chest")
-			(ITrackerType::Tracker_Camera, "vive_tracker_camera")
-			(ITrackerType::Tracker_Keyboard, "vive_tracker_keyboard"),
-
-		ITrackerType_Role_String = boost::assign::map_list_of
-			(ITrackerType::Tracker_Handed, "TrackerRole_Handed")
-			(ITrackerType::Tracker_LeftFoot, "TrackerRole_LeftFoot")
-			(ITrackerType::Tracker_RightFoot, "TrackerRole_RightFoot")
-			(ITrackerType::Tracker_LeftShoulder, "TrackerRole_LeftShoulder")
-			(ITrackerType::Tracker_RightShoulder, "TrackerRole_RightShoulder")
-			(ITrackerType::Tracker_LeftElbow, "TrackerRole_LeftElbow")
-			(ITrackerType::Tracker_RightElbow, "TrackerRole_RightElbow")
-			(ITrackerType::Tracker_LeftKnee, "TrackerRole_LeftKnee")
-			(ITrackerType::Tracker_RightKnee, "TrackerRole_RightKnee")
-			(ITrackerType::Tracker_Waist, "TrackerRole_Waist")
-			(ITrackerType::Tracker_Chest, "TrackerRole_Chest")
-			(ITrackerType::Tracker_Camera, "TrackerRole_Camera")
-			(ITrackerType::Tracker_Keyboard, "TrackerRole_Keyboard");
-
 	// Check Eigen quaternions
 	template <typename _Scalar>
 	Eigen::Quaternion<_Scalar> quaternion_normal(const Eigen::Quaternion<_Scalar>& q)
 	{
 		return Eigen::Quaternion<_Scalar>(
-			boost::math::isnormal(q.w()) ? q.w() : 1.f,
-			boost::math::isnormal(q.x()) ? q.x() : 0.f,
-			boost::math::isnormal(q.y()) ? q.y() : 0.f,
-			boost::math::isnormal(q.z()) ? q.z() : 0.f
+			std::isnormal(q.w()) ? q.w() : 1.f,
+			std::isnormal(q.x()) ? q.x() : 0.f,
+			std::isnormal(q.y()) ? q.y() : 0.f,
+			std::isnormal(q.z()) ? q.z() : 0.f
 		);
 	}
 
@@ -215,9 +139,9 @@ namespace ktvr
 	Eigen::Vector3<_Scalar> vector3_normal(const Eigen::Vector3<_Scalar>& v)
 	{
 		return Eigen::Vector3<_Scalar>(
-			boost::math::isnormal(v.x()) ? v.x() : 0.f,
-			boost::math::isnormal(v.y()) ? v.y() : 0.f,
-			boost::math::isnormal(v.z()) ? v.z() : 0.f
+			std::isnormal(v.x()) ? v.x() : 0.f,
+			std::isnormal(v.y()) ? v.y() : 0.f,
+			std::isnormal(v.z()) ? v.z() : 0.f
 		);
 	}
 
@@ -230,10 +154,7 @@ namespace ktvr
 		Eigen::Vector3f position = Eigen::Vector3f(0.f, 0.f, 0.f);
 
 		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
-		{
-			ar & BOOST_SERIALIZATION_NVP(orientation) & BOOST_SERIALIZATION_NVP(position);
-		}
+		KTVR_API void serialize(Archive& ar, const unsigned int version);
 
 		// Default constructors
 		K2TrackerPose() = default;
@@ -265,10 +186,7 @@ namespace ktvr
 		bool isActive = false;
 
 		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
-		{
-			ar & BOOST_SERIALIZATION_NVP(serial) & BOOST_SERIALIZATION_NVP(role) & BOOST_SERIALIZATION_NVP(isActive);
-		}
+		KTVR_API void serialize(Archive& ar, const unsigned int version);
 
 		// Default constructors
 		K2TrackerData() = default;
@@ -325,11 +243,7 @@ namespace ktvr
 		}
 
 		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
-		{
-			ar & BOOST_SERIALIZATION_NVP(orientation) & BOOST_SERIALIZATION_NVP(position) &
-				BOOST_SERIALIZATION_NVP(millisFromNow); // Serialize
-		}
+		KTVR_API void serialize(Archive& ar, const unsigned int version);
 	};
 
 	class K2DataPacket : public K2TrackerData
@@ -369,11 +283,7 @@ namespace ktvr
 		}
 
 		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
-		{
-			ar & BOOST_SERIALIZATION_NVP(serial) & BOOST_SERIALIZATION_NVP(role) & BOOST_SERIALIZATION_NVP(isActive)
-				& BOOST_SERIALIZATION_NVP(millisFromNow); // Serialize
-		}
+		KTVR_API void serialize(Archive& ar, const unsigned int version);
 	};
 
 	class K2TrackerBase
@@ -384,10 +294,7 @@ namespace ktvr
 		int id = -1; // For error case
 
 		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
-		{
-			ar & BOOST_SERIALIZATION_NVP(pose) & BOOST_SERIALIZATION_NVP(data) & BOOST_SERIALIZATION_NVP(id);
-		}
+		KTVR_API void serialize(Archive& ar, const unsigned int version);
 
 		// Default constructors
 		K2TrackerBase() = default;
@@ -436,47 +343,13 @@ namespace ktvr
 		std::string message_string; // Placeholder for anything
 
 		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
-		{
-			ar & BOOST_SERIALIZATION_NVP(messageType)
-				& BOOST_SERIALIZATION_NVP(tracker_base)
-				& BOOST_SERIALIZATION_NVP(tracker_pose)
-				& BOOST_SERIALIZATION_NVP(tracker_data)
-				& BOOST_SERIALIZATION_NVP(tracker_bases_vector)
-				& BOOST_SERIALIZATION_NVP(message_string)
-				& BOOST_SERIALIZATION_NVP(id)
-				& BOOST_SERIALIZATION_NVP(state)
-				& BOOST_SERIALIZATION_NVP(want_reply)
-				& BOOST_SERIALIZATION_NVP(messageTimestamp)
-				& BOOST_SERIALIZATION_NVP(messageManualTimestamp);
-		}
+		KTVR_API void serialize(Archive& ar, const unsigned int version);
 
 		// Serialize as string
-		std::string serializeToString()
-		{
-			std::ostringstream o;
-			boost::archive::text_oarchive oa(o);
-			oa << *this;
-			return o.str();
-		}
+		KTVR_API std::string serializeToString();
 
 		// Serialize from string, do not call as an overwrite
-		[[nodiscard]] static K2Message parseFromString(const std::string& str) noexcept
-		{
-			try
-			{
-				std::istringstream i(str);
-				boost::archive::text_iarchive ia(i);
-
-				K2Message response;
-				ia >> response;
-				return response;
-			}
-			catch (const boost::archive::archive_exception& e)
-			{
-				return K2Message();
-			}
-		}
+		[[nodiscard]] KTVR_API static K2Message parseFromString(const std::string& str) noexcept;
 
 		// Default constructors
 		K2Message() = default;
@@ -586,43 +459,13 @@ namespace ktvr
 		bool success = false;
 
 		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
-		{
-			ar & BOOST_SERIALIZATION_NVP(messageType)
-				& BOOST_SERIALIZATION_NVP(tracker_base)
-				& BOOST_SERIALIZATION_NVP(id)
-				& BOOST_SERIALIZATION_NVP(result)
-				& BOOST_SERIALIZATION_NVP(success)
-				& BOOST_SERIALIZATION_NVP(messageTimestamp)
-				& BOOST_SERIALIZATION_NVP(messageManualTimestamp);
-		}
+		KTVR_API void serialize(Archive& ar, const unsigned int version);
 
 		// Serialize as string
-		std::string serializeToString()
-		{
-			std::ostringstream o;
-			boost::archive::text_oarchive oa(o);
-			oa << *this;
-			return o.str();
-		}
+		KTVR_API std::string serializeToString();
 
 		// Serialize from string, do not call as an overwriter
-		[[nodiscard]] static K2ResponseMessage parseFromString(const std::string& str) noexcept
-		{
-			try
-			{
-				std::istringstream i(str);
-				boost::archive::text_iarchive ia(i);
-
-				K2ResponseMessage response;
-				ia >> response;
-				return response;
-			}
-			catch (const boost::archive::archive_exception& e)
-			{
-			}
-			return K2ResponseMessage();
-		}
+		[[nodiscard]] KTVR_API static K2ResponseMessage parseFromString(const std::string& str) noexcept;
 
 		// Default constructors
 		K2ResponseMessage() = default;
@@ -709,11 +552,11 @@ namespace ktvr
 	 * \return Returns 0 for success and -1 for failure
 	 */
 	KTVR_API int init_k2api(
-		const std::string& k2_to_pipe = "\\\\.\\pipe\\k2api_to_pipe",
-		const std::string& k2_from_pipe = "\\\\.\\pipe\\k2api_from_pipe",
-		const std::string& k2_to_sem = "Global\\k2api_to_sem",
-		const std::string& k2_from_sem = "Global\\k2api_from_sem",
-		const std::string& k2_start_sem = "Global\\k2api_start_sem") noexcept;
+		const std::string& k2_to_pipe = "\\\\.\\pipe\\k2api_ame_to_pipe",
+		const std::string& k2_from_pipe = "\\\\.\\pipe\\k2api_ame_from_pipe",
+		const std::string& k2_to_sem = "Global\\k2api_ame_to_sem",
+		const std::string& k2_from_sem = "Global\\k2api_ame_from_sem",
+		const std::string& k2_start_sem = "Global\\k2api_ame_start_sem") noexcept;
 
 	/**
 	 * \brief Disconnects socket object from port
@@ -729,6 +572,10 @@ namespace ktvr
 	 */
 	KTVR_API std::string send_message(const std::string& data, bool want_reply = true) noexcept(false);
 
+	// External functions for the template below
+	KTVR_API std::monostate send_message_no_reply(K2Message message);
+	KTVR_API K2ResponseMessage send_message_want_reply(K2Message message);
+
 	/**
 	 * \brief Send message and get a server reply
 	 * \param message Message which is to be sent
@@ -737,38 +584,12 @@ namespace ktvr
 	 */
 	template <bool want_reply = true>
 	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
-	send_message(K2Message message) noexcept(false)
+		send_message(K2Message message) noexcept(false)
 	{
-		// Add timestamp
-		message.messageTimestamp = K2API_GET_TIMESTAMP_NOW;
-		message.want_reply = want_reply;
-
-		// Serialize to string
-		std::ostringstream o;
-		boost::archive::text_oarchive oa(o);
-		oa << message;
-
-		// Send the message
-		// Deserialize then
 		if constexpr (want_reply)
-		{
-			// Compose the response
-			K2ResponseMessage response;
-			auto reply = send_message(o.str(), want_reply);
-
-			std::istringstream i(reply);
-			boost::archive::text_iarchive ia(i);
-			ia >> response;
-
-			// Deserialize reply and return
-			return std::move(response);
-		}
+			return send_message_want_reply(std::move(message));
 		else
-		{
-			// Probably void
-			send_message(o.str(), want_reply);
-			return std::monostate();
-		}
+			return send_message_no_reply(std::move(message));
 	}
 
 	/**

@@ -1,6 +1,47 @@
 #include "pch.h"
 #include "KinectToVR_API.h"
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/export.hpp>
+
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/array.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/optional.hpp>
+
+namespace boost::serialization
+{
+	// Eigen serialization
+	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
+	void serialize(Archive& ar,
+		Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
+		const unsigned int file_version
+	)
+	{
+		for (size_t i = 0; i < t.size(); i++)
+			ar& make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
+	}
+
+	template <class Archive, typename _Scalar>
+	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
+	{
+		ar& make_nvp("w", q.w())
+			& make_nvp("x", q.x())
+			& make_nvp("y", q.y())
+			& make_nvp("z", q.z());
+	}
+
+	template <class Archive, typename _Scalar>
+	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
+	{
+		ar& make_nvp("x", v.x())
+			& make_nvp("y", v.y())
+			& make_nvp("z", v.z());
+	}
+}
+
 void replace_all(std::string& str, const std::string& from, const std::string& to)
 {
 	if (from.empty())
@@ -11,12 +52,6 @@ void replace_all(std::string& str, const std::string& from, const std::string& t
 		str.replace(start_pos, from.length(), to);
 		start_pos += to.length();
 	}
-}
-
-template <class V>
-std::type_info const& var_type(V const& v)
-{
-	return std::visit([](auto&& x)-> decltype(auto) { return typeid(x); }, v);
 }
 
 namespace ktvr
@@ -130,7 +165,7 @@ namespace ktvr
 			// Here, read from the *from* pipe
 			// Create the pipe file
 			std::optional<HANDLE> API_ReaderPipe = CreateFile(
-				TEXT("\\\\.\\pipe\\k2api_from_pipe"),
+				TEXT("\\\\.\\pipe\\k2api_ame_from_pipe"),
 				GENERIC_READ | GENERIC_WRITE,
 				0, nullptr, OPEN_EXISTING, 0, nullptr);
 
@@ -174,6 +209,48 @@ namespace ktvr
 			ReleaseSemaphore(k2api_to_Semaphore, 1, 0);
 			return ""; // No reply
 		}
+	}
+
+	std::monostate send_message_no_reply(K2Message message) {
+		// Add timestamp
+		message.messageTimestamp = K2API_GET_TIMESTAMP_NOW;
+		message.want_reply = false;
+
+		// Serialize to string
+		std::ostringstream o;
+		boost::archive::text_oarchive oa(o);
+		oa << message;
+
+		// Send the message
+		
+		// Probably void
+		send_message(o.str(), false);
+		return std::monostate();
+	}
+
+	K2ResponseMessage send_message_want_reply(K2Message message) {
+		// Add timestamp
+		message.messageTimestamp = K2API_GET_TIMESTAMP_NOW;
+		message.want_reply = true;
+
+		// Serialize to string
+		std::ostringstream o;
+		boost::archive::text_oarchive oa(o);
+		oa << message;
+
+		// Send the message
+		// Deserialize then
+		
+		// Compose the response
+		K2ResponseMessage response;
+		auto reply = send_message(o.str(), true);
+
+		std::istringstream i(reply);
+		boost::archive::text_iarchive ia(i);
+		ia >> response;
+
+		// Deserialize reply and return
+		return std::move(response);
 	}
 
 	K2ResponseMessage add_tracker(K2TrackerBase& tracker) noexcept
@@ -317,5 +394,115 @@ namespace ktvr
 			ret << (char)(int)strtol(s.substr(i, 2).c_str(), nullptr, 16);
 
 		return ret.str();
+	}
+
+	template <class Archive>
+	KTVR_API void K2TrackerPose::serialize(Archive& ar, const unsigned int version)
+	{
+		ar& BOOST_SERIALIZATION_NVP(orientation)& BOOST_SERIALIZATION_NVP(position);
+	}
+
+	template <class Archive>
+	KTVR_API void K2TrackerData::serialize(Archive& ar, const unsigned int version)
+	{
+		ar& BOOST_SERIALIZATION_NVP(serial)& BOOST_SERIALIZATION_NVP(role)& BOOST_SERIALIZATION_NVP(isActive);
+	}
+
+	template <class Archive>
+	KTVR_API void K2PosePacket::serialize(Archive& ar, const unsigned int version)
+	{
+		ar& BOOST_SERIALIZATION_NVP(orientation)& BOOST_SERIALIZATION_NVP(position)&
+			BOOST_SERIALIZATION_NVP(millisFromNow); // Serialize
+	}
+
+	template <class Archive>
+	KTVR_API void K2DataPacket::serialize(Archive& ar, const unsigned int version)
+	{
+		ar& BOOST_SERIALIZATION_NVP(serial)& BOOST_SERIALIZATION_NVP(role)& BOOST_SERIALIZATION_NVP(isActive)
+			& BOOST_SERIALIZATION_NVP(millisFromNow); // Serialize
+	}
+
+	template <class Archive>
+	KTVR_API void K2TrackerBase::serialize(Archive& ar, const unsigned int version)
+	{
+		ar& BOOST_SERIALIZATION_NVP(pose)& BOOST_SERIALIZATION_NVP(data)& BOOST_SERIALIZATION_NVP(id);
+	}
+
+	template <class Archive>
+	KTVR_API void K2Message::serialize(Archive& ar, const unsigned int version)
+	{
+		ar& BOOST_SERIALIZATION_NVP(messageType)
+			& BOOST_SERIALIZATION_NVP(tracker_base)
+			& BOOST_SERIALIZATION_NVP(tracker_pose)
+			& BOOST_SERIALIZATION_NVP(tracker_data)
+			& BOOST_SERIALIZATION_NVP(tracker_bases_vector)
+			& BOOST_SERIALIZATION_NVP(message_string)
+			& BOOST_SERIALIZATION_NVP(id)
+			& BOOST_SERIALIZATION_NVP(state)
+			& BOOST_SERIALIZATION_NVP(want_reply)
+			& BOOST_SERIALIZATION_NVP(messageTimestamp)
+			& BOOST_SERIALIZATION_NVP(messageManualTimestamp);
+	}
+
+	std::string K2Message::serializeToString()
+	{
+		std::ostringstream o;
+		boost::archive::text_oarchive oa(o);
+		oa << *this;
+		return o.str();
+	}
+
+	[[nodiscard]] K2Message K2Message::parseFromString(const std::string& str) noexcept
+	{
+		try
+		{
+			std::istringstream i(str);
+			boost::archive::text_iarchive ia(i);
+
+			K2Message response;
+			ia >> response;
+			return response;
+		}
+		catch (const boost::archive::archive_exception& e)
+		{
+			return K2Message();
+		}
+	}
+
+	template <class Archive>
+	KTVR_API void K2ResponseMessage::serialize(Archive& ar, const unsigned int version)
+	{
+		ar& BOOST_SERIALIZATION_NVP(messageType)
+			& BOOST_SERIALIZATION_NVP(tracker_base)
+			& BOOST_SERIALIZATION_NVP(id)
+			& BOOST_SERIALIZATION_NVP(result)
+			& BOOST_SERIALIZATION_NVP(success)
+			& BOOST_SERIALIZATION_NVP(messageTimestamp)
+			& BOOST_SERIALIZATION_NVP(messageManualTimestamp);
+	}
+
+	std::string K2ResponseMessage::serializeToString()
+	{
+		std::ostringstream o;
+		boost::archive::text_oarchive oa(o);
+		oa << *this;
+		return o.str();
+	}
+
+	[[nodiscard]] K2ResponseMessage K2ResponseMessage::parseFromString(const std::string& str) noexcept
+	{
+		try
+		{
+			std::istringstream i(str);
+			boost::archive::text_iarchive ia(i);
+
+			K2ResponseMessage response;
+			ia >> response;
+			return response;
+		}
+		catch (const boost::archive::archive_exception& e)
+		{
+		}
+		return K2ResponseMessage();
 	}
 }
