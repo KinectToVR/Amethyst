@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "KinectV1Handler.h"
+#define _PI 3.14159265358979323846
 
 HRESULT KinectV1Handler::getStatusResult()
 {
@@ -240,7 +241,10 @@ void KinectV1Handler::updateSkeletalData()
 							absoluteRotation.rotationQuaternion.y,
 							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 							absoluteRotation.rotationQuaternion.z
-						));
+						) *
+						Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+							* Eigen::AngleAxisf(-_PI / 2.0, Eigen::Vector3f::UnitY())
+							* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
 
 				jointOrientations[ktvr::Joint_ElbowRight] =
 					jointOrientations[ktvr::Joint_ElbowRight].slerp(
@@ -253,7 +257,10 @@ void KinectV1Handler::updateSkeletalData()
 								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.y,
 							boneOrientations[globalIndex[
 								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.z
-						));
+						) *
+						Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
+							* Eigen::AngleAxisf(_PI / 2.0, Eigen::Vector3f::UnitY())
+							* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
 
 				break; // Only first skeleton
 			}

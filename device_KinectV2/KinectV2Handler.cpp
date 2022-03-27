@@ -10,6 +10,8 @@
 #include <thread>
 #include <chrono>
 
+#define _PI 3.14159265358979323846
+
 HRESULT KinectV2Handler::getStatusResult()
 {
 	BOOLEAN avail;
@@ -248,7 +250,7 @@ void KinectV2Handler::updateParseFrame()
 						Orientation.z
 					) *
 					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-						* Eigen::AngleAxisf(3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(_PI / 2.0, Eigen::Vector3f::UnitY())
 						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
 
 			jointOrientations[ktvr::Joint_AnkleRight] =
@@ -264,7 +266,7 @@ void KinectV2Handler::updateParseFrame()
 							ktvr::Joint_AnkleRight]].Orientation.z
 					) *
 					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-						* Eigen::AngleAxisf(-3.14159265358979323846 / 2.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(-_PI / 2.0, Eigen::Vector3f::UnitY())
 						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
 
 			jointOrientations[ktvr::Joint_KneeLeft] =
@@ -280,7 +282,7 @@ void KinectV2Handler::updateParseFrame()
 						Orientation.z
 					) *
 					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-						* Eigen::AngleAxisf(3.14159265358979323846 / 3.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(_PI / 3.0, Eigen::Vector3f::UnitY())
 						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
 
 			jointOrientations[ktvr::Joint_KneeRight] =
@@ -296,7 +298,7 @@ void KinectV2Handler::updateParseFrame()
 							ktvr::Joint_KneeRight]].Orientation.z
 					) *
 					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-						* Eigen::AngleAxisf(-3.14159265358979323846 / 3.0, Eigen::Vector3f::UnitY())
+						* Eigen::AngleAxisf(-_PI / 3.0, Eigen::Vector3f::UnitY())
 						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
 
 			jointOrientations[ktvr::Joint_ElbowLeft] =
