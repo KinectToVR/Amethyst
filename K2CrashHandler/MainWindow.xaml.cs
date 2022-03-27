@@ -23,19 +23,16 @@ using K2CrashHandler.Helpers;
 
 namespace K2CrashHandler
 {
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainWindow : Window
     {
         public static int ProcessExitCode;
 
         public MainWindow()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             // Prepare placeholder strings (recovery mode)
-            String handlerTitle = "Amethyst Recovery",
+            String handlerTitle = "KinectToVR Recovery",
                 handlerContent =
                     "Looks like you've manually ran the Crash Handler. What would you like to do?\n\n" +
                     "If the KinectToVR driver for SteamVR is not being detected properly, you can re-register the SteamVR driver (button below) and then try again.",
@@ -78,44 +75,44 @@ namespace K2CrashHandler
                     } while (!process.WaitForExit(3000));
 
                     // Parse the exit code into strings
-                    handlerTitle = "Amethyst has crashed!";
+                    handlerTitle = "KinectToVR's given you up!";
                     primaryButtonText = "View Docs";
                     switch (ProcessExitCode)
                     {
                         case -12:
-                        {
-                            // No devices
-                            primaryButtonHandler = Action_VRDocs;
-                            handlerContent =
-                                "There were no appropriate devices (plugins) available to load and use for body tracking.\n\n" +
-                                "Please check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices.";
-                        }
+                            {
+                                // No devices
+                                primaryButtonHandler = Action_VRDocs;
+                                handlerContent =
+                                    "There were no appropriate devices (plugins) available to load and use for body tracking.\n\n" +
+                                    "Please check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices.";
+                            }
                             break;
                         case -11:
-                        {
-                            // OpenVR error
-                            primaryButtonHandler = Action_DeviceDocs;
-                            handlerContent =
-                                "The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.\n\n" +
-                                "Please check if SteamVR is running and if your HMD's present and working. Additionally, you can restart SteamVR and additionally check its logs.";
-                        }
+                            {
+                                // OpenVR error
+                                primaryButtonHandler = Action_DeviceDocs;
+                                handlerContent =
+                                    "The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.\n\n" +
+                                    "Please check if SteamVR is running and if your HMD's present and working. Additionally, you can restart SteamVR and additionally check its logs.";
+                            }
                             break;
                         case 0:
-                        {
-                            // We're OK
-                            this.Close();
-                        }
+                            {
+                                // We're OK
+                                this.Close();
+                            }
                             break;
                         default:
-                        {
-                            // Unknown
-                            primaryButtonHandler = Action_Discord;
-                            handlerContent =
-                                "Looks like some weird thing happened to the app.\n\n" +
-                                "Don't give up, it (probably) isn't even your fault.\n\n" +
-                                "Please try re-running the app.\nIf problem persists, grab logs and reach us on Discord.";
-                            primaryButtonText = "Join Discord";
-                        }
+                            {
+                                // Unknown
+                                primaryButtonHandler = Action_Discord;
+                                handlerContent =
+                                    "Looks like some weird thing happened to the app.\n\n" +
+                                    "Don't give up, it (probably) isn't even your fault.\n\n" +
+                                    "Please try re-running the app.\nIf problem persists, grab logs and reach us on Discord.";
+                                primaryButtonText = "Join Discord";
+                            }
                             break;
                     }
                 }

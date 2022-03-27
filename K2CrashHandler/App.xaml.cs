@@ -15,7 +15,6 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.UI.ViewManagement;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -34,7 +33,7 @@ namespace K2CrashHandler
         public App()
         {
             this.RequestedTheme = ApplicationTheme.Dark;
-            
+
             this.InitializeComponent();
         }
 
