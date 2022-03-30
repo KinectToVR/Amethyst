@@ -45,41 +45,47 @@ namespace K2CrashHandler
 
             // Check if there's any argv[1]
             String[] args = Environment.GetCommandLineArgs();
-            bool pidMode = args.Length > 1;
+            bool launcherMode = args.Length > 1,
+                relaunchMode = false;
+
+            if (launcherMode)
+                relaunchMode = args[1].Contains("already_running");
 
             // If we're OK then don't use recovery mode
             //    and wait + optionally parse the crash
-            if (pidMode)
+            if (launcherMode)
             {
-                // Get argv[1] for the launch
-                String appPid = args[1];
-
-                // Wait for the app to exit and grab the exit code
-                try
+                if (!relaunchMode)
                 {
-                    int pid = int.Parse(appPid);
-                    Process process = Process.GetProcessById(pid);
+                    // Get argv[1] for the launch
+                    String appPid = args[1];
 
-                    process.EnableRaisingEvents = true;
-                    process.Exited += ProcessEnded;
-
-                    // Display the process statistics until
-                    // the user closes the program.
-                    do
+                    // Wait for the app to exit and grab the exit code
+                    try
                     {
-                        if (!process.HasExited)
+                        int pid = int.Parse(appPid);
+                        Process process = Process.GetProcessById(pid);
+
+                        process.EnableRaisingEvents = true;
+                        process.Exited += ProcessEnded;
+
+                        // Display the process statistics until
+                        // the user closes the program.
+                        do
                         {
-                            // Refresh the current process property values.
-                            process.Refresh();
-                        }
-                    } while (!process.WaitForExit(3000));
+                            if (!process.HasExited)
+                            {
+                                // Refresh the current process property values.
+                                process.Refresh();
+                            }
+                        } while (!process.WaitForExit(3000));
 
-                    // Parse the exit code into strings
-                    handlerTitle = "KinectToVR's given you up!";
-                    primaryButtonText = "View Docs";
-                    switch (ProcessExitCode)
-                    {
-                        case -12:
+                        // Parse the exit code into strings
+                        handlerTitle = "KinectToVR's given you up!";
+                        primaryButtonText = "View Docs";
+                        switch (ProcessExitCode)
+                        {
+                            case -12:
                             {
                                 // No devices
                                 primaryButtonHandler = Action_VRDocs;
@@ -87,8 +93,8 @@ namespace K2CrashHandler
                                     "There were no appropriate devices (plugins) available to load and use for body tracking.\n\n" +
                                     "Please check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices.";
                             }
-                            break;
-                        case -11:
+                                break;
+                            case -11:
                             {
                                 // OpenVR error
                                 primaryButtonHandler = Action_DeviceDocs;
@@ -96,29 +102,43 @@ namespace K2CrashHandler
                                     "The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.\n\n" +
                                     "Please check if SteamVR is running and if your HMD's present and working. Additionally, you can restart SteamVR and additionally check its logs.";
                             }
-                            break;
-                        case 0:
+                                break;
+                            case 0:
                             {
                                 // We're OK
                                 this.Close();
                             }
-                            break;
-                        default:
+                                break;
+                            default:
                             {
                                 // Unknown
                                 primaryButtonHandler = Action_Discord;
                                 handlerContent =
                                     "Looks like some weird thing happened to the app.\n\n" +
-                                    "Don't give up, it (probably) isn't even your fault.\n\n" +
+                                    "Don't panic yet, it (probably) isn't even your fault.\n\n" +
                                     "Please try re-running the app.\nIf problem persists, grab logs and reach us on Discord.";
                                 primaryButtonText = "Join Discord";
                             }
-                            break;
+                                break;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        this.Close();
                     }
                 }
-                catch (Exception)
+                else
                 {
-                    this.Close();
+                    // Parse the strings
+                    handlerTitle = "KinectToVR Already Running!";
+                    primaryButtonText = "View Docs";
+
+                    primaryButtonHandler = Action_ForceQuit;
+                    handlerContent =
+                        "Looks like the app is already running \nand you've tried to " +
+                        "launch a second instance,\nthis action is not currently supported.\n\n" +
+                        "Please check if the app isn't opened.\nIf problem persists, press the 'Force Exit' button.";
+                    primaryButtonText = "Force Exit";
                 }
             }
 
@@ -127,7 +147,11 @@ namespace K2CrashHandler
                 height = 300;
 
             // Set window title, drag-space and size
-            this.Title = pidMode ? "KinectToVR Crash Handler" : "KinectToVR Recovery";
+            this.Title = launcherMode
+                ? (relaunchMode
+                    ? "KinectToVR Already Running!"
+                    : "KinectToVR Crash Handler")
+                : "KinectToVR Recovery";
             this.ExtendsContentIntoTitleBar = true;
             this.SetTitleBar(DragElement);
             this.SetWindowSize(WinRT.Interop.WindowNative
@@ -153,7 +177,7 @@ namespace K2CrashHandler
                 secondaryButtonText,
                 primaryButtonHandler,
                 secondaryButtonHandler,
-                pidMode
+                launcherMode
             );
 
             // And push it into the main grid
@@ -180,6 +204,12 @@ namespace K2CrashHandler
         private void Action_Discord(object sender, RoutedEventArgs e)
         {
             Process.Start("explorer.exe", "https://discord.gg/YBQCRDG");
+        }
+
+        private void Action_ForceQuit(object sender, RoutedEventArgs e)
+        {
+            foreach (var process in Process.GetProcessesByName("KinectToVR"))
+                process.Kill();
         }
 
         private void Action_Close(object sender, RoutedEventArgs e)
