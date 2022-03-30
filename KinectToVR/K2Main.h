@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -251,7 +251,7 @@ namespace k2app::main
 				}
 
 				// Waist tracker (NF_0)
-				if (K2Settings.isJointEnabled[0] && _updateLowerBody)
+				if (K2Settings.isJointPairEnabled[0] && _updateLowerBody)
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[0] || K2Settings.overrideDeviceID < 0)
@@ -263,14 +263,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[0],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(0).getTrackerBase
 								(
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[0],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -284,14 +284,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[0],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(0).getTrackerBase
 								(
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[0],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -299,7 +299,7 @@ namespace k2app::main
 
 				// Left Foot tracker (NF_1)
 				// If not overridden by second device
-				if (K2Settings.isJointEnabled[1] && _updateLowerBody)
+				if (K2Settings.isJointPairEnabled[1] && _updateLowerBody)
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[1] || K2Settings.overrideDeviceID < 0)
@@ -311,14 +311,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[1],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(1).getTrackerBase
 								(
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[1],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -332,14 +332,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[1],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(1).getTrackerBase
 								(
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[1],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -347,7 +347,7 @@ namespace k2app::main
 
 				// Right Foot tracker (NF_2)
 				// If not overridden by second device
-				if (K2Settings.isJointEnabled[2] && _updateLowerBody)
+				if (K2Settings.isJointPairEnabled[1] && _updateLowerBody)
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[2] || K2Settings.overrideDeviceID < 0)
@@ -359,14 +359,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[2],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(2).getTrackerBase
 								(
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[2],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -380,14 +380,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[2],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(2).getTrackerBase
 								(
-									K2Settings.positionFilterOption_basic,
+									K2Settings.positionTrackingFilterOptions[2],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -395,7 +395,7 @@ namespace k2app::main
 
 				// Left Elbow tracker (NF_3)
 				// If not overridden by second device
-				if (K2Settings.isJointEnabled[3])
+				if (K2Settings.isJointPairEnabled[2])
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[3] || K2Settings.overrideDeviceID < 0)
@@ -407,14 +407,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[3],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(3).getTrackerBase
 								(
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[3],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -428,14 +428,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[3],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(3).getTrackerBase
 								(
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[3],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -443,7 +443,7 @@ namespace k2app::main
 
 				// Right Elbow tracker (NF_4)
 				// If not overridden by second device
-				if (K2Settings.isJointEnabled[4])
+				if (K2Settings.isJointPairEnabled[2])
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[4] || K2Settings.overrideDeviceID < 0)
@@ -455,14 +455,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[4],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(4).getTrackerBase
 								(
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[4],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -476,14 +476,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[4],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(4).getTrackerBase
 								(
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[4],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -491,7 +491,7 @@ namespace k2app::main
 
 				// Left Knee tracker (NF_5)
 				// If not overridden by second device
-				if (K2Settings.isJointEnabled[5] && _updateLowerBody)
+				if (K2Settings.isJointPairEnabled[3] && _updateLowerBody)
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[5] || K2Settings.overrideDeviceID < 0)
@@ -503,14 +503,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[5],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(5).getTrackerBase
 								(
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[5],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -524,14 +524,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[5],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(5).getTrackerBase
 								(
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[5],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -539,7 +539,7 @@ namespace k2app::main
 
 				// Right Knee tracker (NF_6)
 				// If not overridden by second device
-				if (K2Settings.isJointEnabled[6] && _updateLowerBody)
+				if (K2Settings.isJointPairEnabled[3] && _updateLowerBody)
 				{
 					// If not overridden by second device
 					if (!K2Settings.isPositionOverriddenJoint[6] || K2Settings.overrideDeviceID < 0)
@@ -551,14 +551,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.first.cast<float>(),
 									K2Settings.calibrationTranslationVectors.first.cast<float>(),
 									K2Settings.calibrationOrigins.first.cast<float>(),
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[6],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(6).getTrackerBase
 								(
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[6],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -572,14 +572,14 @@ namespace k2app::main
 									K2Settings.calibrationRotationMatrices.second.cast<float>(),
 									K2Settings.calibrationTranslationVectors.second.cast<float>(),
 									K2Settings.calibrationOrigins.second.cast<float>(),
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[6],
 									K2Settings.rotationFilterOption
 								));
 						else
 							k2_tracker_bases.push_back(
 								interfacing::K2TrackersVector.at(6).getTrackerBase
 								(
-									K2Settings.positionFilterOption_ext,
+									K2Settings.positionTrackingFilterOptions[6],
 									K2Settings.rotationFilterOption
 								));
 					}
@@ -601,46 +601,42 @@ namespace k2app::main
 					// Update status in server
 
 					// Waist Tracker (NF_0)
-					if (K2Settings.isJointEnabled[0])
+					if (K2Settings.isJointPairEnabled[0])
 						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(0).id,
-						                               K2Settings.isJointTurnedOn[0] &&
 						                               interfacing::K2AppTrackersInitialized);
 
-					// Left Foot tracker (NF_1)
-					if (K2Settings.isJointEnabled[1])
+					if (K2Settings.isJointPairEnabled[1])
+					{
+						// Left Foot tracker (NF_1)
 						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(1).id,
-						                               K2Settings.isJointTurnedOn[1] &&
 						                               interfacing::K2AppTrackersInitialized);
 
-					// Right Foot tracker (NF_2)
-					if (K2Settings.isJointEnabled[2])
+						// Right Foot tracker (NF_2)
 						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(2).id,
-						                               K2Settings.isJointTurnedOn[2] &&
 						                               interfacing::K2AppTrackersInitialized);
+					}
 
-					// Left Elbow tracker (NF_3)
-					if (K2Settings.isJointEnabled[3])
+					if (K2Settings.isJointPairEnabled[2])
+					{
+						// Left Elbow tracker (NF_3)
 						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(3).id,
-						                               K2Settings.isJointTurnedOn[3] &&
 						                               interfacing::K2AppTrackersInitialized);
 
-					// Right Elbow tracker (NF_4)
-					if (K2Settings.isJointEnabled[4])
+						// Right Elbow tracker (NF_4)
 						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(4).id,
-						                               K2Settings.isJointTurnedOn[4] &&
 						                               interfacing::K2AppTrackersInitialized);
+					}
 
-					// Left Knee tracker (NF_5)
-					if (K2Settings.isJointEnabled[5])
+					if (K2Settings.isJointPairEnabled[3])
+					{
+						// Left Knee tracker (NF_5)
 						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(5).id,
-						                               K2Settings.isJointTurnedOn[5] &&
 						                               interfacing::K2AppTrackersInitialized);
 
-					// Right Knee tracker (NF_6)
-					if (K2Settings.isJointEnabled[6])
+						// Right Knee tracker (NF_6)
 						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(6).id,
-						                               K2Settings.isJointTurnedOn[6] &&
 						                               interfacing::K2AppTrackersInitialized);
+					}
 
 					// Update internal status
 					initialized_bak = interfacing::K2AppTrackersInitialized;
