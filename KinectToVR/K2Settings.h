@@ -84,14 +84,12 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(positionJointsOffsets)
 				& BOOST_SERIALIZATION_NVP(rotationJointsOffsets)
 				& BOOST_SERIALIZATION_NVP(jointRotationTrackingOption)
-				& BOOST_SERIALIZATION_NVP(positionFilterOption_basic)
-				& BOOST_SERIALIZATION_NVP(positionFilterOption_ext)
+				& BOOST_SERIALIZATION_NVP(positionTrackingFilterOptions)
 				& BOOST_SERIALIZATION_NVP(rotationFilterOption)
 				& BOOST_SERIALIZATION_NVP(isFlipEnabled)
 				& BOOST_SERIALIZATION_NVP(isExternalFlipEnabled)
 				& BOOST_SERIALIZATION_NVP(externalFlipCalibrationYaw)
-				& BOOST_SERIALIZATION_NVP(isJointEnabled)
-				& BOOST_SERIALIZATION_NVP(isJointTurnedOn)
+				& BOOST_SERIALIZATION_NVP(isJointPairEnabled)
 				& BOOST_SERIALIZATION_NVP(autoSpawnEnabledJoints)
 				& BOOST_SERIALIZATION_NVP(enableAppSounds)
 				& BOOST_SERIALIZATION_NVP(appSoundsVolume)
@@ -165,9 +163,16 @@ namespace k2app
 			k2_DeviceInferredRotation
 		};
 
-		// Joint filter pos options: One-For-All and LERP is the default
-		PositionTrackingFilterOption positionFilterOption_basic = k2_PositionTrackingFilter_LERP,
-		                             positionFilterOption_ext = k2_PositionTrackingFilter_LERP;
+		// Joint filter pos options: LERP is the default
+		std::array<PositionTrackingFilterOption, 7> positionTrackingFilterOptions = {
+			k2_PositionTrackingFilter_LERP,
+			k2_PositionTrackingFilter_LERP,
+			k2_PositionTrackingFilter_LERP,
+			k2_PositionTrackingFilter_LERP,
+			k2_PositionTrackingFilter_LERP,
+			k2_PositionTrackingFilter_LERP,
+			k2_PositionTrackingFilter_LERP
+		};
 
 		// Joint filter rot options: One-For-All and SLERP (normal) is the default
 		RotationTrackingFilterOption rotationFilterOption = k2_OrientationTrackingFilter_SLERP;
@@ -178,11 +183,9 @@ namespace k2app
 		// Skeleton flip based on non-flip override devices' waist tracker
 		bool isExternalFlipEnabled = false;
 
+		// Currently enabled (spawn-able) joints: W; L,R and true is the default, LE,RE; LK,RK
 		std::array<bool, 7>
-			// Currently enabled (spawn-able) joints: W,L,R and true is the default, LE,RE,LK,RK
-			isJointEnabled = {true, true, true, false, false, false, false},
-			// Currently turned on (marked-as-online) joints: W,L,R,LE,RE,LK,RK and true is the default
-			isJointTurnedOn = {true, true, true, true, true, true, true};
+			isJointPairEnabled = { true, true, false, false };
 
 		// Automatically spawn enabled trackers on startup and off is the default
 		bool autoSpawnEnabledJoints = false;
