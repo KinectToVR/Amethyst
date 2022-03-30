@@ -97,7 +97,7 @@ namespace TrackingDevices
 
 		// If we have an override and if it's actually affecting the waist rotation
 		if (overrideDevice.first &&
-			k2app::K2Settings.isJointEnabled[0] &&
+			k2app::K2Settings.isJointPairEnabled[0] &&
 			k2app::K2Settings.isRotationOverriddenJoint[0])
 		{
 			// If the override device is a kinect then it HAS NOT TO support flip
@@ -111,7 +111,7 @@ namespace TrackingDevices
 		}
 
 		// If still not, then also check if the waist is disabled by any chance
-		else if (!k2app::K2Settings.isJointEnabled[0])
+		else if (!k2app::K2Settings.isJointPairEnabled[0])
 			isExternalFlipSupported = true;
 
 		/* Here check if there's a proper waist tracker in steamvr to pull data from */
@@ -231,7 +231,7 @@ namespace TrackingDevices
 					k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
 					k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
 
-					k2app::shared::settings::feetRotationOptionBox.get()->SelectedIndex(
+					k2app::shared::settings::feetRotationFilterOptionBox.get()->SelectedIndex(
 						k2app::K2Settings.jointRotationTrackingOption[1]); // Feet
 				}
 			}
@@ -251,7 +251,7 @@ namespace TrackingDevices
 					k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
 					k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
 
-					k2app::shared::settings::feetRotationOptionBox.get()->SelectedIndex(
+					k2app::shared::settings::feetRotationFilterOptionBox.get()->SelectedIndex(
 						k2app::K2Settings.jointRotationTrackingOption[1]); // Feet
 				}
 			}
