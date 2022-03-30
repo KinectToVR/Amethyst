@@ -123,7 +123,7 @@ namespace k2app
 					// Add only default trackers from the vector (0-2) & (3-6)
 					for (int t = 0; t < 7; t++)
 					{
-						if (k2app::K2Settings.isJointEnabled[t])
+						if (k2app::K2Settings.isJointPairEnabled[floor((t + 1) / 2)])
 						{
 							if (K2TrackersVector.at(t).id != -1)
 							{
@@ -583,7 +583,7 @@ namespace k2app
 			}
 		}
 
-		// Check if we've disabled any joints from spawning and disable they're mods
+		// Check if we've disabled any joints from spawning and disable their mods
 		inline void devices_check_disabled_joints()
 		{
 			using namespace shared::devices;
@@ -592,44 +592,44 @@ namespace k2app
 			if (waistJointOptionBox.get() == nullptr)return;
 
 			// Optionally fix combos for disabled trackers -> joint selectors for base
-			waistJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0]);
-			if (!k2app::K2Settings.isJointEnabled[0])
+			waistJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[0]);
+			if (!k2app::K2Settings.isJointPairEnabled[0])
 				waistJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-			leftFootJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
-			if (!k2app::K2Settings.isJointEnabled[1])
+			leftFootJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
+			if (!k2app::K2Settings.isJointPairEnabled[1])
 				leftFootJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-			rightFootJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2]);
-			if (!k2app::K2Settings.isJointEnabled[2])
+			rightFootJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
+			if (!k2app::K2Settings.isJointPairEnabled[1])
 				rightFootJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-			leftElbowJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[3]);
-			if (!k2app::K2Settings.isJointEnabled[3])
+			leftElbowJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
+			if (!k2app::K2Settings.isJointPairEnabled[2])
 				leftElbowJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-			rightElbowJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[4]);
-			if (!k2app::K2Settings.isJointEnabled[4])
+			rightElbowJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
+			if (!k2app::K2Settings.isJointPairEnabled[2])
 				rightElbowJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-			leftKneeJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[5]);
-			if (!k2app::K2Settings.isJointEnabled[5])
+			leftKneeJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
+			if (!k2app::K2Settings.isJointPairEnabled[3])
 				leftKneeJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-			rightKneeJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointEnabled[6]);
-			if (!k2app::K2Settings.isJointEnabled[6])
+			rightKneeJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
+			if (!k2app::K2Settings.isJointPairEnabled[3])
 				rightKneeJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
 			// Optionally fix combos for disabled trackers -> joint selectors for override
 			waistPositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[0] && k2app::K2Settings.isPositionOverriddenJoint[0]);
+				k2app::K2Settings.isJointPairEnabled[0] && k2app::K2Settings.isPositionOverriddenJoint[0]);
 			waistRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[0] && k2app::K2Settings.isRotationOverriddenJoint[0]);
+				k2app::K2Settings.isJointPairEnabled[0] && k2app::K2Settings.isRotationOverriddenJoint[0]);
 
-			overrideWaistPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0]);
-			overrideWaistRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[0]);
+			overrideWaistPosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[0]);
+			overrideWaistRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[0]);
 
-			if (!k2app::K2Settings.isJointEnabled[0])
+			if (!k2app::K2Settings.isJointPairEnabled[0])
 			{
 				overrideWaistPosition.get()->IsChecked(false);
 				overrideWaistRotation.get()->IsChecked(false);
@@ -639,14 +639,14 @@ namespace k2app
 			}
 
 			leftFootPositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[1] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+				k2app::K2Settings.isJointPairEnabled[1] && k2app::K2Settings.isPositionOverriddenJoint[1]);
 			leftFootRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[1] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+				k2app::K2Settings.isJointPairEnabled[1] && k2app::K2Settings.isRotationOverriddenJoint[1]);
 
-			overrideLeftFootPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
-			overrideLeftFootRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[1]);
+			overrideLeftFootPosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
+			overrideLeftFootRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
 
-			if (!k2app::K2Settings.isJointEnabled[1])
+			if (!k2app::K2Settings.isJointPairEnabled[1])
 			{
 				overrideLeftFootPosition.get()->IsChecked(false);
 				overrideLeftFootRotation.get()->IsChecked(false);
@@ -656,14 +656,14 @@ namespace k2app
 			}
 
 			rightFootPositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[2] && k2app::K2Settings.isPositionOverriddenJoint[2]);
+				k2app::K2Settings.isJointPairEnabled[1] && k2app::K2Settings.isPositionOverriddenJoint[2]);
 			rightFootRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[2] && k2app::K2Settings.isRotationOverriddenJoint[2]);
+				k2app::K2Settings.isJointPairEnabled[1] && k2app::K2Settings.isRotationOverriddenJoint[2]);
 
-			overrideRightFootPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2]);
-			overrideRightFootRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[2]);
+			overrideRightFootPosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
+			overrideRightFootRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
 
-			if (!k2app::K2Settings.isJointEnabled[2])
+			if (!k2app::K2Settings.isJointPairEnabled[1])
 			{
 				overrideRightFootPosition.get()->IsChecked(false);
 				overrideRightFootRotation.get()->IsChecked(false);
@@ -673,14 +673,14 @@ namespace k2app
 			}
 
 			leftElbowPositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[3] && k2app::K2Settings.isPositionOverriddenJoint[3]);
+				k2app::K2Settings.isJointPairEnabled[2] && k2app::K2Settings.isPositionOverriddenJoint[3]);
 			leftElbowRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[3] && k2app::K2Settings.isRotationOverriddenJoint[3]);
+				k2app::K2Settings.isJointPairEnabled[2] && k2app::K2Settings.isRotationOverriddenJoint[3]);
 
-			overrideLeftElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[3]);
-			overrideLeftElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[3]);
+			overrideLeftElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
+			overrideLeftElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
 
-			if (!k2app::K2Settings.isJointEnabled[3])
+			if (!k2app::K2Settings.isJointPairEnabled[2])
 			{
 				overrideLeftElbowPosition.get()->IsChecked(false);
 				overrideLeftElbowRotation.get()->IsChecked(false);
@@ -690,14 +690,14 @@ namespace k2app
 			}
 
 			rightElbowPositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[4] && k2app::K2Settings.isPositionOverriddenJoint[4]);
+				k2app::K2Settings.isJointPairEnabled[2] && k2app::K2Settings.isPositionOverriddenJoint[4]);
 			rightElbowRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[4] && k2app::K2Settings.isRotationOverriddenJoint[4]);
+				k2app::K2Settings.isJointPairEnabled[2] && k2app::K2Settings.isRotationOverriddenJoint[4]);
 
-			overrideRightElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[4]);
-			overrideRightElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[4]);
+			overrideRightElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
+			overrideRightElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
 
-			if (!k2app::K2Settings.isJointEnabled[4])
+			if (!k2app::K2Settings.isJointPairEnabled[2])
 			{
 				overrideRightElbowPosition.get()->IsChecked(false);
 				overrideRightElbowRotation.get()->IsChecked(false);
@@ -707,14 +707,14 @@ namespace k2app
 			}
 
 			leftKneePositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[5] && k2app::K2Settings.isPositionOverriddenJoint[5]);
+				k2app::K2Settings.isJointPairEnabled[3] && k2app::K2Settings.isPositionOverriddenJoint[5]);
 			leftKneeRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[5] && k2app::K2Settings.isRotationOverriddenJoint[5]);
+				k2app::K2Settings.isJointPairEnabled[3] && k2app::K2Settings.isRotationOverriddenJoint[5]);
 
-			overrideLeftKneePosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[5]);
-			overrideLeftKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[5]);
+			overrideLeftKneePosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
+			overrideLeftKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
 
-			if (!k2app::K2Settings.isJointEnabled[5])
+			if (!k2app::K2Settings.isJointPairEnabled[3])
 			{
 				overrideLeftKneePosition.get()->IsChecked(false);
 				overrideLeftKneeRotation.get()->IsChecked(false);
@@ -724,14 +724,14 @@ namespace k2app
 			}
 
 			rightKneePositionOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[6] && k2app::K2Settings.isPositionOverriddenJoint[6]);
+				k2app::K2Settings.isJointPairEnabled[3] && k2app::K2Settings.isPositionOverriddenJoint[6]);
 			rightKneeRotationOverrideOptionBox.get()->IsEnabled(
-				k2app::K2Settings.isJointEnabled[6] && k2app::K2Settings.isRotationOverriddenJoint[6]);
+				k2app::K2Settings.isJointPairEnabled[3] && k2app::K2Settings.isRotationOverriddenJoint[6]);
 
-			overrideRightKneePosition.get()->IsEnabled(k2app::K2Settings.isJointEnabled[6]);
-			overrideRightKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointEnabled[6]);
+			overrideRightKneePosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
+			overrideRightKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
 
-			if (!k2app::K2Settings.isJointEnabled[6])
+			if (!k2app::K2Settings.isJointPairEnabled[3])
 			{
 				overrideRightKneePosition.get()->IsChecked(false);
 				overrideRightKneeRotation.get()->IsChecked(false);
@@ -838,13 +838,13 @@ namespace k2app
 			{
 				return std::array<ktvr::K2TrackedJoint, 7>
 				{
-					K2TrackersVector.at(0).getK2TrackedJoint(K2Settings.isJointEnabled[0], "Waist"),
-					K2TrackersVector.at(1).getK2TrackedJoint(K2Settings.isJointEnabled[1], "Left Foot"),
-					K2TrackersVector.at(2).getK2TrackedJoint(K2Settings.isJointEnabled[2], "Right Foot"),
-					K2TrackersVector.at(3).getK2TrackedJoint(K2Settings.isJointEnabled[3], "Left Elbow"),
-					K2TrackersVector.at(4).getK2TrackedJoint(K2Settings.isJointEnabled[4], "Right Elbow"),
-					K2TrackersVector.at(5).getK2TrackedJoint(K2Settings.isJointEnabled[5], "Left Knee"),
-					K2TrackersVector.at(6).getK2TrackedJoint(K2Settings.isJointEnabled[6], "Right Knee"),
+					K2TrackersVector.at(0).getK2TrackedJoint(K2Settings.isJointPairEnabled[0], "Waist"),
+					K2TrackersVector.at(1).getK2TrackedJoint(K2Settings.isJointPairEnabled[1], "Left Foot"),
+					K2TrackersVector.at(2).getK2TrackedJoint(K2Settings.isJointPairEnabled[1], "Right Foot"),
+					K2TrackersVector.at(3).getK2TrackedJoint(K2Settings.isJointPairEnabled[2], "Left Elbow"),
+					K2TrackersVector.at(4).getK2TrackedJoint(K2Settings.isJointPairEnabled[2], "Right Elbow"),
+					K2TrackersVector.at(5).getK2TrackedJoint(K2Settings.isJointPairEnabled[3], "Left Knee"),
+					K2TrackersVector.at(6).getK2TrackedJoint(K2Settings.isJointPairEnabled[3], "Right Knee"),
 				};
 			}
 		}
