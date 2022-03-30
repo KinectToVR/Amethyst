@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -157,7 +157,8 @@ namespace k2app::main
 			}
 	}
 
-	inline int p_loops = 0; // Loops passed since last status update
+	inline int p_loops = 0, // Loops passed since last status update
+	           p_frozen_loops = 0; // Loops passed since last frozen update
 	inline bool initialized_bak = false; // Backup initialized? value
 	inline void K2UpdateServerTrackers()
 	{
@@ -168,33 +169,44 @@ namespace k2app::main
 			// If tracking is frozen, only refresh
 			if (interfacing::isTrackingFrozen && !K2Settings.freezeLowerOnly)
 			{
-				// Waist Tracker (NF_0)
-				if (K2Settings.isJointEnabled[0])
-					ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(0).id);
+				// To save resources, frozen trackers update once per 1000 frames
+				// (When they're unfrozen, they go back to instant updates)
+				if (p_frozen_loops >= 1000)
+				{
+					// Waist Tracker (NF_0)
+					if (K2Settings.isJointPairEnabled[0])
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(0).id);
 
-				// Left Foot tracker (NF_1)
-				if (K2Settings.isJointEnabled[1])
-					ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(1).id);
+					if (K2Settings.isJointPairEnabled[1])
+					{
+						// Left Foot tracker (NF_1)
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(1).id);
 
-				// Right Foot tracker (NF_2)
-				if (K2Settings.isJointEnabled[2])
-					ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(2).id);
+						// Right Foot tracker (NF_2)
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(2).id);
+					}
 
-				// Left Elbow tracker (NF_3)
-				if (K2Settings.isJointEnabled[3])
-					ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(3).id);
+					if (K2Settings.isJointPairEnabled[2])
+					{
+						// Left Elbow tracker (NF_3)
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(3).id);
 
-				// Right Elbow tracker (NF_4)
-				if (K2Settings.isJointEnabled[4])
-					ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(4).id);
+						// Right Elbow tracker (NF_4)
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(4).id);
+					}
 
-				// Left Knee tracker (NF_5)
-				if (K2Settings.isJointEnabled[5])
-					ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(5).id);
+					if (K2Settings.isJointPairEnabled[3])
+					{
+						// Left Knee tracker (NF_5)
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(5).id);
 
-				// Right Knee tracker (NF_6)
-				if (K2Settings.isJointEnabled[6])
-					ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(6).id);
+						// Right Knee tracker (NF_6)
+						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(6).id);
+					}
+					// Reset
+					p_loops = 0;
+				}
+				else p_loops++;
 			}
 			// If the tracing's actually running
 			else
@@ -229,25 +241,35 @@ namespace k2app::main
 				{
 					_updateLowerBody = false;
 
-					// Waist Tracker (NF_0)
-					if (K2Settings.isJointEnabled[0])
-						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(0).id);
+					// To save resources, frozen trackers update once per 1000 frames
+					// (When they're unfrozen, they go back to instant updates)
+					if (p_frozen_loops >= 1000)
+					{
+						// Waist Tracker (NF_0)
+						if (K2Settings.isJointPairEnabled[0])
+							ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(0).id);
 
-					// Left Foot tracker (NF_1)
-					if (K2Settings.isJointEnabled[1])
-						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(1).id);
+						if (K2Settings.isJointPairEnabled[1])
+						{
+							// Left Foot tracker (NF_1)
+							ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(1).id);
 
-					// Right Foot tracker (NF_2)
-					if (K2Settings.isJointEnabled[2])
-						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(2).id);
+							// Right Foot tracker (NF_2)
+							ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(2).id);
+						}
 
-					// Left Knee tracker (NF_5)
-					if (K2Settings.isJointEnabled[5])
-						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(5).id);
+						if (K2Settings.isJointPairEnabled[2])
+						{
+							// Left Knee tracker (NF_5)
+							ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(5).id);
 
-					// Right Knee tracker (NF_6)
-					if (K2Settings.isJointEnabled[6])
-						ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(6).id);
+							// Right Knee tracker (NF_6)
+							ktvr::refresh_tracker_pose<false>(interfacing::K2TrackersVector.at(6).id);
+						}
+						// Reset
+						p_loops = 0;
+					}
+					else p_loops++;
 				}
 
 				// Waist tracker (NF_0)
