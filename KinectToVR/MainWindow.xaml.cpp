@@ -16,6 +16,7 @@ using namespace Microsoft::UI::Xaml;
 std::shared_ptr<Controls::FontIcon> updateIconDot;
 
 // Helper local variables
+HANDLE hNamedMutex = NULL;
 bool updateFound = false,
      main_localInitFinished = false;
 
@@ -213,6 +214,29 @@ namespace winrt::KinectToVR::implementation
 			(L"console", winrt::xaml_typename<ConsolePage>()));
 
 		LOG(INFO) << "~~~KinectToVR new logging session begins here!~~~";
+
+		LOG(INFO) << "Registering a named mutex for com_kinecttovr_k2app_amethyst...";
+		
+		hNamedMutex = CreateMutexA(NULL, TRUE, "com_kinecttovr_k2app_amethyst");
+		if (ERROR_ALREADY_EXISTS == GetLastError())
+		{
+			LOG(ERROR) << "Startup failed! The app is already running.";
+
+			if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
+			{
+				std::thread([]
+					{
+						ShellExecuteA(NULL, "open",
+							(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
+							.string().c_str(), "already_running", NULL, SW_SHOWDEFAULT);
+					}).detach();
+			}
+			else
+				LOG(WARNING) << "Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!";
+
+			Sleep(3000);
+			exit(0); // Exit peacefully
+		}
 
 		// Priority: Launch the crash handler
 		LOG(INFO) << "Starting the crash handler passing the app PID...";
@@ -858,6 +882,24 @@ void KinectToVR::implementation::MainWindow::ExitButton_Click(
 		}
 		catch (...)
 		{
+		}
+	}();
+
+	// Close the multi-process mutex
+	[&, this]
+	{
+		__try
+		{
+			ReleaseMutex(hNamedMutex); // Explicitly release mutex
+			CloseHandle(hNamedMutex); // Close handle before terminating
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			[&, this]
+			{
+				LOG(INFO) <<
+					"Shutting down: com_kinecttovr_k2app_amethyst named mutex close failed! The app may misbehave.";
+			}();
 		}
 	}();
 
