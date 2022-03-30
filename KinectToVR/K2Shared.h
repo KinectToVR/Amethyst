@@ -213,25 +213,20 @@ namespace k2app
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button> restartButton;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBox>
-				waistRotationOptionBox,
-				feetRotationOptionBox,
-				elbowRotationOptionBox,
-				kneeRotationOptionBox,
-				positionFilterOptionBox,
-				positionFilterOptionBox_1;
+				waistPositionFilterOptionBox,
+				waistRotationFilterOptionBox,
+				feetPositionFilterOptionBox,
+				feetRotationFilterOptionBox,
+				kneePositionFilterOptionBox,
+				kneeRotationFilterOptionBox,
+				elbowsPositionFilterOptionBox,
+				elbowsRotationFilterOptionBox;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem> softwareRotationItem;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
 				flipCheckBox,
 				externalFlipCheckBox,
-				waistOnCheckbox,
-				leftFootOnCheckbox,
-				rightFootOnCheckbox,
-				leftElbowOnCheckBox,
-				rightElbowOnCheckBox,
-				leftKneeOnCheckBox,
-				rightKneeOnCheckBox,
 				autoSpawnCheckbox,
 				enableSoundsCheckbox;
 
@@ -240,21 +235,18 @@ namespace k2app
 				externalFlipCheckBoxLabel;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
-				waistEnabledToggle,
-				leftFootEnabledToggle,
-				rightFootEnabledToggle,
-				leftElbowEnabledToggle,
-				rightElbowEnabledToggle,
-				leftKneeEnabledToggle,
-				rightKneeEnabledToggle;
+				waistTrackerEnabledToggle,
+				feetTrackersEnabledToggle,
+				kneeTrackersEnabledToggle,
+				elbowTrackersEnabledToggle;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Slider> soundsVolumeSlider;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander>
-				rotationDropDown,
-				expRotationDropDown,
-				trackersDropDown,
-				expTrackersDropDown;
+				waistDropDown,
+				feetDropDown,
+				kneesDropDown,
+				elbowsDropDown;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel>
 				externalFlipStackPanel;

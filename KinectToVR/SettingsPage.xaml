@@ -39,7 +39,8 @@
 
                 </Grid>
 
-                <StackPanel Orientation="Horizontal" x:Name="ExternalFlipStackPanel" Visibility="Collapsed" Margin="0,-20,0,0">
+                <StackPanel Orientation="Horizontal" x:Name="ExternalFlipStackPanel" Visibility="Collapsed"
+                            Margin="0,-20,0,0">
 
                     <Grid Margin="0,5,0,0">
                         <Grid.ColumnDefinitions>
@@ -75,488 +76,288 @@
 
                 </StackPanel>
 
-                <TextBlock FontWeight="SemiBold" Text="Filters" FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
+                <TextBlock FontWeight="SemiBold" Text="Tracker Configuration" FontSize="25" Margin="0,20,0,0"
+                           Grid.Row="0" />
 
-                <Expander Margin="0,10,0,0" IsExpanded="True" x:Name="RotationDropDown"
-                          Expanding="RotationDropDown_Expanding"
-                          ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                <Grid>
+                    <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                    <Expander.Header>
-                        <TextBlock FontWeight="SemiBold" Text="Waist and Feet Trackers" />
-                    </Expander.Header>
+                        <TextBlock FontWeight="SemiBold" Text="Waist Tracker" FontSize="14" Margin="0,-3,0,0"
+                                   Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
-                    <Expander.Content>
-                        <Grid Padding="0,-5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="5*" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="80" />
-                                <RowDefinition Height="80" />
-                                <RowDefinition Height="80" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Position Tracking Filter:"
-                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
-
-                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                      x:Name="PositionFilterOptionBox"
-                                      SelectionChanged="PositionFilterOptionBox_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                                <x:String>Linear Interpolation</x:String>
-                                <x:String>Low Pass Filter</x:String>
-                                <x:String>Extended Kalman Filter</x:String>
-                                <x:String>Disable Filter</x:String>
-                            </ComboBox>
-
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Waist Rotation:"
-                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Feet Rotation:"
-                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="2" />
-
-                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                      x:Name="WaistRotationOptionBox"
-                                      IsEnabled="{Binding ElementName=WaistOnToggle, 
-									Path=IsChecked,TargetNullValue=False}"
-                                      SelectionChanged="WaistRotationOptionBox_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
-                                <x:String>Device-inferred Rotation</x:String>
-                                <x:String>Follow Headset</x:String>
-                                <x:String>Disable Rotation</x:String>
-                            </ComboBox>
-
-                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                      x:Name="FeetRotationOptionBox"
-                                      SelectionChanged="FeetRotationOptionBox_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="2" Margin="0,0,0,0">
-                                <ComboBoxItem>Device-inferred Rotation</ComboBoxItem>
-                                <ComboBoxItem x:Name="SoftwareRotationItem" IsEnabled="True">Software-calculated Rotation</ComboBoxItem>
-                                <ComboBoxItem>Follow Headset</ComboBoxItem>
-                                <ComboBoxItem>Disable Rotation</ComboBoxItem>
-                            </ComboBox>
-
-                        </Grid>
-                    </Expander.Content>
-                </Expander>
-
-                <Expander Margin="0,15,0,0" IsExpanded="False" x:Name="ExpRotationDropDown"
-                          Expanding="ExpRotationDropDown_Expanding"
-                          ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-
-                    <Expander.Header>
-                        <TextBlock FontWeight="SemiBold" Text="Elbow and Knee Trackers" />
-                    </Expander.Header>
-
-                    <Expander.Content>
-                        <Grid Padding="0,-5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="5*" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="80" />
-                                <RowDefinition Height="80" />
-                                <RowDefinition Height="80" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Position Tracking Filter:"
-                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
-
-                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                      x:Name="PositionFilterOptionBox_1"
-                                      SelectionChanged="PositionFilterOptionBox_1_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                                <x:String>Linear Interpolation</x:String>
-                                <x:String>Low Pass Filter</x:String>
-                                <x:String>Extended Kalman Filter</x:String>
-                                <x:String>Disable Filter</x:String>
-                            </ComboBox>
-
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Elbow Rotation:"
-                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                       Text="Knee Rotation:"
-                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="2" />
-
-                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                      x:Name="ElbowRotationOptionBox"
-                                      IsEnabled="{Binding ElementName=WaistOnToggle, 
-									Path=IsChecked,TargetNullValue=False}"
-                                      SelectionChanged="ElbowRotationOptionBox_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
-                                <x:String>Device-inferred Rotation</x:String>
-                                <x:String>Follow Headset</x:String>
-                                <x:String>Disable Rotation</x:String>
-                            </ComboBox>
-
-                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                      x:Name="KneeRotationOptionBox"
-                                      SelectionChanged="KneeRotationOptionBox_SelectionChanged"
-                                      Grid.Column="1" Grid.Row="2" Margin="0,0,0,0">
-                                <ComboBoxItem>Device-inferred Rotation</ComboBoxItem>
-                                <ComboBoxItem>Follow Headset</ComboBoxItem>
-                                <ComboBoxItem>Disable Rotation</ComboBoxItem>
-                            </ComboBox>
-
-                        </Grid>
-                    </Expander.Content>
-                </Expander>
-
-                <TextBlock FontWeight="SemiBold" Text="Tracker Configuration" FontSize="25" Margin="0,30,0,0" />
-
-                <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="TrackersDropDown"
-                          Expanding="TrackersDropDown_Expanding"
-                          ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-
-                    <Expander.Header>
-                        <TextBlock FontWeight="SemiBold" Text="Waist and Feet Trackers" />
-                    </Expander.Header>
-
-                    <Expander.Content>
-                        <Grid Margin="0,0,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="3*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="3*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="3.3*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="50" />
-                                <RowDefinition Height="50" />
-                                <RowDefinition Height="50" />
-                                <RowDefinition Height="50" />
-                            </Grid.RowDefinitions>
-
-                            <!-- Background -->
-                            <Grid Grid.Column="0" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  CornerRadius="5,0,0,0" Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="1" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="2" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="3" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="4" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="5" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="6" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  CornerRadius="0,5,0,0" Canvas.ZIndex="-1" />
-
-                            <!-- Background -->
-                            <Grid Grid.Column="0" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="1" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="2" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="3" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="4" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="5" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="6" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-
-
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Tracker:"
-                                       Margin="0,0,20,0" Grid.Column="1" Grid.Row="0" />
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="On/Off:"
-                                       Margin="0,0,20,0" Grid.Column="3" Grid.Row="0" />
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Enabled on startup:"
-                                       Margin="0,0,20,0" Grid.Column="5" Grid.Row="0" />
-
-
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Waist"
-                                       Margin="0,0,20,0" Grid.Column="1" Grid.Row="1" />
-
-                            <ToggleSwitch IsOn="True" x:Name="WaistEnabledToggle"
-                                          Toggled="WaistEnabledToggle_Toggled"
-                                          ToolTipService.ToolTip="Turning off will make waist tracker&#x0a;appear as disconnected in SteamVR."
-                                          Grid.Column="3" Grid.Row="1" Margin="52,0,0,0"
-                                          IsEnabled="{Binding ElementName=WaistOnToggle, 
-									Path=IsChecked,TargetNullValue=False}"
-                                          OnContent="" OffContent="" HorizontalAlignment="Left" />
-
-                            <CheckBox IsChecked="True" x:Name="WaistOnToggle"
-                                      Checked="WaistOnToggle_Checked"
-                                      Unchecked="WaistOnToggle_Unchecked"
+                        <ToggleSwitch IsOn="True" x:Name="WaistTrackerEnabledToggle"
+                                      Toggled="WaistTrackerEnabledToggle_Toggled"
                                       ToolTipService.ToolTip="Disabling will stop waist tracker&#x0a;from spawning on app startup."
-                                      Grid.Column="5" Grid.Row="1" Margin="62,0,0,0"
-                                      HorizontalAlignment="Left" />
+                                      Grid.Column="1" Margin="0,0,-125,0"
+                                      OnContent="" OffContent=""
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Right" />
+                    </Grid>
 
+                    <Expander Margin="0,10,0,0" IsExpanded="True" x:Name="WaistDropDown"
+                              Expanding="WaistDropDown_Expanding"
+                              ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Left Foot"
-                                       Margin="0,0,20,0" Grid.Column="1" Grid.Row="2" />
+                        <Expander.Content>
+                            <Grid Padding="0,-5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="5*" />
+                                </Grid.ColumnDefinitions>
 
-                            <ToggleSwitch IsOn="True" x:Name="LeftFootEnabledToggle"
-                                          Toggled="LeftFootEnabledToggle_Toggled"
-                                          ToolTipService.ToolTip="Turning off will make left foot tracker&#x0a;appear as disconnected in SteamVR."
-                                          Grid.Column="3" Grid.Row="2" Margin="52,0,0,0"
-                                          IsEnabled="{Binding ElementName=LeftFootOnToggle, 
-									Path=IsChecked,TargetNullValue=False}"
-                                          OnContent="" OffContent="" HorizontalAlignment="Left" />
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="80" />
+                                    <RowDefinition Height="80" />
+                                </Grid.RowDefinitions>
 
-                            <CheckBox IsChecked="True" x:Name="LeftFootOnToggle"
-                                      Checked="LeftFootOnToggle_Checked"
-                                      Unchecked="LeftFootOnToggle_Unchecked"
-                                      ToolTipService.ToolTip="Disabling will stop left foot tracker&#x0a;from spawning on app startup."
-                                      Grid.Column="5" Grid.Row="2" Margin="62,0,0,0"
-                                      HorizontalAlignment="Left" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Position Tracking Filter:"
+                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
 
+                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                          x:Name="WaistPositionFilterOptionBox"
+                                          SelectionChanged="WaistPositionFilterOptionBox_SelectionChanged"
+                                          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                                    <x:String>Linear Interpolation</x:String>
+                                    <x:String>Low Pass Filter</x:String>
+                                    <x:String>Extended Kalman Filter</x:String>
+                                    <x:String>Disable Filter</x:String>
+                                </ComboBox>
 
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Right Foot"
-                                       Margin="0,0,20,0" Grid.Column="1" Grid.Row="3" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Rotation Tracking:"
+                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
 
-                            <ToggleSwitch IsOn="True" x:Name="RightFootEnabledToggle"
-                                          Toggled="RightFootEnabledToggle_Toggled"
-                                          ToolTipService.ToolTip="Turning off will make right foot tracker&#x0a;appear as disconnected in SteamVR."
-                                          Grid.Column="3" Grid.Row="3" Margin="52,0,0,0"
-                                          IsEnabled="{Binding ElementName=RightFootOnToggle, 
-									Path=IsChecked,TargetNullValue=False}"
-                                          OnContent="" OffContent="" HorizontalAlignment="Left" />
+                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                          x:Name="WaistRotationFilterOptionBox"
+                                          SelectionChanged="WaistRotationFilterOptionBox_SelectionChanged"
+                                          Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+                                    <x:String>Device-inferred Rotation</x:String>
+                                    <x:String>Follow Headset</x:String>
+                                    <x:String>Disable Rotation</x:String>
+                                </ComboBox>
 
-                            <CheckBox IsChecked="True" x:Name="RightFootOnToggle"
-                                      Checked="RightFootOnToggle_Checked"
-                                      Unchecked="RightFootOnToggle_Unchecked"
-                                      ToolTipService.ToolTip="Disabling will stop right foot tracker&#x0a;from spawning on app startup."
-                                      Grid.Column="5" Grid.Row="3" Margin="62,0,0,0"
-                                      HorizontalAlignment="Left" />
+                            </Grid>
+                        </Expander.Content>
+                    </Expander>
+                </Grid>
 
-                        </Grid>
-                    </Expander.Content>
-                </Expander>
+                <Grid>
+                    <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="ExpTrackersDropDown"
-                          Expanding="ExpTrackersDropDown_Expanding"
-                          ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <TextBlock FontWeight="SemiBold" Text="Feet Trackers" FontSize="14" Margin="0,-3,0,0"
+                                   Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
-                    <Expander.Header>
-                        <TextBlock FontWeight="SemiBold" Text="Elbow and Knee Trackers" />
-                    </Expander.Header>
+                        <ToggleSwitch IsOn="True" x:Name="FeetTrackersEnabledToggle"
+                                      Toggled="FeetTrackersEnabledToggle_Toggled"
+                                      ToolTipService.ToolTip="Disabling will stop feet trackers&#x0a;from spawning on app startup."
+                                      Grid.Column="1" Margin="0,0,-125,0"
+                                      OnContent="" OffContent=""
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Right" />
+                    </Grid>
 
-                    <Expander.Content>
-                        <Grid Margin="0,0,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="3*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="3*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="3.3*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+                    <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="FeetDropDown"
+                              Expanding="FeetDropDown_Expanding"
+                              ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="50" />
-                                <RowDefinition Height="50" />
-                                <RowDefinition Height="50" />
-                                <RowDefinition Height="50" />
-                                <RowDefinition Height="50" />
-                            </Grid.RowDefinitions>
+                        <Expander.Content>
+                            <Grid Padding="0,-5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="5*" />
+                                </Grid.ColumnDefinitions>
 
-                            <!-- Background -->
-                            <Grid Grid.Column="0" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  CornerRadius="5,0,0,0" Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="1" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="2" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="3" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="4" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="5" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="6" Grid.Row="0"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  CornerRadius="0,5,0,0" Canvas.ZIndex="-1" />
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="80" />
+                                    <RowDefinition Height="80" />
+                                </Grid.RowDefinitions>
 
-                            <!-- Background -->
-                            <Grid Grid.Column="0" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="1" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="2" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="3" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="4" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="5" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="6" Grid.Row="2"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Position Tracking Filter:"
+                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
 
-                            <!-- Background -->
-                            <Grid Grid.Column="0" Grid.Row="4"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="1" Grid.Row="4"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="2" Grid.Row="4"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="3" Grid.Row="4"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="4" Grid.Row="4"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="5" Grid.Row="4"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
-                            <Grid Grid.Column="6" Grid.Row="4"
-                                  Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                  Canvas.ZIndex="-1" />
+                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                          x:Name="FeetPositionFilterOptionBox"
+                                          SelectionChanged="FeetPositionFilterOptionBox_SelectionChanged"
+                                          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                                    <x:String>Linear Interpolation</x:String>
+                                    <x:String>Low Pass Filter</x:String>
+                                    <x:String>Extended Kalman Filter</x:String>
+                                    <x:String>Disable Filter</x:String>
+                                </ComboBox>
 
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Rotation Tracking:"
+                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
 
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Tracker:"
-                                       Margin="0,0,20,0" Grid.Column="1" Grid.Row="0" />
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="On/Off:"
-                                       Margin="0,0,20,0" Grid.Column="3" Grid.Row="0" />
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Enabled on startup:"
-                                       Margin="0,0,20,0" Grid.Column="5" Grid.Row="0" />
+                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                          x:Name="FeetRotationFilterOptionBox"
+                                          SelectionChanged="FeetRotationFilterOptionBox_SelectionChanged"
+                                          Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+                                    <ComboBoxItem>Device-inferred Rotation</ComboBoxItem>
+                                    <ComboBoxItem x:Name="SoftwareRotationItem" IsEnabled="True">Software-calculated Rotation</ComboBoxItem>
+                                    <ComboBoxItem>Follow Headset</ComboBoxItem>
+                                    <ComboBoxItem>Disable Rotation</ComboBoxItem>
+                                </ComboBox>
+                            </Grid>
+                        </Expander.Content>
+                    </Expander>
 
+                </Grid>
 
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Left Elbow"
-                                       Margin="0,0,20,0" Grid.Column="1" Grid.Row="1" />
+                <Rectangle HorizontalAlignment="Stretch" Height="1" Margin="0,10,0,0"
+                           Stroke="#3b3b3b" Fill="#3b3b3b" />
 
-                            <ToggleSwitch IsOn="True" x:Name="LeftElbowEnabledToggle"
-                                          Toggled="LeftElbowEnabledToggle_Toggled"
-                                          ToolTipService.ToolTip="Turning off will make left elbow tracker&#x0a;appear as disconnected in SteamVR."
-                                          Grid.Column="3" Grid.Row="1" Margin="52,0,0,0"
-                                          IsEnabled="{Binding ElementName=LeftElbowOnToggle, 
-									Path=IsChecked,TargetNullValue=False}"
-                                          OnContent="" OffContent="" HorizontalAlignment="Left" />
+                <Grid>
+                    <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                            <CheckBox IsChecked="True" x:Name="LeftElbowOnToggle"
-                                      Checked="LeftElbowOnToggle_Checked"
-                                      Unchecked="LeftElbowOnToggle_Unchecked"
-                                      ToolTipService.ToolTip="Disabling will stop left elbow tracker&#x0a;from spawning on app startup."
-                                      Grid.Column="5" Grid.Row="1" Margin="62,0,0,0"
-                                      HorizontalAlignment="Left" />
+                        <TextBlock FontWeight="SemiBold" Text="Elbow Trackers" FontSize="14" Margin="0,-3,0,0"
+                                   Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
+                        <ToggleSwitch IsOn="False" x:Name="ElbowTrackersEnabledToggle"
+                                      Toggled="ElbowTrackersEnabledToggle_Toggled"
+                                      ToolTipService.ToolTip="Disabling will stop elbow trackers&#x0a;from spawning on app startup."
+                                      Grid.Column="1" Margin="0,0,-125,0"
+                                      OnContent="" OffContent=""
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Right" />
+                    </Grid>
 
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Right Elbow"
-                                       Margin="0,0,20,0" Grid.Column="1" Grid.Row="2" />
+                    <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="ElbowsDropDown"
+                              Expanding="ElbowsDropDown_Expanding"
+                              ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
-                            <ToggleSwitch IsOn="True" x:Name="RightElbowEnabledToggle"
-                                          Toggled="RightElbowEnabledToggle_Toggled"
-                                          ToolTipService.ToolTip="Turning off will make right elbow tracker&#x0a;appear as disconnected in SteamVR."
-                                          Grid.Column="3" Grid.Row="2" Margin="52,0,0,0"
-                                          IsEnabled="{Binding ElementName=RightElbowOnToggle, 
-									Path=IsChecked,TargetNullValue=False}"
-                                          OnContent="" OffContent="" HorizontalAlignment="Left" />
+                        <Expander.Content>
+                            <Grid Padding="0,-5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="5*" />
+                                </Grid.ColumnDefinitions>
 
-                            <CheckBox IsChecked="True" x:Name="RightElbowOnToggle"
-                                      Checked="RightElbowOnToggle_Checked"
-                                      Unchecked="RightElbowOnToggle_Unchecked"
-                                      ToolTipService.ToolTip="Disabling will stop right elbow tracker&#x0a;from spawning on app startup."
-                                      Grid.Column="5" Grid.Row="2" Margin="62,0,0,0"
-                                      HorizontalAlignment="Left" />
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="80" />
+                                    <RowDefinition Height="80" />
+                                </Grid.RowDefinitions>
 
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Position Tracking Filter:"
+                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
 
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Left Knee"
-                                       Margin="0,0,20,0" Grid.Column="1" Grid.Row="3" />
+                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                          x:Name="ElbowsPositionFilterOptionBox"
+                                          SelectionChanged="ElbowsPositionFilterOptionBox_SelectionChanged"
+                                          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                                    <x:String>Linear Interpolation</x:String>
+                                    <x:String>Low Pass Filter</x:String>
+                                    <x:String>Extended Kalman Filter</x:String>
+                                    <x:String>Disable Filter</x:String>
+                                </ComboBox>
 
-                            <ToggleSwitch IsOn="True" x:Name="LeftKneeEnabledToggle"
-                                          Toggled="LeftKneeEnabledToggle_Toggled"
-                                          ToolTipService.ToolTip="Turning off will make left knee tracker&#x0a;appear as disconnected in SteamVR."
-                                          Grid.Column="3" Grid.Row="3" Margin="52,0,0,0"
-                                          IsEnabled="{Binding ElementName=LeftKneeOnToggle, 
-									Path=IsChecked,TargetNullValue=False}"
-                                          OnContent="" OffContent="" HorizontalAlignment="Left" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Rotation Tracking:"
+                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
 
-                            <CheckBox IsChecked="True" x:Name="LeftKneeOnToggle"
-                                      Checked="LeftKneeOnToggle_Checked"
-                                      Unchecked="LeftKneeOnToggle_Unchecked"
-                                      ToolTipService.ToolTip="Disabling will stop left knee tracker&#x0a;from spawning on app startup."
-                                      Grid.Column="5" Grid.Row="3" Margin="62,0,0,0"
-                                      HorizontalAlignment="Left" />
+                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                          x:Name="ElbowsRotationFilterOptionBox"
+                                          SelectionChanged="ElbowsRotationFilterOptionBox_SelectionChanged"
+                                          Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+                                    <x:String>Device-inferred Rotation</x:String>
+                                    <x:String>Follow Headset</x:String>
+                                    <x:String>Disable Rotation</x:String>
+                                </ComboBox>
 
+                            </Grid>
+                        </Expander.Content>
+                    </Expander>
+                </Grid>
 
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="Right Knee"
-                                       Margin="0,0,20,0" Grid.Column="1" Grid.Row="4" />
+                <Grid>
+                    <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                            <ToggleSwitch IsOn="True" x:Name="RightKneeEnabledToggle"
-                                          Toggled="RightKneeEnabledToggle_Toggled"
-                                          ToolTipService.ToolTip="Turning off will make right knee tracker&#x0a;appear as disconnected in SteamVR."
-                                          Grid.Column="3" Grid.Row="4" Margin="52,0,0,0"
-                                          IsEnabled="{Binding ElementName=RightKneeOnToggle, 
-									Path=IsChecked,TargetNullValue=False}"
-                                          OnContent="" OffContent="" HorizontalAlignment="Left" />
+                        <TextBlock FontWeight="SemiBold" Text="Knee Trackers" FontSize="14" Margin="0,-3,0,0"
+                                   Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
-                            <CheckBox IsChecked="True" x:Name="RightKneeOnToggle"
-                                      Checked="RightKneeOnToggle_Checked"
-                                      Unchecked="RightKneeOnToggle_Unchecked"
-                                      ToolTipService.ToolTip="Disabling will stop right knee tracker&#x0a;from spawning on app startup."
-                                      Grid.Column="5" Grid.Row="4" Margin="62,0,0,0"
-                                      HorizontalAlignment="Left" />
+                        <ToggleSwitch IsOn="False" x:Name="KneeTrackersEnabledToggle"
+                                      Toggled="KneeTrackersEnabledToggle_Toggled"
+                                      ToolTipService.ToolTip="Disabling will stop knee trackers&#x0a;from spawning on app startup."
+                                      Grid.Column="1" Margin="0,0,-125,0"
+                                      OnContent="" OffContent=""
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Right" />
+                    </Grid>
 
-                        </Grid>
-                    </Expander.Content>
-                </Expander>
+                    <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="KneesDropDown"
+                              Expanding="KneesDropDown_Expanding"
+                              ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+
+                        <Expander.Content>
+                            <Grid Padding="0,-5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="5*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="80" />
+                                    <RowDefinition Height="80" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Position Tracking Filter:"
+                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
+
+                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                          x:Name="KneePositionFilterOptionBox"
+                                          SelectionChanged="KneePositionFilterOptionBox_SelectionChanged"
+                                          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                                    <x:String>Linear Interpolation</x:String>
+                                    <x:String>Low Pass Filter</x:String>
+                                    <x:String>Extended Kalman Filter</x:String>
+                                    <x:String>Disable Filter</x:String>
+                                </ComboBox>
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Rotation Tracking:"
+                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
+
+                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                          x:Name="KneeRotationFilterOptionBox"
+                                          SelectionChanged="KneeRotationFilterOptionBox_SelectionChanged"
+                                          Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+                                    <x:String>Device-inferred Rotation</x:String>
+                                    <x:String>Follow Headset</x:String>
+                                    <x:String>Disable Rotation</x:String>
+                                </ComboBox>
+
+                            </Grid>
+                        </Expander.Content>
+                    </Expander>
+                </Grid>
 
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
