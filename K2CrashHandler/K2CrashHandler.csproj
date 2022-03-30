@@ -17,6 +17,10 @@
     <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
     <Copyright>(c) KinectToVR</Copyright>
     <BaseOutputPath>$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\</BaseOutputPath>
+    <FileVersion>1.0.1.2</FileVersion>
+    <AssemblyVersion>1.0.1.2</AssemblyVersion>
+    <RepositoryUrl>https://github.com/KinectToVR/K2App</RepositoryUrl>
+    <Version>1.0.1.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

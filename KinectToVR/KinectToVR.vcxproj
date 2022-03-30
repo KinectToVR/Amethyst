@@ -127,8 +127,8 @@ xcopy /y /d "$(SolutionDir)external\openvr\bin\win64\openvr_api.dll" "$(OutDir)"
 xcopy /y /d /s /i "$(SolutionDir)external\app_resources\*" "$(OutDir)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">del "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\MddBootstrapAutoInitializer.cpp"
-xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.0\include\"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">del "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.1\include\MddBootstrapAutoInitializer.cpp"
+xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(SolutionDir)packages\Microsoft.WindowsAppSDK.1.0.1\include\"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

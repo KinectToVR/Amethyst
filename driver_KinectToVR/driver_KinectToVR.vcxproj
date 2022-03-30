@@ -18,11 +18,15 @@
   <ItemGroup>
     <ClInclude Include="K2ServerDriver.h" />
     <ClInclude Include="K2Tracker.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KinectToVR_API\KinectToVR_API.vcxproj">
       <Project>{3fb99a4e-d168-4efc-b909-ce2951543cf8}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
