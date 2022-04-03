@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -7,7 +7,7 @@
 #endif
 
 using namespace winrt;
-using namespace Microsoft::UI::Xaml;
+using namespace winrt::Microsoft::UI::Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,6 +44,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 		{
 			// Here check for updates (via external bool)
 			IconRotation().Begin();
+
 			// Capture the calling context.
 			apartment_context ui_thread;
 			co_await resume_background();
@@ -54,53 +55,71 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 			// Check now
 			updateFound = false;
 
+			// Dummy for holding change logs
+			std::vector<std::string> changes_strings_vector;
+
+			// Check for deez updates
 			try
 			{
+				std::ostringstream release_version_os;
+
 				curlpp::options::Url myUrl(
-					std::string("https://github.com/KinectToVR/Amethyst-Releases/releases/latest"));
+					std::string("https://github.com/KinectToVR/Amethyst-Releases/releases/latest/download/version"));
 				curlpp::Easy myRequest;
 				myRequest.setOpt(myUrl);
 				myRequest.setOpt(cURLpp::Options::FollowLocation(true));
 
-				std::ostringstream os;
-				curlpp::options::WriteStream ws(&os);
+				curlpp::options::WriteStream ws(&release_version_os);
 				myRequest.setOpt(ws);
 				myRequest.perform();
 
-				os << myRequest;
-
 				// If the read string isn't empty, proceed to checking for updates
-				if (std::string read_buffer = os.str(); !read_buffer.empty())
+				if (std::string read_buffer = release_version_os.str(); !read_buffer.empty())
 				{
 					LOG(INFO) << "Update-check successful, string:\n" << read_buffer;
 
-					// Find the first KTVRX.X.X.X occurrence, most likey in the tag
-					std::string split = read_buffer.substr(read_buffer.find("tag/KTVR") + sizeof "tag/KTVR" - 1);
-					// And crop it to the first " character
-					K2RemoteVersion = split.substr(0, split.find("\""));
+					std::stringstream release_version_os_stream;
+					release_version_os_stream << read_buffer;
 
-					/* Now split the gathered string into the version number */
+					boost::property_tree::ptree root;
+					read_json(release_version_os_stream, root);
 
-					// Split version strings into integers
-					std::vector<std::string> local_version_num, remote_version_num;
-					boost::split(local_version_num, k2app::interfacing::K2InternalVersion, boost::is_any_of("."));
-					boost::split(remote_version_num, K2RemoteVersion, boost::is_any_of("."));
+					if (root.find("version_string") == root.not_found() ||
+						root.find("changes") == root.not_found())
+						LOG(ERROR) << "The latest release's manifest was invalid!";
 
-					// Compare to the current version
-					for (uint32_t i = 0; i < 4; i++)
+					else
 					{
-						// Check the version
-						if (const auto _ver = boost::lexical_cast<uint32_t>(remote_version_num.at(i));
-							_ver > boost::lexical_cast<uint32_t>(local_version_num.at(i)))
-							updateFound = true;
+						// Find the version tag (it's a string only to save time, trust me...)
+						K2RemoteVersion = root.get<std::string>("version_string");
 
-						// Not to false-alarm in situations like 1.0.1.5 (local) vs 1.0.1.0 (remote)
-						else if (_ver < boost::lexical_cast<uint32_t>(local_version_num.at(i))) break;
+						/* Now split the gathered string into the version number */
+
+						// Split version strings into integers
+						std::vector<std::string> local_version_num, remote_version_num;
+						boost::split(local_version_num, k2app::interfacing::K2InternalVersion, boost::is_any_of("."));
+						boost::split(remote_version_num, K2RemoteVersion, boost::is_any_of("."));
+
+						// Compare to the current version
+						for (uint32_t i = 0; i < 4; i++)
+						{
+							// Check the version
+							if (const auto _ver = boost::lexical_cast<uint32_t>(remote_version_num.at(i));
+								_ver > boost::lexical_cast<uint32_t>(local_version_num.at(i)))
+								updateFound = true;
+
+								// Not to false-alarm in situations like 1.0.1.5 (local) vs 1.0.1.0 (remote)
+							else if (_ver < boost::lexical_cast<uint32_t>(local_version_num.at(i))) break;
+						}
+
+						// Cache the changes
+						BOOST_FOREACH(boost::property_tree::ptree::value_type & v, root.get_child("changes"))
+							changes_strings_vector.push_back(v.second.get_value<std::string>());
+
+						// And maybe log it too
+						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
+						LOG(INFO) << "Local version number: " << k2app::interfacing::K2InternalVersion;
 					}
-
-					// And maybe log it too
-					LOG(INFO) << "Remote version number: " << K2RemoteVersion;
-					LOG(INFO) << "Local version number: " << k2app::interfacing::K2InternalVersion;
 				}
 				else
 					LOG(ERROR) << "Update failed, string was empty.";
@@ -123,7 +142,13 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 			{
 				FlyoutHeader().Text(L"New Update Available");
 				FlyoutFooter().Text(L"KinectToVR v" + wstring_cast(K2RemoteVersion));
-				FlyoutContent().Text(L"  You expected a changelog,\n  But it was me, DIO!");
+
+				std::string changelog_string;
+				for (auto const& str : changes_strings_vector)
+					changelog_string += "- " + str + '\n';
+
+				changelog_string.pop_back(); // Remove the last \n
+				FlyoutContent().Text(wstring_cast(changelog_string));
 
 				auto thickness = Thickness();
 				thickness.Left = 0;
