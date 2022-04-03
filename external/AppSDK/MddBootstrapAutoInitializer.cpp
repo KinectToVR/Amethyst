@@ -3,9 +3,9 @@
 
 #include <Windows.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <MddBootstrap.h>
 #include <WindowsAppSDK-VersionInfo.h>
-#include <intrin.h>
 
 namespace Microsoft::Windows::ApplicationModel::DynamicDependency::Bootstrap
 {
@@ -23,8 +23,10 @@ namespace Microsoft::Windows::ApplicationModel::DynamicDependency::Bootstrap
 
         static void Initialize()
         {
+            const UINT32 c_majorMinorVersion{ WINDOWSAPPSDK_RELEASE_MAJORMINOR };
+            PCWSTR c_versionTag{ WINDOWSAPPSDK_RELEASE_VERSION_TAG_W };
             const PACKAGE_VERSION c_minVersion{ WINDOWSAPPSDK_RUNTIME_VERSION_UINT64 };
-            const HRESULT hr{ ::MddBootstrapInitialize(WINDOWSAPPSDK_RELEASE_MAJORMINOR, WINDOWSAPPSDK_RELEASE_VERSION_TAG_W, c_minVersion) };
+            const HRESULT hr{ ::MddBootstrapInitialize(c_majorMinorVersion, c_versionTag, c_minVersion) };
             if (FAILED(hr))
             {
                 __fastfail(hr);
