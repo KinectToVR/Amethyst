@@ -5,7 +5,7 @@
 #endif
 
 using namespace winrt;
-using namespace Microsoft::UI::Xaml;
+using namespace winrt::Microsoft::UI::Xaml;
 using namespace ::k2app::shared::devices;
 
 // To learn more about WinUI, the WinUI project structure,
