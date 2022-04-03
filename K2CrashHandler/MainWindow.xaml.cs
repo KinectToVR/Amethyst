@@ -12,11 +12,18 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Xml;
 using Windows.ApplicationModel.Core;
+using Windows.Data.Xml.Dom;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics;
+using Windows.UI.Notifications;
 using Windows.UI.ViewManagement;
 using K2CrashHandler.Helpers;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.Windows.ApplicationModel.DynamicDependency;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -144,7 +151,7 @@ namespace K2CrashHandler
 
             // Prepare window size consts
             const int width = 400,
-                height = 300;
+                height = 295;
 
             // Set window title, drag-space and size
             this.Title = launcherMode
@@ -152,10 +159,34 @@ namespace K2CrashHandler
                     ? "KinectToVR Already Running!"
                     : "KinectToVR Crash Handler")
                 : "KinectToVR Recovery";
-            this.ExtendsContentIntoTitleBar = true;
-            this.SetTitleBar(DragElement);
+
+            //this.ExtendsContentIntoTitleBar = true;
+            //this.SetTitleBar(DragElement);
             this.SetWindowSize(WinRT.Interop.WindowNative
                 .GetWindowHandle(this), width, height);
+
+            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(
+                Microsoft.UI.Win32Interop.GetWindowIdFromWindow(
+                    WinRT.Interop.WindowNative.GetWindowHandle(this)));
+
+            if (AppWindowTitleBar.IsCustomizationSupported())
+            {
+                // Chad Windows 11
+
+                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                appWindow.TitleBar.SetDragRectangles(new RectInt32[]
+                {
+                    new RectInt32(0, 0, 10000000, 30)
+                });
+
+                appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+                appWindow.TitleBar.ButtonHoverBackgroundColor =
+                    appWindow.TitleBar.ButtonPressedBackgroundColor;
+            }
+            else
+                // Poor ass Windows 10
+                this.ExtendsContentIntoTitleBar = true;
 
             // Center the window on the screen
             SetWindowPos(WinRT.Interop.WindowNative
