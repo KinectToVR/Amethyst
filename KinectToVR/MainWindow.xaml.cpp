@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -216,7 +216,7 @@ namespace winrt::KinectToVR::implementation
 		LOG(INFO) << "~~~KinectToVR new logging session begins here!~~~";
 
 		LOG(INFO) << "Registering a named mutex for com_kinecttovr_k2app_amethyst...";
-		
+
 		hNamedMutex = CreateMutexA(NULL, TRUE, "com_kinecttovr_k2app_amethyst");
 		if (ERROR_ALREADY_EXISTS == GetLastError())
 		{
@@ -225,11 +225,12 @@ namespace winrt::KinectToVR::implementation
 			if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
 			{
 				std::thread([]
-					{
-						ShellExecuteA(NULL, "open",
-							(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
-							.string().c_str(), "already_running", NULL, SW_SHOWDEFAULT);
-					}).detach();
+				{
+					ShellExecuteA(NULL, "open",
+					              (boost::dll::program_location().parent_path() / "K2CrashHandler" /
+						              "K2CrashHandler.exe ")
+					              .string().c_str(), "already_running", NULL, SW_SHOWDEFAULT);
+				}).detach();
 			}
 			else
 				LOG(WARNING) << "Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!";
@@ -425,6 +426,31 @@ namespace winrt::KinectToVR::implementation
 
 													blocks_flip = true; // Always the same for JointsBasis
 													supports_math = false; // Always the same for JointsBasis
+												}
+											}
+											else if (strcmp(device_type.c_str(), "Spectator") == 0)
+											{
+												auto pDevice =
+													static_cast<ktvr::K2TrackingDeviceBase_Spectator*>(
+														(hDeviceFactory)(ktvr::IK2API_Version, &returnCode));
+
+												if (returnCode == ktvr::K2InitError_None)
+												{
+													LOG(INFO) << "Interface version OK, now constructing...";
+
+													// Push helper functions to the device
+													pDevice->getHMDPosition =
+														k2app::interfacing::plugins::plugins_getHMDPosition;
+													pDevice->getHMDOrientation =
+														k2app::interfacing::plugins::plugins_getHMDOrientation;
+													pDevice->getHMDOrientationYaw =
+														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
+
+													pDevice->getAppJointPoses =
+														k2app::interfacing::plugins::plugins_getAppJointPoses;
+
+													LOG(INFO) << "A Spectator device's been added successfully!";
+													continue; // Don't do any more jobs
 												}
 											}
 
