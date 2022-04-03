@@ -39,6 +39,8 @@ namespace k2app
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Window> thisAppWindow;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Dispatching::DispatcherQueue> thisDispatcherQueue;
+
+			inline std::shared_ptr<winrt::Microsoft::Windows::AppNotifications::AppNotificationManager> thisNotificationManager;
 		}
 
 		namespace general

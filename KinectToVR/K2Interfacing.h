@@ -32,33 +32,23 @@ namespace k2app
 
 		inline void ShowToast(std::string const& header, std::string const& text)
 		{
-			// Unsupported in AppSDK 1.0
+			if (header.empty() || text.empty())return;
 
-			//using namespace winrt::Windows::UI::Notifications;
-			//using namespace winrt::Windows::Data::Xml::Dom;
+			winrt::hstring payload =
+				wstring_cast(R"(<toast>
+						<visual>
+							<binding template = "ToastGeneric">
+								<text>)" + header + R"(</text>"
+								<text>)" + text + R"(</text>
+							</binding>
+						</visual>
+					</toast>)").c_str();
 
-			//// Construct the XML toast template
-			//XmlDocument document;
-			//document.LoadXml(L"\
-			//	<toast>\
-			//		<visual>\
-			//	        <binding template=\"ToastGeneric\">\
-			//	            <text></text>\
-			//	            <text></text>\
-			//	        </binding>\
-			//	    </visual>\
-			//	</toast>");
+			winrt::Microsoft::Windows::AppNotifications::AppNotification toast(payload);
+			toast.Tag(L"Tag_AmeNotifications");
+			toast.Group(L"Group_AmeNotifications");
 
-			//// Populate with text and values
-			//document.SelectSingleNode(L"//text[1]").InnerText(wstring_cast(header));
-			//document.SelectSingleNode(L"//text[2]").InnerText(wstring_cast(text));
-
-			//// Construct the notification
-			//ToastNotification notification{ document };
-			//ToastNotifier toastNotifier{ ToastNotificationManager::CreateToastNotifier() };
-
-			//// And show it!
-			//toastNotifier.Show(notification);
+			shared::main::thisNotificationManager.get()->Show(toast);
 		}
 
 		// Input actions' handler

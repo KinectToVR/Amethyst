@@ -6,7 +6,7 @@
 #endif
 
 using namespace winrt;
-using namespace Microsoft::UI::Xaml;
+using namespace winrt::Microsoft::UI::Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -122,9 +122,12 @@ void trackersConfigChanged()
 		                              "Restart SteamVR for changes to take effect");
 
 	// If all trackers were turned off then SCREAM
-	// TODO
-	//	k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
-	//	                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU THAT YOU DID THIS YOU STUPID BITCH");*/
+	if (std::ranges::all_of(
+		k2app::K2Settings.isJointPairEnabled,
+		[](bool const& i) { return !i; }
+	))
+		k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
+		                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
 
 	// Compare with saved settings and unlock the restart
 	k2app::shared::settings::restartButton.get()->IsEnabled(true);
@@ -486,7 +489,7 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistDropDown_Expanding(
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 	trackersConfig_UpdateIsEnabled();
-	
+
 	// Close all others if valid
 	if (k2app::K2Settings.isJointPairEnabled[0])
 	{

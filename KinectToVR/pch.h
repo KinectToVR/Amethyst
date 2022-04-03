@@ -16,10 +16,16 @@
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.ApplicationModel.Core.h>
 #include <winrt/Windows.ApplicationModel.Activation.h>
+#include <winrt/Windows.ApplicationModel.Background.h>
 #include <winrt/Windows.UI.Xaml.Navigation.h>
 #include <winrt/Windows.UI.ViewManagement.h>
 #include <winrt/Windows.UI.Notifications.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
+
+#include <winrt/Microsoft.Windows.AppLifecycle.h>
+#include <winrt/Microsoft.Windows.PushNotifications.h>
+#include <winrt/Microsoft.Windows.AppNotifications.h>
+
 #include <winrt/Microsoft.UI.Composition.h>
 #include <winrt/Microsoft.UI.Xaml.h>
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
@@ -34,7 +40,11 @@
 #include <winrt/Microsoft.UI.Xaml.Shapes.h>
 #include <winrt/Microsoft.UI.Xaml.Input.h>
 #include <winrt/Microsoft.UI.Dispatching.h>
+#include <winrt/Microsoft.UI.Windowing.h>
+#include <winrt/Microsoft.UI.Interop.h>
+#include <winrt/Windows.Data.Xml.Dom.h>
 #include <wil/cppwinrt_helpers.h>
+#include <wil/win32_helpers.h>
 
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.System.Threading.h>
@@ -43,8 +53,12 @@
 #include "winrt/Windows.UI.Xaml.Media.Animation.h"
 #include "winrt/Microsoft.UI.Xaml.Controls.h"
 #include "winrt/Microsoft.UI.Xaml.XamlTypeInfo.h"
-#include <winrt/Windows.UI.Core.h>
+#include "winrt/Windows.UI.Core.h"
 #include "winrt/Windows.UI.Input.h"
+
+#include <wil/result.h>
+#include <wil/cppwinrt.h>
+#include <wil/resource.h>
 
 #include <Microsoft.UI.Xaml.Window.h>
 

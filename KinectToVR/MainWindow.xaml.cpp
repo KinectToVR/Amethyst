@@ -193,13 +193,49 @@ namespace winrt::KinectToVR::implementation
 		// Set up
 		this->Title(L"KinectToVR");
 
-		this->ExtendsContentIntoTitleBar(true);
-		this->SetTitleBar(DragElement());
+		LOG(INFO) << "Extending the window titlebar...";
+
+		auto windowNative{this->try_as<::IWindowNative>()};
+		winrt::check_bool(windowNative);
+		HWND hWnd{0};
+		windowNative->get_WindowHandle(&hWnd);
+
+		auto app_window = winrt::Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
+			winrt::Microsoft::UI::GetWindowIdFromWindow(hWnd));
+
+		if (app_window.TitleBar().IsCustomizationSupported())
+		{
+			LOG(INFO) << "Good news! You're running Win11-Supported build and your titlebar will be more chad";
+
+			app_window.TitleBar().ExtendsContentIntoTitleBar(true);
+
+			app_window.TitleBar().SetDragRectangles(
+				{
+					// Don't care about resizing, it's gonna be BIG
+					Windows::Graphics::RectInt32{0, 0, 1000000000, 20}
+				});
+
+			app_window.TitleBar().BackgroundColor(Windows::UI::Colors::Transparent());
+			app_window.TitleBar().ButtonBackgroundColor(Windows::UI::Colors::Transparent());
+			app_window.TitleBar().ButtonInactiveBackgroundColor(Windows::UI::Colors::Transparent());
+		}
+		else
+			this->ExtendsContentIntoTitleBar(true);
 
 		LOG(INFO) << "Making the app window available for children views...";
 		k2app::shared::main::thisAppWindow = std::make_shared<Window>(this->try_as<Window>());
-		k2app::shared::main::thisDispatcherQueue = std::make_shared<winrt::Microsoft::UI::Dispatching::DispatcherQueue>(
-			DispatcherQueue());
+
+		LOG(INFO) << "Making the app dispatcher available for children...";
+		k2app::shared::main::thisDispatcherQueue =
+			std::make_shared<winrt::Microsoft::UI::Dispatching::DispatcherQueue>(DispatcherQueue());
+
+		LOG(INFO) << "Creating the default notification manager (may fail on WinAppSDK <1.1)...";
+		k2app::shared::main::thisNotificationManager =
+			std::make_shared<winrt::Microsoft::Windows::AppNotifications::AppNotificationManager>(
+				winrt::Microsoft::Windows::AppNotifications::AppNotificationManager::Default());
+
+		LOG(INFO) << "Registering the notification manager (may fail on WinAppSDK <1.1)...";
+		k2app::shared::main::thisNotificationManager.get()->Register();
 
 		LOG(INFO) << "Pushing control pages to window...";
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
