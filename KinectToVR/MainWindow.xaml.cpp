@@ -158,7 +158,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 		}
 
 		Controls::Primitives::FlyoutShowOptions options;
-		options.Placement(Controls::Primitives::FlyoutPlacementMode::Bottom);
+		options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
 		options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
 		if (updateFound || show)
@@ -999,17 +999,18 @@ void KinectToVR::implementation::MainWindow::MinimizeButton_Click(
 }
 
 
-Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::UpdateButton_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	// Check for updates (and show)
-	co_await checkUpdates(sender.as<UIElement>(), true);
-}
-
-
 Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::UpdateButton_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Check for updates (and show)
 	co_await checkUpdates(sender.as<UIElement>(), false, 2000);
+}
+
+
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::UpdateButton_Tapped(
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+{
+	// Check for updates (and show)
+	co_await checkUpdates(sender.as<UIElement>(), true);
 }

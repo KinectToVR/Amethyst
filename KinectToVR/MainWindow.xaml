@@ -75,28 +75,11 @@
                 </muxc:NavigationViewItem>
             </muxc:NavigationView.MenuItems>
 
-            <Frame x:Name="ContentFrame" NavigationFailed="ContentFrame_NavigationFailed" />
-        </muxc:NavigationView>
+            <muxc:NavigationView.PaneFooter>
+                <muxc:NavigationViewItem x:Name="UpdateButton" 
+                                         Tapped="UpdateButton_Tapped"
+                                         Loaded="UpdateButton_Loaded">
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
-                    VerticalAlignment="Top" Canvas.ZIndex="1" Margin="20">
-            <Grid Height="35" Width="35" Margin="0,0,10,0">
-                <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" FontSize="15" IsHitTestVisible="False"
-                          Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5">
-                    <FontIcon.RenderTransform>
-                        <CompositeTransform />
-                    </FontIcon.RenderTransform>
-                </FontIcon>
-                <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="15" IsHitTestVisible="False"
-                          HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                          Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed" Margin="0,0,7,7">
-                    <FontIcon.RenderTransform>
-                        <CompositeTransform />
-                    </FontIcon.RenderTransform>
-                </FontIcon>
-                <Button Height="35" Width="35" x:Name="UpdateButton" Click="UpdateButton_Click"
-                        Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                        Loaded="UpdateButton_Loaded">
                     <FlyoutBase.AttachedFlyout>
                         <Flyout x:Name="UpdateFlyout">
                             <StackPanel>
@@ -114,8 +97,35 @@
                             </StackPanel>
                         </Flyout>
                     </FlyoutBase.AttachedFlyout>
-                </Button>
-            </Grid>
+
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" 
+                                  Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5">
+                            <FontIcon.RenderTransform>
+                                <CompositeTransform />
+                            </FontIcon.RenderTransform>
+                        </FontIcon>
+                    </muxc:NavigationViewItem.Icon>
+
+                    <Grid>
+                        <TextBlock Text="Updates" FontSize="16" FontWeight="SemiBold"/>
+
+                        <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="15" IsHitTestVisible="False"
+                                  HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                                  RenderTransformOrigin="0.5,0.5" Visibility="Collapsed" Margin="-34,0,0,1">
+                            <FontIcon.RenderTransform>
+                                <CompositeTransform />
+                            </FontIcon.RenderTransform>
+                        </FontIcon>
+                    </Grid>
+                </muxc:NavigationViewItem>
+            </muxc:NavigationView.PaneFooter>
+
+            <Frame x:Name="ContentFrame" NavigationFailed="ContentFrame_NavigationFailed" />
+        </muxc:NavigationView>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="Collapsed"
+                    VerticalAlignment="Top" Canvas.ZIndex="1" Margin="20">
             <Grid Height="35" Width="35" Margin="0,0,10,0">
                 <FontIcon Glyph="&#xE921;" FontSize="13" Canvas.ZIndex="1" IsHitTestVisible="False" />
                 <Button Height="35" Width="35" Click="MinimizeButton_Click"
