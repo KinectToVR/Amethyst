@@ -40,7 +40,7 @@
 namespace ktvr
 {
 	// Interace Version
-	static const char* IK2API_Version = "IK2API_Version_005";
+	static const char* IK2API_Version = "IK2API_Version_006";
 
 	// OpenVR Tracker types
 	enum class ITrackerType

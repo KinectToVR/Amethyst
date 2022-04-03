@@ -18,7 +18,7 @@
 namespace ktvr
 {
 	// Interace Version
-	static const char* IK2API_Devices_Version = "IK2API_Version_005";
+	static const char* IK2API_Devices_Version = "IK2API_Version_006";
 
 	// Return messaging types
 	enum K2InitErrorType
@@ -383,5 +383,27 @@ namespace ktvr
 				return "Failure to initialize the Tracking Device. Is it set up properly?";
 			}
 		} FailedJointsInitialization;
+	};
+
+	// Tracking Device class for client plugins to base on [Pull-Only]
+	class K2TrackingDeviceBase_Spectator
+	{
+	public:
+		virtual ~K2TrackingDeviceBase_Spectator()
+		{
+		}
+		
+		/* Helper functions which may be internally called by the device plugin */
+		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
+		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
+		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
+
+		/*
+		 * Helper to get all joints' positions from the app,
+		 * which are sent to the openvr server driver.
+		 * Note: if joint's unused, its trackingState will be 0
+		 * Note: Waist,LFoot,RFoot,LElbow,RElbow,LKnee,RKnee
+		 */
+		std::array<K2TrackedJoint, 7> (*getAppJointPoses)();
 	};
 }
