@@ -141,7 +141,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 			if (updateFound)
 			{
 				FlyoutHeader().Text(L"New Update Available");
-				FlyoutFooter().Text(L"KinectToVR v" + wstring_cast(K2RemoteVersion));
+				FlyoutFooter().Text(L"Amethyst v" + wstring_cast(K2RemoteVersion) + L" (K2App)");
 
 				std::string changelog_string;
 				for (auto const& str : changes_strings_vector)
@@ -165,8 +165,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 			else
 			{
 				FlyoutHeader().Text(L"You're Up To Date");
-				FlyoutFooter().Text(L"KinectToVR v" + wstring_cast(k2app::interfacing::K2InternalVersion));
-				FlyoutContent().Text(L"Please tell us if you have any ideas\nfor the next KinectToVR update.");
+				FlyoutFooter().Text(L"Amethyst v" + wstring_cast(k2app::interfacing::K2InternalVersion));
+				FlyoutContent().Text(L"Please tell us if you have any ideas\nfor the next Amethyst update.");
 
 				auto thickness = Thickness();
 				thickness.Left = 0;
@@ -216,7 +216,7 @@ namespace winrt::KinectToVR::implementation
 		k2app::shared::main::consoleItem = std::make_shared<Controls::NavigationViewItem>(ConsoleItem());
 
 		// Set up
-		this->Title(L"KinectToVR");
+		this->Title(L"Amethyst (K2App) [EXPERIMENTAL]");
 
 		LOG(INFO) << "Extending the window titlebar...";
 
