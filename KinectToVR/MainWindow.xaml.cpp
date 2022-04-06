@@ -24,6 +24,9 @@ bool updateFound = false,
 std::string K2RemoteVersion =
 	k2app::interfacing::K2InternalVersion;
 
+// Exit handler
+void h_exit(void);
+
 // Updates checking function
 Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkUpdates(
 	const UIElement& show_el, const bool show, const DWORD delay_ms)
@@ -299,6 +302,10 @@ namespace winrt::KinectToVR::implementation
 			Sleep(3000);
 			exit(0); // Exit peacefully
 		}
+
+		// Priority: Register the app exit handler
+		LOG(INFO) << "Registering an atexit handler for the app...";
+		atexit(h_exit);
 
 		// Priority: Launch the crash handler
 		LOG(INFO) << "Starting the crash handler passing the app PID...";
@@ -941,61 +948,7 @@ void KinectToVR::implementation::MainWindow::InstallNowButton_Click(
 void KinectToVR::implementation::MainWindow::ExitButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	// Mark trackers as inactive
-	k2app::interfacing::K2AppTrackersInitialized = false;
-
-	// Disconnect all tracking devices and don't care about any errors
-	[&, this]
-	{
-		try
-		{
-			for (auto& trackingDevice : TrackingDevices::TrackingDevicesVector)
-			{
-				LOG(INFO) << "Now disconnecting the tracking device...";
-
-				if (trackingDevice.index() == 0)
-				{
-					// Kinect Basis
-					auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
-					device->shutdown();
-				}
-				else if (trackingDevice.index() == 1)
-				{
-					// Joints Basis
-					auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
-					device->shutdown();
-				}
-			}
-		}
-		catch (...)
-		{
-		}
-	}();
-
-	// Close the multi-process mutex
-	[&, this]
-	{
-		__try
-		{
-			ReleaseMutex(hNamedMutex); // Explicitly release mutex
-			CloseHandle(hNamedMutex); // Close handle before terminating
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER)
-		{
-			[&, this]
-			{
-				LOG(INFO) <<
-					"Shutting down: com_kinecttovr_k2app_amethyst named mutex close failed! The app may misbehave.";
-			}();
-		}
-	}();
-
-	// Wait a moment
-	Sleep(500);
-
-	// Save and Exit with 0
-	//exit(0);
-	Application::Current().Exit();
+	h_exit();
 }
 
 
@@ -1038,4 +991,60 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow:
 {
 	// Check for updates (and show)
 	co_await checkUpdates(sender.as<UIElement>(), true);
+}
+
+
+void h_exit()
+{
+	// Mark trackers as inactive
+	k2app::interfacing::K2AppTrackersInitialized = false;
+
+	// Disconnect all tracking devices and don't care about any errors
+	[&]
+	{
+		try
+		{
+			for (auto& trackingDevice : TrackingDevices::TrackingDevicesVector)
+			{
+				LOG(INFO) << "Now disconnecting the tracking device...";
+
+				if (trackingDevice.index() == 0)
+				{
+					// Kinect Basis
+					auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+					device->shutdown();
+				}
+				else if (trackingDevice.index() == 1)
+				{
+					// Joints Basis
+					auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+					device->shutdown();
+				}
+			}
+		}
+		catch (...)
+		{
+		}
+	}();
+
+	// Close the multi-process mutex
+	[&]
+	{
+		__try
+		{
+			ReleaseMutex(hNamedMutex); // Explicitly release mutex
+			CloseHandle(hNamedMutex); // Close handle before terminating
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			[&]
+			{
+				LOG(INFO) <<
+					"Shutting down: com_kinecttovr_k2app_amethyst named mutex close failed! The app may misbehave.";
+			}();
+		}
+	}();
+
+	// Wait a moment
+	Sleep(1000);
 }
