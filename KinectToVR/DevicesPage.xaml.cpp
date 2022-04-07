@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "DevicesPage.xaml.h"
 #if __has_include("DevicesPage.g.cpp")
 #include "DevicesPage.g.cpp"
@@ -1345,6 +1345,9 @@ void winrt::KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 	// Deselect the device
 	k2app::K2Settings.overrideDeviceID = -1; // Only acceptable for an Override
 	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
+
+	// Also update in the UI
+	overrideDeviceName.get()->Text(L"No Overrides");
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
