@@ -11,11 +11,11 @@ namespace winrt::KinectToVR::implementation
 	{
 		DevicesPage();
 
-		void TrackingDeviceListView_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender,
+		Windows::Foundation::IAsyncAction TrackingDeviceListView_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender,
 		                                             winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
 		                                             const& e);
-		void SetAsOverrideButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void SetAsBaseButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		Windows::Foundation::IAsyncAction SetAsOverrideButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		Windows::Foundation::IAsyncAction SetAsBaseButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void DisconnectDeviceButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void DeselectDeviceButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void ReconnectDeviceButton_Click(winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args);

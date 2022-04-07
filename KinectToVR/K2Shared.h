@@ -151,7 +151,9 @@ namespace k2app
 				overridesControls,
 				overridesControls_1,
 				jointBasisControls,
-				jointBasisControls_1;
+				jointBasisControls_1,
+				devicesMainContentGridOuter,
+				devicesMainContentGridInner;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander>
 				jointBasisDropDown,
@@ -208,6 +210,14 @@ namespace k2app
 			inline std::binary_semaphore smphSignalCurrentUpdate{0},
 			                             smphSignalStartMain{0};
 			inline uint32_t selectedTrackingDeviceID = 0;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ScrollViewer> devicesMainContentScrollViewer;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel>
+				devicesOverridesSelectorStackPanelOuter,
+				devicesOverridesSelectorStackPanelInner,
+				devicesJointsBasisSelectorStackPanelOuter,
+				devicesJointsBasisSelectorStackPanelInner;
 		}
 
 		namespace settings

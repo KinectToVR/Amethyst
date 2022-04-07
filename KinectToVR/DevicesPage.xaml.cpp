@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "DevicesPage.xaml.h"
 #if __has_include("DevicesPage.g.cpp")
 #include "DevicesPage.g.cpp"
@@ -414,6 +414,8 @@ namespace winrt::KinectToVR::implementation
 		overridesControls_1 = std::make_shared<Controls::Grid>(OverridesControls_1());
 		jointBasisControls = std::make_shared<Controls::Grid>(JointBasisControls());
 		jointBasisControls_1 = std::make_shared<Controls::Grid>(JointBasisControls_1());
+		devicesMainContentGridOuter = std::make_shared<Controls::Grid>(DevicesMainContentGridOuter());
+		devicesMainContentGridInner = std::make_shared<Controls::Grid>(DevicesMainContentGridInner());
 
 		jointBasisDropDown = std::make_shared<Controls::Expander>(JointBasisDropDown());
 		jointBasisDropDown_1 = std::make_shared<Controls::Expander>(JointBasisDropDown_1());
@@ -470,6 +472,14 @@ namespace winrt::KinectToVR::implementation
 		overridesDropDown_1 = std::make_shared<Controls::Expander>(OverridesDropDown_1());
 		jointBasisDropDown = std::make_shared<Controls::Expander>(JointBasisDropDown());
 		jointBasisDropDown_1 = std::make_shared<Controls::Expander>(JointBasisDropDown_1());
+
+		devicesMainContentScrollViewer = std::make_shared<Controls::ScrollViewer>(DevicesMainContentScrollViewer());
+
+		devicesOverridesSelectorStackPanelOuter = std::make_shared<Controls::StackPanel>(DevicesOverridesSelectorStackPanelOuter());
+		devicesOverridesSelectorStackPanelInner = std::make_shared<Controls::StackPanel>(DevicesOverridesSelectorStackPanelInner());
+
+		devicesJointsBasisSelectorStackPanelOuter = std::make_shared<Controls::StackPanel>(DevicesJointsBasisSelectorStackPanelOuter());
+		devicesJointsBasisSelectorStackPanelInner = std::make_shared<Controls::StackPanel>(DevicesJointsBasisSelectorStackPanelInner());
 
 		// Create tracking devices' list
 		static auto m_TrackingDevicesViewModels =
@@ -533,11 +543,11 @@ namespace winrt::KinectToVR::implementation
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
 {
-	if (!devices_tab_setup_finished)return; // Block dummy selects
+	if (!devices_tab_setup_finished)co_return; // Block dummy selects
 
 	selectedTrackingDeviceID = sender.as<Controls::ListView>().SelectedIndex();
 	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
@@ -870,7 +880,37 @@ void winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Sele
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 	}
 
+	{
+		// Remove the only one child of our outer main content grid
+		// (What a bestiality it is to do that!!1)
+		devicesMainContentGridOuter.get()->Children().RemoveAtEnd();
+
+		Media::Animation::EntranceThemeTransition t;
+		t.IsStaggeringEnabled(true);
+
+		devicesMainContentGridInner.get()->Transitions().Append(t);
+
+		// Sleep peacefully pretending that noting happened
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(10); // 10ms for slower systems
+		co_await ui_thread;
+
+		// Re-add the child for it to play our funky transition
+		// (Though it's not the same as before...)
+		devicesMainContentGridOuter.get()->Children().
+			Append(*devicesMainContentGridInner);
+	}
+
 	LOG(INFO) << "Changed the currently selected device to " << deviceName;
+
+	// Remove the transition
+	winrt::apartment_context ui_thread;
+	co_await winrt::resume_background();
+	Sleep(100);
+	co_await ui_thread;
+
+	devicesMainContentGridInner.get()->Transitions().Clear();
 }
 
 
@@ -1313,7 +1353,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
@@ -1407,7 +1447,7 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 		if (device->getTrackedJoints().empty())
 		{
 			NoJointsFlyout().ShowAt(SelectedDeviceNameLabel());
-			return; // Don't set up any overrides (yet)
+			co_return; // Don't set up any overrides (yet)
 		}
 
 		// Also refresh joints
@@ -1512,12 +1552,43 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
 	k2app::K2Settings.overrideDeviceID = selectedTrackingDeviceID;
 	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
 
+	{
+		// Remove the only one child of our outer main content grid
+		// (What a bestiality it is to do that!!1)
+		devicesOverridesSelectorStackPanelOuter.get()->Children().RemoveAtEnd();
+
+		Media::Animation::EntranceThemeTransition t;
+		t.IsStaggeringEnabled(true);
+
+		devicesOverridesSelectorStackPanelInner.get()->Transitions().Append(t);
+
+		// Sleep peacefully pretending that noting happened
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(10); // 10ms for slower systems
+		co_await ui_thread;
+
+		// Re-add the child for it to play our funky transition
+		// (Though it's not the same as before...)
+		devicesOverridesSelectorStackPanelOuter.get()->Children().
+			Append(*devicesOverridesSelectorStackPanelInner);
+
+	}
+
 	// Save settings
 	k2app::K2Settings.saveSettings();
+
+	// Remove the transition
+	winrt::apartment_context ui_thread;
+	co_await winrt::resume_background();
+	Sleep(100);
+	co_await ui_thread;
+
+	devicesOverridesSelectorStackPanelInner.get()->Transitions().Clear();
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
@@ -1681,8 +1752,40 @@ void winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
 	// This is here too cause an override might've became a base... -_-
 	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
 
+	// If controls are set to be visible
+	if (jointBasisControls.get()->Visibility() == Visibility::Visible) {
+
+		// Remove the only one child of our outer main content grid
+		// (What a bestiality it is to do that!!1)
+		devicesJointsBasisSelectorStackPanelOuter.get()->Children().RemoveAtEnd();
+
+		Media::Animation::EntranceThemeTransition t;
+		t.IsStaggeringEnabled(true);
+
+		devicesJointsBasisSelectorStackPanelInner.get()->Transitions().Append(t);
+
+		// Sleep peacefully pretending that noting happened
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(10); // 10ms for slower systems
+		co_await ui_thread;
+
+		// Re-add the child for it to play our funky transition
+		// (Though it's not the same as before...)
+		devicesJointsBasisSelectorStackPanelOuter.get()->Children().
+			Append(*devicesJointsBasisSelectorStackPanelInner);
+	}
+
 	// Save settings
 	k2app::K2Settings.saveSettings();
+
+	// Remove the transition
+	winrt::apartment_context ui_thread;
+	co_await winrt::resume_background();
+	Sleep(100);
+	co_await ui_thread;
+
+	devicesJointsBasisSelectorStackPanelInner.get()->Transitions().Clear();
 }
 
 /* For JointBasis device type: joints selector */
