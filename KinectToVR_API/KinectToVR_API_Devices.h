@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <variant>
 
 #include <Eigen/Dense>
 
@@ -146,6 +147,212 @@ namespace ktvr
 		std::string jointName = "Name not set";
 	};
 
+	// Namespace with settings daemon elements / Interfacing
+	namespace Interface
+	{
+		// TextBlock Class : (Label)
+		class TextBlock
+		{
+		public:
+			TextBlock() = default;
+			virtual ~TextBlock() = default;
+
+			/* XAML-Derived functions & handlers */
+
+			// Text Get and Set
+			virtual std::string Text() { return ""; }
+
+			virtual void Text(std::string const& text)
+			{
+			}
+		};
+
+		// Button Class : (Same as XAMLs)
+		class Button
+		{
+		public:
+			Button() = default;
+			virtual ~Button() = default;
+
+			/* XAML-Derived functions & handlers */
+
+			// IsEnabled Get and Set
+			virtual bool IsEnabled() { return true; }
+
+			virtual void IsEnabled(bool const& enabled)
+			{
+			}
+
+			// Label Set (No Get here, sadly)
+			virtual void Content(std::string const& content)
+			{
+			}
+
+			// Function handlers for plugin to use
+			void (*OnClick)(Button* this_button);
+		};
+
+		// NumberBox Class : (SpinBox, Same as XAMLs)
+		class NumberBox
+		{
+		public:
+			NumberBox() = default;
+			virtual ~NumberBox() = default;
+
+			/* XAML-Derived functions & handlers */
+
+			// IsEnabled Get and Set
+			virtual bool IsEnabled() { return true; }
+
+			virtual void IsEnabled(bool const& enabled)
+			{
+			}
+
+			// Value Get and Set
+			virtual int Value() { return 0; }
+
+			virtual void Value(int const& value)
+			{
+			}
+
+			// Function handlers for plugin to use
+			void (*OnValueChanged)(NumberBox* this_number_box, int const& new_value);
+		};
+
+		// CheckBox Class : (Same as XAMLs)
+		class CheckBox
+		{
+		public:
+			CheckBox() = default;
+			virtual ~CheckBox() = default;
+
+			/* XAML-Derived functions & handlers */
+
+			// IsEnabled Get and Set
+			virtual bool IsEnabled() { return true; }
+
+			virtual void IsEnabled(bool const& enabled)
+			{
+			}
+
+			// IsChecked Get and Set
+			virtual bool IsChecked() { return false; }
+
+			virtual void IsChecked(bool const& is_checked)
+			{
+			}
+
+			// Function handlers for plugin to use
+			void (*OnChecked)(CheckBox* this_check_box);
+			void (*OnUnchecked)(CheckBox* this_check_box);
+		};
+
+		// ToggleSwitch Class : (A bit altered XAMLs)
+		class ToggleSwitch
+		{
+		public:
+			ToggleSwitch() = default;
+			virtual ~ToggleSwitch() = default;
+
+			/* XAML-Derived functions & handlers */
+
+			// IsEnabled Get and Set
+			virtual bool IsEnabled() { return true; }
+
+			virtual void IsEnabled(bool const& enabled)
+			{
+			}
+
+			// IsChecked Get and Set
+			virtual bool IsChecked() { return false; }
+
+			virtual void IsChecked(bool const& is_checked)
+			{
+			}
+
+			// Function handlers for plugin to use
+			void (*OnChecked)(ToggleSwitch* this_toggle_switch);
+			void (*OnUnchecked)(ToggleSwitch* this_toggle_switch);
+		};
+
+		// TextBox Class : (Same as XAMLs, Text Input)
+		class TextBox
+		{
+		public:
+			TextBox() = default;
+			virtual ~TextBox() = default;
+
+			/* XAML-Derived functions & handlers */
+
+			// Text Get and Set
+			virtual std::string Text() { return ""; }
+
+			virtual void Text(std::string const& text)
+			{
+			}
+
+			// Function handlers for plugin to use
+			void (*OnEnterKeyDown)(TextBox* this_text_box);
+		};
+
+		// LayoutRoot appending enum:
+		// when appending a single element,
+		// you can choose which side it should
+		// snap to (HorizontalAlignment)
+		enum class SingleLayoutHorizontalAlignment
+		{
+			// Snap to the left
+			Left,
+			// Snap to the right
+			Right,
+			// Try to be centered
+			Center
+		};
+
+		// A typedef to save time and space:
+		// an std variant around all currently possible ui elements
+		typedef std::variant<
+			TextBlock*,
+			Button*,
+			NumberBox*,
+			CheckBox*,
+			ToggleSwitch*,
+			TextBox*> Element;
+
+		// PluginSettings layout's root pane
+		// This is a xaml vertical stack panel,
+		// with additional methods involving grids,
+		// allowing us to push different config layouts
+		class LayoutRoot
+		{
+		public:
+			// WARNING: It's useless to call this plugin-wise
+			LayoutRoot() = default;
+			virtual ~LayoutRoot() = default;
+
+			// Append a One-Row single element
+			virtual void AppendSingleElement(
+				Element const& element,
+				SingleLayoutHorizontalAlignment const& alignment =
+				SingleLayoutHorizontalAlignment::Left)
+			{
+			}
+
+			// Append a One-Row element pair : */* column space
+			virtual void AppendElementPair(
+				Element const& first_element,
+				Element const& second_element)
+			{
+			}
+
+			// Append a One-Row element vector : */* column space
+			virtual void AppendElementVector(
+				std::vector<Element> const& element_vector)
+			{
+			}
+		};
+	}
+
 	// Tracking Device class for client plugins to base on [KINECT]
 	class K2TrackingDeviceBase_KinectBasis
 	{
@@ -222,6 +429,38 @@ namespace ktvr
 		 */
 		std::array<K2TrackedJoint, 7> (*getAppJointPoses)();
 
+		// To support settings daemon and register the layout root,
+		// the device must properly report it first
+		// -> will lead to showing an additional 'settings' button
+		// Note: each device has to save its settings independently
+		//       and may use the K2AppData from the Paths' header
+		[[nodiscard]] bool isSettingsDaemonSupported() const { return settingsSupported; }
+
+		/*
+		 * A pointer to the default layout root registered for the device.
+		 * Note: Each device / Plugin gets its own layout root
+		 * Note: To show 'settings', the device must report that it supports them
+		 */
+		Interface::LayoutRoot* layoutRoot;
+
+		// Create a text block
+		Interface::TextBlock* (*CreateTextBlock)(std::string const& text);
+
+		// Create a labeled button
+		Interface::Button* (*CreateButton)(std::string const& content);
+
+		// Create a number box
+		Interface::NumberBox* (*CreateNumberBox)(int const& value);
+
+		// Create a check box
+		Interface::CheckBox* (*CreateCheckBox)();
+
+		// Create a toggle switch
+		Interface::ToggleSwitch* (*CreateToggleSwitch)();
+
+		// Create a text box
+		Interface::TextBox* (*CreateTextBox)();
+
 	protected:
 		K2DeviceCharacteristics deviceCharacteristics = K2_Character_Unknown;
 
@@ -230,6 +469,8 @@ namespace ktvr
 
 		bool initialized = false;
 		bool skeletonTracked = false;
+
+		bool settingsSupported = false;
 
 		bool flipSupported = true;
 		bool appOrientationSupported = true;
@@ -367,12 +608,46 @@ namespace ktvr
 		 */
 		std::array<K2TrackedJoint, 7> (*getAppJointPoses)();
 
+		// To support settings daemon and register the layout root,
+		// the device must properly report it first
+		// -> will lead to showing an additional 'settings' button
+		// Note: each device has to save its settings independently
+		//       and may use the K2AppData from the Paths' header
+		[[nodiscard]] bool isSettingsDaemonSupported() const { return settingsSupported; }
+
+		/*
+		 * A pointer to the default layout root registered for the device.
+		 * Note: Each device / Plugin gets its own layout root
+		 * Note: To show 'settings', the device must report that it supports them
+		 */
+		Interface::LayoutRoot* layoutRoot;
+
+		// Create a text block
+		Interface::TextBlock* (*CreateTextBlock)(std::string const& text);
+
+		// Create a labeled button
+		Interface::Button* (*CreateButton)(std::string const& content);
+
+		// Create a number box
+		Interface::NumberBox* (*CreateNumberBox)(int const& value);
+
+		// Create a check box
+		Interface::CheckBox* (*CreateCheckBox)();
+
+		// Create a toggle switch
+		Interface::ToggleSwitch* (*CreateToggleSwitch)();
+
+		// Create a text box
+		Interface::TextBox* (*CreateTextBox)();
+
 	protected:
 		K2DeviceType deviceType = K2_Unknown;
 		std::string deviceName = "Name not set";
 
 		bool initialized = false;
 		bool skeletonTracked = false;
+
+		bool settingsSupported = false;
 
 		std::vector<K2TrackedJoint> trackedJoints = {K2TrackedJoint()};
 
