@@ -241,7 +241,8 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 
 
 void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& e)
+	winrt::Windows::Foundation::IInspectable const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& e)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	k2app::K2Settings.skeletonPreviewEnabled = k2app::shared::general::skeletonToggleButton.get()->IsChecked();
@@ -1831,6 +1832,19 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Capture playspace details one more time, before the calibration
+	{
+		const auto trackingOrigin = vr::VRSystem()->GetRawZeroPoseToStandingAbsoluteTrackingPose();
+
+		k2app::interfacing::vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
+
+		double yaw = std::atan2(trackingOrigin.m[0][2], trackingOrigin.m[2][2]);
+		if (yaw < 0.0)
+			yaw = 2 * _PI + yaw;
+
+		k2app::interfacing::vrPlayspaceOrientation = yaw;
+	}
+
 	// If no overrides
 	if (k2app::K2Settings.overrideDeviceID < 0)
 	{
