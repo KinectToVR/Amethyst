@@ -444,6 +444,16 @@ namespace winrt::KinectToVR::implementation
 												{
 													LOG(INFO) << "Interface version OK, now constructing...";
 
+													LOG(INFO) << "Registering device's layout root...";
+
+													// Create a layout root for the device and override
+													const auto pLayoutRoot = new
+														k2app::interfacing::AppInterface::AppLayoutRoot();
+													pDevice->layoutRoot = dynamic_cast<ktvr::Interface::LayoutRoot*>(
+														pLayoutRoot);
+
+													LOG(INFO) << "Overriding device's helper functions...";
+
 													// Push helper functions to the device
 													pDevice->getHMDPosition =
 														k2app::interfacing::plugins::plugins_getHMDPosition;
@@ -455,8 +465,30 @@ namespace winrt::KinectToVR::implementation
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
 
+													pDevice->CreateTextBlock =
+														k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced;
+													pDevice->CreateButton =
+														k2app::interfacing::AppInterface::CreateAppButton_Sliced;
+													pDevice->CreateNumberBox =
+														k2app::interfacing::AppInterface::CreateAppNumberBox_Sliced;
+													pDevice->CreateCheckBox =
+														k2app::interfacing::AppInterface::CreateAppCheckBox_Sliced;
+													pDevice->CreateToggleSwitch =
+														k2app::interfacing::AppInterface::CreateAppToggleSwitch_Sliced;
+													pDevice->CreateTextBox =
+														k2app::interfacing::AppInterface::CreateAppTextBox_Sliced;
+
+													LOG(INFO) << "Appending the device to the global registry...";
+
 													// Push the device to pointers' vector
 													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
+
+													LOG(INFO) <<
+														"Appending the device's layout root to the global registry...";
+
+													// Push the device's layout root to pointers' vector
+													TrackingDevices::TrackingDevicesLayoutRootsVector.
+														push_back(pLayoutRoot);
 
 													stat = pDevice->statusResultString(
 														pDevice->getStatusResult());
@@ -475,6 +507,16 @@ namespace winrt::KinectToVR::implementation
 												{
 													LOG(INFO) << "Interface version OK, now constructing...";
 
+													LOG(INFO) << "Registering device's layout root...";
+
+													// Create a layout root for the device and override
+													const auto pLayoutRoot = new
+														k2app::interfacing::AppInterface::AppLayoutRoot();
+													pDevice->layoutRoot = dynamic_cast<ktvr::Interface::LayoutRoot*>(
+														pLayoutRoot);
+
+													LOG(INFO) << "Overriding device's helper functions...";
+
 													// Push helper functions to the device
 													pDevice->getHMDPosition =
 														k2app::interfacing::plugins::plugins_getHMDPosition;
@@ -486,8 +528,30 @@ namespace winrt::KinectToVR::implementation
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
 
+													pDevice->CreateTextBlock =
+														k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced;
+													pDevice->CreateButton =
+														k2app::interfacing::AppInterface::CreateAppButton_Sliced;
+													pDevice->CreateNumberBox =
+														k2app::interfacing::AppInterface::CreateAppNumberBox_Sliced;
+													pDevice->CreateCheckBox =
+														k2app::interfacing::AppInterface::CreateAppCheckBox_Sliced;
+													pDevice->CreateToggleSwitch =
+														k2app::interfacing::AppInterface::CreateAppToggleSwitch_Sliced;
+													pDevice->CreateTextBox =
+														k2app::interfacing::AppInterface::CreateAppTextBox_Sliced;
+
+													LOG(INFO) << "Appending the device to the global registry...";
+
 													// Push the device to pointers' vector
 													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
+
+													LOG(INFO) <<
+														"Appending the device's layout root to the global registry...";
+
+													// Push the device's layout root to pointers' vector
+													TrackingDevices::TrackingDevicesLayoutRootsVector.
+														push_back(pLayoutRoot);
 
 													stat = pDevice->statusResultString(
 														pDevice->getStatusResult());
