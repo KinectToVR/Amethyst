@@ -885,5 +885,1050 @@ namespace k2app
 				}
 			}
 		}
+
+		namespace AppInterface
+		{
+			using namespace winrt::Microsoft::UI::Xaml;
+			using namespace ktvr;
+
+			class AppTextBlock final : public Interface::TextBlock
+			{
+			public:
+				AppTextBlock(std::string const& text)
+				{
+					Create(text);
+				}
+
+				/* XAML-Derived functions & handlers */
+
+				// Text Get and Set
+				std::string Text() override
+				{
+					if (_ptr_text_block.get())
+						return string_cast(
+							_ptr_text_block.get()->Text().c_str());
+					else return "";
+				}
+
+				void Text(std::string const& text) override
+				{
+					if (_ptr_text_block.get())
+						_ptr_text_block.get()->Text(
+							wstring_cast(text));
+				}
+
+				// Get the underlying shared pointer
+				std::shared_ptr<Controls::TextBlock> Get()
+				{
+					return _ptr_text_block;
+				}
+
+			protected:
+				// Underlying object shared pointer
+				std::shared_ptr<Controls::TextBlock> _ptr_text_block;
+
+				// Creation: register a host and a callback
+				void Create(std::string const& text)
+				{
+					// Create a XAML button
+					Controls::TextBlock _text_block;
+					_text_block.Text(wstring_cast(text).c_str());
+
+					// Back it up
+					_ptr_text_block = std::make_shared<Controls::TextBlock>(_text_block);
+				}
+			};
+
+			class AppButton final : public Interface::Button
+			{
+			public:
+				AppButton(std::string const& content)
+				{
+					Create(content);
+				}
+
+				/* XAML-Derived functions & handlers */
+
+				// IsEnabled Get and Set
+				bool IsEnabled() override
+				{
+					if (_ptr_button.get())
+						return _ptr_button.get()->IsEnabled();
+					else return true;
+				}
+
+				void IsEnabled(bool const& enabled) override
+				{
+					if (_ptr_button.get())
+						_ptr_button.get()->IsEnabled(enabled);
+				}
+
+				// Label Set
+				void Content(std::string const& content) override
+				{
+					if (_ptr_button.get())
+						_ptr_button.get()->Content(
+							winrt::box_value(wstring_cast(content)));
+				}
+
+				// Get the underlying shared pointer
+				std::shared_ptr<Controls::Button> Get()
+				{
+					return _ptr_button;
+				}
+
+			protected:
+				// Underlying object shared pointer
+				std::shared_ptr<Controls::Button> _ptr_button;
+
+				// Creation: register a host and a callback
+				void Create(std::string const& content)
+				{
+					// Create a XAML button
+					Controls::Button _button;
+					_button.Content(
+						winrt::box_value(wstring_cast(content).c_str()));
+
+					// Back it up
+					_ptr_button = std::make_shared<Controls::Button>(_button);
+
+					// Create a dummy callback
+					std::function<void(
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
+						const _n_callback = [this](winrt::Windows::Foundation::IInspectable const& sender,
+							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
+						void
+					{
+						if (OnClick) // Check if not null
+							OnClick(this);
+					};
+
+					// Set up the click handler to point to the base's one
+					_button.Click(_n_callback);
+				}
+			};
+
+			class AppNumberBox final : public Interface::NumberBox
+			{
+			public:
+				AppNumberBox()
+				{
+					Create(0);
+				}
+
+				AppNumberBox(int const& value)
+				{
+					Create(value);
+				}
+
+				/* XAML-Derived functions & handlers */
+
+				// IsEnabled Get and Set
+				bool IsEnabled() override
+				{
+					if (_ptr_number_box.get())
+						return _ptr_number_box.get()->IsEnabled();
+					else return true;
+				}
+
+				void IsEnabled(bool const& enabled) override
+				{
+					if (_ptr_number_box.get())
+						_ptr_number_box.get()->IsEnabled(enabled);
+				}
+
+				// Value Get and Set
+				int Value() override
+				{
+					if (_ptr_number_box.get())
+						return (int)_ptr_number_box.get()->Value();
+					else return 0;
+				}
+
+				void Value(int const& value) override
+				{
+					if (_ptr_number_box.get())
+						_ptr_number_box.get()->Value(value);
+				}
+
+				// Get the underlying shared pointer
+				std::shared_ptr<Controls::NumberBox> Get()
+				{
+					return _ptr_number_box;
+				}
+
+			protected:
+				// Underlying object shared pointer
+				std::shared_ptr<Controls::NumberBox> _ptr_number_box;
+
+				// Creation: register a host and a callback
+				void Create(int const& value)
+				{
+					// Create a XAML number box
+					Controls::NumberBox _number_box;
+					_number_box.Value(value);
+
+					_number_box.SpinButtonPlacementMode(Controls::NumberBoxSpinButtonPlacementMode::Compact);
+					_number_box.SmallChange(1);
+					_number_box.LargeChange(10);
+
+					// Back it up
+					_ptr_number_box = std::make_shared<Controls::NumberBox>(_number_box);
+
+					// Create a dummy callback
+					std::function<void(
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& e)>
+						const _n_callback = [this](winrt::Windows::Foundation::IInspectable const& sender,
+							winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& e) ->
+						void
+					{
+						if (OnValueChanged) // Check if not null
+							OnValueChanged(this, (int)e.NewValue());
+					};
+
+					// Set up the click handler to point to the base's one
+					_number_box.ValueChanged(_n_callback);
+				}
+			};
+
+			class AppCheckBox final : public Interface::CheckBox
+			{
+			public:
+				AppCheckBox()
+				{
+					Create();
+				}
+
+				/* XAML-Derived functions & handlers */
+
+				// IsEnabled Get and Set
+				bool IsEnabled() override
+				{
+					if (_ptr_check_box.get())
+						return _ptr_check_box.get()->IsEnabled();
+					else return true;
+				}
+
+				void IsEnabled(bool const& enabled) override
+				{
+					if (_ptr_check_box.get())
+						_ptr_check_box.get()->IsEnabled(enabled);
+				}
+
+				// IsChecked Get and Set
+				bool IsChecked() override
+				{
+					if (_ptr_check_box.get())
+						return _ptr_check_box.get()->IsChecked().Value();
+					else return false;
+				}
+
+				void IsChecked(bool const& is_checked) override
+				{
+					if (_ptr_check_box.get())
+						_ptr_check_box.get()->IsChecked(is_checked);
+				}
+
+				// Get the underlying shared pointer
+				std::shared_ptr<Controls::CheckBox> Get()
+				{
+					return _ptr_check_box;
+				}
+
+			protected:
+				// Underlying object shared pointer
+				std::shared_ptr<Controls::CheckBox> _ptr_check_box;
+
+				// Creation: register a host and a callback
+				void Create()
+				{
+					// Create a XAML number box
+					Controls::CheckBox _check_box;
+
+					// Back it up
+					_ptr_check_box = std::make_shared<Controls::CheckBox>(_check_box);
+
+					// Create a dummy callback
+					std::function<void(
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
+						const _n_callback_checked = [this](winrt::Windows::Foundation::IInspectable const& sender,
+							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
+						void
+					{
+						if (OnChecked) // Check if not null
+							OnChecked(this);
+					};
+
+					// Create a dummy callback
+					std::function<void(
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
+						const _n_callback_unchecked = [this](winrt::Windows::Foundation::IInspectable const& sender,
+							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
+						void
+					{
+						if (OnUnchecked) // Check if not null
+							OnUnchecked(this);
+					};
+
+					// Set up the click handler to point to the base's one
+					_check_box.Checked(_n_callback_checked);
+					_check_box.Unchecked(_n_callback_unchecked);
+				}
+			};
+
+			class AppToggleSwitch final : public Interface::ToggleSwitch
+			{
+			public:
+				AppToggleSwitch()
+				{
+					Create();
+				}
+
+				/* XAML-Derived functions & handlers */
+
+				// IsEnabled Get and Set
+				bool IsEnabled() override
+				{
+					if (_ptr_toggle_switch.get())
+						return _ptr_toggle_switch.get()->IsEnabled();
+					else return true;
+				}
+
+				void IsEnabled(bool const& enabled) override
+				{
+					if (_ptr_toggle_switch.get())
+						_ptr_toggle_switch.get()->IsEnabled(enabled);
+				}
+
+				// IsChecked Get and Set
+				bool IsChecked() override
+				{
+					if (_ptr_toggle_switch.get())
+						return _ptr_toggle_switch.get()->IsOn();
+					else return false;
+				}
+
+				void IsChecked(bool const& is_checked) override
+				{
+					if (_ptr_toggle_switch.get())
+						_ptr_toggle_switch.get()->IsOn(is_checked);
+				}
+
+				// Get the underlying shared pointer
+				std::shared_ptr<Controls::ToggleSwitch> Get()
+				{
+					return _ptr_toggle_switch;
+				}
+
+			protected:
+				// Underlying object shared pointer
+				std::shared_ptr<Controls::ToggleSwitch> _ptr_toggle_switch;
+
+				// Creation: register a host and a callback
+				void Create()
+				{
+					// Create a XAML number box
+					Controls::ToggleSwitch _toggle_switch;
+					_toggle_switch.OnContent(winrt::box_value(L""));
+					_toggle_switch.OffContent(winrt::box_value(L""));
+
+					// Back it up
+					_ptr_toggle_switch = std::make_shared<Controls::ToggleSwitch>(_toggle_switch);
+
+					// Create a dummy callback
+					std::function<void(
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
+						const _n_callback = [this](winrt::Windows::Foundation::IInspectable const& sender,
+							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
+						void
+					{
+						// Check which handler to raise
+						if (this->Get().get()->IsOn())
+						{
+							if (OnChecked) // Check if not null
+								OnChecked(this);
+						}
+						else
+						{
+							if (OnUnchecked) // Check if not null
+								OnUnchecked(this);
+						}
+					};
+
+					// Set up the click handler to point to the base's one
+					_toggle_switch.Toggled(_n_callback);
+				}
+			};
+
+			class AppTextBox final : public Interface::TextBox
+			{
+			public:
+				AppTextBox()
+				{
+					Create();
+				}
+
+				/* XAML-Derived functions & handlers */
+
+				// Text Get and Set
+				std::string Text() override
+				{
+					if (_ptr_text_box.get())
+						return string_cast(
+							_ptr_text_box.get()->Text().c_str());
+					else return "";
+				}
+
+				void Text(std::string const& text) override
+				{
+					if (_ptr_text_box.get())
+						_ptr_text_box.get()->Text(
+							wstring_cast(text));
+				}
+
+				// Get the underlying shared pointer
+				std::shared_ptr<Controls::TextBox> Get()
+				{
+					return _ptr_text_box;
+				}
+
+			protected:
+				// Underlying object shared pointer
+				std::shared_ptr<Controls::TextBox> _ptr_text_box;
+
+				// Creation: register a host and a callback
+				void Create()
+				{
+					// Create a XAML button
+					Controls::TextBox _text_box;
+
+					// Back it up
+					_ptr_text_box = std::make_shared<Controls::TextBox>(_text_box);
+
+					// Create a dummy callback
+					std::function<void(
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& e)>
+						const _n_callback = [this](winrt::Windows::Foundation::IInspectable const& sender,
+							winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& e) ->
+						void
+					{
+						if (e.Key() == winrt::Windows::System::VirtualKey::Enter)
+							OnEnterKeyDown(this);
+					};
+
+					// Set up the click handler to point to the base's one
+					_text_box.KeyDown(_n_callback);
+				}
+			};
+
+			inline HorizontalAlignment horizontalAlignmentConverter(
+				Interface::SingleLayoutHorizontalAlignment const& alignment)
+			{
+				switch (alignment)
+				{
+				case Interface::SingleLayoutHorizontalAlignment::Left:
+					return HorizontalAlignment::Left;
+
+				case Interface::SingleLayoutHorizontalAlignment::Center:
+					return HorizontalAlignment::Center;
+
+				case Interface::SingleLayoutHorizontalAlignment::Right:
+					return HorizontalAlignment::Right;
+
+				default:
+					return HorizontalAlignment::Stretch;
+				}
+			}
+
+			inline void AppendGridStarColumn(Controls::Grid& _grid)
+			{
+				Controls::ColumnDefinition _col;
+				_col.Width(GridLengthHelper::FromValueAndType(1, GridUnitType::Star));
+
+				_grid.ColumnDefinitions().Append(_col);
+			}
+
+			class AppLayoutRoot final : public Interface::LayoutRoot
+			{
+			public:
+				AppLayoutRoot()
+				{
+					AppLayoutRoot::Create();
+				}
+
+				// Append a One-Row single element
+				void AppendSingleElement(
+					Interface::Element const& element,
+					Interface::SingleLayoutHorizontalAlignment const& alignment) override
+				{
+					// Switch based on element type: all types
+					switch (element.index())
+					{
+						// TextBlock
+					case 0:
+					{
+						auto const& pElement = static_cast<AppTextBlock*>(
+							std::get<Interface::TextBlock*>(element));
+
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
+
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
+
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+
+						return;
+					}
+					// Button
+					case 1:
+					{
+						auto const& pElement = static_cast<AppButton*>(std::get<Interface::Button*>(element));
+
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
+
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
+
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+
+						return;
+					}
+					// NumberBox
+					case 2:
+					{
+						auto const& pElement = static_cast<AppNumberBox*>(
+							std::get<Interface::NumberBox*>(element));
+
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
+
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
+
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+
+						return;
+					}
+					// CheckBox
+					case 3:
+					{
+						auto const& pElement = static_cast<AppCheckBox*>(
+							std::get<Interface::CheckBox*>(element));
+
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
+
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
+
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+
+						return;
+					}
+					// ToggleSwitch
+					case 4:
+					{
+						auto const& pElement = static_cast<AppToggleSwitch*>(
+							std::get<Interface::ToggleSwitch*>(element));
+
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
+
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
+
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+
+						return;
+					}
+					// TextBox
+					case 5:
+					{
+						auto const& pElement = static_cast<AppTextBox*>(
+							std::get<Interface::TextBox*>(element));
+
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
+
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
+
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+
+						return;
+					}
+					}
+				}
+
+				// Append a One-Row element pair : */* column space
+				void AppendElementPair(Interface::Element const& first_element,
+					Interface::Element const& second_element) override
+				{
+					// Set up a placeholder horizontally divided grid
+					Controls::Grid _grid;
+					_grid.HorizontalAlignment(HorizontalAlignment::Stretch);
+
+					AppendGridStarColumn(_grid);
+					AppendGridStarColumn(_grid);
+
+					// Parse and append the first pair element
+					{
+						// Switch based on element type: all types
+						switch (first_element.index())
+						{
+							// TextBlock
+						case 0:
+						{
+							auto const& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
+
+							break;
+						}
+						// Button
+						case 1:
+						{
+							auto const& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
+
+							break;
+						}
+						// NumberBox
+						case 2:
+						{
+							auto const& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
+
+							break;
+						}
+						// CheckBox
+						case 3:
+						{
+							auto const& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
+
+							break;
+						}
+						// ToggleSwitch
+						case 4:
+						{
+							auto const& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
+
+							break;
+						}
+						// TextBox
+						case 5:
+						{
+							auto const& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
+
+							break;
+						}
+						}
+					}
+
+					// Parse and append the second pair element
+					{
+						// Switch based on element type: all types
+						switch (second_element.index())
+						{
+							// TextBlock
+						case 0:
+						{
+							auto const& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
+
+							break;
+						}
+						// Button
+						case 1:
+						{
+							auto const& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
+
+							break;
+						}
+						// NumberBox
+						case 2:
+						{
+							auto const& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
+
+							break;
+						}
+						// CheckBox
+						case 3:
+						{
+							auto const& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
+
+							break;
+						}
+						// ToggleSwitch
+						case 4:
+						{
+							auto const& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
+
+							break;
+						}
+						// TextBox
+						case 5:
+						{
+							auto const& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
+
+							break;
+						}
+						}
+					}
+
+					// Append the created grid to the base stack
+					_ptr_stack_panel.get()->Children().Append(_grid);
+				}
+
+				// Append a One-Row element pair : */* column space
+				void AppendElementVector(std::vector<Interface::Element>
+					const& element_vector) override
+				{
+					// Set up a placeholder horizontally divided grid
+					Controls::Grid _grid;
+					_grid.HorizontalAlignment(HorizontalAlignment::Stretch);
+
+					// Parse and append the elements
+					for (uint32_t i = 0; i < element_vector.size(); i++)
+					{
+						// Append a column
+						AppendGridStarColumn(_grid);
+
+						// Switch based on element type: all types
+						switch (auto const& element = element_vector.at(i);
+						element.index())
+						{
+							// TextBlock
+						case 0:
+						{
+							auto const& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
+
+							break;
+						}
+						// Button
+						case 1:
+						{
+							auto const& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
+
+							break;
+						}
+						// NumberBox
+						case 2:
+						{
+							auto const& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
+
+							break;
+						}
+						// CheckBox
+						case 3:
+						{
+							auto const& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
+
+							break;
+						}
+						// ToggleSwitch
+						case 4:
+						{
+							auto const& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
+
+							break;
+						}
+						// TextBox
+						case 5:
+						{
+							auto const& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
+
+							break;
+						}
+						}
+					}
+
+					// Append the created grid to the base stack
+					_ptr_stack_panel.get()->Children().Append(_grid);
+				}
+
+				// Creation: register a host
+				void Create()
+				{
+					// Create a XAML number box
+					Controls::StackPanel _stack_panel;
+					_stack_panel.Orientation(Controls::Orientation::Vertical);
+
+					_stack_panel.HorizontalAlignment(HorizontalAlignment::Stretch);
+					_stack_panel.VerticalAlignment(VerticalAlignment::Stretch);
+
+					// Back it up
+					_ptr_stack_panel = std::make_shared<Controls::StackPanel>(_stack_panel);
+				}
+
+				// Get the underlying shared pointer
+				std::shared_ptr<Controls::StackPanel> Get()
+				{
+					return _ptr_stack_panel;
+				}
+
+			protected:
+				std::shared_ptr<Controls::StackPanel> _ptr_stack_panel;
+			};
+
+			// Create a server-side ui element (not sliced, server-only)
+			inline AppTextBlock* CreateAppTextBlock(std::string const& text)
+			{
+				return new AppTextBlock(text);
+			}
+
+			inline Interface::TextBlock* CreateAppTextBlock_Sliced(std::string const& text)
+			{
+				return new AppTextBlock(text);
+			}
+
+
+			// Create a server-side ui element (not sliced, server-only)
+			inline AppButton* CreateAppButton(std::string const& content)
+			{
+				return new AppButton(content);
+			}
+
+			// Create a client-side ui element (sliced)
+			inline Interface::Button* CreateAppButton_Sliced(std::string const& content)
+			{
+				return new AppButton(content);
+			}
+
+
+			// Create a server-side ui element (not sliced, server-only)
+			inline AppNumberBox* CreateAppNumberBox(int const& value = 0)
+			{
+				return new AppNumberBox(value);
+			}
+
+			// Create a client-side ui element (sliced)
+			inline Interface::NumberBox* CreateAppNumberBox_Sliced(int const& value = 0)
+			{
+				return new AppNumberBox(value);
+			}
+
+
+			// Create a server-side ui element (not sliced, server-only)
+			inline AppCheckBox* CreateAppCheckBox()
+			{
+				return new AppCheckBox();
+			}
+
+			// Create a client-side ui element (sliced)
+			inline Interface::CheckBox* CreateAppCheckBox_Sliced()
+			{
+				return new AppCheckBox();
+			}
+
+
+			// Create a server-side ui element (not sliced, server-only)
+			inline AppToggleSwitch* CreateAppToggleSwitch()
+			{
+				return new AppToggleSwitch();
+			}
+
+			// Create a client-side ui element (sliced)
+			inline Interface::ToggleSwitch* CreateAppToggleSwitch_Sliced()
+			{
+				return new AppToggleSwitch();
+			}
+
+
+			// Create a server-side ui element (not sliced, server-only)
+			inline AppTextBox* CreateAppTextBox()
+			{
+				return new AppTextBox();
+			}
+
+			// Create a client-side ui element (sliced)
+			inline Interface::TextBox* CreateAppTextBox_Sliced()
+			{
+				return new AppTextBox();
+			}
+		}
 	}
 }
