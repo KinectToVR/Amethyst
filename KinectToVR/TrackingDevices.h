@@ -14,6 +14,11 @@ namespace TrackingDevices
 			ktvr::K2TrackingDeviceBase_JointsBasis*>>
 	TrackingDevicesVector;
 
+	// Variant of current devices' layout root pointers
+	// Note: the size must be the same as TrackingDevicesVector's
+	inline std::vector<k2app::interfacing::AppInterface::AppLayoutRoot*>
+	TrackingDevicesLayoutRootsVector;
+
 	// Pointer to the device's constructing function
 	typedef void* (*TrackingDeviceBaseFactory)(const char* pVersionName, int* pReturnCode);
 
@@ -87,10 +92,10 @@ namespace TrackingDevices
 				trackingDevice)->isFlipSupported();
 
 		bool isExternalFlipSupported = false, // inapp - overridden/disabled
-			isExternalFlipSupported_Global = false; // global - steamvr
+		     isExternalFlipSupported_Global = false; // global - steamvr
 
-	   /* Now check if either waist tracker is overridden or disabled
-		* And then search in OpenVR for a one with waist role */
+		/* Now check if either waist tracker is overridden or disabled
+		 * And then search in OpenVR for a one with waist role */
 
 		auto const& overrideDevice =
 			TrackingDevices::getCurrentOverrideDevice_Safe();
@@ -105,7 +110,7 @@ namespace TrackingDevices
 				isExternalFlipSupported = !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
 					overrideDevice.second)->isFlipSupported();
 
-			// If the override device is a joints then it's always ok
+				// If the override device is a joints then it's always ok
 			else if (overrideDevice.second.index() == 1)
 				isExternalFlipSupported = true;
 		}
@@ -351,16 +356,16 @@ namespace TrackingDevices
 		if (
 			(id < 0) || // If id is invalid
 			(_override.first && !_is_kinect) // If we're using a jointsbasis
-			)
+		)
 			return id;
 
 		if (
 			_override.first && _is_kinect // If we're using a kinectbasis
-			)
+		)
 		{
 			if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
-				_override.second)->getDeviceCharacteristics()
-			> ktvr::K2_Character_Basic)
+					_override.second)->getDeviceCharacteristics()
+				> ktvr::K2_Character_Basic)
 			{
 				switch (id)
 				{
@@ -416,16 +421,16 @@ namespace TrackingDevices
 		if (
 			(id < 0) || // If id is invalid
 			(_override.first && !_is_kinect) // If we're using a jointsbasis
-			)
+		)
 			return id;
 
 		if (
 			_override.first && _is_kinect // If we're using a kinectbasis
-			)
+		)
 		{
 			if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
-				_override.second)->getDeviceCharacteristics()
-			> ktvr::K2_Character_Basic)
+					_override.second)->getDeviceCharacteristics()
+				> ktvr::K2_Character_Basic)
 			{
 				switch (id)
 				{
