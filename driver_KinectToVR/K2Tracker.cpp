@@ -163,10 +163,6 @@ vr::EVRInitError K2Tracker::Activate(vr::TrackedDeviceIndex_t index)
 	// Get the properties handle for our controller
 	_props = vr::VRProperties()->TrackedDeviceToPropertyContainer(_index);
 
-	/*
-	 * Of course thanks to @SDraw
-	 */
-
 	// Set our universe ID
 	vr::VRProperties()->SetUint64Property(_props, vr::Prop_CurrentUniverseId_Uint64, 2);
 
@@ -175,8 +171,8 @@ vr::EVRInitError K2Tracker::Activate(vr::TrackedDeviceIndex_t index)
 	vr::VRDriverInput()->CreateHapticComponent(_props, "/output/haptic", &_components._haptic);
 
 	// Register all properties, dumped by sdraw originally
-	vr::VRProperties()->SetStringProperty(_props, vr::Prop_TrackingSystemName_String, "lighthouse");
-	vr::VRProperties()->SetStringProperty(_props, vr::Prop_ModelNumber_String, "Vive Tracker Pro MV");
+	vr::VRProperties()->SetStringProperty(_props, vr::Prop_TrackingSystemName_String, "amethyst");
+	vr::VRProperties()->SetStringProperty(_props, vr::Prop_ModelNumber_String, "KinectToVR (Amethyst) BodyTracker");
 	vr::VRProperties()->SetStringProperty(_props, vr::Prop_SerialNumber_String, _serial.c_str());
 	vr::VRProperties()->SetStringProperty(_props, vr::Prop_RenderModelName_String, "{htc}vr_tracker_vive_1_0");
 
@@ -216,9 +212,7 @@ vr::EVRInitError K2Tracker::Activate(vr::TrackedDeviceIndex_t index)
 	//vr::VRProperties()->SetUint64Property(_props, vr::Prop_ParentDriver_Uint64, 8589934597);
 	vr::VRProperties()->SetStringProperty(_props, vr::Prop_ResourceRoot_String, "htc");
 
-	std::string l_registeredType("htc/vive_tracker");
-	l_registeredType.append(_serial);
-	vr::VRProperties()->SetStringProperty(_props, vr::Prop_RegisteredDeviceType_String, l_registeredType.c_str());
+	vr::VRProperties()->SetStringProperty(_props, vr::Prop_RegisteredDeviceType_String, ("amethyst/vr_tracker/" + _serial).c_str());
 	
 	vr::VRProperties()->SetBoolProperty(_props, vr::Prop_Identifiable_Bool, false);
 	vr::VRProperties()->SetBoolProperty(_props, vr::Prop_Firmware_RemindUpdate_Bool, false);
@@ -260,10 +254,7 @@ vr::EVRInitError K2Tracker::Activate(vr::TrackedDeviceIndex_t index)
 		vr::Prop_ControllerType_String, role_enum_string.c_str());
 
 	/*Update tracker's role in menu*/
-	std::string l_registeredDevice("/devices/htc/vive_tracker");
-	l_registeredDevice.append(_serial);
-	
-	vr::VRSettings()->SetString(vr::k_pch_Trackers_Section, l_registeredDevice.c_str(),
+	vr::VRSettings()->SetString(vr::k_pch_Trackers_Section, ("/devices/amethyst/vr_tracker/" + _serial).c_str(),
 		ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(_role)));
 
 	/*Mark tracker as activated*/
