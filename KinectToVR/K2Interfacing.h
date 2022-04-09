@@ -12,13 +12,13 @@ namespace k2app
 		inline const std::string K2InternalVersion = "1.0.1.3"; // KTVR[ver:X.X.X.X]
 
 		inline std::vector<K2AppTracker> K2TrackersVector{
-			K2AppTracker("LHR-CB9AD1T0", ktvr::ITrackerType::Tracker_Waist),
-			K2AppTracker("LHR-CB9AD1T1", ktvr::ITrackerType::Tracker_LeftFoot),
-			K2AppTracker("LHR-CB9AD1T2", ktvr::ITrackerType::Tracker_RightFoot),
-			K2AppTracker("LHR-CB9AD1T3", ktvr::ITrackerType::Tracker_LeftElbow, 0.41),
-			K2AppTracker("LHR-CB9AD1T4", ktvr::ITrackerType::Tracker_RightElbow, 0.41),
-			K2AppTracker("LHR-CB9AD1T5", ktvr::ITrackerType::Tracker_LeftKnee),
-			K2AppTracker("LHR-CB9AD1T6", ktvr::ITrackerType::Tracker_RightKnee)
+			K2AppTracker("AME-00WAIST0", ktvr::ITrackerType::Tracker_Waist),
+			K2AppTracker("AME-L0FOOT00", ktvr::ITrackerType::Tracker_LeftFoot),
+			K2AppTracker("AME-R0FOOT00", ktvr::ITrackerType::Tracker_RightFoot),
+			K2AppTracker("AME-L0ELBOW0", ktvr::ITrackerType::Tracker_LeftElbow, 0.41),
+			K2AppTracker("AME-R0ELBOW0", ktvr::ITrackerType::Tracker_RightElbow, 0.41),
+			K2AppTracker("AME-L0KNEE00", ktvr::ITrackerType::Tracker_LeftKnee),
+			K2AppTracker("AME-R0KNEE00", ktvr::ITrackerType::Tracker_RightKnee)
 		};
 
 		inline std::pair<Eigen::Vector3f, Eigen::Vector3f> // Position helpers for k2 devices -> Base, Override
