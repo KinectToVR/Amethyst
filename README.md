@@ -10,101 +10,27 @@
 ## **License**
 This project is licensed under the GNU GPL v3 License 
 
-## **Build with Docker**
-You'll need:
- - The ```K2App``` repo cloned somewhere and ```cd```'d into
- - Docker Desktop set to use Windows containers
+## **Releases & Downloads**
+Except the [repo-wise Releases](https://github.com/KinectToVR/K2App/releases), official ones are in [the Amethyst-Releases repo](https://github.com/KinectToVR/Amethyst-Releases).
 
-Notes:
- - The build process contains no caching, is one-run, **and will take some time**.<br>
-   Everything that's downloaded, set up, and not saved will be gone.
+## **Dependencies**
+Amethyst uses [WinUI 3](https://docs.microsoft.com/en-us/windows/apps/winui/winui3/). That means you have to install:
+  - [Microsoft Visual C++ Redistributable (2022)](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+  - [.NET Desktop Runtime for .NET6](https://download.visualstudio.microsoft.com/download/pr/7f3a766e-9516-4579-aaf2-2b150caa465c/d57665f880cdcce816b278a944092965/windowsdesktop-runtime-6.0.3-win-x64.exe)
+  - [Windows App SDK Runtime for Desktop](https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads)
 
-Follow these steps:
-  ```powershell
-  # Build the whole thing
-  > docker build -t k2app .
+# **For Developers:**
 
-  # Create a dummy container from saved image
-  > $id = $(docker create k2app)
-  # Copy Release files to the host machine
-  > mkdir ./x64/Release
-  > docker cp ${id}:/x64/Release ./x64/Release
+## **Build & Deploy**
+Both build and deployment instructions [are available here](https://github.com/KinectToVR/K2App/blob/main/BUILD_AND_DEPLOY.md).
 
-  # Release (remove) the dummy container
-  > docker rm -v $id
-  # Release (remove) the base k2app container
-  > docker rmi --force $(docker images -q 'k2app')
-  ```
-  Where ```k2app``` may be your very own super cool container tag name.<br>
-  Artifacts (```x64/Release``` directory) will be saved to ```x64/Release``` inside the repository root.<br>
+## **Devices / Plugins Samples**
+You can find Amethyst plugin samples in [the K2TrackingDevice-Samples repo](https://github.com/KinectToVR/K2TrackingDevice-Samples).
 
-  
-## **Build manually**
-You'll need:
- - The ```K2App``` repo cloned somewhere and ```cd```'d into
- - Kinect SDK 1.8 & 2.0 installed and visible in PATH
- - Working installation of SteamVR for testing
+## **Docs / Wikis**
+I try to document the code as I go (not ot forget some important stuff), so it should kind-of readable and understandable.<br>
+If you have any questions about how something works or how to use it, please search through this repo, or just ask me.<br>
 
-Follow these steps:
-
-- Install Visual Studio 2022 Build Tools with needed addons<br>
-  (If you already have VS2022 or BuildTools set up, **please skip this step**)<br>
-  ```powershell
-  > Set-ExecutionPolicy Bypass -Scope Process -Force
-  > Invoke-Expression (Get-Content .dockerprepvc -Raw)
-  ```
-  This will install Microsoft Visual Studio Build Tools 2022 in the default location.<br>
-  Nothing will be displayed during the process (just the PID & stats), just wait for it.
-
-- Install ```chocolatey``` and ```cmake```, ```7zip.install```, ```sed```, ```git```<br>
-  (If you already have ```chocolatey``` set up, **please only install packages**)<br>
-  ```powershell
-  > Set-ExecutionPolicy Bypass -Scope Process -Force
-  > Invoke-Expression (Get-Content .dockerprepchoco -Raw)
-  ```
-  This will install ```chocolatey``` and download all needed libraries.<br>
-  If you had vcpkg already set up, install ```cmake```, ```7zip.install```, ```sed``` and ```git```:
-  ```powershell
-  > choco install -y cmake 7zip.install sed git
-  ```
-
-- Install ```vcpkg``` and its Visual Studio integration<br>
-  (If you already have ```vcpkg``` set up, **please only install libraries**)<br>
-  ```powershell
-  > Set-ExecutionPolicy Bypass -Scope Process -Force
-  > Invoke-Expression (Get-Content .dockerprep -Raw)
-  ```
-  This will install ```vcpkg``` in ```C:/vcpkg``` and download all needed libraries.
-  If you had vcpkg already set up, install ```boost``` and ```curlpp```:
-  ```powershell
-  > vcpkg install boost:x64-windows curlpp:x64-windows
-  ```
-
-- Clone latest OpenVR and Eigen3 to ```external/``` and set up ```GLog``` & ```GFlags```<br>
-  (For this step you must have cmake installed and visible in ```C:/Program Files/CMake/bin/cmake.exe```)<br>
-  Skip this step **only** when you know what you're setting things up some other way.
-  ```powershell
-  > Set-ExecutionPolicy Bypass -Scope Process -Force
-  > Invoke-Expression (Get-Content .dockerdeps -Raw)
-  ```
-
-- Build the K2App:<br>
-  ```powershell
-  > Set-ExecutionPolicy Bypass -Scope Process -Force
-  > Invoke-Expression (Get-Content .dockerbuild -Raw)
-  ```
-  Alternatively you can open the developer powershell for Visual Studio (or BuildTools) 2022 and:
-  ```powershell
-  > msbuild KinectToVR.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
-  > msbuild KinectToVR.sln /m:3 "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
-  ```
-  There are 2 commands since the first will only restore ```NuGet```,  then the whole thing will be built.
-
-## **Deploy**
-The whole output can be found in ```x64/Release``` directory<br>
-(or ```x64/Debug``` if you're building for ```Debug```, naturally) and:
- - The assembled ```K2Driver``` is inside the ```driver/``` folder
- - Devices (plugins) are inside ```devices/``` folder
- - Deployed app is inside ```KinectToVR/``` folder, along with devices (plugins)<br>
- - To run the deployed app you'll need to install the [Windows App Runtime](https://aka.ms/windowsappsdk/1.0-stable/msix-installer).
- - **Note:** you can't interface a ```Release``` devices with a ```Debug``` app! (driver yes tho)
+Currently, all "docs" (as for plugins) available is [the K2TrackingDevice-Samples repo](https://github.com/KinectToVR/K2TrackingDevice-Samples).<br>
+To learn about the KinectToVR API (K2API for short), please go to [the k2vr-application repo](https://github.com/KinectToVR/k2vr-application/wiki).<br>
+(Though, in [the k2vr-application repo](https://github.com/KinectToVR/k2vr-application/wiki), you're going to find only the old, default API methods)
