@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "DevicesPage.xaml.h"
 #if __has_include("DevicesPage.g.cpp")
 #include "DevicesPage.g.cpp"
@@ -530,20 +530,21 @@ namespace winrt::KinectToVR::implementation
 				make<TrackingDevicesView>(wstring_cast(deviceName).c_str()));
 		}
 
+		// Register tracking devices' list
+		devicesListView.get()->ItemsSource(m_TrackingDevicesViewModels);
+
 		// Set currently tracking device & selected device
 		// RadioButton is set on ItemChanged
-		TrackingDeviceListView().SelectedIndex(k2app::K2Settings.trackingDeviceID);
+		devicesListView.get()->SelectedIndex(k2app::K2Settings.trackingDeviceID);
 
-		// Register tracking devices' list
-		TrackingDeviceListView().ItemsSource(m_TrackingDevicesViewModels);
 		NavigationCacheMode(Navigation::NavigationCacheMode::Required);
-
 		devices_update_current();
 	}
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
+Windows::Foundation::IAsyncAction
+winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
 {
