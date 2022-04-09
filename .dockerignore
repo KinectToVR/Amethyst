@@ -1,9 +1,0 @@
-.git
-.vs
-**/x64
-KinectToVR/Generated\ Files
-packages
-external/eigen
-external/gflags
-external/glog
-external/openvr
