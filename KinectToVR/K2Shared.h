@@ -217,7 +217,12 @@ namespace k2app
 				devicesOverridesSelectorStackPanelOuter,
 				devicesOverridesSelectorStackPanelInner,
 				devicesJointsBasisSelectorStackPanelOuter,
-				devicesJointsBasisSelectorStackPanelInner;
+				devicesJointsBasisSelectorStackPanelInner,
+				selectedDeviceSettingsRootLayoutPanel;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::AppBarButton> selectedDeviceSettingsButton;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Flyout> selectedDeviceSettingsFlyout;
 		}
 
 		namespace settings

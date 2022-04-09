@@ -80,7 +80,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="60" />
                             <RowDefinition Height="73" />
-                            <RowDefinition Height="50" />
+                            <RowDefinition Height="60" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
@@ -111,9 +111,29 @@
 
                         <!--Status Part-->
 
-                        <TextBlock FontWeight="SemiBold" Text="E_UNKNOWN"
-                                   x:Name="SelectedDeviceNameLabel"
-                                   FontSize="25" Margin="40,20,0,0" Grid.Row="2" />
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="40,20,0,0">
+                            <TextBlock FontWeight="SemiBold" Text="E_UNKNOWN" VerticalAlignment="Top"
+                                       x:Name="SelectedDeviceNameLabel" FontSize="25" Margin="0,4,0,0"/>
+
+                            <AppBarButton x:Name="SelectedDeviceSettingsButton" VerticalAlignment="Top"
+                                          Click="SelectedDeviceSettingsButton_Click"
+                                          ToolTipService.ToolTip="Click to show additional&#x0a;(device-wise) settings."
+                                          Icon="Setting" Width="38" Height="46" Margin="7,0,0,0" >
+
+                                <!--Settings pane flyout-->
+                                <FlyoutBase.AttachedFlyout>
+                                    <Flyout x:Name="SelectedDeviceSettingsFlyout" Placement="Bottom">
+                                        <StackPanel>
+                                            <TextBlock Text="Device-Provided Settings" FontSize="17"
+                                                       Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
+                                            <StackPanel x:Name="SelectedDeviceSettingsRootLayoutPanel" 
+                                                        Orientation="Vertical" HorizontalAlignment="Stretch"/>
+                                        </StackPanel>
+                                    </Flyout>
+                                </FlyoutBase.AttachedFlyout>
+
+                            </AppBarButton>
+                        </StackPanel>
 
                         <StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="3" HorizontalAlignment="Stretch">
 

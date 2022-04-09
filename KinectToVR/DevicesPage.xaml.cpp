@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "DevicesPage.xaml.h"
 #if __has_include("DevicesPage.g.cpp")
 #include "DevicesPage.g.cpp"
@@ -475,11 +475,22 @@ namespace winrt::KinectToVR::implementation
 
 		devicesMainContentScrollViewer = std::make_shared<Controls::ScrollViewer>(DevicesMainContentScrollViewer());
 
-		devicesOverridesSelectorStackPanelOuter = std::make_shared<Controls::StackPanel>(DevicesOverridesSelectorStackPanelOuter());
-		devicesOverridesSelectorStackPanelInner = std::make_shared<Controls::StackPanel>(DevicesOverridesSelectorStackPanelInner());
+		devicesOverridesSelectorStackPanelOuter = std::make_shared<Controls::StackPanel>(
+			DevicesOverridesSelectorStackPanelOuter());
+		devicesOverridesSelectorStackPanelInner = std::make_shared<Controls::StackPanel>(
+			DevicesOverridesSelectorStackPanelInner());
 
-		devicesJointsBasisSelectorStackPanelOuter = std::make_shared<Controls::StackPanel>(DevicesJointsBasisSelectorStackPanelOuter());
-		devicesJointsBasisSelectorStackPanelInner = std::make_shared<Controls::StackPanel>(DevicesJointsBasisSelectorStackPanelInner());
+		devicesJointsBasisSelectorStackPanelOuter = std::make_shared<Controls::StackPanel>(
+			DevicesJointsBasisSelectorStackPanelOuter());
+		devicesJointsBasisSelectorStackPanelInner = std::make_shared<Controls::StackPanel>(
+			DevicesJointsBasisSelectorStackPanelInner());
+
+		selectedDeviceSettingsRootLayoutPanel = std::make_shared<Controls::StackPanel>(
+			SelectedDeviceSettingsRootLayoutPanel());
+
+		selectedDeviceSettingsButton = std::make_shared<Controls::AppBarButton>(SelectedDeviceSettingsButton());
+
+		selectedDeviceSettingsFlyout = std::make_shared<Controls::Flyout>(SelectedDeviceSettingsFlyout());
 
 		// Create tracking devices' list
 		static auto m_TrackingDevicesViewModels =
@@ -590,6 +601,20 @@ winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Selection
 
 		deviceName = device->getDeviceName();
 
+		// Show / Hide device settings button
+		selectedDeviceSettingsButton.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
+
 		// We've selected a kinectbasis device, so this should be hidden
 		jointBasisControls.get()->Visibility(Visibility::Collapsed);
 		jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
@@ -670,6 +695,20 @@ winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Selection
 		device_status = device->statusResultString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsButton.get()->Visibility(
+			device->isSettingsDaemonSupported()
+				? Visibility::Visible
+				: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+				? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+					selectedTrackingDeviceID)->Get()
+				: *k2app::interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
@@ -900,7 +939,7 @@ winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Selection
 		// Re-add the child for it to play our funky transition
 		// (Though it's not the same as before...)
 		devicesMainContentGridOuter.get()->Children().
-			Append(*devicesMainContentGridInner);
+		                            Append(*devicesMainContentGridInner);
 	}
 
 	LOG(INFO) << "Changed the currently selected device to " << deviceName;
@@ -1575,8 +1614,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 		// Re-add the child for it to play our funky transition
 		// (Though it's not the same as before...)
 		devicesOverridesSelectorStackPanelOuter.get()->Children().
-			Append(*devicesOverridesSelectorStackPanelInner);
-
+		                                        Append(*devicesOverridesSelectorStackPanelInner);
 	}
 
 	// Save settings
@@ -1757,8 +1795,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
 
 	// If controls are set to be visible
-	if (jointBasisControls.get()->Visibility() == Visibility::Visible) {
-
+	if (jointBasisControls.get()->Visibility() == Visibility::Visible)
+	{
 		// Remove the only one child of our outer main content grid
 		// (What a bestiality it is to do that!!1)
 		devicesJointsBasisSelectorStackPanelOuter.get()->Children().RemoveAtEnd();
@@ -1777,7 +1815,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 		// Re-add the child for it to play our funky transition
 		// (Though it's not the same as before...)
 		devicesJointsBasisSelectorStackPanelOuter.get()->Children().
-			Append(*devicesJointsBasisSelectorStackPanelInner);
+		                                          Append(*devicesJointsBasisSelectorStackPanelInner);
 	}
 
 	// Save settings
@@ -2783,6 +2821,20 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 		deviceName = device->getDeviceName();
 
+		// Show / Hide device settings button
+		selectedDeviceSettingsButton.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
+
 		// We've selected a kinectbasis device, so this should be hidden
 		jointBasisControls.get()->Visibility(Visibility::Collapsed);
 		jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
@@ -2863,6 +2915,20 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		device_status = device->statusResultString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsButton.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
@@ -3125,4 +3191,11 @@ void winrt::KinectToVR::implementation::DevicesPage::OpenDocsButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	ShellExecuteA(0, 0, "https://k2vr.tech/docs/", 0, 0, SW_SHOW);
+}
+
+
+void winrt::KinectToVR::implementation::DevicesPage::SelectedDeviceSettingsButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	selectedDeviceSettingsFlyout.get()->ShowAt(sender.as<FrameworkElement>());
 }

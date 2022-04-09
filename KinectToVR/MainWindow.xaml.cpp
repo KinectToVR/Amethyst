@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -444,14 +444,6 @@ namespace winrt::KinectToVR::implementation
 												{
 													LOG(INFO) << "Interface version OK, now constructing...";
 
-													LOG(INFO) << "Registering device's layout root...";
-
-													// Create a layout root for the device and override
-													const auto pLayoutRoot = new
-														k2app::interfacing::AppInterface::AppLayoutRoot();
-													pDevice->layoutRoot = dynamic_cast<ktvr::Interface::LayoutRoot*>(
-														pLayoutRoot);
-
 													LOG(INFO) << "Overriding device's helper functions...";
 
 													// Push helper functions to the device
@@ -483,12 +475,66 @@ namespace winrt::KinectToVR::implementation
 													// Push the device to pointers' vector
 													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
 
-													LOG(INFO) <<
-														"Appending the device's layout root to the global registry...";
+													// Create a layout root for the device and override
+													const uint32_t _last_device_index =
+														TrackingDevices::TrackingDevicesVector.size() - 1;
+													k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
+														[_last_device_index, this]
+														{
+															LOG(INFO) << "Registering device[" << _last_device_index <<
+																"]'s layout root...";
 
-													// Push the device's layout root to pointers' vector
-													TrackingDevices::TrackingDevicesLayoutRootsVector.
-														push_back(pLayoutRoot);
+															const auto pLayoutRoot = new
+																k2app::interfacing::AppInterface::AppLayoutRoot();
+
+															switch (auto const& device =
+																TrackingDevices::TrackingDevicesVector.at(
+																	_last_device_index); device.index())
+															{
+															case 0:
+																{
+																	auto const& pDevice =
+																		std::get<
+																			ktvr::K2TrackingDeviceBase_KinectBasis*>(
+																			device);
+
+																	// Register the layout
+																	pDevice->layoutRoot = dynamic_cast<
+																			ktvr::Interface::LayoutRoot*>
+																		(pLayoutRoot);
+
+																	// State that everything's fine and he device's loaded
+																	// Note: the dispatcher is starting AFTER device setup
+																	pDevice->onLoad();
+																}
+																break;
+															case 1:
+																{
+																	auto const& pDevice =
+																		std::get<
+																			ktvr::K2TrackingDeviceBase_JointsBasis*>(
+																			device);
+
+																	// Register the layout
+																	pDevice->layoutRoot = dynamic_cast<
+																			ktvr::Interface::LayoutRoot*>
+																		(pLayoutRoot);
+
+																	// State that everything's fine and he device's loaded
+																	// Note: the dispatcher is starting AFTER device setup
+																	pDevice->onLoad();
+																}
+																break;
+															}
+
+															LOG(INFO) <<
+																"Appending the device[" << _last_device_index <<
+																"]'s layout root to the global registry...";
+
+															// Push the device's layout root to pointers' vector
+															TrackingDevices::TrackingDevicesLayoutRootsVector.
+																push_back(pLayoutRoot);
+														});
 
 													stat = pDevice->statusResultString(
 														pDevice->getStatusResult());
@@ -507,14 +553,6 @@ namespace winrt::KinectToVR::implementation
 												{
 													LOG(INFO) << "Interface version OK, now constructing...";
 
-													LOG(INFO) << "Registering device's layout root...";
-
-													// Create a layout root for the device and override
-													const auto pLayoutRoot = new
-														k2app::interfacing::AppInterface::AppLayoutRoot();
-													pDevice->layoutRoot = dynamic_cast<ktvr::Interface::LayoutRoot*>(
-														pLayoutRoot);
-
 													LOG(INFO) << "Overriding device's helper functions...";
 
 													// Push helper functions to the device
@@ -546,12 +584,66 @@ namespace winrt::KinectToVR::implementation
 													// Push the device to pointers' vector
 													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
 
-													LOG(INFO) <<
-														"Appending the device's layout root to the global registry...";
+													// Create a layout root for the device and override
+													const uint32_t _last_device_index =
+														TrackingDevices::TrackingDevicesVector.size() - 1;
+													k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
+														[_last_device_index, this]
+														{
+															LOG(INFO) << "Registering device[" << _last_device_index <<
+																"]'s layout root...";
 
-													// Push the device's layout root to pointers' vector
-													TrackingDevices::TrackingDevicesLayoutRootsVector.
-														push_back(pLayoutRoot);
+															const auto pLayoutRoot = new
+																k2app::interfacing::AppInterface::AppLayoutRoot();
+
+															switch (auto const& device =
+																TrackingDevices::TrackingDevicesVector.at(
+																	_last_device_index); device.index())
+															{
+															case 0:
+																{
+																	auto const& pDevice =
+																		std::get<
+																			ktvr::K2TrackingDeviceBase_KinectBasis*>(
+																			device);
+
+																	// Register the layout
+																	pDevice->layoutRoot = dynamic_cast<
+																			ktvr::Interface::LayoutRoot*>
+																		(pLayoutRoot);
+
+																	// State that everything's fine and he device's loaded
+																	// Note: the dispatcher is starting AFTER device setup
+																	pDevice->onLoad();
+																}
+																break;
+															case 1:
+																{
+																	auto const& pDevice =
+																		std::get<
+																			ktvr::K2TrackingDeviceBase_JointsBasis*>(
+																			device);
+
+																	// Register the layout
+																	pDevice->layoutRoot = dynamic_cast<
+																			ktvr::Interface::LayoutRoot*>
+																		(pLayoutRoot);
+
+																	// State that everything's fine and he device's loaded
+																	// Note: the dispatcher is starting AFTER device setup
+																	pDevice->onLoad();
+																}
+																break;
+															}
+
+															LOG(INFO) <<
+																"Appending the device[" << _last_device_index <<
+																"]'s layout root to the global registry...";
+
+															// Push the device's layout root to pointers' vector
+															TrackingDevices::TrackingDevicesLayoutRootsVector.
+																push_back(pLayoutRoot);
+														});
 
 													stat = pDevice->statusResultString(
 														pDevice->getStatusResult());
@@ -580,6 +672,10 @@ namespace winrt::KinectToVR::implementation
 
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
+
+													// State that everything's fine and he device's loaded
+													// Note: the dispatcher is starting AFTER device setup
+													pDevice->onLoad();
 
 													LOG(INFO) << "A Spectator device's been added successfully!";
 													continue; // Don't do any more jobs
@@ -848,6 +944,20 @@ void KinectToVR::implementation::MainWindow::NavView_Loaded(
 	// here to load the home page.
 	NavView_Navigate(L"general",
 	                 Media::Animation::EntranceNavigationTransitionInfo());
+
+	// Append placeholder text to the dummy layout root
+	k2app::interfacing::emptyLayoutRoot = 
+		new k2app::interfacing::AppInterface::AppLayoutRoot();
+
+	k2app::interfacing::emptyLayoutRoot->AppendSingleElement(
+		k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced(
+			"In the beginning was the Word."),
+		ktvr::Interface::SingleLayoutHorizontalAlignment::Left);
+
+	k2app::interfacing::emptyLayoutRoot->AppendSingleElement(
+		k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced(
+			"  But this device's settings are something else..."),
+		ktvr::Interface::SingleLayoutHorizontalAlignment::Left);
 }
 
 void KinectToVR::implementation::MainWindow::NavView_ItemInvoked(
