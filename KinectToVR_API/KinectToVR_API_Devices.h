@@ -19,7 +19,7 @@
 namespace ktvr
 {
 	// Interace Version
-	static const char* IK2API_Devices_Version = "IK2API_Version_006";
+	static const char* IK2API_Devices_Version = "IK2API_Version_007";
 
 	// Return messaging types
 	enum K2InitErrorType
@@ -311,6 +311,8 @@ namespace ktvr
 
 		// A typedef to save time and space:
 		// an std variant around all currently possible ui elements
+		// Note: To achieve an empty element (spacer),
+		//       you should use a TextBlock with empty text
 		typedef std::variant<
 			TextBlock*,
 			Button*,
@@ -361,19 +363,25 @@ namespace ktvr
 		{
 		}
 
-		// These 3 functions are critical.
-		// All 3 are called by K2App,
-		// - in init you should set the device up (and run the first frame)
-		// - in update you should update the array of joints with data
-		// - in shutdown you should gracefully turn your device off
+		// These 4 functions are critical
+		// All 4 are called by K2App
+
+		// This is called after the app loads the plugin
+		virtual void onLoad()
+		{
+		}
+
+		// This initializes/connects the device
 		virtual void initialize()
 		{
 		}
 
+		// This is called when the device is closed
 		virtual void shutdown()
 		{
 		}
 
+		// This is called to update the device (each loop)
 		virtual void update()
 		{
 		}
@@ -550,19 +558,25 @@ namespace ktvr
 		{
 		}
 
-		// These 3 functions are critical.
-		// All 3 are called by K2App,
-		// - in init you should set the device up (and run the first frame)
-		// - in update you should update the array of joints with data
-		// - in shutdown you should gracefully turn your device off
+		// These 4 functions are critical
+		// All 4 are called by K2App
+
+		// This is called after the app loads the plugin
+		virtual void onLoad()
+		{
+		}
+
+		// This initializes/connects the device
 		virtual void initialize()
 		{
 		}
 
+		// This is called when the device is closed
 		virtual void shutdown()
 		{
 		}
 
+		// This is called to update the device (each loop)
 		virtual void update()
 		{
 		}
@@ -668,6 +682,11 @@ namespace ktvr
 		{
 		}
 		
+		// This is called after the app loads the plugin
+		virtual void onLoad()
+		{
+		}
+
 		/* Helper functions which may be internally called by the device plugin */
 		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
 		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
