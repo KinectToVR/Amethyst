@@ -108,22 +108,22 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 	// ktvr::GetK2AppDataFileDir will create all directories by itself
 	
 	/* Initialize logging */
-	google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("driver_KinectToVR.dll").c_str());
+	google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("KinectToVR_VRServerDriver_").c_str());
 	/* Log everything >=INFO to same file */
-	google::SetLogDestination(google::GLOG_INFO, ktvr::GetK2AppDataLogFileDir("driver_KinectToVR.dll").c_str());
+	google::SetLogDestination(google::GLOG_INFO, ktvr::GetK2AppDataLogFileDir("KinectToVR_VRServerDriver_").c_str());
 	google::SetLogFilenameExtension(".log");
 	
 	FLAGS_logbufsecs = 0; //Set max timeout
 	FLAGS_minloglevel = google::GLOG_INFO;
 
-	LOG(INFO) << "~~~KinectToVR OpenVR Driver new logging session begins here!~~~";
+	LOG(INFO) << "~~~KinectToVR (Amethyst) OpenVR Driver new logging session begins here!~~~";
 	LOG(INFO) << "Interface version name: " << pInterfaceName;
 	LOG(INFO) << "K2API version name: " << ktvr::IK2API_Version;
 
 	static k2_driver::K2ServerProvider k2_server_provider;
 	static K2WatchdogDriver k2_watchdog_driver;
 
-	LOG(INFO) << "KinectToVR OpenVR Driver will try to run on K2API's default addresses.";
+	LOG(INFO) << "KinectToVR (Amethyst) OpenVR Driver will try to run on K2API's default addresses.";
 
 	if (0 == strcmp(vr::IServerTrackedDeviceProvider_Version, pInterfaceName))
 	{

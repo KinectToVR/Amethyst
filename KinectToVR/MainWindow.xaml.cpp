@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include "App.xaml.h"
@@ -201,9 +201,9 @@ namespace winrt::KinectToVR::implementation
 		InitializeComponent();
 
 		// Set up logging
-		google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("KinectToVR_K2App").c_str());
+		google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("KinectToVR_Amethyst_").c_str());
 		// Log everything >=INFO to same file
-		google::SetLogDestination(google::GLOG_INFO, ktvr::GetK2AppDataLogFileDir("KinectToVR_K2App").c_str());
+		google::SetLogDestination(google::GLOG_INFO, ktvr::GetK2AppDataLogFileDir("KinectToVR_Amethyst_").c_str());
 		google::SetLogFilenameExtension(".log");
 
 		FLAGS_logbufsecs = 0; //Set max timeout
