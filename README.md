@@ -28,9 +28,9 @@ Both build and deployment instructions [are available here](https://github.com/K
 You can find Amethyst plugin samples in [the K2TrackingDevice-Samples repo](https://github.com/KinectToVR/K2TrackingDevice-Samples).
 
 ## **Docs / Wikis**
-I try to document the code as I go (not ot forget some important stuff), so it should kind-of readable and understandable.<br>
-If you have any questions about how something works or how to use it, please search through this repo, or just ask me.<br>
+I try to document the code as I go (not to forget stuff), it should kind-of readable and understandable.<br>
+For questions about how something works or how to use it, please search through this repo, or just ask.<br>
 
-Currently, all "docs" (as for plugins) available is [the K2TrackingDevice-Samples repo](https://github.com/KinectToVR/K2TrackingDevice-Samples).<br>
+Currently, all available docs (as for plugins) is [the K2TrackingDevice-Samples repo](https://github.com/KinectToVR/K2TrackingDevice-Samples).<br>
 To learn about the KinectToVR API (K2API for short), please go to [the k2vr-application repo](https://github.com/KinectToVR/k2vr-application/wiki).<br>
 (Though, in [the k2vr-application repo](https://github.com/KinectToVR/k2vr-application/wiki), you're going to find only the old, default API methods)
