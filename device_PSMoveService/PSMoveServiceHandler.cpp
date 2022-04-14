@@ -3,13 +3,9 @@
 
 #define M_PI_2 1.57079632679
 
-int r = 0;
-int g = 0;
-int b = 0;
-
 Eigen::Vector3f PSMSToEigen(PSMVector3f v)
 {
-	return Eigen::Vector3f(v.x, v.y, v.z);
+	return .01 * Eigen::Vector3f(v.x, v.y, v.z);
 }
 
 Eigen::Quaternionf PSMSToEigen(PSMQuatf q)
@@ -276,8 +272,8 @@ void PSMoveServiceHandler::rebuildPSMoveLists()
 					LOG(ERROR) << "Controller stream " << i << " failed to start!";
 				}
 			}
-			// Rebuild K2VR Controller List for Trackers
-			// Here, because of timing issue, where controllers will report as 'None' occasionally when uninitialised properly
+			// Rebuild KTVR Controller List for Trackers
+			// Here, because of timing issue, where controllers will report as 'None' occasionally when uninitialized properly
 		}
 		else
 		{
