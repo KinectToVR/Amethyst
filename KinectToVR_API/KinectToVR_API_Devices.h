@@ -189,7 +189,8 @@ namespace ktvr
 			}
 
 			// Function handlers for plugin to use
-			void (*OnClick)(Button* this_button);
+			std::function<void(Button*)> OnClick;
+			//void (*OnClick)(Button* this_button);
 		};
 
 		// NumberBox Class : (SpinBox, Same as XAMLs)
@@ -216,7 +217,8 @@ namespace ktvr
 			}
 
 			// Function handlers for plugin to use
-			void (*OnValueChanged)(NumberBox* this_number_box, int const& new_value);
+			std::function<void(NumberBox*, int const&)> OnValueChanged;
+			//void (*OnValueChanged)(NumberBox* this_number_box, int const& new_value);
 		};
 
 		// CheckBox Class : (Same as XAMLs)
@@ -243,8 +245,10 @@ namespace ktvr
 			}
 
 			// Function handlers for plugin to use
-			void (*OnChecked)(CheckBox* this_check_box);
-			void (*OnUnchecked)(CheckBox* this_check_box);
+			std::function<void(CheckBox*)> OnChecked;
+			std::function<void(CheckBox*)> OnUnchecked;
+			//void (*OnChecked)(CheckBox* this_check_box);
+			//void (*OnUnchecked)(CheckBox* this_check_box);
 		};
 
 		// ToggleSwitch Class : (A bit altered XAMLs)
@@ -271,8 +275,10 @@ namespace ktvr
 			}
 
 			// Function handlers for plugin to use
-			void (*OnChecked)(ToggleSwitch* this_toggle_switch);
-			void (*OnUnchecked)(ToggleSwitch* this_toggle_switch);
+			std::function<void(ToggleSwitch*)> OnChecked;
+			std::function<void(ToggleSwitch*)> OnUnchecked;
+			//void (*OnChecked)(ToggleSwitch* this_toggle_switch);
+			//void (*OnUnchecked)(ToggleSwitch* this_toggle_switch);
 		};
 
 		// TextBox Class : (Same as XAMLs, Text Input)
@@ -292,7 +298,8 @@ namespace ktvr
 			}
 
 			// Function handlers for plugin to use
-			void (*OnEnterKeyDown)(TextBox* this_text_box);
+			std::function<void(TextBox*)> OnEnterKeyDown;
+			//void (*OnEnterKeyDown)(TextBox* this_text_box);
 		};
 
 		// LayoutRoot appending enum:

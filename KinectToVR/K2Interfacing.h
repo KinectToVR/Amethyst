@@ -9,7 +9,7 @@ namespace k2app
 	namespace interfacing
 	{
 		// Internal version number
-		inline const std::string K2InternalVersion = "1.0.1.3"; // KTVR[ver:X.X.X.X]
+		inline const std::string K2InternalVersion = "1.0.1.5"; // KTVR[ver:X.X.X.X]
 
 		inline std::vector<K2AppTracker> K2TrackersVector{
 			K2AppTracker("AME-00WAIST0", ktvr::ITrackerType::Tracker_Waist),

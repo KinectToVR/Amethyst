@@ -10,7 +10,8 @@ using namespace ::k2app::shared::devices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-bool devices_tab_setup_finished = false;
+bool devices_tab_setup_finished = false,
+devices_tab_re_setup_finished = false;
 
 void devices_check_override_ids(uint32_t const& id)
 {
@@ -1842,7 +1843,7 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_Selecti
 
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1) // if JointsBase
+	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[0]);
 
@@ -1861,7 +1862,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_Sele
 
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1) // if JointsBase
+	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[1]);
 
@@ -1879,7 +1880,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_Sel
 
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1) // if JointsBase
+	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[2]);
 
@@ -1897,7 +1898,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_Sel
 
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1) // if JointsBase
+	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[3]);
 
@@ -1915,7 +1916,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_Se
 
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1) // if JointsBase
+	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[4]);
 
@@ -1933,7 +1934,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_Sele
 
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1) // if JointsBase
+	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[5]);
 
@@ -1951,7 +1952,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_Sel
 
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1) // if JointsBase
+	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[6]);
 
@@ -1973,7 +1974,7 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOption
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.positionOverrideJointID[0]);
 
@@ -1994,7 +1995,7 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOption
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.rotationOverrideJointID[0]);
 
@@ -2015,7 +2016,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOpt
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.positionOverrideJointID[1]);
 
@@ -2036,7 +2037,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOpt
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.rotationOverrideJointID[1]);
 
@@ -2057,7 +2058,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOp
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.positionOverrideJointID[2]);
 
@@ -2077,7 +2078,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOp
 
 	//// If we're using a joints device then also signal the joint
 	auto const& trackingDevice = TrackingDevices::getCurrentOverrideDevice();
-	if (trackingDevice.index() == 1) // if JointsBase
+	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.rotationOverrideJointID[2]);
 
@@ -2098,7 +2099,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOp
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.positionOverrideJointID[3]);
 
@@ -2119,7 +2120,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOp
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.rotationOverrideJointID[3]);
 
@@ -2140,7 +2141,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideO
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.positionOverrideJointID[4]);
 
@@ -2161,7 +2162,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideO
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.rotationOverrideJointID[4]);
 
@@ -2182,7 +2183,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOpt
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.positionOverrideJointID[5]);
 
@@ -2203,7 +2204,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOpt
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.rotationOverrideJointID[5]);
 
@@ -2224,7 +2225,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOp
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.positionOverrideJointID[6]);
 
@@ -2245,7 +2246,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOp
 	// If we're using a joints device then also signal the joint
 	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1) // if JointsBase
+		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
 				signalJoint(k2app::K2Settings.rotationOverrideJointID[6]);
 
@@ -2772,6 +2773,9 @@ void winrt::KinectToVR::implementation::DevicesPage::DismissOverrideTipNoJointsB
 void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Reset
+	devices_tab_re_setup_finished = false;
+
 	// If it's the first time loading, select the base device
 	selectedTrackingDeviceID =
 		devices_tab_setup_finished
@@ -3141,6 +3145,9 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 	}
 
 	LOG(INFO) << "Changed the currently selected device to " << deviceName;
+
+	// Now we're good
+	devices_tab_re_setup_finished = true;
 }
 
 

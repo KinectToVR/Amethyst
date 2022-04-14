@@ -35,7 +35,8 @@ Follow these steps:
     boost-unordered:x64-windows `
     boost-math:x64-windows `
     boost-algorithm:x64-windows `
-    curlpp:x64-windows
+    curlpp:x64-windows `
+    cereal:x64-windows
   ```
 
 - Clone latest `OpenVR` and `Eigen3` to `external/` and set up `GLog` & `GFlags`<br>

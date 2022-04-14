@@ -134,67 +134,6 @@ std::string batteryValueString(PSMBatteryState battery)
 	}
 }
 
-static void flashRainbow(uint32_t id)
-{
-	int red = 0, green = 0, blue = 0;
-	for (int color = 0; color < 6; color++)
-	{
-		switch (color)
-		{
-		case 0:
-			red = 255;
-			green = 0;
-			blue = 0;
-			break;
-
-		case 1:
-			red = 255;
-			green = 255;
-			blue = 0;
-			break;
-
-		case 2:
-			red = 0;
-			green = 255;
-			blue = 0;
-			break;
-
-		case 3:
-			red = 0;
-			green = 255;
-			blue = 255;
-			break;
-
-		case 4:
-			red = 0;
-			green = 0;
-			blue = 255;
-			break;
-
-		case 5:
-			red = 255;
-			green = 0;
-			blue = 255;
-			break;
-		}
-		while (r != red || g != green || b != blue)
-		{
-			if (r < red) r += 1;
-			if (r > red) r -= 1;
-
-			if (g < green) g += 1;
-			if (g > green) g -= 1;
-
-			if (b < blue) b += 1;
-			if (b > blue) b -= 1;
-
-			PSM_SetControllerLEDOverrideColor(id, r, g, b);
-			std::this_thread::sleep_for(std::chrono::microseconds(1));
-		}
-	}
-	PSM_SetControllerLEDOverrideColor(id, 0, 0, 0);
-}
-
 void PSMoveServiceHandler::signalJoint(uint32_t at)
 {
 	try
@@ -421,7 +360,14 @@ void PSMoveServiceHandler::processKeyInputs()
 		// Optionally signal the joint
 		if (wrapper.flashNow)
 		{
-			std::thread(flashRainbow, wrapper.controller->ControllerID).detach();
+			// Vibrate the controller to signal selection
+			std::thread([&, this](uint32_t id)
+			            {
+				            PSM_SetControllerRumble(id, PSMControllerRumbleChannel_All, 0.7);
+				            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				            PSM_SetControllerRumble(id, PSMControllerRumbleChannel_All, 0.0);
+			            },
+			            wrapper.controller->ControllerID).detach();
 			wrapper.flashNow = false; // Reset
 		}
 
