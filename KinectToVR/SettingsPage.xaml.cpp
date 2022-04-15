@@ -271,15 +271,15 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 		k2app::K2Settings.positionTrackingFilterOptions[0]);
 
 	// Feet (pos)
-	waistPositionFilterOptionBox.get()->SelectedIndex(
+	feetPositionFilterOptionBox.get()->SelectedIndex(
 		k2app::K2Settings.positionTrackingFilterOptions[1]);
 
 	// Elbows (pos)
-	waistPositionFilterOptionBox.get()->SelectedIndex(
+	elbowsPositionFilterOptionBox.get()->SelectedIndex(
 		k2app::K2Settings.positionTrackingFilterOptions[3]);
 
 	// Knees (pos)
-	waistPositionFilterOptionBox.get()->SelectedIndex(
+	kneePositionFilterOptionBox.get()->SelectedIndex(
 		k2app::K2Settings.positionTrackingFilterOptions[5]);
 
 	// Feet
