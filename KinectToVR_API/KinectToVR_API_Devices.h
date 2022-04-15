@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include <array>
 
 #include <Eigen/Dense>
 
