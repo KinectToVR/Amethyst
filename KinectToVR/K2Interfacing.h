@@ -994,15 +994,15 @@ namespace k2app
 
 					// Create a dummy callback
 					std::function<void(
-							winrt::Windows::Foundation::IInspectable const& sender,
-							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
 						const _n_callback = [this](winrt::Windows::Foundation::IInspectable const& sender,
-						                           winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
+							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
 						void
-						{
-							if (OnClick) // Check if not null
-								OnClick(this);
-						};
+					{
+						if (OnClick) // Check if not null
+							OnClick(this);
+					};
 
 					// Set up the click handler to point to the base's one
 					_button.Click(_n_callback);
@@ -1078,19 +1078,141 @@ namespace k2app
 
 					// Create a dummy callback
 					std::function<void(
-							winrt::Windows::Foundation::IInspectable const& sender,
-							winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& e)>
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& e)>
 						const _n_callback = [this](winrt::Windows::Foundation::IInspectable const& sender,
-						                           winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs
-						                           const& e) ->
+							winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs
+							const& e) ->
 						void
-						{
-							if (OnValueChanged) // Check if not null
-								OnValueChanged(this, (int)e.NewValue());
-						};
+					{
+						if (OnValueChanged) // Check if not null
+							OnValueChanged(this, (int)e.NewValue());
+					};
 
 					// Set up the click handler to point to the base's one
 					_number_box.ValueChanged(_n_callback);
+				}
+			};
+
+			class AppComboBox final : public Interface::ComboBox
+			{
+			public:
+				AppComboBox()
+				{
+					Create({ "Dummy Entry" });
+				}
+
+				AppComboBox(std::vector<std::string> const& entries)
+				{
+					Create(entries);
+				}
+
+				/* XAML-Derived functions & handlers */
+
+				// IsEnabled Get and Set
+				bool IsEnabled() override
+				{
+					if (_ptr_combo_box.get())
+						return _ptr_combo_box.get()->IsEnabled();
+					else return true;
+				}
+
+				void IsEnabled(bool const& enabled) override
+				{
+					if (_ptr_combo_box.get())
+						_ptr_combo_box.get()->IsEnabled(enabled);
+				}
+
+				// Selected Index Get and Set
+				uint32_t SelectedIndex() override
+				{
+					if (_ptr_combo_box.get())
+						return _ptr_combo_box.get()->SelectedIndex();
+					else return 0;
+				}
+
+				void SelectedIndex(uint32_t const& value) override
+				{
+					if (_ptr_combo_box.get() &&
+						_ptr_combo_box.get()->Items().Size() < value)
+						_ptr_combo_box.get()->SelectedIndex(value);
+				}
+
+				// Items Vector Get and Set
+				std::vector<std::string> Items() override
+				{
+					if (_ptr_combo_box.get())
+					{
+						std::vector<std::string> _items;
+
+						// Construct a funny vector
+						for (auto e : _ptr_combo_box.get()->Items())
+							_items.push_back(string_cast(
+								e.as<winrt::hstring>().c_str()));
+
+						return _items;
+					}
+					else return {};
+				}
+
+				// WARNING: DON'T CALL THIS DURING ANY OTHER MODIFICATION LIKE SELECTIONCHANGED
+				void Items(std::vector<std::string> const& entries) override
+				{
+					if (_ptr_combo_box.get())
+					{
+						// Boiler start - reset selection to a safe spot
+						_ptr_combo_box.get()->SelectedIndex(0);
+
+						// Clear items and append the new ones
+						_ptr_combo_box.get()->Items().Clear();
+						for (auto const& str : entries)
+							_ptr_combo_box.get()->Items().Append(
+								winrt::box_value(wstring_cast(str)));
+
+						// Boiler end - reset selection to the start
+						_ptr_combo_box.get()->SelectedIndex(0);
+					}
+				}
+
+				// Get the underlying shared pointer
+				std::shared_ptr<Controls::ComboBox> Get()
+				{
+					return _ptr_combo_box;
+				}
+
+			protected:
+				// Underlying object shared pointer
+				std::shared_ptr<Controls::ComboBox> _ptr_combo_box;
+
+				// Creation: register a host and a callback
+				void Create(std::vector<std::string> const& entries)
+				{
+					// Create a XAML number box
+					Controls::ComboBox _combo_box;
+
+					_combo_box.Items().Clear();
+					for (auto const& str : entries)
+						_combo_box.Items().Append(winrt::box_value(wstring_cast(str)));
+
+					_combo_box.SelectedIndex(0);
+
+					// Back it up
+					_ptr_combo_box = std::make_shared<Controls::ComboBox>(_combo_box);
+
+					// Create a dummy callback
+					std::function<void(
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)>
+						const _n_callback = [this](winrt::Windows::Foundation::IInspectable const& sender,
+							winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e) ->
+						void
+					{
+						if (OnSelectionChanged) // Check if not null
+							OnSelectionChanged(this, _ptr_combo_box.get()->SelectedIndex());
+					};
+
+					// Set up the click handler to point to the base's one
+					_combo_box.SelectionChanged(_n_callback);
 				}
 			};
 
@@ -1153,27 +1275,27 @@ namespace k2app
 
 					// Create a dummy callback
 					std::function<void(
-							winrt::Windows::Foundation::IInspectable const& sender,
-							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
 						const _n_callback_checked = [this](winrt::Windows::Foundation::IInspectable const& sender,
-						                                   winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
+							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
 						void
-						{
-							if (OnChecked) // Check if not null
-								OnChecked(this);
-						};
+					{
+						if (OnChecked) // Check if not null
+							OnChecked(this);
+					};
 
 					// Create a dummy callback
 					std::function<void(
-							winrt::Windows::Foundation::IInspectable const& sender,
-							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
 						const _n_callback_unchecked = [this](winrt::Windows::Foundation::IInspectable const& sender,
-						                                     winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
+							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
 						void
-						{
-							if (OnUnchecked) // Check if not null
-								OnUnchecked(this);
-						};
+					{
+						if (OnUnchecked) // Check if not null
+							OnUnchecked(this);
+					};
 
 					// Set up the click handler to point to the base's one
 					_check_box.Checked(_n_callback_checked);
@@ -1242,24 +1364,24 @@ namespace k2app
 
 					// Create a dummy callback
 					std::function<void(
-							winrt::Windows::Foundation::IInspectable const& sender,
-							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)>
 						const _n_callback = [this](winrt::Windows::Foundation::IInspectable const& sender,
-						                           winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
+							winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) ->
 						void
+					{
+						// Check which handler to raise
+						if (this->Get().get()->IsOn())
 						{
-							// Check which handler to raise
-							if (this->Get().get()->IsOn())
-							{
-								if (OnChecked) // Check if not null
-									OnChecked(this);
-							}
-							else
-							{
-								if (OnUnchecked) // Check if not null
-									OnUnchecked(this);
-							}
-						};
+							if (OnChecked) // Check if not null
+								OnChecked(this);
+						}
+						else
+						{
+							if (OnUnchecked) // Check if not null
+								OnUnchecked(this);
+						}
+					};
 
 					// Set up the click handler to point to the base's one
 					_toggle_switch.Toggled(_n_callback);
@@ -1313,15 +1435,15 @@ namespace k2app
 
 					// Create a dummy callback
 					std::function<void(
-							winrt::Windows::Foundation::IInspectable const& sender,
-							winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& e)>
+						winrt::Windows::Foundation::IInspectable const& sender,
+						winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& e)>
 						const _n_callback = [this](winrt::Windows::Foundation::IInspectable const& sender,
-						                           winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& e) ->
+							winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& e) ->
 						void
-						{
-							if (e.Key() == winrt::Windows::System::VirtualKey::Enter)
-								OnEnterKeyDown(this);
-						};
+					{
+						if (e.Key() == winrt::Windows::System::VirtualKey::Enter)
+							OnEnterKeyDown(this);
+					};
 
 					// Set up the click handler to point to the base's one
 					_text_box.KeyDown(_n_callback);
@@ -1371,107 +1493,123 @@ namespace k2app
 					// Switch based on element type: all types
 					switch (element.index())
 					{
-					// TextBlock
+						// TextBlock
 					case 0:
-						{
-							auto const& pElement = static_cast<AppTextBlock*>(
-								std::get<Interface::TextBlock*>(element));
+					{
+						auto const& pElement = static_cast<AppTextBlock*>(
+							std::get<Interface::TextBlock*>(element));
 
-							(*pElement).Get().get()->VerticalAlignment(
-								VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-							(*pElement).Get().get()->HorizontalAlignment(
-								horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-							_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-							return;
-						}
+						return;
+					}
 					// Button
 					case 1:
-						{
-							auto const& pElement = static_cast<AppButton*>(std::get<Interface::Button*>(element));
+					{
+						auto const& pElement = static_cast<AppButton*>(std::get<Interface::Button*>(element));
 
-							(*pElement).Get().get()->VerticalAlignment(
-								VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-							(*pElement).Get().get()->HorizontalAlignment(
-								horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-							_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-							return;
-						}
+						return;
+					}
 					// NumberBox
 					case 2:
-						{
-							auto const& pElement = static_cast<AppNumberBox*>(
-								std::get<Interface::NumberBox*>(element));
+					{
+						auto const& pElement = static_cast<AppNumberBox*>(
+							std::get<Interface::NumberBox*>(element));
 
-							(*pElement).Get().get()->VerticalAlignment(
-								VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-							(*pElement).Get().get()->HorizontalAlignment(
-								horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-							_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-							return;
-						}
-					// CheckBox
+						return;
+					}
+					// ComboBox
 					case 3:
-						{
-							auto const& pElement = static_cast<AppCheckBox*>(
-								std::get<Interface::CheckBox*>(element));
+					{
+						auto const& pElement = static_cast<AppComboBox*>(
+							std::get<Interface::ComboBox*>(element));
 
-							(*pElement).Get().get()->VerticalAlignment(
-								VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-							(*pElement).Get().get()->HorizontalAlignment(
-								horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-							_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-							return;
-						}
-					// ToggleSwitch
+						return;
+					}
+					// CheckBox
 					case 4:
-						{
-							auto const& pElement = static_cast<AppToggleSwitch*>(
-								std::get<Interface::ToggleSwitch*>(element));
+					{
+						auto const& pElement = static_cast<AppCheckBox*>(
+							std::get<Interface::CheckBox*>(element));
 
-							(*pElement).Get().get()->VerticalAlignment(
-								VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-							(*pElement).Get().get()->HorizontalAlignment(
-								horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-							_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-							return;
-						}
-					// TextBox
+						return;
+					}
+					// ToggleSwitch
 					case 5:
-						{
-							auto const& pElement = static_cast<AppTextBox*>(
-								std::get<Interface::TextBox*>(element));
+					{
+						auto const& pElement = static_cast<AppToggleSwitch*>(
+							std::get<Interface::ToggleSwitch*>(element));
 
-							(*pElement).Get().get()->VerticalAlignment(
-								VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-							(*pElement).Get().get()->HorizontalAlignment(
-								horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-							_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-							return;
-						}
+						return;
+					}
+					// TextBox
+					case 6:
+					{
+						auto const& pElement = static_cast<AppTextBox*>(
+							std::get<Interface::TextBox*>(element));
+
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
+
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
+
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+
+						return;
+					}
 					}
 				}
 
 				// Append a One-Row element pair : */* column space
 				void AppendElementPair(Interface::Element const& first_element,
-				                       Interface::Element const& second_element) override
+					Interface::Element const& second_element) override
 				{
 					// Set up a placeholder horizontally divided grid
 					Controls::Grid _grid;
@@ -1485,108 +1623,125 @@ namespace k2app
 						// Switch based on element type: all types
 						switch (first_element.index())
 						{
-						// TextBlock
+							// TextBlock
 						case 0:
-							{
-								auto const& pElement = static_cast<AppTextBlock*>(
-									std::get<Interface::TextBlock*>(first_element));
+						{
+							auto const& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(first_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-								break;
-							}
+							break;
+						}
 						// Button
 						case 1:
-							{
-								auto const& pElement = static_cast<AppButton*>(
-									std::get<Interface::Button*>(first_element));
+						{
+							auto const& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(first_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-								break;
-							}
+							break;
+						}
 						// NumberBox
 						case 2:
-							{
-								auto const& pElement = static_cast<AppNumberBox*>(
-									std::get<Interface::NumberBox*>(first_element));
+						{
+							auto const& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(first_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-								break;
-							}
-						// CheckBox
+							break;
+						}
+						// ComboBox
 						case 3:
-							{
-								auto const& pElement = static_cast<AppCheckBox*>(
-									std::get<Interface::CheckBox*>(first_element));
+						{
+							auto const& pElement = static_cast<AppComboBox*>(
+								std::get<Interface::ComboBox*>(first_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-								break;
-							}
-						// ToggleSwitch
+							break;
+						}
+						// CheckBox
 						case 4:
-							{
-								auto const& pElement = static_cast<AppToggleSwitch*>(
-									std::get<Interface::ToggleSwitch*>(first_element));
+						{
+							auto const& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(first_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-								break;
-							}
-						// TextBox
+							break;
+						}
+						// ToggleSwitch
 						case 5:
-							{
-								auto const& pElement = static_cast<AppTextBox*>(
-									std::get<Interface::TextBox*>(first_element));
+						{
+							auto const& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(first_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-								break;
-							}
+							break;
+						}
+						// TextBox
+						case 6:
+						{
+							auto const& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
+
+							break;
+						}
 						}
 					}
 
@@ -1595,108 +1750,125 @@ namespace k2app
 						// Switch based on element type: all types
 						switch (second_element.index())
 						{
-						// TextBlock
+							// TextBlock
 						case 0:
-							{
-								auto const& pElement = static_cast<AppTextBlock*>(
-									std::get<Interface::TextBlock*>(second_element));
+						{
+							auto const& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(second_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-								break;
-							}
+							break;
+						}
 						// Button
 						case 1:
-							{
-								auto const& pElement = static_cast<AppButton*>(
-									std::get<Interface::Button*>(second_element));
+						{
+							auto const& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(second_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-								break;
-							}
+							break;
+						}
 						// NumberBox
 						case 2:
-							{
-								auto const& pElement = static_cast<AppNumberBox*>(
-									std::get<Interface::NumberBox*>(second_element));
+						{
+							auto const& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(second_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-								break;
-							}
-						// CheckBox
+							break;
+						}
+						// ComboBox
 						case 3:
-							{
-								auto const& pElement = static_cast<AppCheckBox*>(
-									std::get<Interface::CheckBox*>(second_element));
+						{
+							auto const& pElement = static_cast<AppComboBox*>(
+								std::get<Interface::ComboBox*>(second_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-								break;
-							}
-						// ToggleSwitch
+							break;
+						}
+						// CheckBox
 						case 4:
-							{
-								auto const& pElement = static_cast<AppToggleSwitch*>(
-									std::get<Interface::ToggleSwitch*>(second_element));
+						{
+							auto const& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(second_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-								break;
-							}
-						// TextBox
+							break;
+						}
+						// ToggleSwitch
 						case 5:
-							{
-								auto const& pElement = static_cast<AppTextBox*>(
-									std::get<Interface::TextBox*>(second_element));
+						{
+							auto const& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(second_element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-								break;
-							}
+							break;
+						}
+						// TextBox
+						case 6:
+						{
+							auto const& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
+
+							break;
+						}
 						}
 					}
 
@@ -1720,110 +1892,127 @@ namespace k2app
 
 						// Switch based on element type: all types
 						switch (auto const& element = element_vector.at(i);
-							element.index())
+						element.index())
 						{
-						// TextBlock
+							// TextBlock
 						case 0:
-							{
-								auto const& pElement = static_cast<AppTextBlock*>(
-									std::get<Interface::TextBlock*>(element));
+						{
+							auto const& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-								break;
-							}
+							break;
+						}
 						// Button
 						case 1:
-							{
-								auto const& pElement = static_cast<AppButton*>(
-									std::get<Interface::Button*>(element));
+						{
+							auto const& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-								break;
-							}
+							break;
+						}
 						// NumberBox
 						case 2:
-							{
-								auto const& pElement = static_cast<AppNumberBox*>(
-									std::get<Interface::NumberBox*>(element));
+						{
+							auto const& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-								break;
-							}
-						// CheckBox
+							break;
+						}
+						// ComboBox
 						case 3:
-							{
-								auto const& pElement = static_cast<AppCheckBox*>(
-									std::get<Interface::CheckBox*>(element));
+						{
+							auto const& pElement = static_cast<AppComboBox*>(
+								std::get<Interface::ComboBox*>(element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-								break;
-							}
-						// ToggleSwitch
+							break;
+						}
+						// CheckBox
 						case 4:
-							{
-								auto const& pElement = static_cast<AppToggleSwitch*>(
-									std::get<Interface::ToggleSwitch*>(element));
+						{
+							auto const& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-								break;
-							}
-						// TextBox
+							break;
+						}
+						// ToggleSwitch
 						case 5:
-							{
-								auto const& pElement = static_cast<AppTextBox*>(
-									std::get<Interface::TextBox*>(element));
+						{
+							auto const& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(element));
 
-								(*pElement).Get().get()->VerticalAlignment(
-									VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-								(*pElement).Get().get()->HorizontalAlignment(
-									HorizontalAlignment::Center);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
 
-								_grid.Children().Append(*(*pElement).Get());
-								_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-								break;
-							}
+							break;
+						}
+						// TextBox
+						case 6:
+						{
+							auto const& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Center);
+
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
+
+							break;
+						}
 						}
 					}
 
@@ -1890,6 +2079,19 @@ namespace k2app
 			inline Interface::NumberBox* CreateAppNumberBox_Sliced(int const& value = 0)
 			{
 				return new AppNumberBox(value);
+			}
+
+
+			// Create a server-side ui element (not sliced, server-only)
+			inline AppComboBox* CreateAppComboBox(std::vector<std::string> const& entries)
+			{
+				return new AppComboBox(entries);
+			}
+
+			// Create a client-side ui element (sliced)
+			inline Interface::ComboBox* CreateAppComboBox_Sliced(std::vector<std::string> const& entries)
+			{
+				return new AppComboBox(entries);
 			}
 
 
