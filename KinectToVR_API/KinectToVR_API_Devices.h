@@ -221,6 +221,42 @@ namespace ktvr
 			//void (*OnValueChanged)(NumberBox* this_number_box, int const& new_value);
 		};
 
+		// ComboBox Class : (ComboBox / DropDownBox, Same as XAMLs)
+		class ComboBox
+		{
+		public:
+			ComboBox() = default;
+			virtual ~ComboBox() = default;
+
+			/* XAML-Derived functions & handlers */
+
+			// IsEnabled Get and Set
+			virtual bool IsEnabled() { return true; }
+
+			virtual void IsEnabled(bool const& enabled)
+			{
+			}
+
+			// Selected Index Get and Set
+			virtual uint32_t SelectedIndex() { return 0; }
+
+			virtual void SelectedIndex(uint32_t const& value)
+			{
+			}
+
+			// Items Vector Get and Set
+			virtual std::vector<std::string> Items() { return {}; }
+
+			// WARNING: DON'T CALL THIS DURING ANY OTHER MODIFICATION LIKE SELECTIONCHANGED
+			virtual void Items(std::vector<std::string> const& entries)
+			{
+			}
+
+			// Function handlers for plugin to use
+			std::function<void(ComboBox*, uint32_t const&)> OnSelectionChanged;
+			//void (*OnSelectionChanged)(ComboBox* this_combo_box, uint32_t const& new_value);
+		};
+
 		// CheckBox Class : (Same as XAMLs)
 		class CheckBox
 		{
@@ -324,6 +360,7 @@ namespace ktvr
 			TextBlock*,
 			Button*,
 			NumberBox*,
+			ComboBox*,
 			CheckBox*,
 			ToggleSwitch*,
 			TextBox*> Element;
@@ -343,7 +380,7 @@ namespace ktvr
 			virtual void AppendSingleElement(
 				Element const& element,
 				SingleLayoutHorizontalAlignment const& alignment =
-				SingleLayoutHorizontalAlignment::Left)
+					SingleLayoutHorizontalAlignment::Left)
 			{
 			}
 
@@ -466,6 +503,9 @@ namespace ktvr
 
 		// Create a number box
 		Interface::NumberBox* (*CreateNumberBox)(int const& value);
+
+		// Create a combo box
+		Interface::ComboBox* (*CreateComboBox)(std::vector<std::string> const& entries);
 
 		// Create a check box
 		Interface::CheckBox* (*CreateCheckBox)();
@@ -652,6 +692,9 @@ namespace ktvr
 		// Create a number box
 		Interface::NumberBox* (*CreateNumberBox)(int const& value);
 
+		// Create a combo box
+		Interface::ComboBox* (*CreateComboBox)(std::vector<std::string> const& entries);
+
 		// Create a check box
 		Interface::CheckBox* (*CreateCheckBox)();
 
@@ -688,7 +731,7 @@ namespace ktvr
 		virtual ~K2TrackingDeviceBase_Spectator()
 		{
 		}
-		
+
 		// This is called after the app loads the plugin
 		virtual void onLoad()
 		{
