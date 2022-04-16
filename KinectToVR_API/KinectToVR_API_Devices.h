@@ -160,6 +160,27 @@ namespace ktvr
 
 			/* XAML-Derived functions & handlers */
 
+			// Visibility Get and Set
+			virtual bool Visibility() { return true; }
+
+			virtual void Visibility(bool const& visibility)
+			{
+			}
+
+			// Width Get and Set
+			virtual uint32_t Width() { return 0; }
+
+			virtual void Width(uint32_t const& width)
+			{
+			}
+
+			// Height Get and Set
+			virtual uint32_t Height() { return 0; }
+
+			virtual void Height(uint32_t const& height)
+			{
+			}
+
 			// Text Get and Set
 			virtual std::string Text() { return ""; }
 
@@ -176,6 +197,27 @@ namespace ktvr
 			virtual ~Button() = default;
 
 			/* XAML-Derived functions & handlers */
+
+			// Visibility Get and Set
+			virtual bool Visibility() { return true; }
+
+			virtual void Visibility(bool const& visibility)
+			{
+			}
+
+			// Width Get and Set
+			virtual uint32_t Width() { return 0; }
+
+			virtual void Width(uint32_t const& width)
+			{
+			}
+
+			// Height Get and Set
+			virtual uint32_t Height() { return 0; }
+
+			virtual void Height(uint32_t const& height)
+			{
+			}
 
 			// IsEnabled Get and Set
 			virtual bool IsEnabled() { return true; }
@@ -202,6 +244,27 @@ namespace ktvr
 			virtual ~NumberBox() = default;
 
 			/* XAML-Derived functions & handlers */
+
+			// Visibility Get and Set
+			virtual bool Visibility() { return true; }
+
+			virtual void Visibility(bool const& visibility)
+			{
+			}
+
+			// Width Get and Set
+			virtual uint32_t Width() { return 0; }
+
+			virtual void Width(uint32_t const& width)
+			{
+			}
+
+			// Height Get and Set
+			virtual uint32_t Height() { return 0; }
+
+			virtual void Height(uint32_t const& height)
+			{
+			}
 
 			// IsEnabled Get and Set
 			virtual bool IsEnabled() { return true; }
@@ -230,6 +293,27 @@ namespace ktvr
 			virtual ~ComboBox() = default;
 
 			/* XAML-Derived functions & handlers */
+
+			// Visibility Get and Set
+			virtual bool Visibility() { return true; }
+
+			virtual void Visibility(bool const& visibility)
+			{
+			}
+
+			// Width Get and Set
+			virtual uint32_t Width() { return 0; }
+
+			virtual void Width(uint32_t const& width)
+			{
+			}
+
+			// Height Get and Set
+			virtual uint32_t Height() { return 0; }
+
+			virtual void Height(uint32_t const& height)
+			{
+			}
 
 			// IsEnabled Get and Set
 			virtual bool IsEnabled() { return true; }
@@ -267,6 +351,27 @@ namespace ktvr
 
 			/* XAML-Derived functions & handlers */
 
+			// Visibility Get and Set
+			virtual bool Visibility() { return true; }
+
+			virtual void Visibility(bool const& visibility)
+			{
+			}
+
+			// Width Get and Set
+			virtual uint32_t Width() { return 0; }
+
+			virtual void Width(uint32_t const& width)
+			{
+			}
+
+			// Height Get and Set
+			virtual uint32_t Height() { return 0; }
+
+			virtual void Height(uint32_t const& height)
+			{
+			}
+
 			// IsEnabled Get and Set
 			virtual bool IsEnabled() { return true; }
 
@@ -296,6 +401,27 @@ namespace ktvr
 			virtual ~ToggleSwitch() = default;
 
 			/* XAML-Derived functions & handlers */
+
+			// Visibility Get and Set
+			virtual bool Visibility() { return true; }
+
+			virtual void Visibility(bool const& visibility)
+			{
+			}
+
+			// Width Get and Set
+			virtual uint32_t Width() { return 0; }
+
+			virtual void Width(uint32_t const& width)
+			{
+			}
+
+			// Height Get and Set
+			virtual uint32_t Height() { return 0; }
+
+			virtual void Height(uint32_t const& height)
+			{
+			}
 
 			// IsEnabled Get and Set
 			virtual bool IsEnabled() { return true; }
@@ -327,6 +453,27 @@ namespace ktvr
 
 			/* XAML-Derived functions & handlers */
 
+			// Visibility Get and Set
+			virtual bool Visibility() { return true; }
+
+			virtual void Visibility(bool const& visibility)
+			{
+			}
+
+			// Width Get and Set
+			virtual uint32_t Width() { return 0; }
+
+			virtual void Width(uint32_t const& width)
+			{
+			}
+
+			// Height Get and Set
+			virtual uint32_t Height() { return 0; }
+
+			virtual void Height(uint32_t const& height)
+			{
+			}
+
 			// Text Get and Set
 			virtual std::string Text() { return ""; }
 
@@ -337,6 +484,96 @@ namespace ktvr
 			// Function handlers for plugin to use
 			std::function<void(TextBox*)> OnEnterKeyDown;
 			//void (*OnEnterKeyDown)(TextBox* this_text_box);
+		};
+
+		// ProgressRing Class : (Same as XAMLs)
+		class ProgressRing
+		{
+		public:
+			ProgressRing() = default;
+			virtual ~ProgressRing() = default;
+
+			/* XAML-Derived functions & handlers */
+
+			// Visibility Get and Set
+			virtual bool Visibility() { return true; }
+
+			virtual void Visibility(bool const& visibility)
+			{
+			}
+
+			// Width Get and Set
+			virtual uint32_t Width() { return 0; }
+
+			virtual void Width(uint32_t const& width)
+			{
+			}
+
+			// Height Get and Set
+			virtual uint32_t Height() { return 0; }
+
+			virtual void Height(uint32_t const& height)
+			{
+			}
+
+			// Progress Get and Set (Set <0 to mark as indeterminate)
+			virtual int32_t Progress() { return -1; }
+
+			virtual void Progress(int32_t const& progress)
+			{
+			}
+		};
+
+		// ProgressBar Class : (Same as XAMLs)
+		class ProgressBar
+		{
+		public:
+			ProgressBar() = default;
+			virtual ~ProgressBar() = default;
+
+			/* XAML-Derived functions & handlers */
+
+			// Visibility Get and Set
+			virtual bool Visibility() { return true; }
+
+			virtual void Visibility(bool const& visibility)
+			{
+			}
+
+			// Width Get and Set
+			virtual uint32_t Width() { return 0; }
+
+			virtual void Width(uint32_t const& width)
+			{
+			}
+
+			// Height Get and Set
+			virtual uint32_t Height() { return 0; }
+
+			virtual void Height(uint32_t const& height)
+			{
+			}
+
+			// Progress Get and Set (Set <0 to mark as indeterminate)
+			virtual int32_t Progress() { return -1; }
+
+			virtual void Progress(int32_t const& progress)
+			{
+			}
+
+			// Paused Get and Set
+			virtual bool ShowPaused() { return false; }
+
+			virtual void ShowPaused(bool const& show_paused)
+			{
+			}
+
+			// Error Get and Set
+			virtual bool ShowError() { return false; }
+
+			virtual void ShowError(bool const& show_error)
+			{
+			}
 		};
 
 		// LayoutRoot appending enum:
@@ -364,7 +601,9 @@ namespace ktvr
 			ComboBox*,
 			CheckBox*,
 			ToggleSwitch*,
-			TextBox*> Element;
+			TextBox*,
+			ProgressRing*,
+			ProgressBar*> Element;
 
 		// PluginSettings layout's root pane
 		// This is a xaml vertical stack panel,
@@ -516,6 +755,12 @@ namespace ktvr
 
 		// Create a text box
 		Interface::TextBox* (*CreateTextBox)();
+
+		// Create a progress ring
+		Interface::ProgressRing* (*CreateProgressRing)();
+
+		// Create a progress bar
+		Interface::ProgressBar* (*CreateProgressBar)();
 
 	protected:
 		K2DeviceCharacteristics deviceCharacteristics = K2_Character_Unknown;
@@ -704,6 +949,12 @@ namespace ktvr
 
 		// Create a text box
 		Interface::TextBox* (*CreateTextBox)();
+
+		// Create a progress ring
+		Interface::ProgressRing* (*CreateProgressRing)();
+
+		// Create a progress bar
+		Interface::ProgressBar* (*CreateProgressBar)();
 
 	protected:
 		K2DeviceType deviceType = K2_Unknown;
