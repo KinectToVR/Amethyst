@@ -19,7 +19,7 @@ enum class general_calibrating_device
 	K2_OverrideDevice
 } general_current_calibrating_device;
 
-void skeleton_visibility_set_ui(bool const& v)
+void skeleton_visibility_set_ui(const bool& v)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	k2app::shared::general::skeletonToggleButton.get()->IsChecked(v);
@@ -29,7 +29,7 @@ void skeleton_visibility_set_ui(bool const& v)
 	k2app::shared::general::forceRenderText.get()->Opacity(v ? 1.0 : 0.5);
 }
 
-void skeleton_force_set_ui(bool const& v)
+void skeleton_force_set_ui(const bool& v)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	k2app::shared::general::forceRenderCheckBox.get()->IsChecked(v);
@@ -126,7 +126,7 @@ namespace winrt::KinectToVR::implementation
 }
 
 void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Push saved offsets' by reading them from settings
 	k2app::K2Settings.readSettings();
@@ -241,8 +241,8 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 
 
 void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& e)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	k2app::K2Settings.skeletonPreviewEnabled = k2app::shared::general::skeletonToggleButton.get()->IsChecked();
@@ -261,7 +261,7 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Click(
 }
 
 void winrt::KinectToVR::implementation::GeneralPage::ForceRenderCheckBox_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	k2app::K2Settings.forceSkeletonPreview = true;
@@ -270,7 +270,7 @@ void winrt::KinectToVR::implementation::GeneralPage::ForceRenderCheckBox_Checked
 }
 
 void winrt::KinectToVR::implementation::GeneralPage::ForceRenderCheckBox_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	k2app::K2Settings.forceSkeletonPreview = false;
@@ -279,7 +279,7 @@ void winrt::KinectToVR::implementation::GeneralPage::ForceRenderCheckBox_Uncheck
 }
 
 void winrt::KinectToVR::implementation::GeneralPage::SaveOffsetsButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	OffsetsView().IsPaneOpen(false);
 
@@ -289,7 +289,7 @@ void winrt::KinectToVR::implementation::GeneralPage::SaveOffsetsButton_Click(
 }
 
 void winrt::KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Discard backend offsets' values by re-reading them from settings
 	k2app::K2Settings.readSettings();
@@ -404,8 +404,8 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
 
 
 void winrt::KinectToVR::implementation::GeneralPage::OffsetsFrontendValueChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs& e)
 {
 	if (!general_tab_setup_finished || pending_offsets_update)return; // Don't react to dummy changes
 
@@ -616,23 +616,23 @@ void winrt::KinectToVR::implementation::GeneralPage::OffsetsFrontendValueChanged
 
 
 void winrt::KinectToVR::implementation::GeneralPage::OffsetsView_PaneClosing(
-	winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::SplitView& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs& args)
 {
 	args.Cancel(true);
 }
 
 
 void winrt::KinectToVR::implementation::GeneralPage::CalibrationView_PaneClosing(
-	winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::SplitView& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs& args)
 {
 	args.Cancel(true);
 }
 
 
 void winrt::KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	AutoCalibrationPane().Visibility(Visibility::Visible);
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
@@ -647,7 +647,7 @@ void winrt::KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click
 
 
 void winrt::KinectToVR::implementation::GeneralPage::ManualCalibrationButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	AutoCalibrationPane().Visibility(Visibility::Collapsed);
 	ManualCalibrationPane().Visibility(Visibility::Visible);
@@ -658,7 +658,7 @@ void winrt::KinectToVR::implementation::GeneralPage::ManualCalibrationButton_Cli
 }
 
 Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage::StartAutoCalibrationButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Set the [calibration pending] bool
 	CalibrationPending = true;
@@ -894,7 +894,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 
 
 void winrt::KinectToVR::implementation::GeneralPage::DiscardAutoCalibrationButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Just exit
 	if (!CalibrationPending)
@@ -913,7 +913,7 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardAutoCalibrationButto
 
 
 Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage::StartManualCalibrationButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Set the [calibration pending] bool
 	CalibrationPending = true;
@@ -1102,7 +1102,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::GeneralPage
 
 
 void winrt::KinectToVR::implementation::GeneralPage::DiscardManualCalibrationButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Just exit
 	if (!CalibrationPending)
@@ -1121,7 +1121,7 @@ void winrt::KinectToVR::implementation::GeneralPage::DiscardManualCalibrationBut
 
 
 void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
 	ToggleTrackersButton().Content(box_value(L"Disconnect Trackers"));
@@ -1147,7 +1147,7 @@ void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checke
 
 
 void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
 	ToggleTrackersButton().Content(box_value(L"Reconnect Trackers"));
@@ -1158,28 +1158,28 @@ void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchec
 
 
 void winrt::KinectToVR::implementation::GeneralPage::OpenDiscordButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	ShellExecuteA(0, 0, "https://discord.gg/YBQCRDG", 0, 0, SW_SHOW);
 }
 
 
 void winrt::KinectToVR::implementation::GeneralPage::OpenDocsButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	ShellExecuteA(0, 0, "https://k2vr.tech/docs/", 0, 0, SW_SHOW);
 }
 
 
 void winrt::KinectToVR::implementation::GeneralPage::ServerOpenDocsButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	ShellExecuteA(0, 0, "https://k2vr.tech/docs/minus10", 0, 0, SW_SHOW);
 }
 
 
 void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Start the main loop since we're done with basic setup
 	::k2app::shared::devices::smphSignalStartMain.release();
@@ -1328,10 +1328,10 @@ void winrt::KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 
 void winrt::KinectToVR::implementation::GeneralPage::sk_line(
 	Shapes::Line& line,
-	std::array<Eigen::Vector3f, 25> const& joints,
-	std::array<ktvr::JointTrackingState, 25> const& states,
-	ktvr::ITrackedJointType const& from,
-	ktvr::ITrackedJointType const& to)
+	const std::array<Eigen::Vector3f, 25>& joints,
+	const std::array<ktvr::JointTrackingState, 25>& states,
+	const ktvr::ITrackedJointType& from,
+	const ktvr::ITrackedJointType& to)
 {
 	constexpr double s_mat_width_default = 700,
 	                 s_mat_height_default = 600;
@@ -1379,9 +1379,9 @@ void winrt::KinectToVR::implementation::GeneralPage::sk_line(
 // the tuple goes like <position, rotation>
 void winrt::KinectToVR::implementation::GeneralPage::sk_dot(
 	Shapes::Ellipse& ellipse,
-	Eigen::Vector3f const& joint,
-	ktvr::JointTrackingState const& state,
-	std::pair<bool, bool> const& isOverridden)
+	const Eigen::Vector3f& joint,
+	const ktvr::JointTrackingState& state,
+	const std::pair<bool, bool>& isOverridden)
 {
 	constexpr double s_mat_width_default = 700,
 	                 s_mat_height_default = 600;
@@ -1447,7 +1447,7 @@ void winrt::KinectToVR::implementation::GeneralPage::sk_dot(
 }
 
 
-std::pair<HWND, hresult> GetHWNDFromWindow(winrt::Microsoft::UI::Xaml::Window const& window)
+std::pair<HWND, hresult> GetHWNDFromWindow(const winrt::Microsoft::UI::Xaml::Window& window)
 {
 	HWND nativeWindow{nullptr};
 	hresult result = window.as<IWindowNative>()->get_WindowHandle(&nativeWindow);
@@ -1492,16 +1492,16 @@ bool IsDashboardOpen()
 }
 
 
-std::pair<bool, bool> IsJointUsedAsOverride(uint32_t const& joint)
+std::pair<bool, bool> IsJointUsedAsOverride(const uint32_t& joint)
 {
 	std::pair<bool, bool> _o{false, false};
 
 	// Scan for position overrides
-	for (auto const& _j_p : k2app::K2Settings.positionOverrideJointID)
+	for (const auto& _j_p : k2app::K2Settings.positionOverrideJointID)
 		if (joint == _j_p)_o.first = true;
 
 	// Scan for rotation overrides
-	for (auto const& _j_r : k2app::K2Settings.rotationOverrideJointID)
+	for (const auto& _j_r : k2app::K2Settings.rotationOverrideJointID)
 		if (joint == _j_r)_o.second = true;
 
 	return (k2app::K2Settings.overrideDeviceID >= 0)
@@ -1510,7 +1510,7 @@ std::pair<bool, bool> IsJointUsedAsOverride(uint32_t const& joint)
 }
 
 
-std::pair<bool, bool> IsJointOverriden(uint32_t const& joint)
+std::pair<bool, bool> IsJointOverriden(const uint32_t& joint)
 {
 	return (k2app::K2Settings.overrideDeviceID >= 0)
 		       ? std::make_pair(
@@ -1521,7 +1521,7 @@ std::pair<bool, bool> IsJointOverriden(uint32_t const& joint)
 
 
 void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	static auto boneLines = std::array<Shapes::Line, 24>();
 	static auto jointDots = std::array<Shapes::Ellipse, 25>(); // For now this is MAX
@@ -1541,7 +1541,7 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 	auto timer = DispatcherTimer();
 	timer.Interval(std::chrono::milliseconds(33));
 
-	timer.Tick([&, this](IInspectable const& sender, IInspectable const& e)
+	timer.Tick([&, this](const IInspectable& sender, const IInspectable& e)
 	{
 		// If we've disabled the preview
 		if (!k2app::K2Settings.skeletonPreviewEnabled)
@@ -1590,13 +1590,13 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 		NotInFocusNotice().Visibility(Visibility::Collapsed); // Else hide
 		DashboardClosedNotice().Visibility(Visibility::Collapsed); // Else hide
 
-		auto const& trackingDevice = TrackingDevices::getCurrentDevice();
+		const auto& trackingDevice = TrackingDevices::getCurrentDevice();
 
 		switch (trackingDevice.index())
 		{
 		case 0:
 			{
-				auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+				const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
 				const auto joints = device->getJointPositions();
 				const auto states = device->getTrackingStates();
@@ -1786,7 +1786,7 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 			break;
 		case 1:
 			{
-				auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+				const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
 				auto joints = device->getTrackedJoints();
 
@@ -1830,7 +1830,7 @@ void winrt::KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loade
 
 
 void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Capture playspace details one more time, before the calibration
 	{
@@ -1869,7 +1869,7 @@ void winrt::KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
 
 
 void winrt::KinectToVR::implementation::GeneralPage::BaseCalibration_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	ChooseDeviceFlyout().Hide();
 
@@ -1884,7 +1884,7 @@ void winrt::KinectToVR::implementation::GeneralPage::BaseCalibration_Click(
 	skeleton_visibility_set_ui(true); // Change to show
 
 	// Eventually enable the auto calibration
-	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
+	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
@@ -1899,7 +1899,7 @@ void winrt::KinectToVR::implementation::GeneralPage::BaseCalibration_Click(
 
 
 void winrt::KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	ChooseDeviceFlyout().Hide();
 
@@ -1914,7 +1914,7 @@ void winrt::KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
 	skeleton_visibility_set_ui(true); // Change to show
 
 	// Eventually enable the auto calibration
-	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
+	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis

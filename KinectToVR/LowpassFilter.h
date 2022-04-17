@@ -5,7 +5,6 @@
 class LowPassFilter
 {
 public:
-
 	LowPassFilter() :
 		output(0),
 		ePow(0)

@@ -7,20 +7,20 @@
 namespace winrt::KinectToVR::implementation
 {
 	TrackingDevicesView::TrackingDevicesView(
-		hstring const& DeviceName) :
-		m_DeviceName{ DeviceName }
+		const hstring& DeviceName) :
+		m_DeviceName{DeviceName}
 	{
 		m_DeviceID = -1;
 		m_Current = false;
 	}
 
 	TrackingDevicesView::TrackingDevicesView(
-		int32_t const& DeviceID,
-		hstring const& DeviceName,
-		bool const& Current) :
-		m_DeviceID{ DeviceID },
-		m_DeviceName{ DeviceName },
-		m_Current{ Current }
+		const int32_t& DeviceID,
+		const hstring& DeviceName,
+		const bool& Current) :
+		m_DeviceID{DeviceID},
+		m_DeviceName{DeviceName},
+		m_Current{Current}
 	{
 	}
 
@@ -33,13 +33,13 @@ namespace winrt::KinectToVR::implementation
 	{
 		return m_DeviceName;
 	}
-	
+
 	bool TrackingDevicesView::Current()
 	{
 		return m_Current;
 	}
 
-	void TrackingDevicesView::DeviceID(int32_t const& value)
+	void TrackingDevicesView::DeviceID(const int32_t& value)
 	{
 		if (m_DeviceID != value)
 		{
@@ -48,7 +48,7 @@ namespace winrt::KinectToVR::implementation
 		}
 	}
 
-	void TrackingDevicesView::DeviceName(hstring const& value)
+	void TrackingDevicesView::DeviceName(const hstring& value)
 	{
 		if (m_DeviceName != value)
 		{
@@ -57,7 +57,7 @@ namespace winrt::KinectToVR::implementation
 		}
 	}
 
-	void TrackingDevicesView::Current(bool const& value)
+	void TrackingDevicesView::Current(const bool& value)
 	{
 		if (m_Current != value)
 		{
@@ -65,14 +65,14 @@ namespace winrt::KinectToVR::implementation
 			m_propertyChanged(*this, Windows::UI::Xaml::Data::PropertyChangedEventArgs{L"Current"});
 		}
 	}
-	
+
 	event_token TrackingDevicesView::PropertyChanged(
-		Windows::UI::Xaml::Data::PropertyChangedEventHandler const& handler)
+		const Windows::UI::Xaml::Data::PropertyChangedEventHandler& handler)
 	{
 		return m_propertyChanged.add(handler);
 	}
 
-	void TrackingDevicesView::PropertyChanged(event_token const& token)
+	void TrackingDevicesView::PropertyChanged(const event_token& token)
 	{
 		m_propertyChanged.remove(token);
 	}

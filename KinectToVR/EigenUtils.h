@@ -61,10 +61,10 @@ namespace EigenUtils
 	/// @see http://www.opengl.org/sdk/docs/man2/xhtml/gluLookAt.xml
 	/// @see glm::lookAt
 	template <typename Derived>
-	Eigen::Matrix<typename Derived::Scalar, 4, 4> lookAt(Derived const& eye, Derived const& center, Derived const& up)
+	Eigen::Matrix<typename Derived::Scalar, 4, 4> lookAt(const Derived& eye, const Derived& center, const Derived& up)
 	{
-		typedef Eigen::Matrix<typename Derived::Scalar, 4, 4> Matrix4;
-		typedef Eigen::Matrix<typename Derived::Scalar, 3, 1> Vector3;
+		using Matrix4 = Eigen::Matrix<typename Derived::Scalar, 4, 4>;
+		using Vector3 = Eigen::Matrix<typename Derived::Scalar, 3, 1>;
 		Vector3 f = (center - eye).normalized();
 		Vector3 u = up.normalized();
 		Vector3 s = f.cross(u).normalized();
@@ -88,12 +88,12 @@ namespace EigenUtils
 
 	/// @see glm::ortho
 	template <typename Scalar>
-	Eigen::Matrix<Scalar, 4, 4> ortho(Scalar const& left,
-	                                  Scalar const& right,
-	                                  Scalar const& bottom,
-	                                  Scalar const& top,
-	                                  Scalar const& zNear,
-	                                  Scalar const& zFar)
+	Eigen::Matrix<Scalar, 4, 4> ortho(const Scalar& left,
+	                                  const Scalar& right,
+	                                  const Scalar& bottom,
+	                                  const Scalar& top,
+	                                  const Scalar& zNear,
+	                                  const Scalar& zFar)
 	{
 		Eigen::Matrix<Scalar, 4, 4> mat = Eigen::Matrix<Scalar, 4, 4>::Identity();
 		mat(0, 0) = Scalar(2) / (right - left);
@@ -109,9 +109,9 @@ namespace EigenUtils
 	/// @see https://eigen.tuxfamily.org/dox/classEigen_1_1AngleAxis.html
 	/// @see https://stackoverflow.com/questions/31589901/euler-to-quaternion-quaternion-to-euler-using-eigen
 	template <typename Derived>
-	Eigen::Quaternion<typename Derived::Scalar> EulersToQuat(Derived const& eulers)
+	Eigen::Quaternion<typename Derived::Scalar> EulersToQuat(const Derived& eulers)
 	{
-		typedef Eigen::Matrix<typename Derived::Scalar, 3, 1> Vector3;
+		using Vector3 = Eigen::Matrix<typename Derived::Scalar, 3, 1>;
 
 		return Eigen::Quaternionf(
 			Eigen::AngleAxisf(eulers(0), Vector3::UnitX())
@@ -123,7 +123,7 @@ namespace EigenUtils
 	/// @see https://eigen.tuxfamily.org/dox/classEigen_1_1AngleAxis.html
 	/// @see https://stackoverflow.com/questions/31589901/euler-to-quaternion-quaternion-to-euler-using-eigen
 	template <typename Derived>
-	Eigen::Matrix<typename Derived::Scalar, 3, 1> QuatToEulers(Derived const& quat)
+	Eigen::Matrix<typename Derived::Scalar, 3, 1> QuatToEulers(const Derived& quat)
 	{
 		return quat.toRotationMatrix().eulerAngles(0, 1, 2);
 	}
@@ -139,8 +139,8 @@ namespace EigenUtils
 	/// @see https://answers.ros.org/question/31006/how-can-a-vector3-axis-be-used-to-produce-a-quaternion/
 	/// @see https://eigen.tuxfamily.org/dox/classEigen_1_1Quaternion.html
 	template <typename Derived>
-	Eigen::Quaternion<typename Derived::Scalar> DirectionQuat(Derived const& from, Derived const& to,
-	                                                          Derived const& base)
+	Eigen::Quaternion<typename Derived::Scalar> DirectionQuat(const Derived& from, const Derived& to,
+	                                                          const Derived& base)
 	{
 		return Eigen::Quaternionf::FromTwoVectors(base, to - from);
 	}
@@ -202,7 +202,7 @@ namespace EigenUtils
 	using PointSet = Eigen::Matrix<double, 3, Eigen::Dynamic>;
 
 	inline std::tuple<Eigen::Matrix3d, Eigen::Vector3d>
-		rigid_transform_3D(const PointSet& A, const PointSet& B)
+	rigid_transform_3D(const PointSet& A, const PointSet& B)
 	{
 		static_assert(PointSet::RowsAtCompileTime == 3);
 		assert(A.cols() == B.cols());

@@ -584,7 +584,7 @@ namespace ktvr
 	 */
 	template <bool want_reply = true>
 	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
-		send_message(K2Message message) noexcept(false)
+	send_message(K2Message message) noexcept(false)
 	{
 		if constexpr (want_reply)
 			return send_message_want_reply(std::move(message));

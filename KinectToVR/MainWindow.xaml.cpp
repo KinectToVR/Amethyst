@@ -147,7 +147,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 				FlyoutFooter().Text(L"Amethyst v" + wstring_cast(K2RemoteVersion));
 
 				std::string changelog_string;
-				for (auto const& str : changes_strings_vector)
+				for (const auto& str : changes_strings_vector)
 					changelog_string += "- " + str + '\n';
 
 				changelog_string.pop_back(); // Remove the last \n
@@ -487,13 +487,13 @@ namespace winrt::KinectToVR::implementation
 															const auto pLayoutRoot = new
 																k2app::interfacing::AppInterface::AppLayoutRoot();
 
-															switch (auto const& device =
+															switch (const auto& device =
 																TrackingDevices::TrackingDevicesVector.at(
 																	_last_device_index); device.index())
 															{
 															case 0:
 																{
-																	auto const& pDevice =
+																	const auto& pDevice =
 																		std::get<
 																			ktvr::K2TrackingDeviceBase_KinectBasis*>(
 																			device);
@@ -510,7 +510,7 @@ namespace winrt::KinectToVR::implementation
 																break;
 															case 1:
 																{
-																	auto const& pDevice =
+																	const auto& pDevice =
 																		std::get<
 																			ktvr::K2TrackingDeviceBase_JointsBasis*>(
 																			device);
@@ -596,13 +596,13 @@ namespace winrt::KinectToVR::implementation
 															const auto pLayoutRoot = new
 																k2app::interfacing::AppInterface::AppLayoutRoot();
 
-															switch (auto const& device =
+															switch (const auto& device =
 																TrackingDevices::TrackingDevicesVector.at(
 																	_last_device_index); device.index())
 															{
 															case 0:
 																{
-																	auto const& pDevice =
+																	const auto& pDevice =
 																		std::get<
 																			ktvr::K2TrackingDeviceBase_KinectBasis*>(
 																			device);
@@ -619,7 +619,7 @@ namespace winrt::KinectToVR::implementation
 																break;
 															case 1:
 																{
-																	auto const& pDevice =
+																	const auto& pDevice =
 																		std::get<
 																			ktvr::K2TrackingDeviceBase_JointsBasis*>(
 																			device);
@@ -757,7 +757,7 @@ namespace winrt::KinectToVR::implementation
 						}
 
 						// Init the device (base)
-						auto const& trackingDevice =
+						const auto& trackingDevice =
 							TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
 						switch (trackingDevice.index())
 						{
@@ -812,7 +812,7 @@ namespace winrt::KinectToVR::implementation
 						if (k2app::K2Settings.overrideDeviceID > -1 &&
 							k2app::K2Settings.overrideDeviceID != k2app::K2Settings.trackingDeviceID)
 						{
-							auto const& overrideDevice =
+							const auto& overrideDevice =
 								TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
 							switch (overrideDevice.index())
 							{
@@ -837,7 +837,7 @@ namespace winrt::KinectToVR::implementation
 							// Init the device (optionally this time)
 							// Base
 							{
-								switch (auto const& _trackingDevice =
+								switch (const auto& _trackingDevice =
 										TrackingDevices::TrackingDevicesVector.at(
 											k2app::K2Settings.trackingDeviceID);
 									_trackingDevice.index())
@@ -862,7 +862,7 @@ namespace winrt::KinectToVR::implementation
 							if (k2app::K2Settings.overrideDeviceID > -1 &&
 								k2app::K2Settings.overrideDeviceID != k2app::K2Settings.trackingDeviceID)
 							{
-								switch (auto const& _trackingDevice =
+								switch (const auto& _trackingDevice =
 										TrackingDevices::TrackingDevicesVector.at(
 											k2app::K2Settings.overrideDeviceID);
 									_trackingDevice.index())
@@ -946,7 +946,7 @@ void KinectToVR::implementation::MainWindow::NavView_Loaded(
 	                 Media::Animation::EntranceNavigationTransitionInfo());
 
 	// Append placeholder text to the dummy layout root
-	k2app::interfacing::emptyLayoutRoot = 
+	k2app::interfacing::emptyLayoutRoot =
 		new k2app::interfacing::AppInterface::AppLayoutRoot();
 
 	k2app::interfacing::emptyLayoutRoot->AppendSingleElement(
@@ -1160,8 +1160,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::Update
 
 
 Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::UpdateButton_Tapped(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs& e)
 {
 	// Check for updates (and show)
 	co_await checkUpdates(sender.as<UIElement>(), true);
@@ -1185,13 +1185,13 @@ void h_exit()
 				if (trackingDevice.index() == 0)
 				{
 					// Kinect Basis
-					auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+					const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 					device->shutdown();
 				}
 				else if (trackingDevice.index() == 1)
 				{
 					// Joints Basis
-					auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+					const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 					device->shutdown();
 				}
 			}

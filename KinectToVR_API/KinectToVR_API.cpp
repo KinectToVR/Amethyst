@@ -16,18 +16,18 @@ namespace boost::serialization
 	// Eigen serialization
 	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
 	void serialize(Archive& ar,
-		Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
-		const unsigned int file_version
+	               Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
+	               const unsigned int file_version
 	)
 	{
 		for (size_t i = 0; i < t.size(); i++)
-			ar& make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
+			ar & make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
 	}
 
 	template <class Archive, typename _Scalar>
 	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
 	{
-		ar& make_nvp("w", q.w())
+		ar & make_nvp("w", q.w())
 			& make_nvp("x", q.x())
 			& make_nvp("y", q.y())
 			& make_nvp("z", q.z());
@@ -36,7 +36,7 @@ namespace boost::serialization
 	template <class Archive, typename _Scalar>
 	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
 	{
-		ar& make_nvp("x", v.x())
+		ar & make_nvp("x", v.x())
 			& make_nvp("y", v.y())
 			& make_nvp("z", v.z());
 	}
@@ -92,7 +92,7 @@ namespace ktvr
 				k2api_start_Semaphore == nullptr)
 				return -1;
 		}
-		catch (std::exception const& e)
+		catch (const std::exception& e)
 		{
 			return -1;
 		}
@@ -108,14 +108,14 @@ namespace ktvr
 			CloseHandle(k2api_from_Semaphore);
 			CloseHandle(k2api_start_Semaphore);
 		}
-		catch (std::exception const& e)
+		catch (const std::exception& e)
 		{
 			return -1;
 		}
 		return 0;
 	}
-	
-	std::string send_message(std::string const& data, const bool want_reply) noexcept(false)
+
+	std::string send_message(const std::string& data, const bool want_reply) noexcept(false)
 	{
 		// change the string to hex format
 		std::string msg_data = hexString(data);
@@ -211,7 +211,8 @@ namespace ktvr
 		}
 	}
 
-	std::monostate send_message_no_reply(K2Message message) {
+	std::monostate send_message_no_reply(K2Message message)
+	{
 		// Add timestamp
 		message.messageTimestamp = K2API_GET_TIMESTAMP_NOW;
 		message.want_reply = false;
@@ -222,13 +223,14 @@ namespace ktvr
 		oa << message;
 
 		// Send the message
-		
+
 		// Probably void
 		send_message(o.str(), false);
 		return std::monostate();
 	}
 
-	K2ResponseMessage send_message_want_reply(K2Message message) {
+	K2ResponseMessage send_message_want_reply(K2Message message)
+	{
 		// Add timestamp
 		message.messageTimestamp = K2API_GET_TIMESTAMP_NOW;
 		message.want_reply = true;
@@ -240,7 +242,7 @@ namespace ktvr
 
 		// Send the message
 		// Deserialize then
-		
+
 		// Compose the response
 		K2ResponseMessage response;
 		auto reply = send_message(o.str(), true);
@@ -269,13 +271,13 @@ namespace ktvr
 			// Send the message and return
 			return response;
 		}
-		catch (std::exception const& e)
+		catch (const std::exception& e)
 		{
 			return K2ResponseMessage(); // Success is set to false by default
 		}
 	}
 
-	K2ResponseMessage download_tracker(int const& tracker_id) noexcept
+	K2ResponseMessage download_tracker(const int& tracker_id) noexcept
 	{
 		try
 		{
@@ -285,13 +287,13 @@ namespace ktvr
 			// Send the message and return
 			return send_message(K2Message(tracker_id));
 		}
-		catch (std::exception const& e)
+		catch (const std::exception& e)
 		{
 			return K2ResponseMessage(); // Success is set to false by default
 		}
 	}
 
-	K2ResponseMessage download_tracker(std::string const& tracker_serial) noexcept
+	K2ResponseMessage download_tracker(const std::string& tracker_serial) noexcept
 	{
 		try
 		{
@@ -300,26 +302,26 @@ namespace ktvr
 			// Normally, we'd set some id to grab tracker from,
 			// although this time it'll be -1,
 			// forcing the driver to check if we've provided a serial
-			K2Message message = K2Message();
+			auto message = K2Message();
 			message.messageType = static_cast<int>(K2MessageType::K2Message_DownloadTracker);
 			message.tracker_data.serial = tracker_serial;
 
 			return send_message(message);
 		}
-		catch (std::exception const& e)
+		catch (const std::exception& e)
 		{
 			return K2ResponseMessage(); // Success is set to false by default
 		}
 	}
 
-	K2ResponseMessage download_tracker(K2TrackerBase const& tracker) noexcept
+	K2ResponseMessage download_tracker(const K2TrackerBase& tracker) noexcept
 	{
 		try
 		{
 			// Send the message and return
 			return download_tracker(tracker.id);
 		}
-		catch (std::exception const& e)
+		catch (const std::exception& e)
 		{
 			return K2ResponseMessage(); // Success is set to false by default
 		}
@@ -334,14 +336,14 @@ namespace ktvr
 			// Normally, we'd set some id to grab tracker from,
 			// although this time it'll be skipped,
 			// the driver will check message_string and download via role
-			K2Message message = K2Message();
+			auto message = K2Message();
 			message.messageType = static_cast<int>(K2MessageType::K2Message_DownloadTracker);
 			message.message_string = "role";
 			message.tracker_data.role = static_cast<uint32_t>(tracker_role);
 
 			return send_message(message);
 		}
-		catch (std::exception const& e)
+		catch (const std::exception& e)
 		{
 			return K2ResponseMessage(); // Success is set to false by default
 		}
@@ -351,7 +353,7 @@ namespace ktvr
 	{
 		try
 		{
-			K2Message message = K2Message();
+			auto message = K2Message();
 			message.messageType = static_cast<int>(K2MessageType::K2Message_Ping);
 
 			// Grab the current time and send the message
@@ -364,7 +366,7 @@ namespace ktvr
 				           static_cast<long long>(0), LLONG_MAX);
 			return std::make_tuple(response, send_time, elapsed_time);
 		}
-		catch (std::exception const& e)
+		catch (const std::exception& e)
 		{
 			return std::make_tuple(K2ResponseMessage(), (long long)0, (long long)0);
 			// Success is set to false by default
@@ -399,39 +401,39 @@ namespace ktvr
 	template <class Archive>
 	KTVR_API void K2TrackerPose::serialize(Archive& ar, const unsigned int version)
 	{
-		ar& BOOST_SERIALIZATION_NVP(orientation)& BOOST_SERIALIZATION_NVP(position);
+		ar & BOOST_SERIALIZATION_NVP(orientation) & BOOST_SERIALIZATION_NVP(position);
 	}
 
 	template <class Archive>
 	KTVR_API void K2TrackerData::serialize(Archive& ar, const unsigned int version)
 	{
-		ar& BOOST_SERIALIZATION_NVP(serial)& BOOST_SERIALIZATION_NVP(role)& BOOST_SERIALIZATION_NVP(isActive);
+		ar & BOOST_SERIALIZATION_NVP(serial) & BOOST_SERIALIZATION_NVP(role) & BOOST_SERIALIZATION_NVP(isActive);
 	}
 
 	template <class Archive>
 	KTVR_API void K2PosePacket::serialize(Archive& ar, const unsigned int version)
 	{
-		ar& BOOST_SERIALIZATION_NVP(orientation)& BOOST_SERIALIZATION_NVP(position)&
+		ar & BOOST_SERIALIZATION_NVP(orientation) & BOOST_SERIALIZATION_NVP(position) &
 			BOOST_SERIALIZATION_NVP(millisFromNow); // Serialize
 	}
 
 	template <class Archive>
 	KTVR_API void K2DataPacket::serialize(Archive& ar, const unsigned int version)
 	{
-		ar& BOOST_SERIALIZATION_NVP(serial)& BOOST_SERIALIZATION_NVP(role)& BOOST_SERIALIZATION_NVP(isActive)
+		ar & BOOST_SERIALIZATION_NVP(serial) & BOOST_SERIALIZATION_NVP(role) & BOOST_SERIALIZATION_NVP(isActive)
 			& BOOST_SERIALIZATION_NVP(millisFromNow); // Serialize
 	}
 
 	template <class Archive>
 	KTVR_API void K2TrackerBase::serialize(Archive& ar, const unsigned int version)
 	{
-		ar& BOOST_SERIALIZATION_NVP(pose)& BOOST_SERIALIZATION_NVP(data)& BOOST_SERIALIZATION_NVP(id);
+		ar & BOOST_SERIALIZATION_NVP(pose) & BOOST_SERIALIZATION_NVP(data) & BOOST_SERIALIZATION_NVP(id);
 	}
 
 	template <class Archive>
 	KTVR_API void K2Message::serialize(Archive& ar, const unsigned int version)
 	{
-		ar& BOOST_SERIALIZATION_NVP(messageType)
+		ar & BOOST_SERIALIZATION_NVP(messageType)
 			& BOOST_SERIALIZATION_NVP(tracker_base)
 			& BOOST_SERIALIZATION_NVP(tracker_pose)
 			& BOOST_SERIALIZATION_NVP(tracker_data)
@@ -472,7 +474,7 @@ namespace ktvr
 	template <class Archive>
 	KTVR_API void K2ResponseMessage::serialize(Archive& ar, const unsigned int version)
 	{
-		ar& BOOST_SERIALIZATION_NVP(messageType)
+		ar & BOOST_SERIALIZATION_NVP(messageType)
 			& BOOST_SERIALIZATION_NVP(tracker_base)
 			& BOOST_SERIALIZATION_NVP(id)
 			& BOOST_SERIALIZATION_NVP(result)

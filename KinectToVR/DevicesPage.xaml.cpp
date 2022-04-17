@@ -11,12 +11,12 @@ using namespace ::k2app::shared::devices;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 bool devices_tab_setup_finished = false,
-devices_tab_re_setup_finished = false;
+     devices_tab_re_setup_finished = false;
 
-void devices_check_override_ids(uint32_t const& id)
+void devices_check_override_ids(const uint32_t& id)
 {
 	// Take down IDs if they're too big
-	if (auto const& device_pair = TrackingDevices::getCurrentOverrideDevice_Safe(id); device_pair.first)
+	if (const auto& device_pair = TrackingDevices::getCurrentOverrideDevice_Safe(id); device_pair.first)
 	{
 		if (device_pair.second.index() == 1) // If Joints
 		{
@@ -101,10 +101,10 @@ void devices_check_override_ids(uint32_t const& id)
 	}
 }
 
-void devices_check_base_ids(uint32_t const& id)
+void devices_check_base_ids(const uint32_t& id)
 {
 	// Take down IDs if they're too big
-	if (auto const& device_pair = TrackingDevices::getCurrentDevice(id);
+	if (const auto& device_pair = TrackingDevices::getCurrentDevice(id);
 		device_pair.index() == 1) // If Joints
 	{
 		// Note: num_joints should never be 0
@@ -131,7 +131,7 @@ void devices_check_base_ids(uint32_t const& id)
 void devices_update_current()
 {
 	{
-		auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
+		const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
 
 		std::string deviceName = "[UNKNOWN]";
 
@@ -155,7 +155,7 @@ void devices_update_current()
 	}
 	{
 		if (k2app::K2Settings.overrideDeviceID < 0)return;
-		auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
+		const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
 
 		std::string deviceName = "[UNKNOWN]";
 
@@ -177,7 +177,7 @@ void devices_update_current()
 	}
 }
 
-void devices_clear_combo(std::shared_ptr<Controls::ComboBox> const& cbox)
+void devices_clear_combo(const std::shared_ptr<Controls::ComboBox>& cbox)
 {
 	try
 	{
@@ -190,8 +190,8 @@ void devices_clear_combo(std::shared_ptr<Controls::ComboBox> const& cbox)
 }
 
 void devices_push_combobox(
-	std::shared_ptr<Controls::ComboBox> const& cbox,
-	hstring const& str)
+	const std::shared_ptr<Controls::ComboBox>& cbox,
+	const hstring& str)
 {
 	try
 	{
@@ -204,8 +204,8 @@ void devices_push_combobox(
 }
 
 void devices_push_override_joints_combo(
-	std::shared_ptr<Controls::ComboBox> const& cbox,
-	bool const& all = true)
+	const std::shared_ptr<Controls::ComboBox>& cbox,
+	const bool& all = true)
 {
 	devices_push_combobox(cbox, L"Chest");
 
@@ -227,7 +227,7 @@ void devices_push_override_joints_combo(
 	devices_push_combobox(cbox, L"Right Foot");
 }
 
-void devices_push_override_joints(bool const& all = true)
+void devices_push_override_joints(const bool& all = true)
 {
 	// Waist
 	devices_push_override_joints_combo(waistPositionOverrideOptionBox, all);
@@ -258,7 +258,7 @@ void devices_push_override_joints(bool const& all = true)
 	devices_push_override_joints_combo(rightKneeRotationOverrideOptionBox, all);
 }
 
-void devices_push_override_joints(std::wstring const& _string)
+void devices_push_override_joints(const std::wstring& _string)
 {
 	// Convert
 	const hstring string = _string.c_str();
@@ -293,8 +293,8 @@ void devices_push_override_joints(std::wstring const& _string)
 }
 
 void devices_select_combobox_safe(
-	std::shared_ptr<Controls::ComboBox> const& cbox,
-	int const& index)
+	const std::shared_ptr<Controls::ComboBox>& cbox,
+	const int& index)
 {
 	try
 	{
@@ -499,8 +499,8 @@ namespace winrt::KinectToVR::implementation
 
 		// Watch for insertions
 		m_TrackingDevicesViewModels.VectorChanged(
-			[&](Windows::Foundation::Collections::IObservableVector<KinectToVR::TrackingDevicesView> const& sender,
-			    Windows::Foundation::Collections::IVectorChangedEventArgs const& args)
+			[&](const Windows::Foundation::Collections::IObservableVector<KinectToVR::TrackingDevicesView>& sender,
+			    const Windows::Foundation::Collections::IVectorChangedEventArgs& args)
 			{
 				// Report a registration and parse
 				LOG(INFO) << string_cast(sender.GetAt(sender.Size() - 1).DeviceName().c_str()) <<
@@ -516,7 +516,7 @@ namespace winrt::KinectToVR::implementation
 			});
 
 		// Add tracking devices here
-		for (auto const& device : TrackingDevices::TrackingDevicesVector)
+		for (const auto& device : TrackingDevices::TrackingDevicesVector)
 		{
 			std::string deviceName = "[UNKNOWN]";
 
@@ -524,13 +524,13 @@ namespace winrt::KinectToVR::implementation
 			{
 			case 0:
 				{
-					auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device);
+					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device);
 					deviceName = pDevice->getDeviceName();
 				}
 				break;
 			case 1:
 				{
-					auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
+					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
 					deviceName = pDevice->getDeviceName();
 				}
 				break;
@@ -557,13 +557,13 @@ namespace winrt::KinectToVR::implementation
 
 Windows::Foundation::IAsyncAction
 winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)co_return; // Block dummy selects
 
 	selectedTrackingDeviceID = sender.as<Controls::ListView>().SelectedIndex();
-	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
+	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string deviceName = "[UNKNOWN]";
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
@@ -605,16 +605,16 @@ winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Selection
 		// Show / Hide device settings button
 		selectedDeviceSettingsButton.get()->Visibility(
 			device->isSettingsDaemonSupported()
-			? Visibility::Visible
-			: Visibility::Collapsed);
+				? Visibility::Visible
+				: Visibility::Collapsed);
 
 		// Append device settings / placeholder layout
 		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
 		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
 			device->isSettingsDaemonSupported()
-			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
-				selectedTrackingDeviceID)->Get()
-			: *k2app::interfacing::emptyLayoutRoot->Get());
+				? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+					selectedTrackingDeviceID)->Get()
+				: *k2app::interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a kinectbasis device, so this should be hidden
 		jointBasisControls.get()->Visibility(Visibility::Collapsed);
@@ -956,8 +956,8 @@ winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Selection
 
 
 void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
-	winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args)
 {
 	auto _index = devicesListView.get()->SelectedIndex();
 
@@ -968,7 +968,7 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
 		device->initialize();
 		device_status = device->statusResultString(device->getStatusResult());
@@ -1047,7 +1047,7 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 	else if (trackingDevice.index() == 1)
 	{
 		// Joints Basis
-		auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+		const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
 		device->initialize();
 		device_status = device->statusResultString(device->getStatusResult());
@@ -1231,8 +1231,8 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 
 // *Nearly* the same as reconnect
 void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	auto _index = devicesListView.get()->SelectedIndex();
 
@@ -1243,7 +1243,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
 		device->shutdown();
 		device_status = device->statusResultString(device->getStatusResult());
@@ -1258,7 +1258,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 	else if (trackingDevice.index() == 1)
 	{
 		// Joints Basis
-		auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+		const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
 		device->shutdown();
 		device_status = device->statusResultString(device->getStatusResult());
@@ -1325,8 +1325,8 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 
 // Mark override device as -1 -> deselect it
 void winrt::KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	auto _index = devicesListView.get()->SelectedIndex();
 
@@ -1353,13 +1353,13 @@ void winrt::KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		auto const& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 		device_status = device->statusResultString(device->getStatusResult());
 	}
 	else if (trackingDevice.index() == 1)
 	{
 		// Joints Basis
-		auto const& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+		const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 		device_status = device->statusResultString(device->getStatusResult());
 	}
 
@@ -1398,9 +1398,9 @@ void winrt::KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 
 
 Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
+	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
 	std::string deviceName = "[UNKNOWN]";
@@ -1632,9 +1632,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 
 
 Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
+	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
 	std::string deviceName = "[UNKNOWN]";
@@ -1834,15 +1834,15 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 /* For JointBasis device type: joints selector */
 
 void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (waistJointOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.selectedTrackedJointID[0] = waistJointOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
+	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
 	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[0]);
@@ -1853,15 +1853,15 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_Selecti
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (leftFootJointOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.selectedTrackedJointID[1] = leftFootJointOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
+	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
 	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[1]);
@@ -1871,15 +1871,15 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_Sele
 }
 
 void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (rightFootJointOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.selectedTrackedJointID[2] = rightFootJointOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
+	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
 	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[2]);
@@ -1889,15 +1889,15 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_Sel
 }
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (leftElbowJointOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.selectedTrackedJointID[3] = leftElbowJointOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
+	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
 	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[3]);
@@ -1907,15 +1907,15 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_Sel
 }
 
 void winrt::KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (rightElbowJointOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.selectedTrackedJointID[4] = rightElbowJointOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
+	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
 	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[4]);
@@ -1925,15 +1925,15 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_Se
 }
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (leftKneeJointOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.selectedTrackedJointID[5] = leftKneeJointOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
+	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
 	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[5]);
@@ -1943,15 +1943,15 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_Sele
 }
 
 void winrt::KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (rightKneeJointOptionBox.get()->SelectedIndex() >= 0)
 		k2app::K2Settings.selectedTrackedJointID[6] = rightKneeJointOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevice = TrackingDevices::getCurrentDevice();
+	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
 	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.selectedTrackedJointID[6]);
@@ -1963,8 +1963,8 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_Sel
 /* For *Override* device type: position & rotation joints selector */
 
 void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[0] &&
@@ -1972,7 +1972,7 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOption
 		k2app::K2Settings.positionOverrideJointID[0] = waistPositionOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -1984,8 +1984,8 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOption
 
 
 void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[0] &&
@@ -1993,7 +1993,7 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOption
 		k2app::K2Settings.rotationOverrideJointID[0] = waistRotationOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2005,8 +2005,8 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOption
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[1] &&
@@ -2014,7 +2014,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOpt
 		k2app::K2Settings.positionOverrideJointID[1] = leftFootPositionOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2026,8 +2026,8 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOpt
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[1] &&
@@ -2035,7 +2035,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOpt
 		k2app::K2Settings.rotationOverrideJointID[1] = leftFootRotationOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2047,8 +2047,8 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOpt
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[2] &&
@@ -2056,7 +2056,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOp
 		k2app::K2Settings.positionOverrideJointID[2] = rightFootPositionOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2068,8 +2068,8 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOp
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[2] &&
@@ -2077,7 +2077,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOp
 		k2app::K2Settings.rotationOverrideJointID[2] = rightFootRotationOverrideOptionBox.get()->SelectedIndex();
 
 	//// If we're using a joints device then also signal the joint
-	auto const& trackingDevice = TrackingDevices::getCurrentOverrideDevice();
+	const auto& trackingDevice = TrackingDevices::getCurrentOverrideDevice();
 	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 			signalJoint(k2app::K2Settings.rotationOverrideJointID[2]);
@@ -2088,8 +2088,8 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOp
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[3] &&
@@ -2097,7 +2097,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOp
 		k2app::K2Settings.positionOverrideJointID[3] = leftElbowPositionOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2109,8 +2109,8 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOp
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[3] &&
@@ -2118,7 +2118,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOp
 		k2app::K2Settings.rotationOverrideJointID[3] = leftElbowRotationOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2130,8 +2130,8 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOp
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[4] &&
@@ -2139,7 +2139,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideO
 		k2app::K2Settings.positionOverrideJointID[4] = rightElbowPositionOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2151,8 +2151,8 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideO
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[4] &&
@@ -2160,7 +2160,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideO
 		k2app::K2Settings.rotationOverrideJointID[4] = rightElbowRotationOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2172,8 +2172,8 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideO
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[5] &&
@@ -2181,7 +2181,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOpt
 		k2app::K2Settings.positionOverrideJointID[5] = leftKneePositionOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2193,8 +2193,8 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOpt
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[5] &&
@@ -2202,7 +2202,7 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOpt
 		k2app::K2Settings.rotationOverrideJointID[5] = leftKneeRotationOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2214,8 +2214,8 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOpt
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[6] &&
@@ -2223,7 +2223,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOp
 		k2app::K2Settings.positionOverrideJointID[6] = rightKneePositionOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2235,8 +2235,8 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOp
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[6] &&
@@ -2244,7 +2244,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOp
 		k2app::K2Settings.rotationOverrideJointID[6] = rightKneeRotationOverrideOptionBox.get()->SelectedIndex();
 
 	// If we're using a joints device then also signal the joint
-	auto const& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 	if (trackingDevicePair.first)
 		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -2257,7 +2257,7 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOp
 /* For *Override* device type: override elements for joints selector */
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2284,7 +2284,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2311,7 +2311,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2338,7 +2338,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Cl
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2365,7 +2365,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Cl
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2392,7 +2392,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_C
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2419,7 +2419,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_C
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftElbowPosition_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2446,7 +2446,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftElbowPosition_C
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftElbowRotation_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2473,7 +2473,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftElbowRotation_C
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideRightElbowPosition_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2500,7 +2500,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightElbowPosition_
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideRightElbowRotation_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2527,7 +2527,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightElbowRotation_
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftKneePosition_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2554,7 +2554,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftKneePosition_Cl
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftKneeRotation_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2581,7 +2581,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftKneeRotation_Cl
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideRightKneePosition_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2608,7 +2608,7 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightKneePosition_C
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverrideRightKneeRotation_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2637,141 +2637,141 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightKneeRotation_C
 /* For comboboxes: update before opening */
 
 void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_DropDownOpened(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::DismissOverrideTipNoJointsButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	NoJointsFlyout().Hide();
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Reset
 	devices_tab_re_setup_finished = false;
@@ -2786,7 +2786,7 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 	devices_tab_setup_finished = true;
 
 	// Run the on-selected routine
-	auto const& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
+	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string deviceName = "[UNKNOWN]";
 	std::string device_status = "E_UKNOWN\nWhat's happened here?";
@@ -2828,16 +2828,16 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		// Show / Hide device settings button
 		selectedDeviceSettingsButton.get()->Visibility(
 			device->isSettingsDaemonSupported()
-			? Visibility::Visible
-			: Visibility::Collapsed);
+				? Visibility::Visible
+				: Visibility::Collapsed);
 
 		// Append device settings / placeholder layout
 		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
 		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
 			device->isSettingsDaemonSupported()
-			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
-				selectedTrackingDeviceID)->Get()
-			: *k2app::interfacing::emptyLayoutRoot->Get());
+				? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+					selectedTrackingDeviceID)->Get()
+				: *k2app::interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a kinectbasis device, so this should be hidden
 		jointBasisControls.get()->Visibility(Visibility::Collapsed);
@@ -2923,16 +2923,16 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		// Show / Hide device settings button
 		selectedDeviceSettingsButton.get()->Visibility(
 			device->isSettingsDaemonSupported()
-			? Visibility::Visible
-			: Visibility::Collapsed);
+				? Visibility::Visible
+				: Visibility::Collapsed);
 
 		// Append device settings / placeholder layout
 		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
 		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
 			device->isSettingsDaemonSupported()
-			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
-				selectedTrackingDeviceID)->Get()
-			: *k2app::interfacing::emptyLayoutRoot->Get());
+				? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+					selectedTrackingDeviceID)->Get()
+				: *k2app::interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
@@ -3152,8 +3152,8 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverridesDropDown_Expanding(
-	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	overridesDropDown_1.get()->IsExpanded(false);
@@ -3161,8 +3161,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverridesDropDown_Expanding
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OverridesDropDown_1_Expanding(
-	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	overridesDropDown.get()->IsExpanded(false);
@@ -3170,8 +3170,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverridesDropDown_1_Expandi
 
 
 void winrt::KinectToVR::implementation::DevicesPage::JointBasisDropDown_Expanding(
-	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	jointBasisDropDown_1.get()->IsExpanded(false);
@@ -3179,8 +3179,8 @@ void winrt::KinectToVR::implementation::DevicesPage::JointBasisDropDown_Expandin
 
 
 void winrt::KinectToVR::implementation::DevicesPage::JointBasisDropDown_1_Expanding(
-	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& e)
+	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	jointBasisDropDown.get()->IsExpanded(false);
@@ -3188,21 +3188,21 @@ void winrt::KinectToVR::implementation::DevicesPage::JointBasisDropDown_1_Expand
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OpenDiscordButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	ShellExecuteA(0, 0, "https://discord.gg/YBQCRDG", 0, 0, SW_SHOW);
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::OpenDocsButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	ShellExecuteA(0, 0, "https://k2vr.tech/docs/", 0, 0, SW_SHOW);
 }
 
 
 void winrt::KinectToVR::implementation::DevicesPage::SelectedDeviceSettingsButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	selectedDeviceSettingsFlyout.get()->ShowAt(sender.as<FrameworkElement>());
 }

@@ -124,7 +124,7 @@ void trackersConfigChanged()
 	// If all trackers were turned off then SCREAM
 	if (std::ranges::all_of(
 		k2app::K2Settings.isJointPairEnabled,
-		[](bool const& i) { return !i; }
+		[](const bool& i) { return !i; }
 	))
 		k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
 		                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
@@ -144,7 +144,7 @@ void trackersConfigChanged()
 
 
 void winrt::KinectToVR::implementation::SettingsPage::FlipCheckBox_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -157,7 +157,7 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipCheckBox_Checked(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::FlipCheckBox_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -170,7 +170,7 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipCheckBox_Unchecked(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -182,7 +182,7 @@ void winrt::KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Check
 
 
 void winrt::KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -194,14 +194,14 @@ void winrt::KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Unche
 
 
 void winrt::KinectToVR::implementation::SettingsPage::RestartButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	ktvr::request_vr_restart<false>("SteamVR needs to be restarted to enable/disable trackers properly.");
 }
 
 
 void winrt::KinectToVR::implementation::SettingsPage::ResetButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Read settings after reset
 	k2app::K2Settings = k2app::K2AppSettings(); // Reset settings
@@ -213,7 +213,7 @@ void winrt::KinectToVR::implementation::SettingsPage::ResetButton_Click(
 	using namespace std::string_literals;
 
 	// Get current caller path
-	const LPSTR fileName = new CHAR[MAX_PATH + 1];
+	const auto fileName = new CHAR[MAX_PATH + 1];
 	const DWORD charsWritten = GetModuleFileNameA(nullptr, fileName, MAX_PATH + 1);
 
 	// If we've found who asked
@@ -258,7 +258,7 @@ void winrt::KinectToVR::implementation::SettingsPage::ResetButton_Click(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	using namespace ::k2app::shared::settings;
 
@@ -358,7 +358,7 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 		break;
 	}
 
-	if (auto const& trackingDevice = TrackingDevices::getCurrentDevice(); trackingDevice.index() == 0)
+	if (const auto& trackingDevice = TrackingDevices::getCurrentDevice(); trackingDevice.index() == 0)
 	{
 		// Kinect Basis
 		softwareRotationItem.get()->IsEnabled(
@@ -399,7 +399,7 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 }
 
 void winrt::KinectToVR::implementation::SettingsPage::AutoSpawn_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -411,7 +411,7 @@ void winrt::KinectToVR::implementation::SettingsPage::AutoSpawn_Checked(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::AutoSpawn_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -423,7 +423,7 @@ void winrt::KinectToVR::implementation::SettingsPage::AutoSpawn_Unchecked(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::EnableSounds_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -438,7 +438,7 @@ void winrt::KinectToVR::implementation::SettingsPage::EnableSounds_Checked(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::EnableSounds_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -453,8 +453,8 @@ void winrt::KinectToVR::implementation::SettingsPage::EnableSounds_Unchecked(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -470,8 +470,8 @@ void winrt::KinectToVR::implementation::SettingsPage::SoundsVolumeSlider_ValueCh
 
 
 void winrt::KinectToVR::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem_Click(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	k2app::K2Settings.externalFlipCalibrationYaw =
 		EigenUtils::QuatToEulers(
@@ -484,8 +484,8 @@ void winrt::KinectToVR::implementation::SettingsPage::CalibrateExternalFlipMenuF
 
 
 void winrt::KinectToVR::implementation::SettingsPage::WaistDropDown_Expanding(
-	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 	trackersConfig_UpdateIsEnabled();
@@ -501,7 +501,7 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistDropDown_Expanding(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::WaistTrackerEnabledToggle_Toggled(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -518,8 +518,8 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistTrackerEnabledToggle_
 
 
 void winrt::KinectToVR::implementation::SettingsPage::WaistPositionFilterOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -550,8 +550,8 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistPositionFilterOptionB
 
 
 void winrt::KinectToVR::implementation::SettingsPage::WaistRotationFilterOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -578,8 +578,8 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistRotationFilterOptionB
 
 
 void winrt::KinectToVR::implementation::SettingsPage::FeetDropDown_Expanding(
-	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 	trackersConfig_UpdateIsEnabled();
@@ -595,7 +595,7 @@ void winrt::KinectToVR::implementation::SettingsPage::FeetDropDown_Expanding(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::FeetTrackersEnabledToggle_Toggled(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -612,8 +612,8 @@ void winrt::KinectToVR::implementation::SettingsPage::FeetTrackersEnabledToggle_
 
 
 void winrt::KinectToVR::implementation::SettingsPage::FeetPositionFilterOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -648,8 +648,8 @@ void winrt::KinectToVR::implementation::SettingsPage::FeetPositionFilterOptionBo
 
 
 void winrt::KinectToVR::implementation::SettingsPage::FeetRotationFilterOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -684,8 +684,8 @@ void winrt::KinectToVR::implementation::SettingsPage::FeetRotationFilterOptionBo
 
 
 void winrt::KinectToVR::implementation::SettingsPage::ElbowsDropDown_Expanding(
-	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 	trackersConfig_UpdateIsEnabled();
@@ -701,7 +701,7 @@ void winrt::KinectToVR::implementation::SettingsPage::ElbowsDropDown_Expanding(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::ElbowTrackersEnabledToggle_Toggled(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -718,8 +718,8 @@ void winrt::KinectToVR::implementation::SettingsPage::ElbowTrackersEnabledToggle
 
 
 void winrt::KinectToVR::implementation::SettingsPage::ElbowsPositionFilterOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -754,8 +754,8 @@ void winrt::KinectToVR::implementation::SettingsPage::ElbowsPositionFilterOption
 
 
 void winrt::KinectToVR::implementation::SettingsPage::ElbowsRotationFilterOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -785,8 +785,8 @@ void winrt::KinectToVR::implementation::SettingsPage::ElbowsRotationFilterOption
 
 
 void winrt::KinectToVR::implementation::SettingsPage::KneesDropDown_Expanding(
-	winrt::Microsoft::UI::Xaml::Controls::Expander const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 	trackersConfig_UpdateIsEnabled();
@@ -802,7 +802,7 @@ void winrt::KinectToVR::implementation::SettingsPage::KneesDropDown_Expanding(
 
 
 void winrt::KinectToVR::implementation::SettingsPage::KneeTrackersEnabledToggle_Toggled(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -819,8 +819,8 @@ void winrt::KinectToVR::implementation::SettingsPage::KneeTrackersEnabledToggle_
 
 
 void winrt::KinectToVR::implementation::SettingsPage::KneePositionFilterOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -855,8 +855,8 @@ void winrt::KinectToVR::implementation::SettingsPage::KneePositionFilterOptionBo
 
 
 void winrt::KinectToVR::implementation::SettingsPage::KneeRotationFilterOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;

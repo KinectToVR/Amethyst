@@ -55,7 +55,7 @@ namespace k2app::main
 			LOG(INFO) << "[Input Actions] Input: Flip toggled.";
 
 			// Also validate the result
-			if (auto const& trackingDevice = TrackingDevices::getCurrentDevice(); trackingDevice.index() == 0)
+			if (const auto& trackingDevice = TrackingDevices::getCurrentDevice(); trackingDevice.index() == 0)
 			{
 				// Kinect Basis
 				K2Settings.isFlipEnabled =
@@ -110,12 +110,12 @@ namespace k2app::main
 	inline void K2UpdateTrackingDevices()
 	{
 		/* Update the base device here */
-		switch (auto const& device = TrackingDevices::
+		switch (const auto& device = TrackingDevices::
 			getCurrentDevice(); device.index())
 		{
 		case 0:
 			{
-				auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device);
+				const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device);
 				pDevice->update(); // Update the device
 				interfacing::kinectHeadPosition.first = pDevice->getJointPositions()[ktvr::Joint_Head];
 				interfacing::kinectWaistPosition.first = pDevice->getJointPositions()[ktvr::Joint_SpineWaist];
@@ -123,7 +123,7 @@ namespace k2app::main
 			break;
 		case 1:
 			{
-				auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
+				const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
 				pDevice->update(); // Update the device
 				if (K2Settings.selectedTrackedJointID[0] < pDevice->getTrackedJoints().size())
 					interfacing::kinectWaistPosition.first = pDevice->getTrackedJoints().at(
@@ -133,13 +133,13 @@ namespace k2app::main
 		}
 
 		/* Update the override device here (optionally) */
-		if (auto const& device_pair = TrackingDevices::
+		if (const auto& device_pair = TrackingDevices::
 			getCurrentOverrideDevice_Safe(); device_pair.first)
 			switch (device_pair.second.index())
 			{
 			case 0:
 				{
-					auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device_pair.second);
+					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device_pair.second);
 					pDevice->update(); // Update the device
 					interfacing::kinectHeadPosition.second = pDevice->getJointPositions()[ktvr::Joint_Head];
 					interfacing::kinectWaistPosition.second = pDevice->getJointPositions()[ktvr::Joint_SpineWaist];
@@ -147,7 +147,7 @@ namespace k2app::main
 				break;
 			case 1:
 				{
-					auto const& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device_pair.second);
+					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device_pair.second);
 					pDevice->update(); // Update the device
 					if (K2Settings.selectedTrackedJointID[0] < pDevice->getTrackedJoints().size())
 						interfacing::kinectWaistPosition.second = pDevice->getTrackedJoints().at(
@@ -703,7 +703,7 @@ namespace k2app::main
 		// Base device
 		{
 			// Get the currently tracking device
-			auto const& _device = TrackingDevices::getCurrentDevice();
+			const auto& _device = TrackingDevices::getCurrentDevice();
 
 			// Compose the yaw neutral and current
 			const double _neutral_yaw =
@@ -969,7 +969,7 @@ namespace k2app::main
 				(K2Settings.jointRotationTrackingOption[1] == k2_SoftwareCalculatedRotation ||
 					K2Settings.jointRotationTrackingOption[2] == k2_SoftwareCalculatedRotation))
 			{
-				auto const& _kinect = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device);
+				const auto& _kinect = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device);
 
 				if (_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Full ||
 					_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
@@ -1079,7 +1079,7 @@ namespace k2app::main
 							kneeRightPose, ankleRightPose, forward);
 
 					// The tuning quat
-					Eigen::Quaternionf
+					auto
 						tuneQuaternion_first = Eigen::Quaternionf(1, 0, 0, 0);
 
 					// Now adjust some values like playspace yaw and pitch, additional rotations
@@ -1131,7 +1131,7 @@ namespace k2app::main
 						calculatedRightFootOrientation = knee_ankleRightOrientationQuaternion;
 
 					// The tuning quat
-					Eigen::Quaternionf
+					auto
 						leftFootFineTuneQuaternion = Eigen::Quaternionf(1, 0, 0, 0),
 						rightFootFineTuneQuaternion = Eigen::Quaternionf(1, 0, 0, 0);
 
@@ -1510,7 +1510,7 @@ namespace k2app::main
 
 			if (_device.index() == 0)
 			{
-				auto const& _kinect =
+				const auto& _kinect =
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device);
 
 				// Optionally flip positions (if supported)
@@ -1534,7 +1534,7 @@ namespace k2app::main
 			}
 			else if (_device.index() == 1)
 			{
-				auto const& _joints =
+				const auto& _joints =
 					std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_device);
 
 				interfacing::K2TrackersVector.at(0).pose.position =
@@ -1575,7 +1575,7 @@ namespace k2app::main
 				 */
 
 				// Get the current override device
-				auto const& _device = TrackingDevices::getCurrentOverrideDevice();
+				const auto& _device = TrackingDevices::getCurrentOverrideDevice();
 
 				// Compose the yaw neutral and current
 				const double _neutral_yaw =
@@ -2151,7 +2151,7 @@ namespace k2app::main
 
 				if (_device.index() == 0)
 				{
-					auto const& _kinect =
+					const auto& _kinect =
 						std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device);
 
 					if (K2Settings.isPositionOverriddenJoint[0])
@@ -2212,7 +2212,7 @@ namespace k2app::main
 				}
 				else if (_device.index() == 1)
 				{
-					auto const& _joints =
+					const auto& _joints =
 						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_device);
 
 					if (K2Settings.isPositionOverriddenJoint[0])

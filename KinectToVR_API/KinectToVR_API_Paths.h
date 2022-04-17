@@ -17,7 +17,7 @@ namespace ktvr
 	inline std::string GetK2AppDataFileDir(const std::string& relativeFilePath)
 	{
 		CreateDirectoryA(std::string(std::string(std::getenv("APPDATA")) + "\\KinectToVR\\").c_str(),
-			nullptr);
+		                 nullptr);
 		return std::string(std::getenv("APPDATA")) + "\\KinectToVR\\" + relativeFilePath;
 	}
 
@@ -25,8 +25,7 @@ namespace ktvr
 	inline std::string GetK2AppDataLogFileDir(const std::string& relativeFilePath)
 	{
 		CreateDirectoryA(std::string(std::string(std::getenv("APPDATA")) + "\\KinectToVR\\logs\\").c_str(),
-			nullptr);
+		                 nullptr);
 		return std::string(std::getenv("APPDATA")) + "\\KinectToVR\\logs\\" + relativeFilePath;
 	}
-
 }

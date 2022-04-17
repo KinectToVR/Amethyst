@@ -38,18 +38,18 @@ namespace boost::serialization
 	// Eigen serialization
 	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
 	void serialize(Archive& ar,
-		Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
-		const unsigned int file_version
+	               Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
+	               const unsigned int file_version
 	)
 	{
 		for (size_t i = 0; i < t.size(); i++)
-			ar& make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
+			ar & make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
 	}
 
 	template <class Archive, typename _Scalar>
 	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
 	{
-		ar& make_nvp("w", q.w())
+		ar & make_nvp("w", q.w())
 			& make_nvp("x", q.x())
 			& make_nvp("y", q.y())
 			& make_nvp("z", q.z());
@@ -58,7 +58,7 @@ namespace boost::serialization
 	template <class Archive, typename _Scalar>
 	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
 	{
-		ar& make_nvp("x", v.x())
+		ar & make_nvp("x", v.x())
 			& make_nvp("y", v.y())
 			& make_nvp("z", v.z());
 	}
@@ -185,7 +185,7 @@ namespace k2app
 
 		// Currently enabled (spawn-able) joints: W; L,R and true is the default, LE,RE; LK,RK
 		std::array<bool, 7>
-			isJointPairEnabled = { true, true, false, false };
+		isJointPairEnabled = {true, true, false, false};
 
 		// Automatically spawn enabled trackers on startup and off is the default
 		bool autoSpawnEnabledJoints = false;
@@ -236,7 +236,7 @@ namespace k2app
 				archive << boost::serialization::make_nvp("K2AppSettings", *this);
 				LOG(INFO) << "Settings have been saved to file \"KinectToVR_settings.xml\" (inside K2AppData)";
 			}
-			catch (boost::archive::archive_exception const& e)
+			catch (const boost::archive::archive_exception& e)
 			{
 				LOG(ERROR) << "Settings archive serialization error: " << e.what();
 			}
@@ -261,7 +261,7 @@ namespace k2app
 				calibrationPointsNumber = std::clamp(
 					calibrationPointsNumber, (uint32_t)3, (uint32_t)5);
 			}
-			catch (boost::archive::archive_exception const& e)
+			catch (const boost::archive::archive_exception& e)
 			{
 				LOG(ERROR) << "Settings archive serialization error: " << e.what();
 			}

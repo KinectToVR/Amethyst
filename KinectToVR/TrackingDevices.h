@@ -20,7 +20,7 @@ namespace TrackingDevices
 	TrackingDevicesLayoutRootsVector;
 
 	// Pointer to the device's constructing function
-	typedef void* (*TrackingDeviceBaseFactory)(const char* pVersionName, int* pReturnCode);
+	using TrackingDeviceBaseFactory = void* (*)(const char* pVersionName, int* pReturnCode);
 
 	// Extract the current device (variant of it)
 	inline auto getCurrentDevice()
@@ -30,7 +30,7 @@ namespace TrackingDevices
 	}
 
 	// Extract the current device (variant of it)
-	inline auto getCurrentDevice(uint32_t const& id)
+	inline auto getCurrentDevice(const uint32_t& id)
 	{
 		// trackingDeviceID is always >= 0 anyway
 		return TrackingDevicesVector.at(id);
@@ -65,7 +65,7 @@ namespace TrackingDevices
 	inline std::pair<
 		bool, std::variant<
 			ktvr::K2TrackingDeviceBase_KinectBasis*,
-			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe(uint32_t const& id)
+			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe(const uint32_t& id)
 	{
 		bool _exists = TrackingDevicesVector.size() > id;
 
@@ -84,7 +84,7 @@ namespace TrackingDevices
 
 		/* First check if our tracking device even supports normal flip */
 
-		auto const& trackingDevice =
+		const auto& trackingDevice =
 			TrackingDevices::getCurrentDevice();
 
 		if (trackingDevice.index() == 0)
@@ -97,7 +97,7 @@ namespace TrackingDevices
 		/* Now check if either waist tracker is overridden or disabled
 		 * And then search in OpenVR for a one with waist role */
 
-		auto const& overrideDevice =
+		const auto& overrideDevice =
 			TrackingDevices::getCurrentOverrideDevice_Safe();
 
 		// If we have an override and if it's actually affecting the waist rotation
@@ -152,7 +152,7 @@ namespace TrackingDevices
 	}
 
 	// Select proper tracking device in the UI
-	inline void updateTrackingDeviceUI(uint32_t const& index)
+	inline void updateTrackingDeviceUI(const uint32_t& index)
 	{
 		if (TrackingDevicesVector.size() < 1) return; // Just give up
 
@@ -267,7 +267,7 @@ namespace TrackingDevices
 	}
 
 	// Select proper tracking device in the UI
-	inline void updateOverrideDeviceUI(uint32_t const& index)
+	inline void updateOverrideDeviceUI(const uint32_t& index)
 	{
 		if (TrackingDevicesVector.size() < 1) return; // Just give up
 
@@ -345,9 +345,9 @@ namespace TrackingDevices
 		}
 	}
 
-	inline int32_t devices_override_joint_id(int32_t const& id)
+	inline int32_t devices_override_joint_id(const int32_t& id)
 	{
-		auto const& _override = TrackingDevices::getCurrentOverrideDevice_Safe();
+		const auto& _override = TrackingDevices::getCurrentOverrideDevice_Safe();
 		bool _is_kinect = false; // 1: isSet, 2: isKinect
 
 		if (_override.first)
@@ -410,9 +410,9 @@ namespace TrackingDevices
 		return -1; // Return invalid
 	}
 
-	inline int32_t devices_override_joint_id_reverse(int32_t const& id)
+	inline int32_t devices_override_joint_id_reverse(const int32_t& id)
 	{
-		auto const& _override = TrackingDevices::getCurrentOverrideDevice_Safe();
+		const auto& _override = TrackingDevices::getCurrentOverrideDevice_Safe();
 		bool _is_kinect = false; // 1: isSet, 2: isKinect
 
 		if (_override.first)

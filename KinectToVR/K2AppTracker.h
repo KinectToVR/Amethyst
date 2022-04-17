@@ -58,7 +58,7 @@ namespace k2app
 		~K2AppTracker() = default;
 
 		// Custom constructor for role+serial
-		K2AppTracker(std::string const& _serial, ktvr::ITrackerType const& _role)
+		K2AppTracker(const std::string& _serial, const ktvr::ITrackerType& _role)
 		{
 			// Copy serial and role
 			data.serial = _serial;
@@ -70,7 +70,7 @@ namespace k2app
 		}
 
 		// Custom constructor for role+serial+filter const
-		K2AppTracker(std::string const& _serial, ktvr::ITrackerType const& _role, double const& m_lerp_const)
+		K2AppTracker(const std::string& _serial, const ktvr::ITrackerType& _role, const double& m_lerp_const)
 		{
 			// Copy serial and role
 			data.serial = _serial;
@@ -84,10 +84,10 @@ namespace k2app
 			_lerp_const = m_lerp_const;
 		}
 
-		ktvr::K2TrackedJoint getK2TrackedJoint(bool const& _state, std::string const& _name)
+		ktvr::K2TrackedJoint getK2TrackedJoint(const bool& _state, const std::string& _name)
 		{
-			return ktvr::K2TrackedJoint(pose.position, pose.orientation, 
-				_state ? ktvr::State_Tracked : ktvr::State_NotTracked, _name);
+			return ktvr::K2TrackedJoint(pose.position, pose.orientation,
+			                            _state ? ktvr::State_Tracked : ktvr::State_NotTracked, _name);
 		}
 
 		// Position filter update option

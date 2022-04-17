@@ -6,19 +6,19 @@ namespace winrt::KinectToVR::implementation
 	struct TrackingDevicesView : TrackingDevicesViewT<TrackingDevicesView>
 	{
 		TrackingDevicesView() = delete;
-		TrackingDevicesView(hstring const& DeviceName);
-		TrackingDevicesView(int32_t const& DeviceID, hstring const& DeviceName, bool const& Current);
+		TrackingDevicesView(const hstring& DeviceName);
+		TrackingDevicesView(const int32_t& DeviceID, const hstring& DeviceName, const bool& Current);
 
 		int32_t DeviceID();
 		hstring DeviceName();
 		bool Current();
 
-		void DeviceID(int32_t const& value);
-		void DeviceName(hstring const& value);
-		void Current(bool const& value);
+		void DeviceID(const int32_t& value);
+		void DeviceName(const hstring& value);
+		void Current(const bool& value);
 
-		event_token PropertyChanged(Windows::UI::Xaml::Data::PropertyChangedEventHandler const& value);
-		void PropertyChanged(event_token const& token);
+		event_token PropertyChanged(const Windows::UI::Xaml::Data::PropertyChangedEventHandler& value);
+		void PropertyChanged(const event_token& token);
 
 	private:
 		int32_t m_DeviceID;
