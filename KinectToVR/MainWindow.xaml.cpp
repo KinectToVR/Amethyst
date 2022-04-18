@@ -449,10 +449,16 @@ namespace winrt::KinectToVR::implementation
 													// Push helper functions to the device
 													pDevice->getHMDPosition =
 														k2app::interfacing::plugins::plugins_getHMDPosition;
+													pDevice->getHMDPositionCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDPositionCalibrated;
 													pDevice->getHMDOrientation =
 														k2app::interfacing::plugins::plugins_getHMDOrientation;
+													pDevice->getHMDOrientationCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDOrientationCalibrated;
 													pDevice->getHMDOrientationYaw =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
+													pDevice->getHMDOrientationYawCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
 
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
@@ -469,6 +475,10 @@ namespace winrt::KinectToVR::implementation
 														k2app::interfacing::AppInterface::CreateAppToggleSwitch_Sliced;
 													pDevice->CreateTextBox =
 														k2app::interfacing::AppInterface::CreateAppTextBox_Sliced;
+													pDevice->CreateProgressRing =
+														k2app::interfacing::AppInterface::CreateAppProgressRing_Sliced;
+													pDevice->CreateProgressBar =
+														k2app::interfacing::AppInterface::CreateAppProgressBar_Sliced;
 
 													LOG(INFO) << "Appending the device to the global registry...";
 
@@ -558,10 +568,16 @@ namespace winrt::KinectToVR::implementation
 													// Push helper functions to the device
 													pDevice->getHMDPosition =
 														k2app::interfacing::plugins::plugins_getHMDPosition;
+													pDevice->getHMDPositionCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDPositionCalibrated;
 													pDevice->getHMDOrientation =
 														k2app::interfacing::plugins::plugins_getHMDOrientation;
+													pDevice->getHMDOrientationCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDOrientationCalibrated;
 													pDevice->getHMDOrientationYaw =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
+													pDevice->getHMDOrientationYawCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
 
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
@@ -578,6 +594,10 @@ namespace winrt::KinectToVR::implementation
 														k2app::interfacing::AppInterface::CreateAppToggleSwitch_Sliced;
 													pDevice->CreateTextBox =
 														k2app::interfacing::AppInterface::CreateAppTextBox_Sliced;
+													pDevice->CreateProgressRing =
+														k2app::interfacing::AppInterface::CreateAppProgressRing_Sliced;
+													pDevice->CreateProgressBar =
+														k2app::interfacing::AppInterface::CreateAppProgressBar_Sliced;
 
 													LOG(INFO) << "Appending the device to the global registry...";
 
@@ -665,10 +685,16 @@ namespace winrt::KinectToVR::implementation
 													// Push helper functions to the device
 													pDevice->getHMDPosition =
 														k2app::interfacing::plugins::plugins_getHMDPosition;
+													pDevice->getHMDPositionCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDPositionCalibrated;
 													pDevice->getHMDOrientation =
 														k2app::interfacing::plugins::plugins_getHMDOrientation;
+													pDevice->getHMDOrientationCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDOrientationCalibrated;
 													pDevice->getHMDOrientationYaw =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
+													pDevice->getHMDOrientationYawCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
 
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
@@ -1170,6 +1196,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow:
 
 void h_exit()
 {
+	// Mark exiting as true
+	k2app::interfacing::isExitingNow = true;
+
 	// Mark trackers as inactive
 	k2app::interfacing::K2AppTrackersInitialized = false;
 

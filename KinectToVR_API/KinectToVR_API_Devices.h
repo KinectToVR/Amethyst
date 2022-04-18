@@ -710,8 +710,11 @@ namespace ktvr
 
 		/* Helper functions which may be internally called by the device plugin */
 		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
+		Eigen::Vector3f (*getHMDPositionCalibrated)(); // Get the HMD Position, calibrated
 		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
+		Eigen::Quaternionf (*getHMDOrientationCalibrated)(); // Get the HMD Rotation, calibrated
 		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
+		float (*getHMDOrientationYawCalibrated)(); // Get the HMD Yaw, exclusively & calibrated
 
 		/*
 		 * Helper to get all joints' positions from the app,
@@ -904,8 +907,11 @@ namespace ktvr
 
 		/* Helper functions which may be internally called by the device plugin */
 		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
+		Eigen::Vector3f (*getHMDPositionCalibrated)(); // Get the HMD Position, calibrated
 		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
+		Eigen::Quaternionf (*getHMDOrientationCalibrated)(); // Get the HMD Rotation, calibrated
 		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
+		float (*getHMDOrientationYawCalibrated)(); // Get the HMD Yaw, exclusively & calibrated
 
 		/*
 		 * Helper to get all joints' positions from the app,
@@ -991,8 +997,11 @@ namespace ktvr
 
 		/* Helper functions which may be internally called by the device plugin */
 		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
+		Eigen::Vector3f (*getHMDPositionCalibrated)(); // Get the HMD Position, calibrated
 		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
+		Eigen::Quaternionf (*getHMDOrientationCalibrated)(); // Get the HMD Rotation, calibrated
 		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
+		float (*getHMDOrientationYawCalibrated)(); // Get the HMD Yaw, exclusively & calibrated
 
 		/*
 		 * Helper to get all joints' positions from the app,

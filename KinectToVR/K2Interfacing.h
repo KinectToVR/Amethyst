@@ -9,6 +9,9 @@ namespace k2app::interfacing
 	// Internal version number
 	inline const std::string K2InternalVersion = "1.0.1.5"; // KTVR[ver:X.X.X.X]
 
+	// App closing check
+	inline bool isExitingNow = false;
+
 	inline std::vector<K2AppTracker> K2TrackersVector{
 		K2AppTracker("AME-00WAIST0", ktvr::ITrackerType::Tracker_Waist),
 		K2AppTracker("AME-L0FOOT00", ktvr::ITrackerType::Tracker_LeftFoot),
@@ -27,6 +30,7 @@ namespace k2app::interfacing
 	inline Eigen::Vector3f vrPlayspaceTranslation = Eigen::Vector3f(0, 0, 0);
 	// OpenVR playspace rotation
 	inline float vrPlayspaceOrientation = 0.f; // Note: radians
+	inline Eigen::Quaternionf vrPlayspaceOrientationQuaternion{ 1,0,0,0 };
 
 	inline void ShowToast(const std::string& header, const std::string& text)
 	{
@@ -224,6 +228,7 @@ namespace k2app::interfacing
 			yaw = 2 * _PI + yaw;
 
 		vrPlayspaceOrientation = yaw;
+		vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(trackingOrigin);
 		return true; // OK
 	}
 
@@ -811,15 +816,31 @@ namespace k2app::interfacing
 			return std::get<Eigen::Vector3f>(vrHMDPose);
 		}
 
+		inline Eigen::Vector3f plugins_getHMDPositionCalibrated()
+		{
+			return std::get<Eigen::Vector3f>(vrHMDPose) - vrPlayspaceTranslation;
+		}
+
 		inline Eigen::Quaternionf plugins_getHMDOrientation()
 		{
 			return std::get<Eigen::Quaternionf>(vrHMDPose);
+		}
+
+		inline Eigen::Quaternionf plugins_getHMDOrientationCalibrated()
+		{
+			return vrPlayspaceOrientationQuaternion.inverse() * std::get<Eigen::Quaternionf>(vrHMDPose);
 		}
 
 		// Note: this is in radians
 		inline float plugins_getHMDOrientationYaw()
 		{
 			return std::get<float>(vrHMDPose);
+		}
+
+		// Note: this is in radians
+		inline float plugins_getHMDOrientationYawCalibrated()
+		{
+			return std::get<float>(vrHMDPose) - vrPlayspaceOrientation;
 		}
 
 		inline std::array<ktvr::K2TrackedJoint, 7> plugins_getAppJointPoses()
@@ -910,11 +931,16 @@ namespace k2app::interfacing
 
 			void Visibility(const bool& visibility) override
 			{
-				if (_ptr_text_block.get())
-					_ptr_text_block.get()->Visibility(
-						visibility
-							? Visibility::Visible
-							: Visibility::Collapsed);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_block.get())
+							_ptr_text_block.get()->Visibility(
+								visibility
+									? Visibility::Visible
+									: Visibility::Collapsed);
+					});
 			}
 
 			// Width Get and Set
@@ -927,8 +953,13 @@ namespace k2app::interfacing
 
 			void Width(const uint32_t& width) override
 			{
-				if (_ptr_text_block.get())
-					_ptr_text_block.get()->Width(width);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_block.get())
+							_ptr_text_block.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -941,8 +972,13 @@ namespace k2app::interfacing
 
 			void Height(const uint32_t& height) override
 			{
-				if (_ptr_text_block.get())
-					_ptr_text_block.get()->Height(height);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_block.get())
+							_ptr_text_block.get()->Height(height);
+					});
 			}
 
 			// Text Get and Set
@@ -956,9 +992,14 @@ namespace k2app::interfacing
 
 			void Text(const std::string& text) override
 			{
-				if (_ptr_text_block.get())
-					_ptr_text_block.get()->Text(
-						wstring_cast(text));
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_block.get())
+							_ptr_text_block.get()->Text(
+								wstring_cast(text));
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1004,11 +1045,16 @@ namespace k2app::interfacing
 
 			void Visibility(const bool& visibility) override
 			{
-				if (_ptr_button.get())
-					_ptr_button.get()->Visibility(
-						visibility
-							? Visibility::Visible
-							: Visibility::Collapsed);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_button.get())
+							_ptr_button.get()->Visibility(
+								visibility
+									? Visibility::Visible
+									: Visibility::Collapsed);
+					});
 			}
 
 			// Width Get and Set
@@ -1021,8 +1067,13 @@ namespace k2app::interfacing
 
 			void Width(const uint32_t& width) override
 			{
-				if (_ptr_button.get())
-					_ptr_button.get()->Width(width);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_button.get())
+							_ptr_button.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1035,8 +1086,13 @@ namespace k2app::interfacing
 
 			void Height(const uint32_t& height) override
 			{
-				if (_ptr_button.get())
-					_ptr_button.get()->Height(height);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_button.get())
+							_ptr_button.get()->Height(height);
+					});
 			}
 
 			// IsEnabled Get and Set
@@ -1049,16 +1105,26 @@ namespace k2app::interfacing
 
 			void IsEnabled(const bool& enabled) override
 			{
-				if (_ptr_button.get())
-					_ptr_button.get()->IsEnabled(enabled);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_button.get())
+							_ptr_button.get()->IsEnabled(enabled);
+					});
 			}
 
 			// Label Set
 			void Content(const std::string& content) override
 			{
-				if (_ptr_button.get())
-					_ptr_button.get()->Content(
-						winrt::box_value(wstring_cast(content)));
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_button.get())
+							_ptr_button.get()->Content(
+								winrt::box_value(wstring_cast(content)));
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1125,11 +1191,16 @@ namespace k2app::interfacing
 
 			void Visibility(const bool& visibility) override
 			{
-				if (_ptr_number_box.get())
-					_ptr_number_box.get()->Visibility(
-						visibility
-							? Visibility::Visible
-							: Visibility::Collapsed);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_number_box.get())
+							_ptr_number_box.get()->Visibility(
+								visibility
+									? Visibility::Visible
+									: Visibility::Collapsed);
+					});
 			}
 
 			// Width Get and Set
@@ -1142,8 +1213,13 @@ namespace k2app::interfacing
 
 			void Width(const uint32_t& width) override
 			{
-				if (_ptr_number_box.get())
-					_ptr_number_box.get()->Width(width);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_number_box.get())
+							_ptr_number_box.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1156,8 +1232,13 @@ namespace k2app::interfacing
 
 			void Height(const uint32_t& height) override
 			{
-				if (_ptr_number_box.get())
-					_ptr_number_box.get()->Height(height);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_number_box.get())
+							_ptr_number_box.get()->Height(height);
+					});
 			}
 
 			// IsEnabled Get and Set
@@ -1170,8 +1251,13 @@ namespace k2app::interfacing
 
 			void IsEnabled(const bool& enabled) override
 			{
-				if (_ptr_number_box.get())
-					_ptr_number_box.get()->IsEnabled(enabled);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_number_box.get())
+							_ptr_number_box.get()->IsEnabled(enabled);
+					});
 			}
 
 			// Value Get and Set
@@ -1184,8 +1270,13 @@ namespace k2app::interfacing
 
 			void Value(const int& value) override
 			{
-				if (_ptr_number_box.get())
-					_ptr_number_box.get()->Value(value);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_number_box.get())
+							_ptr_number_box.get()->Value(value);
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1256,11 +1347,16 @@ namespace k2app::interfacing
 
 			void Visibility(const bool& visibility) override
 			{
-				if (_ptr_combo_box.get())
-					_ptr_combo_box.get()->Visibility(
-						visibility
-							? Visibility::Visible
-							: Visibility::Collapsed);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get())
+							_ptr_combo_box.get()->Visibility(
+								visibility
+									? Visibility::Visible
+									: Visibility::Collapsed);
+					});
 			}
 
 			// Width Get and Set
@@ -1273,8 +1369,13 @@ namespace k2app::interfacing
 
 			void Width(const uint32_t& width) override
 			{
-				if (_ptr_combo_box.get())
-					_ptr_combo_box.get()->Width(width);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get())
+							_ptr_combo_box.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1287,8 +1388,13 @@ namespace k2app::interfacing
 
 			void Height(const uint32_t& height) override
 			{
-				if (_ptr_combo_box.get())
-					_ptr_combo_box.get()->Height(height);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get())
+							_ptr_combo_box.get()->Height(height);
+					});
 			}
 
 			// IsEnabled Get and Set
@@ -1301,8 +1407,13 @@ namespace k2app::interfacing
 
 			void IsEnabled(const bool& enabled) override
 			{
-				if (_ptr_combo_box.get())
-					_ptr_combo_box.get()->IsEnabled(enabled);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get())
+							_ptr_combo_box.get()->IsEnabled(enabled);
+					});
 			}
 
 			// Selected Index Get and Set
@@ -1315,9 +1426,14 @@ namespace k2app::interfacing
 
 			void SelectedIndex(const uint32_t& value) override
 			{
-				if (_ptr_combo_box.get() &&
-					_ptr_combo_box.get()->Items().Size() < value)
-					_ptr_combo_box.get()->SelectedIndex(value);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get() &&
+							_ptr_combo_box.get()->Items().Size() < value)
+							_ptr_combo_box.get()->SelectedIndex(value);
+					});
 			}
 
 			// Items Vector Get and Set
@@ -1340,20 +1456,25 @@ namespace k2app::interfacing
 			// WARNING: DON'T CALL THIS DURING ANY OTHER MODIFICATION LIKE SELECTIONCHANGED
 			void Items(const std::vector<std::string>& entries) override
 			{
-				if (_ptr_combo_box.get())
-				{
-					// Boiler start - reset selection to a safe spot
-					_ptr_combo_box.get()->SelectedIndex(0);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get())
+						{
+							// Boiler start - reset selection to a safe spot
+							_ptr_combo_box.get()->SelectedIndex(0);
 
-					// Clear items and append the new ones
-					_ptr_combo_box.get()->Items().Clear();
-					for (const auto& str : entries)
-						_ptr_combo_box.get()->Items().Append(
-							winrt::box_value(wstring_cast(str)));
+							// Clear items and append the new ones
+							_ptr_combo_box.get()->Items().Clear();
+							for (const auto& str : entries)
+								_ptr_combo_box.get()->Items().Append(
+									winrt::box_value(wstring_cast(str)));
 
-					// Boiler end - reset selection to the start
-					_ptr_combo_box.get()->SelectedIndex(0);
-				}
+							// Boiler end - reset selection to the start
+							_ptr_combo_box.get()->SelectedIndex(0);
+						}
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1420,11 +1541,16 @@ namespace k2app::interfacing
 
 			void Visibility(const bool& visibility) override
 			{
-				if (_ptr_check_box.get())
-					_ptr_check_box.get()->Visibility(
-						visibility
-							? Visibility::Visible
-							: Visibility::Collapsed);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_check_box.get())
+							_ptr_check_box.get()->Visibility(
+								visibility
+									? Visibility::Visible
+									: Visibility::Collapsed);
+					});
 			}
 
 			// Width Get and Set
@@ -1437,8 +1563,13 @@ namespace k2app::interfacing
 
 			void Width(const uint32_t& width) override
 			{
-				if (_ptr_check_box.get())
-					_ptr_check_box.get()->Width(width);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_check_box.get())
+							_ptr_check_box.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1451,8 +1582,13 @@ namespace k2app::interfacing
 
 			void Height(const uint32_t& height) override
 			{
-				if (_ptr_check_box.get())
-					_ptr_check_box.get()->Height(height);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_check_box.get())
+							_ptr_check_box.get()->Height(height);
+					});
 			}
 
 			// IsEnabled Get and Set
@@ -1465,8 +1601,13 @@ namespace k2app::interfacing
 
 			void IsEnabled(const bool& enabled) override
 			{
-				if (_ptr_check_box.get())
-					_ptr_check_box.get()->IsEnabled(enabled);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_check_box.get())
+							_ptr_check_box.get()->IsEnabled(enabled);
+					});
 			}
 
 			// IsChecked Get and Set
@@ -1479,8 +1620,13 @@ namespace k2app::interfacing
 
 			void IsChecked(const bool& is_checked) override
 			{
-				if (_ptr_check_box.get())
-					_ptr_check_box.get()->IsChecked(is_checked);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_check_box.get())
+							_ptr_check_box.get()->IsChecked(is_checked);
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1553,11 +1699,16 @@ namespace k2app::interfacing
 
 			void Visibility(const bool& visibility) override
 			{
-				if (_ptr_toggle_switch.get())
-					_ptr_toggle_switch.get()->Visibility(
-						visibility
-							? Visibility::Visible
-							: Visibility::Collapsed);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_toggle_switch.get())
+							_ptr_toggle_switch.get()->Visibility(
+								visibility
+									? Visibility::Visible
+									: Visibility::Collapsed);
+					});
 			}
 
 			// Width Get and Set
@@ -1570,8 +1721,13 @@ namespace k2app::interfacing
 
 			void Width(const uint32_t& width) override
 			{
-				if (_ptr_toggle_switch.get())
-					_ptr_toggle_switch.get()->Width(width);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_toggle_switch.get())
+							_ptr_toggle_switch.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1584,8 +1740,13 @@ namespace k2app::interfacing
 
 			void Height(const uint32_t& height) override
 			{
-				if (_ptr_toggle_switch.get())
-					_ptr_toggle_switch.get()->Height(height);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_toggle_switch.get())
+							_ptr_toggle_switch.get()->Height(height);
+					});
 			}
 
 			// IsEnabled Get and Set
@@ -1598,8 +1759,13 @@ namespace k2app::interfacing
 
 			void IsEnabled(const bool& enabled) override
 			{
-				if (_ptr_toggle_switch.get())
-					_ptr_toggle_switch.get()->IsEnabled(enabled);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_toggle_switch.get())
+							_ptr_toggle_switch.get()->IsEnabled(enabled);
+					});
 			}
 
 			// IsChecked Get and Set
@@ -1612,8 +1778,13 @@ namespace k2app::interfacing
 
 			void IsChecked(const bool& is_checked) override
 			{
-				if (_ptr_toggle_switch.get())
-					_ptr_toggle_switch.get()->IsOn(is_checked);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_toggle_switch.get())
+							_ptr_toggle_switch.get()->IsOn(is_checked);
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1684,11 +1855,16 @@ namespace k2app::interfacing
 
 			void Visibility(const bool& visibility) override
 			{
-				if (_ptr_text_box.get())
-					_ptr_text_box.get()->Visibility(
-						visibility
-							? Visibility::Visible
-							: Visibility::Collapsed);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_box.get())
+							_ptr_text_box.get()->Visibility(
+								visibility
+									? Visibility::Visible
+									: Visibility::Collapsed);
+					});
 			}
 
 			// Width Get and Set
@@ -1701,8 +1877,13 @@ namespace k2app::interfacing
 
 			void Width(const uint32_t& width) override
 			{
-				if (_ptr_text_box.get())
-					_ptr_text_box.get()->Width(width);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_box.get())
+							_ptr_text_box.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1715,8 +1896,13 @@ namespace k2app::interfacing
 
 			void Height(const uint32_t& height) override
 			{
-				if (_ptr_text_box.get())
-					_ptr_text_box.get()->Height(height);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_box.get())
+							_ptr_text_box.get()->Height(height);
+					});
 			}
 
 			// Text Get and Set
@@ -1730,9 +1916,14 @@ namespace k2app::interfacing
 
 			void Text(const std::string& text) override
 			{
-				if (_ptr_text_box.get())
-					_ptr_text_box.get()->Text(
-						wstring_cast(text));
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_box.get())
+							_ptr_text_box.get()->Text(
+								wstring_cast(text));
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1771,6 +1962,7 @@ namespace k2app::interfacing
 			}
 		};
 
+		// Poggers Ring
 		class AppProgressRing final : public Interface::ProgressRing
 		{
 		public:
@@ -1797,11 +1989,16 @@ namespace k2app::interfacing
 
 			void Visibility(const bool& visibility) override
 			{
-				if (_ptr_progress_ring.get())
-					_ptr_progress_ring.get()->Visibility(
-						visibility
-							? Visibility::Visible
-							: Visibility::Collapsed);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_ring.get())
+							_ptr_progress_ring.get()->Visibility(
+								visibility
+									? Visibility::Visible
+									: Visibility::Collapsed);
+					});
 			}
 
 			// Width Get and Set
@@ -1814,8 +2011,13 @@ namespace k2app::interfacing
 
 			void Width(const uint32_t& width) override
 			{
-				if (_ptr_progress_ring.get())
-					_ptr_progress_ring.get()->Width(width);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_ring.get())
+							_ptr_progress_ring.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1828,8 +2030,13 @@ namespace k2app::interfacing
 
 			void Height(const uint32_t& height) override
 			{
-				if (_ptr_progress_ring.get())
-					_ptr_progress_ring.get()->Height(height);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_ring.get())
+							_ptr_progress_ring.get()->Height(height);
+					});
 			}
 
 			// Progress Get and Set (Set <0 to mark as indeterminate)
@@ -1846,19 +2053,24 @@ namespace k2app::interfacing
 
 			void Progress(const int32_t& progress) override
 			{
-				if (_ptr_progress_ring.get())
-				{
-					if (progress < 0)
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
 					{
-						_ptr_progress_ring.get()->IsActive(true);
-						_ptr_progress_ring.get()->IsIndeterminate(true);
-					}
-					else
-					{
-						_ptr_progress_ring.get()->Value(progress);
-						_ptr_progress_ring.get()->IsIndeterminate(false);
-					}
-				}
+						if (isExitingNow)return;
+						if (_ptr_progress_ring.get())
+						{
+							if (progress < 0)
+							{
+								_ptr_progress_ring.get()->IsActive(true);
+								_ptr_progress_ring.get()->IsIndeterminate(true);
+							}
+							else
+							{
+								_ptr_progress_ring.get()->Value(progress);
+								_ptr_progress_ring.get()->IsIndeterminate(false);
+							}
+						}
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1893,6 +2105,7 @@ namespace k2app::interfacing
 			}
 		};
 
+		// Poggers Bar
 		class AppProgressBar final : public Interface::ProgressBar
 		{
 		public:
@@ -1919,11 +2132,16 @@ namespace k2app::interfacing
 
 			void Visibility(const bool& visibility) override
 			{
-				if (_ptr_progress_bar.get())
-					_ptr_progress_bar.get()->Visibility(
-						visibility
-							? Visibility::Visible
-							: Visibility::Collapsed);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+							_ptr_progress_bar.get()->Visibility(
+								visibility
+									? Visibility::Visible
+									: Visibility::Collapsed);
+					});
 			}
 
 			// Width Get and Set
@@ -1936,8 +2154,13 @@ namespace k2app::interfacing
 
 			void Width(const uint32_t& width) override
 			{
-				if (_ptr_progress_bar.get())
-					_ptr_progress_bar.get()->Width(width);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+							_ptr_progress_bar.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1950,8 +2173,13 @@ namespace k2app::interfacing
 
 			void Height(const uint32_t& height) override
 			{
-				if (_ptr_progress_bar.get())
-					_ptr_progress_bar.get()->Height(height);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+							_ptr_progress_bar.get()->Height(height);
+					});
 			}
 
 			// Progress Get and Set (Set <0 to mark as indeterminate)
@@ -1968,18 +2196,23 @@ namespace k2app::interfacing
 
 			void Progress(const int32_t& progress) override
 			{
-				if (_ptr_progress_bar.get())
-				{
-					if (progress < 0)
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
 					{
-						_ptr_progress_bar.get()->IsIndeterminate(true);
-					}
-					else
-					{
-						_ptr_progress_bar.get()->Value(progress);
-						_ptr_progress_bar.get()->IsIndeterminate(false);
-					}
-				}
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+						{
+							if (progress < 0)
+							{
+								_ptr_progress_bar.get()->IsIndeterminate(true);
+							}
+							else
+							{
+								_ptr_progress_bar.get()->Value(progress);
+								_ptr_progress_bar.get()->IsIndeterminate(false);
+							}
+						}
+					});
 			}
 
 			// Paused Get and Set
@@ -1992,8 +2225,13 @@ namespace k2app::interfacing
 
 			void ShowPaused(const bool& show_paused) override
 			{
-				if (_ptr_progress_bar.get())
-					_ptr_progress_bar.get()->ShowPaused(show_paused);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+							_ptr_progress_bar.get()->ShowPaused(show_paused);
+					});
 			}
 
 			// Error Get and Set
@@ -2006,8 +2244,13 @@ namespace k2app::interfacing
 
 			void ShowError(const bool& show_error) override
 			{
-				if (_ptr_progress_bar.get())
-					_ptr_progress_bar.get()->ShowError(show_error);
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+							_ptr_progress_bar.get()->ShowError(show_error);
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -2642,15 +2885,12 @@ namespace k2app::interfacing
 					// If there are more than 2 elements,
 					// snap the first one to the left and the last one to the right
 					if (element_vector.size() > 1) // 2 or more elements
-						switch (i)
-						{
-						case 0:
+					{
+						if (i == 0)
 							_alignment = HorizontalAlignment::Left;
-							break;
-						case element_vector.size() - 1:
+						else if (i == element_vector.size() - 1)
 							_alignment = HorizontalAlignment::Right;
-							break;
-						}
+					}
 
 					// Switch based on element type: all types
 					switch (const auto& element = element_vector.at(i);
@@ -2946,9 +3186,9 @@ namespace k2app::interfacing
 		}
 
 		// Create a client-side ui element (sliced)
-		inline Interface::ProgressRing* CreateAppProgressRing_Sliced(const int32_t& progress = -1)
+		inline Interface::ProgressRing* CreateAppProgressRing_Sliced()
 		{
-			return new AppProgressRing(progress);
+			return new AppProgressRing(-1);
 		}
 
 
@@ -2959,9 +3199,9 @@ namespace k2app::interfacing
 		}
 
 		// Create a client-side ui element (sliced)
-		inline Interface::ProgressBar* CreateAppProgressBar_Sliced(const int32_t& progress = -1)
+		inline Interface::ProgressBar* CreateAppProgressBar_Sliced()
 		{
-			return new AppProgressBar(progress);
+			return new AppProgressBar(-1);
 		}
 	}
 
