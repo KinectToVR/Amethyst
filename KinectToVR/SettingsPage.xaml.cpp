@@ -116,30 +116,42 @@ void trackersConfigChanged()
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
 
-	// If this is the first time, also show the notification
-	if (!k2app::shared::settings::restartButton.get()->IsEnabled())
-		k2app::interfacing::ShowToast("Trackers configuration has changed",
-		                              "Restart SteamVR for changes to take effect");
+	// Run in a detached thread to allow waiting
+	std::thread([&]
+	{
+		// Mark trackers as inactive
+		k2app::interfacing::K2AppTrackersInitialized = false;
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-	// If all trackers were turned off then SCREAM
-	if (std::ranges::all_of(
-		k2app::K2Settings.isJointPairEnabled,
-		[](const bool& i) { return !i; }
-	))
-		k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
-		                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
+		// If this is the first time, also show the notification
+		if (!k2app::shared::settings::restartButton.get()->IsEnabled())
+			k2app::interfacing::ShowToast("Trackers configuration has changed",
+			                              "Restart SteamVR for changes to take effect");
 
-	// Compare with saved settings and unlock the restart
-	k2app::shared::settings::restartButton.get()->IsEnabled(true);
+		// If all trackers were turned off then SCREAM
+		if (std::ranges::all_of(
+			k2app::K2Settings.isJointPairEnabled,
+			[](const bool& i) { return !i; }
+		))
+			k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
+			                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
 
-	// Enable/Disable combos
-	trackersConfig_UpdateIsEnabled();
+		// Compare with saved settings and unlock the restart
+		k2app::shared::settings::restartButton.get()->IsEnabled(true);
 
-	// Enable/Disable ExtFlip
-	TrackingDevices::settings_set_external_flip_is_enabled();
+		// Enable/Disable combos
+		trackersConfig_UpdateIsEnabled();
 
-	// Save settings
-	k2app::K2Settings.saveSettings();
+		// Enable/Disable ExtFlip
+		TrackingDevices::settings_set_external_flip_is_enabled();
+
+		// Mark trackers as active
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		k2app::interfacing::K2AppTrackersInitialized = true;
+
+		// Save settings
+		k2app::K2Settings.saveSettings();
+	}).detach();
 }
 
 
