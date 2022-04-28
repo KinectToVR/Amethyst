@@ -971,7 +971,9 @@ namespace ktvr
 
 		bool settingsSupported = false;
 
-		std::vector<K2TrackedJoint> trackedJoints = {K2TrackedJoint()};
+		std::vector<K2TrackedJoint> trackedJoints = {
+			K2TrackedJoint("INVALID!") // owo, wat's this?
+		};
 
 		class FailedJointsInitialization : public std::exception
 		{

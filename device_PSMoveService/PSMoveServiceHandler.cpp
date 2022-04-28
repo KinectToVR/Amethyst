@@ -137,7 +137,7 @@ void PSMoveServiceHandler::signalJoint(uint32_t at)
 		if (v_controllers.size() > at)
 			v_controllers.at(at).flashNow = true;
 	}
-	catch (std::exception const& e)
+	catch (const std::exception& e)
 	{
 	}
 }
@@ -297,7 +297,7 @@ void PSMoveServiceHandler::rebuildControllerList()
 
 	for (int cntlr_ix = 0; cntlr_ix < controllerList.count; ++cntlr_ix)
 	{
-		const char* controller_type = "NONE";
+		auto controller_type = "NONE";
 
 		switch (controllerList.controller_type[cntlr_ix])
 		{
@@ -321,6 +321,11 @@ void PSMoveServiceHandler::rebuildControllerList()
 		trackedJoints.push_back(ktvr::K2TrackedJoint( // Add the controller to K2App's vector
 			controller_type + " "s + std::to_string(controllerList.controller_id[cntlr_ix])));
 	}
+
+	// If there are no real joints, at least push a placeholder one
+	// This should spare us at least one crash condition （￣︶￣）↗　
+	if (trackedJoints.empty())
+		trackedJoints.push_back(ktvr::K2TrackedJoint("INVALID!"));
 }
 
 void PSMoveServiceHandler::processKeyInputs()
