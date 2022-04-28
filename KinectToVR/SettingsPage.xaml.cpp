@@ -116,42 +116,30 @@ void trackersConfigChanged()
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
 
-	// Run in a detached thread to allow waiting
-	std::thread([&]
-	{
-		// Mark trackers as inactive
-		k2app::interfacing::K2AppTrackersInitialized = false;
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+	// If this is the first time, also show the notification
+	if (!k2app::shared::settings::restartButton.get()->IsEnabled())
+		k2app::interfacing::ShowToast("Trackers configuration has changed",
+		                              "Restart SteamVR for changes to take effect");
 
-		// If this is the first time, also show the notification
-		if (!k2app::shared::settings::restartButton.get()->IsEnabled())
-			k2app::interfacing::ShowToast("Trackers configuration has changed",
-			                              "Restart SteamVR for changes to take effect");
+	// If all trackers were turned off then SCREAM
+	if (std::ranges::all_of(
+		k2app::K2Settings.isJointPairEnabled,
+		[](const bool& i) { return !i; }
+	))
+		k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
+		                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
 
-		// If all trackers were turned off then SCREAM
-		if (std::ranges::all_of(
-			k2app::K2Settings.isJointPairEnabled,
-			[](const bool& i) { return !i; }
-		))
-			k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
-			                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
+	// Compare with saved settings and unlock the restart
+	k2app::shared::settings::restartButton.get()->IsEnabled(true);
 
-		// Compare with saved settings and unlock the restart
-		k2app::shared::settings::restartButton.get()->IsEnabled(true);
+	// Enable/Disable combos
+	trackersConfig_UpdateIsEnabled();
 
-		// Enable/Disable combos
-		trackersConfig_UpdateIsEnabled();
+	// Enable/Disable ExtFlip
+	TrackingDevices::settings_set_external_flip_is_enabled();
 
-		// Enable/Disable ExtFlip
-		TrackingDevices::settings_set_external_flip_is_enabled();
-
-		// Mark trackers as active
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
-		k2app::interfacing::K2AppTrackersInitialized = true;
-
-		// Save settings
-		k2app::K2Settings.saveSettings();
-	}).detach();
+	// Save settings
+	k2app::K2Settings.saveSettings();
 }
 
 
@@ -512,17 +500,38 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistDropDown_Expanding(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::WaistTrackerEnabledToggle_Toggled(
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::WaistTrackerEnabledToggle_Toggled(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!settings_localInitFinished)co_return;
 
+	// Mark trackers as inactive
+	k2app::interfacing::K2AppTrackersInitialized = false;
+	{
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(20);
+		co_await ui_thread;
+	}
+
+	// Make actual changes
 	k2app::K2Settings.isJointPairEnabled[0] = k2app::shared::settings::waistTrackerEnabledToggle.get()->IsOn();
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
 	trackersConfigChanged();
+
+	// Mark trackers as active
+	{
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(20);
+		co_await ui_thread;
+	}
+	k2app::interfacing::K2AppTrackersInitialized = true;
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -606,17 +615,38 @@ void winrt::KinectToVR::implementation::SettingsPage::FeetDropDown_Expanding(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::FeetTrackersEnabledToggle_Toggled(
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::FeetTrackersEnabledToggle_Toggled(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!settings_localInitFinished)co_return;
 
+	// Mark trackers as inactive
+	k2app::interfacing::K2AppTrackersInitialized = false;
+	{
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(20);
+		co_await ui_thread;
+	}
+
+	// Make actual changes
 	k2app::K2Settings.isJointPairEnabled[1] = k2app::shared::settings::feetTrackersEnabledToggle.get()->IsOn();
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
 	trackersConfigChanged();
+
+	// Mark trackers as active
+	{
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(20);
+		co_await ui_thread;
+	}
+	k2app::interfacing::K2AppTrackersInitialized = true;
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -712,17 +742,38 @@ void winrt::KinectToVR::implementation::SettingsPage::ElbowsDropDown_Expanding(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::ElbowTrackersEnabledToggle_Toggled(
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::ElbowTrackersEnabledToggle_Toggled(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!settings_localInitFinished)co_return;
 
+	// Mark trackers as inactive
+	k2app::interfacing::K2AppTrackersInitialized = false;
+	{
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(20);
+		co_await ui_thread;
+	}
+
+	// Make actual changes
 	k2app::K2Settings.isJointPairEnabled[2] = k2app::shared::settings::elbowTrackersEnabledToggle.get()->IsOn();
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
 	trackersConfigChanged();
+
+	// Mark trackers as active
+	{
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(20);
+		co_await ui_thread;
+	}
+	k2app::interfacing::K2AppTrackersInitialized = true;
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -813,17 +864,38 @@ void winrt::KinectToVR::implementation::SettingsPage::KneesDropDown_Expanding(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::KneeTrackersEnabledToggle_Toggled(
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::KneeTrackersEnabledToggle_Toggled(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!settings_localInitFinished)co_return;
 
+	// Mark trackers as inactive
+	k2app::interfacing::K2AppTrackersInitialized = false;
+	{
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(20);
+		co_await ui_thread;
+	}
+
+	// Make actual changes
 	k2app::K2Settings.isJointPairEnabled[3] = k2app::shared::settings::kneeTrackersEnabledToggle.get()->IsOn();
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
 	trackersConfigChanged();
+
+	// Mark trackers as active
+	{
+		// Sleep on UI
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+		Sleep(20);
+		co_await ui_thread;
+	}
+	k2app::interfacing::K2AppTrackersInitialized = true;
 
 	// Save settings
 	k2app::K2Settings.saveSettings();

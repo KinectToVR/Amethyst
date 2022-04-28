@@ -38,19 +38,27 @@ namespace winrt::KinectToVR::implementation
         void SoundsVolumeSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& e);
         void CalibrateExternalFlipMenuFlyoutItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void WaistDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
-        void WaistTrackerEnabledToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        Windows::Foundation::IAsyncAction WaistTrackerEnabledToggle_Toggled(
+	        winrt::Windows::Foundation::IInspectable const& sender,
+	        winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void WaistPositionFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
         void FeetDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
-        void FeetTrackersEnabledToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        Windows::Foundation::IAsyncAction FeetTrackersEnabledToggle_Toggled(
+	        winrt::Windows::Foundation::IInspectable const& sender,
+	        winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void FeetPositionFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
         void FeetRotationFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
         void WaistRotationFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
         void KneesDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
-        void KneeTrackersEnabledToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        Windows::Foundation::IAsyncAction KneeTrackersEnabledToggle_Toggled(
+	        winrt::Windows::Foundation::IInspectable const& sender,
+	        winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void KneePositionFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
         void KneeRotationFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
         void ElbowsDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
-        void ElbowTrackersEnabledToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        Windows::Foundation::IAsyncAction ElbowTrackersEnabledToggle_Toggled(
+	        winrt::Windows::Foundation::IInspectable const& sender,
+	        winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void ElbowsPositionFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
         void ElbowsRotationFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
     };
