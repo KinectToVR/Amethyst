@@ -179,28 +179,46 @@ void devices_update_current()
 
 void devices_clear_combo(const std::shared_ptr<Controls::ComboBox>& cbox)
 {
-	try
+	[&]
 	{
-		cbox.get()->Items().Clear();
-	}
-	catch (...)
-	{
-		LOG(WARNING) << "Couldn't clear a ComboBox. You better call an exorcist.";
-	}
+		__try
+		{
+			[&]
+			{
+				cbox.get()->Items().Clear();
+			}();
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			[&]
+			{
+				LOG(WARNING) << "Couldn't clear a ComboBox. You better call an exorcist.";
+			}();
+		}
+	}();
 }
 
 void devices_push_combobox(
 	const std::shared_ptr<Controls::ComboBox>& cbox,
 	const hstring& str)
 {
-	try
+	[&]
 	{
-		cbox.get()->Items().Append(box_value(str));
-	}
-	catch (...)
-	{
-		LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
-	}
+		__try
+		{
+			[&]
+			{
+				cbox.get()->Items().Append(box_value(str));
+			}();
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			[&]
+			{
+				LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
+			}();
+		}
+	}();
 }
 
 void devices_push_override_joints_combo(
@@ -296,14 +314,20 @@ void devices_select_combobox_safe(
 	const std::shared_ptr<Controls::ComboBox>& cbox,
 	const int& index)
 {
-	try
+	[&]
 	{
-		cbox.get()->SelectedIndex(index);
-	}
-	catch (...)
-	{
-		LOG(WARNING) << "Couldn't select a ComboBox index. You better call an exorcist.";
-	}
+		__try
+		{
+			cbox.get()->SelectedIndex(index);
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			[&]
+			{
+				LOG(WARNING) << "Couldn't select a ComboBox index. You better call an exorcist.";
+			}();
+		}
+	}();
 }
 
 void devices_select_combobox()
