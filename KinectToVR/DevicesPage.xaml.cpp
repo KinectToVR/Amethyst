@@ -1662,6 +1662,13 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 		deviceName = device->getDeviceName();
 		device->initialize(); // Init the device as we'll be using it
 
+		// Abort if there are no joints
+		if (device->getTrackedJoints().empty())
+		{
+			NoJointsFlyout().ShowAt(SelectedDeviceNameLabel());
+			co_return; // Don't set up any overrides (yet)
+		}
+
 		// Also refresh joints
 
 		// Clear items
