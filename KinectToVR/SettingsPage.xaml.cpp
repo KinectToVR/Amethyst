@@ -506,7 +506,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)co_return;
 
-	// Mark trackers as inactive
+	// Mark trackers as inactive, back up the current one
+	const bool _trackersInitialized =
+		k2app::interfacing::K2AppTrackersInitialized;
 	k2app::interfacing::K2AppTrackersInitialized = false;
 	{
 		// Sleep on UI
@@ -523,7 +525,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	k2app::interfacing::devices_check_disabled_joints();
 	trackersConfigChanged();
 
-	// Mark trackers as active
+	// Mark trackers as active (or backup)
 	{
 		// Sleep on UI
 		winrt::apartment_context ui_thread;
@@ -531,7 +533,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 		Sleep(20);
 		co_await ui_thread;
 	}
-	k2app::interfacing::K2AppTrackersInitialized = true;
+	k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -621,7 +623,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)co_return;
 
-	// Mark trackers as inactive
+	// Mark trackers as inactive, back up the current one
+	const bool _trackersInitialized =
+		k2app::interfacing::K2AppTrackersInitialized;
 	k2app::interfacing::K2AppTrackersInitialized = false;
 	{
 		// Sleep on UI
@@ -638,7 +642,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	k2app::interfacing::devices_check_disabled_joints();
 	trackersConfigChanged();
 
-	// Mark trackers as active
+	// Mark trackers as active (or backup)
 	{
 		// Sleep on UI
 		winrt::apartment_context ui_thread;
@@ -646,7 +650,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 		Sleep(20);
 		co_await ui_thread;
 	}
-	k2app::interfacing::K2AppTrackersInitialized = true;
+	k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -748,7 +752,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)co_return;
 
-	// Mark trackers as inactive
+	// Mark trackers as inactive, back up the current one
+	const bool _trackersInitialized =
+		k2app::interfacing::K2AppTrackersInitialized;
 	k2app::interfacing::K2AppTrackersInitialized = false;
 	{
 		// Sleep on UI
@@ -765,7 +771,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	k2app::interfacing::devices_check_disabled_joints();
 	trackersConfigChanged();
 
-	// Mark trackers as active
+	// Mark trackers as active (or backup)
 	{
 		// Sleep on UI
 		winrt::apartment_context ui_thread;
@@ -773,7 +779,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 		Sleep(20);
 		co_await ui_thread;
 	}
-	k2app::interfacing::K2AppTrackersInitialized = true;
+	k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -870,7 +876,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)co_return;
 
-	// Mark trackers as inactive
+	// Mark trackers as inactive, back up the current one
+	const bool _trackersInitialized =
+		k2app::interfacing::K2AppTrackersInitialized;
 	k2app::interfacing::K2AppTrackersInitialized = false;
 	{
 		// Sleep on UI
@@ -887,7 +895,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	k2app::interfacing::devices_check_disabled_joints();
 	trackersConfigChanged();
 
-	// Mark trackers as active
+	// Mark trackers as active (or backup)
 	{
 		// Sleep on UI
 		winrt::apartment_context ui_thread;
@@ -895,7 +903,7 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 		Sleep(20);
 		co_await ui_thread;
 	}
-	k2app::interfacing::K2AppTrackersInitialized = true;
+	k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
