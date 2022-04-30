@@ -474,4 +474,168 @@ namespace TrackingDevices
 
 		return -1; // Return invalid
 	}
+
+	inline void devices_check_override_ids(const uint32_t& id)
+	{
+		// Take down IDs if they're too big
+		if (const auto& device_pair = getCurrentOverrideDevice_Safe(id); device_pair.first)
+		{
+			if (device_pair.second.index() == 1) // If Joints
+			{
+				// Note: num_joints should never be 0
+				const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
+					(device_pair.second)->getTrackedJoints().size();
+
+				if (k2app::K2Settings.positionOverrideJointID[0] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[0] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[1] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[1] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[2] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[2] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[3] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[3] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[4] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[4] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[5] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[5] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[6] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[6] = 0;
+
+				if (k2app::K2Settings.rotationOverrideJointID[0] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[0] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[1] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[1] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[2] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[2] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[3] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[3] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[4] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[4] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[5] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[5] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[6] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[6] = 0;
+			}
+			else if (device_pair.second.index() == 0) // If Kinect
+			{
+				// Note: switch based on device characteristics
+				const auto characteristics = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
+					(device_pair.second)->getDeviceCharacteristics();
+				uint32_t num_joints = -1; // To set later
+
+				if (characteristics == ktvr::K2_Character_Full)
+					num_joints = 8;
+				else if (characteristics == ktvr::K2_Character_Simple)
+					num_joints = 8;
+				else if (characteristics == ktvr::K2_Character_Basic)
+					num_joints = 3;
+
+				if (k2app::K2Settings.positionOverrideJointID[0] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[0] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[1] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[1] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[2] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[2] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[3] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[3] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[4] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[4] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[5] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[5] = 0;
+				if (k2app::K2Settings.positionOverrideJointID[6] >= num_joints)
+					k2app::K2Settings.positionOverrideJointID[6] = 0;
+
+				if (k2app::K2Settings.rotationOverrideJointID[0] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[0] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[1] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[1] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[2] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[2] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[3] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[3] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[4] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[4] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[5] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[5] = 0;
+				if (k2app::K2Settings.rotationOverrideJointID[6] >= num_joints)
+					k2app::K2Settings.rotationOverrideJointID[6] = 0;
+			}
+		}
+	}
+
+	inline void devices_check_base_ids(const uint32_t& id)
+	{
+		// Take down IDs if they're too big
+		if (const auto& device_pair = TrackingDevices::getCurrentDevice(id);
+			device_pair.index() == 1) // If Joints
+		{
+			// Note: num_joints should never be 0
+			const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
+				(device_pair)->getTrackedJoints().size();
+
+			if (k2app::K2Settings.selectedTrackedJointID[0] >= num_joints)
+				k2app::K2Settings.selectedTrackedJointID[0] = 0;
+			if (k2app::K2Settings.selectedTrackedJointID[1] >= num_joints)
+				k2app::K2Settings.selectedTrackedJointID[1] = 0;
+			if (k2app::K2Settings.selectedTrackedJointID[2] >= num_joints)
+				k2app::K2Settings.selectedTrackedJointID[2] = 0;
+			if (k2app::K2Settings.selectedTrackedJointID[3] >= num_joints)
+				k2app::K2Settings.selectedTrackedJointID[3] = 0;
+			if (k2app::K2Settings.selectedTrackedJointID[4] >= num_joints)
+				k2app::K2Settings.selectedTrackedJointID[4] = 0;
+			if (k2app::K2Settings.selectedTrackedJointID[5] >= num_joints)
+				k2app::K2Settings.selectedTrackedJointID[5] = 0;
+			if (k2app::K2Settings.selectedTrackedJointID[6] >= num_joints)
+				k2app::K2Settings.selectedTrackedJointID[6] = 0;
+		}
+	}
+
+	inline void devices_update_current()
+	{
+		{
+			const auto& trackingDevice = TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
+
+			std::string deviceName = "[UNKNOWN]";
+
+			if (trackingDevice.index() == 0)
+			{
+				// Kinect Basis
+				const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+				deviceName = device->getDeviceName();
+			}
+			else if (trackingDevice.index() == 1)
+			{
+				// Joints Basis
+				const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+				deviceName = device->getDeviceName();
+			}
+
+			/* Update local statuses */
+			k2app::shared::devices::baseDeviceName.get()->Text(wstring_cast(deviceName));
+			if (k2app::shared::devices::overrideDeviceName.get()->Text() == wstring_cast(deviceName))
+				k2app::shared::devices::overrideDeviceName.get()->Text(L"No Overrides");
+		}
+		{
+			if (k2app::K2Settings.overrideDeviceID < 0)return;
+			const auto& trackingDevice = TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
+
+			std::string deviceName = "[UNKNOWN]";
+
+			if (trackingDevice.index() == 0)
+			{
+				// Kinect Basis
+				const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+				deviceName = device->getDeviceName();
+			}
+			else if (trackingDevice.index() == 1)
+			{
+				// Joints Basis
+				const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+				deviceName = device->getDeviceName();
+			}
+
+			/* Update local statuses */
+			k2app::shared::devices::overrideDeviceName.get()->Text(wstring_cast(deviceName));
+		}
+	}
 }
