@@ -92,6 +92,16 @@ namespace K2CrashHandler
                         primaryButtonText = "View Docs";
                         switch (ProcessExitCode)
                         {
+                            case -13:
+                            {
+                                // Panic exit
+                                primaryButtonHandler = Action_ResetConfig;
+                                handlerContent =
+                                    "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\n" +
+                                    "Please check if all your devices / plugins are working and check logs. Optionally, you can erase the app configuration and then try running it again.";
+                                primaryButtonText = "Reset Config";
+                            }
+                                break;
                             case -12:
                             {
                                 // No devices
@@ -220,6 +230,12 @@ namespace K2CrashHandler
             VRHelper helper = new();
             helper.UpdateSteamPaths();
             // TODO
+        }
+
+        private void Action_ResetConfig(object sender, RoutedEventArgs e)
+        {
+            File.Delete(Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData), "KinectToVR", "KinectToVR_settings.xml"));
         }
 
         private void Action_VRDocs(object sender, RoutedEventArgs e)

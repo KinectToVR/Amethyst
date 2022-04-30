@@ -2425,10 +2425,10 @@ namespace k2app::main
 
 					// Mark trackers as inactive
 					interfacing::K2AppTrackersInitialized = false;
-					
+
 					// Wait a moment
 					Sleep(200);
-					
+
 					exit(-13); // -13 is the code for giving up then, I guess
 					// user will be prompted to reset the config (opt)
 				}
