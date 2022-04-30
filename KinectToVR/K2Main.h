@@ -2406,11 +2406,31 @@ namespace k2app::main
 			{
 				LOG(ERROR) << "The main loop has crashed! Restarting it now...";
 				server_tries++; // One more?
-				if (server_tries > 3)
+				if (server_tries > 3 && server_tries <= 7)
 				{
 					// We've crashed the third time now. Somethin's off.. really...
-					LOG(ERROR) << "Server loop has already crashed 3 times. Giving up...";
-					server_giveUp = true;
+					LOG(ERROR) << "Server loop has already crashed 3 times. Checking the joint config...";
+
+					// Check the joint configuration
+					TrackingDevices::devices_check_base_ids(K2Settings.trackingDeviceID);
+					TrackingDevices::devices_check_override_ids(K2Settings.trackingDeviceID);
+				}
+				else if (server_tries > 7)
+				{
+					// We've crashed the seventh time now. Somethin's off.. really...
+					LOG(ERROR) << "Server loop has already crashed 7 times. Giving up...";
+
+					// Mark exiting as true
+					interfacing::isExitingNow = true;
+
+					// Mark trackers as inactive
+					interfacing::K2AppTrackersInitialized = false;
+					
+					// Wait a moment
+					Sleep(200);
+					
+					exit(-13); // -13 is the code for giving up then, I guess
+					// user will be prompted to reset the config (opt)
 				}
 			}
 		}
