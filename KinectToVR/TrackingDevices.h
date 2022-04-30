@@ -560,6 +560,9 @@ namespace TrackingDevices
 				if (k2app::K2Settings.rotationOverrideJointID[6] >= num_joints)
 					k2app::K2Settings.rotationOverrideJointID[6] = 0;
 			}
+
+			// Save it
+			k2app::K2Settings.saveSettings();
 		}
 	}
 
@@ -587,6 +590,9 @@ namespace TrackingDevices
 				k2app::K2Settings.selectedTrackedJointID[5] = 0;
 			if (k2app::K2Settings.selectedTrackedJointID[6] >= num_joints)
 				k2app::K2Settings.selectedTrackedJointID[6] = 0;
+
+			// Save it
+			k2app::K2Settings.saveSettings();
 		}
 	}
 
