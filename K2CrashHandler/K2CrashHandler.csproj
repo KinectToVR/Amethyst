@@ -6,7 +6,7 @@
     <RootNamespace>K2CrashHandler</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x64</Platforms>
-    <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
+    <RuntimeIdentifier>win</RuntimeIdentifier>
     <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.6.3" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0-preview2" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22598-preview" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
