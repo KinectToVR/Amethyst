@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "SettingsPage.xaml.h"
 
 #if __has_include("SettingsPage.g.cpp")
@@ -193,16 +193,21 @@ void winrt::KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Unche
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::RestartButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::RestartButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ktvr::request_vr_restart<false>("SteamVR needs to be restarted to enable/disable trackers properly.");
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::ResetButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::ResetButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Mark trackers as inactive
+	k2app::interfacing::K2AppTrackersInitialized = false;
+	if (k2app::shared::general::toggleTrackersButton.get() != nullptr)
+		k2app::shared::general::toggleTrackersButton->IsChecked(false);
+
 	// Read settings after reset
 	k2app::K2Settings = k2app::K2AppSettings(); // Reset settings
 	k2app::K2Settings.saveSettings(); // Save empty settings
@@ -241,6 +246,9 @@ void winrt::KinectToVR::implementation::SettingsPage::ResetButton_Click(
 			                              "Please try restarting it manually");
 			return;
 		}
+
+		// Mark exiting as true
+		k2app::interfacing::isExitingNow = true;
 
 		// Exit the app
 		LOG(INFO) << "Configuration has been reset, exiting...";
