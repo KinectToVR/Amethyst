@@ -12,7 +12,6 @@ namespace k2_driver
 		K2ServerDriver m_ServerDriver;
 
 	public:
-		
 		K2ServerProvider()
 		{
 			LOG(INFO) << "Provider component creation has started";
@@ -26,14 +25,15 @@ namespace k2_driver
 
 			// Initialize communication with K2API
 			const int initCode = m_ServerDriver.init_ServerDriver(); // Default IPC addresses
-			LOG(INFO) << "Driver's IPC server init code: " + 
+			LOG(INFO) << "Driver's IPC server init code: " +
 				std::to_string(initCode);
 
-			if (initCode == 0) {
+			if (initCode == 0)
+			{
 				LOG(INFO) << "OpenVR ServerDriver init success";
 				return vr::VRInitError_None;
 			}
-			
+
 			LOG(ERROR) << "OpenVR ServerDriver init failure! Aborting...";
 			return vr::VRInitError_Driver_Failed;
 		}
@@ -106,13 +106,13 @@ void K2WatchdogDriver::Cleanup()
 extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceName, int* pReturnCode)
 {
 	// ktvr::GetK2AppDataFileDir will create all directories by itself
-	
+
 	/* Initialize logging */
 	google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("KinectToVR_VRServerDriver_").c_str());
 	/* Log everything >=INFO to same file */
 	google::SetLogDestination(google::GLOG_INFO, ktvr::GetK2AppDataLogFileDir("KinectToVR_VRServerDriver_").c_str());
 	google::SetLogFilenameExtension(".log");
-	
+
 	FLAGS_logbufsecs = 0; //Set max timeout
 	FLAGS_minloglevel = google::GLOG_INFO;
 
@@ -133,7 +133,7 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 	{
 		return &k2_watchdog_driver;
 	}
-	
+
 	(*pReturnCode) = vr::VRInitError_None;
 
 	if (pReturnCode)

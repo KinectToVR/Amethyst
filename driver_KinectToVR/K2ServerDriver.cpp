@@ -20,7 +20,7 @@ int K2ServerDriver::init_ServerDriver(
 	{
 		// Create the *to* semaphore
 		k2api_to_Semaphore = CreateSemaphoreA(
-			NULL, //Security Attributes
+			nullptr, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
 			k2_to_sem.c_str()); //Semaphore Name
@@ -34,11 +34,11 @@ int K2ServerDriver::init_ServerDriver(
 		LOG(INFO) << "*TO* Semaphore Creation Success\n";
 
 		// Automatically release the sem after creation
-		ReleaseSemaphore(k2api_to_Semaphore, 1, 0);
+		ReleaseSemaphore(k2api_to_Semaphore, 1, nullptr);
 
 		// Create the *from* semaphore
 		k2api_from_Semaphore = CreateSemaphoreA(
-			NULL, //Security Attributes
+			nullptr, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
 			k2_from_sem.c_str()); //Semaphore Name
@@ -53,7 +53,7 @@ int K2ServerDriver::init_ServerDriver(
 
 		// Create the *start* semaphore
 		k2api_start_Semaphore = CreateSemaphoreA(
-			NULL, //Security Attributes
+			nullptr, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
 			k2_start_sem.c_str()); //Semaphore Name
@@ -66,7 +66,7 @@ int K2ServerDriver::init_ServerDriver(
 		}
 		LOG(INFO) << "*START* Semaphore Creation Success\n";
 	}
-	catch (std::exception const& e)
+	catch (const std::exception& e)
 	{
 		LOG(ERROR) << "Setting up server failed: " << e.what();
 		return -1;
@@ -102,7 +102,7 @@ int K2ServerDriver::init_ServerDriver(
 							LOG(INFO) << "Releasing the *TO* semaphore\n";
 							// Release the semaphore in case something hangs,
 							// no request would take as long as 15 seconds anyway
-							ReleaseSemaphore(k2api_to_Semaphore, 1, 0);
+							ReleaseSemaphore(k2api_to_Semaphore, 1, nullptr);
 						}
 
 						// Here, read from the *TO* pipe
@@ -160,11 +160,11 @@ int K2ServerDriver::init_ServerDriver(
 
 							parse_message(response);
 						}
-						catch (boost::archive::archive_exception const& e)
+						catch (const boost::archive::archive_exception& e)
 						{
 							LOG(ERROR) << "Message may be corrupted. Boost serialization error: " << e.what();
 						}
-						catch (std::exception const& e)
+						catch (const std::exception& e)
 						{
 							LOG(ERROR) << "Global parsing error: " << e.what();
 						}
@@ -267,7 +267,7 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 
 							// Compose the response
 							_response.success = true;
-							_response.id = (int)trackerVector.size() - 1; // ID
+							_response.id = static_cast<int>(trackerVector.size()) - 1; // ID
 
 							// Copy the tracker base object
 							_response.tracker_base = trackerVector.back().getTrackerBase();
@@ -589,7 +589,7 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 				// Check if the pose exists
 				if (message.tracker_bases_vector.has_value())
 				{
-					for (auto const& _tracker : message.tracker_bases_vector.value())
+					for (const auto& _tracker : message.tracker_bases_vector.value())
 					{
 						/* Pose */
 
@@ -656,7 +656,7 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 		_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_ParsingError);
 
 		// We're done, screw em if the type was bad
-		ReleaseSemaphore(k2api_to_Semaphore, 1, 0);
+		ReleaseSemaphore(k2api_to_Semaphore, 1, nullptr);
 		return;
 	}
 
@@ -683,7 +683,7 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 		DWORD Written;
 
 		// Let the client know that we'll be writing soon
-		ReleaseSemaphore(k2api_from_Semaphore, 1, 0);
+		ReleaseSemaphore(k2api_from_Semaphore, 1, nullptr);
 
 		// Read from the pipe
 		ConnectNamedPipe(WriterPipe, nullptr);

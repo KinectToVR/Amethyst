@@ -10,7 +10,7 @@ namespace EigenUtils
 	template <typename _Scalar>
 	Eigen::Vector3<_Scalar> lerp(const Eigen::Vector3<_Scalar>& to, const Eigen::Vector3<_Scalar>& from, float t)
 	{
-		return from * t + to * ((_Scalar)1.f - t);
+		return from * t + to * (static_cast<_Scalar>(1.f) - t);
 	}
 
 	/// @brief Returns a perspective transformation matrix like the one from gluPerspective
@@ -156,32 +156,32 @@ namespace EigenUtils
 	auto p_cast_type(const T& in)
 	{
 		/* If somehow same */
-		if constexpr (std::is_same<Ret, T>::value) return in;
+		if constexpr (std::is_same_v<Ret, T>) return in;
 
 			/* To Eigen Quaternion */
-		else if constexpr (std::is_same<Ret, Eigen::Quaternionf>::value && std::is_same<T, vr::HmdQuaternion_t>::value)
+		else if constexpr (std::is_same_v<Ret, Eigen::Quaternionf> && std::is_same_v<T, vr::HmdQuaternion_t>)
 			return Eigen::Quaternionf(in.w, in.x, in.y, in.z);
 
 			/* To OpenVR Quaternion */
-		else if constexpr (std::is_same<Ret, vr::HmdQuaternion_t>::value && std::is_same<T, Eigen::Quaternionf>::value)
+		else if constexpr (std::is_same_v<Ret, vr::HmdQuaternion_t> && std::is_same_v<T, Eigen::Quaternionf>)
 			return vr::HmdQuaternion_t{in.w(), in.x(), in.y(), in.z()};
 
 			/* To Eigen Vector3f */
-		else if constexpr (std::is_same<Ret, Eigen::Vector3f>::value && std::is_same<T, vr::HmdVector3d_t>::value)
+		else if constexpr (std::is_same_v<Ret, Eigen::Vector3f> && std::is_same_v<T, vr::HmdVector3d_t>)
 			return Eigen::Vector3f(in.v[0], in.v[1], in.v[2]);
 
-		else if constexpr (std::is_same<Ret, Eigen::Vector3f>::value && std::is_same<T, vr::HmdMatrix34_t>::value)
+		else if constexpr (std::is_same_v<Ret, Eigen::Vector3f> && std::is_same_v<T, vr::HmdMatrix34_t>)
 			return Eigen::Vector3f(in.m[0][3], in.m[1][3], in.m[2][3]);
 
 			/* To OpenVR HmdVector3d_t */
-		else if constexpr (std::is_same<Ret, vr::HmdVector3d_t>::value && std::is_same<T, Eigen::Vector3f>::value)
+		else if constexpr (std::is_same_v<Ret, vr::HmdVector3d_t> && std::is_same_v<T, Eigen::Vector3f>)
 			return vr::HmdVector3d_t{in.x(), in.y(), in.z()};
 
-		else if constexpr (std::is_same<Ret, vr::HmdVector3d_t>::value && std::is_same<T, vr::HmdMatrix34_t>::value)
+		else if constexpr (std::is_same_v<Ret, vr::HmdVector3d_t> && std::is_same_v<T, vr::HmdMatrix34_t>)
 			return vr::HmdVector3d_t{in.m[0][3], in.m[1][3], in.m[2][3]};
 
 			/* From OpenVR Matrix to OpenVR Quaternion */
-		else if constexpr (std::is_same<Ret, vr::HmdQuaternion_t>::value && std::is_same<T, vr::HmdMatrix34_t>::value)
+		else if constexpr (std::is_same_v<Ret, vr::HmdQuaternion_t> && std::is_same_v<T, vr::HmdMatrix34_t>)
 		{
 			auto q = vr::HmdQuaternion_t{1., 0., 0., 0.};
 			q.w = sqrt(fmax(0, 1 + in.m[0][0] + in.m[1][1] + in.m[2][2])) / 2;
@@ -195,7 +195,7 @@ namespace EigenUtils
 		}
 
 		/* From OpenVR Matrix to Eigen Quaternion */
-		else if constexpr (std::is_same<Ret, Eigen::Quaternionf>::value && std::is_same<T, vr::HmdMatrix34_t>::value)
+		else if constexpr (std::is_same_v<Ret, Eigen::Quaternionf> && std::is_same_v<T, vr::HmdMatrix34_t>)
 			return p_cast_type<Eigen::Quaternionf>(p_cast_type<vr::HmdQuaternion_t>(in));
 	}
 

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SettingsPage.xaml.h"
 
 #if __has_include("SettingsPage.g.cpp")
@@ -21,7 +21,7 @@ namespace winrt::KinectToVR::implementation
 		InitializeComponent();
 
 		// Cache needed UI elements
-		using namespace ::k2app::shared::settings;
+		using namespace k2app::shared::settings;
 
 		restartButton = std::make_shared<Controls::Button>(RestartButton());
 
@@ -143,8 +143,8 @@ void trackersConfigChanged()
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::FlipCheckBox_Checked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::FlipCheckBox_Checked(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -156,8 +156,8 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipCheckBox_Checked(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::FlipCheckBox_Unchecked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::FlipCheckBox_Unchecked(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -169,8 +169,8 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipCheckBox_Unchecked(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Checked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Checked(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -181,8 +181,8 @@ void winrt::KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Check
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Unchecked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Unchecked(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -265,10 +265,10 @@ void KinectToVR::implementation::SettingsPage::ResetButton_Click(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	using namespace ::k2app::shared::settings;
+	using namespace k2app::shared::settings;
 
 	// Select saved flip, position and rotation options
 	flipCheckBox.get()->IsChecked(k2app::K2Settings.isFlipEnabled);
@@ -406,8 +406,8 @@ void winrt::KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	settings_localInitFinished = true;
 }
 
-void winrt::KinectToVR::implementation::SettingsPage::AutoSpawn_Checked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::AutoSpawn_Checked(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -418,8 +418,8 @@ void winrt::KinectToVR::implementation::SettingsPage::AutoSpawn_Checked(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::AutoSpawn_Unchecked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::AutoSpawn_Unchecked(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -430,8 +430,8 @@ void winrt::KinectToVR::implementation::SettingsPage::AutoSpawn_Unchecked(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::EnableSounds_Checked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::EnableSounds_Checked(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -445,8 +445,8 @@ void winrt::KinectToVR::implementation::SettingsPage::EnableSounds_Checked(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::EnableSounds_Unchecked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::EnableSounds_Unchecked(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -460,9 +460,9 @@ void winrt::KinectToVR::implementation::SettingsPage::EnableSounds_Unchecked(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::Primitives::RangeBaseValueChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -470,16 +470,16 @@ void winrt::KinectToVR::implementation::SettingsPage::SoundsVolumeSlider_ValueCh
 	// Change sounds level
 	k2app::K2Settings.appSoundsVolume = k2app::shared::settings::soundsVolumeSlider.get()->Value();
 	ElementSoundPlayer::Volume(std::clamp(
-		double(k2app::K2Settings.appSoundsVolume) / 100.0, 0.0, 100.0));
+		static_cast<double>(k2app::K2Settings.appSoundsVolume) / 100.0, 0.0, 100.0));
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem_Click(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem_Click(
+	const Windows::Foundation::IInspectable& sender,
+	const RoutedEventArgs& e)
 {
 	k2app::K2Settings.externalFlipCalibrationYaw =
 		EigenUtils::QuatToEulers(
@@ -491,9 +491,9 @@ void winrt::KinectToVR::implementation::SettingsPage::CalibrateExternalFlipMenuF
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::WaistDropDown_Expanding(
-	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
+void KinectToVR::implementation::SettingsPage::WaistDropDown_Expanding(
+	const Controls::Expander& sender,
+	const Controls::ExpanderExpandingEventArgs& args)
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 	trackersConfig_UpdateIsEnabled();
@@ -508,8 +508,8 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistDropDown_Expanding(
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::WaistTrackerEnabledToggle_Toggled(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::WaistTrackerEnabledToggle_Toggled(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)co_return;
@@ -520,8 +520,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	k2app::interfacing::K2AppTrackersInitialized = false;
 	{
 		// Sleep on UI
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(20);
 		co_await ui_thread;
 	}
@@ -536,8 +536,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	// Mark trackers as active (or backup)
 	{
 		// Sleep on UI
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(20);
 		co_await ui_thread;
 	}
@@ -548,9 +548,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::WaistPositionFilterOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::WaistPositionFilterOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -580,9 +580,9 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistPositionFilterOptionB
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::WaistRotationFilterOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::WaistRotationFilterOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -608,9 +608,9 @@ void winrt::KinectToVR::implementation::SettingsPage::WaistRotationFilterOptionB
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::FeetDropDown_Expanding(
-	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
+void KinectToVR::implementation::SettingsPage::FeetDropDown_Expanding(
+	const Controls::Expander& sender,
+	const Controls::ExpanderExpandingEventArgs& args)
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 	trackersConfig_UpdateIsEnabled();
@@ -625,8 +625,8 @@ void winrt::KinectToVR::implementation::SettingsPage::FeetDropDown_Expanding(
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::FeetTrackersEnabledToggle_Toggled(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::FeetTrackersEnabledToggle_Toggled(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)co_return;
@@ -637,8 +637,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	k2app::interfacing::K2AppTrackersInitialized = false;
 	{
 		// Sleep on UI
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(20);
 		co_await ui_thread;
 	}
@@ -653,8 +653,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	// Mark trackers as active (or backup)
 	{
 		// Sleep on UI
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(20);
 		co_await ui_thread;
 	}
@@ -665,9 +665,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::FeetPositionFilterOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::FeetPositionFilterOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -701,9 +701,9 @@ void winrt::KinectToVR::implementation::SettingsPage::FeetPositionFilterOptionBo
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::FeetRotationFilterOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::FeetRotationFilterOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -737,9 +737,9 @@ void winrt::KinectToVR::implementation::SettingsPage::FeetRotationFilterOptionBo
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::ElbowsDropDown_Expanding(
-	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
+void KinectToVR::implementation::SettingsPage::ElbowsDropDown_Expanding(
+	const Controls::Expander& sender,
+	const Controls::ExpanderExpandingEventArgs& args)
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 	trackersConfig_UpdateIsEnabled();
@@ -754,8 +754,8 @@ void winrt::KinectToVR::implementation::SettingsPage::ElbowsDropDown_Expanding(
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::ElbowTrackersEnabledToggle_Toggled(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::ElbowTrackersEnabledToggle_Toggled(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)co_return;
@@ -766,8 +766,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	k2app::interfacing::K2AppTrackersInitialized = false;
 	{
 		// Sleep on UI
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(20);
 		co_await ui_thread;
 	}
@@ -782,8 +782,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	// Mark trackers as active (or backup)
 	{
 		// Sleep on UI
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(20);
 		co_await ui_thread;
 	}
@@ -794,9 +794,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::ElbowsPositionFilterOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::ElbowsPositionFilterOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -830,9 +830,9 @@ void winrt::KinectToVR::implementation::SettingsPage::ElbowsPositionFilterOption
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::ElbowsRotationFilterOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::ElbowsRotationFilterOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -861,9 +861,9 @@ void winrt::KinectToVR::implementation::SettingsPage::ElbowsRotationFilterOption
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::KneesDropDown_Expanding(
-	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
+void KinectToVR::implementation::SettingsPage::KneesDropDown_Expanding(
+	const Controls::Expander& sender,
+	const Controls::ExpanderExpandingEventArgs& args)
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 	trackersConfig_UpdateIsEnabled();
@@ -878,8 +878,8 @@ void winrt::KinectToVR::implementation::SettingsPage::KneesDropDown_Expanding(
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::KneeTrackersEnabledToggle_Toggled(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::KneeTrackersEnabledToggle_Toggled(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)co_return;
@@ -890,8 +890,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	k2app::interfacing::K2AppTrackersInitialized = false;
 	{
 		// Sleep on UI
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(20);
 		co_await ui_thread;
 	}
@@ -906,8 +906,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 	// Mark trackers as active (or backup)
 	{
 		// Sleep on UI
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(20);
 		co_await ui_thread;
 	}
@@ -918,9 +918,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPag
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::KneePositionFilterOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::KneePositionFilterOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -954,9 +954,9 @@ void winrt::KinectToVR::implementation::SettingsPage::KneePositionFilterOptionBo
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::KneeRotationFilterOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::KneeRotationFilterOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;

@@ -134,7 +134,7 @@ namespace ktvr
 		DWORD Written;
 
 		// Let the server know we'll be writing soon
-		ReleaseSemaphore(k2api_start_Semaphore, 1, 0);
+		ReleaseSemaphore(k2api_start_Semaphore, 1, nullptr);
 
 		// Read from the pipe
 		ConnectNamedPipe(API_WriterPipe, nullptr);
@@ -191,7 +191,7 @@ namespace ktvr
 			CloseHandle(API_ReaderPipe.value());
 
 			// Unlock the semaphore after job done
-			ReleaseSemaphore(k2api_to_Semaphore, 1, 0);
+			ReleaseSemaphore(k2api_to_Semaphore, 1, nullptr);
 
 			///// Receive the response via named pipe /////
 
@@ -203,12 +203,9 @@ namespace ktvr
 			// decode hex reply
 			return asciiString(_s); // Return only the reply
 		}
-		else
-		{
-			// Unlock the semaphore after job done
-			ReleaseSemaphore(k2api_to_Semaphore, 1, 0);
-			return ""; // No reply
-		}
+		// Unlock the semaphore after job done
+		ReleaseSemaphore(k2api_to_Semaphore, 1, nullptr);
+		return ""; // No reply
 	}
 
 	std::monostate send_message_no_reply(K2Message message)
@@ -368,7 +365,7 @@ namespace ktvr
 		}
 		catch (const std::exception& e)
 		{
-			return std::make_tuple(K2ResponseMessage(), (long long)0, (long long)0);
+			return std::make_tuple(K2ResponseMessage(), static_cast<long long>(0), static_cast<long long>(0));
 			// Success is set to false by default
 		}
 	}
@@ -379,12 +376,12 @@ namespace ktvr
 
 		// Change ascii string to hex string
 		for (char c : s)
-			ret << std::hex << std::setfill('0') << std::setw(2) << std::nouppercase << (int)c;
+			ret << std::hex << std::setfill('0') << std::setw(2) << std::nouppercase << static_cast<int>(c);
 		std::string ret_s = ret.str();
 
 		// Erase 0a00 if there is so
 		if (ret_s.find("0a00") == 0)ret_s.erase(0, 4);
-		return ret_s;;
+		return ret_s;
 	}
 
 	std::string asciiString(const std::string& s)
@@ -393,7 +390,7 @@ namespace ktvr
 
 		// Start from the index 2, removing 0A00 occur
 		for (std::string::size_type i = 0; i < s.length(); i += 2)
-			ret << (char)(int)strtol(s.substr(i, 2).c_str(), nullptr, 16);
+			ret << static_cast<char>((int)strtol(s.substr(i, 2).c_str(), nullptr, 16));
 
 		return ret.str();
 	}

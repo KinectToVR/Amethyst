@@ -30,7 +30,7 @@ namespace k2app::interfacing
 	inline Eigen::Vector3f vrPlayspaceTranslation = Eigen::Vector3f(0, 0, 0);
 	// OpenVR playspace rotation
 	inline float vrPlayspaceOrientation = 0.f; // Note: radians
-	inline Eigen::Quaternionf vrPlayspaceOrientationQuaternion{ 1,0,0,0 };
+	inline Eigen::Quaternionf vrPlayspaceOrientationQuaternion{1, 0, 0, 0};
 
 	inline void ShowToast(const std::string& header, const std::string& text)
 	{
@@ -115,7 +115,7 @@ namespace k2app::interfacing
 				// Add only default trackers from the vector (0-2) & (3-6)
 				for (int t = 0; t < 7; t++)
 				{
-					if (k2app::K2Settings.isJointPairEnabled[floor((t + 1) / 2)])
+					if (K2Settings.isJointPairEnabled[floor((t + 1) / 2)])
 					{
 						if (K2TrackersVector.at(t).id != -1)
 						{
@@ -206,7 +206,7 @@ namespace k2app::interfacing
 
 		if (eError != vr::VRInitError_None)
 		{
-			LOG(ERROR) << "IVRSystem could not be initialized: EVRInitError Code " << static_cast<int>(eError);
+			LOG(ERROR) << "IVRSystem could not be initialized: EVRInitError Code " << eError;
 			/*MessageBoxA(nullptr,
 				            std::string(
 					            "Couldn't initialise VR system. (Code " + std::to_string(eError) +
@@ -308,8 +308,8 @@ namespace k2app::interfacing
 
 				// Release
 				pingCheckingThreadsNumber = std::clamp(
-					int(pingCheckingThreadsNumber) - 1, 0,
-					int(maxPingCheckingThreads) + 1);
+					static_cast<int>(pingCheckingThreadsNumber) - 1, 0,
+					static_cast<int>(maxPingCheckingThreads) + 1);
 
 				// Return the result
 				return test_response.success;
@@ -322,8 +322,8 @@ namespace k2app::interfacing
 
 				// Release
 				pingCheckingThreadsNumber = std::clamp(
-					int(pingCheckingThreadsNumber) - 1, 0,
-					int(maxPingCheckingThreads) + 1);
+					static_cast<int>(pingCheckingThreadsNumber) - 1, 0,
+					static_cast<int>(maxPingCheckingThreads) + 1);
 				return false;
 			}
 		}
@@ -523,30 +523,30 @@ namespace k2app::interfacing
 		using namespace winrt::Microsoft::UI::Xaml;
 
 		// Disable UI (partially) if we've encountered an error
-		if (::k2app::shared::main::devicesItem.get() != nullptr)
+		if (shared::main::devicesItem.get() != nullptr)
 		{
 			//::k2app::shared::main::settingsItem.get()->IsEnabled(isServerDriverPresent);
-			::k2app::shared::main::devicesItem.get()->IsEnabled(isServerDriverPresent);
+			shared::main::devicesItem.get()->IsEnabled(isServerDriverPresent);
 		}
 
 		// Check with this one, should be the same for all anyway
-		if (::k2app::shared::general::serverErrorWhatText.get() != nullptr)
+		if (shared::general::serverErrorWhatText.get() != nullptr)
 		{
-			::k2app::shared::general::serverErrorWhatText.get()->Visibility(
+			shared::general::serverErrorWhatText.get()->Visibility(
 				isServerDriverPresent ? Visibility::Collapsed : Visibility::Visible);
-			::k2app::shared::general::serverErrorWhatGrid.get()->Visibility(
+			shared::general::serverErrorWhatGrid.get()->Visibility(
 				isServerDriverPresent ? Visibility::Collapsed : Visibility::Visible);
-			::k2app::shared::general::serverErrorButtonsGrid.get()->Visibility(
+			shared::general::serverErrorButtonsGrid.get()->Visibility(
 				isServerDriverPresent ? Visibility::Collapsed : Visibility::Visible);
-			::k2app::shared::general::serverErrorLabel.get()->Visibility(
+			shared::general::serverErrorLabel.get()->Visibility(
 				isServerDriverPresent ? Visibility::Collapsed : Visibility::Visible);
 
 			// Split status and message by \n
-			::k2app::shared::general::serverStatusLabel.get()->Text(
+			shared::general::serverStatusLabel.get()->Text(
 				wstring_cast(split_status(serverStatusString)[0]));
-			::k2app::shared::general::serverErrorLabel.get()->Text(
+			shared::general::serverErrorLabel.get()->Text(
 				wstring_cast(split_status(serverStatusString)[1]));
-			::k2app::shared::general::serverErrorWhatText.get()->Text(
+			shared::general::serverErrorWhatText.get()->Text(
 				wstring_cast(split_status(serverStatusString)[2]));
 		}
 
@@ -556,21 +556,21 @@ namespace k2app::interfacing
 			LOG(ERROR) <<
 				"An error occurred and the app couldn't connect to K2 Server. Please check the upper message for more info.";
 
-			if (::k2app::shared::general::errorWhatText.get() != nullptr)
+			if (shared::general::errorWhatText.get() != nullptr)
 			{
 				LOG(INFO) << "[Server Error] Entering the server error state...";
 
 				// Hide device error labels (if any)
-				::k2app::shared::general::errorWhatText.get()->Visibility(Visibility::Collapsed);
-				::k2app::shared::general::errorWhatGrid.get()->Visibility(Visibility::Collapsed);
-				::k2app::shared::general::errorButtonsGrid.get()->Visibility(Visibility::Collapsed);
-				::k2app::shared::general::trackingDeviceErrorLabel.get()->Visibility(
+				shared::general::errorWhatText.get()->Visibility(Visibility::Collapsed);
+				shared::general::errorWhatGrid.get()->Visibility(Visibility::Collapsed);
+				shared::general::errorButtonsGrid.get()->Visibility(Visibility::Collapsed);
+				shared::general::trackingDeviceErrorLabel.get()->Visibility(
 					Visibility::Collapsed);
 
 				// Block spawn|offsets|calibration buttons, //disable autospawn for session (just don't save)
-				::k2app::shared::general::toggleTrackersButton.get()->IsEnabled(false);
-				::k2app::shared::general::calibrationButton.get()->IsEnabled(false);
-				::k2app::shared::general::offsetsButton.get()->IsEnabled(false);
+				shared::general::toggleTrackersButton.get()->IsEnabled(false);
+				shared::general::calibrationButton.get()->IsEnabled(false);
+				shared::general::offsetsButton.get()->IsEnabled(false);
 				//::k2app::K2Settings.autoSpawnEnabledJoints = false;
 			}
 		}
@@ -585,44 +585,44 @@ namespace k2app::interfacing
 		if (waistJointOptionBox.get() == nullptr)return;
 
 		// Optionally fix combos for disabled trackers -> joint selectors for base
-		waistJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[0]);
-		if (!k2app::K2Settings.isJointPairEnabled[0])
+		waistJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[0]);
+		if (!K2Settings.isJointPairEnabled[0])
 			waistJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		leftFootJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
-		if (!k2app::K2Settings.isJointPairEnabled[1])
+		leftFootJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
+		if (!K2Settings.isJointPairEnabled[1])
 			leftFootJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		rightFootJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
-		if (!k2app::K2Settings.isJointPairEnabled[1])
+		rightFootJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
+		if (!K2Settings.isJointPairEnabled[1])
 			rightFootJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		leftElbowJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
-		if (!k2app::K2Settings.isJointPairEnabled[2])
+		leftElbowJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
+		if (!K2Settings.isJointPairEnabled[2])
 			leftElbowJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		rightElbowJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
-		if (!k2app::K2Settings.isJointPairEnabled[2])
+		rightElbowJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
+		if (!K2Settings.isJointPairEnabled[2])
 			rightElbowJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		leftKneeJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
-		if (!k2app::K2Settings.isJointPairEnabled[3])
+		leftKneeJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
+		if (!K2Settings.isJointPairEnabled[3])
 			leftKneeJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		rightKneeJointOptionBox.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
-		if (!k2app::K2Settings.isJointPairEnabled[3])
+		rightKneeJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
+		if (!K2Settings.isJointPairEnabled[3])
 			rightKneeJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
 		// Optionally fix combos for disabled trackers -> joint selectors for override
 		waistPositionOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[0] && k2app::K2Settings.isPositionOverriddenJoint[0]);
+			K2Settings.isJointPairEnabled[0] && K2Settings.isPositionOverriddenJoint[0]);
 		waistRotationOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[0] && k2app::K2Settings.isRotationOverriddenJoint[0]);
+			K2Settings.isJointPairEnabled[0] && K2Settings.isRotationOverriddenJoint[0]);
 
-		overrideWaistPosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[0]);
-		overrideWaistRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[0]);
+		overrideWaistPosition.get()->IsEnabled(K2Settings.isJointPairEnabled[0]);
+		overrideWaistRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[0]);
 
-		if (!k2app::K2Settings.isJointPairEnabled[0])
+		if (!K2Settings.isJointPairEnabled[0])
 		{
 			overrideWaistPosition.get()->IsChecked(false);
 			overrideWaistRotation.get()->IsChecked(false);
@@ -632,14 +632,14 @@ namespace k2app::interfacing
 		}
 
 		leftFootPositionOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[1] && k2app::K2Settings.isPositionOverriddenJoint[1]);
+			K2Settings.isJointPairEnabled[1] && K2Settings.isPositionOverriddenJoint[1]);
 		leftFootRotationOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[1] && k2app::K2Settings.isRotationOverriddenJoint[1]);
+			K2Settings.isJointPairEnabled[1] && K2Settings.isRotationOverriddenJoint[1]);
 
-		overrideLeftFootPosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
-		overrideLeftFootRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
+		overrideLeftFootPosition.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
+		overrideLeftFootRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
 
-		if (!k2app::K2Settings.isJointPairEnabled[1])
+		if (!K2Settings.isJointPairEnabled[1])
 		{
 			overrideLeftFootPosition.get()->IsChecked(false);
 			overrideLeftFootRotation.get()->IsChecked(false);
@@ -649,14 +649,14 @@ namespace k2app::interfacing
 		}
 
 		rightFootPositionOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[1] && k2app::K2Settings.isPositionOverriddenJoint[2]);
+			K2Settings.isJointPairEnabled[1] && K2Settings.isPositionOverriddenJoint[2]);
 		rightFootRotationOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[1] && k2app::K2Settings.isRotationOverriddenJoint[2]);
+			K2Settings.isJointPairEnabled[1] && K2Settings.isRotationOverriddenJoint[2]);
 
-		overrideRightFootPosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
-		overrideRightFootRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[1]);
+		overrideRightFootPosition.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
+		overrideRightFootRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
 
-		if (!k2app::K2Settings.isJointPairEnabled[1])
+		if (!K2Settings.isJointPairEnabled[1])
 		{
 			overrideRightFootPosition.get()->IsChecked(false);
 			overrideRightFootRotation.get()->IsChecked(false);
@@ -666,14 +666,14 @@ namespace k2app::interfacing
 		}
 
 		leftElbowPositionOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[2] && k2app::K2Settings.isPositionOverriddenJoint[3]);
+			K2Settings.isJointPairEnabled[2] && K2Settings.isPositionOverriddenJoint[3]);
 		leftElbowRotationOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[2] && k2app::K2Settings.isRotationOverriddenJoint[3]);
+			K2Settings.isJointPairEnabled[2] && K2Settings.isRotationOverriddenJoint[3]);
 
-		overrideLeftElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
-		overrideLeftElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
+		overrideLeftElbowPosition.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
+		overrideLeftElbowRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
 
-		if (!k2app::K2Settings.isJointPairEnabled[2])
+		if (!K2Settings.isJointPairEnabled[2])
 		{
 			overrideLeftElbowPosition.get()->IsChecked(false);
 			overrideLeftElbowRotation.get()->IsChecked(false);
@@ -683,14 +683,14 @@ namespace k2app::interfacing
 		}
 
 		rightElbowPositionOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[2] && k2app::K2Settings.isPositionOverriddenJoint[4]);
+			K2Settings.isJointPairEnabled[2] && K2Settings.isPositionOverriddenJoint[4]);
 		rightElbowRotationOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[2] && k2app::K2Settings.isRotationOverriddenJoint[4]);
+			K2Settings.isJointPairEnabled[2] && K2Settings.isRotationOverriddenJoint[4]);
 
-		overrideRightElbowPosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
-		overrideRightElbowRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[2]);
+		overrideRightElbowPosition.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
+		overrideRightElbowRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
 
-		if (!k2app::K2Settings.isJointPairEnabled[2])
+		if (!K2Settings.isJointPairEnabled[2])
 		{
 			overrideRightElbowPosition.get()->IsChecked(false);
 			overrideRightElbowRotation.get()->IsChecked(false);
@@ -700,14 +700,14 @@ namespace k2app::interfacing
 		}
 
 		leftKneePositionOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[3] && k2app::K2Settings.isPositionOverriddenJoint[5]);
+			K2Settings.isJointPairEnabled[3] && K2Settings.isPositionOverriddenJoint[5]);
 		leftKneeRotationOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[3] && k2app::K2Settings.isRotationOverriddenJoint[5]);
+			K2Settings.isJointPairEnabled[3] && K2Settings.isRotationOverriddenJoint[5]);
 
-		overrideLeftKneePosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
-		overrideLeftKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
+		overrideLeftKneePosition.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
+		overrideLeftKneeRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
 
-		if (!k2app::K2Settings.isJointPairEnabled[3])
+		if (!K2Settings.isJointPairEnabled[3])
 		{
 			overrideLeftKneePosition.get()->IsChecked(false);
 			overrideLeftKneeRotation.get()->IsChecked(false);
@@ -717,14 +717,14 @@ namespace k2app::interfacing
 		}
 
 		rightKneePositionOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[3] && k2app::K2Settings.isPositionOverriddenJoint[6]);
+			K2Settings.isJointPairEnabled[3] && K2Settings.isPositionOverriddenJoint[6]);
 		rightKneeRotationOverrideOptionBox.get()->IsEnabled(
-			k2app::K2Settings.isJointPairEnabled[3] && k2app::K2Settings.isRotationOverriddenJoint[6]);
+			K2Settings.isJointPairEnabled[3] && K2Settings.isRotationOverriddenJoint[6]);
 
-		overrideRightKneePosition.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
-		overrideRightKneeRotation.get()->IsEnabled(k2app::K2Settings.isJointPairEnabled[3]);
+		overrideRightKneePosition.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
+		overrideRightKneeRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
 
-		if (!k2app::K2Settings.isJointPairEnabled[3])
+		if (!K2Settings.isJointPairEnabled[3])
 		{
 			overrideRightKneePosition.get()->IsChecked(false);
 			overrideRightKneeRotation.get()->IsChecked(false);
@@ -926,7 +926,7 @@ namespace k2app::interfacing
 				if (_ptr_text_block.get())
 					return (_ptr_text_block.get()->Visibility()
 						== Visibility::Visible);
-				else return true;
+				return true;
 			}
 
 			void Visibility(const bool& visibility) override
@@ -948,7 +948,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_text_block.get())
 					return _ptr_text_block.get()->Width();
-				else return 0;
+				return 0;
 			}
 
 			void Width(const uint32_t& width) override
@@ -967,7 +967,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_text_block.get())
 					return _ptr_text_block.get()->Height();
-				else return 0;
+				return 0;
 			}
 
 			void Height(const uint32_t& height) override
@@ -987,7 +987,7 @@ namespace k2app::interfacing
 				if (_ptr_text_block.get())
 					return string_cast(
 						_ptr_text_block.get()->Text().c_str());
-				else return "";
+				return "";
 			}
 
 			void Text(const std::string& text) override
@@ -1040,7 +1040,7 @@ namespace k2app::interfacing
 				if (_ptr_button.get())
 					return (_ptr_button.get()->Visibility()
 						== Visibility::Visible);
-				else return true;
+				return true;
 			}
 
 			void Visibility(const bool& visibility) override
@@ -1062,7 +1062,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_button.get())
 					return _ptr_button.get()->Width();
-				else return 0;
+				return 0;
 			}
 
 			void Width(const uint32_t& width) override
@@ -1081,7 +1081,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_button.get())
 					return _ptr_button.get()->Height();
-				else return 0;
+				return 0;
 			}
 
 			void Height(const uint32_t& height) override
@@ -1100,7 +1100,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_button.get())
 					return _ptr_button.get()->IsEnabled();
-				else return true;
+				return true;
 			}
 
 			void IsEnabled(const bool& enabled) override
@@ -1151,9 +1151,9 @@ namespace k2app::interfacing
 				// Create a dummy callback
 				const std::function<void(
 						const winrt::Windows::Foundation::IInspectable& sender,
-						const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)>
+						const RoutedEventArgs& e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
-					                     const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e) ->
+					                     const RoutedEventArgs& e) ->
 					void
 					{
 						if (OnClick) // Check if not null
@@ -1186,7 +1186,7 @@ namespace k2app::interfacing
 				if (_ptr_number_box.get())
 					return (_ptr_number_box.get()->Visibility()
 						== Visibility::Visible);
-				else return true;
+				return true;
 			}
 
 			void Visibility(const bool& visibility) override
@@ -1208,7 +1208,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_number_box.get())
 					return _ptr_number_box.get()->Width();
-				else return 0;
+				return 0;
 			}
 
 			void Width(const uint32_t& width) override
@@ -1227,7 +1227,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_number_box.get())
 					return _ptr_number_box.get()->Height();
-				else return 0;
+				return 0;
 			}
 
 			void Height(const uint32_t& height) override
@@ -1246,7 +1246,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_number_box.get())
 					return _ptr_number_box.get()->IsEnabled();
-				else return true;
+				return true;
 			}
 
 			void IsEnabled(const bool& enabled) override
@@ -1264,8 +1264,8 @@ namespace k2app::interfacing
 			int Value() override
 			{
 				if (_ptr_number_box.get())
-					return (int)_ptr_number_box.get()->Value();
-				else return 0;
+					return static_cast<int>(_ptr_number_box.get()->Value());
+				return 0;
 			}
 
 			void Value(const int& value) override
@@ -1306,14 +1306,14 @@ namespace k2app::interfacing
 				// Create a dummy callback
 				const std::function<void(
 						const winrt::Windows::Foundation::IInspectable& sender,
-						const winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs& e)>
+						const Controls::NumberBoxValueChangedEventArgs& e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
-					                     const winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs
+					                     const Controls::NumberBoxValueChangedEventArgs
 					                     & e) ->
 					void
 					{
 						if (OnValueChanged) // Check if not null
-							OnValueChanged(this, (int)e.NewValue());
+							OnValueChanged(this, static_cast<int>(e.NewValue()));
 					};
 
 				// Set up the click handler to point to the base's one
@@ -1342,7 +1342,7 @@ namespace k2app::interfacing
 				if (_ptr_combo_box.get())
 					return (_ptr_combo_box.get()->Visibility()
 						== Visibility::Visible);
-				else return true;
+				return true;
 			}
 
 			void Visibility(const bool& visibility) override
@@ -1364,7 +1364,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_combo_box.get())
 					return _ptr_combo_box.get()->Width();
-				else return 0;
+				return 0;
 			}
 
 			void Width(const uint32_t& width) override
@@ -1383,7 +1383,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_combo_box.get())
 					return _ptr_combo_box.get()->Height();
-				else return 0;
+				return 0;
 			}
 
 			void Height(const uint32_t& height) override
@@ -1402,7 +1402,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_combo_box.get())
 					return _ptr_combo_box.get()->IsEnabled();
-				else return true;
+				return true;
 			}
 
 			void IsEnabled(const bool& enabled) override
@@ -1421,7 +1421,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_combo_box.get())
 					return _ptr_combo_box.get()->SelectedIndex();
-				else return 0;
+				return 0;
 			}
 
 			void SelectedIndex(const uint32_t& value) override
@@ -1450,7 +1450,7 @@ namespace k2app::interfacing
 
 					return _items;
 				}
-				else return {};
+				return {};
 			}
 
 			// WARNING: DON'T CALL THIS DURING ANY OTHER MODIFICATION LIKE SELECTIONCHANGED
@@ -1505,9 +1505,9 @@ namespace k2app::interfacing
 				// Create a dummy callback
 				const std::function<void(
 						const winrt::Windows::Foundation::IInspectable& sender,
-						const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)>
+						const Controls::SelectionChangedEventArgs& e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
-					                     const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
+					                     const Controls::SelectionChangedEventArgs
 					                     & e) ->
 					void
 					{
@@ -1536,7 +1536,7 @@ namespace k2app::interfacing
 				if (_ptr_check_box.get())
 					return (_ptr_check_box.get()->Visibility()
 						== Visibility::Visible);
-				else return true;
+				return true;
 			}
 
 			void Visibility(const bool& visibility) override
@@ -1558,7 +1558,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_check_box.get())
 					return _ptr_check_box.get()->Width();
-				else return 0;
+				return 0;
 			}
 
 			void Width(const uint32_t& width) override
@@ -1577,7 +1577,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_check_box.get())
 					return _ptr_check_box.get()->Height();
-				else return 0;
+				return 0;
 			}
 
 			void Height(const uint32_t& height) override
@@ -1596,7 +1596,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_check_box.get())
 					return _ptr_check_box.get()->IsEnabled();
-				else return true;
+				return true;
 			}
 
 			void IsEnabled(const bool& enabled) override
@@ -1615,7 +1615,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_check_box.get())
 					return _ptr_check_box.get()->IsChecked().Value();
-				else return false;
+				return false;
 			}
 
 			void IsChecked(const bool& is_checked) override
@@ -1651,9 +1651,9 @@ namespace k2app::interfacing
 				// Create a dummy callback
 				const std::function<void(
 						const winrt::Windows::Foundation::IInspectable& sender,
-						const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)>
+						const RoutedEventArgs& e)>
 					_n_callback_checked = [this](const winrt::Windows::Foundation::IInspectable& sender,
-					                             const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e) ->
+					                             const RoutedEventArgs& e) ->
 					void
 					{
 						if (OnChecked) // Check if not null
@@ -1663,9 +1663,9 @@ namespace k2app::interfacing
 				// Create a dummy callback
 				const std::function<void(
 						const winrt::Windows::Foundation::IInspectable& sender,
-						const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)>
+						const RoutedEventArgs& e)>
 					_n_callback_unchecked = [this](const winrt::Windows::Foundation::IInspectable& sender,
-					                               const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e) ->
+					                               const RoutedEventArgs& e) ->
 					void
 					{
 						if (OnUnchecked) // Check if not null
@@ -1694,7 +1694,7 @@ namespace k2app::interfacing
 				if (_ptr_toggle_switch.get())
 					return (_ptr_toggle_switch.get()->Visibility()
 						== Visibility::Visible);
-				else return true;
+				return true;
 			}
 
 			void Visibility(const bool& visibility) override
@@ -1716,7 +1716,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_toggle_switch.get())
 					return _ptr_toggle_switch.get()->Width();
-				else return 0;
+				return 0;
 			}
 
 			void Width(const uint32_t& width) override
@@ -1735,7 +1735,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_toggle_switch.get())
 					return _ptr_toggle_switch.get()->Height();
-				else return 0;
+				return 0;
 			}
 
 			void Height(const uint32_t& height) override
@@ -1754,7 +1754,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_toggle_switch.get())
 					return _ptr_toggle_switch.get()->IsEnabled();
-				else return true;
+				return true;
 			}
 
 			void IsEnabled(const bool& enabled) override
@@ -1773,7 +1773,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_toggle_switch.get())
 					return _ptr_toggle_switch.get()->IsOn();
-				else return false;
+				return false;
 			}
 
 			void IsChecked(const bool& is_checked) override
@@ -1811,9 +1811,9 @@ namespace k2app::interfacing
 				// Create a dummy callback
 				const std::function<void(
 						const winrt::Windows::Foundation::IInspectable& sender,
-						const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)>
+						const RoutedEventArgs& e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
-					                     const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e) ->
+					                     const RoutedEventArgs& e) ->
 					void
 					{
 						// Check which handler to raise
@@ -1850,7 +1850,7 @@ namespace k2app::interfacing
 				if (_ptr_text_box.get())
 					return (_ptr_text_box.get()->Visibility()
 						== Visibility::Visible);
-				else return true;
+				return true;
 			}
 
 			void Visibility(const bool& visibility) override
@@ -1872,7 +1872,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_text_box.get())
 					return _ptr_text_box.get()->Width();
-				else return 0;
+				return 0;
 			}
 
 			void Width(const uint32_t& width) override
@@ -1891,7 +1891,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_text_box.get())
 					return _ptr_text_box.get()->Height();
-				else return 0;
+				return 0;
 			}
 
 			void Height(const uint32_t& height) override
@@ -1911,7 +1911,7 @@ namespace k2app::interfacing
 				if (_ptr_text_box.get())
 					return string_cast(
 						_ptr_text_box.get()->Text().c_str());
-				else return "";
+				return "";
 			}
 
 			void Text(const std::string& text) override
@@ -1948,9 +1948,9 @@ namespace k2app::interfacing
 				// Create a dummy callback
 				const std::function<void(
 						const winrt::Windows::Foundation::IInspectable& sender,
-						const winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs& e)>
+						const Input::KeyRoutedEventArgs& e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
-					                     const winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs& e) ->
+					                     const Input::KeyRoutedEventArgs& e) ->
 					void
 					{
 						if (e.Key() == winrt::Windows::System::VirtualKey::Enter)
@@ -1984,7 +1984,7 @@ namespace k2app::interfacing
 				if (_ptr_progress_ring.get())
 					return (_ptr_progress_ring.get()->Visibility()
 						== Visibility::Visible);
-				else return true;
+				return true;
 			}
 
 			void Visibility(const bool& visibility) override
@@ -2006,7 +2006,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_progress_ring.get())
 					return _ptr_progress_ring.get()->Width();
-				else return 0;
+				return 0;
 			}
 
 			void Width(const uint32_t& width) override
@@ -2025,7 +2025,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_progress_ring.get())
 					return _ptr_progress_ring.get()->Height();
-				else return 0;
+				return 0;
 			}
 
 			void Height(const uint32_t& height) override
@@ -2046,9 +2046,9 @@ namespace k2app::interfacing
 				{
 					if (_ptr_progress_ring.get()->IsIndeterminate())
 						return -1;
-					else return _ptr_progress_ring.get()->Value();
+					return _ptr_progress_ring.get()->Value();
 				}
-				else return -1;
+				return -1;
 			}
 
 			void Progress(const int32_t& progress) override
@@ -2127,7 +2127,7 @@ namespace k2app::interfacing
 				if (_ptr_progress_bar.get())
 					return (_ptr_progress_bar.get()->Visibility()
 						== Visibility::Visible);
-				else return true;
+				return true;
 			}
 
 			void Visibility(const bool& visibility) override
@@ -2149,7 +2149,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_progress_bar.get())
 					return _ptr_progress_bar.get()->Width();
-				else return 0;
+				return 0;
 			}
 
 			void Width(const uint32_t& width) override
@@ -2168,7 +2168,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_progress_bar.get())
 					return _ptr_progress_bar.get()->Height();
-				else return 0;
+				return 0;
 			}
 
 			void Height(const uint32_t& height) override
@@ -2189,9 +2189,9 @@ namespace k2app::interfacing
 				{
 					if (_ptr_progress_bar.get()->IsIndeterminate())
 						return -1;
-					else return _ptr_progress_bar.get()->Value();
+					return _ptr_progress_bar.get()->Value();
 				}
-				else return -1;
+				return -1;
 			}
 
 			void Progress(const int32_t& progress) override
@@ -2220,7 +2220,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_progress_bar.get())
 					return _ptr_progress_bar.get()->ShowPaused();
-				else return false;
+				return false;
 			}
 
 			void ShowPaused(const bool& show_paused) override
@@ -2239,7 +2239,7 @@ namespace k2app::interfacing
 			{
 				if (_ptr_progress_bar.get())
 					return _ptr_progress_bar.get()->ShowError();
-				else return false;
+				return false;
 			}
 
 			void ShowError(const bool& show_error) override
@@ -2317,7 +2317,7 @@ namespace k2app::interfacing
 		public:
 			AppLayoutRoot()
 			{
-				AppLayoutRoot::Create();
+				Create();
 			}
 
 			// Append a One-Row single element
@@ -2486,8 +2486,6 @@ namespace k2app::interfacing
 						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
 						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
-
-						return;
 					}
 				}
 			}

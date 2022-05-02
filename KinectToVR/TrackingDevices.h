@@ -85,7 +85,7 @@ namespace TrackingDevices
 		/* First check if our tracking device even supports normal flip */
 
 		const auto& trackingDevice =
-			TrackingDevices::getCurrentDevice();
+			getCurrentDevice();
 
 		if (trackingDevice.index() == 0)
 			isFlipSupported = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
@@ -98,7 +98,7 @@ namespace TrackingDevices
 		 * And then search in OpenVR for a one with waist role */
 
 		const auto& overrideDevice =
-			TrackingDevices::getCurrentOverrideDevice_Safe();
+			getCurrentOverrideDevice_Safe();
 
 		// If we have an override and if it's actually affecting the waist rotation
 		if (overrideDevice.first &&
@@ -186,46 +186,46 @@ namespace TrackingDevices
 		using namespace winrt::Microsoft::UI::Xaml;
 
 		// Check with this one, should be the same for all anyway
-		if (::k2app::shared::general::errorWhatText.get() != nullptr)
+		if (k2app::shared::general::errorWhatText.get() != nullptr)
 		{
 			// Don't show device errors if we've got a server error
 			if (!k2app::interfacing::isServerDriverPresent)status_ok = true;
 
-			::k2app::shared::general::errorWhatText.get()->Visibility(
+			k2app::shared::general::errorWhatText.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
-			::k2app::shared::general::errorWhatGrid.get()->Visibility(
+			k2app::shared::general::errorWhatGrid.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
-			::k2app::shared::general::errorButtonsGrid.get()->Visibility(
+			k2app::shared::general::errorButtonsGrid.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
-			::k2app::shared::general::trackingDeviceErrorLabel.get()->Visibility(
+			k2app::shared::general::trackingDeviceErrorLabel.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
 
 			// Split status and message by \n
-			::k2app::shared::general::deviceNameLabel.get()->Text(wstring_cast(deviceName));
-			::k2app::shared::general::deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
-			::k2app::shared::general::trackingDeviceErrorLabel.get()->Text(
+			k2app::shared::general::deviceNameLabel.get()->Text(wstring_cast(deviceName));
+			k2app::shared::general::deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
+			k2app::shared::general::trackingDeviceErrorLabel.get()->Text(
 				wstring_cast(split_status(device_status)[1]));
-			::k2app::shared::general::errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+			k2app::shared::general::errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 		}
 
 		/* Update the device in devices tab */
 
-		::k2app::shared::devices::smphSignalCurrentUpdate.release();
+		k2app::shared::devices::smphSignalCurrentUpdate.release();
 
 		/* Update the device in settings tab */
 
-		if (::k2app::shared::settings::softwareRotationItem.get() != nullptr)
+		if (k2app::shared::settings::softwareRotationItem.get() != nullptr)
 		{
 			if (trackingDevice.index() == 0)
 			{
 				// Kinect Basis
-				::k2app::shared::settings::flipCheckBox.get()->IsChecked(k2app::K2Settings.isFlipEnabled);
-				::k2app::shared::settings::softwareRotationItem.get()->IsEnabled(
+				k2app::shared::settings::flipCheckBox.get()->IsChecked(k2app::K2Settings.isFlipEnabled);
+				k2app::shared::settings::softwareRotationItem.get()->IsEnabled(
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported());
-				::k2app::shared::settings::flipCheckBox.get()->IsEnabled(
+				k2app::shared::settings::flipCheckBox.get()->IsEnabled(
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
-				::k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(
-					::k2app::shared::settings::flipCheckBox.get()->IsEnabled() ? 1 : 0.5);
+				k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(
+					k2app::shared::settings::flipCheckBox.get()->IsEnabled() ? 1 : 0.5);
 
 				settings_set_external_flip_is_enabled();
 
@@ -244,9 +244,9 @@ namespace TrackingDevices
 			{
 				// Joints Basis
 				k2app::K2Settings.isFlipEnabled = false;
-				::k2app::shared::settings::softwareRotationItem.get()->IsEnabled(false);
-				::k2app::shared::settings::flipCheckBox.get()->IsEnabled(false);
-				::k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(0.5);
+				k2app::shared::settings::softwareRotationItem.get()->IsEnabled(false);
+				k2app::shared::settings::flipCheckBox.get()->IsEnabled(false);
+				k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(0.5);
 
 				settings_set_external_flip_is_enabled(false);
 
@@ -310,10 +310,10 @@ namespace TrackingDevices
 		/* Update the device in general tab */
 
 		// Check with this one, should be the same for all anyway
-		if (::k2app::shared::general::overrideErrorWhatText.get() != nullptr)
+		if (k2app::shared::general::overrideErrorWhatText.get() != nullptr)
 		{
 			// Update the status here
-			const bool base_status_ok = ::k2app::shared::general::errorWhatGrid.get()->Visibility() ==
+			const bool base_status_ok = k2app::shared::general::errorWhatGrid.get()->Visibility() ==
 				winrt::Microsoft::UI::Xaml::Visibility::Collapsed;
 			using namespace winrt::Microsoft::UI::Xaml;
 
@@ -321,33 +321,33 @@ namespace TrackingDevices
 			if (!k2app::interfacing::isServerDriverPresent || !base_status_ok || !_show)status_ok = true;
 
 			// Don't show ANYTHING if we 'ven 't selected an override device
-			::k2app::shared::general::overrideDeviceNameLabel.get()->Visibility(
+			k2app::shared::general::overrideDeviceNameLabel.get()->Visibility(
 				_show ? Visibility::Visible : Visibility::Collapsed);
-			::k2app::shared::general::overrideDeviceStatusLabel.get()->Visibility(
+			k2app::shared::general::overrideDeviceStatusLabel.get()->Visibility(
 				_show ? Visibility::Visible : Visibility::Collapsed);
 
-			::k2app::shared::general::overrideErrorWhatText.get()->Visibility(
+			k2app::shared::general::overrideErrorWhatText.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
-			::k2app::shared::general::overrideErrorWhatGrid.get()->Visibility(
+			k2app::shared::general::overrideErrorWhatGrid.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
-			::k2app::shared::general::overrideErrorButtonsGrid.get()->Visibility(
+			k2app::shared::general::overrideErrorButtonsGrid.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
-			::k2app::shared::general::overrideDeviceErrorLabel.get()->Visibility(
+			k2app::shared::general::overrideDeviceErrorLabel.get()->Visibility(
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
 
 			// Split status and message by \n
-			::k2app::shared::general::overrideDeviceNameLabel.get()->Text(wstring_cast(deviceName));
-			::k2app::shared::general::overrideDeviceStatusLabel.get()->Text(
+			k2app::shared::general::overrideDeviceNameLabel.get()->Text(wstring_cast(deviceName));
+			k2app::shared::general::overrideDeviceStatusLabel.get()->Text(
 				wstring_cast(split_status(device_status)[0]));
-			::k2app::shared::general::overrideDeviceErrorLabel.get()->Text(
+			k2app::shared::general::overrideDeviceErrorLabel.get()->Text(
 				wstring_cast(split_status(device_status)[1]));
-			::k2app::shared::general::overrideErrorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+			k2app::shared::general::overrideErrorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
 		}
 	}
 
 	inline int32_t devices_override_joint_id(const int32_t& id)
 	{
-		const auto& _override = TrackingDevices::getCurrentOverrideDevice_Safe();
+		const auto& _override = getCurrentOverrideDevice_Safe();
 		bool _is_kinect = false; // 1: isSet, 2: isKinect
 
 		if (_override.first)
@@ -389,21 +389,18 @@ namespace TrackingDevices
 					return -1;
 				}
 			}
-			else
+			switch (id)
 			{
-				switch (id)
-				{
-				case 0:
-					return ktvr::Joint_SpineShoulder;
-				case 1:
-					return ktvr::Joint_SpineWaist;
-				case 2:
-					return ktvr::Joint_AnkleLeft;
-				case 3:
-					return ktvr::Joint_AnkleRight;
-				default:
-					return -1;
-				}
+			case 0:
+				return ktvr::Joint_SpineShoulder;
+			case 1:
+				return ktvr::Joint_SpineWaist;
+			case 2:
+				return ktvr::Joint_AnkleLeft;
+			case 3:
+				return ktvr::Joint_AnkleRight;
+			default:
+				return -1;
 			}
 		}
 
@@ -412,7 +409,7 @@ namespace TrackingDevices
 
 	inline int32_t devices_override_joint_id_reverse(const int32_t& id)
 	{
-		const auto& _override = TrackingDevices::getCurrentOverrideDevice_Safe();
+		const auto& _override = getCurrentOverrideDevice_Safe();
 		bool _is_kinect = false; // 1: isSet, 2: isKinect
 
 		if (_override.first)
@@ -454,21 +451,18 @@ namespace TrackingDevices
 					return -1;
 				}
 			}
-			else
+			switch (id)
 			{
-				switch (id)
-				{
-				case ktvr::Joint_SpineShoulder:
-					return 0;
-				case ktvr::Joint_SpineWaist:
-					return 1;
-				case ktvr::Joint_AnkleLeft:
-					return 2;
-				case ktvr::Joint_AnkleRight:
-					return 3;
-				default:
-					return -1;
-				}
+			case ktvr::Joint_SpineShoulder:
+				return 0;
+			case ktvr::Joint_SpineWaist:
+				return 1;
+			case ktvr::Joint_AnkleLeft:
+				return 2;
+			case ktvr::Joint_AnkleRight:
+				return 3;
+			default:
+				return -1;
 			}
 		}
 
@@ -569,7 +563,7 @@ namespace TrackingDevices
 	inline void devices_check_base_ids(const uint32_t& id)
 	{
 		// Take down IDs if they're too big
-		if (const auto& device_pair = TrackingDevices::getCurrentDevice(id);
+		if (const auto& device_pair = getCurrentDevice(id);
 			device_pair.index() == 1) // If Joints
 		{
 			// Note: num_joints should never be 0

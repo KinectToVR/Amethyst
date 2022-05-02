@@ -6,7 +6,7 @@
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
-using namespace ::k2app::shared::devices;
+using namespace k2app::shared::devices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -416,9 +416,9 @@ namespace winrt::KinectToVR::implementation
 
 
 Windows::Foundation::IAsyncAction
-winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)co_return; // Block dummy selects
 
@@ -792,8 +792,8 @@ winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Selection
 		devicesMainContentGridInner.get()->Transitions().Append(t);
 
 		// Sleep peacefully pretending that noting happened
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(10); // 10ms for slower systems
 		co_await ui_thread;
 
@@ -806,8 +806,8 @@ winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Selection
 	LOG(INFO) << "Changed the currently selected device to " << deviceName;
 
 	// Remove the transition
-	winrt::apartment_context ui_thread;
-	co_await winrt::resume_background();
+	apartment_context ui_thread;
+	co_await resume_background();
 	Sleep(100);
 	co_await ui_thread;
 
@@ -815,9 +815,9 @@ winrt::KinectToVR::implementation::DevicesPage::TrackingDeviceListView_Selection
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
-	const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args)
+void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
+	const Controls::SplitButton& sender,
+	const Controls::SplitButtonClickEventArgs& args)
 {
 	auto _index = devicesListView.get()->SelectedIndex();
 
@@ -1090,9 +1090,9 @@ void winrt::KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click
 }
 
 // *Nearly* the same as reconnect
-void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
+	const Windows::Foundation::IInspectable& sender,
+	const RoutedEventArgs& e)
 {
 	auto _index = devicesListView.get()->SelectedIndex();
 
@@ -1184,9 +1184,9 @@ void winrt::KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Clic
 }
 
 // Mark override device as -1 -> deselect it
-void winrt::KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
+	const Windows::Foundation::IInspectable& sender,
+	const RoutedEventArgs& e)
 {
 	auto _index = devicesListView.get()->SelectedIndex();
 
@@ -1257,8 +1257,8 @@ void winrt::KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
@@ -1467,8 +1467,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 		devicesOverridesSelectorStackPanelInner.get()->Transitions().Append(t);
 
 		// Sleep peacefully pretending that noting happened
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(10); // 10ms for slower systems
 		co_await ui_thread;
 
@@ -1482,8 +1482,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 	k2app::K2Settings.saveSettings();
 
 	// Remove the transition
-	winrt::apartment_context ui_thread;
-	co_await winrt::resume_background();
+	apartment_context ui_thread;
+	co_await resume_background();
 	Sleep(100);
 	co_await ui_thread;
 
@@ -1491,8 +1491,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
@@ -1675,8 +1675,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 		devicesJointsBasisSelectorStackPanelInner.get()->Transitions().Append(t);
 
 		// Sleep peacefully pretending that noting happened
-		winrt::apartment_context ui_thread;
-		co_await winrt::resume_background();
+		apartment_context ui_thread;
+		co_await resume_background();
 		Sleep(10); // 10ms for slower systems
 		co_await ui_thread;
 
@@ -1690,8 +1690,8 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 	k2app::K2Settings.saveSettings();
 
 	// Remove the transition
-	winrt::apartment_context ui_thread;
-	co_await winrt::resume_background();
+	apartment_context ui_thread;
+	co_await resume_background();
 	Sleep(100);
 	co_await ui_thread;
 
@@ -1700,9 +1700,9 @@ Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::DevicesPage
 
 /* For JointBasis device type: joints selector */
 
-void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::WaistJointOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (waistJointOptionBox.get()->SelectedIndex() >= 0)
@@ -1719,9 +1719,9 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_Selecti
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (leftFootJointOptionBox.get()->SelectedIndex() >= 0)
@@ -1737,9 +1737,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_Sele
 	k2app::K2Settings.saveSettings();
 }
 
-void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (rightFootJointOptionBox.get()->SelectedIndex() >= 0)
@@ -1755,9 +1755,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_Sel
 	k2app::K2Settings.saveSettings();
 }
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (leftElbowJointOptionBox.get()->SelectedIndex() >= 0)
@@ -1773,9 +1773,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_Sel
 	k2app::K2Settings.saveSettings();
 }
 
-void winrt::KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (rightElbowJointOptionBox.get()->SelectedIndex() >= 0)
@@ -1791,9 +1791,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_Se
 	k2app::K2Settings.saveSettings();
 }
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (leftKneeJointOptionBox.get()->SelectedIndex() >= 0)
@@ -1809,9 +1809,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_Sele
 	k2app::K2Settings.saveSettings();
 }
 
-void winrt::KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (rightKneeJointOptionBox.get()->SelectedIndex() >= 0)
@@ -1829,9 +1829,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_Sel
 
 /* For *Override* device type: position & rotation joints selector */
 
-void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[0] &&
@@ -1850,9 +1850,9 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOption
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[0] &&
@@ -1871,9 +1871,9 @@ void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOption
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[1] &&
@@ -1892,9 +1892,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOpt
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[1] &&
@@ -1913,9 +1913,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOpt
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[2] &&
@@ -1934,9 +1934,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOp
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[2] &&
@@ -1954,9 +1954,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOp
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[3] &&
@@ -1975,9 +1975,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOp
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[3] &&
@@ -1996,9 +1996,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOp
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[4] &&
@@ -2017,9 +2017,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideO
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[4] &&
@@ -2038,9 +2038,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideO
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[5] &&
@@ -2059,9 +2059,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOpt
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[5] &&
@@ -2080,9 +2080,9 @@ void winrt::KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOpt
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isPositionOverriddenJoint[6] &&
@@ -2101,9 +2101,9 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOp
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	if (k2app::K2Settings.isRotationOverriddenJoint[6] &&
@@ -2123,8 +2123,8 @@ void winrt::KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOp
 
 /* For *Override* device type: override elements for joints selector */
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2150,8 +2150,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2177,8 +2177,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2204,8 +2204,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Cl
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2231,8 +2231,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Cl
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2258,8 +2258,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_C
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2285,8 +2285,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_C
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftElbowPosition_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideLeftElbowPosition_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2312,8 +2312,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftElbowPosition_C
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftElbowRotation_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideLeftElbowRotation_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2339,8 +2339,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftElbowRotation_C
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideRightElbowPosition_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideRightElbowPosition_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2366,8 +2366,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightElbowPosition_
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideRightElbowRotation_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideRightElbowRotation_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2393,8 +2393,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightElbowRotation_
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftKneePosition_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideLeftKneePosition_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2420,8 +2420,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftKneePosition_Cl
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftKneeRotation_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideLeftKneeRotation_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2447,8 +2447,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideLeftKneeRotation_Cl
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideRightKneePosition_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideRightKneePosition_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2474,8 +2474,8 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightKneePosition_C
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverrideRightKneeRotation_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverrideRightKneeRotation_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -2503,142 +2503,142 @@ void winrt::KinectToVR::implementation::DevicesPage::OverrideRightKneeRotation_C
 
 /* For comboboxes: update before opening */
 
-void winrt::KinectToVR::implementation::DevicesPage::WaistJointOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::WaistJointOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::DismissOverrideTipNoJointsButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::DismissOverrideTipNoJointsButton_Click(
+	const Windows::Foundation::IInspectable& sender,
+	const RoutedEventArgs& e)
 {
 	NoJointsFlyout().Hide();
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Reset
 	devices_tab_re_setup_finished = false;
@@ -3018,58 +3018,58 @@ void winrt::KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverridesDropDown_Expanding(
-	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverridesDropDown_Expanding(
+	const Controls::Expander& sender,
+	const Controls::ExpanderExpandingEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	overridesDropDown_1.get()->IsExpanded(false);
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OverridesDropDown_1_Expanding(
-	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OverridesDropDown_1_Expanding(
+	const Controls::Expander& sender,
+	const Controls::ExpanderExpandingEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	overridesDropDown.get()->IsExpanded(false);
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::JointBasisDropDown_Expanding(
-	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e)
+void KinectToVR::implementation::DevicesPage::JointBasisDropDown_Expanding(
+	const Controls::Expander& sender,
+	const Controls::ExpanderExpandingEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	jointBasisDropDown_1.get()->IsExpanded(false);
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::JointBasisDropDown_1_Expanding(
-	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e)
+void KinectToVR::implementation::DevicesPage::JointBasisDropDown_1_Expanding(
+	const Controls::Expander& sender,
+	const Controls::ExpanderExpandingEventArgs& e)
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	jointBasisDropDown.get()->IsExpanded(false);
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OpenDiscordButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OpenDiscordButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	ShellExecuteA(0, 0, "https://discord.gg/YBQCRDG", 0, 0, SW_SHOW);
+	ShellExecuteA(nullptr, nullptr, "https://discord.gg/YBQCRDG", nullptr, nullptr, SW_SHOW);
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::OpenDocsButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::OpenDocsButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	ShellExecuteA(0, 0, "https://k2vr.tech/docs/", 0, 0, SW_SHOW);
+	ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/", nullptr, nullptr, SW_SHOW);
 }
 
 
-void winrt::KinectToVR::implementation::DevicesPage::SelectedDeviceSettingsButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::DevicesPage::SelectedDeviceSettingsButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	selectedDeviceSettingsFlyout.get()->ShowAt(sender.as<FrameworkElement>());
 }

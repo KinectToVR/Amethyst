@@ -609,7 +609,7 @@ namespace k2app::main
 
 				// Now update the trackers
 				if (!k2_tracker_bases.empty())
-					ktvr::update_tracker_vector(k2_tracker_bases);
+					update_tracker_vector(k2_tracker_bases);
 			}
 
 			// Update status 1/1000 loops / ~8s

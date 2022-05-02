@@ -16,7 +16,7 @@ using namespace winrt::Microsoft::UI::Xaml;
 std::shared_ptr<Controls::FontIcon> updateIconDot;
 
 // Helper local variables
-HANDLE hNamedMutex = NULL;
+HANDLE hNamedMutex = nullptr;
 bool updateFound = false,
      main_localInitFinished = false;
 
@@ -100,8 +100,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 
 						// Split version strings into integers
 						std::vector<std::string> local_version_num, remote_version_num;
-						boost::split(local_version_num, k2app::interfacing::K2InternalVersion, boost::is_any_of("."));
-						boost::split(remote_version_num, K2RemoteVersion, boost::is_any_of("."));
+						split(local_version_num, k2app::interfacing::K2InternalVersion, boost::is_any_of("."));
+						split(remote_version_num, K2RemoteVersion, boost::is_any_of("."));
 
 						// Compare to the current version
 						for (uint32_t i = 0; i < 4; i++)
@@ -223,13 +223,13 @@ namespace winrt::KinectToVR::implementation
 
 		LOG(INFO) << "Extending the window titlebar...";
 
-		auto windowNative{this->try_as<::IWindowNative>()};
-		winrt::check_bool(windowNative);
-		HWND hWnd{0};
+		auto windowNative{this->try_as<IWindowNative>()};
+		check_bool(windowNative);
+		HWND hWnd{nullptr};
 		windowNative->get_WindowHandle(&hWnd);
 
-		auto app_window = winrt::Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
-			winrt::Microsoft::UI::GetWindowIdFromWindow(hWnd));
+		auto app_window = Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
+			Microsoft::UI::GetWindowIdFromWindow(hWnd));
 
 		if (app_window.TitleBar().IsCustomizationSupported())
 		{
@@ -255,12 +255,12 @@ namespace winrt::KinectToVR::implementation
 
 		LOG(INFO) << "Making the app dispatcher available for children...";
 		k2app::shared::main::thisDispatcherQueue =
-			std::make_shared<winrt::Microsoft::UI::Dispatching::DispatcherQueue>(DispatcherQueue());
+			std::make_shared<Microsoft::UI::Dispatching::DispatcherQueue>(DispatcherQueue());
 
 		LOG(INFO) << "Creating the default notification manager (may fail on WinAppSDK <1.1)...";
 		k2app::shared::main::thisNotificationManager =
-			std::make_shared<winrt::Microsoft::Windows::AppNotifications::AppNotificationManager>(
-				winrt::Microsoft::Windows::AppNotifications::AppNotificationManager::Default());
+			std::make_shared<Microsoft::Windows::AppNotifications::AppNotificationManager>(
+				Microsoft::Windows::AppNotifications::AppNotificationManager::Default());
 
 		LOG(INFO) << "Registering the notification manager (may fail on WinAppSDK <1.1)...";
 		k2app::shared::main::thisNotificationManager.get()->Register();
@@ -281,7 +281,7 @@ namespace winrt::KinectToVR::implementation
 
 		LOG(INFO) << "Registering a named mutex for com_kinecttovr_k2app_amethyst...";
 
-		hNamedMutex = CreateMutexA(NULL, TRUE, "com_kinecttovr_k2app_amethyst");
+		hNamedMutex = CreateMutexA(nullptr, TRUE, "com_kinecttovr_k2app_amethyst");
 		if (ERROR_ALREADY_EXISTS == GetLastError())
 		{
 			LOG(ERROR) << "Startup failed! The app is already running.";
@@ -290,10 +290,10 @@ namespace winrt::KinectToVR::implementation
 			{
 				std::thread([]
 				{
-					ShellExecuteA(NULL, "open",
+					ShellExecuteA(nullptr, "open",
 					              (boost::dll::program_location().parent_path() / "K2CrashHandler" /
 						              "K2CrashHandler.exe ")
-					              .string().c_str(), "already_running", NULL, SW_SHOWDEFAULT);
+					              .string().c_str(), "already_running", nullptr, SW_SHOWDEFAULT);
 				}).detach();
 			}
 			else
@@ -314,9 +314,10 @@ namespace winrt::KinectToVR::implementation
 		{
 			std::thread([]
 			{
-				ShellExecuteA(NULL, "open",
+				ShellExecuteA(nullptr, "open",
 				              (boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
-				              .string().c_str(), std::to_string(GetCurrentProcessId()).c_str(), NULL, SW_SHOWDEFAULT);
+				              .string().c_str(), std::to_string(GetCurrentProcessId()).c_str(), nullptr,
+				              SW_SHOWDEFAULT);
 			}).detach();
 		}
 		else
@@ -349,7 +350,7 @@ namespace winrt::KinectToVR::implementation
 			                          ? ElementSoundPlayerState::On
 			                          : ElementSoundPlayerState::Off);
 		ElementSoundPlayer::Volume(std::clamp(
-			double(k2app::K2Settings.appSoundsVolume) / 100.0, 0.0, 100.0));
+			static_cast<double>(k2app::K2Settings.appSoundsVolume) / 100.0, 0.0, 100.0));
 
 		// Scan for tracking devices
 		std::thread([&]
@@ -413,7 +414,7 @@ namespace winrt::KinectToVR::implementation
 									BOOL fRunTimeLinkSuccess = FALSE;
 
 									// Get a handle to the DLL module.
-									hLibraryInstance = LoadLibraryExA(deviceDllPath.string().c_str(), NULL,
+									hLibraryInstance = LoadLibraryExA(deviceDllPath.string().c_str(), nullptr,
 									                                  LOAD_LIBRARY_SEARCH_DEFAULT_DIRS |
 									                                  // Add device's folder to dll search path
 									                                  LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR |
@@ -1140,7 +1141,8 @@ void KinectToVR::implementation::MainWindow::InstallLaterButton_Click(
 void KinectToVR::implementation::MainWindow::InstallNowButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	ShellExecuteA(0, 0, "https://github.com/KinectToVR/Amethyst-Releases/releases/latest", 0, 0, SW_SHOW);
+	ShellExecuteA(nullptr, nullptr, "https://github.com/KinectToVR/Amethyst-Releases/releases/latest", nullptr, nullptr,
+	              SW_SHOW);
 	UpdateFlyout().Hide();
 }
 
@@ -1185,9 +1187,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::Update
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::UpdateButton_Tapped(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs& e)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::UpdateButton_Tapped(
+	const Windows::Foundation::IInspectable& sender,
+	const Input::TappedRoutedEventArgs& e)
 {
 	// Check for updates (and show)
 	co_await checkUpdates(sender.as<UIElement>(), true);

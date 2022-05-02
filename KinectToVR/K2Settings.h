@@ -255,11 +255,11 @@ namespace k2app
 
 				// Optionally fix volume if too big somehow
 				appSoundsVolume = std::clamp(
-					appSoundsVolume, (uint32_t)0, (uint32_t)100);
+					appSoundsVolume, static_cast<uint32_t>(0), static_cast<uint32_t>(100));
 
 				// Optionally fix calibration points
 				calibrationPointsNumber = std::clamp(
-					calibrationPointsNumber, (uint32_t)3, (uint32_t)5);
+					calibrationPointsNumber, static_cast<uint32_t>(3), static_cast<uint32_t>(5));
 			}
 			catch (const boost::archive::archive_exception& e)
 			{

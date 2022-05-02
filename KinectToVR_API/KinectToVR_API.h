@@ -154,7 +154,7 @@ namespace ktvr
 		Eigen::Vector3f position = Eigen::Vector3f(0.f, 0.f, 0.f);
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, const unsigned int version);
+		KTVR_API void serialize(Archive& ar, unsigned int version);
 
 		// Default constructors
 		K2TrackerPose() = default;
@@ -186,7 +186,7 @@ namespace ktvr
 		bool isActive = false;
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, const unsigned int version);
+		KTVR_API void serialize(Archive& ar, unsigned int version);
 
 		// Default constructors
 		K2TrackerData() = default;
@@ -243,7 +243,7 @@ namespace ktvr
 		}
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, const unsigned int version);
+		KTVR_API void serialize(Archive& ar, unsigned int version);
 	};
 
 	class K2DataPacket : public K2TrackerData
@@ -283,7 +283,7 @@ namespace ktvr
 		}
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, const unsigned int version);
+		KTVR_API void serialize(Archive& ar, unsigned int version);
 	};
 
 	class K2TrackerBase
@@ -294,7 +294,7 @@ namespace ktvr
 		int id = -1; // For error case
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, const unsigned int version);
+		KTVR_API void serialize(Archive& ar, unsigned int version);
 
 		// Default constructors
 		K2TrackerBase() = default;
@@ -343,7 +343,7 @@ namespace ktvr
 		std::string message_string; // Placeholder for anything
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, const unsigned int version);
+		KTVR_API void serialize(Archive& ar, unsigned int version);
 
 		// Serialize as string
 		KTVR_API std::string serializeToString();
@@ -459,7 +459,7 @@ namespace ktvr
 		bool success = false;
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, const unsigned int version);
+		KTVR_API void serialize(Archive& ar, unsigned int version);
 
 		// Serialize as string
 		KTVR_API std::string serializeToString();
@@ -583,7 +583,7 @@ namespace ktvr
 	 * \return Returns server's reply to the message
 	 */
 	template <bool want_reply = true>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	send_message(K2Message message) noexcept(false)
 	{
 		if constexpr (want_reply)
@@ -607,7 +607,7 @@ namespace ktvr
 	 * \return Returns tracker id / success?
 	 */
 	template <bool want_reply = true>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	set_tracker_state(int id, bool state) noexcept
 	{
 		try
@@ -633,7 +633,7 @@ namespace ktvr
 	 * \return Returns success?
 	 */
 	template <bool want_reply = true>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	set_state_all(bool state) noexcept
 	{
 		try
@@ -658,7 +658,7 @@ namespace ktvr
 	 * \return Returns tracker id / success?
 	 */
 	template <bool want_reply = false>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	update_tracker_vector(const std::vector<K2TrackerBase>& tracker_bases) noexcept
 	{
 		try
@@ -685,7 +685,7 @@ namespace ktvr
 	 * \return Returns tracker id / success?
 	 */
 	template <bool want_reply = true>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	update_tracker_pose(int id, const K2PosePacket& tracker_pose) noexcept
 	{
 		try
@@ -712,7 +712,7 @@ namespace ktvr
 	 * \return Returns tracker id / success?
 	 */
 	template <bool want_reply = true>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	update_tracker_pose(const K2TrackerBase& tracker_handle) noexcept
 	{
 		try
@@ -735,7 +735,7 @@ namespace ktvr
 	 * \return Returns tracker id / success?
 	 */
 	template <bool want_reply = true>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	update_tracker_data(int id, const K2DataPacket& tracker_data) noexcept
 	{
 		try
@@ -761,7 +761,7 @@ namespace ktvr
 	 * \return Returns tracker id / success?
 	 */
 	template <bool want_reply = true>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	update_tracker_data(const K2TrackerBase& tracker_handle) noexcept
 	{
 		try
@@ -783,7 +783,7 @@ namespace ktvr
 	 * \return Returns tracker id / success?
 	 */
 	template <bool want_reply = true>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	update_tracker(const K2TrackerBase& tracker) noexcept
 	{
 		try
@@ -808,7 +808,7 @@ namespace ktvr
 	 * \return Returns tracker id / success?
 	 */
 	template <bool want_reply = true>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	refresh_tracker_pose(const int& tracker_id) noexcept
 	{
 		try
@@ -835,7 +835,7 @@ namespace ktvr
 	 * \return Returns tracker id / success?
 	 */
 	template <bool want_reply = true>
-	typename std::conditional<want_reply, K2ResponseMessage, std::monostate>::type
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
 	request_vr_restart(const std::string& reason) noexcept
 	{
 		try
