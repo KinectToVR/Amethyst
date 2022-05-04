@@ -79,8 +79,8 @@ namespace k2app::main
 					winrt::Microsoft::UI::Xaml::ElementSoundKind::Invoke);
 			});
 
-			if (shared::settings::flipCheckBox.get() != nullptr)
-				shared::settings::flipCheckBox.get()->IsChecked(K2Settings.isFlipEnabled);
+			if (shared::settings::flipToggle.get() != nullptr)
+				shared::settings::flipToggle.get()->IsOn(K2Settings.isFlipEnabled);
 		}
 
 		// Update the Calibration:Confirm : one-time switch

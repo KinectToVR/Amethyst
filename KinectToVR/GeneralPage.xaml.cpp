@@ -515,75 +515,54 @@ void KinectToVR::implementation::GeneralPage::OffsetsFrontendValueChanged(
 	pending_offsets_update = false;
 
 	// Update backend offsets with new values BUT NOT SAVE
-	k2app::K2Settings.positionJointsOffsets[0].x() = static_cast<double>(k2app::shared::general::waistXNumberBox.get()->
-			Value()) /
-		100.0;
-	k2app::K2Settings.positionJointsOffsets[0].y() = static_cast<double>(k2app::shared::general::waistYNumberBox.get()->
-			Value()) /
-		100.0;
-	k2app::K2Settings.positionJointsOffsets[0].z() = static_cast<double>(k2app::shared::general::waistZNumberBox.get()->
-			Value()) /
-		100.0;
+	k2app::K2Settings.positionJointsOffsets[0].x() = k2app::shared::general::waistXNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[0].y() = k2app::shared::general::waistYNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[0].z() = k2app::shared::general::waistZNumberBox.
+	                                                 get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[1].x() = static_cast<double>(k2app::shared::general::leftFootXNumberBox.
-	                                                                     get()->Value()) /
-		100.0;
-	k2app::K2Settings.positionJointsOffsets[1].y() = static_cast<double>(k2app::shared::general::leftFootYNumberBox.
-	                                                                     get()->Value()) /
-		100.0;
-	k2app::K2Settings.positionJointsOffsets[1].z() = static_cast<double>(k2app::shared::general::leftFootZNumberBox.
-	                                                                     get()->Value()) /
-		100.0;
+	k2app::K2Settings.positionJointsOffsets[1].x() = k2app::shared::general::leftFootXNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[1].y() = k2app::shared::general::leftFootYNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[1].z() = k2app::shared::general::leftFootZNumberBox.
+	                                                 get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[2].x() = static_cast<double>(k2app::shared::general::rightFootXNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
-	k2app::K2Settings.positionJointsOffsets[2].y() = static_cast<double>(k2app::shared::general::rightFootYNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
-	k2app::K2Settings.positionJointsOffsets[2].z() = static_cast<double>(k2app::shared::general::rightFootZNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
+	k2app::K2Settings.positionJointsOffsets[2].x() = k2app::shared::general::rightFootXNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[2].y() = k2app::shared::general::rightFootYNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[2].z() = k2app::shared::general::rightFootZNumberBox.
+	                                                 get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[3].x() = static_cast<double>(k2app::shared::general::leftElbowXNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
-	k2app::K2Settings.positionJointsOffsets[3].y() = static_cast<double>(k2app::shared::general::leftElbowYNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
-	k2app::K2Settings.positionJointsOffsets[3].z() = static_cast<double>(k2app::shared::general::leftElbowZNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
+	k2app::K2Settings.positionJointsOffsets[3].x() = k2app::shared::general::leftElbowXNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[3].y() = k2app::shared::general::leftElbowYNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[3].z() = k2app::shared::general::leftElbowZNumberBox.
+	                                                 get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[4].x() = static_cast<double>(k2app::shared::general::rightElbowXNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
-	k2app::K2Settings.positionJointsOffsets[4].y() = static_cast<double>(k2app::shared::general::rightElbowYNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
-	k2app::K2Settings.positionJointsOffsets[4].z() = static_cast<double>(k2app::shared::general::rightElbowZNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
+	k2app::K2Settings.positionJointsOffsets[4].x() = k2app::shared::general::rightElbowXNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[4].y() = k2app::shared::general::rightElbowYNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[4].z() = k2app::shared::general::rightElbowZNumberBox.
+	                                                 get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[5].x() = static_cast<double>(k2app::shared::general::leftKneeXNumberBox.
-	                                                                     get()->Value()) /
-		100.0;
-	k2app::K2Settings.positionJointsOffsets[5].y() = static_cast<double>(k2app::shared::general::leftKneeYNumberBox.
-	                                                                     get()->Value()) /
-		100.0;
-	k2app::K2Settings.positionJointsOffsets[5].z() = static_cast<double>(k2app::shared::general::leftKneeZNumberBox.
-	                                                                     get()->Value()) /
-		100.0;
+	k2app::K2Settings.positionJointsOffsets[5].x() = k2app::shared::general::leftKneeXNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[5].y() = k2app::shared::general::leftKneeYNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[5].z() = k2app::shared::general::leftKneeZNumberBox.
+	                                                 get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[6].x() = static_cast<double>(k2app::shared::general::rightKneeXNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
-	k2app::K2Settings.positionJointsOffsets[6].y() = static_cast<double>(k2app::shared::general::rightKneeYNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
-	k2app::K2Settings.positionJointsOffsets[6].z() = static_cast<double>(k2app::shared::general::rightKneeZNumberBox.
-	                                                                     get()->Value())
-		/ 100.0;
+	k2app::K2Settings.positionJointsOffsets[6].x() = k2app::shared::general::rightKneeXNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[6].y() = k2app::shared::general::rightKneeYNumberBox.
+	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.positionJointsOffsets[6].z() = k2app::shared::general::rightKneeZNumberBox.
+	                                                 get()->Value() / 100.0;
 
 	k2app::K2Settings.rotationJointsOffsets[0].x() = degreesToRadians(
 		k2app::shared::general::waistPitchNumberBox.get()->Value());
@@ -1481,12 +1460,13 @@ bool IsCurrentWindowActive()
 	if (k2app::shared::main::thisAppWindow.get() == nullptr)
 		return true; // Give up k?
 
-	if (const auto [handle, result] =
+	if (const auto [h_handle, h_result] =
 			GetHWNDFromWindow(*k2app::shared::main::thisAppWindow);
 
-		result < 0) // From winrt::check_hresult
-		return true; // Give up k?
-	return GetActiveWindow() == handle;
+		h_result >= 0) // From winrt::check_hresult
+		return GetActiveWindow() == h_handle;
+
+	return true; // (else) Give up k?
 }
 
 

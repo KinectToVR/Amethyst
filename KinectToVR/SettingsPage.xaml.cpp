@@ -44,13 +44,14 @@ namespace winrt::KinectToVR::implementation
 
 		softwareRotationItem =
 			std::make_shared<Controls::ComboBoxItem>(SoftwareRotationItem());
-
-		flipCheckBox = std::make_shared<Controls::CheckBox>(FlipCheckBox());
+		
 		externalFlipCheckBox = std::make_shared<Controls::CheckBox>(ExternalFlipCheckBox());
 		autoSpawnCheckbox = std::make_shared<Controls::CheckBox>(AutoSpawnCheckBox());
 		enableSoundsCheckbox = std::make_shared<Controls::CheckBox>(SoundsEnabledCheckBox());
 
-		flipCheckBoxLabel = std::make_shared<Controls::TextBlock>(FlipCheckBoxLabel());
+		flipDropDownGrid = std::make_shared<Controls::Grid>(FlipDropDownGrid());
+		flipToggle = std::make_shared<Controls::ToggleSwitch>(FlipToggle());
+
 		externalFlipCheckBoxLabel = std::make_shared<Controls::TextBlock>(ExternalFlipCheckBoxLabel());
 
 		waistTrackerEnabledToggle = std::make_shared<Controls::ToggleSwitch>(WaistTrackerEnabledToggle());
@@ -62,6 +63,7 @@ namespace winrt::KinectToVR::implementation
 		feetDropDown = std::make_shared<Controls::Expander>(FeetDropDown());
 		kneesDropDown = std::make_shared<Controls::Expander>(KneesDropDown());
 		elbowsDropDown = std::make_shared<Controls::Expander>(ElbowsDropDown());
+		flipDropDown = std::make_shared<Controls::Expander>(FlipDropDown());
 
 		soundsVolumeSlider = std::make_shared<Controls::Slider>(SoundsVolumeSlider());
 
@@ -139,32 +141,6 @@ void trackersConfigChanged()
 	TrackingDevices::settings_set_external_flip_is_enabled();
 
 	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::FlipCheckBox_Checked(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
-
-	// Cache flip to settings and save
-	k2app::K2Settings.isFlipEnabled = true; // Checked
-	TrackingDevices::settings_set_external_flip_is_enabled();
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::FlipCheckBox_Unchecked(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
-
-	// Cache flip to settings and save
-	k2app::K2Settings.isFlipEnabled = false; // Unchecked
-	TrackingDevices::settings_set_external_flip_is_enabled();
 	k2app::K2Settings.saveSettings();
 }
 
@@ -271,7 +247,7 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	using namespace k2app::shared::settings;
 
 	// Select saved flip, position and rotation options
-	flipCheckBox.get()->IsChecked(k2app::K2Settings.isFlipEnabled);
+	flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);
 	externalFlipCheckBox.get()->IsChecked(k2app::K2Settings.isExternalFlipEnabled);
 
 	// Waist (pos)
@@ -371,17 +347,20 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 		// Kinect Basis
 		softwareRotationItem.get()->IsEnabled(
 			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported());
-		flipCheckBox.get()->IsEnabled(
+		flipToggle.get()->IsEnabled(
 			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
-		flipCheckBoxLabel.get()->Opacity(flipCheckBox.get()->IsEnabled() ? 1 : 0.5);
+		flipDropDown.get()->IsEnabled(
+			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+		flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
 		TrackingDevices::settings_set_external_flip_is_enabled();
 	}
 	else if (trackingDevice.index() == 1)
 	{
 		// Joints Basis
 		softwareRotationItem.get()->IsEnabled(false);
-		flipCheckBox.get()->IsEnabled(false);
-		flipCheckBoxLabel.get()->Opacity(0.5);
+		flipToggle.get()->IsEnabled(false);
+		flipDropDown.get()->IsEnabled(false);
+		flipDropDownGrid.get()->Opacity(0.5);
 		TrackingDevices::settings_set_external_flip_is_enabled(false);
 	}
 
@@ -398,10 +377,7 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 
 	// Load tracker settings/enabled
 	trackersConfig_UpdateIsEnabled();
-
-	// Hide/Show external flip depending on exp_options
-	externalFlipStackPanel->Visibility(k2app::shared::main::consoleItem.get()->Visibility());
-
+	
 	// Notify of the setup end
 	settings_localInitFinished = true;
 }
@@ -981,5 +957,27 @@ void KinectToVR::implementation::SettingsPage::KneeRotationFilterOptionBox_Selec
 	}
 
 	// Save settings
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args)
+{
+	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
+
+	// Enable/Disable ExtFlip
+	TrackingDevices::settings_set_external_flip_is_enabled();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::FlipToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!settings_localInitFinished)return;
+
+	// Cache flip to settings and save
+	k2app::K2Settings.isFlipEnabled = 
+		k2app::shared::settings::flipToggle->IsOn(); // Checked?
+	TrackingDevices::settings_set_external_flip_is_enabled();
 	k2app::K2Settings.saveSettings();
 }

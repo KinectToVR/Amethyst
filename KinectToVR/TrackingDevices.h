@@ -219,13 +219,15 @@ namespace TrackingDevices
 			if (trackingDevice.index() == 0)
 			{
 				// Kinect Basis
-				k2app::shared::settings::flipCheckBox.get()->IsChecked(k2app::K2Settings.isFlipEnabled);
+				k2app::shared::settings::flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);
 				k2app::shared::settings::softwareRotationItem.get()->IsEnabled(
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported());
-				k2app::shared::settings::flipCheckBox.get()->IsEnabled(
+				k2app::shared::settings::flipToggle.get()->IsEnabled(
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
-				k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(
-					k2app::shared::settings::flipCheckBox.get()->IsEnabled() ? 1 : 0.5);
+				k2app::shared::settings::flipDropDown.get()->IsEnabled(
+					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+				k2app::shared::settings::flipDropDownGrid.get()->Opacity(
+					k2app::shared::settings::flipToggle.get()->IsEnabled() ? 1 : 0.5);
 
 				settings_set_external_flip_is_enabled();
 
@@ -245,8 +247,9 @@ namespace TrackingDevices
 				// Joints Basis
 				k2app::K2Settings.isFlipEnabled = false;
 				k2app::shared::settings::softwareRotationItem.get()->IsEnabled(false);
-				k2app::shared::settings::flipCheckBox.get()->IsEnabled(false);
-				k2app::shared::settings::flipCheckBoxLabel.get()->Opacity(0.5);
+				k2app::shared::settings::flipToggle.get()->IsEnabled(false);
+				k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
+				k2app::shared::settings::flipDropDownGrid.get()->Opacity(0.5);
 
 				settings_set_external_flip_is_enabled(false);
 

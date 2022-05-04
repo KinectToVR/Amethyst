@@ -241,14 +241,18 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem> softwareRotationItem;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
-			flipCheckBox,
 			externalFlipCheckBox,
 			autoSpawnCheckbox,
 			enableSoundsCheckbox;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
-			flipCheckBoxLabel,
 			externalFlipCheckBoxLabel;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
+			flipDropDownGrid;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
+			flipToggle;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
 			waistTrackerEnabledToggle,
@@ -262,7 +266,8 @@ namespace k2app::shared
 			waistDropDown,
 			feetDropDown,
 			kneesDropDown,
-			elbowsDropDown;
+			elbowsDropDown,
+			flipDropDown;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel>
 		externalFlipStackPanel;
