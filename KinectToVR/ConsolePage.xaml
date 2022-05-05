@@ -18,9 +18,10 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <CheckBox Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top"
+        <CheckBox Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom"
                   Checked="ExpCheckBox_Checked" Unchecked="ExpCheckBox_Unchecked"
-                  Margin="0,20,55,0" />
+                  Margin="17,0,0,10" Content="Please notice me!" 
+                  FontWeight="Medium" Opacity="0.5" />
 
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
                       x:Name="ExpScrollViewer" Visibility="Collapsed"
@@ -42,7 +43,7 @@
 
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
                               Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                              x:Name="LanguageOptionBox" Grid.Column="1">
+                              x:Name="LanguageOptionBox" Grid.Column="1" DropDownOpened="LanguageOptionBox_DropDownOpened">
                         <x:String>English</x:String>
                     </ComboBox>
                 </Grid>
@@ -72,7 +73,7 @@
 
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium" Opacity="1"
                                                x:Name="FreezeOnlyLowerCheckBoxLabel"
-                                               Text="Only lower body trackers" Margin="30,0,0,0"
+                                               Text="Freeze only lower body trackers&#x0a;(This check is session-persistent)" Margin="30,0,0,0"
                                                Grid.Column="0" />
                                     <CheckBox x:Name="FreezeOnlyLowerCheckBox"
                                               Checked="FreezeOnlyLowerCheckBox_Checked"

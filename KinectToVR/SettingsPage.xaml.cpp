@@ -76,6 +76,15 @@ void trackersConfig_UpdateIsEnabled()
 	// Make expander opacity .5 and collapse it
 	// to imitate that it's disabled
 
+	// Flip
+	if(!k2app::K2Settings.isFlipEnabled)
+	{
+		k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
+		k2app::shared::settings::flipDropDown.get()->IsExpanded(false);
+	}
+	else
+		k2app::shared::settings::flipDropDown.get()->IsEnabled(true);
+
 	// Waist
 	if (!k2app::K2Settings.isJointPairEnabled[0])
 	{
@@ -967,6 +976,7 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(win
 
 	// Enable/Disable ExtFlip
 	TrackingDevices::settings_set_external_flip_is_enabled();
+	trackersConfig_UpdateIsEnabled();
 }
 
 
@@ -978,6 +988,9 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipToggle_Toggled(winrt::
 	// Cache flip to settings and save
 	k2app::K2Settings.isFlipEnabled = 
 		k2app::shared::settings::flipToggle->IsOn(); // Checked?
+
 	TrackingDevices::settings_set_external_flip_is_enabled();
+	trackersConfig_UpdateIsEnabled();
+
 	k2app::K2Settings.saveSettings();
 }

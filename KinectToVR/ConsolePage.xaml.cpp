@@ -127,3 +127,9 @@ void winrt::KinectToVR::implementation::ConsolePage::FreezeOnlyLowerCheckBox_Unc
 	k2app::K2Settings.freezeLowerOnly = false;
 	k2app::K2Settings.saveSettings();
 }
+
+
+void winrt::KinectToVR::implementation::ConsolePage::LanguageOptionBox_DropDownOpened(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+	ShellExecuteA(nullptr, nullptr, "https://www.google.com/search?q=learn+english", nullptr, nullptr, SW_SHOW);
+}
