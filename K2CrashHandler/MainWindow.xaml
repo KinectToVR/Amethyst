@@ -9,7 +9,7 @@
     <Grid x:Name="RGrid">
         <Grid Canvas.ZIndex="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="20" />
+                <RowDefinition Height="28" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
