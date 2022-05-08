@@ -68,7 +68,7 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "KinectToVR Team"
-            VALUE "FileDescription", "Amethyst Desktop [EXPERIMENTAL]"
+            VALUE "FileDescription", "Amethyst Desktop [Preview]"
             VALUE "FileVersion", "1.0.1.7"
             VALUE "InternalName", "KinectToVR.exe"
             VALUE "LegalCopyright", "Copyright (C) 2022"

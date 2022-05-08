@@ -1,6 +1,10 @@
 ﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 
+#include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
+#include <winrt/Windows.System.h>
+#include <dispatcherqueue.h>
+
 #include "App.xaml.h"
 #if __has_include("MainWindow.g.cpp")
 #include "MainWindow.g.cpp"
@@ -194,11 +198,128 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 	}
 }
 
+Windows::System::DispatcherQueueController CreateSystemDispatcherQueueController()
+{
+	DispatcherQueueOptions options
+	{
+		sizeof(DispatcherQueueOptions),
+		DQTYPE_THREAD_CURRENT,
+		DQTAT_COM_NONE
+	};
+
+	ABI::Windows::System::IDispatcherQueueController* ptr{nullptr};
+	check_hresult(CreateDispatcherQueueController(options, &ptr));
+	return {ptr, take_ownership_from_abi};
+}
+
+winrt::Microsoft::UI::Composition::SystemBackdrops::SystemBackdropTheme ConvertToSystemBackdropTheme(
+	const ElementTheme& theme)
+{
+	switch (theme)
+	{
+	case ElementTheme::Dark:
+		return winrt::Microsoft::UI::Composition::SystemBackdrops::SystemBackdropTheme::Dark;
+	case ElementTheme::Light:
+		return winrt::Microsoft::UI::Composition::SystemBackdrops::SystemBackdropTheme::Light;
+	default:
+		return winrt::Microsoft::UI::Composition::SystemBackdrops::SystemBackdropTheme::Default;
+	}
+}
+
 namespace winrt::KinectToVR::implementation
 {
+	Microsoft::UI::Composition::SystemBackdrops::SystemBackdropConfiguration m_configuration{nullptr};
+	Microsoft::UI::Composition::SystemBackdrops::MicaController m_micaController{nullptr};
+	Window::Activated_revoker m_activatedRevoker;
+	Window::Closed_revoker m_closedRevoker;
+	Microsoft::UI::Xaml::FrameworkElement::ActualThemeChanged_revoker m_themeChangedRevoker;
+	Microsoft::UI::Xaml::FrameworkElement m_rootElement{nullptr};
+	Windows::System::DispatcherQueueController m_dispatcherQueueController{nullptr};
+
 	MainWindow::MainWindow()
 	{
 		InitializeComponent();
+
+		// Set up mica controllers
+		if (Microsoft::UI::Composition::SystemBackdrops::MicaController::IsSupported())
+		{
+			// Log it!
+			LOG(INFO) << "You're using Windows 11, great! Amethyst will look more chad";
+
+			// We ensure that there is a Windows.System.DispatcherQueue on the current thread.
+			// Always check if one already exists before attempting to create a new one.
+			if (nullptr == Windows::System::DispatcherQueue::GetForCurrentThread() &&
+				nullptr == m_dispatcherQueueController)
+			{
+				m_dispatcherQueueController = CreateSystemDispatcherQueueController();
+			}
+
+			// Setup the SystemBackdropConfiguration object.
+			{
+				m_configuration = Microsoft::UI::Composition::SystemBackdrops::SystemBackdropConfiguration();
+
+				// Activation state.
+				m_activatedRevoker = this->Activated(
+					auto_revoke,
+					[&](auto&&, const Microsoft::UI::Xaml::WindowActivatedEventArgs& args)
+					{
+						m_configuration.IsInputActive(
+							WindowActivationState::Deactivated
+							!= args.WindowActivationState());
+					});
+
+				// Initial state.
+				m_configuration.IsInputActive(true);
+
+				// Application theme.
+				m_rootElement = this->Content().try_as<Microsoft::UI::Xaml::FrameworkElement>();
+				if (nullptr != m_rootElement)
+				{
+					m_themeChangedRevoker =
+						m_rootElement.ActualThemeChanged(auto_revoke,
+						                                 [&](auto&&, auto&&)
+						                                 {
+							                                 m_configuration.Theme(
+								                                 ConvertToSystemBackdropTheme(
+									                                 m_rootElement.ActualTheme()));
+						                                 });
+
+					// Initial state.
+					m_configuration.Theme(
+						ConvertToSystemBackdropTheme(m_rootElement.ActualTheme()));
+				}
+			}
+
+			// Setup Mica on the current Window.
+			m_micaController = Microsoft::UI::Composition::SystemBackdrops::MicaController();
+			m_micaController.SetSystemBackdropConfiguration(m_configuration);
+			m_micaController.AddSystemBackdropTarget(
+				this->try_as<Microsoft::UI::Composition::ICompositionSupportsSystemBackdrop>());
+
+			// Change the window background to support mica
+			XMainGrid().Background(Media::SolidColorBrush(Microsoft::UI::Colors::Transparent()));
+		}
+		else
+		{
+			// No Mica support.
+			LOG(INFO) << "You're using Windows 10, bruh... Amethyst won't have cool Mica effects";
+		}
+
+		// Handle app exits (mica & dispatcher shutdown)
+		m_closedRevoker = this->Closed(auto_revoke, [&](auto&&, auto&&)
+		{
+			if (nullptr != m_micaController)
+			{
+				m_micaController.Close();
+				m_micaController = nullptr;
+			}
+
+			if (nullptr != m_dispatcherQueueController)
+			{
+				m_dispatcherQueueController.ShutdownQueueAsync();
+				m_dispatcherQueueController = nullptr;
+			}
+		});
 
 		// Set up logging
 		google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("KinectToVR_Amethyst_").c_str());
@@ -219,36 +340,11 @@ namespace winrt::KinectToVR::implementation
 		k2app::shared::main::consoleItem = std::make_shared<Controls::NavigationViewItem>(ConsoleItem());
 
 		// Set up
-		this->Title(L"Amethyst [EXPERIMENTAL]");
+		this->Title(L"Amethyst [Preview]");
 
 		LOG(INFO) << "Extending the window titlebar...";
-
-		auto windowNative{this->try_as<IWindowNative>()};
-		check_bool(windowNative);
-		HWND hWnd{nullptr};
-		windowNative->get_WindowHandle(&hWnd);
-
-		auto app_window = Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
-			Microsoft::UI::GetWindowIdFromWindow(hWnd));
-
-		if (app_window.TitleBar().IsCustomizationSupported())
-		{
-			LOG(INFO) << "Good news! You're running Win11-Supported build and your titlebar will be more chad";
-
-			app_window.TitleBar().ExtendsContentIntoTitleBar(true);
-
-			app_window.TitleBar().SetDragRectangles(
-				{
-					// Don't care about resizing, it's gonna be BIG
-					Windows::Graphics::RectInt32{0, 0, 1000000000, 20}
-				});
-
-			app_window.TitleBar().BackgroundColor(Windows::UI::Colors::Transparent());
-			app_window.TitleBar().ButtonBackgroundColor(Windows::UI::Colors::Transparent());
-			app_window.TitleBar().ButtonInactiveBackgroundColor(Windows::UI::Colors::Transparent());
-		}
-		else
-			this->ExtendsContentIntoTitleBar(true);
+		this->ExtendsContentIntoTitleBar(true);
+		this->SetTitleBar(DragElement());
 
 		LOG(INFO) << "Making the app window available for children views...";
 		k2app::shared::main::thisAppWindow = std::make_shared<Window>(this->try_as<Window>());

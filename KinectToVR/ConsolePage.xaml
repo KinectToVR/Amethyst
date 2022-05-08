@@ -11,7 +11,7 @@
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
 
-    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
+    <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="700" />
@@ -214,7 +214,6 @@
                     <RowDefinition Height="370" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="200" />
-                    <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="まあ？ ようこそ！❤️" FontSize="85" Margin="0,0,0,0" Grid.Row="1"

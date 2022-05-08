@@ -9,6 +9,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
+    <!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
     <Grid MinHeight="600" MinWidth="1000" Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
           x:Name="XMainGrid">
 
@@ -19,7 +20,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="20" />
+                <RowDefinition Height="28" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -29,6 +30,7 @@
 
         <muxc:NavigationView x:Name="NavView"
                              IsTabStop="False"
+                             Margin="0,28,0,0"
                              IsTitleBarAutoPaddingEnabled="False"
                              Loaded="NavView_Loaded"
                              ItemInvoked="NavView_ItemInvoked"
@@ -36,7 +38,8 @@
                              Grid.Row="1" CompactPaneLength="60"
                              OpenPaneLength="197"
                              FontSize="16"
-                             PaneDisplayMode="LeftCompact"
+                             PaneDisplayMode="Left"
+                             IsPaneOpen="False"
                              SelectionFollowsFocus="Enabled"
                              IsBackButtonVisible="Collapsed"
                              IsSettingsVisible="False"
@@ -48,6 +51,12 @@
                     Amethyst
                 </TextBlock>
             </muxc:NavigationView.PaneHeader>
+
+            <!--Note: Disable/Delete this if using LeftCompat instead of Left pane mode-->
+            <NavigationView.Resources>
+                <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent"/>
+                <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="Transparent" />
+            </NavigationView.Resources>
 
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Icon="Home" Margin="0,10,0,5"

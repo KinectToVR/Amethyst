@@ -10,8 +10,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
-    <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
-
+    <Grid Background="Transparent">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="450" />
