@@ -426,6 +426,9 @@ namespace winrt::KinectToVR::implementation
 			exit(-11); // OpenVR is critical, so exit
 		}
 
+		// Priority: Set up Amethyst as a vr app
+		k2app::interfacing::installApplicationManifest();
+
 		// Priority: Set up VR Input Actions
 		if (!k2app::interfacing::EVRActionsStartup())
 			LOG(ERROR) << "Could not set up VR Input Actions! The app will lack some functionality.";

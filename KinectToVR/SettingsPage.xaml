@@ -450,13 +450,65 @@
                         x:Name="ResetButton" Width="270" Click="ResetButton_Click"
                         Content="Delete configuration and restart" FontSize="16" />
 
-                <!--TODO Re-enable and impl them-->
                 <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
-                        x:Name="ReRegisterButton" Width="270" IsEnabled="False"
+                        x:Name="ReRegisterButton" Width="270" Click="ReRegisterButton_Click"
                         Content="Re-register SteamVR driver entry" FontSize="16" />
-                <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
-                        x:Name="ReManifestButton" Width="340" IsEnabled="False"
-                        Content="Reinstall SteamVR input binding manifests" FontSize="16" />
+
+                <SplitButton Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
+                             x:Name="ReManifestButton" Width="305" Click="ReManifestButton_Click"
+                             Content="Reinstall SteamVR manifests" FontSize="16">
+                    <SplitButton.Flyout>
+                        <Flyout Placement="RightEdgeAlignedBottom" Opening="AutoStartFlyout_Opening">
+                            <Grid>
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+                                           Text="Automatically start with SteamVR" Margin="30,0,0,3" />
+                                <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
+                                          Unchecked="AutoStartCheckBox_Unchecked"
+                                          HorizontalAlignment="Left" VerticalAlignment="Center"
+                                          MinWidth="0" MinHeight="0" />
+                            </Grid>
+                        </Flyout>
+                    </SplitButton.Flyout>
+                </SplitButton>
+
+                <!--Flyout for manifest and reregister errors-->
+                <FlyoutBase.AttachedFlyout>
+                    <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button FontSize="15" x:Name="DismissSetErrorButton"
+                                        Click="DismissSetErrorButton_Click"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Content="Dismiss"
+                                        Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
+
+                            </Grid>
+
+                            <TextBlock FontSize="15" HorizontalAlignment="Stretch"
+                                       x:Name="SetErrorFlyoutText"
+                                       VerticalAlignment="Stretch"
+                                       Grid.Row="0" FontWeight="SemiBold"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       Text="[NO CONTENT SET]" />
+
+                        </Grid>
+                    </Flyout>
+                </FlyoutBase.AttachedFlyout>
 
             </StackPanel>
 

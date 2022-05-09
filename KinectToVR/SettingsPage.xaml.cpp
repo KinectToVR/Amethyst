@@ -44,15 +44,17 @@ namespace winrt::KinectToVR::implementation
 
 		softwareRotationItem =
 			std::make_shared<Controls::ComboBoxItem>(SoftwareRotationItem());
-		
+
 		externalFlipCheckBox = std::make_shared<Controls::CheckBox>(ExternalFlipCheckBox());
 		autoSpawnCheckbox = std::make_shared<Controls::CheckBox>(AutoSpawnCheckBox());
 		enableSoundsCheckbox = std::make_shared<Controls::CheckBox>(SoundsEnabledCheckBox());
+		autoStartCheckBox = std::make_shared<Controls::CheckBox>(AutoStartCheckBox());
 
 		flipDropDownGrid = std::make_shared<Controls::Grid>(FlipDropDownGrid());
 		flipToggle = std::make_shared<Controls::ToggleSwitch>(FlipToggle());
 
 		externalFlipCheckBoxLabel = std::make_shared<Controls::TextBlock>(ExternalFlipCheckBoxLabel());
+		setErrorFlyoutText = std::make_shared<Controls::TextBlock>(SetErrorFlyoutText());
 
 		waistTrackerEnabledToggle = std::make_shared<Controls::ToggleSwitch>(WaistTrackerEnabledToggle());
 		feetTrackersEnabledToggle = std::make_shared<Controls::ToggleSwitch>(FeetTrackersEnabledToggle());
@@ -77,7 +79,7 @@ void trackersConfig_UpdateIsEnabled()
 	// to imitate that it's disabled
 
 	// Flip
-	if(!k2app::K2Settings.isFlipEnabled)
+	if (!k2app::K2Settings.isFlipEnabled)
 	{
 		k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
 		k2app::shared::settings::flipDropDown.get()->IsExpanded(false);
@@ -386,7 +388,7 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 
 	// Load tracker settings/enabled
 	trackersConfig_UpdateIsEnabled();
-	
+
 	// Notify of the setup end
 	settings_localInitFinished = true;
 }
@@ -970,7 +972,9 @@ void KinectToVR::implementation::SettingsPage::KneeRotationFilterOptionBox_Selec
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args)
+void winrt::KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(
+	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
 {
 	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
 
@@ -980,17 +984,122 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(win
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::FlipToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void winrt::KinectToVR::implementation::SettingsPage::FlipToggle_Toggled(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
 
 	// Cache flip to settings and save
-	k2app::K2Settings.isFlipEnabled = 
+	k2app::K2Settings.isFlipEnabled =
 		k2app::shared::settings::flipToggle->IsOn(); // Checked?
 
 	TrackingDevices::settings_set_external_flip_is_enabled();
 	trackersConfig_UpdateIsEnabled();
 
 	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::AutoStartFlyout_Opening(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+{
+	k2app::shared::settings::autoStartCheckBox->IsChecked(
+		vr::VRApplications()->GetApplicationAutoLaunch("KinectToVR.Amethyst"));
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Checked(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	k2app::interfacing::installApplicationManifest(); // Just in case
+
+	const auto app_error = vr::VRApplications()->
+		SetApplicationAutoLaunch("KinectToVR.Amethyst", true);
+
+	if (app_error != vr::VRApplicationError_None)
+		LOG(WARNING) << "Amethyst manifest not installed! Error:  " <<
+			vr::VRApplications()->GetApplicationsErrorNameFromEnum(app_error);
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	k2app::interfacing::installApplicationManifest(); // Just in case
+
+	const auto app_error = vr::VRApplications()->
+		SetApplicationAutoLaunch("KinectToVR.Amethyst", false);
+
+	if (app_error != vr::VRApplicationError_None)
+		LOG(WARNING) << "Amethyst manifest not installed! Error:  " <<
+			vr::VRApplications()->GetApplicationsErrorNameFromEnum(app_error);
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
+	const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args)
+{
+	switch (k2app::interfacing::installApplicationManifest())
+	{
+	// Not found failure
+	case 0:
+		{
+			k2app::shared::settings::setErrorFlyoutText->Text(
+				L"Amethyst vr manifest couldn't be installed.\nPlease check if it exists at the root (.exe) path.");
+
+			Controls::Primitives::FlyoutShowOptions _opt;
+			_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
+			SetErrorFlyout().ShowAt(ReManifestButton(), _opt);
+			break;
+		}
+	// Generic success
+	case 1:
+		break;
+	// SteamVR failure
+	case 2:
+		{
+			k2app::shared::settings::setErrorFlyoutText->Text(
+				L"Amethyst vr manifest couldn't be installed.\nPlease check SteamVR logs and consider reporting it.");
+
+			Controls::Primitives::FlyoutShowOptions _opt;
+			_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
+			SetErrorFlyout().ShowAt(ReManifestButton(), _opt);
+			break;
+		}
+	}
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::ReRegisterButton_Click(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
+	{
+		std::thread([]
+		{
+			ShellExecuteA(nullptr, "open",
+			              (boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
+			              .string().c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
+		}).detach();
+	}
+	else
+	{
+		LOG(WARNING) << "Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!";
+
+		k2app::shared::settings::setErrorFlyoutText->Text(
+			L"Amethyst crash handler executable was not found.\nIt's needed for the reregistration, please check if it's there.");
+
+		Controls::Primitives::FlyoutShowOptions _opt;
+		_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
+		SetErrorFlyout().ShowAt(ReRegisterButton(), _opt);
+	}
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::DismissSetErrorButton_Click(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	SetErrorFlyout().Hide();
 }

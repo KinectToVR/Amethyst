@@ -1,7 +1,7 @@
 {
    "action_manifest_version" : 0,
    "alias_info" : {},
-   "app_key" : "kinecttovr.k2ex",
+   "app_key" : "kinecttovr.amethyst",
    "bindings" : {
       "/actions/default" : {
          "chords" : [
@@ -106,7 +106,7 @@
    "category" : "steamvr_input",
    "controller_type" : "hpmotioncontroller",
    "description" : "",
-   "name" : "Default K2EX Bindings for HP Motion Controller",
+   "name" : "Default Amethyst Bindings for HP Motion Controller",
    "options" : {},
    "simulated_actions" : []
 }

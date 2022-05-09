@@ -1,7 +1,7 @@
 {
    "action_manifest_version" : 0,
    "alias_info" : {},
-   "app_key" : "kinecttovr.k2ex",
+   "app_key" : "kinecttovr.amethyst",
    "bindings" : {
       "/actions/default" : {
          "chords" : [
@@ -255,7 +255,7 @@
    "category" : "steamvr_input",
    "controller_type" : "holographic_controller",
    "description" : "",
-   "name" : "Default K2EX Bindings for Windows MR Controller",
+   "name" : "Default Amethyst Bindings for Windows MR Controller",
    "options" : {},
    "simulated_actions" : []
 }

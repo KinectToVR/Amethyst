@@ -1,7 +1,7 @@
 {
 	"source" : "builtin",
 	"applications": [{
-		"app_key": "k2app",
+		"app_key": "KinectToVR.Amethyst",
 		"launch_type": "binary",
 		"binary_path_windows": "KinectToVR.exe",
 		"is_dashboard_overlay": true,

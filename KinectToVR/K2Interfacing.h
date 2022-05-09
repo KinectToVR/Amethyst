@@ -258,6 +258,64 @@ namespace k2app::interfacing
 	}
 
 	/**
+		 * \brief This will install Ame's vr manifest
+		 * \return Fail:0 Success:1 Other:2
+		 */
+	inline uint32_t installApplicationManifest()
+	{
+		if (vr::VRApplications()->IsApplicationInstalled("KinectToVR.Amethyst"))
+		{
+			LOG(INFO) << "Amethyst manifest is already installed";
+			return 1;
+		}
+		else
+		{
+			if (exists(boost::dll::program_location().parent_path() / "Amethyst.vrmanifest"))
+			{
+				const auto app_error =
+					vr::VRApplications()->AddApplicationManifest(
+						(boost::dll::program_location().parent_path() / "Amethyst.vrmanifest").string().c_str());
+
+				if (app_error != vr::VRApplicationError_None)
+				{
+					LOG(WARNING) << "Amethyst manifest not installed! Error: (VRApplicationError) " << app_error;
+					return 2;
+				}
+				else
+				{
+					LOG(INFO) << "Amethyst manifest installed at: " <<
+						boost::dll::program_location().parent_path() / "Amethyst.vrmanifest";
+					return 1;
+				}
+			}
+			else
+			{
+				LOG(WARNING) << "Amethyst vr manifest (./Amethyst.vrmanifest) not found!";
+				return 0;
+			}
+		}
+	}
+
+	/**
+		 * \brief This will uninstall Ame's vr manifest
+		 */
+	inline void uninstallApplicationManifest()
+	{
+		if (vr::VRApplications()->IsApplicationInstalled("KinectToVR.Amethyst"))
+		{
+			vr::VRApplications()->RemoveApplicationManifest(
+				(boost::dll::program_location().parent_path() / "Amethyst.vrmanifest").string().c_str());
+
+			LOG(INFO) << "Attempted to remove Amethyst manifest at: " <<
+				boost::dll::program_location().parent_path() / "Amethyst.vrmanifest";
+		}
+		if (vr::VRApplications()->IsApplicationInstalled("KinectToVR.Amethyst"))
+			LOG(WARNING) << "Amethyst manifest removal failed! It may have been installed from somewhere else too";
+		else
+			LOG(INFO) << "Amethyst manifest removal succeed";
+	}
+
+	/**
 		 * \brief This will init K2API and server driver
 		 * \return Success?
 		 */
