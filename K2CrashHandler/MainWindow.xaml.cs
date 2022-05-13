@@ -1,29 +1,14 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Xml;
-using Windows.ApplicationModel.Core;
-using Windows.Data.Xml.Dom;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Graphics;
-using Windows.UI.Notifications;
-using Windows.UI.ViewManagement;
 using K2CrashHandler.Helpers;
+using K2InsightsHandler;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
-using Microsoft.Windows.ApplicationModel.DynamicDependency;
+using Microsoft.UI.Xaml;
+using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,10 +21,10 @@ namespace K2CrashHandler
 
         public MainWindow()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             // Prepare placeholder strings (recovery mode)
-            String handlerTitle = "KinectToVR Recovery",
+            string handlerTitle = "KinectToVR Recovery",
                 handlerContent =
                     "Looks like you've manually ran the Crash Handler. What would you like to do?\n\n" +
                     "If the KinectToVR driver for SteamVR is not being detected properly, you can re-register the SteamVR driver (button below) and then try again.",
@@ -51,7 +36,7 @@ namespace K2CrashHandler
                 secondaryButtonHandler = Action_Close;
 
             // Check if there's any argv[1]
-            String[] args = Environment.GetCommandLineArgs();
+            var args = Environment.GetCommandLineArgs();
             bool launcherMode = args.Length > 1,
                 relaunchMode = false;
 
@@ -65,13 +50,13 @@ namespace K2CrashHandler
                 if (!relaunchMode)
                 {
                     // Get argv[1] for the launch
-                    String appPid = args[1];
+                    var appPid = args[1];
 
                     // Wait for the app to exit and grab the exit code
                     try
                     {
-                        int pid = int.Parse(appPid);
-                        Process process = Process.GetProcessById(pid);
+                        var pid = int.Parse(appPid);
+                        var process = Process.GetProcessById(pid);
 
                         process.EnableRaisingEvents = true;
                         process.Exited += ProcessEnded;
@@ -81,11 +66,17 @@ namespace K2CrashHandler
                         do
                         {
                             if (!process.HasExited)
-                            {
                                 // Refresh the current process property values.
                                 process.Refresh();
-                            }
                         } while (!process.WaitForExit(3000));
+
+                        // Handle normal exit
+                        if (ProcessExitCode == 0)
+                            Close(); // We're OK to exit
+
+                        // Register AI handler
+                        var handler = new InsightsHandler();
+                        handler.Initialize();
 
                         // Parse the exit code into strings
                         handlerTitle = "KinectToVR's given you up!";
@@ -100,6 +91,8 @@ namespace K2CrashHandler
                                     "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\n" +
                                     "Please check if all your devices / plugins are working and check logs. Optionally, you can erase the app configuration and then try running it again.";
                                 primaryButtonText = "Reset Config";
+
+                                handler.LogException(new OverflowException("Too many main loop crashes"));
                             }
                                 break;
                             case -12:
@@ -109,7 +102,9 @@ namespace K2CrashHandler
                                 handlerContent =
                                     "There were no appropriate devices (plugins) available to load and use for body tracking.\n\n" +
                                     "Please check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices.";
-                            }
+
+                                handler.LogException(new MissingFieldException("No devices available"));
+                                }
                                 break;
                             case -11:
                             {
@@ -118,12 +113,14 @@ namespace K2CrashHandler
                                 handlerContent =
                                     "The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.\n\n" +
                                     "Please check if SteamVR is running and if your HMD's present and working. Additionally, you can restart SteamVR and additionally check its logs.";
-                            }
+
+                                handler.LogException(new NotSupportedException("OpenVR initialization error"));
+                                }
                                 break;
                             case 0:
                             {
                                 // We're OK
-                                this.Close();
+                                Close();
                             }
                                 break;
                             default:
@@ -135,13 +132,15 @@ namespace K2CrashHandler
                                     "Don't panic yet, it (probably) isn't even your fault.\n\n" +
                                     "Please try re-running the app.\nIf problem persists, grab logs and reach us on Discord.";
                                 primaryButtonText = "Join Discord";
-                            }
+
+                                handler.LogException(new NotImplementedException("Something else this time"));
+                                }
                                 break;
                         }
                     }
                     catch (Exception)
                     {
-                        this.Close();
+                        Close();
                     }
                 }
                 else
@@ -164,20 +163,20 @@ namespace K2CrashHandler
                 height = 295;
 
             // Set window title, drag-space and size
-            this.Title = launcherMode
-                ? (relaunchMode
+            Title = launcherMode
+                ? relaunchMode
                     ? "KinectToVR Already Running!"
-                    : "KinectToVR Crash Handler")
+                    : "KinectToVR Crash Handler"
                 : "KinectToVR Recovery";
 
             //this.ExtendsContentIntoTitleBar = true;
             //this.SetTitleBar(DragElement);
-            this.SetWindowSize(WinRT.Interop.WindowNative
+            SetWindowSize(WindowNative
                 .GetWindowHandle(this), width, height);
 
-            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(
-                Microsoft.UI.Win32Interop.GetWindowIdFromWindow(
-                    WinRT.Interop.WindowNative.GetWindowHandle(this)));
+            var appWindow = AppWindow.GetFromWindowId(
+                Win32Interop.GetWindowIdFromWindow(
+                    WindowNative.GetWindowHandle(this)));
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
@@ -186,7 +185,7 @@ namespace K2CrashHandler
                 appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
                 appWindow.TitleBar.SetDragRectangles(new RectInt32[]
                 {
-                    new RectInt32(0, 0, 10000000, 30)
+                    new(0, 0, 10000000, 30)
                 });
 
                 appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -196,21 +195,23 @@ namespace K2CrashHandler
             }
             else
                 // Poor ass Windows 10
-                this.ExtendsContentIntoTitleBar = true;
+            {
+                ExtendsContentIntoTitleBar = true;
+            }
 
             // Center the window on the screen
-            SetWindowPos(WinRT.Interop.WindowNative
+            SetWindowPos(WindowNative
                     .GetWindowHandle(this), 0x0000,
                 GetSystemMetrics(SystemMetric.SM_CXSCREEN) / 2 - width / 2,
                 GetSystemMetrics(SystemMetric.SM_CYSCREEN) / 2 - height / 2,
                 width, height, 0x0040); // SWP_SHOWWINDOW
 
             // And show it (forcibly)
-            SetForegroundWindow(WinRT.Interop.WindowNative
+            SetForegroundWindow(WindowNative
                 .GetWindowHandle(this));
 
             // Construct the dialog
-            ContentDialogView dialogView = new ContentDialogView
+            var dialogView = new ContentDialogView
             (
                 handlerTitle,
                 handlerContent,
@@ -261,7 +262,7 @@ namespace K2CrashHandler
 
         private void Action_Close(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -279,15 +280,15 @@ namespace K2CrashHandler
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
-        static extern int GetSystemMetrics(SystemMetric smIndex);
+        private static extern int GetSystemMetrics(SystemMetric smIndex);
 
         private void SetWindowSize(IntPtr hwnd, int width, int height)
         {
             var dpi = GetDpiForWindow(hwnd);
-            float scalingFactor = (float)dpi / 96;
+            var scalingFactor = (float)dpi / 96;
             width = (int)(width * scalingFactor);
             height = (int)(height * scalingFactor);
 
@@ -299,10 +300,7 @@ namespace K2CrashHandler
         private void ProcessEnded(object sender, EventArgs e)
         {
             var process = sender as Process;
-            if (process != null)
-            {
-                ProcessExitCode = process.ExitCode;
-            }
+            if (process != null) ProcessExitCode = process.ExitCode;
         }
     }
 }
@@ -346,7 +344,7 @@ public enum SetWindowPosFlags : uint
 
     SWP_NOZORDER = 0x0004,
 
-    SWP_SHOWWINDOW = 0x0040,
+    SWP_SHOWWINDOW = 0x0040
 }
 
 public enum SystemMetric
@@ -448,5 +446,5 @@ public enum SystemMetric
 
 
     SM_CONVERTIBLESLATEMODE = 0x2003,
-    SM_SYSTEMDOCKED = 0x2004,
+    SM_SYSTEMDOCKED = 0x2004
 }
