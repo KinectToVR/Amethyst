@@ -7,7 +7,9 @@ You'll need:
 Follow these steps:
 
 - [Install tools for the Windows App development](https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/set-up-your-development-environment?tabs=vs-2022-17-1-a%2Cvs-2022-17-1-b).<br>
-  You'll have to install Visual Studio 2022, [WASDK Plugins and Runtime](https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads).
+  You'll have to install Visual Studio 2022, [WASDK Plugins and Runtime](https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads).<br>
+  (Make sure to check MFC, UWP, C++/CLI, .NET Desktop & Framework<br>
+   and proper v143 Tools & Windows SDK when installing Visual Studio)
 
 - Install [CMake](https://cmake.org/download/) and [git](https://git-scm.com/download/win) if you still somehow don't have them.<br>
   Note: If you have `chocolatey` installed, you can just ```choco install cmake git```
