@@ -4,6 +4,7 @@
 #include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
 #include <winrt/Windows.System.h>
 #include <dispatcherqueue.h>
+#include <numeric>
 
 #include "App.xaml.h"
 #if __has_include("MainWindow.g.cpp")
@@ -121,7 +122,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 
 						// Cache the changes
 						BOOST_FOREACH(boost::property_tree::ptree::value_type & v, root.get_child("changes"))
-							changes_strings_vector.push_back(v.second.get_value<std::string>());
+						changes_strings_vector.push_back(v.second.get_value<std::string>());
 
 						// And maybe log it too
 						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
@@ -427,11 +428,15 @@ namespace winrt::KinectToVR::implementation
 		}
 
 		// Priority: Set up Amethyst as a vr app
+		LOG(INFO) << "Installing the vr application manifest...";
 		k2app::interfacing::installApplicationManifest();
 
 		// Priority: Set up VR Input Actions
 		if (!k2app::interfacing::EVRActionsStartup())
 			LOG(ERROR) << "Could not set up VR Input Actions! The app will lack some functionality.";
+
+		// After-Setup Priority: Set up an AI session
+		K2InsightsCLR::Initialize();
 
 		// Priority: Set up the K2API & Server
 		static std::thread serverStatusThread(k2app::interfacing::K2ServerDriverSetup);
@@ -440,6 +445,18 @@ namespace winrt::KinectToVR::implementation
 		// Read settings
 		LOG(INFO) << "Now reading saved settings...";
 		k2app::K2Settings.readSettings();
+
+		K2InsightsCLR::LogMetric("CalibrationPoints", k2app::K2Settings.calibrationPointsNumber);
+		K2InsightsCLR::LogMetric("TrackerPairs", [&, this]()-> uint32_t
+		{
+			// The default one (W+F) would be 2 pairs
+			uint32_t _out_accumulate = 0;
+			std::accumulate(
+				k2app::K2Settings.isJointPairEnabled.begin(),
+				k2app::K2Settings.isJointPairEnabled.end(),
+				_out_accumulate);
+			return _out_accumulate;
+		}());
 
 		// Start the main loop
 		std::thread(k2app::main::K2MainLoop).detach();
@@ -496,12 +513,12 @@ namespace winrt::KinectToVR::implementation
 								{
 									BOOST_FOREACH(boost::property_tree::ptree::value_type & v,
 									              root.get_child("linked_dll_path"))
-										if (!exists(v.second.get_value<std::string>()))
-										{
-											_found = false; // Mark as failed
-											LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
-												std::string>();
-										}
+									if (!exists(v.second.get_value<std::string>()))
+									{
+										_found = false; // Mark as failed
+										LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
+											std::string>();
+									}
 								}
 								// Else continue
 

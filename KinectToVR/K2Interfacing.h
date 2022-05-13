@@ -4,6 +4,20 @@
 #include "K2EVRInput.h"
 #include "K2Shared.h"
 
+// The AI namespace & functions (do not rename!)
+namespace K2InsightsCLR
+{
+	__declspec(dllimport) void Initialize();
+
+	__declspec(dllimport) void LogEvent(const char* name);
+
+	__declspec(dllimport) void LogTrace(const char* message);
+
+	__declspec(dllimport) void LogMetric(const char* name, DOUBLE value);
+
+	__declspec(dllimport) void LogPageView(const char* name);
+}
+
 namespace k2app::interfacing
 {
 	// Internal version number
@@ -12,6 +26,7 @@ namespace k2app::interfacing
 	// App closing check
 	inline bool isExitingNow = false;
 
+	// In-App tracker vector
 	inline std::vector<K2AppTracker> K2TrackersVector{
 		K2AppTracker("AME-00WAIST0", ktvr::ITrackerType::Tracker_Waist),
 		K2AppTracker("AME-L0FOOT00", ktvr::ITrackerType::Tracker_LeftFoot),
@@ -21,7 +36,7 @@ namespace k2app::interfacing
 		K2AppTracker("AME-L0KNEE00", ktvr::ITrackerType::Tracker_LeftKnee),
 		K2AppTracker("AME-R0KNEE00", ktvr::ITrackerType::Tracker_RightKnee)
 	};
-
+	
 	inline std::pair<Eigen::Vector3f, Eigen::Vector3f> // Position helpers for k2 devices -> Base, Override
 		kinectHeadPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}, // But this one's kinect-only
 		kinectWaistPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}; // This one applies to both bases

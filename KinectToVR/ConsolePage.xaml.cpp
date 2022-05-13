@@ -41,6 +41,8 @@ void winrt::KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
 		                                                  : box_value(L"Freeze"));
 	k2app::shared::other::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
 	LOG(INFO) << "Experiments page setup finished.";
+
+	K2InsightsCLR::LogEvent("Okashi Tab Displayed");
 }
 
 
