@@ -74,7 +74,7 @@ namespace k2app
 		template <class Archive>
 		void serialize(Archive& archive, unsigned int version)
 		{
-			archive & BOOST_SERIALIZATION_NVP(trackingDeviceID)
+			archive& BOOST_SERIALIZATION_NVP(trackingDeviceID)
 				& BOOST_SERIALIZATION_NVP(overrideDeviceID)
 				& BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
 				& BOOST_SERIALIZATION_NVP(positionOverrideJointID)
@@ -103,7 +103,10 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(autoCalibration)
 				& BOOST_SERIALIZATION_NVP(skeletonPreviewEnabled)
 				& BOOST_SERIALIZATION_NVP(forceSkeletonPreview)
-				& BOOST_SERIALIZATION_NVP(freezeLowerOnly);
+				& BOOST_SERIALIZATION_NVP(freezeLowerOnly)
+				& BOOST_SERIALIZATION_NVP(shownToastsGuidVector)
+				& BOOST_SERIALIZATION_NVP(ratingRemainingSessions)
+				& BOOST_SERIALIZATION_NVP(ratingRemainingElapsedSessions);
 		}
 
 	public:
@@ -220,8 +223,15 @@ namespace k2app
 		double externalFlipCalibrationYaw = 0.;
 
 		// If we wanna freeze only lower body trackers or all
-		// TODO Will be removed and handled differently
 		bool freezeLowerOnly = false;
+
+		// Already shown toasts vector
+		std::vector<std::string> shownToastsGuidVector;
+
+		// Sessions to wait for a rating notice
+		int32_t ratingRemainingSessions = 7; // Start with 7, -1 to disable
+		// Sessions elapsed without a rating notice
+		int32_t ratingRemainingElapsedSessions = 0; // Start with 0 (not uint tho)
 
 		/* Saving and loading part */
 
@@ -260,6 +270,10 @@ namespace k2app
 				// Optionally fix calibration points
 				calibrationPointsNumber = std::clamp(
 					calibrationPointsNumber, static_cast<uint32_t>(3), static_cast<uint32_t>(5));
+
+				// Optionally fix rating sessions
+				ratingRemainingElapsedSessions = std::clamp(
+					ratingRemainingElapsedSessions, 0, INT32_MAX);
 			}
 			catch (const boost::archive::archive_exception& e)
 			{

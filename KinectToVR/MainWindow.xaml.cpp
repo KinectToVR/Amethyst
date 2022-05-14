@@ -25,12 +25,21 @@ HANDLE hNamedMutex = nullptr;
 bool updateFound = false,
      main_localInitFinished = false;
 
+std::atomic_bool checkingUpdatesNow = false;
+
 // Assume we're up to date
 std::string K2RemoteVersion =
 	k2app::interfacing::K2InternalVersion;
 
 // Exit handler
 void h_exit(void);
+
+// Toast struct (json)
+struct toast
+{
+	std::string guid, title, message;
+	bool show_always = false;
+};
 
 // Updates checking function
 Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkUpdates(
@@ -39,6 +48,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 	// Attempt only after init
 	if (main_localInitFinished)
 	{
+		// Mark as checking
+		checkingUpdatesNow = true;
+
 		{
 			// Sleep on UI (Non-blocking)
 			apartment_context ui_thread;
@@ -122,11 +134,66 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 
 						// Cache the changes
 						BOOST_FOREACH(boost::property_tree::ptree::value_type & v, root.get_child("changes"))
-						changes_strings_vector.push_back(v.second.get_value<std::string>());
+							changes_strings_vector.push_back(v.second.get_value<std::string>());
 
 						// And maybe log it too
 						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
 						LOG(INFO) << "Local version number: " << k2app::interfacing::K2InternalVersion;
+
+						// Thanks to this chad: https://stackoverflow.com/a/45123408
+						// Now check for push notifications aka toasts
+
+						// !show checks if the update handler was run automatically:
+						//       (by design) it's false only when run at the startup
+						if (root.find("toasts") != root.not_found() && !show)
+						{
+							// Scan for all toasts & push them to a table
+							boost::multi_index::multi_index_container<
+								toast, boost::multi_index::indexed_by<
+									boost::multi_index::ordered_unique<
+										boost::multi_index::tag<struct by_name>,
+										boost::multi_index::member<
+											toast, std::string, &toast::guid>>>> toasts;
+
+							for (auto& v : root.get_child("toasts"))
+							{
+								auto& node = v.second;
+								toast tst;
+
+								tst.guid = node.get<std::string>("guid", "");
+								tst.title = node.get<std::string>("title", "");
+								tst.message = node.get<std::string>("message", "");
+								tst.show_always = node.get<bool>("show_always", false);
+
+								if (!toasts.insert(tst).second)
+									LOG(INFO) << "Skipping toast with duplicate guid: " << tst.guid << '\n';
+							}
+
+							// Iterate over all the found toasts
+							for (auto& itr : toasts)
+							{
+								// Log everything
+								LOG(INFO) << "Found a toast with:\n    guid: " << itr.guid <<
+									"\n    title: " << itr.title << "\n    message: " << itr.message <<
+									"\n    which needs to show " << (itr.show_always ? "always" : "once");
+
+								// Check if this toast hasn't already been shown, and opt show it
+								if (itr.show_always ||
+									std::ranges::find(k2app::K2Settings.shownToastsGuidVector, itr.guid)
+									== k2app::K2Settings.shownToastsGuidVector.end())
+								{
+									// Log it
+									LOG(INFO) << "Showing toast with guid " << itr.guid << " now...";
+
+									// Show the toast (and optionally cache it)
+									k2app::interfacing::ShowToast(itr.title, itr.message);
+
+									// If the toast isn't meant to be shown always, cache it
+									if (!itr.show_always)
+										k2app::K2Settings.shownToastsGuidVector.push_back(itr.guid);
+								}
+							}
+						}
 					}
 				}
 				else
@@ -194,8 +261,27 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 		options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
 		options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
+		// If an update was found, show it
+		// (or if the cheack was manual)
 		if (updateFound || show)
 			UpdateFlyout().ShowAt(show_el, options);
+
+		// Otherwise, show the rating request
+		// (once per 7,9,11... sessions, skip for -1)
+		// TODO DISABLE THIS AFTER PREVIEW VERSIONS
+		else if (k2app::K2Settings.ratingRemainingSessions >= 0 &&
+			k2app::K2Settings.ratingRemainingElapsedSessions >=
+			k2app::K2Settings.ratingRemainingSessions)
+		{
+			k2app::K2Settings.ratingRemainingSessions += 2;
+			k2app::K2Settings.ratingRemainingElapsedSessions = 1;
+			k2app::K2Settings.saveSettings();
+
+			RatingFlyout().ShowAt(show_el, options); // Show
+		}
+
+		// Uncheck
+		checkingUpdatesNow = false;
 	}
 }
 
@@ -458,6 +544,9 @@ namespace winrt::KinectToVR::implementation
 			return _out_accumulate;
 		}());
 
+		// It's been one more, innit?
+		k2app::K2Settings.ratingRemainingElapsedSessions += 1;
+
 		// Start the main loop
 		std::thread(k2app::main::K2MainLoop).detach();
 
@@ -513,12 +602,12 @@ namespace winrt::KinectToVR::implementation
 								{
 									BOOST_FOREACH(boost::property_tree::ptree::value_type & v,
 									              root.get_child("linked_dll_path"))
-									if (!exists(v.second.get_value<std::string>()))
-									{
-										_found = false; // Mark as failed
-										LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
-											std::string>();
-									}
+										if (!exists(v.second.get_value<std::string>()))
+										{
+											_found = false; // Mark as failed
+											LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
+												std::string>();
+										}
 								}
 								// Else continue
 
@@ -1308,7 +1397,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::Update
 	const Input::TappedRoutedEventArgs& e)
 {
 	// Check for updates (and show)
-	co_await checkUpdates(sender.as<UIElement>(), true);
+	if (!checkingUpdatesNow)
+		co_await checkUpdates(sender.as<UIElement>(), true);
+	else co_return;
 }
 
 
@@ -1368,4 +1459,33 @@ void h_exit()
 
 	// Wait a moment
 	Sleep(1000);
+}
+
+
+// Disable rating prompts button
+void winrt::KinectToVR::implementation::MainWindow::HyperlinkButton_Click(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	// Disable all rating prompts
+	k2app::K2Settings.ratingRemainingSessions = -1;
+	k2app::K2Settings.saveSettings();
+	RatingFlyout().Hide();
+}
+
+
+// AutoHide after rated, we don't care anymore
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::RatingControl_ValueChanged(
+	const winrt::Microsoft::UI::Xaml::Controls::RatingControl& sender, const winrt::Windows::Foundation::IInspectable& args)
+{
+	// Log the rated value
+	K2InsightsCLR::LogMetric("Rating", sender.Value());
+	BetaRatingControl().IsReadOnly(true);
+	
+	// Sleep on UI (Non-blocking)
+	apartment_context ui_thread;
+	co_await resume_background();
+	Sleep(300);
+	co_await ui_thread;
+
+	RatingFlyout().Hide();
 }
