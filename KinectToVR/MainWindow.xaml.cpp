@@ -128,7 +128,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 								_ver > boost::lexical_cast<uint32_t>(local_version_num.at(i)))
 								updateFound = true;
 
-								// Not to false-alarm in situations like 1.0.1.7 (local) vs 1.0.1.0 (remote)
+								// Not to false-alarm in situations like 1.0.1.8 (local) vs 1.0.1.0 (remote)
 							else if (_ver < boost::lexical_cast<uint32_t>(local_version_num.at(i))) break;
 						}
 
