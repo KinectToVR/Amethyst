@@ -22,7 +22,7 @@ std::shared_ptr<Controls::FontIcon> updateIconDot;
 
 // Helper local variables
 HANDLE hNamedMutex = nullptr;
-bool updateFound = false,
+bool updateFound = false, showRating = false,
      main_localInitFinished = false;
 
 std::atomic_bool checkingUpdatesNow = false;
@@ -139,6 +139,10 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 						// And maybe log it too
 						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
 						LOG(INFO) << "Local version number: " << k2app::interfacing::K2InternalVersion;
+
+						// Check if we should show the rating notice (once 7...9...11... sessions)
+						if (root.find("show_rating") != root.not_found())
+							showRating = root.get<bool>("version_string", false);
 
 						// Thanks to this chad: https://stackoverflow.com/a/45123408
 						// Now check for push notifications aka toasts
@@ -268,10 +272,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 
 		// Otherwise, show the rating request
 		// (once per 7,9,11... sessions, skip for -1)
-		// TODO DISABLE THIS AFTER PREVIEW VERSIONS
 		else if (k2app::K2Settings.ratingRemainingSessions >= 0 &&
 			k2app::K2Settings.ratingRemainingElapsedSessions >=
-			k2app::K2Settings.ratingRemainingSessions)
+			k2app::K2Settings.ratingRemainingSessions && showRating)
 		{
 			k2app::K2Settings.ratingRemainingSessions += 2;
 			k2app::K2Settings.ratingRemainingElapsedSessions = 1;
