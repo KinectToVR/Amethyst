@@ -44,8 +44,8 @@ ref struct IK2Insights
 	static K2InsightsWrapper::InsightsWrapper^ wrapper = gcnew K2InsightsWrapper::InsightsWrapper;
 };
 
-namespace K2InsightsCLR {
-
+namespace K2InsightsCLR
+{
 	__declspec(dllexport) void Initialize()
 	{
 		IK2Insights::wrapper->Initialize();
@@ -70,5 +70,4 @@ namespace K2InsightsCLR {
 	{
 		IK2Insights::wrapper->LogPageView(name);
 	}
-
 }

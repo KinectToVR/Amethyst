@@ -18,8 +18,8 @@ namespace winrt::KinectToVR::implementation
 	}
 
 	void InfoPage::K2DoubleTapped(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& e)
+		const Windows::Foundation::IInspectable& sender,
+		const winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs& e)
 	{
 		// Also show a notification when we get to winui 1.1
 		k2app::shared::main::consoleItem.get()->Visibility(Visibility::Visible);

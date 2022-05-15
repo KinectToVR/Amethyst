@@ -23,12 +23,12 @@ public:
 		//KinectV1Handler::initialize();
 		LOG(INFO) << "Constructing the Kinect V1 (X360) Handler for KinectBasis K2TrackingDevice...";
 
-		K2TrackingDeviceBase_KinectBasis::deviceType = ktvr::K2_Kinect;
-		K2TrackingDeviceBase_KinectBasis::deviceName = "Xbox 360 Kinect";
+		deviceType = ktvr::K2_Kinect;
+		deviceName = "Xbox 360 Kinect";
 
-		K2TrackingDeviceBase_KinectBasis::deviceCharacteristics = ktvr::K2_Character_Full;
-		K2TrackingDeviceBase_KinectBasis::flipSupported = true;
-		K2TrackingDeviceBase_KinectBasis::appOrientationSupported = true;
+		deviceCharacteristics = ktvr::K2_Character_Full;
+		flipSupported = true;
+		appOrientationSupported = true;
 	}
 
 	HANDLE kinectRGBStream = nullptr;
@@ -42,7 +42,7 @@ public:
 	void update() override;
 	void shutdown() override;
 
-	virtual ~KinectV1Handler()
+	~KinectV1Handler() override
 	{
 	}
 

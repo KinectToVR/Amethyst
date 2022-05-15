@@ -217,21 +217,6 @@
     <Image Include="Assets\SplashScreen.scale-400.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\BadgeLogo.scale-100.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\BadgeLogo.scale-125.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\BadgeLogo.scale-150.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\BadgeLogo.scale-200.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\BadgeLogo.scale-400.png">
-      <Filter>Assets</Filter>
-    </Image>
     <Image Include="Assets\StoreLogo.scale-100.png">
       <Filter>Assets</Filter>
     </Image>
@@ -288,8 +273,5 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Amethyst.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
 </Project>

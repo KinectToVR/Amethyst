@@ -54,7 +54,7 @@
 
             <!--Note: Disable/Delete this if using LeftCompat instead of Left pane mode-->
             <NavigationView.Resources>
-                <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent"/>
+                <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
                 <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="Transparent" />
             </NavigationView.Resources>
 
@@ -85,7 +85,7 @@
             </muxc:NavigationView.MenuItems>
 
             <muxc:NavigationView.PaneFooter>
-                <muxc:NavigationViewItem x:Name="UpdateButton" 
+                <muxc:NavigationViewItem x:Name="UpdateButton"
                                          Tapped="UpdateButton_Tapped"
                                          Loaded="UpdateButton_Loaded">
 
@@ -93,12 +93,14 @@
                         <Flyout x:Name="RatingFlyout">
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="How do you like this build?" FontWeight="SemiBold" />
-                                <RatingControl x:Name="BetaRatingControl" IsClearEnabled="False" 
-                                               IsReadOnly="False" Margin="0,5" ValueChanged="RatingControl_ValueChanged" />
+                                <RatingControl x:Name="BetaRatingControl" IsClearEnabled="False"
+                                               IsReadOnly="False" Margin="0,5"
+                                               ValueChanged="RatingControl_ValueChanged" />
                                 <Grid>
-                                    <HyperlinkButton Content="Learn more" HorizontalAlignment="Right" 
-                                                     FontSize="11" NavigateUri="https://github.com/KinectToVR/Amethyst#beta-rating" />
-                                    <HyperlinkButton Content="Don't ask me" HorizontalAlignment="Left" 
+                                    <HyperlinkButton Content="Learn more" HorizontalAlignment="Right"
+                                                     FontSize="11"
+                                                     NavigateUri="https://github.com/KinectToVR/Amethyst#beta-rating" />
+                                    <HyperlinkButton Content="Don't ask me" HorizontalAlignment="Left"
                                                      FontSize="11" Click="HyperlinkButton_Click" />
                                 </Grid>
                             </StackPanel>
@@ -124,7 +126,7 @@
                     </FlyoutBase.AttachedFlyout>
 
                     <muxc:NavigationViewItem.Icon>
-                        <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" 
+                        <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;"
                                   Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5">
                             <FontIcon.RenderTransform>
                                 <CompositeTransform />
@@ -133,7 +135,7 @@
                     </muxc:NavigationViewItem.Icon>
 
                     <Grid>
-                        <TextBlock Text="Updates" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="Updates" FontSize="16" FontWeight="SemiBold" />
 
                         <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="15" IsHitTestVisible="False"
                                   HorizontalAlignment="Left" VerticalAlignment="Bottom"

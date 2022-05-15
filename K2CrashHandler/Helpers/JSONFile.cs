@@ -1,40 +1,34 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
+using Newtonsoft.Json;
 
-namespace K2CrashHandler.Helpers
+namespace K2CrashHandler.Helpers;
+
+internal class JsonFile
 {
-    class JsonFile
+    public static T Read<T>(string path)
     {
-        public static T Read<T>(string path)
+        var jsonSerializer = new JsonSerializer();
+        jsonSerializer.DefaultValueHandling = DefaultValueHandling.Populate;
+        using (var textReader = new StreamReader(path))
         {
-            var jsonSerializer = new JsonSerializer();
-            jsonSerializer.DefaultValueHandling = DefaultValueHandling.Populate;
-            using (var textReader = new StreamReader(path))
+            using (var jsonTextReader = new JsonTextReader(textReader))
             {
-                using (var jsonTextReader = new JsonTextReader(textReader))
-                {
-                    return jsonSerializer.Deserialize<T>(jsonTextReader);
-                }
+                return jsonSerializer.Deserialize<T>(jsonTextReader);
             }
         }
+    }
 
-        public static void Write(string path, object obj, int identation, char identChar)
+    public static void Write(string path, object obj, int identation, char identChar)
+    {
+        var jsonSerializer = new JsonSerializer();
+        using (var textWriter = new StreamWriter(path))
         {
-            var jsonSerializer = new JsonSerializer();
-            using (var textWriter = new StreamWriter(path))
+            using (var jsonTextWriter = new JsonTextWriter(textWriter))
             {
-                using (var jsonTextWriter = new JsonTextWriter(textWriter))
-                {
-                    jsonTextWriter.Formatting = Formatting.Indented;
-                    jsonTextWriter.Indentation = identation;
-                    jsonTextWriter.IndentChar = identChar;
-                    jsonSerializer.Serialize(jsonTextWriter, obj);
-                }
+                jsonTextWriter.Formatting = Formatting.Indented;
+                jsonTextWriter.Indentation = identation;
+                jsonTextWriter.IndentChar = identChar;
+                jsonSerializer.Serialize(jsonTextWriter, obj);
             }
         }
     }

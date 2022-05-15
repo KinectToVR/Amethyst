@@ -1,49 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>K2CrashHandler</RootNamespace>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x64</Platforms>
-    <RuntimeIdentifier>win</RuntimeIdentifier>
-    <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
-    <UseWinUI>true</UseWinUI>
-    <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
-    <WindowsPackageType>None</WindowsPackageType>
-    <ApplicationIcon>Assets\crashhandler.ico</ApplicationIcon>
-    <Authors>K2VR Team</Authors>
-    <Description>Amethyst Crash and Recovery Handler</Description>
-    <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
-    <Copyright>(c) K2VR Team</Copyright>
-    <BaseOutputPath>$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\</BaseOutputPath>
-    <FileVersion>1.0.1.8</FileVersion>
-    <AssemblyVersion>1.0.1.8</AssemblyVersion>
-    <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
-    <Version>1.0.1.8</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
+		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<RootNamespace>K2CrashHandler</RootNamespace>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Platforms>x64</Platforms>
+		<RuntimeIdentifier>win</RuntimeIdentifier>
+		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
+		<UseWinUI>true</UseWinUI>
+		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+		<WindowsPackageType>None</WindowsPackageType>
+		<ApplicationIcon>Assets\crashhandler.ico</ApplicationIcon>
+		<Authors>K2VR Team</Authors>
+		<Description>Amethyst Crash and Recovery Handler</Description>
+		<PackageProjectUrl>k2vr.tech</PackageProjectUrl>
+		<Copyright>(c) K2VR Team</Copyright>
+		<BaseOutputPath>$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\</BaseOutputPath>
+		<FileVersion>1.0.1.8</FileVersion>
+		<AssemblyVersion>1.0.1.8</AssemblyVersion>
+		<RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
+		<Version>1.0.1.8</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0-preview3" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22616-preview" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0-preview3" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22616-preview" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<Manifest Include="$(ApplicationManifest)" />
+	</ItemGroup>
 
-  <!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+	<!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
        Tools extension to be activated for this project even if the Windows App SDK Nuget
        package has not yet been restored -->
-  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\K2InsightsHandler\K2InsightsHandler.csproj" />
-  </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y /i /e &quot;$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\K2CrashHandler&quot;" />
-  </Target>
+	<ItemGroup
+		Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
+		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Helpers\" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\K2InsightsHandler\K2InsightsHandler.csproj" />
+	</ItemGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec
+			Command="xcopy /y /i /e &quot;$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\K2CrashHandler&quot;" />
+	</Target>
 </Project>

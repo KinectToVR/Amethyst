@@ -134,7 +134,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 
 						// Cache the changes
 						BOOST_FOREACH(boost::property_tree::ptree::value_type & v, root.get_child("changes"))
-							changes_strings_vector.push_back(v.second.get_value<std::string>());
+						changes_strings_vector.push_back(v.second.get_value<std::string>());
 
 						// And maybe log it too
 						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
@@ -142,7 +142,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 
 						// Check if we should show the rating notice (once 7...9...11... sessions)
 						if (root.find("show_rating") != root.not_found())
-							showRating = root.get<bool>("version_string", false);
+							showRating = root.get<bool>("show_rating", false);
 
 						// Thanks to this chad: https://stackoverflow.com/a/45123408
 						// Now check for push notifications aka toasts
@@ -270,8 +270,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 		if (updateFound || show)
 			UpdateFlyout().ShowAt(show_el, options);
 
-		// Otherwise, show the rating request
-		// (once per 7,9,11... sessions, skip for -1)
+			// Otherwise, show the rating request
+			// (once per 7,9,11... sessions, skip for -1)
 		else if (k2app::K2Settings.ratingRemainingSessions >= 0 &&
 			k2app::K2Settings.ratingRemainingElapsedSessions >=
 			k2app::K2Settings.ratingRemainingSessions && showRating)
@@ -605,12 +605,12 @@ namespace winrt::KinectToVR::implementation
 								{
 									BOOST_FOREACH(boost::property_tree::ptree::value_type & v,
 									              root.get_child("linked_dll_path"))
-										if (!exists(v.second.get_value<std::string>()))
-										{
-											_found = false; // Mark as failed
-											LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
-												std::string>();
-										}
+									if (!exists(v.second.get_value<std::string>()))
+									{
+										_found = false; // Mark as failed
+										LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
+											std::string>();
+									}
 								}
 								// Else continue
 
@@ -1466,8 +1466,8 @@ void h_exit()
 
 
 // Disable rating prompts button
-void winrt::KinectToVR::implementation::MainWindow::HyperlinkButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::MainWindow::HyperlinkButton_Click(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Disable all rating prompts
 	k2app::K2Settings.ratingRemainingSessions = -1;
@@ -1477,13 +1477,13 @@ void winrt::KinectToVR::implementation::MainWindow::HyperlinkButton_Click(
 
 
 // AutoHide after rated, we don't care anymore
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::MainWindow::RatingControl_ValueChanged(
-	const winrt::Microsoft::UI::Xaml::Controls::RatingControl& sender, const winrt::Windows::Foundation::IInspectable& args)
+Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::RatingControl_ValueChanged(
+	const winrt::Microsoft::UI::Xaml::Controls::RatingControl& sender, const Windows::Foundation::IInspectable& args)
 {
 	// Log the rated value
 	K2InsightsCLR::LogMetric("Rating", sender.Value());
 	BetaRatingControl().IsReadOnly(true);
-	
+
 	// Sleep on UI (Non-blocking)
 	apartment_context ui_thread;
 	co_await resume_background();

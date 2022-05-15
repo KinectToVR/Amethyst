@@ -972,7 +972,7 @@ void KinectToVR::implementation::SettingsPage::KneeRotationFilterOptionBox_Selec
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(
+void KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(
 	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
 	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
 {
@@ -984,8 +984,8 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::FlipToggle_Toggled(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::FlipToggle_Toggled(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!settings_localInitFinished)return;
@@ -1001,16 +1001,16 @@ void winrt::KinectToVR::implementation::SettingsPage::FlipToggle_Toggled(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::AutoStartFlyout_Opening(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void KinectToVR::implementation::SettingsPage::AutoStartFlyout_Opening(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	k2app::shared::settings::autoStartCheckBox->IsChecked(
 		vr::VRApplications()->GetApplicationAutoLaunch("KinectToVR.Amethyst"));
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Checked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Checked(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	k2app::interfacing::installApplicationManifest(); // Just in case
 
@@ -1023,8 +1023,8 @@ void winrt::KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Checked(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	k2app::interfacing::installApplicationManifest(); // Just in case
 
@@ -1037,7 +1037,7 @@ void winrt::KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Unchecke
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
+void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 	const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
 	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args)
 {
@@ -1072,8 +1072,8 @@ void winrt::KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::ReRegisterButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::ReRegisterButton_Click(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
 	{
@@ -1098,8 +1098,8 @@ void winrt::KinectToVR::implementation::SettingsPage::ReRegisterButton_Click(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::DismissSetErrorButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void KinectToVR::implementation::SettingsPage::DismissSetErrorButton_Click(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	SetErrorFlyout().Hide();
 }

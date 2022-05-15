@@ -395,7 +395,7 @@ void KinectV2Handler::shutdown()
 			}();
 		}
 	}
-	catch (std::exception const& e)
+	catch (const std::exception& e)
 	{
 		LOG(INFO) <<
 			"Shutting down: Kinect V2 streams' termination failed! The device may misbehave until the next reconnection.";

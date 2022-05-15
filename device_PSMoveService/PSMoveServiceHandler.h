@@ -29,9 +29,9 @@ public:
 		//PSMoveServiceHandler::initialize();
 		LOG(INFO) << "Constructing the PSMS Handler for JointsBasis K2TrackingDevice...";
 
-		K2TrackingDeviceBase_JointsBasis::deviceType = ktvr::K2_Joints;
-		K2TrackingDeviceBase_JointsBasis::deviceName = "PSMove Service";
-		K2TrackingDeviceBase_JointsBasis::settingsSupported = true;
+		deviceType = ktvr::K2_Joints;
+		deviceName = "PSMove Service";
+		settingsSupported = true;
 	}
 
 	void initialize() override;
@@ -39,7 +39,7 @@ public:
 	void shutdown() override;
 	void signalJoint(uint32_t at) override;
 
-	virtual ~PSMoveServiceHandler()
+	~PSMoveServiceHandler() override
 	{
 	}
 
@@ -141,10 +141,10 @@ private:
 		}
 	}
 
-	void update_lights(bool const& off)
+	void update_lights(const bool& off)
 	{
 		// They'll either be very dimmed (1,1,1) or standard (0,0,0)
-		for (auto const& controller : v_controllers)
+		for (const auto& controller : v_controllers)
 			PSM_SetControllerLEDOverrideColor(
 				controller.controller->ControllerID, off, off, off);
 	}

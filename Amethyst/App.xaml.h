@@ -4,13 +4,13 @@
 
 namespace winrt::KinectToVR::implementation
 {
-    struct App : AppT<App>
-    {
-        App();
+	struct App : AppT<App>
+	{
+		App();
 
-        void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
+		void OnLaunched(const Microsoft::UI::Xaml::LaunchActivatedEventArgs&);
 
-    private:
-        winrt::Microsoft::UI::Xaml::Window window{ nullptr };
-    };
+	private:
+		winrt::Microsoft::UI::Xaml::Window window{nullptr};
+	};
 }

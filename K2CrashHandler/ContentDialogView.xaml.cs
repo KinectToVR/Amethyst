@@ -4,53 +4,53 @@ using System.IO;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
 
-namespace K2CrashHandler
+namespace K2CrashHandler;
+
+public sealed partial class ContentDialogView
 {
-    public sealed partial class ContentDialogView
+    public ContentDialogView()
     {
-        public ContentDialogView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        public ContentDialogView
-        (
-            String title = "[NO TITLE]",
-            String content = "[CONTENT NOT SET]",
-            String primaryButtonText = "[NOT SET]",
-            String secondaryButtonText = "[NOT SET]",
-            RoutedEventHandler primaryButtonHandler = null,
-            RoutedEventHandler secondaryButtonHandler = null,
-            bool accentPrimaryButton = true
-        )
-        {
-            InitializeComponent();
+    public ContentDialogView
+    (
+        string title = "[NO TITLE]",
+        string content = "[CONTENT NOT SET]",
+        string primaryButtonText = "[NOT SET]",
+        string secondaryButtonText = "[NOT SET]",
+        RoutedEventHandler primaryButtonHandler = null,
+        RoutedEventHandler secondaryButtonHandler = null,
+        bool accentPrimaryButton = true
+    )
+    {
+        InitializeComponent();
 
-            DialogTitle.Content = title;
-            DialogContent.Content = content;
+        DialogTitle.Content = title;
+        DialogContent.Content = content;
 
-            DialogPrimaryButton.Content = primaryButtonText;
-            DialogSecondaryButton.Content = secondaryButtonText;
+        DialogPrimaryButton.Content = primaryButtonText;
+        DialogSecondaryButton.Content = secondaryButtonText;
 
-            DialogPrimaryButton.Click += primaryButtonHandler;
-            DialogSecondaryButton.Click += secondaryButtonHandler;
+        DialogPrimaryButton.Click += primaryButtonHandler;
+        DialogSecondaryButton.Click += secondaryButtonHandler;
 
-            if (accentPrimaryButton) DialogPrimaryButton.Style = (Style)Resources["AccentButtonStyle"];
+        if (accentPrimaryButton) DialogPrimaryButton.Style = (Style)Resources["AccentButtonStyle"];
 
-            // Disabled until we can somehow find ame inside registry or just decide to blind shoot with c:/k2ex TODO
-            if (!accentPrimaryButton) DialogPrimaryButton.IsEnabled = false;
-        }
+        // Disabled until we can somehow find ame inside registry or just decide to blind shoot with c:/k2ex TODO
+        if (!accentPrimaryButton) DialogPrimaryButton.IsEnabled = false;
+    }
 
-        private void LogsHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
-        {
-            var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst\\logs");
+    private void LogsHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
+    {
+        var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Amethyst\\logs");
 
-            Process.Start("explorer.exe", appData);
-        }
+        Process.Start("explorer.exe", appData);
+    }
 
-        private void DiscordHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
-        {
-            Process.Start("explorer.exe", "https://discord.gg/YBQCRDG");
-        }
+    private void DiscordHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
+    {
+        Process.Start("explorer.exe", "https://discord.gg/YBQCRDG");
     }
 }

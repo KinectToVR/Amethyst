@@ -25,7 +25,7 @@ namespace winrt::KinectToVR::implementation
 		hstring m_DeviceName;
 		bool m_Current;
 
-		winrt::event<Windows::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
+		event<Windows::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
 	};
 }
 

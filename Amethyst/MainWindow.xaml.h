@@ -24,62 +24,80 @@
 
 namespace muxc
 {
-    using namespace winrt::Microsoft::UI::Xaml::Controls;
+	using namespace winrt::Microsoft::UI::Xaml::Controls;
 };
 
 namespace wuxc
 {
-    using namespace winrt::Windows::UI::Xaml::Controls;
+	using namespace winrt::Windows::UI::Xaml::Controls;
 };
 
 namespace winrt::KinectToVR::implementation
 {
-    struct MainWindow : MainWindowT<MainWindow>
-    {
-        MainWindow();
+	struct MainWindow : MainWindowT<MainWindow>
+	{
+		MainWindow();
 
-        void NavView_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void NavView_ItemInvoked(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs const& args);
-        void NavView_BackRequested(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewBackRequestedEventArgs const& args);
-        void ContentFrame_NavigationFailed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs const& e);
+		void NavView_Loaded(const Windows::Foundation::IInspectable& sender,
+		                    const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void NavView_ItemInvoked(const winrt::Microsoft::UI::Xaml::Controls::NavigationView& sender,
+		                         const winrt::Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs& args);
+		void NavView_BackRequested(const winrt::Microsoft::UI::Xaml::Controls::NavigationView& sender,
+		                           const winrt::Microsoft::UI::Xaml::Controls::NavigationViewBackRequestedEventArgs&
+		                           args);
+		void ContentFrame_NavigationFailed(const Windows::Foundation::IInspectable& sender,
+		                                   const winrt::Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs& e);
 
-        void NavView_Navigate(
-            std::wstring navItemTag,
-            Microsoft::UI::Xaml::Media::Animation::NavigationTransitionInfo const& transitionInfo);
+		void NavView_Navigate(
+			std::wstring navItemTag,
+			const Microsoft::UI::Xaml::Media::Animation::NavigationTransitionInfo& transitionInfo);
 
-        void On_Navigated(
-            Windows::Foundation::IInspectable const& /* sender */,
-            Windows::UI::Xaml::Navigation::NavigationEventArgs const& args);
-        void CoreDispatcher_AcceleratorKeyActivated(
-            Windows::UI::Core::CoreDispatcher const& /* sender */,
-            Windows::UI::Core::AcceleratorKeyEventArgs const& args);
-        void CoreWindow_PointerPressed(
-            Windows::UI::Core::CoreWindow const& /* sender */,
-            Windows::UI::Core::PointerEventArgs const& args);
-        void System_BackRequested(
-            Windows::Foundation::IInspectable const& /* sender */,
-            Windows::UI::Core::BackRequestedEventArgs const& args);
-        bool TryGoBack();
+		void On_Navigated(
+			const Windows::Foundation::IInspectable& /* sender */,
+			const Windows::UI::Xaml::Navigation::NavigationEventArgs& args);
+		void CoreDispatcher_AcceleratorKeyActivated(
+			const Windows::UI::Core::CoreDispatcher& /* sender */,
+			const Windows::UI::Core::AcceleratorKeyEventArgs& args);
+		void CoreWindow_PointerPressed(
+			const Windows::UI::Core::CoreWindow& /* sender */,
+			const Windows::UI::Core::PointerEventArgs& args);
+		void System_BackRequested(
+			const Windows::Foundation::IInspectable& /* sender */,
+			const Windows::UI::Core::BackRequestedEventArgs& args);
+		bool TryGoBack();
 
 	private:
 		// Vector of std::pair holding the Navigation Tag and the relative Navigation Page.
 		std::vector<std::pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>> m_pages;
 
-    public:
-        Windows::Foundation::IAsyncAction checkUpdates(winrt::Microsoft::UI::Xaml::UIElement const& show_el, bool show = false, DWORD delay_ms = 0);void InstallLaterButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void InstallNowButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void ExitButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void MinimizeButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        Windows::Foundation::IAsyncAction UpdateButton_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        Windows::Foundation::IAsyncAction UpdateButton_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
-        void HyperlinkButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        Windows::Foundation::IAsyncAction RatingControl_ValueChanged(winrt::Microsoft::UI::Xaml::Controls::RatingControl const& sender, winrt::Windows::Foundation::IInspectable const& args);
-    };
+	public:
+		Windows::Foundation::IAsyncAction checkUpdates(const winrt::Microsoft::UI::Xaml::UIElement& show_el,
+		                                               bool show = false, DWORD delay_ms = 0);
+		void InstallLaterButton_Click(
+			const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void InstallNowButton_Click(const Windows::Foundation::IInspectable& sender,
+		                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ExitButton_Click(const Windows::Foundation::IInspectable& sender,
+		                      const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void MinimizeButton_Click(const Windows::Foundation::IInspectable& sender,
+		                          const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		Windows::Foundation::IAsyncAction UpdateButton_Loaded(const Windows::Foundation::IInspectable& sender,
+		                                                      const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		Windows::Foundation::IAsyncAction UpdateButton_Tapped(const Windows::Foundation::IInspectable& sender,
+		                                                      const
+		                                                      winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs&
+		                                                      e);
+		void HyperlinkButton_Click(const Windows::Foundation::IInspectable& sender,
+		                           const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		Windows::Foundation::IAsyncAction RatingControl_ValueChanged(
+			const winrt::Microsoft::UI::Xaml::Controls::RatingControl& sender,
+			const Windows::Foundation::IInspectable& args);
+	};
 }
 
 namespace winrt::KinectToVR::factory_implementation
 {
-    struct MainWindow : MainWindowT<MainWindow, implementation::MainWindow>
-    {
-    };
+	struct MainWindow : MainWindowT<MainWindow, implementation::MainWindow>
+	{
+	};
 }

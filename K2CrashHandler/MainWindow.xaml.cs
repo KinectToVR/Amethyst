@@ -104,7 +104,7 @@ namespace K2CrashHandler
                                     "Please check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices.";
 
                                 handler.LogException(new MissingFieldException("No devices available"));
-                                }
+                            }
                                 break;
                             case -11:
                             {
@@ -115,7 +115,7 @@ namespace K2CrashHandler
                                     "Please check if SteamVR is running and if your HMD's present and working. Additionally, you can restart SteamVR and additionally check its logs.";
 
                                 handler.LogException(new NotSupportedException("OpenVR initialization error"));
-                                }
+                            }
                                 break;
                             case 0:
                             {
@@ -134,7 +134,7 @@ namespace K2CrashHandler
                                 primaryButtonText = "Join Discord";
 
                                 handler.LogException(new NotImplementedException("Something else this time"));
-                                }
+                            }
                                 break;
                         }
                     }

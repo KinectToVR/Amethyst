@@ -18,15 +18,15 @@ public:
 		//KinectV2Handler::initialize();
 		LOG(INFO) << "Constructing the Kinect V2 (XBONE) Handler for KinectBasis K2TrackingDevice...";
 
-		K2TrackingDeviceBase_KinectBasis::deviceType = ktvr::K2_Kinect;
-		K2TrackingDeviceBase_KinectBasis::deviceName = "Xbox One Kinect";
+		deviceType = ktvr::K2_Kinect;
+		deviceName = "Xbox One Kinect";
 
-		K2TrackingDeviceBase_KinectBasis::deviceCharacteristics = ktvr::K2_Character_Full;
-		K2TrackingDeviceBase_KinectBasis::flipSupported = true;
-		K2TrackingDeviceBase_KinectBasis::appOrientationSupported = true;
+		deviceCharacteristics = ktvr::K2_Character_Full;
+		flipSupported = true;
+		appOrientationSupported = true;
 	}
 
-	virtual ~KinectV2Handler()
+	~KinectV2Handler() override
 	{
 	}
 

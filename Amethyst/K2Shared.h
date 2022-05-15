@@ -251,10 +251,10 @@ namespace k2app::shared
 			setErrorFlyoutText;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
-			flipDropDownGrid;
+		flipDropDownGrid;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
-			flipToggle;
+		flipToggle;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
 			waistTrackerEnabledToggle,

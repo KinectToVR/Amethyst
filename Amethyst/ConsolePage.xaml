@@ -20,7 +20,7 @@
 
         <CheckBox Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom"
                   Checked="ExpCheckBox_Checked" Unchecked="ExpCheckBox_Unchecked"
-                  Margin="17,0,0,10" Content="Please notice me!" 
+                  Margin="17,0,0,10" Content="Please notice me!"
                   FontWeight="Medium" Opacity="0.5" />
 
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
@@ -43,7 +43,8 @@
 
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
                               Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                              x:Name="LanguageOptionBox" Grid.Column="1" DropDownOpened="LanguageOptionBox_DropDownOpened">
+                              x:Name="LanguageOptionBox" Grid.Column="1"
+                              DropDownOpened="LanguageOptionBox_DropDownOpened">
                         <x:String>English</x:String>
                     </ComboBox>
                 </Grid>
@@ -60,9 +61,9 @@
                     </Grid.RowDefinitions>
 
                     <ToggleSplitButton Grid.Column="1" Height="40" x:Name="ToggleTrackingButton"
-                                  Click="ToggleTrackingButton_Click" FontWeight="SemiBold"
-                                  HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                  Content="Freeze" FontSize="16" >
+                                       Click="ToggleTrackingButton_Click" FontWeight="SemiBold"
+                                       HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                       Content="Freeze" FontSize="16">
                         <ToggleSplitButton.Flyout>
                             <Flyout Placement="Bottom">
                                 <Grid Margin="0,0,0,0">
@@ -71,9 +72,11 @@
                                         <ColumnDefinition Width="9*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium" Opacity="1"
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                               FontWeight="Medium" Opacity="1"
                                                x:Name="FreezeOnlyLowerCheckBoxLabel"
-                                               Text="Freeze only lower body trackers&#x0a;(This check is session-persistent)" Margin="30,0,0,0"
+                                               Text="Freeze only lower body trackers&#x0a;(This check is session-persistent)"
+                                               Margin="30,0,0,0"
                                                Grid.Column="0" />
                                     <CheckBox x:Name="FreezeOnlyLowerCheckBox"
                                               Checked="FreezeOnlyLowerCheckBox_Checked"
@@ -127,7 +130,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                            Content="Trigger Crash" FontSize="16" Click="DevicesCrashButton_Click" FontWeight="SemiBold" />
+                            Content="Trigger Crash" FontSize="16" Click="DevicesCrashButton_Click"
+                            FontWeight="SemiBold" />
 
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
@@ -146,7 +150,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                            Content="Trigger Crash" FontSize="16" Click="DelegateCrashButton_Click" FontWeight="SemiBold" />
+                            Content="Trigger Crash" FontSize="16" Click="DelegateCrashButton_Click"
+                            FontWeight="SemiBold" />
 
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
@@ -165,7 +170,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                            Content="Trigger Crash" FontSize="16" Click="HRESULTCrashButton_Click" FontWeight="SemiBold" />
+                            Content="Trigger Crash" FontSize="16" Click="HRESULTCrashButton_Click"
+                            FontWeight="SemiBold" />
 
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"

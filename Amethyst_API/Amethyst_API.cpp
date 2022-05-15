@@ -390,7 +390,7 @@ namespace ktvr
 
 		// Start from the index 2, removing 0A00 occur
 		for (std::string::size_type i = 0; i < s.length(); i += 2)
-			ret << static_cast<char>((int)strtol(s.substr(i, 2).c_str(), nullptr, 16));
+			ret << static_cast<char>(static_cast<int>(strtol(s.substr(i, 2).c_str(), nullptr, 16)));
 
 		return ret.str();
 	}

@@ -30,10 +30,13 @@
                            VerticalAlignment="Center" ToolTipService.ToolTip="What 'bout a double-tap?"
                            DoubleTapped="K2DoubleTapped" />
 
-                    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Margin="30,35,0,0">
+                    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
+                                Margin="30,35,0,0">
                         <TextBlock Margin="0,0,0,0" Text="Amethyst" FontSize="85" VerticalAlignment="Center"
-                                   HorizontalAlignment="Right" ToolTipService.ToolTip="Pls donate if you like us! ˶ᵔ ᵕ ᵔ˶" />
-                        <TextBlock Margin="0,-15,-80,0" Text="by K2VR Team" FontSize="22" VerticalAlignment="Center" FontWeight="SemiBold"
+                                   HorizontalAlignment="Right"
+                                   ToolTipService.ToolTip="Pls donate if you like us! ˶ᵔ ᵕ ᵔ˶" />
+                        <TextBlock Margin="0,-15,-80,0" Text="by K2VR Team" FontSize="22" VerticalAlignment="Center"
+                                   FontWeight="SemiBold"
                                    Opacity="0.5" HorizontalAlignment="Right" ToolTipService.ToolTip="(つ*ヮ*)つ" />
                     </StackPanel>
                 </StackPanel>

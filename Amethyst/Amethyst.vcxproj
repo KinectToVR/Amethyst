@@ -267,11 +267,6 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\autocalibration.png" />
-    <Image Include="Assets\BadgeLogo.scale-100.png" />
-    <Image Include="Assets\BadgeLogo.scale-125.png" />
-    <Image Include="Assets\BadgeLogo.scale-150.png" />
-    <Image Include="Assets\BadgeLogo.scale-200.png" />
-    <Image Include="Assets\BadgeLogo.scale-400.png" />
     <Image Include="Assets\flat_ktvr.ico" />
     <Image Include="Assets\flat_ktvr.png" />
     <Image Include="Assets\hug.gif" />
@@ -349,9 +344,6 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <ProjectReference Include="..\Amethyst_API\Amethyst_API.vcxproj">
       <Project>{3fb99a4e-d168-4efc-b909-ce2951543cf8}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

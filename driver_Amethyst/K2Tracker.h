@@ -13,41 +13,40 @@
 
 // Mapping enum to string for eliminating if-else loop
 const boost::unordered_map<ktvr::ITrackerType, const char*>
-ITrackerType_String = boost::assign::map_list_of
-(ktvr::ITrackerType::Tracker_Handed, "vive_tracker_handed")
-(ktvr::ITrackerType::Tracker_LeftFoot, "vive_tracker_left_foot")
-(ktvr::ITrackerType::Tracker_RightFoot, "vive_tracker_right_foot")
-(ktvr::ITrackerType::Tracker_LeftShoulder, "vive_tracker_left_Shoulder")
-(ktvr::ITrackerType::Tracker_RightShoulder, "vive_tracker_right_shoulder")
-(ktvr::ITrackerType::Tracker_LeftElbow, "vive_tracker_left_elbow")
-(ktvr::ITrackerType::Tracker_RightElbow, "vive_tracker_right_elbow")
-(ktvr::ITrackerType::Tracker_LeftKnee, "vive_tracker_left_knee")
-(ktvr::ITrackerType::Tracker_RightKnee, "vive_tracker_right_knee")
-(ktvr::ITrackerType::Tracker_Waist, "vive_tracker_waist")
-(ktvr::ITrackerType::Tracker_Chest, "vive_tracker_chest")
-(ktvr::ITrackerType::Tracker_Camera, "vive_tracker_camera")
-(ktvr::ITrackerType::Tracker_Keyboard, "vive_tracker_keyboard"),
+	ITrackerType_String = boost::assign::map_list_of
+		(ktvr::ITrackerType::Tracker_Handed, "vive_tracker_handed")
+		(ktvr::ITrackerType::Tracker_LeftFoot, "vive_tracker_left_foot")
+		(ktvr::ITrackerType::Tracker_RightFoot, "vive_tracker_right_foot")
+		(ktvr::ITrackerType::Tracker_LeftShoulder, "vive_tracker_left_Shoulder")
+		(ktvr::ITrackerType::Tracker_RightShoulder, "vive_tracker_right_shoulder")
+		(ktvr::ITrackerType::Tracker_LeftElbow, "vive_tracker_left_elbow")
+		(ktvr::ITrackerType::Tracker_RightElbow, "vive_tracker_right_elbow")
+		(ktvr::ITrackerType::Tracker_LeftKnee, "vive_tracker_left_knee")
+		(ktvr::ITrackerType::Tracker_RightKnee, "vive_tracker_right_knee")
+		(ktvr::ITrackerType::Tracker_Waist, "vive_tracker_waist")
+		(ktvr::ITrackerType::Tracker_Chest, "vive_tracker_chest")
+		(ktvr::ITrackerType::Tracker_Camera, "vive_tracker_camera")
+		(ktvr::ITrackerType::Tracker_Keyboard, "vive_tracker_keyboard"),
 
-ITrackerType_Role_String = boost::assign::map_list_of
-(ktvr::ITrackerType::Tracker_Handed, "TrackerRole_Handed")
-(ktvr::ITrackerType::Tracker_LeftFoot, "TrackerRole_LeftFoot")
-(ktvr::ITrackerType::Tracker_RightFoot, "TrackerRole_RightFoot")
-(ktvr::ITrackerType::Tracker_LeftShoulder, "TrackerRole_LeftShoulder")
-(ktvr::ITrackerType::Tracker_RightShoulder, "TrackerRole_RightShoulder")
-(ktvr::ITrackerType::Tracker_LeftElbow, "TrackerRole_LeftElbow")
-(ktvr::ITrackerType::Tracker_RightElbow, "TrackerRole_RightElbow")
-(ktvr::ITrackerType::Tracker_LeftKnee, "TrackerRole_LeftKnee")
-(ktvr::ITrackerType::Tracker_RightKnee, "TrackerRole_RightKnee")
-(ktvr::ITrackerType::Tracker_Waist, "TrackerRole_Waist")
-(ktvr::ITrackerType::Tracker_Chest, "TrackerRole_Chest")
-(ktvr::ITrackerType::Tracker_Camera, "TrackerRole_Camera")
-(ktvr::ITrackerType::Tracker_Keyboard, "TrackerRole_Keyboard");
+	ITrackerType_Role_String = boost::assign::map_list_of
+		(ktvr::ITrackerType::Tracker_Handed, "TrackerRole_Handed")
+		(ktvr::ITrackerType::Tracker_LeftFoot, "TrackerRole_LeftFoot")
+		(ktvr::ITrackerType::Tracker_RightFoot, "TrackerRole_RightFoot")
+		(ktvr::ITrackerType::Tracker_LeftShoulder, "TrackerRole_LeftShoulder")
+		(ktvr::ITrackerType::Tracker_RightShoulder, "TrackerRole_RightShoulder")
+		(ktvr::ITrackerType::Tracker_LeftElbow, "TrackerRole_LeftElbow")
+		(ktvr::ITrackerType::Tracker_RightElbow, "TrackerRole_RightElbow")
+		(ktvr::ITrackerType::Tracker_LeftKnee, "TrackerRole_LeftKnee")
+		(ktvr::ITrackerType::Tracker_RightKnee, "TrackerRole_RightKnee")
+		(ktvr::ITrackerType::Tracker_Waist, "TrackerRole_Waist")
+		(ktvr::ITrackerType::Tracker_Chest, "TrackerRole_Chest")
+		(ktvr::ITrackerType::Tracker_Camera, "TrackerRole_Camera")
+		(ktvr::ITrackerType::Tracker_Keyboard, "TrackerRole_Keyboard");
 
 class K2Tracker : public vr::ITrackedDeviceServerDriver
 {
 public:
-
-	explicit K2Tracker(ktvr::K2TrackerBase const& tracker_base);
+	explicit K2Tracker(const ktvr::K2TrackerBase& tracker_base);
 	virtual ~K2Tracker() = default;
 
 	/**
@@ -82,12 +81,13 @@ public:
 	 * \brief Activate device (called from OpenVR)
 	 * \return InitError for OpenVR if we're set up correctly
 	 */
-	virtual vr::EVRInitError Activate(vr::TrackedDeviceIndex_t index);
+	vr::EVRInitError Activate(vr::TrackedDeviceIndex_t index) override;
 
 	/**
 	 * \brief Deactivate tracker (remove)
 	 */
-	virtual void Deactivate() {
+	void Deactivate() override
+	{
 		// Clear device id
 		_index = vr::k_unTrackedDeviceIndexInvalid;
 	}
@@ -95,22 +95,30 @@ public:
 	/**
 	 * \brief Handle debug request (not needed/implemented)
 	 */
-	virtual void DebugRequest(const char* request, char* response_buffer, uint32_t response_buffer_size) {
+	void DebugRequest(const char* request, char* response_buffer, uint32_t response_buffer_size) override
+	{
 		// No custom debug requests defined
 		if (response_buffer_size >= 1)
 			response_buffer[0] = 0;
 	}
 
-	virtual void EnterStandby() { }
-	virtual void LeaveStandby() { }
+	void EnterStandby() override
+	{
+	}
+
+	virtual void LeaveStandby()
+	{
+	}
+
 	virtual bool ShouldBlockStandbyMode() { return false; }
 
 	/**
 	 * \brief Get component handle (for OpenVR)
 	 */
-	void* GetComponent(const char* component) {
+	void* GetComponent(const char* component) override
+	{
 		// No extra components on this device so always return nullptr
-		return NULL;
+		return nullptr;
 	}
 
 	/**
@@ -119,10 +127,10 @@ public:
 	vr::DriverPose_t GetPose() override;
 
 	// Update pose
-	void set_pose(ktvr::K2PosePacket const& pose);
+	void set_pose(const ktvr::K2PosePacket& pose);
 
 	// Update data (only if uninitialized)
-	void set_data(ktvr::K2DataPacket const& data);
+	void set_data(const ktvr::K2DataPacket& data);
 
 	void set_state(bool state);
 	bool spawn(); // TrackedDeviceAdded
@@ -136,7 +144,6 @@ public:
 	[[nodiscard]] ktvr::K2TrackerBase getTrackerBase();
 
 private:
-
 	// Tracker base to be returned
 	ktvr::K2TrackerBase _trackerBase;
 

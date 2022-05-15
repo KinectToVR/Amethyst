@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:K2CrashHandler"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:triggers="using:K2CrashHandler.Triggers"
     d:DesignHeight="200"
@@ -85,12 +84,12 @@
                             FontFamily="{StaticResource ContentControlThemeFontFamily}"
                             FontSize="{ThemeResource ContentControlFontSize}"
                             Foreground="{ThemeResource ContentDialogForeground}"
-                            TextWrapping="WrapWholeWords" >
+                            TextWrapping="WrapWholeWords">
                             <TextBlock>
-                                <LineBreak/>
+                                <LineBreak />
                                 <Run>If you're looking for app logs, they're </Run>
                                 <Hyperlink Click="LogsHyperlink_OnClick">here</Hyperlink>
-                                <LineBreak/>
+                                <LineBreak />
                                 <Run>Please consider joining our </Run>
                                 <Hyperlink Click="DiscordHyperlink_OnClick">Discord Server</Hyperlink>
                             </TextBlock>

@@ -74,7 +74,7 @@ namespace k2app
 		template <class Archive>
 		void serialize(Archive& archive, unsigned int version)
 		{
-			archive& BOOST_SERIALIZATION_NVP(trackingDeviceID)
+			archive & BOOST_SERIALIZATION_NVP(trackingDeviceID)
 				& BOOST_SERIALIZATION_NVP(overrideDeviceID)
 				& BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
 				& BOOST_SERIALIZATION_NVP(positionOverrideJointID)

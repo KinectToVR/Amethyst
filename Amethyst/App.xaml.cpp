@@ -10,7 +10,7 @@ using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
 using namespace winrt::Microsoft::UI::Xaml::Navigation;
 using namespace KinectToVR;
-using namespace KinectToVR::implementation;
+using namespace implementation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,15 +49,15 @@ VOID _DBGPRINT(LPCWSTR kwszFunction, INT iLineNumber, LPCWSTR kwszDebugFormatStr
 
 winrt::Microsoft::Windows::AppNotifications::AppNotification CreateToastNotification()
 {
-    winrt::hstring payload =
-        LR"(<toast launch="action = viewDownload &amp; downloadId = 9438108">
+	hstring payload =
+		LR"(<toast launch="action = viewDownload &amp; downloadId = 9438108">
         <visual>
             <binding template = "ToastGeneric">
                 <text>Downloading this week's new music...</text>
             </binding>
         </visual>
     </toast>)";
-    return winrt::Microsoft::Windows::AppNotifications::AppNotification(payload);
+	return winrt::Microsoft::Windows::AppNotifications::AppNotification(payload);
 }
 
 /// <summary>
@@ -66,20 +66,21 @@ winrt::Microsoft::Windows::AppNotifications::AppNotification CreateToastNotifica
 /// </summary>
 App::App()
 {
-    /* Set up everything before the launch */
+	/* Set up everything before the launch */
 
-    // Request the dark theme to be set
-    this->RequestedTheme(ApplicationTheme::Dark);
+	// Request the dark theme to be set
+	this->RequestedTheme(ApplicationTheme::Dark);
 
-    /* Bootstrap here (still waiting for stable 1.1) */
-    
-    /* Initialize the main app and launch it */
+	/* Bootstrap here (still waiting for stable 1.1) */
 
-    InitializeComponent();
-    
-    Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize(Windows::Foundation::Size(1000, 700));
-    Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode(Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize);
-    
+	/* Initialize the main app and launch it */
+
+	InitializeComponent();
+
+	Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize(Size(1000, 700));
+	Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode(
+		Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize);
+
 #if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
     UnhandledException([this](IInspectable const&, UnhandledExceptionEventArgs const& e)
     {
@@ -97,8 +98,8 @@ App::App()
 /// will be used such as when the application is launched to open a specific file.
 /// </summary>
 /// <param name="e">Details about the launch request and process.</param>
-void App::OnLaunched(LaunchActivatedEventArgs const&)
+void App::OnLaunched(const LaunchActivatedEventArgs&)
 {
-    window = make<MainWindow>();
-    window.Activate();
+	window = make<MainWindow>();
+	window.Activate();
 }

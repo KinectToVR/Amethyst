@@ -36,7 +36,7 @@ namespace k2app::interfacing
 		K2AppTracker("AME-L0KNEE00", ktvr::ITrackerType::Tracker_LeftKnee),
 		K2AppTracker("AME-R0KNEE00", ktvr::ITrackerType::Tracker_RightKnee)
 	};
-	
+
 	inline std::pair<Eigen::Vector3f, Eigen::Vector3f> // Position helpers for k2 devices -> Base, Override
 		kinectHeadPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}, // But this one's kinect-only
 		kinectWaistPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}; // This one applies to both bases
@@ -283,32 +283,23 @@ namespace k2app::interfacing
 			LOG(INFO) << "Amethyst manifest is already installed";
 			return 1;
 		}
-		else
+		if (exists(boost::dll::program_location().parent_path() / "Amethyst.vrmanifest"))
 		{
-			if (exists(boost::dll::program_location().parent_path() / "Amethyst.vrmanifest"))
-			{
-				const auto app_error =
-					vr::VRApplications()->AddApplicationManifest(
-						(boost::dll::program_location().parent_path() / "Amethyst.vrmanifest").string().c_str());
+			const auto app_error =
+				vr::VRApplications()->AddApplicationManifest(
+					(boost::dll::program_location().parent_path() / "Amethyst.vrmanifest").string().c_str());
 
-				if (app_error != vr::VRApplicationError_None)
-				{
-					LOG(WARNING) << "Amethyst manifest not installed! Error: (VRApplicationError) " << app_error;
-					return 2;
-				}
-				else
-				{
-					LOG(INFO) << "Amethyst manifest installed at: " <<
-						boost::dll::program_location().parent_path() / "Amethyst.vrmanifest";
-					return 1;
-				}
-			}
-			else
+			if (app_error != vr::VRApplicationError_None)
 			{
-				LOG(WARNING) << "Amethyst vr manifest (./Amethyst.vrmanifest) not found!";
-				return 0;
+				LOG(WARNING) << "Amethyst manifest not installed! Error: (VRApplicationError) " << app_error;
+				return 2;
 			}
+			LOG(INFO) << "Amethyst manifest installed at: " <<
+				boost::dll::program_location().parent_path() / "Amethyst.vrmanifest";
+			return 1;
 		}
+		LOG(WARNING) << "Amethyst vr manifest (./Amethyst.vrmanifest) not found!";
+		return 0;
 	}
 
 	/**
@@ -544,9 +535,9 @@ namespace k2app::interfacing
 
 				// Log that we're finished
 				LOG_IF(INFO, _log) <<
-						"\nFound an active waist tracker with:\n    hint: " <<
-						buf << "\n    serial: " <<
-						buf_p << "\n    id: " << i;
+					"\nFound an active waist tracker with:\n    hint: " <<
+					buf << "\n    serial: " <<
+					buf_p << "\n    id: " << i;
 
 				// Return what we've got
 				return std::make_pair(true, i);
@@ -555,7 +546,7 @@ namespace k2app::interfacing
 
 		// We've failed if the loop's finished
 		LOG_IF(WARNING, _log) <<
-				"Didn't find any waist tracker in SteamVR with a proper role hint (Prop_ControllerType_String)";
+			"Didn't find any waist tracker in SteamVR with a proper role hint (Prop_ControllerType_String)";
 		return std::make_pair(false, vr::k_unTrackedDeviceIndexInvalid);
 	}
 
@@ -585,7 +576,7 @@ namespace k2app::interfacing
 		}
 
 		LOG_IF(WARNING, _log) <<
-					"Either waist tracker doesn't exist or its role hint (Prop_ControllerType_String) was invalid";
+			"Either waist tracker doesn't exist or its role hint (Prop_ControllerType_String) was invalid";
 
 		return std::make_pair(Eigen::Vector3f::Zero(), Eigen::Quaternionf(1, 0, 0, 0));
 	}
@@ -1223,8 +1214,8 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable & sender,
+						const RoutedEventArgs & e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const RoutedEventArgs& e) ->
 					void
@@ -1378,8 +1369,8 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const Controls::NumberBoxValueChangedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable & sender,
+						const Controls::NumberBoxValueChangedEventArgs & e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const Controls::NumberBoxValueChangedEventArgs
 					                     & e) ->
@@ -1577,8 +1568,8 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const Controls::SelectionChangedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable & sender,
+						const Controls::SelectionChangedEventArgs & e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const Controls::SelectionChangedEventArgs
 					                     & e) ->
@@ -1723,8 +1714,8 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable & sender,
+						const RoutedEventArgs & e)>
 					_n_callback_checked = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                             const RoutedEventArgs& e) ->
 					void
@@ -1735,8 +1726,8 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable & sender,
+						const RoutedEventArgs & e)>
 					_n_callback_unchecked = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                               const RoutedEventArgs& e) ->
 					void
@@ -1883,8 +1874,8 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable & sender,
+						const RoutedEventArgs & e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const RoutedEventArgs& e) ->
 					void
@@ -2020,8 +2011,8 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const Input::KeyRoutedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable & sender,
+						const Input::KeyRoutedEventArgs & e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const Input::KeyRoutedEventArgs& e) ->
 					void

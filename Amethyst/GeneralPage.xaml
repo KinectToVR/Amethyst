@@ -1713,7 +1713,7 @@
             <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Canvas.ZIndex="-1"
                     x:Name="SkeletonDrawingCanvas" Loaded="SkeletonDrawingCanvas_Loaded">
                 <Canvas.Clip>
-                    <RectangleGeometry Rect="0,0,10000000,10000000"/>
+                    <RectangleGeometry Rect="0,0,10000000,10000000" />
                 </Canvas.Clip>
             </Canvas>
 

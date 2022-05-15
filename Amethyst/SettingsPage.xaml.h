@@ -7,72 +7,135 @@
 
 namespace winrt::KinectToVR::implementation
 {
-    struct SettingsPage : SettingsPageT<SettingsPage>
-    {
-        SettingsPage();
-        void WaistOnToggle_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void WaistOnToggle_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void LeftFootOnToggle_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void LeftFootOnToggle_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void RightFootOnToggle_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void RightFootOnToggle_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void LeftElbowOnToggle_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void LeftElbowOnToggle_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void RightElbowOnToggle_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void RightElbowOnToggle_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-    	void LeftKneeOnToggle_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void LeftKneeOnToggle_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void RightKneeOnToggle_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void RightKneeOnToggle_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void ExternalFlipCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void ExternalFlipCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void RestartButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void ResetButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void SettingsPage_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void AutoSpawn_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void AutoSpawn_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void EnableSounds_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void EnableSounds_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void SoundsVolumeSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& e);
-        void CalibrateExternalFlipMenuFlyoutItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void WaistDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
-        Windows::Foundation::IAsyncAction WaistTrackerEnabledToggle_Toggled(
-	        winrt::Windows::Foundation::IInspectable const& sender,
-	        winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void WaistPositionFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
-        void FeetDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
-        Windows::Foundation::IAsyncAction FeetTrackersEnabledToggle_Toggled(
-	        winrt::Windows::Foundation::IInspectable const& sender,
-	        winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void FeetPositionFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
-        void FeetRotationFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
-        void WaistRotationFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
-        void KneesDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
-        Windows::Foundation::IAsyncAction KneeTrackersEnabledToggle_Toggled(
-	        winrt::Windows::Foundation::IInspectable const& sender,
-	        winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void KneePositionFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
-        void KneeRotationFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
-        void ElbowsDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
-        Windows::Foundation::IAsyncAction ElbowTrackersEnabledToggle_Toggled(
-	        winrt::Windows::Foundation::IInspectable const& sender,
-	        winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void ElbowsPositionFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
-        void ElbowsRotationFilterOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
-        void FlipDropDown_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
-        void FlipToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void AutoStartFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
-        void AutoStartCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void AutoStartCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void ReManifestButton_Click(winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args);
-        void ReRegisterButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void DismissSetErrorButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-    };
+	struct SettingsPage : SettingsPageT<SettingsPage>
+	{
+		SettingsPage();
+		void WaistOnToggle_Checked(const Windows::Foundation::IInspectable& sender,
+		                           const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void WaistOnToggle_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                             const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void LeftFootOnToggle_Checked(const Windows::Foundation::IInspectable& sender,
+		                              const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void LeftFootOnToggle_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                                const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void RightFootOnToggle_Checked(const Windows::Foundation::IInspectable& sender,
+		                               const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void RightFootOnToggle_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void LeftElbowOnToggle_Checked(const Windows::Foundation::IInspectable& sender,
+		                               const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void LeftElbowOnToggle_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void RightElbowOnToggle_Checked(const Windows::Foundation::IInspectable& sender,
+		                                const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void RightElbowOnToggle_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                                  const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void LeftKneeOnToggle_Checked(const Windows::Foundation::IInspectable& sender,
+		                              const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void LeftKneeOnToggle_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                                const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void RightKneeOnToggle_Checked(const Windows::Foundation::IInspectable& sender,
+		                               const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void RightKneeOnToggle_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ExternalFlipCheckBox_Checked(const Windows::Foundation::IInspectable& sender,
+		                                  const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ExternalFlipCheckBox_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                                    const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void RestartButton_Click(const Windows::Foundation::IInspectable& sender,
+		                         const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ResetButton_Click(const Windows::Foundation::IInspectable& sender,
+		                       const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void SettingsPage_Loaded(const Windows::Foundation::IInspectable& sender,
+		                         const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void AutoSpawn_Checked(const Windows::Foundation::IInspectable& sender,
+		                       const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void AutoSpawn_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                         const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void EnableSounds_Checked(const Windows::Foundation::IInspectable& sender,
+		                          const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void EnableSounds_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void SoundsVolumeSlider_ValueChanged(const Windows::Foundation::IInspectable& sender,
+		                                     const
+		                                     winrt::Microsoft::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs
+		                                     & e);
+		void CalibrateExternalFlipMenuFlyoutItem_Click(const Windows::Foundation::IInspectable& sender,
+		                                               const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void WaistDropDown_Expanding(const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+		                             const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args);
+		Windows::Foundation::IAsyncAction WaistTrackerEnabledToggle_Toggled(
+			const Windows::Foundation::IInspectable& sender,
+			const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void WaistPositionFilterOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
+		                                                   const
+		                                                   winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
+		                                                   & e);
+		void FeetDropDown_Expanding(const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+		                            const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args);
+		Windows::Foundation::IAsyncAction FeetTrackersEnabledToggle_Toggled(
+			const Windows::Foundation::IInspectable& sender,
+			const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void FeetPositionFilterOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
+		                                                  const
+		                                                  winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
+		                                                  & e);
+		void FeetRotationFilterOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
+		                                                  const
+		                                                  winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
+		                                                  & e);
+		void WaistRotationFilterOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
+		                                                   const
+		                                                   winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
+		                                                   & e);
+		void KneesDropDown_Expanding(const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+		                             const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args);
+		Windows::Foundation::IAsyncAction KneeTrackersEnabledToggle_Toggled(
+			const Windows::Foundation::IInspectable& sender,
+			const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void KneePositionFilterOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
+		                                                  const
+		                                                  winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
+		                                                  & e);
+		void KneeRotationFilterOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
+		                                                  const
+		                                                  winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
+		                                                  & e);
+		void ElbowsDropDown_Expanding(const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+		                              const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args);
+		Windows::Foundation::IAsyncAction ElbowTrackersEnabledToggle_Toggled(
+			const Windows::Foundation::IInspectable& sender,
+			const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ElbowsPositionFilterOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
+		                                                    const
+		                                                    winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
+		                                                    & e);
+		void ElbowsRotationFilterOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
+		                                                    const
+		                                                    winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
+		                                                    & e);
+		void FlipDropDown_Expanding(const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+		                            const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args);
+		void FlipToggle_Toggled(const Windows::Foundation::IInspectable& sender,
+		                        const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void AutoStartFlyout_Opening(const Windows::Foundation::IInspectable& sender,
+		                             const Windows::Foundation::IInspectable& e);
+		void AutoStartCheckBox_Checked(const Windows::Foundation::IInspectable& sender,
+		                               const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void AutoStartCheckBox_Unchecked(const Windows::Foundation::IInspectable& sender,
+		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ReManifestButton_Click(const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
+		                            const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args);
+		void ReRegisterButton_Click(const Windows::Foundation::IInspectable& sender,
+		                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void DismissSetErrorButton_Click(const Windows::Foundation::IInspectable& sender,
+		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+	};
 }
 
 namespace winrt::KinectToVR::factory_implementation
 {
-    struct SettingsPage : SettingsPageT<SettingsPage, implementation::SettingsPage>
-    {
-    };
+	struct SettingsPage : SettingsPageT<SettingsPage, implementation::SettingsPage>
+	{
+	};
 }

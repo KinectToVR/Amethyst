@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -15,8 +11,8 @@ namespace K2InsightsHandler
     [ClassInterface(ClassInterfaceType.None)]
     public class InsightsHandler
     {
-        private TelemetryConfiguration _ = TelemetryConfiguration.Active;
         private readonly TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
+        private TelemetryConfiguration _ = TelemetryConfiguration.Active;
 
         private TelemetryClient tc = new TelemetryClient(); // Hollow
 

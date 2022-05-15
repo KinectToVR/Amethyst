@@ -31,14 +31,14 @@ namespace winrt::KinectToVR::implementation
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	console_setup_finished = true;
 	k2app::shared::other::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
 	k2app::shared::other::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		                                                  ? box_value(L"Unfreeze")
-		                                                  : box_value(L"Freeze"));
+		                                                        ? box_value(L"Unfreeze")
+		                                                        : box_value(L"Freeze"));
 	k2app::shared::other::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
 	LOG(INFO) << "Experiments page setup finished.";
 
@@ -46,8 +46,8 @@ void winrt::KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::ExpCheckBox_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::ConsolePage::ExpCheckBox_Checked(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (!console_setup_finished)return;
 
@@ -56,8 +56,8 @@ void winrt::KinectToVR::implementation::ConsolePage::ExpCheckBox_Checked(
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::ExpCheckBox_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::ConsolePage::ExpCheckBox_Unchecked(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (!console_setup_finished)return;
 
@@ -66,36 +66,36 @@ void winrt::KinectToVR::implementation::ConsolePage::ExpCheckBox_Unchecked(
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::DevicesCrashButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::ConsolePage::DevicesCrashButton_Click(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	exit(-12);
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::OpenVRCrashButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::ConsolePage::OpenVRCrashButton_Click(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	exit(-11);
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::HRESULTCrashButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::ConsolePage::HRESULTCrashButton_Click(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	winrt::check_hresult(FALSE);
+	check_hresult(FALSE);
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::DelegateCrashButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::ConsolePage::DelegateCrashButton_Click(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	throw winrt::hresult_illegal_delegate_assignment();
+	throw hresult_illegal_delegate_assignment();
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::NullCrashButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::ConsolePage::NullCrashButton_Click(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// This is only a sample, null pointer exceptions
 	//      actually happen sometimes, e.g. if an element
@@ -106,32 +106,38 @@ void winrt::KinectToVR::implementation::ConsolePage::NullCrashButton_Click(
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::ToggleTrackingButton_Click(winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args)
+void KinectToVR::implementation::ConsolePage::ToggleTrackingButton_Click(
+	const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args)
 {
 	k2app::interfacing::isTrackingFrozen = !k2app::interfacing::isTrackingFrozen;
 
 	k2app::shared::other::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
 	k2app::shared::other::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		? box_value(L"Unfreeze")
-		: box_value(L"Freeze"));
+		                                                        ? box_value(L"Unfreeze")
+		                                                        : box_value(L"Freeze"));
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::FreezeOnlyLowerCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::ConsolePage::FreezeOnlyLowerCheckBox_Checked(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	k2app::K2Settings.freezeLowerOnly = true;
 	k2app::K2Settings.saveSettings();
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::FreezeOnlyLowerCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void KinectToVR::implementation::ConsolePage::FreezeOnlyLowerCheckBox_Unchecked(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	k2app::K2Settings.freezeLowerOnly = false;
 	k2app::K2Settings.saveSettings();
 }
 
 
-void winrt::KinectToVR::implementation::ConsolePage::LanguageOptionBox_DropDownOpened(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+void KinectToVR::implementation::ConsolePage::LanguageOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender,
+	const Windows::Foundation::IInspectable& e)
 {
 	ShellExecuteA(nullptr, nullptr, "https://www.google.com/search?q=learn+english", nullptr, nullptr, SW_SHOW);
 }
