@@ -43,7 +43,7 @@ namespace K2CrashHandler
 
         private void LogsHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
         {
-            var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "KinectToVR\\logs");
+            var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst\\logs");
 
             Process.Start("explorer.exe", appData);
         }

@@ -67,13 +67,13 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "KinectToVR Team"
-            VALUE "FileDescription", "KinectToVR (Amethyst) PSMS Plugin"
+            VALUE "CompanyName", "K2VR Team"
+            VALUE "FileDescription", "Amethyst PSMS Plugin"
             VALUE "FileVersion", "1.0.1.8"
             VALUE "InternalName", "device_PSMoveService.dll"
             VALUE "LegalCopyright", "Copyright (C) 2022"
             VALUE "OriginalFilename", "device_PSMoveService.dll"
-            VALUE "ProductName", "KinectToVR PSMS Plugin"
+            VALUE "ProductName", "Amethyst PSMS Plugin"
             VALUE "ProductVersion", "1.0.1.8"
         END
     END

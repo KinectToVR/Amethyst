@@ -9,8 +9,8 @@
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>
 
-#include "KinectToVR_API_Devices.h"
-#include "KinectToVR_API_Paths.h"
+#include "Amethyst_API_Devices.h"
+#include "Amethyst_API_Paths.h"
 
 /* Not exported */
 

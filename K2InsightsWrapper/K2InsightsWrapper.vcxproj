@@ -57,10 +57,10 @@
       <AdditionalDependencies />
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\KinectToVR"
+      <Command>mkdir "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\Amethyst"
 
-powershell Copy-Item -Force "$(OutDir)K2InsightsWrapper.dll" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\KinectToVR\K2InsightsWrapper.dll"
-powershell Copy-Item -Force "$(OutDir)K2InsightsWrapper.dll.metagen" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\KinectToVR\K2InsightsWrapper.dll.metagen"</Command>
+powershell Copy-Item -Force "$(OutDir)K2InsightsWrapper.dll" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\Amethyst\K2InsightsWrapper.dll"
+powershell Copy-Item -Force "$(OutDir)K2InsightsWrapper.dll.metagen" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\Amethyst\K2InsightsWrapper.dll.metagen"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -74,10 +74,10 @@ powershell Copy-Item -Force "$(OutDir)K2InsightsWrapper.dll.metagen" "$(Solution
       <AdditionalDependencies />
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\KinectToVR"
+      <Command>mkdir "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\Amethyst"
 
-powershell Copy-Item -Force "$(OutDir)K2InsightsWrapper.dll" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\KinectToVR\K2InsightsWrapper.dll"
-powershell Copy-Item -Force "$(OutDir)K2InsightsWrapper.dll.metagen" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\KinectToVR\K2InsightsWrapper.dll.metagen"</Command>
+powershell Copy-Item -Force "$(OutDir)K2InsightsWrapper.dll" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\Amethyst\K2InsightsWrapper.dll"
+powershell Copy-Item -Force "$(OutDir)K2InsightsWrapper.dll.metagen" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\Amethyst\K2InsightsWrapper.dll.metagen"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

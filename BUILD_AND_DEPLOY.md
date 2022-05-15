@@ -91,8 +91,8 @@ Follow these steps:
     -replace('"installationPath": "','') -replace('",',''))".Trim() + "\\MSBuild\\Current\\Bin\\MSBuild.exe"
 
   # Restore NuGet packages and build everything. Remove the /m:3 if your PC is kinda slow (or just give up)
-  > &"$msbuild" KinectToVR.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
-  > &"$msbuild" KinectToVR.sln /m:3 "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
+  > &"$msbuild" Amethyst.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
+  > &"$msbuild" Amethyst.sln /m:3 "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
   ```
 
 ## **Deployment**
@@ -100,7 +100,7 @@ The whole output can be found in ```x64/Release``` directory<br>
 (or ```x64/Debug``` if you're building for ```Debug```, naturally) and:
  - The assembled ```K2Driver``` is inside the ```driver/``` folder
  - Devices (plugins) are inside ```devices/``` folder
- - Deployed app is inside ```KinectToVR/``` folder, along with devices (plugins)<br>
+ - Deployed app is inside ```Amethyst/``` folder, along with devices (plugins)<br>
  - To run the deployed app you need [VC2022 Redist](https://aka.ms/vs/17/release/vc_redist.x64.exe), [.NET6 Redist](https://download.visualstudio.microsoft.com/download/pr/7f3a766e-9516-4579-aaf2-2b150caa465c/d57665f880cdcce816b278a944092965/windowsdesktop-runtime-6.0.3-win-x64.exe
 ) and [WASDK Runtime](https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads).
  - **Note:** you can't interface a ```Release``` devices with a ```Debug``` app! (driver yes tho)

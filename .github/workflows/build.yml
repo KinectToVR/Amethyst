@@ -84,8 +84,8 @@ jobs:
               Select-String -Pattern "Studio" | Select-Object -First 1 | Select-String -Pattern "installationPath")" `
               -replace('"installationPath": "','') -replace('",',''))".Trim() + "\\MSBuild\\Current\\Bin\\MSBuild.exe"
           
-          &"$msbuild" KinectToVR.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
-          &"$msbuild" KinectToVR.sln /m:3 "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
+          &"$msbuild" Amethyst.sln /t:restore "/p:Configuration=Release;Platform=x64;RestorePackagesConfig=true"
+          &"$msbuild" Amethyst.sln /m:3 "/p:Configuration=Release;Platform=x64;BuildInParallel=true"
 
       - name: Get short commit SHA
         id: slug
@@ -104,6 +104,6 @@ jobs:
       - name: Prepare Release zip
         run: |
           mkdir Release; cd Release
-          cp -r ../x64/Release/KinectToVR/* ./
-          cp -r ../x64/Release/driver/KinectToVR/* ./KinectToVR
+          cp -r ../x64/Release/Amethyst/* ./
+          cp -r ../x64/Release/driver/Amethyst/* ./Amethyst
           7z a "Amethyst-Release-${{ steps.slug.outputs.slug }}.zip" *

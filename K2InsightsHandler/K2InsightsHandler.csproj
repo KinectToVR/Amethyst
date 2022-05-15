@@ -70,6 +70,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y /i /e "$(ProjectDir)$(OutDir)*" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\KinectToVR"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y /i /e "$(ProjectDir)$(OutDir)*" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\Amethyst"</PostBuildEvent>
   </PropertyGroup>
 </Project>

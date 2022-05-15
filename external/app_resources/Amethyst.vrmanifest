@@ -3,12 +3,12 @@
 	"applications": [{
 		"app_key": "KinectToVR.Amethyst",
 		"launch_type": "binary",
-		"binary_path_windows": "KinectToVR.exe",
+		"binary_path_windows": "Amethyst.exe",
 		"is_dashboard_overlay": true,
 
 		"strings": {
 			"en_us": {
-				"name": "KinectToVR (Amethyst)",
+				"name": "Amethyst",
 				"description": "Full-Body Tracking"
 			}
 		}

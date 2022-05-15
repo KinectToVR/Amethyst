@@ -1,5 +1,5 @@
 #pragma once
-#include <KinectToVR_API.h>
+#include <Amethyst_API.h>
 #include "LowPassFilter.h"
 #include "KalmanFilter.h"
 

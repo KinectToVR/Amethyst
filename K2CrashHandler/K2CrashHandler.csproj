@@ -12,14 +12,14 @@
     <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
     <WindowsPackageType>None</WindowsPackageType>
     <ApplicationIcon>Assets\crashhandler.ico</ApplicationIcon>
-    <Authors>KinectToVR</Authors>
-    <Description>KinectToVR (Ame) Crash and Recovery Handler</Description>
+    <Authors>K2VR Team</Authors>
+    <Description>Amethyst Crash and Recovery Handler</Description>
     <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
-    <Copyright>(c) KinectToVR</Copyright>
+    <Copyright>(c) K2VR Team</Copyright>
     <BaseOutputPath>$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\</BaseOutputPath>
     <FileVersion>1.0.1.8</FileVersion>
     <AssemblyVersion>1.0.1.8</AssemblyVersion>
-    <RepositoryUrl>https://github.com/KinectToVR/K2App</RepositoryUrl>
+    <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
     <Version>1.0.1.8</Version>
   </PropertyGroup>
 
@@ -44,6 +44,6 @@
     <ProjectReference Include="..\K2InsightsHandler\K2InsightsHandler.csproj" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y /i /e &quot;$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\KinectToVR\K2CrashHandler&quot;" />
+    <Exec Command="xcopy /y /i /e &quot;$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\K2CrashHandler&quot;" />
   </Target>
 </Project>

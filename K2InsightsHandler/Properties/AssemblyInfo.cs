@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("K2InsightsHandler")]
-[assembly: AssemblyDescription("AI .NET Handler for KinectToVR/Amethyst")]
+[assembly: AssemblyDescription("AI .NET Handler for Amethyst")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("KinectToVR")]
+[assembly: AssemblyCompany("K2VR Team")]
 [assembly: AssemblyProduct("K2InsightsHandler")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]

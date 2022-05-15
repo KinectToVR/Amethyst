@@ -57,7 +57,7 @@ namespace K2CrashHandler.Helpers
             }
 
             SteamVrSettingsPath = Path.Combine(SteamPath, "config", "steamvr.vrsettings");
-            CopiedDriverPath = Path.Combine(SteamVrPath, "drivers", "KinectToVR");
+            CopiedDriverPath = Path.Combine(SteamVrPath, "drivers", "Amethyst");
 
             if (!File.Exists(SteamVrSettingsPath))
             {

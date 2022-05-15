@@ -1,0 +1,176 @@
+﻿<Window
+    x:Class="KinectToVR.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:KinectToVR"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
+
+    <!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
+    <Grid MinHeight="600" MinWidth="1000" Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
+          x:Name="XMainGrid">
+
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="62" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="28" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1"
+                  x:Name="DragElement" Canvas.ZIndex="1" />
+        </Grid>
+
+        <muxc:NavigationView x:Name="NavView"
+                             IsTabStop="False"
+                             Margin="0,28,0,0"
+                             IsTitleBarAutoPaddingEnabled="False"
+                             Loaded="NavView_Loaded"
+                             ItemInvoked="NavView_ItemInvoked"
+                             BackRequested="NavView_BackRequested"
+                             Grid.Row="1" CompactPaneLength="60"
+                             OpenPaneLength="197"
+                             FontSize="16"
+                             PaneDisplayMode="Left"
+                             IsPaneOpen="False"
+                             SelectionFollowsFocus="Enabled"
+                             IsBackButtonVisible="Collapsed"
+                             IsSettingsVisible="False"
+                             SelectedItem="general"
+                             FontWeight="Bold">
+
+            <muxc:NavigationView.PaneHeader>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,10,0">
+                    Amethyst
+                </TextBlock>
+            </muxc:NavigationView.PaneHeader>
+
+            <!--Note: Disable/Delete this if using LeftCompat instead of Left pane mode-->
+            <NavigationView.Resources>
+                <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent"/>
+                <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="Transparent" />
+            </NavigationView.Resources>
+
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Icon="Home" Margin="0,10,0,5"
+                                         Content="General" Tag="general" x:Name="GeneralItem" />
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Icon="Setting" Margin="0,5,0,5"
+                                         Content="Settings" Tag="settings" x:Name="SettingsItem" />
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"
+                                         Content="Devices" Tag="devices" x:Name="DevicesItem">
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE88E;" />
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"
+                                         Content="Info" Tag="info" x:Name="InfoItem">
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"
+                                         Content="お菓子！" Tag="console" x:Name="ConsoleItem"
+                                         Visibility="Collapsed">
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEB51;" />
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+            </muxc:NavigationView.MenuItems>
+
+            <muxc:NavigationView.PaneFooter>
+                <muxc:NavigationViewItem x:Name="UpdateButton" 
+                                         Tapped="UpdateButton_Tapped"
+                                         Loaded="UpdateButton_Loaded">
+
+                    <muxc:NavigationViewItem.Resources>
+                        <Flyout x:Name="RatingFlyout">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="How do you like this build?" FontWeight="SemiBold" />
+                                <RatingControl x:Name="BetaRatingControl" IsClearEnabled="False" 
+                                               IsReadOnly="False" Margin="0,5" ValueChanged="RatingControl_ValueChanged" />
+                                <Grid>
+                                    <HyperlinkButton Content="Learn more" HorizontalAlignment="Right" 
+                                                     FontSize="11" NavigateUri="https://github.com/KinectToVR/Amethyst#beta-rating" />
+                                    <HyperlinkButton Content="Don't ask me" HorizontalAlignment="Left" 
+                                                     FontSize="11" Click="HyperlinkButton_Click" />
+                                </Grid>
+                            </StackPanel>
+                        </Flyout>
+                    </muxc:NavigationViewItem.Resources>
+
+                    <FlyoutBase.AttachedFlyout>
+                        <Flyout x:Name="UpdateFlyout">
+                            <StackPanel>
+                                <TextBlock x:Name="FlyoutHeader" FontSize="17"
+                                           Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
+                                <TextBlock x:Name="FlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
+                                <TextBlock x:Name="FlyoutContent" Margin="0,0,0,12" />
+                                <StackPanel Orientation="Horizontal">
+                                    <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click"
+                                            Content="Install Later" Margin="0,0,5,0" />
+                                    <Button x:Name="InstallNowButton" Click="InstallNowButton_Click"
+                                            Content="Install Now" Margin="5,0,0,0"
+                                            Style="{StaticResource AccentButtonStyle}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Flyout>
+                    </FlyoutBase.AttachedFlyout>
+
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" 
+                                  Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5">
+                            <FontIcon.RenderTransform>
+                                <CompositeTransform />
+                            </FontIcon.RenderTransform>
+                        </FontIcon>
+                    </muxc:NavigationViewItem.Icon>
+
+                    <Grid>
+                        <TextBlock Text="Updates" FontSize="16" FontWeight="SemiBold"/>
+
+                        <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="15" IsHitTestVisible="False"
+                                  HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                                  RenderTransformOrigin="0.5,0.5" Visibility="Collapsed" Margin="-34,0,0,1">
+                            <FontIcon.RenderTransform>
+                                <CompositeTransform />
+                            </FontIcon.RenderTransform>
+                        </FontIcon>
+                    </Grid>
+                </muxc:NavigationViewItem>
+            </muxc:NavigationView.PaneFooter>
+
+            <Frame x:Name="ContentFrame" NavigationFailed="ContentFrame_NavigationFailed" />
+        </muxc:NavigationView>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="Collapsed"
+                    VerticalAlignment="Top" Canvas.ZIndex="1" Margin="20">
+            <Grid Height="35" Width="35" Margin="0,0,10,0">
+                <FontIcon Glyph="&#xE921;" FontSize="13" Canvas.ZIndex="1" IsHitTestVisible="False" />
+                <Button Height="35" Width="35" Click="MinimizeButton_Click"
+                        Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}" />
+            </Grid>
+            <Grid Height="35" Width="35">
+                <FontIcon Glyph="&#xE8BB;" FontSize="13" Canvas.ZIndex="1" IsHitTestVisible="False" />
+                <Button Height="35" Width="35" Click="ExitButton_Click"
+                        Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}" />
+            </Grid>
+        </StackPanel>
+
+        <Grid.Resources>
+            <Storyboard x:Name="IconRotation" AutoReverse="False" RepeatBehavior="Forever">
+                <DoubleAnimation Duration="0:0:1" To="360"
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)"
+                                 Storyboard.TargetName="UpdateIcon" />
+            </Storyboard>
+        </Grid.Resources>
+
+    </Grid>
+
+</Window>

@@ -5,8 +5,8 @@
 #include <SharedConstants.h>
 #include <glog/logging.h>
 
-#include "KinectToVR_API_Devices.h"
-#include "KinectToVR_API_Paths.h"
+#include "Amethyst_API_Devices.h"
+#include "Amethyst_API_Paths.h"
 
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/memory.hpp>

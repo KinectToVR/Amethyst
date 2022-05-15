@@ -24,10 +24,10 @@ namespace K2CrashHandler
             InitializeComponent();
 
             // Prepare placeholder strings (recovery mode)
-            string handlerTitle = "KinectToVR Recovery",
+            string handlerTitle = "Amethyst Recovery",
                 handlerContent =
                     "Looks like you've manually ran the Crash Handler. What would you like to do?\n\n" +
-                    "If the KinectToVR driver for SteamVR is not being detected properly, you can re-register the SteamVR driver (button below) and then try again.",
+                    "If the Amethyst driver for SteamVR is not being detected properly, you can re-register the SteamVR driver (button below) and then try again.",
                 primaryButtonText = "Re-Register Driver",
                 secondaryButtonText = "Close";
 
@@ -79,7 +79,7 @@ namespace K2CrashHandler
                         handler.Initialize();
 
                         // Parse the exit code into strings
-                        handlerTitle = "KinectToVR's given you up!";
+                        handlerTitle = "Amethyst's given you up!";
                         primaryButtonText = "View Docs";
                         switch (ProcessExitCode)
                         {
@@ -146,7 +146,7 @@ namespace K2CrashHandler
                 else
                 {
                     // Parse the strings
-                    handlerTitle = "KinectToVR Already Running!";
+                    handlerTitle = "Amethyst Already Running!";
                     primaryButtonText = "View Docs";
 
                     primaryButtonHandler = Action_ForceQuit;
@@ -165,9 +165,9 @@ namespace K2CrashHandler
             // Set window title, drag-space and size
             Title = launcherMode
                 ? relaunchMode
-                    ? "KinectToVR Already Running!"
-                    : "KinectToVR Crash Handler"
-                : "KinectToVR Recovery";
+                    ? "Amethyst Already Running!"
+                    : "Amethyst Crash Handler"
+                : "Amethyst Recovery";
 
             //this.ExtendsContentIntoTitleBar = true;
             //this.SetTitleBar(DragElement);
@@ -236,7 +236,7 @@ namespace K2CrashHandler
         private void Action_ResetConfig(object sender, RoutedEventArgs e)
         {
             File.Delete(Path.Combine(Environment.GetFolderPath(
-                Environment.SpecialFolder.ApplicationData), "KinectToVR", "KinectToVR_settings.xml"));
+                Environment.SpecialFolder.ApplicationData), "Amethyst", "Amethyst_settings.xml"));
         }
 
         private void Action_VRDocs(object sender, RoutedEventArgs e)
@@ -256,7 +256,7 @@ namespace K2CrashHandler
 
         private void Action_ForceQuit(object sender, RoutedEventArgs e)
         {
-            foreach (var process in Process.GetProcessesByName("KinectToVR"))
+            foreach (var process in Process.GetProcessesByName("Amethyst"))
                 process.Kill();
         }
 
