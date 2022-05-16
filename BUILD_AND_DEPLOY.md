@@ -1,6 +1,6 @@
-## **Build Amethyst (K2App)**
+## **Build Amethyst**
 You'll need:
- - The ```K2App``` repo cloned somewhere and ```cd```'d into
+ - The ```Amethyst``` repo cloned somewhere and ```cd```'d into
  - (For building plugins) Kinect SDK 1.8 & 2.0 installed and in PATH
  - (For testing purpose) Working installation of SteamVR
 
@@ -83,7 +83,7 @@ Follow these steps:
   > cd ../../..
   ```
 
-- Build the K2App:<br>
+- Build Amethyst:<br>
   ```powershell
   # Use the downloaded vswhere tool (again) to find msbuild. Skip this step if you use the Dev Powershell
   > $msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Select-String -Pattern "2022" | `

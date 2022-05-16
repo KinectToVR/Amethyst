@@ -1,9 +1,4 @@
-<h1 dir=auto>
-<b>K2App</b>
-<text>(&nbspCodename</text>
-<text style="color:#9966cc;">Amethyst</text>
-<text>)</text>
-</h1>
+# **Amethyst**
 
 ## <ins>__[Discord server](https://discord.gg/YBQCRDG)__</ins> and I'm **公彦赤屋先#5023**
 

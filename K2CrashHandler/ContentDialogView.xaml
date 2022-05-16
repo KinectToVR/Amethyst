@@ -118,7 +118,55 @@
                         Margin="{StaticResource ContentDialogButton1HostMargin}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        d:Content="OK" />
+                        d:Content="OK" >
+
+                        <FlyoutBase.AttachedFlyout>
+                            <Flyout x:Name="ConfirmationFlyout" Closing="ConfirmationFlyout_Closing">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+
+                                    <Grid Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button FontSize="15" x:Name="ConfirmationFlyoutConfirmActionButton"
+                                                    Click="ConfirmationFlyoutConfirmActionButton_Click"
+                                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                                    Content="[ NOT SET ]"
+                                                    Margin="0,10,5,0" CornerRadius="3" Grid.Column="0"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Style="{ThemeResource AccentButtonStyle}" />
+
+                                        <Button FontSize="15" x:Name="ConfirmationFlyoutCancelActionButton"
+                                                    Click="ConfirmationFlyoutCancelActionButton_Click"
+                                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                                    Content="[ NOT SET ]"
+                                                    Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch" />
+
+                                    </Grid>
+
+                                    <TextBlock FontSize="15" HorizontalAlignment="Stretch"
+                                                   VerticalAlignment="Stretch" x:Name="ConfirmationFlyoutContent"
+                                                   Grid.Row="0" FontWeight="SemiBold"
+                                                   Style="{ThemeResource BaseTextBlockStyle}"
+                                                   Text="[ TEXT CONTENT NOT SET ]" />
+
+                                </Grid>
+                            </Flyout>
+                        </FlyoutBase.AttachedFlyout>
+
+                    </Button>
 
                     <Button
                         x:Name="DialogSecondaryButton"

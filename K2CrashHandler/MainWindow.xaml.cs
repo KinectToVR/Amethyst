@@ -1,13 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Windows.Graphics;
 using K2CrashHandler.Helpers;
 using K2InsightsHandler;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -18,6 +24,7 @@ namespace K2CrashHandler
     public sealed partial class MainWindow : Window
     {
         public static int ProcessExitCode;
+        public static ContentDialogView DialogView;
 
         public MainWindow()
         {
@@ -211,7 +218,7 @@ namespace K2CrashHandler
                 .GetWindowHandle(this));
 
             // Construct the dialog
-            var dialogView = new ContentDialogView
+            DialogView = new ContentDialogView
             (
                 handlerTitle,
                 handlerContent,
@@ -223,14 +230,211 @@ namespace K2CrashHandler
             );
 
             // And push it into the main grid
-            RGrid.Children.Add(dialogView);
+            RGrid.Children.Add(DialogView);
         }
 
-        private void Action_ReRegister(object sender, RoutedEventArgs e)
+        private async void Action_ReRegister(object sender, RoutedEventArgs e)
         {
             VRHelper helper = new();
-            helper.UpdateSteamPaths();
-            // TODO
+            var openVRPaths = OpenVRPaths.Read();
+            var resultPaths = helper.UpdateSteamPaths();
+
+            /*
+             * ReRegister Logic:
+             *
+             * Search for Amethyst VRDriver in the crash handler's directory
+             * and 2 folders up in tree, recursively. (Find the manifest)
+             *
+             * If the manifest & dll are found, check and ask to close SteamVR
+             *
+             * With closed SteamVR, search for all remaining 'driver_Amethyst' instances:
+             * copied inside /drivers/ or registered. If found, ask to delete them
+             *
+             * When everything is purified, we can register the 'driver_Amethyst'
+             * via OpenVRPaths and then check twice if it's there ready to go
+             *
+             * If the previous steps succeeded, we can enable the 'driver_Amethyst'
+             * in VRSettings. A run failure/exception of this one isn't critical
+             */
+
+            /* 1 */
+
+            // Get crash handler's  parent path
+            var doubleParentPath =
+                Directory.GetParent(Assembly.GetExecutingAssembly().Location);
+
+            // Search for driver manifests, try max 2 times
+            var localAmethystDriverPath = "";
+            for (var i = 0; i < 2; i++)
+            {
+                // Double that to get Amethyst (Desktop) exe path
+                if (doubleParentPath.Parent != null)
+                    doubleParentPath = doubleParentPath.Parent;
+
+                // Find all vr driver manifests there
+                var allLocalDriverManifests = Directory.GetFiles(
+                    doubleParentPath.ToString(), "driver.vrdrivermanifest", SearchOption.AllDirectories);
+
+                // For each found manifest, check if there is an ame driver dll inside
+                foreach (var localDriverManifest in allLocalDriverManifests)
+                    if (File.Exists(Path.Combine(
+                            Directory.GetParent(localDriverManifest).ToString(),
+                            "bin", "win64", "driver_Amethyst.dll")))
+                    {
+                        // We've found it! Now cache it and break free
+                        localAmethystDriverPath = Directory.GetParent(localDriverManifest).ToString();
+                        goto p_search_loop_end;
+                    }
+                // Else redo once more & then check
+            }
+
+            // End of the searching loop
+            p_search_loop_end:
+
+            // If there's none (still), cry about it and abort
+            if (string.IsNullOrEmpty(localAmethystDriverPath))
+            {
+                await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                    "The Amethyst Driver folder wasn't found.\nIs it somewhere around the Crash Handler?",
+                    "", "");
+                return;
+            }
+
+            /* 2 */
+
+            // Force exit (kill) SteamVR
+            if (Process.GetProcesses().FirstOrDefault(
+                    proc => proc.ProcessName == "vrserver" ||
+                            proc.ProcessName == "vrmonitor") != null)
+            {
+                if (await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                        "SteamVR needs to be shut down\nto register properly, kill it now?",
+                        "Kill", "Abort"))
+                    helper.CloseSteamVR();
+                else
+                    return;
+            }
+
+            /* 3 */
+
+            // Search for all remaining (registered or copied) Amethyst Driver instances
+
+            var isAmethystDriverPresent = resultPaths.Item1.Item3; // is ame copied?
+            var amethystDriverPathsList = new List<string>(); // ame external list
+
+            var isLocalAmethystDriverRegistered = false; // is our local ame registered?
+
+            foreach (var externalDriver in openVRPaths.external_drivers)
+                if (externalDriver.Contains("Amethyst"))
+                {
+                    // Don't un-register the already-existent one
+                    if (externalDriver == localAmethystDriverPath)
+                    {
+                        isLocalAmethystDriverRegistered = true;
+                        continue; // Don't report it
+                    }
+
+                    isAmethystDriverPresent = true;
+                    amethystDriverPathsList.Add(externalDriver);
+                }
+
+            // Remove (or delete) the existing Amethyst Drivers
+            if (isAmethystDriverPresent)
+            {
+                if (!await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                        "One or more drivers named 'Amethyst'\nalready exist, remove them now?",
+                        "Remove", "Abort"))
+                    return;
+            }
+
+            // Try-Catch it
+            try
+            {
+                if (isAmethystDriverPresent || resultPaths.Item1.Item3)
+                {
+                    // Delete the copied Amethyst Driver (if exists)
+                    if (resultPaths.Item1.Item3)
+                        Directory.Delete(resultPaths.Item2.Item3, true); // Delete
+
+                    // Un-register any remaining Amethyst Drivers (if exist)
+                    if (amethystDriverPathsList.Any())
+                    {
+                        foreach (var amethystDriverPath in amethystDriverPathsList)
+                        {
+                            // Don't remove if already existent
+                            if (amethystDriverPath == localAmethystDriverPath) continue;
+
+                            openVRPaths.external_drivers.Remove(amethystDriverPath); // Un-register
+                        }
+
+                        // Save it
+                        openVRPaths.Write();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // Critical, cry about it
+                await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                    "Couldn't remove Amethyst Driver,\na fatal exception occurred.",
+                    "", "");
+                return;
+            }
+
+            /* 4 */
+
+            // If out local amethyst driver was already registered, skip this step
+            if (!isLocalAmethystDriverRegistered)
+                try // Try-Catch it
+                {
+                    // Register the local Amethyst Driver via OpenVRPaths
+                    openVRPaths.external_drivers.Add(localAmethystDriverPath);
+                    openVRPaths.Write(); // Save it
+
+                    // If failed, cry about it and abort
+                    var openVrPathsCheck = OpenVRPaths.Read();
+                    if (!openVrPathsCheck.external_drivers.Contains(localAmethystDriverPath))
+                    {
+                        await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                            "Couldn't register Amethyst Driver,\nopenvrpaths write error.",
+                            "", "");
+                        return;
+                    }
+                }
+                catch (Exception)
+                {
+                    // Critical, cry about it
+                    await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                        "Couldn't register Amethyst Driver,\na fatal exception occurred.",
+                        "", "");
+                    return;
+                }
+
+            /* 5 */
+
+            // Try-Catch it
+            try
+            {
+                // Read the vr settings
+                var steamVRSettings = JsonConvert.DeserializeObject<dynamic>(
+                    File.ReadAllText(resultPaths.Item2.Item2));
+
+                // Enable & unblock the Amethyst Driver
+                if (steamVRSettings["driver_Amethyst"] == null)
+                    steamVRSettings["driver_Amethyst"] = new JObject();
+
+                steamVRSettings["driver_Amethyst"]["enable"] = true;
+                steamVRSettings["driver_Amethyst"]["blocked_by_safe_mode"] = false;
+                JsonFile.Write(resultPaths.Item2.Item2, steamVRSettings, 3, ' ');
+            }
+            catch (Exception)
+            {
+                // Not critical
+            }
+
+            // UreshiiDesuYoo
+            await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                "You're good to go!", "", "");
         }
 
         private void Action_ResetConfig(object sender, RoutedEventArgs e)
