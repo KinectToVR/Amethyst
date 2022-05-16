@@ -19,12 +19,12 @@
 /*
  * Default IPC defines are:
  *
- * \\\\.\\pipe\\k2api_ame_to_pipe
- * \\\\.\\pipe\\k2api_ame_from_pipe
+ * \\\\.\\pipe\\k2api_amethyst_to_pipe
+ * \\\\.\\pipe\\k2api_amethyst_from_pipe
  *
- * Global\\k2api_ame_to_sem
- * Global\\k2api_ame_from_sem
- * Global\\k2api_ame_start_sem
+ * Global\\k2api_amethyst_to_semaphore
+ * Global\\k2api_amethyst_from_semaphore
+ * Global\\k2api_amethyst_start_semaphore
  */
 
 #define K2API_GET_TIMESTAMP_NOW \
@@ -552,11 +552,11 @@ namespace ktvr
 	 * \return Returns 0 for success and -1 for failure
 	 */
 	KTVR_API int init_k2api(
-		const std::string& k2_to_pipe = "\\\\.\\pipe\\k2api_ame_to_pipe",
-		const std::string& k2_from_pipe = "\\\\.\\pipe\\k2api_ame_from_pipe",
-		const std::string& k2_to_sem = "Global\\k2api_ame_to_sem",
-		const std::string& k2_from_sem = "Global\\k2api_ame_from_sem",
-		const std::string& k2_start_sem = "Global\\k2api_ame_start_sem") noexcept;
+		const std::string& k2_to_pipe = "\\\\.\\pipe\\k2api_amethyst_to_pipe",
+		const std::string& k2_from_pipe = "\\\\.\\pipe\\k2api_amethyst_from_pipe",
+		const std::string& k2_to_sem = "Global\\k2api_amethyst_to_semaphore",
+		const std::string& k2_from_sem = "Global\\k2api_amethyst_from_semaphore",
+		const std::string& k2_start_sem = "Global\\k2api_amethyst_start_semaphore") noexcept;
 
 	/**
 	 * \brief Disconnects socket object from port

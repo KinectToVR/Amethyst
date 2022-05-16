@@ -165,7 +165,7 @@ namespace ktvr
 			// Here, read from the *from* pipe
 			// Create the pipe file
 			std::optional<HANDLE> API_ReaderPipe = CreateFile(
-				TEXT("\\\\.\\pipe\\k2api_ame_from_pipe"),
+				TEXT("\\\\.\\pipe\\k2api_amethyst_from_pipe"),
 				GENERIC_READ | GENERIC_WRITE,
 				0, nullptr, OPEN_EXISTING, 0, nullptr);
 

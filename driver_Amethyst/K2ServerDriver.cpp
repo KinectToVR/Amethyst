@@ -676,7 +676,7 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 	{
 		// Here, write to the *from* pipe
 		HANDLE WriterPipe = CreateNamedPipe(
-			TEXT("\\\\.\\pipe\\k2api_ame_from_pipe"),
+			TEXT("\\\\.\\pipe\\k2api_amethyst_from_pipe"),
 			PIPE_ACCESS_INBOUND | PIPE_ACCESS_OUTBOUND,
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
 			1, 4096, 4096, 1000L, nullptr);
