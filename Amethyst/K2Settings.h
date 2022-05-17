@@ -187,8 +187,7 @@ namespace k2app
 		bool isExternalFlipEnabled = false;
 
 		// Currently enabled (spawn-able) joints: W; L,R and true is the default, LE,RE; LK,RK
-		std::array<bool, 7>
-		isJointPairEnabled = {true, true, false, false};
+		std::array<bool, 4> isJointPairEnabled = {true, true, false, false};
 
 		// Automatically spawn enabled trackers on startup and off is the default
 		bool autoSpawnEnabledJoints = false;

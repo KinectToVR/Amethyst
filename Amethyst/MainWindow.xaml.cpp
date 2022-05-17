@@ -134,7 +134,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 
 						// Cache the changes
 						BOOST_FOREACH(boost::property_tree::ptree::value_type & v, root.get_child("changes"))
-						changes_strings_vector.push_back(v.second.get_value<std::string>());
+							changes_strings_vector.push_back(v.second.get_value<std::string>());
 
 						// And maybe log it too
 						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
@@ -535,17 +535,11 @@ namespace winrt::KinectToVR::implementation
 		LOG(INFO) << "Now reading saved settings...";
 		k2app::K2Settings.readSettings();
 
+		K2InsightsCLR::LogEvent("Amethyst Startup");
 		K2InsightsCLR::LogMetric("CalibrationPoints", k2app::K2Settings.calibrationPointsNumber);
-		K2InsightsCLR::LogMetric("TrackerPairs", [&, this]()-> uint32_t
-		{
-			// The default one (W+F) would be 2 pairs
-			uint32_t _out_accumulate = 0;
-			std::accumulate(
-				k2app::K2Settings.isJointPairEnabled.begin(),
-				k2app::K2Settings.isJointPairEnabled.end(),
-				_out_accumulate);
-			return _out_accumulate;
-		}());
+		K2InsightsCLR::LogMetric("TrackerPairs", static_cast<uint32_t>(std::accumulate(
+			                         k2app::K2Settings.isJointPairEnabled.begin(),
+			                         k2app::K2Settings.isJointPairEnabled.end(), 0)));
 
 		// It's been one more, innit?
 		k2app::K2Settings.ratingRemainingElapsedSessions += 1;
@@ -605,12 +599,12 @@ namespace winrt::KinectToVR::implementation
 								{
 									BOOST_FOREACH(boost::property_tree::ptree::value_type & v,
 									              root.get_child("linked_dll_path"))
-									if (!exists(v.second.get_value<std::string>()))
-									{
-										_found = false; // Mark as failed
-										LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
-											std::string>();
-									}
+										if (!exists(v.second.get_value<std::string>()))
+										{
+											_found = false; // Mark as failed
+											LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
+												std::string>();
+										}
 								}
 								// Else continue
 

@@ -104,6 +104,6 @@ jobs:
       - name: Prepare Release zip
         run: |
           mkdir Release; cd Release
-          cp -r ../x64/Release/Amethyst/* ./
-          cp -r ../x64/Release/driver/Amethyst/* ./Amethyst
+          Copy-Item ../x64/Release/Amethyst/* -Destination ./ -Force -Recurse
+          Copy-Item ../x64/Release/driver/Amethyst -Destination ./ -Force -Recurse
           7z a "Amethyst-Release-${{ steps.slug.outputs.slug }}.zip" *
