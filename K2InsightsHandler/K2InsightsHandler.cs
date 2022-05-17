@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.Win32;
 
 // Everything should be noexcept(true)
 namespace K2InsightsHandler
@@ -23,7 +24,8 @@ namespace K2InsightsHandler
                 configuration.InstrumentationKey = "b6e7d4dc-c14b-4c3d-9342-31db3d3350fb";
                 tc = new TelemetryClient(configuration);
 
-                tc.Context.User.Id = Guid.NewGuid().ToString();
+                tc.Context.Component.Version = "1.0.1.8"; // Amethyst version
+                tc.Context.User.Id = GetMachineGuid(); // User id (random)
                 tc.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
             }
             catch (Exception)
@@ -88,6 +90,21 @@ namespace K2InsightsHandler
             }
             catch (Exception)
             {
+            }
+        }
+
+        private string GetMachineGuid()
+        {
+            using (var rk = RegistryKey.OpenBaseKey(
+                           RegistryHive.LocalMachine, RegistryView.Registry64)
+                       .OpenSubKey(@"SOFTWARE\Microsoft\Cryptography"))
+            {
+                if (rk == null)
+                    return Guid.NewGuid().ToString();
+
+                return rk.GetValue("MachineGuid") == null
+                    ? Guid.NewGuid().ToString()
+                    : rk.GetValue("MachineGuid").ToString();
             }
         }
     }

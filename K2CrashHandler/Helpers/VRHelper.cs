@@ -14,13 +14,8 @@ public class VRHelper
     public string SteamVRPath = "";
     public string SteamVRSettingsPath = "";
     public string VRPathReg = "";
-
-    public string GetFullInstallationPath()
-    {
-        return "C:/K2EX"; // TODO Registry maybe?
-    }
-
-    // Returns: <Exists>, <Path> of SteamVr, VRSettings, CopiedDriver
+    
+    // Returns: <Exists>, <Path> of SteamVR, VRSettings, CopiedDriver
     public
         Tuple<Tuple<bool, bool, bool>,
             Tuple<string, string, string>

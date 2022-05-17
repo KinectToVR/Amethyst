@@ -236,8 +236,32 @@ namespace K2CrashHandler
         private async void Action_ReRegister(object sender, RoutedEventArgs e)
         {
             VRHelper helper = new();
-            var openVRPaths = OpenVRPaths.Read();
+            OpenVRPaths openVRPaths;
             var resultPaths = helper.UpdateSteamPaths();
+
+            // Check if SteamVR was found
+            if (!resultPaths.Item1.Item1)
+            {
+                // Critical, cry about it
+                await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                    "SteamVR couldn't be found,\nmake sure it's installed.",
+                    "", "");
+                return;
+            }
+
+            try // Try-Catch it
+            {
+                // Read the OpenVRPaths
+                openVRPaths = OpenVRPaths.Read();
+            }
+            catch (Exception)
+            {
+                // Critical, cry about it
+                await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                    "OpenVRPaths couldn't be read!\nMake sure it's not corrupted,\nand run SteamVR at least once.",
+                    "", "");
+                return;
+            }
 
             /*
              * ReRegister Logic:
