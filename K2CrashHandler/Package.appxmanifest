@@ -9,7 +9,7 @@
   <Identity
     Name="96a90d6c-cbb6-4e32-89cd-3e5ac3e8d1d2"
     Publisher="CN=K2VRTeam"
-    Version="1.0.1.8" />
+    Version="1.0.1.9" />
 
   <Properties>
     <DisplayName>K2CrashHandler</DisplayName>

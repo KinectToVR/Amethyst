@@ -128,7 +128,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 								_ver > boost::lexical_cast<uint32_t>(local_version_num.at(i)))
 								updateFound = true;
 
-								// Not to false-alarm in situations like 1.0.1.8 (local) vs 1.0.1.0 (remote)
+								// Not to false-alarm in situations like 1.0.1.0 (local) vs 1.0.0.1 (remote)
 							else if (_ver < boost::lexical_cast<uint32_t>(local_version_num.at(i))) break;
 						}
 
@@ -534,12 +534,6 @@ namespace winrt::KinectToVR::implementation
 		// Read settings
 		LOG(INFO) << "Now reading saved settings...";
 		k2app::K2Settings.readSettings();
-
-		K2InsightsCLR::LogEvent("Amethyst Startup");
-		K2InsightsCLR::LogMetric("CalibrationPoints", k2app::K2Settings.calibrationPointsNumber);
-		K2InsightsCLR::LogMetric("TrackerPairs", static_cast<uint32_t>(std::accumulate(
-			                         k2app::K2Settings.isJointPairEnabled.begin(),
-			                         k2app::K2Settings.isJointPairEnabled.end(), 0)));
 
 		// It's been one more, innit?
 		k2app::K2Settings.ratingRemainingElapsedSessions += 1;
@@ -1404,6 +1398,7 @@ void h_exit()
 {
 	// Mark exiting as true
 	k2app::interfacing::isExitingNow = true;
+	K2InsightsCLR::LogEvent("Amethyst shutting down");
 
 	// Mark trackers as inactive
 	k2app::interfacing::K2AppTrackersInitialized = false;

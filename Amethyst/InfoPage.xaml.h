@@ -10,6 +10,7 @@ namespace winrt::KinectToVR::implementation
 		InfoPage();
 		void K2DoubleTapped(const Windows::Foundation::IInspectable& sender,
 		                    const winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs& e);
+		void Grid_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 	};
 }
 

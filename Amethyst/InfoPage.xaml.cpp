@@ -25,3 +25,12 @@ namespace winrt::KinectToVR::implementation
 		k2app::shared::main::consoleItem.get()->Visibility(Visibility::Visible);
 	}
 }
+
+
+void winrt::KinectToVR::implementation::InfoPage::Grid_Loaded(
+	winrt::Windows::Foundation::IInspectable const& sender, 
+	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// The info page was loaded
+	K2InsightsCLR::LogPageView("Info");
+}

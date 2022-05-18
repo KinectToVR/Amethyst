@@ -3015,6 +3015,7 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 	// Now we're good
 	devices_tab_re_setup_finished = true;
+	K2InsightsCLR::LogPageView("Devices");
 }
 
 

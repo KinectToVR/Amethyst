@@ -24,7 +24,7 @@ namespace K2InsightsHandler
                 configuration.InstrumentationKey = "b6e7d4dc-c14b-4c3d-9342-31db3d3350fb";
                 tc = new TelemetryClient(configuration);
 
-                tc.Context.Component.Version = "1.0.1.8"; // Amethyst version
+                tc.Context.Component.Version = "1.0.1.9"; // Amethyst version
                 tc.Context.User.Id = GetMachineGuid(); // User id (random)
                 tc.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
             }

@@ -40,9 +40,9 @@ void KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
 		                                                        ? box_value(L"Unfreeze")
 		                                                        : box_value(L"Freeze"));
 	k2app::shared::other::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
-	LOG(INFO) << "Experiments page setup finished.";
 
-	K2InsightsCLR::LogEvent("Okashi Tab Displayed");
+	LOG(INFO) << "Ohhhhh, How Sweeet!";
+	K2InsightsCLR::LogPageView("Okashi");
 }
 
 

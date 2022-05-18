@@ -1323,6 +1323,8 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	// Setup the preview button
 	skeleton_visibility_set_ui(k2app::K2Settings.skeletonPreviewEnabled);
 	skeleton_force_set_ui(k2app::K2Settings.forceSkeletonPreview);
+
+	K2InsightsCLR::LogPageView("General");
 }
 
 
