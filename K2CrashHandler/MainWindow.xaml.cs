@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,17 +27,28 @@ namespace K2CrashHandler
         public static int ProcessExitCode;
         public static ContentDialogView DialogView;
 
+        private static Microsoft.Windows.ApplicationModel.Resources.ResourceManager ResourceManager;
+        private static Microsoft.Windows.ApplicationModel.Resources.ResourceContext ResourceContext;
+
+        private static string LangResString(string key)
+        {
+            ResourceContext.QualifierValues["Language"] = CultureInfo.InstalledUICulture.IetfLanguageTag;
+            return ResourceManager.MainResourceMap.GetValue($"Resources/{key}", ResourceContext).ValueAsString;
+        }
+
         public MainWindow()
         {
             InitializeComponent();
 
+            // Load strings
+            ResourceManager = new Microsoft.Windows.ApplicationModel.Resources.ResourceManager("resources.pri");
+            ResourceContext = ResourceManager.CreateResourceContext();
+
             // Prepare placeholder strings (recovery mode)
-            string handlerTitle = "Amethyst Recovery",
-                handlerContent =
-                    "Looks like you've manually ran the Crash Handler. What would you like to do?\n\n" +
-                    "If the Amethyst driver for SteamVR is not being detected properly, you can re-register the SteamVR driver (button below) and then try again.",
-                primaryButtonText = "Re-Register Driver",
-                secondaryButtonText = "Close";
+            string handlerTitle = LangResString("Title/Recovery"),
+                handlerContent = LangResString("Content/Recovery"),
+                primaryButtonText = LangResString("PrimaryButton/Recovery"),
+                secondaryButtonText = LangResString("SecondaryButton/Recovery");
 
             // Prepare placeholder callbacks (recovery mode)
             RoutedEventHandler primaryButtonHandler = Action_ReRegister,
@@ -86,18 +98,16 @@ namespace K2CrashHandler
                         handler.Initialize();
 
                         // Parse the exit code into strings
-                        handlerTitle = "Amethyst's given you up!";
-                        primaryButtonText = "View Docs";
+                        handlerTitle = LangResString("Title/Crash/Default");
+                        primaryButtonText = LangResString("PrimaryButton/Crash");
                         switch (ProcessExitCode)
                         {
                             case -13:
                             {
                                 // Panic exit
                                 primaryButtonHandler = Action_ResetConfig;
-                                handlerContent =
-                                    "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\n" +
-                                    "Please check if all your devices / plugins are working and check logs. Optionally, you can erase the app configuration and then try running it again.";
-                                primaryButtonText = "Reset Config";
+                                handlerContent = LangResString("Content/Crash/Panic");
+                                primaryButtonText = LangResString("PrimaryButton/Crash/Panic");
 
                                 handler.LogException(new OverflowException("Too many main loop crashes"));
                             }
@@ -106,9 +116,7 @@ namespace K2CrashHandler
                             {
                                 // No devices
                                 primaryButtonHandler = Action_VRDocs;
-                                handlerContent =
-                                    "There were no appropriate devices (plugins) available to load and use for body tracking.\n\n" +
-                                    "Please check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices.";
+                                handlerContent = LangResString("Content/Crash/NoDevices");
 
                                 handler.LogException(new MissingFieldException("No devices available"));
                             }
@@ -117,9 +125,7 @@ namespace K2CrashHandler
                             {
                                 // OpenVR error
                                 primaryButtonHandler = Action_DeviceDocs;
-                                handlerContent =
-                                    "The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.\n\n" +
-                                    "Please check if SteamVR is running and if your HMD's present and working. Additionally, you can restart SteamVR and additionally check its logs.";
+                                handlerContent = LangResString("Content/Crash/OpenVR");
 
                                 handler.LogException(new NotSupportedException("OpenVR initialization error"));
                             }
@@ -134,11 +140,8 @@ namespace K2CrashHandler
                             {
                                 // Unknown
                                 primaryButtonHandler = Action_Discord;
-                                handlerContent =
-                                    "Looks like some weird thing happened to the app.\n\n" +
-                                    "Don't panic yet, it (probably) isn't even your fault.\n\n" +
-                                    "Please try re-running the app.\nIf problem persists, grab logs and reach us on Discord.";
-                                primaryButtonText = "Join Discord";
+                                handlerContent = LangResString("Content/Crash/Unknown");
+                                primaryButtonText = LangResString("PrimaryButton/Crash/Unknown");
 
                                 handler.LogException(new NotImplementedException("Something else this time"));
                             }
@@ -153,15 +156,11 @@ namespace K2CrashHandler
                 else
                 {
                     // Parse the strings
-                    handlerTitle = "Amethyst Already Running!";
-                    primaryButtonText = "View Docs";
-
                     primaryButtonHandler = Action_ForceQuit;
-                    handlerContent =
-                        "Looks like the app is already running \nand you've tried to " +
-                        "launch a second instance,\nthis action is not currently supported.\n\n" +
-                        "Please check if the app isn't opened.\nIf problem persists, press the 'Force Exit' button.";
-                    primaryButtonText = "Force Exit";
+
+                    handlerTitle = LangResString("Title.AlreadyRunning");
+                    handlerContent = LangResString("PrimaryButton.AlreadyRunning");
+                    primaryButtonText = LangResString("PrimaryButton.AlreadyRunning");
                 }
             }
 
@@ -172,12 +171,10 @@ namespace K2CrashHandler
             // Set window title, drag-space and size
             Title = launcherMode
                 ? relaunchMode
-                    ? "Amethyst Already Running!"
-                    : "Amethyst Crash Handler"
-                : "Amethyst Recovery";
+                    ? LangResString("Title.AlreadyRunning")
+                    : LangResString("Title/Crash")
+                : LangResString("Title/Recovery");
 
-            //this.ExtendsContentIntoTitleBar = true;
-            //this.SetTitleBar(DragElement);
             SetWindowSize(WindowNative
                 .GetWindowHandle(this), width, height);
 
@@ -244,7 +241,7 @@ namespace K2CrashHandler
             {
                 // Critical, cry about it
                 await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                    "SteamVR couldn't be found,\nmake sure it's installed.",
+                    LangResString("ReRegister/SteamVRNotFound"),
                     "", "");
                 return;
             }
@@ -258,7 +255,7 @@ namespace K2CrashHandler
             {
                 // Critical, cry about it
                 await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                    "OpenVRPaths couldn't be read!\nMake sure it's not corrupted,\nand run SteamVR at least once.",
+                    LangResString("ReRegister/OpenVRPathsError"),
                     "", "");
                 return;
             }
@@ -319,7 +316,7 @@ namespace K2CrashHandler
             if (string.IsNullOrEmpty(localAmethystDriverPath))
             {
                 await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                    "The Amethyst Driver folder wasn't found.\nIs it somewhere around the Crash Handler?",
+                    LangResString("ReRegister/DriverNotFound"),
                     "", "");
                 return;
             }
@@ -332,8 +329,9 @@ namespace K2CrashHandler
                             proc.ProcessName == "vrmonitor") != null)
             {
                 if (await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                        "SteamVR needs to be shut down\nto register properly, kill it now?",
-                        "Kill", "Abort"))
+                        LangResString("ReRegister/KillSteamVR/Content"),
+                        LangResString("ReRegister/KillSteamVR/PrimaryButton"),
+                        LangResString("ReRegister/KillSteamVR/SecondaryButton")))
                     helper.CloseSteamVR();
                 else
                     return;
@@ -364,12 +362,11 @@ namespace K2CrashHandler
 
             // Remove (or delete) the existing Amethyst Drivers
             if (isAmethystDriverPresent)
-            {
                 if (!await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                        "One or more drivers named 'Amethyst'\nalready exist, remove them now?",
-                        "Remove", "Abort"))
+                        LangResString("ReRegister/ExistingDrivers/Content"),
+                        LangResString("ReRegister/ExistingDrivers/PrimaryButton"),
+                        LangResString("ReRegister/ExistingDrivers/SecondaryButton")))
                     return;
-            }
 
             // Try-Catch it
             try
@@ -400,7 +397,7 @@ namespace K2CrashHandler
             {
                 // Critical, cry about it
                 await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                    "Couldn't remove Amethyst Driver,\na fatal exception occurred.",
+                    LangResString("ReRegister/FatalRemoveException"),
                     "", "");
                 return;
             }
@@ -420,7 +417,7 @@ namespace K2CrashHandler
                     if (!openVrPathsCheck.external_drivers.Contains(localAmethystDriverPath))
                     {
                         await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                            "Couldn't register Amethyst Driver,\nopenvrpaths write error.",
+                            LangResString("ReRegister/OpenVRPathsWriteError"),
                             "", "");
                         return;
                     }
@@ -429,7 +426,7 @@ namespace K2CrashHandler
                 {
                     // Critical, cry about it
                     await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                        "Couldn't register Amethyst Driver,\na fatal exception occurred.",
+                        LangResString("ReRegister/FatalRegisterException"),
                         "", "");
                     return;
                 }
@@ -458,7 +455,7 @@ namespace K2CrashHandler
 
             // UreshiiDesuYoo
             await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                "You're good to go!", "", "");
+                LangResString("ReRegister/Finished"), "", "");
         }
 
         private void Action_ResetConfig(object sender, RoutedEventArgs e)
