@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is- DOIN YOUR MOM
+    DOIN DOIN DOIN YOUR MOM
+    DOIN YOUR MOM
+    DOIN DOIN YOUR MOM
+    No bitches?
+    L + ratio + you fell off + didn't ask + don't care + I bet you suck Greg Driver's dick.
+
+    For any inquiries regarding why Microsoft chose this god awful format
+    Please refer to who asked.
+
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Content.AlreadyRunning" xml:space="preserve">
+<value>Il semble que l'application est déjà
+lancée. Une seule instance d'Amethyst peut être
+ouverte à la fois.
+
+Assurez vous d'avoir quitté l'application correctement.
+Si le problème persiste, cliquez sur "Quitter de force".</value>
+  </data>
+  <data name="Content.Crash.NoDevices" xml:space="preserve">
+<value>Aucun plug-in ou appareil est disponible à charger et utiliser pour le full-body tracking.
+
+Assurez vous que tous les pré-requis pour l'appareil de votre choix sont bien installés. (Par example: SDK et pilotes pour Kinect)</value>
+  </data>
+  <data name="Content.Crash.OpenVR" xml:space="preserve">
+    <value>SteamVR (OpenVR) n'a pas pu être initialisé avec succès.
+
+SteamVR doit être fonctionnel avec votre casque avant de pouvoir lancer Amethyst. Additionellement, vous pouvez vérifier les logs de SteamVR.</value>
+  </data>
+  <data name="Content.Crash.Panic" xml:space="preserve">
+    <value>Amethyst a planté plus de 7 fois consécutives et a donc été arrêté.
+
+Assurez vous que les plug-ins actifs fonctionnent correctement et vérifiez les logs pour plus d'infos. Vous pouvez aussi restaurer les valeurs par défaut d'Amethyst en supprimant la configuration.</value>
+  </data>
+  <data name="Content.Crash.Unknown" xml:space="preserve">
+    <value>Quelque chose de bizarre est arrivé.
+
+Ne paniquez pas (encore), ce n'est probablement pas votre faute.
+
+Tentez de relancer l'application.
+Si le problème persiste, envoyez nous les logs sur Discord.</value>
+  </data>
+  <data name="Content.Recovery" xml:space="preserve">
+    <value>Vous avez lancé le Crash Handler manuellement, que voulez-vous faire?
+
+Si l'add-on SteamVR pour Amethyst n'est pas détecté correctement, vous pouvez le ré-inscrire dans la liste (bouton ci-dessous) et essayer à nouveau.</value>
+  </data>
+  <data name="PrimaryButton.AlreadyRunning" xml:space="preserve">
+    <value>Quitter de force</value>
+  </data>
+  <data name="PrimaryButton.Crash.Default" xml:space="preserve">
+    <value>Voir les docs</value>
+  </data>
+  <data name="PrimaryButton.Crash.Panic" xml:space="preserve">
+    <value>Supprimer config</value>
+  </data>
+  <data name="PrimaryButton.Crash.Unknown" xml:space="preserve">
+    <value>Serveur Discord</value>
+  </data>
+  <data name="PrimaryButton.Recovery" xml:space="preserve">
+    <value>Ré-inscrire l'add-on</value>
+  </data>
+  <data name="ReRegister.DriverNotFound" xml:space="preserve">
+    <value>L'add-on SteamVR pour Amethyst n'a pas été trouvé.
+Est-il présent dans le même dossier que le Crash Handler?</value>
+  </data>
+  <data name="ReRegister.ExistingDrivers.Content" xml:space="preserve">
+    <value>Un ou plusieurs add-ons nommés `Amethyst` sont déjà inscrits dans la liste.
+Voulez-vous les enlever?</value>
+  </data>
+  <data name="ReRegister.ExistingDrivers.PrimaryButton" xml:space="preserve">
+    <value>Enlever</value>
+  </data>
+  <data name="ReRegister.ExistingDrivers.SecondaryButton" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="ReRegister.FatalRegisterException" xml:space="preserve">
+    <value>L'add-on pour Amethyst n'a pu être inscrit.
+Un problème est survenu.</value>
+  </data>
+  <data name="ReRegister.FatalRemoveException" xml:space="preserve">
+    <value>L'add-on pour Amethyst n'a pu être enlevé.
+Un problème est survenu.</value>
+  </data>
+  <data name="ReRegister.Finished" xml:space="preserve">
+    <value>Et voila, c'est prêt!</value>
+  </data>
+  <data name="ReRegister.KillSteamVR.Content" xml:space="preserve">
+    <value>SteamVR doit être fermé
+pour inscrire l'add-on, Voulez-vous le faire maintenant?</value>
+  </data>
+  <data name="ReRegister.KillSteamVR.PrimaryButton" xml:space="preserve">
+    <value>Quitter SteamVR</value>
+  </data>
+  <data name="ReRegister.KillSteamVR.SecondaryButton" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="ReRegister.OpenVRPathsError" xml:space="preserve">
+    <value>Impossible de lire OpenVRPaths.
+Assurez vous que le fichier n'est pas corrompu
+et d'avoir lancé SteamVR au moins une fois.</value>
+  </data>
+  <data name="ReRegister.OpenVRPathsWriteError" xml:space="preserve">
+    <value>Impossible d'inscire l'add-on pour Amethyst.
+Erreur lors de l'écriture du fichier OpenVRPaths.</value>
+  </data>
+  <data name="ReRegister.SteamVRNotFound" xml:space="preserve">
+    <value>Impossible de trouver SteamVR.
+L'avez-vous bien installé?</value>
+  </data>
+  <data name="SecondaryButton.Recovery" xml:space="preserve">
+    <value>Quitter</value>
+  </data>
+  <data name="Title.AlreadyRunning" xml:space="preserve">
+    <value>Amethyst est déjà lancé!</value>
+  </data>
+  <data name="Title.Crash" xml:space="preserve">
+    <value>Amethyst vous a laissé tomber!</value>
+  </data>
+  <data name="Title.Recovery" xml:space="preserve">
+    <value>Réparation d'Amethyst</value>
+  </data>
+</root>
