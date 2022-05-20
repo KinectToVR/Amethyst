@@ -40,6 +40,12 @@ namespace k2app::shared
 
 		inline std::shared_ptr<winrt::Microsoft::Windows::AppNotifications::AppNotificationManager>
 		thisNotificationManager;
+
+		inline std::shared_ptr<winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager>
+		thisResourceManager;
+
+		inline std::shared_ptr<winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceContext>
+		thisResourceContext;
 	}
 
 	namespace general

@@ -450,7 +450,17 @@ namespace winrt::KinectToVR::implementation
 
 		LOG(INFO) << "Registering the notification manager (may fail on WinAppSDK <1.1)...";
 		k2app::shared::main::thisNotificationManager.get()->Register();
-
+		
+		LOG(INFO) << "Creating and registering the default resource manager (may fail on WinAppSDK <1.1)...";
+		k2app::shared::main::thisResourceManager =
+			std::make_shared<Microsoft::Windows::ApplicationModel::Resources::ResourceManager>(
+				Microsoft::Windows::ApplicationModel::Resources::ResourceManager(L"resources.pri"));
+		
+		LOG(INFO) << "Creating and registering the default resource context (may fail on WinAppSDK <1.1)...";
+		k2app::shared::main::thisResourceContext =
+			std::make_shared<Microsoft::Windows::ApplicationModel::Resources::ResourceContext>(
+				k2app::shared::main::thisResourceManager.get()->CreateResourceContext());
+		
 		LOG(INFO) << "Pushing control pages to window...";
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"general", winrt::xaml_typename<GeneralPage>()));

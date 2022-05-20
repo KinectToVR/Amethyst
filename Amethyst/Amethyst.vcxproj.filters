@@ -261,6 +261,15 @@
     <Filter Include="Header Files">
       <UniqueIdentifier>{0fc750fd-6054-4c3d-8204-d91bb847daca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Strings">
+      <UniqueIdentifier>{ec2128d2-1cb5-42ac-bf32-79b5fa75026b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\en-US">
+      <UniqueIdentifier>{0c073a15-b136-4bd2-b2de-67d72d3fedc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\lc-LC">
+      <UniqueIdentifier>{de212c51-1d57-46a2-901e-001547c32519}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
@@ -273,5 +282,13 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Amethyst.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\InfoPage.resw">
+      <Filter>Strings\en-US</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\lc-LC\InfoPage.resw">
+      <Filter>Strings\lc-LC</Filter>
+    </PRIResource>
   </ItemGroup>
 </Project>

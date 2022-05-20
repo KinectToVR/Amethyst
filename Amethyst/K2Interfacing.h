@@ -47,6 +47,19 @@ namespace k2app::interfacing
 	inline float vrPlayspaceOrientation = 0.f; // Note: radians
 	inline Eigen::Quaternionf vrPlayspaceOrientationQuaternion{1, 0, 0, 0};
 
+	// Get a string from resources (crash handler's LAngResString)
+	inline std::string LocalizedResourceString(const std::string& dictionary, const std::string& key)
+	{
+		winrt::Windows::Globalization::Language language{
+			winrt::Windows::System::UserProfile::GlobalizationPreferences::Languages().GetAt(0) };
+		
+		shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language.LanguageTag();
+		
+		return string_cast(shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
+			wstring_cast(dictionary + "/" + key).c_str()).ValueAsString().c_str());
+	}
+
+	// Show an app toast / notification
 	inline void ShowToast(const std::string& header, const std::string& text)
 	{
 		if (header.empty() || text.empty())return;

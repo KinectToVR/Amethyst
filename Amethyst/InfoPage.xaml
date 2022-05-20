@@ -32,77 +32,78 @@
 
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
                                 Margin="30,35,0,0">
-                        <TextBlock Margin="0,0,0,0" Text="Amethyst" FontSize="85" VerticalAlignment="Center"
+                        <TextBlock Margin="0,0,0,0" x:Uid="/InfoPage/AppTitle"  FontSize="85" VerticalAlignment="Center"
                                    HorizontalAlignment="Right"
                                    ToolTipService.ToolTip="Pls donate if you like us! ˶ᵔ ᵕ ᵔ˶" />
-                        <TextBlock Margin="0,-15,-80,0" Text="by K2VR Team" FontSize="22" VerticalAlignment="Center"
+                        <TextBlock Margin="0,-15,-80,0" x:Uid="/InfoPage/AppCaption" FontSize="22" VerticalAlignment="Center"
                                    FontWeight="SemiBold"
                                    Opacity="0.5" HorizontalAlignment="Right" ToolTipService.ToolTip="(つ*ヮ*)つ" />
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock FontWeight="SemiBold" Text="Credits" FontSize="25" Margin="0,60,0,0" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/InfoPage/Credits/Header" FontSize="25" Margin="0,60,0,0" />
 
-                <TextBlock FontWeight="SemiBold" Foreground="LightGray" Text="Main Team:" Margin="0,20,0,0" />
+                <TextBlock FontWeight="SemiBold" Foreground="LightGray" x:Uid="/InfoPage/Credits/MainTeam/Title" Margin="0,20,0,0" />
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve">Lead Developer: </Run>
+                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Akaya"/>
                     <Hyperlink NavigateUri="https://github.com/KimihikoAkayasaki" UnderlineStyle="None">KimihikoAkayasaki</Hyperlink>
                     <Run xml:space="preserve">&#x09;"Akaya"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve">Project Management: </Run>
+                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Ella"/>
                     <Hyperlink NavigateUri="https://github.com/TripingPC" UnderlineStyle="None">AuroraNemoia</Hyperlink>
                     <Run xml:space="preserve">&#x09;"Ella"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve">Installer Development: </Run>
+                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Himbeer"/>
                     <Hyperlink NavigateUri="https://github.com/HimbeersaftLP" UnderlineStyle="None">himbeersaft</Hyperlink>
                     <Run xml:space="preserve">&#x09;"Himbeer"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve">Other Development: </Run>
+                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Hekky"/>
                     <Hyperlink NavigateUri="https://github.com/hyblocker" UnderlineStyle="None">hyblocker</Hyperlink>
                     <Run xml:space="preserve">&#x09;&#x09;"Hekky"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve">Support: </Run>
+                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Artemis"/>
                     <Hyperlink NavigateUri="https://github.com/ArtemisMax" UnderlineStyle="None">ArtemisMax</Hyperlink>
                     <Run xml:space="preserve">&#x09;&#x09;&#x09;"Artemis"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve">Support: </Run>
+                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Ollie"/>
                     <Hyperlink NavigateUri="https://github.com/i386sh" UnderlineStyle="None">i386sh</Hyperlink>
                     <Run xml:space="preserve">/ notzer0&#x09;&#x09;&#x09;"Ollie"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve">Support (inactive): </Run>
+                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Aria"/>
                     <Hyperlink NavigateUri="https://github.com/conatsera" UnderlineStyle="None">conatsera</Hyperlink>
                     <Run xml:space="preserve">&#x09;&#x09;"Aria"</Run>
                 </TextBlock>
 
-                <TextBlock FontWeight="SemiBold" Foreground="LightGray" Text="Helpers:" Margin="0,20,0,0" />
+                <TextBlock FontWeight="SemiBold" Foreground="LightGray" x:Uid="/InfoPage/Credits/Helpers/Title" Margin="0,20,0,0" />
 
                 <TextBlock FontWeight="SemiBold">
                     <Run xml:space="preserve">Alex (nakog)    </Run>
                     <Run xml:space="preserve">Allen    </Run>
+                    <Run xml:space="preserve">Aze    </Run>
                     <Run xml:space="preserve">Fiery (fierybattlehawk)    </Run>
                     <Run xml:space="preserve">illyriarose    </Run>
                     <Run xml:space="preserve">Luka (woomie)    </Run>
-                    <Run xml:space="preserve">Sky (P. S.)    </Run>
                 </TextBlock>
                 <TextBlock FontWeight="SemiBold">
+                    <Run xml:space="preserve">Sky (P. S.)    </Run>
                     <Run xml:space="preserve">Sylva    </Run>
                     <Run xml:space="preserve">Vexa (vexatag)</Run>
                 </TextBlock>
 
-                <TextBlock FontWeight="SemiBold" Text="And everyone else who helped along the way. " Margin="0,20,0,20" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/InfoPage/Credits/Community" Margin="0,20,0,20" />
 
             </StackPanel>
 

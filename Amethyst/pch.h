@@ -26,6 +26,11 @@
 #include <winrt/Microsoft.Windows.PushNotifications.h>
 #include <winrt/Microsoft.Windows.AppNotifications.h>
 
+#include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
+
+#include <winrt/Windows.System.UserProfile.h>
+#include <winrt/Windows.Globalization.h>
+
 #include <winrt/Microsoft.UI.Composition.h>
 #include <winrt/Microsoft.UI.Xaml.h>
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
