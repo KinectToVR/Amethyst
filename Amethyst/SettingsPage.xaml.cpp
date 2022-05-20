@@ -1051,8 +1051,8 @@ void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 	// Not found failure
 	case 0:
 		{
-			k2app::shared::settings::setErrorFlyoutText->Text(
-				L"Amethyst vr manifest couldn't be installed.\nPlease check if it exists at the root (.exe) path.");
+			k2app::shared::settings::setErrorFlyoutText->Text(wstring_cast(
+				k2app::interfacing::LocalizedResourceString("SettingsPage", "ReManifest/Error/NotFound")));
 
 			Controls::Primitives::FlyoutShowOptions _opt;
 			_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
@@ -1065,8 +1065,8 @@ void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 	// SteamVR failure
 	case 2:
 		{
-			k2app::shared::settings::setErrorFlyoutText->Text(
-				L"Amethyst vr manifest couldn't be installed.\nPlease check SteamVR logs and consider reporting it.");
+			k2app::shared::settings::setErrorFlyoutText->Text(wstring_cast(
+				k2app::interfacing::LocalizedResourceString("SettingsPage", "ReManifest/Error/Other")));
 
 			Controls::Primitives::FlyoutShowOptions _opt;
 			_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
@@ -1095,8 +1095,8 @@ void KinectToVR::implementation::SettingsPage::ReRegisterButton_Click(
 	{
 		LOG(WARNING) << "Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!";
 
-		k2app::shared::settings::setErrorFlyoutText->Text(
-			L"Amethyst crash handler executable was not found.\nIt's needed for the reregistration, please check if it's there.");
+		k2app::shared::settings::setErrorFlyoutText->Text(wstring_cast(
+			k2app::interfacing::LocalizedResourceString("SettingsPage", "ReRegister/Error/NotFound")));
 
 		Controls::Primitives::FlyoutShowOptions _opt;
 		_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);

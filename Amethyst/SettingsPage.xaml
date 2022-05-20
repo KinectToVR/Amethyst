@@ -19,7 +19,7 @@
 
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
 
-                <TextBlock FontWeight="SemiBold" Text="Skeleton Flip" FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/SkeletonFlip" FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
 
                 <Grid x:Name="FlipDropDownGrid">
                     <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
@@ -28,13 +28,13 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock FontWeight="SemiBold" Text="Mirror trackers when turning away from the Kinect"
+                        <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Captions/SkeletonFlip"
                                    FontSize="14" Margin="0,-3,0,0"
                                    Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
                         <ToggleSwitch IsOn="True" x:Name="FlipToggle"
                                       Toggled="FlipToggle_Toggled"
-                                      ToolTipService.ToolTip="Disabling will stop tracking&#x0a;from flipping when you turn around."
+                                      x:Uid="/SettingsPage/Elements/FlipToggle"
                                       Grid.Column="1" Margin="0,0,-125,0"
                                       OnContent="" OffContent=""
                                       VerticalAlignment="Center"
@@ -60,7 +60,7 @@
                                                    FontWeight="Medium"
                                                    Opacity="0.5"
                                                    x:Name="ExternalFlipCheckBoxLabel"
-                                                   Text="Use external waist tracking data instead of the Headset"
+                                                   x:Uid="/SettingsPage/Titles/ExtFlip"
                                                    Margin="30,0,0,10"
                                                    Grid.Column="0" />
                                         <CheckBox x:Name="ExternalFlipCheckBox" IsEnabled="False"
@@ -72,14 +72,14 @@
                                     </Grid>
 
                                     <AppBarButton IsCompact="True" Width="35" Height="65" Margin="5,17,0,0"
-                                                  ToolTipService.ToolTip="Calibration"
+                                                  x:Uid="/SettingsPage/Elements/ExtFlipCalibration"
                                                   IsEnabled="{Binding ElementName=ExternalFlipCheckBox, 
 									                    Path=IsChecked,TargetNullValue=False}">
                                         <AppBarButton.Flyout>
                                             <MenuFlyout>
-                                                <MenuFlyoutItem Text="Face the Kinect!" FontWeight="Medium"
+                                                <MenuFlyoutItem x:Uid="/SettingsPage/Captions/FaceTheKinect" FontWeight="Medium"
                                                                 IsHitTestVisible="False" />
-                                                <MenuFlyoutItem Text="Click to calibrate" Tag="Calibrate"
+                                                <MenuFlyoutItem x:Uid="/SettingsPage/Captions/CalibrateExtFlip" Tag="Calibrate"
                                                                 Click="CalibrateExternalFlipMenuFlyoutItem_Click" />
                                             </MenuFlyout>
                                         </AppBarButton.Flyout>
@@ -88,8 +88,7 @@
                                 </StackPanel>
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="When turned on: Amethyst will decide if you are turned back,
-                                           &#x0a;checking the currently active Waist Tracker in SteamVR"
+                                           x:Uid="/SettingsPage/Captions/ExtFlip"
                                            Margin="30,-20,0,7" Foreground="LightGray"
                                            Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
 									                    Path=Opacity,TargetNullValue=1.0}" />
@@ -100,7 +99,7 @@
                 </Grid>
 
 
-                <TextBlock FontWeight="SemiBold" Text="Tracker Configuration" FontSize="25" Margin="0,20,0,0"
+                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/TrackerConfig/Header" FontSize="25" Margin="0,20,0,0"
                            Grid.Row="0" />
 
                 <Grid>
@@ -110,12 +109,12 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock FontWeight="SemiBold" Text="Waist Tracker" FontSize="14" Margin="0,-3,0,0"
+                        <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/TrackerConfig/Waist" FontSize="14" Margin="0,-3,0,0"
                                    Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
                         <ToggleSwitch IsOn="True" x:Name="WaistTrackerEnabledToggle"
                                       Toggled="WaistTrackerEnabledToggle_Toggled"
-                                      ToolTipService.ToolTip="Disabling will stop waist tracker&#x0a;from spawning on app startup."
+                                      x:Uid="/SettingsPage/Elements/WaistToggle"
                                       Grid.Column="1" Margin="0,0,-125,0"
                                       OnContent="" OffContent=""
                                       VerticalAlignment="Center"
@@ -139,7 +138,7 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Position Tracking Filter:"
+                                           x:Uid="/SettingsPage/Captions/Filters/Position" 
                                            Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
 
                                 <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
@@ -147,14 +146,14 @@
                                           x:Name="WaistPositionFilterOptionBox"
                                           SelectionChanged="WaistPositionFilterOptionBox_SelectionChanged"
                                           Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                                    <x:String>Linear Interpolation</x:String>
-                                    <x:String>Low Pass Filter</x:String>
-                                    <x:String>Extended Kalman Filter</x:String>
-                                    <x:String>Disable Filter</x:String>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LERP"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LowPass"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Kalman"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Off"/>
                                 </ComboBox>
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Rotation Tracking:"
+                                           x:Uid="/SettingsPage/Captions/Filters/Orientation"
                                            Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
 
                                 <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
@@ -162,9 +161,9 @@
                                           x:Name="WaistRotationFilterOptionBox"
                                           SelectionChanged="WaistRotationFilterOptionBox_SelectionChanged"
                                           Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
-                                    <x:String>Device-inferred Rotation</x:String>
-                                    <x:String>Follow Headset</x:String>
-                                    <x:String>Disable Rotation</x:String>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Device"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/HMD"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Off"/>
                                 </ComboBox>
 
                             </Grid>
@@ -179,12 +178,12 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock FontWeight="SemiBold" Text="Feet Trackers" FontSize="14" Margin="0,-3,0,0"
+                        <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/TrackerConfig/Feet" FontSize="14" Margin="0,-3,0,0"
                                    Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
                         <ToggleSwitch IsOn="True" x:Name="FeetTrackersEnabledToggle"
                                       Toggled="FeetTrackersEnabledToggle_Toggled"
-                                      ToolTipService.ToolTip="Disabling will stop feet trackers&#x0a;from spawning on app startup."
+                                      x:Uid="/SettingsPage/Elements/FeetToggle"
                                       Grid.Column="1" Margin="0,0,-125,0"
                                       OnContent="" OffContent=""
                                       VerticalAlignment="Center"
@@ -208,7 +207,7 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Position Tracking Filter:"
+                                           x:Uid="/SettingsPage/Captions/Filters/Position" 
                                            Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
 
                                 <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
@@ -216,14 +215,14 @@
                                           x:Name="FeetPositionFilterOptionBox"
                                           SelectionChanged="FeetPositionFilterOptionBox_SelectionChanged"
                                           Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                                    <x:String>Linear Interpolation</x:String>
-                                    <x:String>Low Pass Filter</x:String>
-                                    <x:String>Extended Kalman Filter</x:String>
-                                    <x:String>Disable Filter</x:String>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LERP"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LowPass"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Kalman"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Off"/>
                                 </ComboBox>
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Rotation Tracking:"
+                                           x:Uid="/SettingsPage/Captions/Filters/Orientation"
                                            Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
 
                                 <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
@@ -231,10 +230,11 @@
                                           x:Name="FeetRotationFilterOptionBox"
                                           SelectionChanged="FeetRotationFilterOptionBox_SelectionChanged"
                                           Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
-                                    <ComboBoxItem>Device-inferred Rotation</ComboBoxItem>
-                                    <ComboBoxItem x:Name="SoftwareRotationItem" IsEnabled="True">Software-calculated Rotation</ComboBoxItem>
-                                    <ComboBoxItem>Follow Headset</ComboBoxItem>
-                                    <ComboBoxItem>Disable Rotation</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Device"/>
+                                    <ComboBoxItem x:Name="SoftwareRotationItem" IsEnabled="True"
+                                                  x:Uid="/SettingsPage/Filters/Orientation/MathBased"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/HMD"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Off"/>
                                 </ComboBox>
                             </Grid>
                         </Expander.Content>
@@ -252,12 +252,12 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock FontWeight="SemiBold" Text="Elbow Trackers" FontSize="14" Margin="0,-3,0,0"
+                        <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/TrackerConfig/Elbows" FontSize="14" Margin="0,-3,0,0"
                                    Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
                         <ToggleSwitch IsOn="False" x:Name="ElbowTrackersEnabledToggle"
                                       Toggled="ElbowTrackersEnabledToggle_Toggled"
-                                      ToolTipService.ToolTip="Disabling will stop elbow trackers&#x0a;from spawning on app startup."
+                                      x:Uid="/SettingsPage/Elements/ElbowsToggle"
                                       Grid.Column="1" Margin="0,0,-125,0"
                                       OnContent="" OffContent=""
                                       VerticalAlignment="Center"
@@ -281,7 +281,7 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Position Tracking Filter:"
+                                           x:Uid="/SettingsPage/Captions/Filters/Position" 
                                            Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
 
                                 <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
@@ -289,14 +289,14 @@
                                           x:Name="ElbowsPositionFilterOptionBox"
                                           SelectionChanged="ElbowsPositionFilterOptionBox_SelectionChanged"
                                           Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                                    <x:String>Linear Interpolation</x:String>
-                                    <x:String>Low Pass Filter</x:String>
-                                    <x:String>Extended Kalman Filter</x:String>
-                                    <x:String>Disable Filter</x:String>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LERP"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LowPass"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Kalman"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Off"/>
                                 </ComboBox>
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Rotation Tracking:"
+                                           x:Uid="/SettingsPage/Captions/Filters/Orientation"
                                            Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
 
                                 <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
@@ -304,9 +304,9 @@
                                           x:Name="ElbowsRotationFilterOptionBox"
                                           SelectionChanged="ElbowsRotationFilterOptionBox_SelectionChanged"
                                           Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
-                                    <x:String>Device-inferred Rotation</x:String>
-                                    <x:String>Follow Headset</x:String>
-                                    <x:String>Disable Rotation</x:String>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Device"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/HMD"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Off"/>
                                 </ComboBox>
 
                             </Grid>
@@ -321,12 +321,12 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock FontWeight="SemiBold" Text="Knee Trackers" FontSize="14" Margin="0,-3,0,0"
+                        <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/TrackerConfig/Knees" FontSize="14" Margin="0,-3,0,0"
                                    Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
                         <ToggleSwitch IsOn="False" x:Name="KneeTrackersEnabledToggle"
                                       Toggled="KneeTrackersEnabledToggle_Toggled"
-                                      ToolTipService.ToolTip="Disabling will stop knee trackers&#x0a;from spawning on app startup."
+                                      x:Uid="/SettingsPage/Elements/KneesToggle"
                                       Grid.Column="1" Margin="0,0,-125,0"
                                       OnContent="" OffContent=""
                                       VerticalAlignment="Center"
@@ -350,7 +350,7 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Position Tracking Filter:"
+                                           x:Uid="/SettingsPage/Captions/Filters/Position" 
                                            Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
 
                                 <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
@@ -358,14 +358,14 @@
                                           x:Name="KneePositionFilterOptionBox"
                                           SelectionChanged="KneePositionFilterOptionBox_SelectionChanged"
                                           Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                                    <x:String>Linear Interpolation</x:String>
-                                    <x:String>Low Pass Filter</x:String>
-                                    <x:String>Extended Kalman Filter</x:String>
-                                    <x:String>Disable Filter</x:String>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LERP"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LowPass"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Kalman"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Off"/>
                                 </ComboBox>
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Rotation Tracking:"
+                                           x:Uid="/SettingsPage/Captions/Filters/Orientation"
                                            Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
 
                                 <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
@@ -373,9 +373,9 @@
                                           x:Name="KneeRotationFilterOptionBox"
                                           SelectionChanged="KneeRotationFilterOptionBox_SelectionChanged"
                                           Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
-                                    <x:String>Device-inferred Rotation</x:String>
-                                    <x:String>Follow Headset</x:String>
-                                    <x:String>Disable Rotation</x:String>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Device"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/HMD"/>
+                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Off"/>
                                 </ComboBox>
 
                             </Grid>
@@ -398,20 +398,21 @@
                             Style="{StaticResource AccentButtonStyle}" x:Name="RestartButton"
                             Click="RestartButton_Click" FontWeight="SemiBold"
                             HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                            Content="Restart SteamVR" FontSize="16" IsEnabled="False" />
+                            x:Uid="/SettingsPage/Buttons/RestartSteamVR"
+                            FontSize="16" IsEnabled="False" />
 
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
-                                   Text="Enabling or disabling a tracker requires restarting SteamVR"
+                                   x:Uid="/SettingsPage/Captions/TrackersRestart.Line1"
                                    Margin="0,0,0,0" Foreground="LightGray" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
-                                   Text="and Amethyst for changes to take effect."
+                                   x:Uid="/SettingsPage/Captions/TrackersRestart.Line2"
                                    Margin="0,0,0,0" Foreground="LightGray" />
                     </StackPanel>
 
                     <Grid Grid.Column="0" Grid.Row="1" Margin="0,20,0,0">
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                                   Text="Automatically connect enabled trackers at launch" Margin="30,0,0,10" />
+                                   x:Uid="/SettingsPage/Captions/TrackersAutoSpawn" Margin="30,0,0,10" />
                         <CheckBox x:Name="AutoSpawnCheckBox" Checked="AutoSpawn_Checked"
                                   Unchecked="AutoSpawn_Unchecked"
                                   HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -420,11 +421,11 @@
 
                 </Grid>
 
-                <TextBlock FontWeight="SemiBold" Text="Sounds" FontSize="25" Margin="0,50,0,0" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Sounds" FontSize="25" Margin="0,50,0,0" />
 
                 <Grid Grid.Column="0" Grid.Row="1" Margin="0,15,0,0">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                               Text="Enable app sounds" Margin="30,0,0,10" />
+                               x:Uid="/SettingsPage/Captions/Sounds" Margin="30,0,0,10" />
                     <CheckBox x:Name="SoundsEnabledCheckBox"
                               Checked="EnableSounds_Checked" Unchecked="EnableSounds_Unchecked"
                               HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -437,31 +438,31 @@
 
                 <StackPanel Orientation="Vertical" Margin="0,0,5,0">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               Text="Sounds happen during startup, calibration, errors, or when toggling tracker freeze"
+                               x:Uid="/SettingsPage/Captions/SoundsWhen.Line1"
                                Margin="0,0,0,0" Foreground="LightGray" />
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               Text="or skeleton mirroring."
+                               x:Uid="/SettingsPage/Captions/SoundsWhen.Line2"
                                Margin="0,0,0,0" Foreground="LightGray" />
                 </StackPanel>
 
-                <TextBlock FontWeight="SemiBold" Text="Troubleshooting" FontSize="25" Margin="0,50,0,15" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Troubleshooting" FontSize="25" Margin="0,50,0,15" />
 
                 <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
                         x:Name="ResetButton" Width="270" Click="ResetButton_Click"
-                        Content="Delete configuration and restart" FontSize="16" />
+                        x:Uid="/SettingsPage/Buttons/Reset" FontSize="16" />
 
                 <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
                         x:Name="ReRegisterButton" Width="270" Click="ReRegisterButton_Click"
-                        Content="Re-register SteamVR driver entry" FontSize="16" />
+                        x:Uid="/SettingsPage/Buttons/ReRegister" FontSize="16" />
 
                 <SplitButton Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
                              x:Name="ReManifestButton" Width="305" Click="ReManifestButton_Click"
-                             Content="Reinstall SteamVR manifests" FontSize="16">
+                             x:Uid="/SettingsPage/Buttons/ReManifest" FontSize="16">
                     <SplitButton.Flyout>
                         <Flyout Placement="RightEdgeAlignedBottom" Opening="AutoStartFlyout_Opening">
                             <Grid>
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                                           Text="Automatically start with SteamVR" Margin="30,0,0,3" />
+                                           x:Uid="/SettingsPage/Captions/AutoStart" Margin="30,0,0,3" />
                                 <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
                                           Unchecked="AutoStartCheckBox_Unchecked"
                                           HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -492,7 +493,7 @@
                                 <Button FontSize="15" x:Name="DismissSetErrorButton"
                                         Click="DismissSetErrorButton_Click"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="Dismiss"
+                                        x:Uid="/SettingsPage/Buttons/Error/Dismiss"
                                         Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />

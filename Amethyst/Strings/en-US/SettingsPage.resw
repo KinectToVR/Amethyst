@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Button.Error.Dismiss.Content" xml:space="preserve">
+    <value>Dismiss</value>
+  </data>
+  <data name="Buttons.ReManifest.Content" xml:space="preserve">
+    <value>Reinstall SteamVR manifests</value>
+  </data>
+  <data name="Buttons.ReRegister.Content" xml:space="preserve">
+    <value>Re-register SteamVR driver entry</value>
+  </data>
+  <data name="Buttons.Reset.Content" xml:space="preserve">
+    <value>Delete configuration and restart</value>
+  </data>
+  <data name="Buttons.RestartSteamVR.Content" xml:space="preserve">
+    <value>Restart SteamVR</value>
+  </data>
+  <data name="Captions.AutoStart.Text" xml:space="preserve">
+    <value>Automatically start with SteamVR</value>
+  </data>
+  <data name="Captions.CalibrateExtFlip.Text" xml:space="preserve">
+    <value>Click to calibrate</value>
+  </data>
+  <data name="Captions.ExtFlip.Text" xml:space="preserve">
+    <value>When turned on: Amethyst will decide if you are turned back,
+checking the currently active Waist Tracker in SteamVR</value>
+  </data>
+  <data name="Captions.FaceTheKinect.Text" xml:space="preserve">
+    <value>Face the Kinect!</value>
+  </data>
+  <data name="Captions.Filters.Orientation.Text" xml:space="preserve">
+    <value>Rotation Tracking:</value>
+  </data>
+  <data name="Captions.Filters.Position.Text" xml:space="preserve">
+    <value>Position Tracking Filter:</value>
+  </data>
+  <data name="Captions.SkeletonFlip.Text" xml:space="preserve">
+    <value>Mirror trackers when turning away from the Kinect</value>
+  </data>
+  <data name="Captions.Sounds.Text" xml:space="preserve">
+    <value>Enable app sounds</value>
+  </data>
+  <data name="Captions.TrackersAutoSpawn.Text" xml:space="preserve">
+    <value>Automatically connect enabled trackers at launch</value>
+  </data>
+  <data name="Captions.TrackersRestart.Line1.Text" xml:space="preserve">
+    <value>Enabling or disabling a tracker requires restarting SteamVR</value>
+  </data>
+  <data name="Captions.TrackersRestart.Line2.Text" xml:space="preserve">
+    <value>and Amethyst for changes to take effect.</value>
+  </data>
+  <data name="Elements.ElbowsToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Disabling will stop elbow trackers
+from spawning on app startup.</value>
+  </data>
+  <data name="Elements.ExtFlipCalibration.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Calibration</value>
+  </data>
+  <data name="Elements.FeetToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Disabling will stop feet trackers
+from spawning on app startup.</value>
+  </data>
+  <data name="Elements.FlipToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Disabling will stop tracking
+from flipping when you turn around.</value>
+  </data>
+  <data name="Elements.KneesToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Disabling will stop knee trackers
+from spawning on app startup.</value>
+  </data>
+  <data name="Elements.WaistToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Disabling will stop waist tracker
+from spawning on app startup.</value>
+  </data>
+  <data name="Filters.Orientation.Device.Content" xml:space="preserve">
+    <value>Device-inferred Rotation</value>
+  </data>
+  <data name="Filters.Orientation.HMD.Content" xml:space="preserve">
+    <value>Follow Headset</value>
+  </data>
+  <data name="Filters.Orientation.MathBased.Content" xml:space="preserve">
+    <value>Software-calculated Rotation</value>
+  </data>
+  <data name="Filters.Orientation.Off.Content" xml:space="preserve">
+    <value>Disable Rotation</value>
+  </data>
+  <data name="Filters.Position.Kalman.Content" xml:space="preserve">
+    <value>Extended Kalman Filter</value>
+  </data>
+  <data name="Filters.Position.LERP.Content" xml:space="preserve">
+    <value>Linear Interpolation</value>
+  </data>
+  <data name="Filters.Position.LowPass.Content" xml:space="preserve">
+    <value>Low Pass Filter</value>
+  </data>
+  <data name="Filters.Position.Off.Content" xml:space="preserve">
+    <value>Disable Filter</value>
+  </data>
+  <data name="ReManifest.Error.NotFound" xml:space="preserve">
+    <value>Amethyst vr manifest couldn't be installed.
+Please check if it exists at the root (.exe) path.</value>
+  </data>
+  <data name="ReManifest.Error.Other" xml:space="preserve">
+    <value>Amethyst vr manifest couldn't be installed.
+Please check SteamVR logs and consider reporting it.</value>
+  </data>
+  <data name="ReRegister.Error.NotFound" xml:space="preserve">
+    <value>Amethyst crash handler executable was not found.
+It's needed for the reregistration, please check if it's there.</value>
+  </data>
+  <data name="SoundsWhen.Line1.Text" xml:space="preserve">
+    <value>Sounds happen during startup, calibration, errors, or when toggling tracker freeze</value>
+  </data>
+  <data name="SoundsWhen.Line2.Text" xml:space="preserve">
+    <value>or skeleton mirroring.</value>
+  </data>
+  <data name="Titles.ExtFlip.Text" xml:space="preserve">
+    <value>Use external waist tracking data instead of the Headset</value>
+  </data>
+  <data name="Titles.SkeletonFlip.Text" xml:space="preserve">
+    <value>Skeleton Flip</value>
+  </data>
+  <data name="Titles.Sounds.Text" xml:space="preserve">
+    <value>Sounds</value>
+  </data>
+  <data name="Titles.TrackerConfig.Elbows.Text" xml:space="preserve">
+    <value>Elbow Trackers</value>
+  </data>
+  <data name="Titles.TrackerConfig.Feet.Text" xml:space="preserve">
+    <value>Feet Trackers</value>
+  </data>
+  <data name="Titles.TrackerConfig.Header.Text" xml:space="preserve">
+    <value>Tracker Configuration</value>
+  </data>
+  <data name="Titles.TrackerConfig.Knees.Text" xml:space="preserve">
+    <value>Knee Trackers</value>
+  </data>
+  <data name="Titles.TrackerConfig.Waist.Text" xml:space="preserve">
+    <value>Waist Tracker</value>
+  </data>
+  <data name="Titles.Troubleshooting.Text" xml:space="preserve">
+    <value>Troubleshooting</value>
+  </data>
+</root>
