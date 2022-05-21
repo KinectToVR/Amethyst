@@ -1248,8 +1248,8 @@ void KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
 
 	// Also update in the UI
-	overrideDeviceName.get()->Text(StringToWString(
-		k2app::interfacing::LocalizedResourceString("DevicesPage", "Titles/NoOverrides/Text")));
+	overrideDeviceName.get()->Text(
+		k2app::interfacing::LocalizedResourceWString(L"DevicesPage", L"Titles/NoOverrides/Text"));
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -1622,8 +1622,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 
 	baseDeviceName.get()->Text(StringToWString(deviceName));
 	if (overrideDeviceName.get()->Text() == StringToWString(deviceName))
-		overrideDeviceName.get()->Text(StringToWString(
-			k2app::interfacing::LocalizedResourceString("DevicesPage", "Titles/NoOverrides/Text")));
+		overrideDeviceName.get()->Text(
+			k2app::interfacing::LocalizedResourceWString(L"DevicesPage", L"Titles/NoOverrides/Text"));
 
 	LOG(INFO) << "Changed the current tracking device (Base) to " << deviceName;
 

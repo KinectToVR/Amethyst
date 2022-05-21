@@ -48,28 +48,28 @@ namespace k2app::interfacing
 	inline Eigen::Quaternionf vrPlayspaceOrientationQuaternion{1, 0, 0, 0};
 
 	// Get a string from resources (crash handler's LAngResString)
-	inline std::string LocalizedResourceString(const std::string& dictionary, const std::string& key)
+	inline std::wstring LocalizedResourceWString(const std::wstring& dictionary, const std::wstring& key)
 	{
 		winrt::Windows::Globalization::Language language{
 			winrt::Windows::System::UserProfile::GlobalizationPreferences::Languages().GetAt(0) };
 		
 		shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language.LanguageTag();
 		
-		return WStringToString(shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
-			StringToWString(dictionary + "/" + key).c_str()).ValueAsString().c_str());
+		return shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
+			(dictionary + L"/" + key).c_str()).ValueAsString().c_str();
 	}
 
 	// Show an app toast / notification
-	inline void ShowToast(const std::string& header, const std::string& text)
+	inline void ShowToast(const std::wstring& header, const std::wstring& text)
 	{
 		if (header.empty() || text.empty())return;
 
 		winrt::hstring payload =
-			StringToWString(R"(<toast>
+			(LR"(<toast>
 						<visual>
 							<binding template = "ToastGeneric">
-								<text>)" + header + R"(</text>"
-								<text>)" + text + R"(</text>
+								<text>)" + header + LR"(</text>"
+								<text>)" + text + LR"(</text>
 							</binding>
 						</visual>
 					</toast>)").c_str();

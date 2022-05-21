@@ -1133,8 +1133,9 @@ void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(
 		{
 			k2app::interfacing::serverDriverFailure = true; // WAAAAAAA
 			k2app::interfacing::K2ServerDriverSetup(); // Refresh
-			k2app::interfacing::ShowToast("We couldn't spawn trackers automatically!",
-			                              "A server failure occurred and body trackers couldn't be spawned");
+			k2app::interfacing::ShowToast(
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title"),
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content"));
 		}
 
 		// Update things
@@ -1202,8 +1203,9 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 		{
 			k2app::interfacing::serverDriverFailure = true; // WAAAAAAA
 			k2app::interfacing::K2ServerDriverSetup(); // Refresh
-			k2app::interfacing::ShowToast("We couldn't spawn trackers automatically!",
-			                              "A server failure occurred and body trackers couldn't be spawned");
+			k2app::interfacing::ShowToast(
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title"),
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content"));
 		}
 	}
 

@@ -190,7 +190,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 									LOG(INFO) << "Showing toast with guid " << itr.guid << " now...";
 
 									// Show the toast (and optionally cache it)
-									k2app::interfacing::ShowToast(itr.title, itr.message);
+									k2app::interfacing::ShowToast(
+										StringToWString(itr.title), 
+										StringToWString(itr.message));
 
 									// If the toast isn't meant to be shown always, cache it
 									if (!itr.show_always)

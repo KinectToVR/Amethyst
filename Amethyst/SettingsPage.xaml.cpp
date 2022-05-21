@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SettingsPage.xaml.h"
 
 #if __has_include("SettingsPage.g.cpp")
@@ -131,16 +131,17 @@ void trackersConfigChanged()
 
 	// If this is the first time, also show the notification
 	if (!k2app::shared::settings::restartButton.get()->IsEnabled())
-		k2app::interfacing::ShowToast("Trackers configuration has changed",
-		                              "Restart SteamVR for changes to take effect");
+		k2app::interfacing::ShowToast(
+			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersConfigChanged/Title"),
+			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersConfigChanged/Content"));
 
 	// If all trackers were turned off then SCREAM
 	if (std::ranges::all_of(
 		k2app::K2Settings.isJointPairEnabled,
 		[](const bool& i) { return !i; }
 	))
-		k2app::interfacing::ShowToast("YOU'VE JUST DISABLED ALL TRACKERS",
-		                              "WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
+		k2app::interfacing::ShowToast(L"YOU'VE JUST DISABLED ALL TRACKERS",
+		                              L"WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
 
 	// Compare with saved settings and unlock the restart
 	k2app::shared::settings::restartButton.get()->IsEnabled(true);
@@ -229,8 +230,9 @@ void KinectToVR::implementation::SettingsPage::ResetButton_Click(
 		if (WinExec(_cmd.c_str(), SW_HIDE) != NO_ERROR)
 		{
 			LOG(ERROR) << "App will not be restarted due to new process creation error.";
-			k2app::interfacing::ShowToast("We couldn't restart Amethyst for you!",
-			                              "Please try restarting it manually");
+			k2app::interfacing::ShowToast(
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content"));
 			return;
 		}
 
@@ -239,15 +241,14 @@ void KinectToVR::implementation::SettingsPage::ResetButton_Click(
 
 		// Exit the app
 		LOG(INFO) << "Configuration has been reset, exiting...";
-		k2app::interfacing::ShowToast("Amethyst restart pending...",
-		                              "The app will restart automatically in 3 seconds");
-		//exit(0);
 		Application::Current().Exit();
 	}
 	else
 	{
 		LOG(ERROR) << "App will not be restarted due to caller process identification error.";
-		k2app::interfacing::ShowToast("We couldn't restart Amethyst for you!", "Please try restarting it manually");
+		k2app::interfacing::ShowToast(
+			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
+			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content"));
 	}
 }
 
@@ -1051,8 +1052,8 @@ void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 	// Not found failure
 	case 0:
 		{
-			k2app::shared::settings::setErrorFlyoutText->Text(StringToWString(
-				k2app::interfacing::LocalizedResourceString("SettingsPage", "ReManifest/Error/NotFound")));
+			k2app::shared::settings::setErrorFlyoutText->Text(
+				k2app::interfacing::LocalizedResourceWString(L"SettingsPage", L"ReManifest/Error/NotFound"));
 
 			Controls::Primitives::FlyoutShowOptions _opt;
 			_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
@@ -1065,8 +1066,8 @@ void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 	// SteamVR failure
 	case 2:
 		{
-			k2app::shared::settings::setErrorFlyoutText->Text(StringToWString(
-				k2app::interfacing::LocalizedResourceString("SettingsPage", "ReManifest/Error/Other")));
+			k2app::shared::settings::setErrorFlyoutText->Text(
+				k2app::interfacing::LocalizedResourceWString(L"SettingsPage", L"ReManifest/Error/Other"));
 
 			Controls::Primitives::FlyoutShowOptions _opt;
 			_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
@@ -1095,8 +1096,8 @@ void KinectToVR::implementation::SettingsPage::ReRegisterButton_Click(
 	{
 		LOG(WARNING) << "Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!";
 
-		k2app::shared::settings::setErrorFlyoutText->Text(StringToWString(
-			k2app::interfacing::LocalizedResourceString("SettingsPage", "ReRegister/Error/NotFound")));
+		k2app::shared::settings::setErrorFlyoutText->Text(
+			k2app::interfacing::LocalizedResourceWString(L"SettingsPage", L"ReRegister/Error/NotFound"));
 
 		Controls::Primitives::FlyoutShowOptions _opt;
 		_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
@@ -1115,4 +1116,30 @@ void KinectToVR::implementation::SettingsPage::DismissSetErrorButton_Click(
 Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersButton_Click(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
+	auto learnMoreDialog = Controls::ContentDialog();
+
+	learnMoreDialog.Title(box_value(L"Chungus Bungus"));
+
+	auto scrollViewer = Controls::ScrollViewer();
+	scrollViewer.Content(box_value(
+		L"Lorem ipsum dolor sit amet, consectetur adipiscing elit,\n"
+		L"sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+
+		L"Amet purus gravida quis blandit turpis.Neque viverra justo nec ultrices dui sapien eget mi.\n"
+		L"Platea dictumst quisque sagittis purus sit amet.Nisi scelerisque eu ultrices vitae.\n"
+		L"Consequat mauris nunc congue nisi vitae.\n\n"
+
+		L"Amet luctus venenatis lectus magna fringilla urna porttitor.\n"
+		L"Phasellus vestibulum lorem sed risus ultricies tristique.\n"
+		L"Consequat semper viverra nam libero justo.\n\n"
+
+		L"Accumsan in nisl nisi scelerisque eu ultrices vitae auctor eu."
+	));
+
+	learnMoreDialog.Content(scrollViewer);
+	learnMoreDialog.CloseButtonText(L"Close");
+
+	learnMoreDialog.ShowAsync();
+
+	co_return;
 }
