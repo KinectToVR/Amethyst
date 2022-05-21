@@ -18,16 +18,16 @@ HRESULT PSMoveServiceHandler::getStatusResult()
 	return initialized ? S_OK : E_PSMS_NOT_RUNNING;
 }
 
-std::string PSMoveServiceHandler::statusResultString(HRESULT stat)
+std::wstring PSMoveServiceHandler::statusResultWString(HRESULT stat)
 {
-	// Wrap status to string for readability
+	// Wrap status to string for readability TODO LOCALIZE
 	switch (stat)
 	{
-	case S_OK: return "Success!\nS_OK\nEverything's good!";
+	case S_OK: return L"Success!\nS_OK\nEverything's good!";
 	case E_PSMS_NOT_RUNNING: return
-			"Connection error!\nE_PSMS_NOT_RUNNING\nCheck if PSMoveService is running, working and accessible by clients.";
-	default: return "Undefined: " + std::to_string(stat) +
-			"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
+			L"Connection error!\nE_PSMS_NOT_RUNNING\nCheck if PSMoveService is running, working and accessible by clients.";
+	default: return L"Undefined: " + std::to_wstring(stat) +
+			L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
 }
 

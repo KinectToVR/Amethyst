@@ -9,24 +9,24 @@ HRESULT KinectV1Handler::getStatusResult()
 	return E_NUI_NOTCONNECTED;
 }
 
-std::string KinectV1Handler::statusResultString(HRESULT stat)
+std::wstring KinectV1Handler::statusResultWString(HRESULT stat)
 {
-	// Wrap status to string for readability
+	// Wrap status to string for readability TODO LOCALIZE
 	switch (stat)
 	{
-	case S_OK: return "Success!\nS_OK\nEverything's good!";
+	case S_OK: return L"Success!\nS_OK\nEverything's good!";
 	case S_NUI_INITIALIZING: return
-			"INITIALIZING\nS_NUI_INITIALIZING\nThe device is connected, but still initializing.";
-	case E_NUI_NOTCONNECTED: return "NOTCONNECTED\nE_NUI_NOTCONNECTED\nThe device is not connected.";
-	case E_NUI_NOTGENUINE: return "NOTGENUINE\nE_NUI_NOTGENUINE\nThe device is not a valid Kinect.";
-	case E_NUI_NOTSUPPORTED: return "NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nThe device is an unsupported model.";
+			L"INITIALIZING\nS_NUI_INITIALIZING\nThe device is connected, but still initializing.";
+	case E_NUI_NOTCONNECTED: return L"NOTCONNECTED\nE_NUI_NOTCONNECTED\nThe device is not connected.";
+	case E_NUI_NOTGENUINE: return L"NOTGENUINE\nE_NUI_NOTGENUINE\nThe device is not a valid Kinect.";
+	case E_NUI_NOTSUPPORTED: return L"NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nThe device is an unsupported model.";
 	case E_NUI_INSUFFICIENTBANDWIDTH: return
-			"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nThe device is connected to a hub without the necessary bandwidth requirements.";
+			L"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nThe device is connected to a hub without the necessary bandwidth requirements.";
 	case E_NUI_NOTPOWERED: return
-			"NOTPOWERED\nE_NUI_NOTPOWERED\nThere is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.";
-	case E_NUI_NOTREADY: return "NOTREADY\nE_NUI_NOTREADY\nThere was some other unspecified error.";
-	default: return "Undefined: " + std::to_string(stat) +
-			"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
+			L"NOTPOWERED\nE_NUI_NOTPOWERED\nThere is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.";
+	case E_NUI_NOTREADY: return L"NOTREADY\nE_NUI_NOTREADY\nThere was some other unspecified error.";
+	default: return L"Undefined: " + std::to_wstring(stat) +
+			L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
 }
 
@@ -37,7 +37,7 @@ void KinectV1Handler::initialize()
 		initialized = initKinect();
 
 		LOG(INFO) << "Initializing: updated Kinect V1 status with: " <<
-			statusResultString(getStatusResult());
+			WStringToString(statusResultWString(getStatusResult()));
 
 		if (!initialized) throw FailedKinectInitialization;
 	}

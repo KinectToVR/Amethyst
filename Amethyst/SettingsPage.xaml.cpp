@@ -1051,7 +1051,7 @@ void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 	// Not found failure
 	case 0:
 		{
-			k2app::shared::settings::setErrorFlyoutText->Text(wstring_cast(
+			k2app::shared::settings::setErrorFlyoutText->Text(StringToWString(
 				k2app::interfacing::LocalizedResourceString("SettingsPage", "ReManifest/Error/NotFound")));
 
 			Controls::Primitives::FlyoutShowOptions _opt;
@@ -1065,7 +1065,7 @@ void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 	// SteamVR failure
 	case 2:
 		{
-			k2app::shared::settings::setErrorFlyoutText->Text(wstring_cast(
+			k2app::shared::settings::setErrorFlyoutText->Text(StringToWString(
 				k2app::interfacing::LocalizedResourceString("SettingsPage", "ReManifest/Error/Other")));
 
 			Controls::Primitives::FlyoutShowOptions _opt;
@@ -1095,7 +1095,7 @@ void KinectToVR::implementation::SettingsPage::ReRegisterButton_Click(
 	{
 		LOG(WARNING) << "Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!";
 
-		k2app::shared::settings::setErrorFlyoutText->Text(wstring_cast(
+		k2app::shared::settings::setErrorFlyoutText->Text(StringToWString(
 			k2app::interfacing::LocalizedResourceString("SettingsPage", "ReRegister/Error/NotFound")));
 
 		Controls::Primitives::FlyoutShowOptions _opt;

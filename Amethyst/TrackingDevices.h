@@ -160,14 +160,14 @@ namespace TrackingDevices
 		auto& trackingDevice = TrackingDevicesVector.at(index);
 
 		std::string deviceName = "[UNKNOWN]"; // Dummy name
-		std::string device_status = "E_UKNOWN\nWhat's happened here?"; // Dummy status
+		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?"; // Dummy status
 
 		if (trackingDevice.index() == 0)
 		{
 			// Kinect Basis
 			const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
-			device_status = device->statusResultString(device->getStatusResult());
+			device_status = device->statusResultWString(device->getStatusResult());
 			deviceName = device->getDeviceName();
 		}
 		else if (trackingDevice.index() == 1)
@@ -175,14 +175,14 @@ namespace TrackingDevices
 			// Joints Basis
 			const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
-			device_status = device->statusResultString(device->getStatusResult());
+			device_status = device->statusResultWString(device->getStatusResult());
 			deviceName = device->getDeviceName();
 		}
 
 		/* Update the device in general tab */
 
 		// Update the status here
-		bool status_ok = device_status.find("S_OK") != std::string::npos;
+		bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
 		using namespace winrt::Microsoft::UI::Xaml;
 
 		// Check with this one, should be the same for all anyway
@@ -201,11 +201,10 @@ namespace TrackingDevices
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
 
 			// Split status and message by \n
-			k2app::shared::general::deviceNameLabel.get()->Text(wstring_cast(deviceName));
-			k2app::shared::general::deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
-			k2app::shared::general::trackingDeviceErrorLabel.get()->Text(
-				wstring_cast(split_status(device_status)[1]));
-			k2app::shared::general::errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+			k2app::shared::general::deviceNameLabel.get()->Text(StringToWString(deviceName));
+			k2app::shared::general::deviceStatusLabel.get()->Text(split_status(device_status)[0]);
+			k2app::shared::general::trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
+			k2app::shared::general::errorWhatText.get()->Text(split_status(device_status)[2]);
 		}
 
 		/* Update the device in devices tab */
@@ -279,7 +278,7 @@ namespace TrackingDevices
 		bool status_ok = false; // Assume failure :/
 
 		std::string deviceName = "[UNKNOWN]"; // Dummy name
-		std::string device_status = "E_UKNOWN\nWhat's happened here?"; // Dummy status
+		std::wstring device_status = L"E_UKNOWN\nWhat's happened here?"; // Dummy status
 
 		if (_show)
 		{
@@ -291,7 +290,7 @@ namespace TrackingDevices
 				// Kinect Basis
 				const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(overrideDevice);
 
-				device_status = device->statusResultString(device->getStatusResult());
+				device_status = device->statusResultWString(device->getStatusResult());
 				deviceName = device->getDeviceName();
 			}
 			else if (overrideDevice.index() == 1)
@@ -299,11 +298,11 @@ namespace TrackingDevices
 				// Joints Basis
 				const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(overrideDevice);
 
-				device_status = device->statusResultString(device->getStatusResult());
+				device_status = device->statusResultWString(device->getStatusResult());
 				deviceName = device->getDeviceName();
 			}
 
-			status_ok = device_status.find("S_OK") != std::string::npos;
+			status_ok = device_status.find(L"S_OK") != std::wstring::npos;
 		}
 
 		/* Update the device in settings tab */
@@ -339,12 +338,10 @@ namespace TrackingDevices
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
 
 			// Split status and message by \n
-			k2app::shared::general::overrideDeviceNameLabel.get()->Text(wstring_cast(deviceName));
-			k2app::shared::general::overrideDeviceStatusLabel.get()->Text(
-				wstring_cast(split_status(device_status)[0]));
-			k2app::shared::general::overrideDeviceErrorLabel.get()->Text(
-				wstring_cast(split_status(device_status)[1]));
-			k2app::shared::general::overrideErrorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+			k2app::shared::general::overrideDeviceNameLabel.get()->Text(StringToWString(deviceName));
+			k2app::shared::general::overrideDeviceStatusLabel.get()->Text(split_status(device_status)[0]);
+			k2app::shared::general::overrideDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
+			k2app::shared::general::overrideErrorWhatText.get()->Text(split_status(device_status)[2]);
 		}
 	}
 
@@ -614,8 +611,8 @@ namespace TrackingDevices
 			}
 
 			/* Update local statuses */
-			k2app::shared::devices::baseDeviceName.get()->Text(wstring_cast(deviceName));
-			if (k2app::shared::devices::overrideDeviceName.get()->Text() == wstring_cast(deviceName))
+			k2app::shared::devices::baseDeviceName.get()->Text(StringToWString(deviceName));
+			if (k2app::shared::devices::overrideDeviceName.get()->Text() == StringToWString(deviceName))
 				k2app::shared::devices::overrideDeviceName.get()->Text(L"No Overrides");
 		}
 		{
@@ -638,7 +635,7 @@ namespace TrackingDevices
 			}
 
 			/* Update local statuses */
-			k2app::shared::devices::overrideDeviceName.get()->Text(wstring_cast(deviceName));
+			k2app::shared::devices::overrideDeviceName.get()->Text(StringToWString(deviceName));
 		}
 	}
 }

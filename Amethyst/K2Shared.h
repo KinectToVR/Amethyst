@@ -2,23 +2,13 @@
 #include "pch.h"
 #include "K2Settings.h"
 
-inline std::wstring wstring_cast(const std::string& s)
-{
-	return std::wstring(s.begin(), s.end());
-}
-
-inline std::string string_cast(const std::wstring& s)
-{
-	return std::string(s.begin(), s.end());
-}
-
-inline std::array<std::string, 3> split_status(const std::string& s)
+inline std::array<std::wstring, 3> split_status(const std::wstring& s)
 {
 	// If there are 3 strings separated by \n
-	return std::array<std::string, 3>{
-		s.substr(0, s.find("\n")),
-		s.substr(s.find("\n") + 1, s.rfind("\n") - (s.find("\n") + 1)),
-		s.substr(s.rfind("\n") + 1)
+	return std::array<std::wstring, 3>{
+		s.substr(0, s.find(L"\n")),
+		s.substr(s.find(L"\n") + 1, s.rfind(L"\n") - (s.find(L"\n") + 1)),
+		s.substr(s.rfind(L"\n") + 1)
 	};
 }
 

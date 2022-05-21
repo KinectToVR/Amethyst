@@ -24,15 +24,16 @@ HRESULT KinectV2Handler::getStatusResult()
 	return S_FALSE;
 }
 
-std::string KinectV2Handler::statusResultString(HRESULT stat)
+std::wstring KinectV2Handler::statusResultWString(HRESULT stat)
 {
+	// Wrap status to string for readability TODO LOCALIZE
 	switch (stat)
 	{
-	case S_OK: return "Success!\nS_OK\nEverything's good!";
+	case S_OK: return L"Success!\nS_OK\nEverything's good!";
 	case S_FALSE: return
-			"Sensor Unavailable!\nE_NOTAVAILABLE\nCheck if the Kinect plugged in to your PC's USB and power plugs.";
-	default: return "Undefined: " + std::to_string(stat) +
-			"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
+			L"Sensor Unavailable!\nE_NOTAVAILABLE\nCheck if the Kinect plugged in to your PC's USB and power plugs.";
+	default: return L"Undefined: " + std::to_wstring(stat) +
+			L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
 }
 
@@ -43,7 +44,7 @@ void KinectV2Handler::initialize()
 		initialized = initKinect();
 
 		LOG(INFO) << "Initializing: updated Kinect V2 status with: " <<
-			statusResultString(getStatusResult());
+			WStringToString(statusResultWString(getStatusResult()));
 
 		// initializeColor();
 		// Commented both image frames out, as most people use the kinect for skeletal data

@@ -363,7 +363,7 @@ namespace winrt::KinectToVR::implementation
 			    const Windows::Foundation::Collections::IVectorChangedEventArgs& args)
 			{
 				// Report a registration and parse
-				LOG(INFO) << string_cast(sender.GetAt(sender.Size() - 1).DeviceName().c_str()) <<
+				LOG(INFO) << WStringToString(sender.GetAt(sender.Size() - 1).DeviceName().c_str()) <<
 					"'s been registered as a tracking device. [UI Node]";
 
 				// Set the current device
@@ -399,7 +399,7 @@ namespace winrt::KinectToVR::implementation
 			LOG(INFO) << "Appending " << deviceName <<
 				" to UI Node's tracking devices' list...";
 			m_TrackingDevicesViewModels.Append(
-				make<TrackingDevicesView>(wstring_cast(deviceName).c_str()));
+				make<TrackingDevicesView>(StringToWString(deviceName).c_str()));
 		}
 
 		// Register tracking devices' list
@@ -426,7 +426,7 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string deviceName = "[UNKNOWN]";
-	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 
 	// Only if override -> select enabled combos
 	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -457,8 +457,8 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 		// Kinect Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
-		deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
-		device_status = device->statusResultString(device->getStatusResult());
+		deviceNameLabel.get()->Text(StringToWString(device->getDeviceName()));
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
 
@@ -484,7 +484,7 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 		// Set up combos if the device's OK
-		if (device_status.find("S_OK") != std::string::npos)
+		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
 			// If we're reconnecting an override device, also refresh joints
 			if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -552,8 +552,8 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 		// Joints Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
-		deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
-		device_status = device->statusResultString(device->getStatusResult());
+		deviceNameLabel.get()->Text(StringToWString(device->getDeviceName()));
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
 
@@ -574,37 +574,37 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
 		jointBasisControls.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisControls_1.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisDropDown.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisDropDown_1.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		// Set up combos if the device's OK
-		if (device_status.find("S_OK") != std::string::npos)
+		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
 			// If we're reconnecting a base device, also refresh joints
 			if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
@@ -633,19 +633,19 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 
 					// Push the name to all combos
 					// Waist
-					waistJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					waistJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// LeftF
-					leftFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// RightF
-					rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// LeftEL
-					leftElbowJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// RightEL
-					rightElbowJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// LeftK
-					leftKneeJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// RightK
-					rightKneeJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 				}
 
 				// Check base IDs if wrong
@@ -707,7 +707,7 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 					auto _jointname = _joint.getJointName();
 
 					// Push the name to all combos
-					devices_push_override_joints(wstring_cast(_jointname));
+					devices_push_override_joints(StringToWString(_jointname));
 				}
 
 				// Try fix override IDs if wrong
@@ -724,7 +724,7 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 	k2app::interfacing::devices_check_disabled_joints();
 
 	// Update the status here
-	const bool status_ok = device_status.find("S_OK") != std::string::npos;
+	const bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -737,9 +737,9 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 		status_ok ? Visibility::Visible : Visibility::Collapsed);
 
 	// Split status and message by \n
-	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
-	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
-	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
+	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
+	errorWhatText.get()->Text(split_status(device_status)[2]);
 
 	if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 	{
@@ -822,7 +822,7 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 	auto _index = devicesListView.get()->SelectedIndex();
 
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
-	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	LOG(INFO) << "Now reconnecting the tracking device...";
 
 	if (trackingDevice.index() == 0)
@@ -831,7 +831,7 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 		const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
 		device->initialize();
-		device_status = device->statusResultString(device->getStatusResult());
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a kinectbasis device, so this should be hidden
 		jointBasisControls.get()->Visibility(Visibility::Collapsed);
@@ -841,7 +841,7 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 		// Set up combos if the device's OK
-		if (device_status.find("S_OK") != std::string::npos)
+		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
 			// If we're reconnecting an override device, also refresh joints
 			if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -910,42 +910,42 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 		const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
 		device->initialize();
-		device_status = device->statusResultString(device->getStatusResult());
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
 		jointBasisControls.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisControls_1.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisDropDown.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisDropDown_1.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		// Set up combos if the device's OK
-		if (device_status.find("S_OK") != std::string::npos)
+		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
 			// If we're reconnecting a base device, also refresh joints
 			if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
@@ -974,19 +974,19 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 
 					// Push the name to all combos
 					// Waist
-					waistJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					waistJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// LeftF
-					leftFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// RightF
-					rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// LeftEL
-					leftElbowJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// RightEL
-					rightElbowJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// LeftK
-					leftKneeJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// RightK
-					rightKneeJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 				}
 
 				// Check base IDs if wrong
@@ -1048,7 +1048,7 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 					auto _jointname = _joint.getJointName();
 
 					// Push the name to all combos
-					devices_push_override_joints(wstring_cast(_jointname));
+					devices_push_override_joints(StringToWString(_jointname));
 				}
 
 				// Try fix override IDs if wrong
@@ -1067,7 +1067,7 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 	/* Update local statuses */
 
 	// Update the status here
-	const bool status_ok = device_status.find("S_OK") != std::string::npos;
+	const bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -1080,9 +1080,9 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 		status_ok ? Visibility::Visible : Visibility::Collapsed);
 
 	// Split status and message by \n
-	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
-	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
-	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
+	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
+	errorWhatText.get()->Text(split_status(device_status)[2]);
 
 	// Update the GeneralPage status
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
@@ -1097,7 +1097,7 @@ void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	auto _index = devicesListView.get()->SelectedIndex();
 
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
-	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	LOG(INFO) << "Now disconnecting the tracking device...";
 
 	if (trackingDevice.index() == 0)
@@ -1106,7 +1106,7 @@ void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 		const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
 		device->shutdown();
-		device_status = device->statusResultString(device->getStatusResult());
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a kinectbasis device, so this should be hidden
 		jointBasisControls.get()->Visibility(Visibility::Collapsed);
@@ -1121,36 +1121,36 @@ void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 		const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
 		device->shutdown();
-		device_status = device->statusResultString(device->getStatusResult());
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
 		jointBasisControls.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisControls_1.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisDropDown.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisDropDown_1.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
@@ -1159,7 +1159,7 @@ void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	/* Update local statuses */
 
 	// Update the status here
-	const bool status_ok = device_status.find("S_OK") != std::string::npos;
+	const bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -1172,9 +1172,9 @@ void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 		status_ok ? Visibility::Visible : Visibility::Collapsed);
 
 	// Split status and message by \n
-	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
-	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
-	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
+	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
+	errorWhatText.get()->Text(split_status(device_status)[2]);
 
 	// Update the GeneralPage status
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
@@ -1191,7 +1191,7 @@ void KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 	auto _index = devicesListView.get()->SelectedIndex();
 
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
-	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	LOG(INFO) << "Now deselecting the tracking device...";
 
 	jointBasisControls.get()->Visibility(Visibility::Collapsed);
@@ -1214,19 +1214,19 @@ void KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 	{
 		// Kinect Basis
 		const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
-		device_status = device->statusResultString(device->getStatusResult());
+		device_status = device->statusResultWString(device->getStatusResult());
 	}
 	else if (trackingDevice.index() == 1)
 	{
 		// Joints Basis
 		const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
-		device_status = device->statusResultString(device->getStatusResult());
+		device_status = device->statusResultWString(device->getStatusResult());
 	}
 
 	/* Update local statuses */
 
 	// Update the status here
-	const bool status_ok = device_status.find("S_OK") != std::string::npos;
+	const bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -1239,16 +1239,16 @@ void KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 		status_ok ? Visibility::Visible : Visibility::Collapsed);
 
 	// Split status and message by \n
-	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
-	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
-	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
+	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
+	errorWhatText.get()->Text(split_status(device_status)[2]);
 
 	// Deselect the device
 	k2app::K2Settings.overrideDeviceID = -1; // Only acceptable for an Override
 	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
 
 	// Also update in the UI
-	overrideDeviceName.get()->Text(wstring_cast(
+	overrideDeviceName.get()->Text(StringToWString(
 		k2app::interfacing::LocalizedResourceString("SettingsPage", "Titles/NoOverrides/Text")));
 
 	// Save settings
@@ -1263,7 +1263,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 {
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
-	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	std::string deviceName = "[UNKNOWN]";
 
 	if (trackingDevice.index() == 0)
@@ -1332,7 +1332,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		devices_select_combobox();
 
 		// Backup the status
-		device_status = device->statusResultString(device->getStatusResult());
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a kinectbasis device, so this should be hidden
 		jointBasisControls.get()->Visibility(Visibility::Collapsed);
@@ -1393,7 +1393,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 			auto _jointname = _joint.getJointName();
 
 			// Push the name to all combos
-			devices_push_override_joints(wstring_cast(_jointname));
+			devices_push_override_joints(StringToWString(_jointname));
 		}
 
 		// Try fix override IDs if wrong
@@ -1404,7 +1404,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		devices_select_combobox();
 
 		// Backup the status
-		device_status = device->statusResultString(device->getStatusResult());
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected an override device, so this should be hidden
 		jointBasisControls.get()->Visibility(Visibility::Collapsed);
@@ -1422,7 +1422,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 	setAsBaseButton.get()->IsEnabled(true);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
 
-	overrideDeviceName.get()->Text(wstring_cast(deviceName));
+	overrideDeviceName.get()->Text(StringToWString(deviceName));
 
 	LOG(INFO) << "Changed the current tracking device (Override) to " << deviceName;
 
@@ -1437,7 +1437,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 	/* Update local statuses */
 
 	// Update the status here
-	const bool status_ok = device_status.find("S_OK") != std::string::npos;
+	const bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -1450,9 +1450,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		status_ok ? Visibility::Visible : Visibility::Collapsed);
 
 	// Split status and message by \n
-	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
-	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
-	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
+	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
+	errorWhatText.get()->Text(split_status(device_status)[2]);
 
 	k2app::K2Settings.overrideDeviceID = selectedTrackingDeviceID;
 	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
@@ -1497,7 +1497,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 {
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
-	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	std::string deviceName = "[UNKNOWN]";
 
 	if (trackingDevice.index() == 0)
@@ -1507,7 +1507,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		deviceName = device->getDeviceName();
 
 		device->initialize(); // Init the device as we'll be using it
-		device_status = device->statusResultString(device->getStatusResult());
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a kinectbasis device, so this should be hidden
 		jointBasisControls.get()->Visibility(Visibility::Collapsed);
@@ -1556,19 +1556,19 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 
 			// Push the name to all combos
 			// Waist
-			waistJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			waistJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 			// LeftF
-			leftFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			leftFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 			// RightF
-			rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			rightFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 			// LeftEL
-			leftElbowJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			leftElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 			// RightEL
-			rightElbowJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			rightElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 			// LeftK
-			leftKneeJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			leftKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 			// RightK
-			rightKneeJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+			rightKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 		}
 
 		// Check base IDs if wrong
@@ -1592,24 +1592,24 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		rightKneeJointOptionBox.get()->SelectedIndex(k2app::K2Settings.selectedTrackedJointID[6]);
 
 		// Update the status
-		device_status = device->statusResultString(device->getStatusResult());
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
 		jointBasisControls.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos) ? Visibility::Visible : Visibility::Collapsed);
+			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
 
 		jointBasisControls_1.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos) ? Visibility::Visible : Visibility::Collapsed);
+			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
 
 		jointBasisDropDown.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos) ? Visibility::Visible : Visibility::Collapsed);
+			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
 
 		jointBasisDropDown_1.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos) ? Visibility::Visible : Visibility::Collapsed);
+			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos) ? Visibility::Visible : Visibility::Collapsed);
+			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
 	}
 
 	// Check if we've disabled any joints from spawning and disable they're mods
@@ -1620,9 +1620,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 	setAsBaseButton.get()->IsEnabled(false);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
 
-	baseDeviceName.get()->Text(wstring_cast(deviceName));
-	if (overrideDeviceName.get()->Text() == wstring_cast(deviceName))
-		overrideDeviceName.get()->Text(wstring_cast(
+	baseDeviceName.get()->Text(StringToWString(deviceName));
+	if (overrideDeviceName.get()->Text() == StringToWString(deviceName))
+		overrideDeviceName.get()->Text(StringToWString(
 			k2app::interfacing::LocalizedResourceString("SettingsPage", "Titles/NoOverrides/Text")));
 
 	LOG(INFO) << "Changed the current tracking device (Base) to " << deviceName;
@@ -1638,7 +1638,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 	/* Update local statuses */
 
 	// Update the status here
-	const bool status_ok = device_status.find("S_OK") != std::string::npos;
+	const bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -1651,9 +1651,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		status_ok ? Visibility::Visible : Visibility::Collapsed);
 
 	// Split status and message by \n
-	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
-	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
-	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
+	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
+	errorWhatText.get()->Text(split_status(device_status)[2]);
 
 	k2app::K2Settings.trackingDeviceID = selectedTrackingDeviceID;
 	if (k2app::K2Settings.overrideDeviceID == k2app::K2Settings.trackingDeviceID)
@@ -2658,7 +2658,7 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string deviceName = "[UNKNOWN]";
-	std::string device_status = "E_UKNOWN\nWhat's happened here?";
+	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 
 	// Only if override -> select enabled combos
 	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -2689,8 +2689,8 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		// Kinect Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 
-		deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
-		device_status = device->statusResultString(device->getStatusResult());
+		deviceNameLabel.get()->Text(StringToWString(device->getDeviceName()));
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
 
@@ -2716,7 +2716,7 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 		// Set up combos if the device's OK
-		if (device_status.find("S_OK") != std::string::npos)
+		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
 			// If we're reconnecting an override device, also refresh joints
 			if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -2784,8 +2784,8 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		// Joints Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
-		deviceNameLabel.get()->Text(wstring_cast(device->getDeviceName()));
-		device_status = device->statusResultString(device->getStatusResult());
+		deviceNameLabel.get()->Text(StringToWString(device->getDeviceName()));
+		device_status = device->statusResultWString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
 
@@ -2806,37 +2806,37 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
 		jointBasisControls.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisControls_1.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisDropDown.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		jointBasisDropDown_1.get()->Visibility(
-			(device_status.find("S_OK") != std::string::npos &&
+			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
 		// Set up combos if the device's OK
-		if (device_status.find("S_OK") != std::string::npos)
+		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
 			// If we're reconnecting a base device, also refresh joints
 			if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
@@ -2865,19 +2865,19 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 					// Push the name to all combos
 					// Waist
-					waistJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					waistJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// LeftF
-					leftFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// RightF
-					rightFootJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// LeftEL
-					leftElbowJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// RightEL
-					rightElbowJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// LeftK
-					leftKneeJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					leftKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 					// RightK
-					rightKneeJointOptionBox.get()->Items().Append(box_value(wstring_cast(_jointname)));
+					rightKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
 				}
 
 				// Check base IDs if wrong
@@ -2939,7 +2939,7 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 					auto _jointname = _joint.getJointName();
 
 					// Push the name to all combos
-					devices_push_override_joints(wstring_cast(_jointname));
+					devices_push_override_joints(StringToWString(_jointname));
 				}
 
 				// Try fix override IDs if wrong
@@ -2956,7 +2956,7 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 	k2app::interfacing::devices_check_disabled_joints();
 
 	// Update the status here
-	const bool status_ok = device_status.find("S_OK") != std::string::npos;
+	const bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
 
 	errorWhatText.get()->Visibility(
 		status_ok ? Visibility::Collapsed : Visibility::Visible);
@@ -2969,9 +2969,9 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		status_ok ? Visibility::Visible : Visibility::Collapsed);
 
 	// Split status and message by \n
-	deviceStatusLabel.get()->Text(wstring_cast(split_status(device_status)[0]));
-	trackingDeviceErrorLabel.get()->Text(wstring_cast(split_status(device_status)[1]));
-	errorWhatText.get()->Text(wstring_cast(split_status(device_status)[2]));
+	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
+	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
+	errorWhatText.get()->Text(split_status(device_status)[2]);
 
 	if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 	{

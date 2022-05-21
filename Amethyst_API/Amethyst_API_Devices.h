@@ -17,10 +17,20 @@
  *
  */
 
+inline std::wstring StringToWString(const std::string& s)
+{
+	return std::wstring(s.begin(), s.end());
+}
+
+inline std::string WStringToString(const std::wstring& s)
+{
+	return std::string(s.begin(), s.end());
+}
+
 namespace ktvr
 {
 	// Interace Version
-	static const char* IK2API_Devices_Version = "IK2API_Version_007";
+	static const char* IK2API_Devices_Version = "IK2API_Version_008";
 
 	// Return messaging types
 	enum K2InitErrorType
@@ -182,9 +192,9 @@ namespace ktvr
 			}
 
 			// Text Get and Set
-			virtual std::string Text() { return ""; }
+			virtual std::wstring Text() { return L""; }
 
-			virtual void Text(const std::string& text)
+			virtual void Text(const std::wstring& text)
 			{
 			}
 		};
@@ -227,7 +237,7 @@ namespace ktvr
 			}
 
 			// Label Set (No Get here, sadly)
-			virtual void Content(const std::string& content)
+			virtual void Content(const std::wstring& content)
 			{
 			}
 
@@ -330,10 +340,10 @@ namespace ktvr
 			}
 
 			// Items Vector Get and Set
-			virtual std::vector<std::string> Items() { return {}; }
+			virtual std::vector<std::wstring> Items() { return {}; }
 
 			// WARNING: DON'T CALL THIS DURING ANY OTHER MODIFICATION LIKE SELECTIONCHANGED
-			virtual void Items(const std::vector<std::string>& entries)
+			virtual void Items(const std::vector<std::wstring>& entries)
 			{
 			}
 
@@ -475,9 +485,9 @@ namespace ktvr
 			}
 
 			// Text Get and Set
-			virtual std::string Text() { return ""; }
+			virtual std::wstring Text() { return L""; }
 
-			virtual void Text(const std::string& text)
+			virtual void Text(const std::wstring& text)
 			{
 			}
 
@@ -620,7 +630,7 @@ namespace ktvr
 			virtual void AppendSingleElement(
 				const Element& element,
 				const SingleLayoutHorizontalAlignment& alignment =
-					SingleLayoutHorizontalAlignment::Left)
+				SingleLayoutHorizontalAlignment::Left)
 			{
 			}
 
@@ -692,7 +702,8 @@ namespace ktvr
 		// These will indicate the device's status.
 		// Both should be updated either on call or as frequent as possible
 		virtual HRESULT getStatusResult() { return E_NOTIMPL; }
-		virtual std::string statusResultString(HRESULT stat) { return "statusResultString behaviour not defined"; }
+		// Device status wide string: to get system locale/language, use GetUserDefaultUILanguage
+		virtual std::wstring statusResultWString(HRESULT stat) { return L"Not Defined\nE_NOT_DEFINED\nstatusResultWString behaviour not defined"; }
 
 		// This should be updated on every frame,
 		// along with joint devices
@@ -739,16 +750,16 @@ namespace ktvr
 		Interface::LayoutRoot* layoutRoot;
 
 		// Create a text block
-		Interface::TextBlock* (*CreateTextBlock)(const std::string& text);
+		Interface::TextBlock* (*CreateTextBlock)(const std::wstring& text);
 
 		// Create a labeled button
-		Interface::Button* (*CreateButton)(const std::string& content);
+		Interface::Button* (*CreateButton)(const std::wstring& content);
 
 		// Create a number box
 		Interface::NumberBox* (*CreateNumberBox)(const int& value);
 
 		// Create a combo box
-		Interface::ComboBox* (*CreateComboBox)(const std::vector<std::string>& entries);
+		Interface::ComboBox* (*CreateComboBox)(const std::vector<std::wstring>& entries);
 
 		// Create a check box
 		Interface::CheckBox* (*CreateCheckBox)();
@@ -892,7 +903,8 @@ namespace ktvr
 		// These will indicate the device's status.
 		// Both should be updated either on call or as frequent as possible
 		virtual HRESULT getStatusResult() { return E_NOTIMPL; }
-		virtual std::string statusResultString(HRESULT stat) { return "statusResultString behaviour not defined"; }
+		// Device status wide string: to get system locale/language, use GetUserDefaultUILanguage
+		virtual std::wstring statusResultWString(HRESULT stat) { return L"Not Defined\nE_NOT_DEFINED\nstatusResultWString behaviour not defined"; }
 
 		// Signal the joint eg psm_id0 that it's being selected
 		virtual void signalJoint(uint32_t at)
@@ -936,16 +948,16 @@ namespace ktvr
 		Interface::LayoutRoot* layoutRoot;
 
 		// Create a text block
-		Interface::TextBlock* (*CreateTextBlock)(const std::string& text);
+		Interface::TextBlock* (*CreateTextBlock)(const std::wstring& text);
 
 		// Create a labeled button
-		Interface::Button* (*CreateButton)(const std::string& content);
+		Interface::Button* (*CreateButton)(const std::wstring& content);
 
 		// Create a number box
 		Interface::NumberBox* (*CreateNumberBox)(const int& value);
 
 		// Create a combo box
-		Interface::ComboBox* (*CreateComboBox)(const std::vector<std::string>& entries);
+		Interface::ComboBox* (*CreateComboBox)(const std::vector<std::wstring>& entries);
 
 		// Create a check box
 		Interface::CheckBox* (*CreateCheckBox)();

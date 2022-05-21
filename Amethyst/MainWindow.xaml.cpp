@@ -220,14 +220,14 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 			if (updateFound)
 			{
 				FlyoutHeader().Text(L"New Update Available");
-				FlyoutFooter().Text(L"Amethyst v" + wstring_cast(K2RemoteVersion));
+				FlyoutFooter().Text(L"Amethyst v" + StringToWString(K2RemoteVersion));
 
 				std::string changelog_string;
 				for (const auto& str : changes_strings_vector)
 					changelog_string += "- " + str + '\n';
 
 				changelog_string.pop_back(); // Remove the last \n
-				FlyoutContent().Text(wstring_cast(changelog_string));
+				FlyoutContent().Text(StringToWString(changelog_string));
 
 				auto thickness = Thickness();
 				thickness.Left = 0;
@@ -244,7 +244,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 			else
 			{
 				FlyoutHeader().Text(L"You're Up To Date");
-				FlyoutFooter().Text(L"Amethyst v" + wstring_cast(k2app::interfacing::K2InternalVersion));
+				FlyoutFooter().Text(L"Amethyst v" + StringToWString(k2app::interfacing::K2InternalVersion));
 				FlyoutContent().Text(L"Please tell us if you have any ideas\nfor the next Amethyst update.");
 
 				auto thickness = Thickness();
@@ -638,7 +638,7 @@ namespace winrt::KinectToVR::implementation
 											LOG(INFO) << "Device library loaded, now checking interface...";
 
 											int returnCode = ktvr::K2InitError_Invalid;
-											std::string stat = "E_UNKNOWN";
+											std::wstring stat = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 											bool blocks_flip = false, supports_math = true;
 
 											if (strcmp(device_type.c_str(), "KinectBasis") == 0)
@@ -676,6 +676,8 @@ namespace winrt::KinectToVR::implementation
 														k2app::interfacing::AppInterface::CreateAppButton_Sliced;
 													pDevice->CreateNumberBox =
 														k2app::interfacing::AppInterface::CreateAppNumberBox_Sliced;
+													pDevice->CreateComboBox =
+														k2app::interfacing::AppInterface::CreateAppComboBox_Sliced;
 													pDevice->CreateCheckBox =
 														k2app::interfacing::AppInterface::CreateAppCheckBox_Sliced;
 													pDevice->CreateToggleSwitch =
@@ -686,7 +688,7 @@ namespace winrt::KinectToVR::implementation
 														k2app::interfacing::AppInterface::CreateAppProgressRing_Sliced;
 													pDevice->CreateProgressBar =
 														k2app::interfacing::AppInterface::CreateAppProgressBar_Sliced;
-
+													
 													LOG(INFO) << "Appending the device to the global registry...";
 
 													// Push the device to pointers' vector
@@ -753,7 +755,7 @@ namespace winrt::KinectToVR::implementation
 																push_back(pLayoutRoot);
 														});
 
-													stat = pDevice->statusResultString(
+													stat = pDevice->statusResultWString(
 														pDevice->getStatusResult());
 
 													blocks_flip = !pDevice->isFlipSupported();
@@ -795,6 +797,8 @@ namespace winrt::KinectToVR::implementation
 														k2app::interfacing::AppInterface::CreateAppButton_Sliced;
 													pDevice->CreateNumberBox =
 														k2app::interfacing::AppInterface::CreateAppNumberBox_Sliced;
+													pDevice->CreateComboBox =
+														k2app::interfacing::AppInterface::CreateAppComboBox_Sliced;
 													pDevice->CreateCheckBox =
 														k2app::interfacing::AppInterface::CreateAppCheckBox_Sliced;
 													pDevice->CreateToggleSwitch =
@@ -872,7 +876,7 @@ namespace winrt::KinectToVR::implementation
 																push_back(pLayoutRoot);
 														});
 
-													stat = pDevice->statusResultString(
+													stat = pDevice->statusResultWString(
 														pDevice->getStatusResult());
 
 													blocks_flip = true; // Always the same for JointsBasis
@@ -928,7 +932,7 @@ namespace winrt::KinectToVR::implementation
 														1;
 
 													LOG(INFO) << "Device status (should be 'not initialized'): \n[\n" <<
-														stat << "\n]\n";
+														WStringToString(stat) << "\n]\n";
 												}
 												break;
 											case ktvr::K2InitError_BadInterface:
@@ -1184,12 +1188,12 @@ void KinectToVR::implementation::MainWindow::NavView_Loaded(
 
 	k2app::interfacing::emptyLayoutRoot->AppendSingleElement(
 		k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced(
-			"In the beginning was the Word."),
+			L"In the beginning was the Word."),
 		ktvr::Interface::SingleLayoutHorizontalAlignment::Left);
 
 	k2app::interfacing::emptyLayoutRoot->AppendSingleElement(
 		k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced(
-			"  But this device's settings are something else..."),
+			L"  But this device's settings are something else..."),
 		ktvr::Interface::SingleLayoutHorizontalAlignment::Left);
 }
 

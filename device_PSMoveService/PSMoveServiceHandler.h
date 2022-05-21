@@ -51,8 +51,8 @@ public:
 
 		layoutRoot->AppendSingleElement(
 			CreateTextBlock(
-				"If you're using PSMS for rotation tracking only,\n"
-				"you can dim controller LED lights to save power.\n "));
+				L"If you're using PSMS for rotation tracking only,\n"
+				L"you can dim controller LED lights to save power.\n "));
 
 		auto lights_toggle = CreateToggleSwitch();
 		lights_toggle->IsChecked(m_lightsOff); // Read from settings
@@ -79,12 +79,12 @@ public:
 
 		layoutRoot->AppendElementPair(
 			CreateTextBlock(
-				"Dim PSMS lights:"),
+				L"Dim PSMS lights:"),
 			lights_toggle);
 	}
 
 	HRESULT getStatusResult() override;
-	std::string statusResultString(HRESULT stat) override;
+	std::wstring statusResultWString(HRESULT stat) override;
 
 private:
 	bool startup();
