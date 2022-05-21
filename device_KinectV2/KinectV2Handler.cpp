@@ -10,6 +10,8 @@
 #include <thread>
 #include <chrono>
 
+#include "LocalizedStatuses.h"
+
 #define _PI 3.14159265358979323846
 
 HRESULT KinectV2Handler::getStatusResult()
@@ -26,12 +28,11 @@ HRESULT KinectV2Handler::getStatusResult()
 
 std::wstring KinectV2Handler::statusResultWString(HRESULT stat)
 {
-	// Wrap status to string for readability TODO LOCALIZE
+	// Wrap status to string for readability
 	switch (stat)
 	{
-	case S_OK: return L"Success!\nS_OK\nEverything's good!";
-	case S_FALSE: return
-			L"Sensor Unavailable!\nE_NOTAVAILABLE\nCheck if the Kinect plugged in to your PC's USB and power plugs.";
+	case S_OK: return GetLocalizedStatusWStringAutomatic(status_ok_map);
+	case S_FALSE: return GetLocalizedStatusWStringAutomatic(status_unavailable_map);
 	default: return L"Undefined: " + std::to_wstring(stat) +
 			L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
