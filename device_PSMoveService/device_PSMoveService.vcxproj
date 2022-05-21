@@ -127,6 +127,7 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="LocalizedStatuses.h" />
     <ClInclude Include="PSMoveServiceHandler.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />

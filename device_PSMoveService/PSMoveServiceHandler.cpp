@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "PSMoveServiceHandler.h"
+#include "LocalizedStatuses.h"
 
 #define M_PI_2 1.57079632679
 
@@ -20,12 +21,11 @@ HRESULT PSMoveServiceHandler::getStatusResult()
 
 std::wstring PSMoveServiceHandler::statusResultWString(HRESULT stat)
 {
-	// Wrap status to string for readability TODO LOCALIZE
+	// Wrap status to string for readability
 	switch (stat)
 	{
-	case S_OK: return L"Success!\nS_OK\nEverything's good!";
-	case E_PSMS_NOT_RUNNING: return
-			L"Connection error!\nE_PSMS_NOT_RUNNING\nCheck if PSMoveService is running, working and accessible by clients.";
+	case S_OK: return GetLocalizedStatusWStringAutomatic(status_ok_map);
+	case E_PSMS_NOT_RUNNING: return GetLocalizedStatusWStringAutomatic(status_not_running_map);
 	default: return L"Undefined: " + std::to_wstring(stat) +
 			L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
