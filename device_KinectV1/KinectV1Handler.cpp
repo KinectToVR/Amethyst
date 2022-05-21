@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 #include "KinectV1Handler.h"
+#include "LocalizedStatuses.h"
+
 #define _PI 3.14159265358979323846
 
 HRESULT KinectV1Handler::getStatusResult()
@@ -11,20 +13,17 @@ HRESULT KinectV1Handler::getStatusResult()
 
 std::wstring KinectV1Handler::statusResultWString(HRESULT stat)
 {
-	// Wrap status to string for readability TODO LOCALIZE
+	// Wrap status to string for readability
 	switch (stat)
 	{
-	case S_OK: return L"Success!\nS_OK\nEverything's good!";
-	case S_NUI_INITIALIZING: return
-			L"INITIALIZING\nS_NUI_INITIALIZING\nThe device is connected, but still initializing.";
-	case E_NUI_NOTCONNECTED: return L"NOTCONNECTED\nE_NUI_NOTCONNECTED\nThe device is not connected.";
-	case E_NUI_NOTGENUINE: return L"NOTGENUINE\nE_NUI_NOTGENUINE\nThe device is not a valid Kinect.";
-	case E_NUI_NOTSUPPORTED: return L"NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nThe device is an unsupported model.";
-	case E_NUI_INSUFFICIENTBANDWIDTH: return
-			L"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nThe device is connected to a hub without the necessary bandwidth requirements.";
-	case E_NUI_NOTPOWERED: return
-			L"NOTPOWERED\nE_NUI_NOTPOWERED\nThere is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.";
-	case E_NUI_NOTREADY: return L"NOTREADY\nE_NUI_NOTREADY\nThere was some other unspecified error.";
+	case S_OK: return GetLocalizedStatusWStringAutomatic(status_ok_map);
+	case S_NUI_INITIALIZING: return GetLocalizedStatusWStringAutomatic(status_initializing_map);
+	case E_NUI_NOTCONNECTED: return GetLocalizedStatusWStringAutomatic(status_not_connected_map);
+	case E_NUI_NOTGENUINE: return GetLocalizedStatusWStringAutomatic(status_not_genuine_map);
+	case E_NUI_NOTSUPPORTED: return GetLocalizedStatusWStringAutomatic(status_not_supported_map);
+	case E_NUI_INSUFFICIENTBANDWIDTH: return GetLocalizedStatusWStringAutomatic(status_insufficient_bandwidth_map);
+	case E_NUI_NOTPOWERED: return GetLocalizedStatusWStringAutomatic(status_not_powered_map);
+	case E_NUI_NOTREADY: return GetLocalizedStatusWStringAutomatic(status_not_ready_map);
 	default: return L"Undefined: " + std::to_wstring(stat) +
 			L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
