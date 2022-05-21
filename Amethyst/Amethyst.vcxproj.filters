@@ -296,5 +296,11 @@
     <PRIResource Include="Strings\lc-LC\SettingsPage.resw">
       <Filter>Strings\lc-LC</Filter>
     </PRIResource>
+    <PRIResource Include="Strings\en-US\DevicesPage.resw">
+      <Filter>Strings\en-US</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\lc-LC\DevicesPage.resw">
+      <Filter>Strings\lc-LC</Filter>
+    </PRIResource>
   </ItemGroup>
 </Project>

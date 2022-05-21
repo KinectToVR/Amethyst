@@ -26,7 +26,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock FontWeight="SemiBold" Text="Devices" FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Devices" FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
 
                 <ListView x:Name="TrackingDeviceListView" Grid.Column="1" CornerRadius="5"
                           VerticalAlignment="Top" HorizontalAlignment="Left"
@@ -85,7 +85,7 @@
 
                         <!--Header Part-->
 
-                        <TextBlock FontWeight="SemiBold" Text="Currently Tracking"
+                        <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/CurrentDevice"
                                    FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
 
                         <StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="1" HorizontalAlignment="Stretch">
@@ -93,7 +93,7 @@
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch"
                                         MinWidth="290">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Device:" Margin="0,0,5,0" Foreground="LightGray" />
+                                           x:Uid="/DevicesPage/Titles/DeviceBase" Margin="0,0,5,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="E_UNKNOWN" x:Name="BaseDeviceName" />
                             </StackPanel>
@@ -101,9 +101,9 @@
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch"
                                         MinWidth="290">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Override:" Margin="0,0,5,0" Foreground="LightGray" />
+                                           x:Uid="/DevicesPage/Titles/DeviceOverride" Margin="0,0,5,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="No Overrides" x:Name="OverrideDeviceName" />
+                                           x:Uid="/DevicesPage/Titles/NoOverrides" x:Name="OverrideDeviceName" />
                             </StackPanel>
 
                         </StackPanel>
@@ -116,14 +116,14 @@
 
                             <AppBarButton x:Name="SelectedDeviceSettingsButton" VerticalAlignment="Top"
                                           Click="SelectedDeviceSettingsButton_Click"
-                                          ToolTipService.ToolTip="Click to show additional&#x0a;(device-wise) settings."
+                                          x:Uid="/DevicesPage/Buttons/DeviceSettings"
                                           Icon="Setting" Width="38" Height="46" Margin="7,0,0,0">
 
                                 <!--Settings pane flyout-->
                                 <FlyoutBase.AttachedFlyout>
                                     <Flyout x:Name="SelectedDeviceSettingsFlyout" Placement="Bottom">
                                         <StackPanel>
-                                            <TextBlock Text="Device-Provided Settings" FontSize="17"
+                                            <TextBlock x:Uid="/DevicesPage/Titles/DeviceSettings" FontSize="17"
                                                        Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
                                             <StackPanel x:Name="SelectedDeviceSettingsRootLayoutPanel"
                                                         Orientation="Vertical" HorizontalAlignment="Stretch" />
@@ -146,15 +146,15 @@
 
                                 <Grid Grid.Column="0">
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="SemiBold"
-                                               Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
+                                               FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/DeviceStatus"
+                                               Margin="0,0,0,0" Foreground="LightGray" />
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
                                                FontWeight="SemiBold"
                                                Text="Connection error!" Margin="55,0,0,0"
                                                x:Name="TrackingDeviceStatusLabel" />
 
                                     <SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                 Content="Reconnect"
+                                                 x:Uid="/DevicesPage/Buttons/Reconnect"
                                                  Margin="0,0,3,0" CornerRadius="3" Height="35" Width="140"
                                                  HorizontalAlignment="Right" VerticalAlignment="Top"
                                                  x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click">
@@ -162,16 +162,15 @@
                                         <SplitButton.Flyout>
                                             <Flyout Placement="Bottom" x:Name="AlternativeConnectionOptionsFlyout">
                                                 <StackPanel Orientation="Vertical">
-                                                    <Button FontWeight="SemiBold" Content="Disconnect"
+                                                    <Button FontWeight="SemiBold" x:Uid="/DevicesPage/Buttons/Disconnect"
                                                             CornerRadius="3" Height="35" HorizontalAlignment="Stretch"
                                                             x:Name="DisconnectDeviceButton"
                                                             Click="DisconnectDeviceButton_Click" />
-                                                    <Button FontWeight="SemiBold" Content="Deselect"
+                                                    <Button FontWeight="SemiBold" x:Uid="/DevicesPage/Buttons/Deselect"
                                                             CornerRadius="3" Height="35"
                                                             Margin="0,15,0,0" HorizontalAlignment="Stretch"
                                                             x:Name="DeselectDeviceButton"
-                                                            Click="DeselectDeviceButton_Click"
-                                                            ToolTipService.ToolTip="Deselecting this device will&#x0a;unset it from Override role." />
+                                                            Click="DeselectDeviceButton_Click" />
                                                 </StackPanel>
                                             </Flyout>
                                         </SplitButton.Flyout>
@@ -211,13 +210,15 @@
                                 <StackPanel Grid.Column="0" Margin="0,0,0,0" Orientation="Vertical">
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                            Content="View Docs" Margin="0,0,3,5" CornerRadius="3"
+                                            x:Uid="/DevicesPage/Buttons/ViewDocs"
+                                            Margin="0,0,3,5" CornerRadius="3"
                                             x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
                                             Height="55" Width="140" Style="{StaticResource AccentButtonStyle}"
                                             HorizontalAlignment="Right" VerticalAlignment="Top" />
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                            Content="Join Discord" Margin="0,0,3,0" CornerRadius="3"
+                                            x:Uid="/DevicesPage/Buttons/JoinDiscord"
+                                            Margin="0,0,3,0" CornerRadius="3"
                                             Height="55" Width="140" x:Name="OpenDiscordButton"
                                             Click="OpenDiscordButton_Click"
                                             HorizontalAlignment="Right" VerticalAlignment="Top" />
@@ -237,30 +238,30 @@
 
                                 <Grid Grid.Column="0">
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="SemiBold"
-                                               Text="Set as Tracking Device:" Margin="0,0,0,0" Foreground="LightGray" />
+                                               FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/SetAsDevice"
+                                               Margin="0,0,0,0" Foreground="LightGray" />
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                            Content="Set Device as..." Margin="0,0,3,0" CornerRadius="3"
+                                            x:Uid="/DevicesPage/Buttons/SetAs/Header"
+                                            Margin="0,0,3,0" CornerRadius="3"
                                             Height="35" Width="140"
-                                            HorizontalAlignment="Right" VerticalAlignment="Top"
-                                            ToolTipService.ToolTip="Set the selected device&#x0a;as a Base or an Override.">
+                                            HorizontalAlignment="Right" VerticalAlignment="Top">
 
                                         <Button.Flyout>
                                             <Flyout Placement="Bottom" x:Name="SetDeviceTypeFlyout">
                                                 <StackPanel Orientation="Vertical">
-                                                    <Button FontWeight="SemiBold" Content="Set as Base"
+                                                    <Button FontWeight="SemiBold" 
+                                                            x:Uid="/DevicesPage/Buttons/SetAs/Base"
                                                             Style="{StaticResource AccentButtonStyle}"
                                                             HorizontalAlignment="Stretch"
                                                             CornerRadius="3" Height="35" Margin="0,0,0,15"
-                                                            x:Name="SetAsBaseButton" Click="SetAsBaseButton_Click"
-                                                            ToolTipService.ToolTip="The device will provide the primary&#x0a;position and rotation of virtual trackers." />
-                                                    <Button FontWeight="SemiBold" Content="Set as Override"
+                                                            x:Name="SetAsBaseButton" Click="SetAsBaseButton_Click" />
+                                                    <Button FontWeight="SemiBold" 
+                                                            x:Uid="/DevicesPage/Buttons/SetAs/Override"
                                                             HorizontalAlignment="Stretch"
                                                             CornerRadius="3" Height="35"
                                                             x:Name="SetAsOverrideButton"
-                                                            Click="SetAsOverrideButton_Click"
-                                                            ToolTipService.ToolTip="The device will override position/rotation&#x0a;of one or more virtual trackers." />
+                                                            Click="SetAsOverrideButton_Click" />
                                                 </StackPanel>
                                             </Flyout>
                                         </Button.Flyout>
@@ -287,7 +288,7 @@
                                                     <Button FontSize="15" x:Name="DismissOverrideTipNoJointsButton"
                                                             Click="DismissOverrideTipNoJointsButton_Click"
                                                             VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                            Content="Dismiss"
+                                                            x:Uid="/DevicesPage/Buttons/NoJoints/Dismiss"
                                                             Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
                                                             HorizontalAlignment="Stretch"
                                                             VerticalAlignment="Stretch" />
@@ -298,7 +299,7 @@
                                                            VerticalAlignment="Stretch"
                                                            Grid.Row="0" FontWeight="SemiBold"
                                                            Style="{ThemeResource BaseTextBlockStyle}"
-                                                           Text="This device doesn't provide any joints.&#x0a;You won't be able to use it as an override." />
+                                                           x:Uid="/DevicesPage/Titles/DeviceHasNoJoints" />
 
                                             </Grid>
                                         </Flyout>
@@ -322,7 +323,7 @@
                                         </TransitionCollection>
                                     </StackPanel.Transitions>-->
 
-                                    <TextBlock FontWeight="SemiBold" Text="Overrides" x:Name="OverridesLabel"
+                                    <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Overrides/Header" x:Name="OverridesLabel"
                                                FontSize="25" Margin="40,20,0,0" Grid.Row="0" Visibility="Collapsed" />
 
                                     <!--W,L,R-->
@@ -333,7 +334,7 @@
                                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
                                         <Expander.Header>
-                                            <TextBlock FontWeight="SemiBold" Text="Waist and Feet Trackers" />
+                                            <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Joints/WaistAndFeet" />
                                         </Expander.Header>
 
                                         <Expander.Content>
@@ -398,13 +399,16 @@
 
 
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Tracker:"
+                                                           x:Uid="/DevicesPage/Titles/Set/Tracker"
+                                                           FontWeight="SemiBold"
                                                            Margin="0,0,40,0" Grid.Column="1" Grid.Row="0" />
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Position:"
+                                                           x:Uid="/DevicesPage/Titles/Set/Position"
+                                                           FontWeight="SemiBold"
                                                            Margin="0,0,0,0" Grid.Column="3" Grid.Row="0" />
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Rotation:"
+                                                           x:Uid="/DevicesPage/Titles/Set/Orientation"
+                                                           FontWeight="SemiBold"
                                                            Margin="0,0,0,0" Grid.Column="5" Grid.Row="0" />
 
                                                 <Grid Grid.Column="1" Grid.Row="1" Width="130" Margin="0,0,0,0"
@@ -416,21 +420,25 @@
                                                     </Grid.ColumnDefinitions>
 
                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                               Grid.Column="0"
-                                                               FontWeight="SemiBold" Text="Waist" Margin="0,0,0,0" />
+                                                               Grid.Column="0" 
+                                                               x:Uid="/DevicesPage/Joints/Waist"
+                                                               FontWeight="SemiBold" Margin="0,0,0,0" />
                                                     <AppBarButton HorizontalAlignment="Right"
                                                                   VerticalAlignment="Center"
                                                                   Margin="0,3,0,0" Width="35" Height="48"
                                                                   x:Name="WaistOverrideSelector"
-                                                                  ToolTipService.ToolTip="Overrides" Grid.Column="1">
+                                                                  x:Uid="/DevicesPage/Buttons/OverrideSelector"
+                                                                  Grid.Column="1">
                                                         <AppBarButton.Flyout>
                                                             <MenuFlyout>
                                                                 <ToggleMenuFlyoutItem x:Name="OverrideWaistPosition"
                                                                     Click="OverrideWaistPosition_Click"
-                                                                    Text="Position" IsChecked="True" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Position"
+                                                                    IsChecked="True" />
                                                                 <ToggleMenuFlyoutItem x:Name="OverrideWaistRotation"
                                                                     Click="OverrideWaistRotation_Click"
-                                                                    Text="Rotation" IsChecked="True" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Orientation"
+                                                                    IsChecked="True" />
                                                             </MenuFlyout>
                                                         </AppBarButton.Flyout>
                                                     </AppBarButton>
@@ -439,7 +447,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="WaistPositionOverrideOptionBox_DropDownOpened"
                                                           x:Name="WaistPositionOverrideOptionBox"
                                                           SelectionChanged="WaistPositionOverrideOptionBox_SelectionChanged"
@@ -454,7 +462,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="WaistRotationOverrideOptionBox_DropDownOpened"
                                                           x:Name="WaistRotationOverrideOptionBox"
                                                           SelectionChanged="WaistRotationOverrideOptionBox_SelectionChanged"
@@ -476,19 +484,21 @@
 
                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                Grid.Column="0"
-                                                               FontWeight="SemiBold" Text="Left Foot" Margin="0,0,0,0" />
+                                                               x:Uid="/DevicesPage/Joints/LeftFoot"
+                                                               FontWeight="SemiBold" Margin="0,0,0,0" />
                                                     <AppBarButton HorizontalAlignment="Right"
                                                                   VerticalAlignment="Center"
                                                                   Margin="0,3,0,0" Width="35" Height="48"
-                                                                  ToolTipService.ToolTip="Overrides" Grid.Column="1">
+                                                                  x:Uid="/DevicesPage/Buttons/OverrideSelector" 
+                                                                  Grid.Column="1">
                                                         <AppBarButton.Flyout>
                                                             <MenuFlyout>
                                                                 <ToggleMenuFlyoutItem x:Name="OverrideLeftFootPosition"
                                                                     Click="OverrideLeftFootPosition_Click"
-                                                                    Text="Position" IsChecked="False" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Position" IsChecked="False" />
                                                                 <ToggleMenuFlyoutItem x:Name="OverrideLeftFootRotation"
                                                                     Click="OverrideLeftFootRotation_Click"
-                                                                    Text="Rotation" IsChecked="False" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Orientation" IsChecked="False" />
                                                             </MenuFlyout>
                                                         </AppBarButton.Flyout>
                                                     </AppBarButton>
@@ -497,7 +507,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="LeftFootPositionOverrideOptionBox_DropDownOpened"
                                                           x:Name="LeftFootPositionOverrideOptionBox"
                                                           SelectionChanged="LeftFootPositionOverrideOptionBox_SelectionChanged"
@@ -512,7 +522,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="LeftFootRotationOverrideOptionBox_DropDownOpened"
                                                           x:Name="LeftFootRotationOverrideOptionBox"
                                                           SelectionChanged="LeftFootRotationOverrideOptionBox_SelectionChanged"
@@ -535,21 +545,23 @@
 
                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                Grid.Column="0"
-                                                               FontWeight="SemiBold" Text="Right Foot" Margin="0,0,0,0" />
+                                                               x:Uid="/DevicesPage/Joints/RightFoot"
+                                                               FontWeight="SemiBold" Margin="0,0,0,0" />
                                                     <AppBarButton HorizontalAlignment="Right"
                                                                   VerticalAlignment="Center"
                                                                   Margin="0,3,0,0" Width="35" Height="48"
-                                                                  ToolTipService.ToolTip="Overrides" Grid.Column="1">
+                                                                  x:Uid="/DevicesPage/Buttons/OverrideSelector" 
+                                                                  Grid.Column="1">
                                                         <AppBarButton.Flyout>
                                                             <MenuFlyout>
                                                                 <ToggleMenuFlyoutItem
                                                                     x:Name="OverrideRightFootPosition"
                                                                     Click="OverrideRightFootPosition_Click"
-                                                                    Text="Position" IsChecked="False" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Position" IsChecked="False" />
                                                                 <ToggleMenuFlyoutItem
                                                                     x:Name="OverrideRightFootRotation"
                                                                     Click="OverrideRightFootRotation_Click"
-                                                                    Text="Rotation" IsChecked="False" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Orientation" IsChecked="False" />
                                                             </MenuFlyout>
                                                         </AppBarButton.Flyout>
                                                     </AppBarButton>
@@ -558,7 +570,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="RightFootPositionOverrideOptionBox_DropDownOpened"
                                                           x:Name="RightFootPositionOverrideOptionBox"
                                                           SelectionChanged="RightFootPositionOverrideOptionBox_SelectionChanged"
@@ -573,7 +585,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="RightFootRotationOverrideOptionBox_DropDownOpened"
                                                           x:Name="RightFootRotationOverrideOptionBox"
                                                           SelectionChanged="RightFootRotationOverrideOptionBox_SelectionChanged"
@@ -599,7 +611,7 @@
                                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
                                         <Expander.Header>
-                                            <TextBlock FontWeight="SemiBold" Text="Elbow and Knee Trackers" />
+                                            <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Joints/ElbowsAndKnees" />
                                         </Expander.Header>
 
                                         <Expander.Content>
@@ -685,13 +697,16 @@
                                                       Canvas.ZIndex="-1" />
 
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Tracker:"
+                                                           FontWeight="SemiBold" 
+                                                           x:Uid="/DevicesPage/Titles/Set/Tracker"
                                                            Margin="0,0,40,0" Grid.Column="1" Grid.Row="0" />
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Position:"
+                                                           FontWeight="SemiBold" 
+                                                           x:Uid="/DevicesPage/Titles/Set/Position"
                                                            Margin="0,0,0,0" Grid.Column="3" Grid.Row="0" />
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Rotation:"
+                                                           FontWeight="SemiBold" 
+                                                           x:Uid="/DevicesPage/Titles/Set/Orientation"
                                                            Margin="0,0,0,0" Grid.Column="5" Grid.Row="0" />
 
                                                 <Grid Grid.Column="1" Grid.Row="1" Width="130" Margin="0,0,0,0"
@@ -704,21 +719,23 @@
 
                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                Grid.Column="0"
-                                                               FontWeight="SemiBold" Text="Left Elbow" Margin="0,0,0,0" />
+                                                               x:Uid="/DevicesPage/Joints/LeftElbow"
+                                                               FontWeight="SemiBold" Margin="0,0,0,0" />
                                                     <AppBarButton HorizontalAlignment="Right"
                                                                   VerticalAlignment="Center"
                                                                   Margin="0,3,0,0" Width="35" Height="48"
-                                                                  ToolTipService.ToolTip="Overrides" Grid.Column="1">
+                                                                  x:Uid="/DevicesPage/Buttons/OverrideSelector" 
+                                                                  Grid.Column="1">
                                                         <AppBarButton.Flyout>
                                                             <MenuFlyout>
                                                                 <ToggleMenuFlyoutItem
                                                                     x:Name="OverrideLeftElbowPosition"
                                                                     Click="OverrideLeftElbowPosition_Click"
-                                                                    Text="Position" IsChecked="True" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Position" IsChecked="True" />
                                                                 <ToggleMenuFlyoutItem
                                                                     x:Name="OverrideLeftElbowRotation"
                                                                     Click="OverrideLeftElbowRotation_Click"
-                                                                    Text="Rotation" IsChecked="True" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Orientation" IsChecked="True" />
                                                             </MenuFlyout>
                                                         </AppBarButton.Flyout>
                                                     </AppBarButton>
@@ -727,7 +744,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="LeftElbowPositionOverrideOptionBox_DropDownOpened"
                                                           x:Name="LeftElbowPositionOverrideOptionBox"
                                                           SelectionChanged="LeftElbowPositionOverrideOptionBox_SelectionChanged"
@@ -742,7 +759,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="LeftElbowRotationOverrideOptionBox_DropDownOpened"
                                                           x:Name="LeftElbowRotationOverrideOptionBox"
                                                           SelectionChanged="LeftElbowRotationOverrideOptionBox_SelectionChanged"
@@ -764,22 +781,23 @@
 
                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                Grid.Column="0"
-                                                               FontWeight="SemiBold" Text="Right Elbow"
-                                                               Margin="0,0,0,0" />
+                                                               x:Uid="/DevicesPage/Joints/RightElbow"
+                                                               FontWeight="SemiBold" Margin="0,0,0,0" />
                                                     <AppBarButton HorizontalAlignment="Right"
                                                                   VerticalAlignment="Center"
                                                                   Margin="0,3,0,0" Width="35" Height="48"
-                                                                  ToolTipService.ToolTip="Overrides" Grid.Column="1">
+                                                                  x:Uid="/DevicesPage/Buttons/OverrideSelector"
+                                                                  Grid.Column="1">
                                                         <AppBarButton.Flyout>
                                                             <MenuFlyout>
                                                                 <ToggleMenuFlyoutItem
                                                                     x:Name="OverrideRightElbowPosition"
                                                                     Click="OverrideRightElbowPosition_Click"
-                                                                    Text="Position" IsChecked="False" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Position" IsChecked="False" />
                                                                 <ToggleMenuFlyoutItem
                                                                     x:Name="OverrideRightElbowRotation"
                                                                     Click="OverrideRightElbowRotation_Click"
-                                                                    Text="Rotation" IsChecked="False" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Orientation" IsChecked="False" />
                                                             </MenuFlyout>
                                                         </AppBarButton.Flyout>
                                                     </AppBarButton>
@@ -788,7 +806,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="RightElbowPositionOverrideOptionBox_DropDownOpened"
                                                           x:Name="RightElbowPositionOverrideOptionBox"
                                                           SelectionChanged="RightElbowPositionOverrideOptionBox_SelectionChanged"
@@ -803,7 +821,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="RightElbowRotationOverrideOptionBox_DropDownOpened"
                                                           x:Name="RightElbowRotationOverrideOptionBox"
                                                           SelectionChanged="RightElbowRotationOverrideOptionBox_SelectionChanged"
@@ -825,19 +843,21 @@
 
                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                Grid.Column="0"
-                                                               FontWeight="SemiBold" Text="Left Knee" Margin="0,0,0,0" />
+                                                               x:Uid="/DevicesPage/Joints/LeftKnee"
+                                                               FontWeight="SemiBold" Margin="0,0,0,0" />
                                                     <AppBarButton HorizontalAlignment="Right"
                                                                   VerticalAlignment="Center"
                                                                   Margin="0,3,0,0" Width="35" Height="48"
-                                                                  ToolTipService.ToolTip="Overrides" Grid.Column="1">
+                                                                  x:Uid="/DevicesPage/Buttons/OverrideSelector"
+                                                                  Grid.Column="1">
                                                         <AppBarButton.Flyout>
                                                             <MenuFlyout>
                                                                 <ToggleMenuFlyoutItem x:Name="OverrideLeftKneePosition"
                                                                     Click="OverrideLeftKneePosition_Click"
-                                                                    Text="Position" IsChecked="False" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Position" IsChecked="False" />
                                                                 <ToggleMenuFlyoutItem x:Name="OverrideLeftKneeRotation"
                                                                     Click="OverrideLeftKneeRotation_Click"
-                                                                    Text="Rotation" IsChecked="False" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Orientation" IsChecked="False" />
                                                             </MenuFlyout>
                                                         </AppBarButton.Flyout>
                                                     </AppBarButton>
@@ -846,7 +866,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="LeftKneePositionOverrideOptionBox_DropDownOpened"
                                                           x:Name="LeftKneePositionOverrideOptionBox"
                                                           SelectionChanged="LeftKneePositionOverrideOptionBox_SelectionChanged"
@@ -861,7 +881,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="LeftKneeRotationOverrideOptionBox_DropDownOpened"
                                                           x:Name="LeftKneeRotationOverrideOptionBox"
                                                           SelectionChanged="LeftKneeRotationOverrideOptionBox_SelectionChanged"
@@ -883,21 +903,23 @@
 
                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                Grid.Column="0"
-                                                               FontWeight="SemiBold" Text="Left Knee" Margin="0,0,0,0" />
+                                                               x:Uid="/DevicesPage/Joints/RightKnee"
+                                                               FontWeight="SemiBold" Margin="0,0,0,0" />
                                                     <AppBarButton HorizontalAlignment="Right"
                                                                   VerticalAlignment="Center"
                                                                   Margin="0,3,0,0" Width="35" Height="48"
-                                                                  ToolTipService.ToolTip="Overrides" Grid.Column="1">
+                                                                  x:Uid="/DevicesPage/Buttons/OverrideSelector"
+                                                                  Grid.Column="1">
                                                         <AppBarButton.Flyout>
                                                             <MenuFlyout>
                                                                 <ToggleMenuFlyoutItem
                                                                     x:Name="OverrideRightKneePosition"
                                                                     Click="OverrideRightKneePosition_Click"
-                                                                    Text="Position" IsChecked="False" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Position" IsChecked="False" />
                                                                 <ToggleMenuFlyoutItem
                                                                     x:Name="OverrideRightKneeRotation"
                                                                     Click="OverrideRightKneeRotation_Click"
-                                                                    Text="Rotation" IsChecked="False" />
+                                                                    x:Uid="/DevicesPage/Titles/Check/Orientation" IsChecked="False" />
                                                             </MenuFlyout>
                                                         </AppBarButton.Flyout>
                                                     </AppBarButton>
@@ -906,7 +928,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="RightKneePositionOverrideOptionBox_DropDownOpened"
                                                           x:Name="RightKneePositionOverrideOptionBox"
                                                           SelectionChanged="RightKneePositionOverrideOptionBox_SelectionChanged"
@@ -921,7 +943,7 @@
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="140" FontSize="15" FontWeight="SemiBold"
-                                                          PlaceholderText="No Override"
+                                                          x:Uid="/DevicesPage/Placeholders/Overrides/NoOverride"
                                                           DropDownOpened="RightKneeRotationOverrideOptionBox_DropDownOpened"
                                                           x:Name="RightKneeRotationOverrideOptionBox"
                                                           SelectionChanged="RightKneeRotationOverrideOptionBox_SelectionChanged"
@@ -957,7 +979,7 @@
                                         </TransitionCollection>
                                     </StackPanel.Transitions>-->
 
-                                    <TextBlock FontWeight="SemiBold" Text="Assign Joints" x:Name="JointBasisLabel"
+                                    <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Joints/Assign" x:Name="JointBasisLabel"
                                                FontSize="25" Margin="40,20,0,0" Grid.Row="0" Visibility="Collapsed" />
 
                                     <!--W,L,R-->
@@ -968,7 +990,7 @@
                                               HorizontalAlignment="Stretch" Expanding="JointBasisDropDown_Expanding">
 
                                         <Expander.Header>
-                                            <TextBlock FontWeight="SemiBold" Text="Waist and Feet Trackers" />
+                                            <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Joints/WaistAndFeet" />
                                         </Expander.Header>
 
                                         <Expander.Content>
@@ -1013,22 +1035,25 @@
                                                       Canvas.ZIndex="-1" />
 
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Tracker:"
+                                                           x:Uid="/DevicesPage/Titles/Set/Tracker"
+                                                           FontWeight="SemiBold"
                                                            Margin="0,0,0,0" Grid.Column="1" Grid.Row="0" />
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Tracked Joint:"
+                                                           x:Uid="/DevicesPage/Titles/Set/TrackedJoint"
+                                                           FontWeight="SemiBold"
                                                            Margin="0,0,0,0" Grid.Column="3" Grid.Row="0" />
 
                                                 <TextBlock Grid.Column="1" Grid.Row="1" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Waist"
+                                                           x:Uid="/DevicesPage/Joints/Waist"
+                                                           FontWeight="SemiBold"
                                                            HorizontalTextAlignment="Center" />
 
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="150" FontSize="15" FontWeight="SemiBold"
                                                           DropDownOpened="WaistJointOptionBox_DropDownOpened"
-                                                          PlaceholderText="Joint Disabled"
+                                                          x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="WaistJointOptionBox"
                                                           SelectionChanged="WaistJointOptionBox_SelectionChanged"
                                                           Grid.Column="3" Grid.Row="1" Margin="0,0,0,0">
@@ -1039,14 +1064,15 @@
 
                                                 <TextBlock Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Left Foot"
+                                                           x:Uid="/DevicesPage/Joints/LeftFoot"
+                                                           FontWeight="SemiBold"
                                                            HorizontalTextAlignment="Center" />
 
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="150" FontSize="15" FontWeight="SemiBold"
                                                           DropDownOpened="LeftFootJointOptionBox_DropDownOpened"
-                                                          PlaceholderText="Joint Disabled"
+                                                          x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="LeftFootJointOptionBox"
                                                           SelectionChanged="LeftFootJointOptionBox_SelectionChanged"
                                                           Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
@@ -1057,14 +1083,15 @@
 
                                                 <TextBlock Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Right Foot"
+                                                           x:Uid="/DevicesPage/Joints/RightFoot"
+                                                           FontWeight="SemiBold"
                                                            HorizontalTextAlignment="Center" />
 
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="150" FontSize="15" FontWeight="SemiBold"
                                                           DropDownOpened="RightFootJointOptionBox_DropDownOpened"
-                                                          PlaceholderText="Joint Disabled"
+                                                          x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="RightFootJointOptionBox"
                                                           SelectionChanged="RightFootJointOptionBox_SelectionChanged"
                                                           Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
@@ -1087,7 +1114,7 @@
                                               HorizontalAlignment="Stretch" Expanding="JointBasisDropDown_1_Expanding">
 
                                         <Expander.Header>
-                                            <TextBlock FontWeight="SemiBold" Text="Elbow and Knee Trackers" />
+                                            <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Joints/ElbowsAndKnees" />
                                         </Expander.Header>
 
                                         <Expander.Content>
@@ -1144,22 +1171,25 @@
                                                       Canvas.ZIndex="-1" />
 
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Tracker:"
+                                                           x:Uid="/DevicesPage/Titles/Set/Tracker"
+                                                           FontWeight="SemiBold"
                                                            Margin="0,0,0,0" Grid.Column="1" Grid.Row="0" />
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Tracked Joint:"
+                                                           x:Uid="/DevicesPage/Titles/Set/TrackedJoint"
+                                                           FontWeight="SemiBold"
                                                            Margin="0,0,0,0" Grid.Column="3" Grid.Row="0" />
 
                                                 <TextBlock Grid.Column="1" Grid.Row="1" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Left Elbow"
+                                                           x:Uid="/DevicesPage/Joints/LeftElbow"
+                                                           FontWeight="SemiBold"
                                                            HorizontalTextAlignment="Center" />
 
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="150" FontSize="15" FontWeight="SemiBold"
                                                           DropDownOpened="LeftElbowJointOptionBox_DropDownOpened"
-                                                          PlaceholderText="Joint Disabled"
+                                                          x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="LeftElbowJointOptionBox"
                                                           SelectionChanged="LeftElbowJointOptionBox_SelectionChanged"
                                                           Grid.Column="3" Grid.Row="1" Margin="0,0,0,0">
@@ -1170,14 +1200,15 @@
 
                                                 <TextBlock Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Right Elbow"
+                                                           x:Uid="/DevicesPage/Joints/RightElbow"
+                                                           FontWeight="SemiBold"
                                                            HorizontalTextAlignment="Center" />
 
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="150" FontSize="15" FontWeight="SemiBold"
                                                           DropDownOpened="RightElbowJointOptionBox_DropDownOpened"
-                                                          PlaceholderText="Joint Disabled"
+                                                          x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="RightElbowJointOptionBox"
                                                           SelectionChanged="RightElbowJointOptionBox_SelectionChanged"
                                                           Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
@@ -1188,14 +1219,15 @@
 
                                                 <TextBlock Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Left Knee"
+                                                           x:Uid="/DevicesPage/Joints/LeftKnee"
+                                                           FontWeight="SemiBold"
                                                            HorizontalTextAlignment="Center" />
 
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="150" FontSize="15" FontWeight="SemiBold"
                                                           DropDownOpened="LeftKneeJointOptionBox_DropDownOpened"
-                                                          PlaceholderText="Joint Disabled"
+                                                          x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="LeftKneeJointOptionBox"
                                                           SelectionChanged="LeftKneeJointOptionBox_SelectionChanged"
                                                           Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
@@ -1206,14 +1238,15 @@
 
                                                 <TextBlock Grid.Column="1" Grid.Row="4" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                           FontWeight="SemiBold" Text="Right Knee"
+                                                           x:Uid="/DevicesPage/Joints/RightKnee"
+                                                           FontWeight="SemiBold"
                                                            HorizontalTextAlignment="Center" />
 
                                                 <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center"
                                                           SelectedIndex="0"
                                                           Height="45" Width="150" FontSize="15" FontWeight="SemiBold"
                                                           DropDownOpened="RightKneeJointOptionBox_DropDownOpened"
-                                                          PlaceholderText="Joint Disabled"
+                                                          x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="RightKneeJointOptionBox"
                                                           SelectionChanged="RightKneeJointOptionBox_SelectionChanged"
                                                           Grid.Column="3" Grid.Row="4" Margin="0,0,0,0">
