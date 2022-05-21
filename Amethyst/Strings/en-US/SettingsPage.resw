@@ -157,6 +157,12 @@ checking the currently active Waist Tracker in SteamVR</value>
   <data name="Captions.Sounds.Text" xml:space="preserve">
     <value>Enable app sounds</value>
   </data>
+  <data name="Captions.SoundsWhen.Line1.Text" xml:space="preserve">
+    <value>Sounds happen during startup, calibration, errors, or when toggling tracker freeze</value>
+  </data>
+  <data name="Captions.SoundsWhen.Line2.Text" xml:space="preserve">
+    <value>or skeleton mirroring.</value>
+  </data>
   <data name="Captions.TrackersAutoSpawn.Text" xml:space="preserve">
     <value>Automatically connect enabled trackers at launch</value>
   </data>
@@ -224,12 +230,6 @@ Please check SteamVR logs and consider reporting it.</value>
   <data name="ReRegister.Error.NotFound" xml:space="preserve">
     <value>Amethyst crash handler executable was not found.
 It's needed for the reregistration, please check if it's there.</value>
-  </data>
-  <data name="SoundsWhen.Line1.Text" xml:space="preserve">
-    <value>Sounds happen during startup, calibration, errors, or when toggling tracker freeze</value>
-  </data>
-  <data name="SoundsWhen.Line2.Text" xml:space="preserve">
-    <value>or skeleton mirroring.</value>
   </data>
   <data name="Titles.ExtFlip.Text" xml:space="preserve">
     <value>Use external waist tracking data instead of the Headset</value>

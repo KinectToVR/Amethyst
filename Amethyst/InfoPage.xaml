@@ -46,43 +46,43 @@
                 <TextBlock FontWeight="SemiBold" Foreground="LightGray" x:Uid="/InfoPage/Credits/MainTeam/Title" Margin="0,20,0,0" />
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Akaya"/>
+                    <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Akaya"/>
                     <Hyperlink NavigateUri="https://github.com/KimihikoAkayasaki" UnderlineStyle="None">KimihikoAkayasaki</Hyperlink>
                     <Run xml:space="preserve">&#x09;"Akaya"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Ella"/>
+                    <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Ella"/>
                     <Hyperlink NavigateUri="https://github.com/TripingPC" UnderlineStyle="None">AuroraNemoia</Hyperlink>
                     <Run xml:space="preserve">&#x09;"Ella"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Himbeer"/>
+                    <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Himbeer"/>
                     <Hyperlink NavigateUri="https://github.com/HimbeersaftLP" UnderlineStyle="None">himbeersaft</Hyperlink>
                     <Run xml:space="preserve">&#x09;"Himbeer"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Hekky"/>
+                    <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Hekky"/>
                     <Hyperlink NavigateUri="https://github.com/hyblocker" UnderlineStyle="None">hyblocker</Hyperlink>
                     <Run xml:space="preserve">&#x09;&#x09;"Hekky"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Artemis"/>
+                    <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Artemis"/>
                     <Hyperlink NavigateUri="https://github.com/ArtemisMax" UnderlineStyle="None">ArtemisMax</Hyperlink>
                     <Run xml:space="preserve">&#x09;&#x09;&#x09;"Artemis"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Ollie"/>
+                    <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Ollie"/>
                     <Hyperlink NavigateUri="https://github.com/i386sh" UnderlineStyle="None">i386sh</Hyperlink>
                     <Run xml:space="preserve">/ notzer0&#x09;&#x09;&#x09;"Ollie"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve" x:Uid="/InfoPage/Credits/MainTeam/Roles/Aria"/>
+                    <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Aria"/>
                     <Hyperlink NavigateUri="https://github.com/conatsera" UnderlineStyle="None">conatsera</Hyperlink>
                     <Run xml:space="preserve">&#x09;&#x09;"Aria"</Run>
                 </TextBlock>

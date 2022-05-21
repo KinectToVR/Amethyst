@@ -403,10 +403,10 @@
 
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
-                                   x:Uid="/SettingsPage/Captions/TrackersRestart.Line1"
+                                   x:Uid="/SettingsPage/Captions/TrackersRestart/Line1"
                                    Margin="0,0,0,0" Foreground="LightGray" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
-                                   x:Uid="/SettingsPage/Captions/TrackersRestart.Line2"
+                                   x:Uid="/SettingsPage/Captions/TrackersRestart/Line2"
                                    Margin="0,0,0,0" Foreground="LightGray" />
                     </StackPanel>
 
@@ -438,10 +438,10 @@
 
                 <StackPanel Orientation="Vertical" Margin="0,0,5,0">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               x:Uid="/SettingsPage/Captions/SoundsWhen.Line1"
+                               x:Uid="/SettingsPage/Captions/SoundsWhen/Line1"
                                Margin="0,0,0,0" Foreground="LightGray" />
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               x:Uid="/SettingsPage/Captions/SoundsWhen.Line2"
+                               x:Uid="/SettingsPage/Captions/SoundsWhen/Line2"
                                Margin="0,0,0,0" Foreground="LightGray" />
                 </StackPanel>
 

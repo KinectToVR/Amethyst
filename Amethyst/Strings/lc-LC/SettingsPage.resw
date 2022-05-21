@@ -157,6 +157,12 @@ checking the cuwwwentwy active waist twackew in steamvr</value>
   <data name="Captions.Sounds.Text" xml:space="preserve">
     <value>Enabwe app souwnds</value>
   </data>
+  <data name="Captions.SoundsWhen.Line1.Text" xml:space="preserve">
+    <value>Souwnds happen duwwing stawtuwp, cawibwation, ewwows, ow when toggwing twackew fweeze</value>
+  </data>
+  <data name="Captions.SoundsWhen.Line2.Text" xml:space="preserve">
+    <value>ow skeweton miwwowing.</value>
+  </data>
   <data name="Captions.TrackersAutoSpawn.Text" xml:space="preserve">
     <value>Auwtomaticawwy connect enabwed twackews at wauwnch</value>
   </data>
@@ -224,12 +230,6 @@ pwease check steamvr wogs and considew wepowting it.</value>
   <data name="ReRegister.Error.NotFound" xml:space="preserve">
     <value>Amethyst cwash handwew execuwtabwe was not fouwnd. 
 it's needed fow the wewegistwation, pwease check if it's thewe.</value>
-  </data>
-  <data name="SoundsWhen.Line1.Text" xml:space="preserve">
-    <value>Souwnds happen duwwing stawtuwp, cawibwation, ewwows, ow when toggwing twackew fweeze</value>
-  </data>
-  <data name="SoundsWhen.Line2.Text" xml:space="preserve">
-    <value>ow skeweton miwwowing.</value>
   </data>
   <data name="Titles.ExtFlip.Text" xml:space="preserve">
     <value> Use extewnaw waist twacking data instead of the headset</value>

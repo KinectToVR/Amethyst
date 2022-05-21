@@ -2,6 +2,7 @@
 
 #include "InfoPage.g.h"
 #include "K2Shared.h"
+#include "K2Interfacing.h"
 
 namespace winrt::KinectToVR::implementation
 {
