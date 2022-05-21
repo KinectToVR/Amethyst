@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "SettingsPage.xaml.h"
 
 #if __has_include("SettingsPage.g.cpp")
@@ -1109,4 +1109,10 @@ void KinectToVR::implementation::SettingsPage::DismissSetErrorButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	SetErrorFlyout().Hide();
+}
+
+
+Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersButton_Click(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
 }

@@ -252,6 +252,9 @@ it's needed fow the wewegistwation, pwease check if it's thewe.</value>
   <data name="Titles.TrackerConfig.Knees.Text" xml:space="preserve">
     <value>Knee twackews</value>
   </data>
+  <data name="Titles.TrackerConfig.Learn.Content" xml:space="preserve">
+    <value>Wewn moww b't ths settinwgsh</value>
+  </data>
   <data name="Titles.TrackerConfig.Waist.Text" xml:space="preserve">
     <value>Waist twackew</value>
   </data>

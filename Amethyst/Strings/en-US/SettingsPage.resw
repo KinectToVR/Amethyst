@@ -252,6 +252,9 @@ It's needed for the reregistration, please check if it's there.</value>
   <data name="Titles.TrackerConfig.Knees.Text" xml:space="preserve">
     <value>Knee Trackers</value>
   </data>
+  <data name="Titles.TrackerConfig.Learn.Content" xml:space="preserve">
+    <value>Learn more about these settings</value>
+  </data>
   <data name="Titles.TrackerConfig.Waist.Text" xml:space="preserve">
     <value>Waist Tracker</value>
   </data>
