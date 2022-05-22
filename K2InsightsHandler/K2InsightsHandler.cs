@@ -25,8 +25,13 @@ namespace K2InsightsHandler
                 tc = new TelemetryClient(configuration);
 
                 tc.Context.Component.Version = "1.0.1.9"; // Amethyst version
-                tc.Context.User.Id = GetMachineGuid(); // User id (random)
-                tc.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
+                tc.Context.User.Id = GetMachineGuid(); // User id (random, unique)
+                tc.Context.Session.Id = Guid.NewGuid().ToString(); // Session id (random)
+                tc.Context.Device.OperatingSystem =
+                    "Microsoft Windows Build " +
+                    Registry.GetValue(
+                        @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion",
+                        "CurrentBuild", "").ToString();
             }
             catch (Exception)
             {
