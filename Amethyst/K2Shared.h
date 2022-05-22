@@ -126,6 +126,12 @@ namespace k2app::shared
 			rightKneeXNumberBox,
 			rightKneeYNumberBox,
 			rightKneeZNumberBox;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSplitButton>
+		toggleFreezeButton;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
+		freezeOnlyLowerCheckBox;
 	}
 
 	namespace devices
@@ -269,11 +275,5 @@ namespace k2app::shared
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel>
 		externalFlipStackPanel;
-	}
-
-	namespace other
-	{
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSplitButton> toggleFreezeButton;
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox> freezeOnlyLowerCheckBox;
 	}
 }

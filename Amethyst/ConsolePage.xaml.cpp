@@ -21,12 +21,6 @@ namespace winrt::KinectToVR::implementation
 	ConsolePage::ConsolePage()
 	{
 		InitializeComponent();
-
-		k2app::shared::other::toggleFreezeButton = std::make_shared<
-			winrt::Microsoft::UI::Xaml::Controls::ToggleSplitButton>(ToggleTrackingButton());
-
-		k2app::shared::other::freezeOnlyLowerCheckBox = std::make_shared<
-			winrt::Microsoft::UI::Xaml::Controls::CheckBox>(FreezeOnlyLowerCheckBox());
 	}
 }
 
@@ -34,35 +28,8 @@ namespace winrt::KinectToVR::implementation
 void KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	console_setup_finished = true;
-	k2app::shared::other::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
-	k2app::shared::other::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		                                                        ? box_value(L"Unfreeze")
-		                                                        : box_value(L"Freeze"));
-	k2app::shared::other::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
-
 	LOG(INFO) << "Ohhhhh, How Sweeet!";
 	K2InsightsCLR::LogPageView("Okashi");
-}
-
-
-void KinectToVR::implementation::ConsolePage::ExpCheckBox_Checked(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
-{
-	if (!console_setup_finished)return;
-
-	ExpScrollViewer().Visibility(Visibility::Visible);
-	ThanksScrollViewer().Visibility(Visibility::Collapsed);
-}
-
-
-void KinectToVR::implementation::ConsolePage::ExpCheckBox_Unchecked(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
-{
-	if (!console_setup_finished)return;
-
-	ExpScrollViewer().Visibility(Visibility::Collapsed);
-	ThanksScrollViewer().Visibility(Visibility::Visible);
 }
 
 
@@ -106,38 +73,11 @@ void KinectToVR::implementation::ConsolePage::NullCrashButton_Click(
 }
 
 
-void KinectToVR::implementation::ConsolePage::ToggleTrackingButton_Click(
-	const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args)
+void KinectToVR::implementation::ConsolePage::DatePicker_SelectedDateChanged(
+	const Controls::DatePicker& sender, const Controls::DatePickerSelectedValueChangedEventArgs& args)
 {
-	k2app::interfacing::isTrackingFrozen = !k2app::interfacing::isTrackingFrozen;
-
-	k2app::shared::other::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
-	k2app::shared::other::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		                                                        ? box_value(L"Unfreeze")
-		                                                        : box_value(L"Freeze"));
-}
-
-
-void KinectToVR::implementation::ConsolePage::FreezeOnlyLowerCheckBox_Checked(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
-{
-	k2app::K2Settings.freezeLowerOnly = true;
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::ConsolePage::FreezeOnlyLowerCheckBox_Unchecked(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
-{
-	k2app::K2Settings.freezeLowerOnly = false;
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::ConsolePage::LanguageOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender,
-	const Windows::Foundation::IInspectable& e)
-{
-	ShellExecuteA(nullptr, nullptr, "https://www.google.com/search?q=learn+english", nullptr, nullptr, SW_SHOW);
+	if (Windows::Globalization::DateTimeFormatting::DateTimeFormatter(
+		L"{year.full}/{month.integer(2)}/{day.integer(2)}"
+	).Format(DatePicker().Date()) == L"2022/02/21")
+		WhaaatFlyout().ShowAt(sender);
 }

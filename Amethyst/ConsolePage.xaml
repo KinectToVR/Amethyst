@@ -18,93 +18,22 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <CheckBox Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                  Checked="ExpCheckBox_Checked" Unchecked="ExpCheckBox_Unchecked"
-                  Margin="17,0,0,10" Content="Please notice me!"
-                  FontWeight="Medium" Opacity="0.5" />
-
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
-                      x:Name="ExpScrollViewer" Visibility="Collapsed"
+                      x:Name="ExpScrollViewer" Visibility="Visible"
                       VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
 
-                <TextBlock FontWeight="SemiBold" Text="Experimental Features"
-                           FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
+                <TextBlock FontWeight="SemiBold" Text="Start of a Story..."
+                           FontSize="25" Margin="0,20,0,20" Grid.Row="0" />
 
-                <Grid Margin="0,10,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="5*" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               Text="Language:" Margin="0,0,20,0" Grid.Column="0" />
-
-                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                              Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                              x:Name="LanguageOptionBox" Grid.Column="1"
-                              DropDownOpened="LanguageOptionBox_DropDownOpened">
-                        <x:String>English</x:String>
-                    </ComboBox>
-                </Grid>
-
-                <Grid Margin="0,15,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="9*" />
-                        <ColumnDefinition Width="2.8*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="50" />
-                        <RowDefinition Height="50" />
-                    </Grid.RowDefinitions>
-
-                    <ToggleSplitButton Grid.Column="1" Height="40" x:Name="ToggleTrackingButton"
-                                       Click="ToggleTrackingButton_Click" FontWeight="SemiBold"
-                                       HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                       Content="Freeze" FontSize="16">
-                        <ToggleSplitButton.Flyout>
-                            <Flyout Placement="Bottom">
-                                <Grid Margin="0,0,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*" />
-                                        <ColumnDefinition Width="9*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="Medium" Opacity="1"
-                                               x:Name="FreezeOnlyLowerCheckBoxLabel"
-                                               Text="Freeze only lower body trackers&#x0a;(This check is session-persistent)"
-                                               Margin="30,0,0,0"
-                                               Grid.Column="0" />
-                                    <CheckBox x:Name="FreezeOnlyLowerCheckBox"
-                                              Checked="FreezeOnlyLowerCheckBox_Checked"
-                                              Unchecked="FreezeOnlyLowerCheckBox_Unchecked"
-                                              HorizontalAlignment="Left" VerticalAlignment="Center"
-                                              MinWidth="0" MinHeight="0" Margin="0,2,0,0" IsChecked="False" />
-
-                                </Grid>
-                            </Flyout>
-                        </ToggleSplitButton.Flyout>
-
-                    </ToggleSplitButton>
-
-                    <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
-                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
-                                   Text="You can freeze tracking for trackers to stop moving,"
-                                   Margin="0,0,0,0" Foreground="LightGray" />
-                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
-                                   Text="this is not saved or session-persistent."
-                                   Margin="0,0,0,0" Foreground="LightGray" />
-                    </StackPanel>
-
-                </Grid>
+                <DatePicker HorizontalAlignment="Stretch" x:Name="DatePicker"
+                            SelectedDateChanged="DatePicker_SelectedDateChanged" />
 
                 <TextBlock FontWeight="SemiBold" Text="In-App Crashes"
-                           FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
+                           FontSize="25" Margin="0,50,0,0" Grid.Row="0" />
 
-                <Grid Margin="0,10,0,0">
+                <Grid Margin="0,20,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="9*" />
                         <ColumnDefinition Width="2.8*" />
@@ -203,56 +132,65 @@
                 </Grid>
 
             </StackPanel>
-
         </ScrollViewer>
 
+        <FlyoutBase.AttachedFlyout>
+            <Flyout x:Name="WhaaatFlyout">
+                <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Height="Auto" Width="420"
+                         Stretch="Uniform" StretchDirection="DownOnly">
+                    <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
+                              x:Name="ThanksScrollViewer" Visibility="Visible"
+                              VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
-        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
-                      x:Name="ThanksScrollViewer"
-                      VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="110" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="370" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="200" />
+                            </Grid.RowDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20" />
-                    <RowDefinition Height="110" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="370" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="200" />
-                </Grid.RowDefinitions>
+                            <TextBlock Text="まあ？ ようこそ！❤️" FontSize="85" Margin="0,0,0,0" Grid.Row="1"
+                                   HorizontalAlignment="Center" FontWeight="Bold" />
 
-                <TextBlock Text="まあ？ ようこそ！❤️" FontSize="85" Margin="0,0,0,0" Grid.Row="1"
-                           HorizontalAlignment="Center" />
+                            <Image Source="ms-appx:///Assets/hug.gif" HorizontalAlignment="Center"
+                               VerticalAlignment="Center" Margin="25" Grid.Row="3" />
 
-                <Image Source="ms-appx:///Assets/hug.gif" HorizontalAlignment="Center"
-                       VerticalAlignment="Center" Margin="25" Grid.Row="3" />
+                            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    Orientation="Vertical" Grid.Row="5">
 
-                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                            Orientation="Vertical" Grid.Row="5">
+                                <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29"
+                                       Margin="0,5,0,0">
+                                <Run xml:space="preserve">あなたがここにいることをとても嬉しく思っています、私たちは。</Run>
+                                </TextBlock>
 
-                    <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29" Margin="0,5,0,0">
-                        <Run xml:space="preserve">あなたがここにいることをとても嬉しく思っています、私たちは。</Run>
-                    </TextBlock>
+                                <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29"
+                                       Margin="0,5,0,0">
+                                <Run xml:space="preserve">ここで終わってしまうとは、鋭いですねぇ。でも誰？あなただ！</Run>
+                                </TextBlock>
 
-                    <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29" Margin="0,5,0,0">
-                        <Run xml:space="preserve">ここで終わってしまうとは、鋭いですねぇ。でも誰？あなただ！</Run>
-                    </TextBlock>
+                                <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29"
+                                       Margin="0,5,0,0">
+                                <Run xml:space="preserve">私たちの会員になりたい？あのねぇ....... 大勢の人を助ける。</Run>
+                                </TextBlock>
 
-                    <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29" Margin="0,5,0,0">
-                        <Run xml:space="preserve">私たちの会員になりたい？あのねぇ....... 大勢の人を助ける。</Run>
-                    </TextBlock>
+                                <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29"
+                                       Margin="0,5,0,0">
+                                <Run xml:space="preserve">そうだよ。かもね？そう… </Run>
+                                <Hyperlink NavigateUri="https://discord.gg/YBQCRDG" UnderlineStyle="None">ここで</Hyperlink>
+                                <Run xml:space="preserve">会いましょう！</Run>
+                                </TextBlock>
+                            </StackPanel>
 
-                    <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29" Margin="0,5,0,0">
-                        <Run xml:space="preserve">そうだよ。かもね？そう… </Run>
-                        <Hyperlink NavigateUri="https://discord.gg/YBQCRDG" UnderlineStyle="None">ここで</Hyperlink>
-                        <Run xml:space="preserve">会いましょう！</Run>
-                    </TextBlock>
-                </StackPanel>
+                        </Grid>
 
-            </Grid>
-
-        </ScrollViewer>
+                    </ScrollViewer>
+                </Viewbox>
+            </Flyout>
+        </FlyoutBase.AttachedFlyout>
 
     </Grid>
 

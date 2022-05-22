@@ -30,6 +30,7 @@
 
 #include <winrt/Windows.System.UserProfile.h>
 #include <winrt/Windows.Globalization.h>
+#include <winrt/Windows.Globalization.DateTimeFormatting.h>
 
 #include <winrt/Microsoft.UI.Composition.h>
 #include <winrt/Microsoft.UI.Xaml.h>

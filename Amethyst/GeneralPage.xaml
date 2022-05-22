@@ -1817,6 +1817,8 @@
                     <RowDefinition Height="20" />
                     <RowDefinition Height="45" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="45" />
+                    <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="1">
@@ -1851,12 +1853,48 @@
                                 </Grid>
                             </Flyout>
                         </ToggleSplitButton.Flyout>
-
                     </ToggleSplitButton>
-
                 </Grid>
-            </Grid>
 
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="175" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="400" />
+                    </Grid.ColumnDefinitions>
+
+                    <ToggleSplitButton Grid.Column="0" Margin="20,0,0,10" x:Name="ToggleTrackingButton"
+                                       Click="ToggleTrackingButton_Click" FontWeight="SemiBold"
+                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                       Content="Freeze" FontSize="16">
+
+                        <ToggleSplitButton.Flyout>
+                            <Flyout Placement="Bottom">
+                                <Grid Margin="0,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="9*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                               FontWeight="Medium" Opacity="1"
+                                               x:Name="FreezeOnlyLowerCheckBoxLabel"
+                                               Text="Only Lower Body"
+                                               Margin="30,0,0,0"
+                                               Grid.Column="0" />
+                                    <CheckBox x:Name="FreezeOnlyLowerCheckBox"
+                                              Checked="FreezeOnlyLowerCheckBox_Checked"
+                                              Unchecked="FreezeOnlyLowerCheckBox_Unchecked"
+                                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                                              MinWidth="0" MinHeight="0" Margin="0,2,0,0" IsChecked="False" />
+
+                                </Grid>
+                            </Flyout>
+                        </ToggleSplitButton.Flyout>
+                    </ToggleSplitButton>
+                </Grid>
+
+            </Grid>
         </Grid>
     </Grid>
 </Page>

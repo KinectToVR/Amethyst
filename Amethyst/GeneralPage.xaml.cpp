@@ -122,6 +122,9 @@ namespace winrt::KinectToVR::implementation
 		rightKneeXNumberBox = std::make_shared<Controls::NumberBox>(RightKneeXNumberBox());
 		rightKneeYNumberBox = std::make_shared<Controls::NumberBox>(RightKneeYNumberBox());
 		rightKneeZNumberBox = std::make_shared<Controls::NumberBox>(RightKneeZNumberBox());
+
+		toggleFreezeButton = std::make_shared<Controls::ToggleSplitButton>(ToggleTrackingButton());
+		freezeOnlyLowerCheckBox = std::make_shared<Controls::CheckBox>(FreezeOnlyLowerCheckBox());
 	}
 }
 
@@ -1326,6 +1329,13 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	skeleton_visibility_set_ui(k2app::K2Settings.skeletonPreviewEnabled);
 	skeleton_force_set_ui(k2app::K2Settings.forceSkeletonPreview);
 
+	// Setup the freeze button
+	k2app::shared::general::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
+	k2app::shared::general::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
+		? box_value(L"Unfreeze")
+		: box_value(L"Freeze"));
+	k2app::shared::general::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
+
 	K2InsightsCLR::LogPageView("General");
 }
 
@@ -1930,4 +1940,35 @@ void KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
 
 	// Set the current device for scripts
 	general_current_calibrating_device = general_calibrating_device::K2_OverrideDevice;
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackingButton_Click(
+	winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender, 
+	winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args)
+{
+	k2app::interfacing::isTrackingFrozen = !k2app::interfacing::isTrackingFrozen;
+
+	k2app::shared::general::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
+	k2app::shared::general::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
+		? box_value(L"Unfreeze")
+		: box_value(L"Freeze"));
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, 
+	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	k2app::K2Settings.freezeLowerOnly = true;
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, 
+	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	k2app::K2Settings.freezeLowerOnly = false;
+	k2app::K2Settings.saveSettings();
 }
