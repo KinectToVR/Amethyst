@@ -1815,9 +1815,9 @@
             <Grid Background="Transparent" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="20" />
-                    <RowDefinition Height="45" />
+                    <RowDefinition Height="35" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="45" />
+                    <RowDefinition Height="35" />
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
 
@@ -1830,7 +1830,7 @@
 
                     <ToggleSplitButton x:Name="SkeletonToggleButton" Click="SkeletonToggleButton_Click"
                                        IsChecked="True" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                       Content="Hide Skeleton" Margin="20,0,0,10" CornerRadius="3" Grid.Column="0"
+                                       Content="Hide Skeleton" Margin="20,0,0,0" CornerRadius="3" Grid.Column="0"
                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                         <ToggleSplitButton.Flyout>
@@ -1863,7 +1863,7 @@
                         <ColumnDefinition Width="400" />
                     </Grid.ColumnDefinitions>
 
-                    <ToggleSplitButton Grid.Column="0" Margin="20,0,0,10" x:Name="ToggleTrackingButton"
+                    <ToggleSplitButton Grid.Column="0" Margin="20,0,0,0" x:Name="ToggleTrackingButton"
                                        Click="ToggleTrackingButton_Click" FontWeight="SemiBold"
                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                        Content="Freeze" FontSize="16">
