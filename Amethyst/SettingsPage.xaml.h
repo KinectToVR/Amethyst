@@ -130,7 +130,8 @@ namespace winrt::KinectToVR::implementation
 		                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DismissSetErrorButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		Windows::Foundation::IAsyncAction LearnAboutFiltersButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void LearnAboutFiltersButton_Click(winrt::Windows::Foundation::IInspectable const& sender,
+		                                   winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 };
 }
 

@@ -1113,33 +1113,12 @@ void KinectToVR::implementation::SettingsPage::DismissSetErrorButton_Click(
 }
 
 
-Windows::Foundation::IAsyncAction winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersButton_Click(
+void winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersButton_Click(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	auto learnMoreDialog = Controls::ContentDialog();
+	Controls::Primitives::FlyoutShowOptions options;
+	options.Placement(Controls::Primitives::FlyoutPlacementMode::Full);
+	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
-	learnMoreDialog.Title(box_value(L"Chungus Bungus"));
-
-	auto scrollViewer = Controls::ScrollViewer();
-	scrollViewer.Content(box_value(
-		L"Lorem ipsum dolor sit amet, consectetur adipiscing elit,\n"
-		L"sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
-
-		L"Amet purus gravida quis blandit turpis.Neque viverra justo nec ultrices dui sapien eget mi.\n"
-		L"Platea dictumst quisque sagittis purus sit amet.Nisi scelerisque eu ultrices vitae.\n"
-		L"Consequat mauris nunc congue nisi vitae.\n\n"
-
-		L"Amet luctus venenatis lectus magna fringilla urna porttitor.\n"
-		L"Phasellus vestibulum lorem sed risus ultricies tristique.\n"
-		L"Consequat semper viverra nam libero justo.\n\n"
-
-		L"Accumsan in nisl nisi scelerisque eu ultrices vitae auctor eu."
-	));
-
-	learnMoreDialog.Content(scrollViewer);
-	learnMoreDialog.CloseButtonText(L"Close");
-
-	learnMoreDialog.ShowAsync();
-
-	co_return;
+	LearnAboutFiltersFlyout().ShowAt(LearnAboutFiltersButton(), options);
 }
