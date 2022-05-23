@@ -11,9 +11,6 @@ using namespace winrt::Microsoft::UI::Xaml;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-// Helper local variables
-bool settings_localInitFinished = false;
-
 namespace winrt::KinectToVR::implementation
 {
 	SettingsPage::SettingsPage()
@@ -73,95 +70,12 @@ namespace winrt::KinectToVR::implementation
 	}
 }
 
-void trackersConfig_UpdateIsEnabled()
-{
-	// Make expander opacity .5 and collapse it
-	// to imitate that it's disabled
-
-	// Flip
-	if (!k2app::K2Settings.isFlipEnabled)
-	{
-		k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
-		k2app::shared::settings::flipDropDown.get()->IsExpanded(false);
-	}
-	else
-		k2app::shared::settings::flipDropDown.get()->IsEnabled(true);
-
-	// Waist
-	if (!k2app::K2Settings.isJointPairEnabled[0])
-	{
-		k2app::shared::settings::waistDropDown.get()->IsEnabled(false);
-		k2app::shared::settings::waistDropDown.get()->IsExpanded(false);
-	}
-	else
-		k2app::shared::settings::waistDropDown.get()->IsEnabled(true);
-
-	// Feet
-	if (!k2app::K2Settings.isJointPairEnabled[1])
-	{
-		k2app::shared::settings::feetDropDown.get()->IsEnabled(false);
-		k2app::shared::settings::feetDropDown.get()->IsExpanded(false);
-	}
-	else
-		k2app::shared::settings::feetDropDown.get()->IsEnabled(true);
-
-	// Elbows
-	if (!k2app::K2Settings.isJointPairEnabled[2])
-	{
-		k2app::shared::settings::elbowsDropDown.get()->IsEnabled(false);
-		k2app::shared::settings::elbowsDropDown.get()->IsExpanded(false);
-	}
-	else
-		k2app::shared::settings::elbowsDropDown.get()->IsEnabled(true);
-
-	// Knees
-	if (!k2app::K2Settings.isJointPairEnabled[3])
-	{
-		k2app::shared::settings::kneesDropDown.get()->IsEnabled(false);
-		k2app::shared::settings::kneesDropDown.get()->IsExpanded(false);
-	}
-	else
-		k2app::shared::settings::kneesDropDown.get()->IsEnabled(true);
-}
-
-void trackersConfigChanged()
-{
-	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
-
-	// If this is the first time, also show the notification
-	if (!k2app::shared::settings::restartButton.get()->IsEnabled())
-		k2app::interfacing::ShowToast(
-			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersConfigChanged/Title"),
-			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersConfigChanged/Content"));
-
-	// If all trackers were turned off then SCREAM
-	if (std::ranges::all_of(
-		k2app::K2Settings.isJointPairEnabled,
-		[](const bool& i) { return !i; }
-	))
-		k2app::interfacing::ShowToast(L"YOU'VE JUST DISABLED ALL TRACKERS",
-		                              L"WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
-
-	// Compare with saved settings and unlock the restart
-	k2app::shared::settings::restartButton.get()->IsEnabled(true);
-
-	// Enable/Disable combos
-	trackersConfig_UpdateIsEnabled();
-
-	// Enable/Disable ExtFlip
-	TrackingDevices::settings_set_external_flip_is_enabled();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
 
 void KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Checked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	// Cache flip to settings and save
 	k2app::K2Settings.isExternalFlipEnabled = true; // Checked
@@ -173,7 +87,7 @@ void KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	// Cache flip to settings and save
 	k2app::K2Settings.isExternalFlipEnabled = false; // Unchecked
@@ -388,10 +302,10 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	soundsVolumeSlider.get()->Value(k2app::K2Settings.appSoundsVolume);
 
 	// Load tracker settings/enabled
-	trackersConfig_UpdateIsEnabled();
+	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
 
 	// Notify of the setup end
-	settings_localInitFinished = true;
+	k2app::shared::settings::settings_localInitFinished = true;
 	K2InsightsCLR::LogPageView("Settings");
 }
 
@@ -399,7 +313,7 @@ void KinectToVR::implementation::SettingsPage::AutoSpawn_Checked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	k2app::K2Settings.autoSpawnEnabledJoints = true;
 	// Save settings
@@ -411,7 +325,7 @@ void KinectToVR::implementation::SettingsPage::AutoSpawn_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	k2app::K2Settings.autoSpawnEnabledJoints = false;
 	// Save settings
@@ -423,7 +337,7 @@ void KinectToVR::implementation::SettingsPage::EnableSounds_Checked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	// Turn sounds on
 	k2app::K2Settings.enableAppSounds = true;
@@ -438,7 +352,7 @@ void KinectToVR::implementation::SettingsPage::EnableSounds_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	// Turn sounds on
 	k2app::K2Settings.enableAppSounds = false;
@@ -454,7 +368,7 @@ void KinectToVR::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
 	const Controls::Primitives::RangeBaseValueChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	// Change sounds level
 	k2app::K2Settings.appSoundsVolume = k2app::shared::settings::soundsVolumeSlider.get()->Value();
@@ -484,8 +398,8 @@ void KinectToVR::implementation::SettingsPage::WaistDropDown_Expanding(
 	const Controls::Expander& sender,
 	const Controls::ExpanderExpandingEventArgs& args)
 {
-	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
-	trackersConfig_UpdateIsEnabled();
+	if (!k2app::shared::settings::settings_localInitFinished)return; // Don't even try if we're not set up yet
+	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
 
 	// Close all others if valid
 	if (k2app::K2Settings.isJointPairEnabled[0])
@@ -501,7 +415,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Wais
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)co_return;
+	if (!k2app::shared::settings::settings_localInitFinished)co_return;
 
 	// Mark trackers as inactive, back up the current one
 	const bool _trackersInitialized =
@@ -520,7 +434,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Wais
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
-	trackersConfigChanged();
+	TrackingDevices::settings_trackersConfigChanged();
 
 	// Mark trackers as active (or backup)
 	{
@@ -542,7 +456,7 @@ void KinectToVR::implementation::SettingsPage::WaistPositionFilterOptionBox_Sele
 	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	switch (const uint32_t index = k2app::shared::settings::waistPositionFilterOptionBox.get()->SelectedIndex(); index)
 	{
@@ -574,7 +488,7 @@ void KinectToVR::implementation::SettingsPage::WaistRotationFilterOptionBox_Sele
 	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	switch (const uint32_t index = k2app::shared::settings::waistRotationFilterOptionBox.get()->SelectedIndex(); index)
 	{
@@ -601,8 +515,8 @@ void KinectToVR::implementation::SettingsPage::FeetDropDown_Expanding(
 	const Controls::Expander& sender,
 	const Controls::ExpanderExpandingEventArgs& args)
 {
-	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
-	trackersConfig_UpdateIsEnabled();
+	if (!k2app::shared::settings::settings_localInitFinished)return; // Don't even try if we're not set up yet
+	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
 
 	// Close all others if valid
 	if (k2app::K2Settings.isJointPairEnabled[1])
@@ -618,7 +532,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Feet
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)co_return;
+	if (!k2app::shared::settings::settings_localInitFinished)co_return;
 
 	// Mark trackers as inactive, back up the current one
 	const bool _trackersInitialized =
@@ -637,7 +551,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Feet
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
-	trackersConfigChanged();
+	TrackingDevices::settings_trackersConfigChanged();
 
 	// Mark trackers as active (or backup)
 	{
@@ -659,7 +573,7 @@ void KinectToVR::implementation::SettingsPage::FeetPositionFilterOptionBox_Selec
 	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	switch (const uint32_t index = k2app::shared::settings::feetPositionFilterOptionBox.get()->SelectedIndex(); index)
 	{
@@ -695,7 +609,7 @@ void KinectToVR::implementation::SettingsPage::FeetRotationFilterOptionBox_Selec
 	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	switch (const uint32_t index = k2app::shared::settings::feetRotationFilterOptionBox.get()->SelectedIndex(); index)
 	{
@@ -730,8 +644,8 @@ void KinectToVR::implementation::SettingsPage::ElbowsDropDown_Expanding(
 	const Controls::Expander& sender,
 	const Controls::ExpanderExpandingEventArgs& args)
 {
-	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
-	trackersConfig_UpdateIsEnabled();
+	if (!k2app::shared::settings::settings_localInitFinished)return; // Don't even try if we're not set up yet
+	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
 
 	// Close all others if valid
 	if (k2app::K2Settings.isJointPairEnabled[2])
@@ -747,7 +661,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Elbo
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)co_return;
+	if (!k2app::shared::settings::settings_localInitFinished)co_return;
 
 	// Mark trackers as inactive, back up the current one
 	const bool _trackersInitialized =
@@ -766,7 +680,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Elbo
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
-	trackersConfigChanged();
+	TrackingDevices::settings_trackersConfigChanged();
 
 	// Mark trackers as active (or backup)
 	{
@@ -788,7 +702,7 @@ void KinectToVR::implementation::SettingsPage::ElbowsPositionFilterOptionBox_Sel
 	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	switch (const uint32_t index = k2app::shared::settings::elbowsPositionFilterOptionBox.get()->SelectedIndex(); index)
 	{
@@ -824,7 +738,7 @@ void KinectToVR::implementation::SettingsPage::ElbowsRotationFilterOptionBox_Sel
 	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	switch (const uint32_t index = k2app::shared::settings::elbowsRotationFilterOptionBox.get()->SelectedIndex(); index)
 	{
@@ -854,8 +768,8 @@ void KinectToVR::implementation::SettingsPage::KneesDropDown_Expanding(
 	const Controls::Expander& sender,
 	const Controls::ExpanderExpandingEventArgs& args)
 {
-	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
-	trackersConfig_UpdateIsEnabled();
+	if (!k2app::shared::settings::settings_localInitFinished)return; // Don't even try if we're not set up yet
+	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
 
 	// Close all others if valid
 	if (k2app::K2Settings.isJointPairEnabled[3])
@@ -871,7 +785,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Knee
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)co_return;
+	if (!k2app::shared::settings::settings_localInitFinished)co_return;
 
 	// Mark trackers as inactive, back up the current one
 	const bool _trackersInitialized =
@@ -890,7 +804,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Knee
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
-	trackersConfigChanged();
+	TrackingDevices::settings_trackersConfigChanged();
 
 	// Mark trackers as active (or backup)
 	{
@@ -912,7 +826,7 @@ void KinectToVR::implementation::SettingsPage::KneePositionFilterOptionBox_Selec
 	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	switch (const uint32_t index = k2app::shared::settings::kneePositionFilterOptionBox.get()->SelectedIndex(); index)
 	{
@@ -948,7 +862,7 @@ void KinectToVR::implementation::SettingsPage::KneeRotationFilterOptionBox_Selec
 	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	switch (const uint32_t index = k2app::shared::settings::kneeRotationFilterOptionBox.get()->SelectedIndex(); index)
 	{
@@ -978,11 +892,11 @@ void KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(
 	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
 	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
 {
-	if (!settings_localInitFinished)return; // Don't even try if we're not set up yet
+	if (!k2app::shared::settings::settings_localInitFinished)return; // Don't even try if we're not set up yet
 
 	// Enable/Disable ExtFlip
 	TrackingDevices::settings_set_external_flip_is_enabled();
-	trackersConfig_UpdateIsEnabled();
+	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
 }
 
 
@@ -990,14 +904,14 @@ void KinectToVR::implementation::SettingsPage::FlipToggle_Toggled(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	// Cache flip to settings and save
 	k2app::K2Settings.isFlipEnabled =
 		k2app::shared::settings::flipToggle->IsOn(); // Checked?
 
 	TrackingDevices::settings_set_external_flip_is_enabled();
-	trackersConfig_UpdateIsEnabled();
+	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
 
 	k2app::K2Settings.saveSettings();
 }
