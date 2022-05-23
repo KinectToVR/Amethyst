@@ -14,6 +14,18 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+        <Grid x:Name="DimGrid" Canvas.ZIndex="1" Visibility="Collapsed">
+            <Grid Grid.Column="0" Canvas.ZIndex="1"
+                  Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                  Opacity="0.5" IsHitTestVisible="True" />
+            <Grid Grid.Column="1" Canvas.ZIndex="1"
+                  Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                  Opacity="0.5" IsHitTestVisible="True" />
+            <Grid Grid.Column="2" Canvas.ZIndex="1"
+                  Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                  Opacity="0.5" IsHitTestVisible="True" />
+        </Grid>
+
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
                       VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
@@ -117,7 +129,8 @@
                                          x:Name="LearnAboutFiltersButton" Click="LearnAboutFiltersButton_Click">
 
                             <FlyoutBase.AttachedFlyout>
-                                <Flyout Placement="Full" x:Name="LearnAboutFiltersFlyout">
+                                <Flyout Placement="Full" x:Name="LearnAboutFiltersFlyout"
+                                        Closed="LearnAboutFiltersFlyout_Closed">
 
                                     <Flyout.FlyoutPresenterStyle>
                                         <Style TargetType="FlyoutPresenter">
@@ -220,7 +233,7 @@
                                                    FontWeight="SemiBold" Margin="0,20,0,20" />
 
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
-                                                   x:Uid="/SettingsLearn/Captions/ManageTrackers"/>
+                                                   x:Uid="/SettingsLearn/Captions/ManageTrackers" />
 
                                     </StackPanel>
 

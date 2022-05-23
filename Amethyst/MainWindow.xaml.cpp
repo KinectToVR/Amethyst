@@ -1414,7 +1414,9 @@ void h_exit()
 {
 	// Mark exiting as true
 	k2app::interfacing::isExitingNow = true;
+
 	K2InsightsCLR::LogEvent("Amethyst shutting down");
+	LOG(INFO) << "AtExit handler called, starting the shutdown routine...";
 
 	// Mark trackers as inactive
 	k2app::interfacing::K2AppTrackersInitialized = false;
@@ -1465,8 +1467,9 @@ void h_exit()
 		}
 	}();
 
-	// Wait a moment
-	Sleep(1000);
+	// Wait a moment & exit
+	LOG(INFO) << "Shutdown actions completed, exiting in 1000ms...";
+	Sleep(1000); // Sleep a bit for a proper server disconnect
 }
 
 

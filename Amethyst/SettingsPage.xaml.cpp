@@ -1121,4 +1121,12 @@ void winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersButton_Cl
 	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
 	LearnAboutFiltersFlyout().ShowAt(LearnAboutFiltersButton(), options);
+	DimGrid().Visibility(Visibility::Visible);
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersFlyout_Closed(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+	DimGrid().Visibility(Visibility::Collapsed);
 }
