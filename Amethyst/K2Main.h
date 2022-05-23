@@ -84,12 +84,9 @@ namespace k2app::main
 		}
 
 		// Update the Calibration:Confirm : one-time switch
-		// Only one-way switch this time
+		// Only one-way switch this time, reset at calibration's end
 		if (evr_input.confirmAndSaveActionData().bState)
 			calibration_confirm = true;
-
-		/*LOG_IF(evr_input.fineTuneActionData().bState, INFO) << "FineTune ON!";
-		LOG_IF(evr_input.fineTuneActionData().bActive, INFO) << "FineTune Action ACTIVE!";*/
 
 		// Update the Calibration:ModeSwap : one-time switch
 		// Only if the state has changed from 1 to 0: chord was done

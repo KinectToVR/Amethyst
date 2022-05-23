@@ -1096,8 +1096,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 		co_await ui_thread;
 	}
 
-	// Exit the pane
+	// Exit the pane and reset
 	CalibrationView().IsPaneOpen(false);
+	k2app::interfacing::calibration_confirm = false;
 
 	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
