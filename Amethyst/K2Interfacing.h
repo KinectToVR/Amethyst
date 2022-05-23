@@ -60,7 +60,8 @@ namespace k2app::interfacing
 	}
 
 	// Show an app toast / notification
-	inline void ShowToast(const std::wstring& header, const std::wstring& text)
+	inline void ShowToast(const std::wstring& header, 
+		const std::wstring& text, const bool high_priority = false)
 	{
 		if (header.empty() || text.empty())return;
 
@@ -77,6 +78,8 @@ namespace k2app::interfacing
 		winrt::Microsoft::Windows::AppNotifications::AppNotification toast(payload);
 		toast.Tag(L"Tag_AmeNotifications");
 		toast.Group(L"Group_AmeNotifications");
+		toast.Priority(static_cast<
+			winrt::Microsoft::Windows::AppNotifications::AppNotificationPriority>(high_priority));
 
 		shared::main::thisNotificationManager.get()->Show(toast);
 	}
@@ -525,7 +528,10 @@ namespace k2app::interfacing
 		 * \_log Should we print logs?
 		 * \return <Success?, id>
 		 */
-	inline std::pair<bool, uint32_t> findVRWaistTracker(const bool _log = true)
+	inline std::pair<bool, uint32_t> findVRTracker(
+		const std::string &_role, 
+		const bool _can_be_ame = true, 
+		const bool _log = true)
 	{
 		// Loop through all devices
 		for (uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; i++)
@@ -538,7 +544,7 @@ namespace k2app::interfacing
 			else continue; // Don't waste our time
 
 			// If we've actually found the one
-			if (findStringIC(buf, "waist"))
+			if (findStringIC(buf, _role))
 			{
 				char buf_p[1024];
 				vr::VRSystem()->
@@ -546,18 +552,31 @@ namespace k2app::interfacing
 
 				// Log that we're finished
 				LOG_IF(INFO, _log) <<
-					"\nFound an active waist tracker with:\n    hint: " <<
+					"\nFound an active " + _role + " tracker with:\n    hint: " <<
 					buf << "\n    serial: " <<
 					buf_p << "\n    id: " << i;
 
+				// Check if it's not ame's
+				bool _can_return = true;
+
+				if (!_can_be_ame)
+					for (const auto& _tracker : k2app::interfacing::K2TrackersVector)
+						if (std::string(buf_p) == _tracker.data.serial)
+						{
+							LOG_IF(INFO, _log) << 
+								"Skipping the latest found tracker because it's been added from Amethyst";
+							_can_return = false; // Maybe next time, bud
+						}
+
 				// Return what we've got
-				return std::make_pair(true, i);
+				if(_can_return)
+					return std::make_pair(true, i);
 			}
 		}
 
 		// We've failed if the loop's finished
 		LOG_IF(WARNING, _log) <<
-			"Didn't find any waist tracker in SteamVR with a proper role hint (Prop_ControllerType_String)";
+			"Didn't find any " + _role + " tracker in SteamVR with a proper role hint (Prop_ControllerType_String)";
 		return std::make_pair(false, vr::k_unTrackedDeviceIndexInvalid);
 	}
 
@@ -573,7 +592,7 @@ namespace k2app::interfacing
 		                                                devicePose,
 		                                                vr::k_unMaxTrackedDeviceCount);
 
-		const auto waistPair = findVRWaistTracker(_log);
+		const auto waistPair = findVRTracker("waist", true, _log);
 
 		if (waistPair.first)
 		{
