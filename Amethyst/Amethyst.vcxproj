@@ -348,10 +348,12 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
   <ItemGroup>
     <PRIResource Include="Strings\en-US\DevicesPage.resw" />
     <PRIResource Include="Strings\en-US\InfoPage.resw" />
+    <PRIResource Include="Strings\en-US\SettingsLearn.resw" />
     <PRIResource Include="Strings\en-US\SettingsPage.resw" />
     <PRIResource Include="Strings\en-US\SharedStrings.resw" />
     <PRIResource Include="Strings\lc-LC\DevicesPage.resw" />
     <PRIResource Include="Strings\lc-LC\InfoPage.resw" />
+    <PRIResource Include="Strings\lc-LC\SettingsLearn.resw" />
     <PRIResource Include="Strings\lc-LC\SettingsPage.resw" />
     <PRIResource Include="Strings\lc-LC\SharedStrings.resw" />
   </ItemGroup>

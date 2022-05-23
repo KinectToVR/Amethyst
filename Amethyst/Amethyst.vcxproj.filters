@@ -308,5 +308,11 @@
     <PRIResource Include="Strings\lc-LC\SharedStrings.resw">
       <Filter>Strings\lc-LC</Filter>
     </PRIResource>
+    <PRIResource Include="Strings\en-US\SettingsLearn.resw">
+      <Filter>Strings\en-US</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\lc-LC\SettingsLearn.resw">
+      <Filter>Strings\lc-LC</Filter>
+    </PRIResource>
   </ItemGroup>
 </Project>
