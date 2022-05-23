@@ -228,6 +228,8 @@ namespace k2app::shared
 
 	namespace settings
 	{
+		inline bool settings_localInitFinished = false;
+
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button> restartButton;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBox>

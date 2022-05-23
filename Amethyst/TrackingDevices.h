@@ -121,7 +121,7 @@ namespace TrackingDevices
 
 		/* Here check if there's a proper waist tracker in steamvr to pull data from */
 		if (isExternalFlipSupported)
-			isExternalFlipSupported_Global = k2app::interfacing::findVRWaistTracker().first; // .first is [Success?]
+			isExternalFlipSupported_Global = k2app::interfacing::findVRTracker("waist").first; // .first is [Success?]
 
 		return isExternalFlipSupported_Global;
 	}
@@ -637,5 +637,93 @@ namespace TrackingDevices
 			/* Update local statuses */
 			k2app::shared::devices::overrideDeviceName.get()->Text(StringToWString(deviceName));
 		}
+	}
+
+	inline void settings_trackersConfig_UpdateIsEnabled()
+	{
+		// Skip if not set up yet
+		if (k2app::shared::settings::flipDropDown.get() == nullptr)return;
+
+		// Make expander opacity .5 and collapse it
+		// to imitate that it's disabled
+
+		// Flip
+		if (!k2app::K2Settings.isFlipEnabled)
+		{
+			k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
+			k2app::shared::settings::flipDropDown.get()->IsExpanded(false);
+		}
+		else
+			k2app::shared::settings::flipDropDown.get()->IsEnabled(true);
+
+		// Waist
+		if (!k2app::K2Settings.isJointPairEnabled[0])
+		{
+			k2app::shared::settings::waistDropDown.get()->IsEnabled(false);
+			k2app::shared::settings::waistDropDown.get()->IsExpanded(false);
+		}
+		else
+			k2app::shared::settings::waistDropDown.get()->IsEnabled(true);
+
+		// Feet
+		if (!k2app::K2Settings.isJointPairEnabled[1])
+		{
+			k2app::shared::settings::feetDropDown.get()->IsEnabled(false);
+			k2app::shared::settings::feetDropDown.get()->IsExpanded(false);
+		}
+		else
+			k2app::shared::settings::feetDropDown.get()->IsEnabled(true);
+
+		// Elbows
+		if (!k2app::K2Settings.isJointPairEnabled[2])
+		{
+			k2app::shared::settings::elbowsDropDown.get()->IsEnabled(false);
+			k2app::shared::settings::elbowsDropDown.get()->IsExpanded(false);
+		}
+		else
+			k2app::shared::settings::elbowsDropDown.get()->IsEnabled(true);
+
+		// Knees
+		if (!k2app::K2Settings.isJointPairEnabled[3])
+		{
+			k2app::shared::settings::kneesDropDown.get()->IsEnabled(false);
+			k2app::shared::settings::kneesDropDown.get()->IsExpanded(false);
+		}
+		else
+			k2app::shared::settings::kneesDropDown.get()->IsEnabled(true);
+	}
+
+	inline void settings_trackersConfigChanged(const bool showToasts = true)
+	{
+		// Don't react to pre-init signals
+		if (!k2app::shared::settings::settings_localInitFinished)return;
+
+		// If this is the first time, also show the notification
+		if (k2app::shared::settings::restartButton.get() != nullptr && showToasts)
+			if (!k2app::shared::settings::restartButton.get()->IsEnabled())
+				k2app::interfacing::ShowToast(
+					k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersConfigChanged/Title"),
+					k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersConfigChanged/Content"));
+
+		// If all trackers were turned off then SCREAM
+		if (showToasts && std::ranges::all_of(
+			k2app::K2Settings.isJointPairEnabled,
+			[](const bool& i) { return !i; }
+		))
+			k2app::interfacing::ShowToast(L"YOU'VE JUST DISABLED ALL TRACKERS",
+				L"WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
+
+		// Compare with saved settings and unlock the restart
+		if (k2app::shared::settings::restartButton.get() != nullptr)
+			k2app::shared::settings::restartButton.get()->IsEnabled(true);
+
+		// Enable/Disable combos
+		TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
+
+		// Enable/Disable ExtFlip
+		TrackingDevices::settings_set_external_flip_is_enabled();
+
+		// Save settings
+		k2app::K2Settings.saveSettings();
 	}
 }
