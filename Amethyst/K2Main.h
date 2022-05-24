@@ -42,8 +42,8 @@ namespace k2app::main
 				{
 					shared::general::toggleFreezeButton.get()->IsChecked(isTrackingFrozen);
 					shared::general::toggleFreezeButton.get()->Content(isTrackingFrozen
-						                                                 ? winrt::box_value(L"Unfreeze")
-						                                                 : winrt::box_value(L"Freeze"));
+						                                                   ? winrt::box_value(L"Unfreeze")
+						                                                   : winrt::box_value(L"Freeze"));
 				}
 			});
 		}
@@ -609,193 +609,93 @@ namespace k2app::main
 					update_tracker_vector(k2_tracker_bases);
 			}
 
-			// Update status 1/1000 loops / ~8s
+			// Update status 1/1100 loops / ~15s
 			// or right after any change
 			for (int i = 0; i < 3; i++)
 			{
 				// try 3 times
-				if (p_loops >= 1000 ||
+				if (p_loops >= 1100 ||
 					(initialized_bak != interfacing::K2AppTrackersInitialized))
 				{
-
 					// Scan for already-added body trackers from other apps
 					// (If any found, disable corresponding ame's pairs)
 
-					shared::main::thisDispatcherQueue.get()->TryEnqueue(
-						[&]()->Windows::Foundation::IAsyncAction
-						{
-							bool wereChangesMade = false;
-
-							// Disable the waist tracker if found
-							if (k2app::K2Settings.isJointPairEnabled[0] &&
-								interfacing::findVRTracker("waist", false, true).first)
+					if (!interfacing::isAlreadyAddedTrackersScanRunning)
+						shared::main::thisDispatcherQueue.get()->TryEnqueue(
+							[&]()-> winrt::Windows::Foundation::IAsyncAction
 							{
-								// Mark trackers as inactive, back up the current one
-								const bool _trackersInitialized =
-									k2app::interfacing::K2AppTrackersInitialized;
-								k2app::interfacing::K2AppTrackersInitialized = false;
+								using namespace winrt;
+								interfacing::isAlreadyAddedTrackersScanRunning = true;
+								bool wereChangesMade = false; // At least not yet
+
+								// Do that on UI's background
+								apartment_context ui_thread;
+								co_await resume_background();
+								const std::array foundTrackerFromPair
 								{
-									// Sleep on UI
-									apartment_context ui_thread;
-									co_await resume_background();
-									Sleep(20);
-									co_await ui_thread;
-								}
+									interfacing::findVRTracker("waist", false, true).first,
+									(interfacing::findVRTracker("left_foot", false, true).first ||
+										interfacing::findVRTracker("right_foot", false, true).first),
+									(interfacing::findVRTracker("left_elbow", false, true).first ||
+										interfacing::findVRTracker("right_elbow", false, true).first),
+									(interfacing::findVRTracker("left_knee", false, true).first ||
+										interfacing::findVRTracker("right_knee", false, true).first)
+								};
+								co_await ui_thread;
 
-								// Make actual changes
-								k2app::K2Settings.isJointPairEnabled[0] = false;
-								if (k2app::shared::settings::waistTrackerEnabledToggle.get() != nullptr)
-									k2app::shared::settings::waistTrackerEnabledToggle.get()->IsOn(false);
+								// Disable the waist tracker if found
+								for (uint32_t tracker_pair_index = 0; i < 4; i++)
+									if (K2Settings.isJointPairEnabled[tracker_pair_index] &&
+										foundTrackerFromPair.at(tracker_pair_index))
+									{
+										// Mark trackers as inactive, back up the current one
+										const bool _trackersInitialized =
+											interfacing::K2AppTrackersInitialized;
+										interfacing::K2AppTrackersInitialized = false;
+										{
+											// Sleep on UI
+											apartment_context ui_thread;
+											co_await resume_background();
+											Sleep(20);
+											co_await ui_thread;
+										}
 
-								// Check if we've disabled any joints from spawning and disable their mods
-								k2app::interfacing::devices_check_disabled_joints();
-								TrackingDevices::settings_trackersConfigChanged(false);
+										// Make actual changes
+										K2Settings.isJointPairEnabled[tracker_pair_index] = false;
+										if (shared::settings::trackerPairEnabledToggles.at(tracker_pair_index).get() !=
+											nullptr)
+											shared::settings::trackerPairEnabledToggles.at(tracker_pair_index).get()->
+												IsOn(false);
 
-								// Mark trackers as active (or backup)
-								{
-									// Sleep on UI
-									apartment_context ui_thread;
-									co_await resume_background();
-									Sleep(20);
-									co_await ui_thread;
-								}
-								k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
+										// Check if we've disabled any joints from spawning and disable their mods
+										interfacing::devices_check_disabled_joints();
+										TrackingDevices::settings_trackersConfigChanged(false);
 
-								// Save settings
-								k2app::K2Settings.saveSettings();
-								wereChangesMade = true;
-							}
+										// Mark trackers as active (or backup)
+										{
+											// Sleep on UI
+											apartment_context ui_thread;
+											co_await resume_background();
+											Sleep(20);
+											co_await ui_thread;
+										}
+										interfacing::K2AppTrackersInitialized = _trackersInitialized;
 
-							// Disable the feet trackers if found
-							if (k2app::K2Settings.isJointPairEnabled[1] &&
-								interfacing::findVRTracker("left_foot", false, true).first ||
-								interfacing::findVRTracker("right_foot", false, true).first)
-							{
-								// Mark trackers as inactive, back up the current one
-								const bool _trackersInitialized =
-									k2app::interfacing::K2AppTrackersInitialized;
-								k2app::interfacing::K2AppTrackersInitialized = false;
-								{
-									// Sleep on UI
-									apartment_context ui_thread;
-									co_await resume_background();
-									Sleep(20);
-									co_await ui_thread;
-								}
+										// Save settings
+										K2Settings.saveSettings();
+										wereChangesMade = true;
+									}
 
-								// Make actual changes
-								k2app::K2Settings.isJointPairEnabled[1] = false;
-								if (k2app::shared::settings::feetTrackersEnabledToggle.get() != nullptr)
-									k2app::shared::settings::feetTrackersEnabledToggle.get()->IsOn(false);
-
-								// Check if we've disabled any joints from spawning and disable their mods
-								k2app::interfacing::devices_check_disabled_joints();
-								TrackingDevices::settings_trackersConfigChanged();
-
-								// Mark trackers as active (or backup)
-								{
-									// Sleep on UI
-									apartment_context ui_thread;
-									co_await resume_background();
-									Sleep(20);
-									co_await ui_thread;
-								}
-								k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
-
-								// Save settings
-								k2app::K2Settings.saveSettings();
-								wereChangesMade = true;
-							}
-
-							// Disable the feet trackers if found
-							if (k2app::K2Settings.isJointPairEnabled[2] &&
-								interfacing::findVRTracker("left_elbow", false, true).first ||
-								interfacing::findVRTracker("right_elbow", false, true).first)
-							{
-								// Mark trackers as inactive, back up the current one
-								const bool _trackersInitialized =
-									k2app::interfacing::K2AppTrackersInitialized;
-								k2app::interfacing::K2AppTrackersInitialized = false;
-								{
-									// Sleep on UI
-									apartment_context ui_thread;
-									co_await resume_background();
-									Sleep(20);
-									co_await ui_thread;
-								}
-
-								// Make actual changes
-								k2app::K2Settings.isJointPairEnabled[2] = false;
-								if (k2app::shared::settings::elbowTrackersEnabledToggle.get() != nullptr)
-									k2app::shared::settings::elbowTrackersEnabledToggle.get()->IsOn(false);
-
-								// Check if we've disabled any joints from spawning and disable their mods
-								k2app::interfacing::devices_check_disabled_joints();
-								TrackingDevices::settings_trackersConfigChanged();
-
-								// Mark trackers as active (or backup)
-								{
-									// Sleep on UI
-									apartment_context ui_thread;
-									co_await resume_background();
-									Sleep(20);
-									co_await ui_thread;
-								}
-								k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
-
-								// Save settings
-								k2app::K2Settings.saveSettings();
-								wereChangesMade = true;
-							}
-
-							// Disable the feet trackers if found
-							if (k2app::K2Settings.isJointPairEnabled[3] &&
-								interfacing::findVRTracker("left_knee", false, true).first ||
-								interfacing::findVRTracker("right_knee", false, true).first)
-							{
-								// Mark trackers as inactive, back up the current one
-								const bool _trackersInitialized =
-									k2app::interfacing::K2AppTrackersInitialized;
-								k2app::interfacing::K2AppTrackersInitialized = false;
-								{
-									// Sleep on UI
-									apartment_context ui_thread;
-									co_await resume_background();
-									Sleep(20);
-									co_await ui_thread;
-								}
-
-								// Make actual changes
-								k2app::K2Settings.isJointPairEnabled[3] = false;
-								if (k2app::shared::settings::kneeTrackersEnabledToggle.get() != nullptr)
-									k2app::shared::settings::kneeTrackersEnabledToggle.get()->IsOn(false);
-
-								// Check if we've disabled any joints from spawning and disable their mods
-								k2app::interfacing::devices_check_disabled_joints();
-								TrackingDevices::settings_trackersConfigChanged();
-
-								// Mark trackers as active (or backup)
-								{
-									// Sleep on UI
-									apartment_context ui_thread;
-									co_await resume_background();
-									Sleep(20);
-									co_await ui_thread;
-								}
-								k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
-
-								// Save settings
-								k2app::K2Settings.saveSettings();
-								wereChangesMade = true;
-							}
-
-							// Check if anything's changed
-							if (wereChangesMade)
-								k2app::interfacing::ShowToast(
-									k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersAutoDisabled/Title"),
-									k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersAutoDisabled/Content"),
-									true); // This one's gonna be a high-priority one
-						});
+								// Check if anything's changed
+								interfacing::isAlreadyAddedTrackersScanRunning = false;
+								if (wereChangesMade)
+									interfacing::ShowToast(
+										interfacing::LocalizedResourceWString(
+											L"SharedStrings", L"Toasts/TrackersAutoDisabled/Title"),
+										interfacing::LocalizedResourceWString(
+											L"SharedStrings", L"Toasts/TrackersAutoDisabled/Content"),
+										true); // This one's gonna be a high-priority one
+							});
 
 					// Update status in server
 

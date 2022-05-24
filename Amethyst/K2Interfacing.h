@@ -114,6 +114,9 @@ namespace k2app::interfacing
 	inline std::array<std::array<float, 2>, 2>
 	calibration_joystick_positions;
 
+	// Check if we're currently scanning for trackers from other apps
+	inline std::atomic_bool isAlreadyAddedTrackersScanRunning = false;
+
 	// Function to spawn default' enabled trackers
 	inline bool SpawnDefaultEnabledTrackers()
 	{
