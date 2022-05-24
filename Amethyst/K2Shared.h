@@ -260,12 +260,10 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
 		flipToggle;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
-			waistTrackerEnabledToggle,
-			feetTrackersEnabledToggle,
-			kneeTrackersEnabledToggle,
-			elbowTrackersEnabledToggle;
-
+		// Waist, Feet, Elbows, Knees
+		inline std::array<std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>, 4>
+		trackerPairEnabledToggles;
+		
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Slider> soundsVolumeSlider;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander>

@@ -53,10 +53,10 @@ namespace winrt::KinectToVR::implementation
 		externalFlipCheckBoxLabel = std::make_shared<Controls::TextBlock>(ExternalFlipCheckBoxLabel());
 		setErrorFlyoutText = std::make_shared<Controls::TextBlock>(SetErrorFlyoutText());
 
-		waistTrackerEnabledToggle = std::make_shared<Controls::ToggleSwitch>(WaistTrackerEnabledToggle());
-		feetTrackersEnabledToggle = std::make_shared<Controls::ToggleSwitch>(FeetTrackersEnabledToggle());
-		kneeTrackersEnabledToggle = std::make_shared<Controls::ToggleSwitch>(KneeTrackersEnabledToggle());
-		elbowTrackersEnabledToggle = std::make_shared<Controls::ToggleSwitch>(ElbowTrackersEnabledToggle());
+		trackerPairEnabledToggles.at(0) = std::make_shared<Controls::ToggleSwitch>(WaistTrackerEnabledToggle());
+		trackerPairEnabledToggles.at(1) = std::make_shared<Controls::ToggleSwitch>(FeetTrackersEnabledToggle());
+		trackerPairEnabledToggles.at(2) = std::make_shared<Controls::ToggleSwitch>(ElbowTrackersEnabledToggle());
+		trackerPairEnabledToggles.at(3) = std::make_shared<Controls::ToggleSwitch>(KneeTrackersEnabledToggle());
 
 		waistDropDown = std::make_shared<Controls::Expander>(WaistDropDown());
 		feetDropDown = std::make_shared<Controls::Expander>(FeetDropDown());
@@ -291,10 +291,10 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	}
 
 	// Load the tracker configuration
-	waistTrackerEnabledToggle.get()->IsOn(k2app::K2Settings.isJointPairEnabled[0]);
-	feetTrackersEnabledToggle.get()->IsOn(k2app::K2Settings.isJointPairEnabled[1]);
-	elbowTrackersEnabledToggle.get()->IsOn(k2app::K2Settings.isJointPairEnabled[2]);
-	kneeTrackersEnabledToggle.get()->IsOn(k2app::K2Settings.isJointPairEnabled[3]);
+	trackerPairEnabledToggles.at(0).get()->IsOn(k2app::K2Settings.isJointPairEnabled[0]);
+	trackerPairEnabledToggles.at(1).get()->IsOn(k2app::K2Settings.isJointPairEnabled[1]);
+	trackerPairEnabledToggles.at(2).get()->IsOn(k2app::K2Settings.isJointPairEnabled[2]);
+	trackerPairEnabledToggles.at(3).get()->IsOn(k2app::K2Settings.isJointPairEnabled[3]);
 
 	// Load auto-spawn and sounds config
 	autoSpawnCheckbox->IsChecked(k2app::K2Settings.autoSpawnEnabledJoints);
@@ -430,7 +430,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Wais
 	}
 
 	// Make actual changes
-	k2app::K2Settings.isJointPairEnabled[0] = k2app::shared::settings::waistTrackerEnabledToggle.get()->IsOn();
+	k2app::K2Settings.isJointPairEnabled[0] = 
+		k2app::shared::settings::trackerPairEnabledToggles.at(0).get()->IsOn();
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
@@ -547,7 +548,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Feet
 	}
 
 	// Make actual changes
-	k2app::K2Settings.isJointPairEnabled[1] = k2app::shared::settings::feetTrackersEnabledToggle.get()->IsOn();
+	k2app::K2Settings.isJointPairEnabled[1] = 
+		k2app::shared::settings::trackerPairEnabledToggles.at(1).get()->IsOn();
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
@@ -676,7 +678,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Elbo
 	}
 
 	// Make actual changes
-	k2app::K2Settings.isJointPairEnabled[2] = k2app::shared::settings::elbowTrackersEnabledToggle.get()->IsOn();
+	k2app::K2Settings.isJointPairEnabled[2] = 
+		k2app::shared::settings::trackerPairEnabledToggles.at(2).get()->IsOn();
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
@@ -800,7 +803,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::Knee
 	}
 
 	// Make actual changes
-	k2app::K2Settings.isJointPairEnabled[3] = k2app::shared::settings::kneeTrackersEnabledToggle.get()->IsOn();
+	k2app::K2Settings.isJointPairEnabled[3] = 
+		k2app::shared::settings::trackerPairEnabledToggles.at(3).get()->IsOn();
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	k2app::interfacing::devices_check_disabled_joints();
