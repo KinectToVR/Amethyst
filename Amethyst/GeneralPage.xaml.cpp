@@ -1139,7 +1139,8 @@ void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(
 			k2app::interfacing::K2ServerDriverSetup(); // Refresh
 			k2app::interfacing::ShowToast(
 				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title"),
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content"));
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content"),
+				true); // High priority - it's probably a server failure
 		}
 
 		// Update things
@@ -1209,7 +1210,8 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 			k2app::interfacing::K2ServerDriverSetup(); // Refresh
 			k2app::interfacing::ShowToast(
 				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title"),
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content"));
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content"),
+				true); // High priority - it's probably a server failure
 		}
 	}
 
