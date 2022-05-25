@@ -644,22 +644,11 @@ namespace k2app::main
 								co_await ui_thread;
 
 								// Disable the waist tracker if found
-								for (uint32_t tracker_pair_index = 0; i < 4; i++)
+								for (uint32_t tracker_pair_index = 0; 
+									tracker_pair_index < 4; tracker_pair_index++)
 									if (K2Settings.isJointPairEnabled[tracker_pair_index] &&
 										foundTrackerFromPair.at(tracker_pair_index))
 									{
-										// Mark trackers as inactive, back up the current one
-										const bool _trackersInitialized =
-											interfacing::K2AppTrackersInitialized;
-										interfacing::K2AppTrackersInitialized = false;
-										{
-											// Sleep on UI
-											apartment_context ui_thread;
-											co_await resume_background();
-											Sleep(20);
-											co_await ui_thread;
-										}
-
 										// Make actual changes
 										K2Settings.isJointPairEnabled[tracker_pair_index] = false;
 										if (shared::settings::trackerPairEnabledToggles.at(tracker_pair_index).get() !=
@@ -667,20 +656,29 @@ namespace k2app::main
 											shared::settings::trackerPairEnabledToggles.at(tracker_pair_index).get()->
 												IsOn(false);
 
+										switch(tracker_pair_index)
+										{
+										case 0:
+											ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(0).id, false);
+											break;
+										case 1:
+											ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(1).id, false);
+											ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(2).id, false);
+											break;
+										case 2:
+											ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(3).id, false);
+											ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(4).id, false);
+											break;
+										case 3:
+											ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(5).id, false);
+											ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(6).id, false);
+											break;
+										}
+
 										// Check if we've disabled any joints from spawning and disable their mods
 										interfacing::devices_check_disabled_joints();
 										TrackingDevices::settings_trackersConfigChanged(false);
-
-										// Mark trackers as active (or backup)
-										{
-											// Sleep on UI
-											apartment_context ui_thread;
-											co_await resume_background();
-											Sleep(20);
-											co_await ui_thread;
-										}
-										interfacing::K2AppTrackersInitialized = _trackersInitialized;
-
+										
 										// Save settings
 										K2Settings.saveSettings();
 										wereChangesMade = true;

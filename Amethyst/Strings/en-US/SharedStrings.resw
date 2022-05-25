@@ -130,7 +130,7 @@
     <value>We couldn't restart Amethyst for you!</value>
   </data>
   <data name="Toasts.TrackersAutoDisabled.Content" xml:space="preserve">
-    <value>Additional trackers with overriding roles were found, so Amethyst's corresponding ones have been disabled</value>
+    <value>Additional trackers with overriding roles were found, so Amethyst's corresponding ones were disabled</value>
   </data>
   <data name="Toasts.TrackersAutoDisabled.Title" xml:space="preserve">
     <value>One or more trackers have been disabled</value>
