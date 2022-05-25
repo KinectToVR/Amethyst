@@ -180,7 +180,7 @@ namespace k2app::interfacing
 										K2TrackersVector.at(t).id) +
 									" could not be spawned due to internal server error.";
 								if (!ktvr::GetLastError().empty())
-									LOG(ERROR) << "Last K2API error: " + ktvr::GetLastError();
+									LOG(ERROR) << "Last Amethyst API error: " + ktvr::GetLastError();
 							}
 						}
 						else

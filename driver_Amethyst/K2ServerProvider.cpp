@@ -107,6 +107,17 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 {
 	// ktvr::GetK2AppDataFileDir will create all directories by itself
 
+	/* If logging was set up by some other thing / assembly,
+	 * "peacefully" ask it to exit and note that */
+	if (google::IsGoogleLoggingInitialized())
+	{
+		LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n" <<
+			"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n" <<
+			"Logging will be shut down, re-initialized, and forwarded to \"" <<
+			ktvr::GetK2AppDataLogFileDir("Amethyst_VRDriver_").c_str() << "*.log\"";
+		google::ShutdownGoogleLogging();
+	}
+
 	/* Initialize logging */
 	google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("Amethyst_VRDriver_").c_str());
 	/* Log everything >=INFO to same file */
@@ -116,6 +127,10 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 	FLAGS_logbufsecs = 0; //Set max timeout
 	FLAGS_minloglevel = google::GLOG_INFO;
 
+	LOG(WARNING) <<
+		"If you get a \"Check failed: !IsGoogleLoggingInitialized() You called InitGoogleLogging() twice!\","
+		"please unregister all other drivers using the GLog library";
+
 	LOG(INFO) << "~~~Amethyst OpenVR Driver new logging session begins here!~~~";
 	LOG(INFO) << "Interface version name: " << pInterfaceName;
 	LOG(INFO) << "K2API version name: " << ktvr::IK2API_Version;
@@ -123,7 +138,7 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 	static k2_driver::K2ServerProvider k2_server_provider;
 	static K2WatchdogDriver k2_watchdog_driver;
 
-	LOG(INFO) << "Amethyst OpenVR Driver will try to run on K2API's default addresses.";
+	LOG(INFO) << "Amethyst OpenVR Driver will try to run on Amethyst API's default addresses.";
 
 	if (0 == strcmp(vr::IServerTrackedDeviceProvider_Version, pInterfaceName))
 	{

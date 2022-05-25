@@ -413,6 +413,17 @@ namespace winrt::KinectToVR::implementation
 			}
 		});
 
+		// If logging was set up by some other thing / assembly,
+		// "peacefully" ask it to exit and note that 
+		if (google::IsGoogleLoggingInitialized())
+		{
+			LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n" <<
+				"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n" <<
+				"Logging will be shut down, re-initialized, and forwarded to \"" <<
+				ktvr::GetK2AppDataLogFileDir("Amethyst_").c_str() << "*.log\"";
+			google::ShutdownGoogleLogging();
+		}
+		
 		// Set up logging
 		google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("Amethyst_").c_str());
 		// Log everything >=INFO to same file
