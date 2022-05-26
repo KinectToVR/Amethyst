@@ -249,101 +249,7 @@ namespace ktvr
 		ia >> response;
 
 		// Deserialize reply and return
-		return std::move(response);
-	}
-
-	K2ResponseMessage add_tracker(K2TrackerBase& tracker) noexcept
-	{
-		try
-		{
-			// Send and grab the response
-			// Thanks to our constructors,
-			// message will set all
-			K2ResponseMessage response =
-				send_message(K2Message(tracker));
-
-			// Overwrite the current tracker's id
-			tracker.id = response.id;
-
-			// Send the message and return
-			return response;
-		}
-		catch (const std::exception& e)
-		{
-			return K2ResponseMessage(); // Success is set to false by default
-		}
-	}
-
-	K2ResponseMessage download_tracker(const int& tracker_id) noexcept
-	{
-		try
-		{
-			// Send and grab the response
-			// Thanks to our constructors,
-			// message will set all
-			// Send the message and return
-			return send_message(K2Message(tracker_id));
-		}
-		catch (const std::exception& e)
-		{
-			return K2ResponseMessage(); // Success is set to false by default
-		}
-	}
-
-	K2ResponseMessage download_tracker(const std::string& tracker_serial) noexcept
-	{
-		try
-		{
-			// Send and grab the response
-			// Send the message and return
-			// Normally, we'd set some id to grab tracker from,
-			// although this time it'll be -1,
-			// forcing the driver to check if we've provided a serial
-			auto message = K2Message();
-			message.messageType = static_cast<int>(K2MessageType::K2Message_DownloadTracker);
-			message.tracker_data.serial = tracker_serial;
-
-			return send_message(message);
-		}
-		catch (const std::exception& e)
-		{
-			return K2ResponseMessage(); // Success is set to false by default
-		}
-	}
-
-	K2ResponseMessage download_tracker(const K2TrackerBase& tracker) noexcept
-	{
-		try
-		{
-			// Send the message and return
-			return download_tracker(tracker.id);
-		}
-		catch (const std::exception& e)
-		{
-			return K2ResponseMessage(); // Success is set to false by default
-		}
-	}
-
-	K2ResponseMessage download_tracker(const ITrackerType& tracker_role) noexcept
-	{
-		try
-		{
-			// Send and grab the response
-			// Send the message and return
-			// Normally, we'd set some id to grab tracker from,
-			// although this time it'll be skipped,
-			// the driver will check message_string and download via role
-			auto message = K2Message();
-			message.messageType = static_cast<int>(K2MessageType::K2Message_DownloadTracker);
-			message.message_string = "role";
-			message.tracker_data.role = static_cast<uint32_t>(tracker_role);
-
-			return send_message(message);
-		}
-		catch (const std::exception& e)
-		{
-			return K2ResponseMessage(); // Success is set to false by default
-		}
+		return response;
 	}
 
 	std::tuple<K2ResponseMessage, long long, long long> test_connection() noexcept
@@ -415,16 +321,9 @@ namespace ktvr
 	}
 
 	template <class Archive>
-	KTVR_API void K2DataPacket::serialize(Archive& ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(serial) & BOOST_SERIALIZATION_NVP(role) & BOOST_SERIALIZATION_NVP(isActive)
-			& BOOST_SERIALIZATION_NVP(millisFromNow); // Serialize
-	}
-
-	template <class Archive>
 	KTVR_API void K2TrackerBase::serialize(Archive& ar, const unsigned int version)
 	{
-		ar & BOOST_SERIALIZATION_NVP(pose) & BOOST_SERIALIZATION_NVP(data) & BOOST_SERIALIZATION_NVP(id);
+		ar & BOOST_SERIALIZATION_NVP(pose) & BOOST_SERIALIZATION_NVP(data) & BOOST_SERIALIZATION_NVP(tracker);
 	}
 
 	template <class Archive>
@@ -433,10 +332,9 @@ namespace ktvr
 		ar & BOOST_SERIALIZATION_NVP(messageType)
 			& BOOST_SERIALIZATION_NVP(tracker_base)
 			& BOOST_SERIALIZATION_NVP(tracker_pose)
-			& BOOST_SERIALIZATION_NVP(tracker_data)
 			& BOOST_SERIALIZATION_NVP(tracker_bases_vector)
 			& BOOST_SERIALIZATION_NVP(message_string)
-			& BOOST_SERIALIZATION_NVP(id)
+			& BOOST_SERIALIZATION_NVP(tracker)
 			& BOOST_SERIALIZATION_NVP(state)
 			& BOOST_SERIALIZATION_NVP(want_reply)
 			& BOOST_SERIALIZATION_NVP(messageTimestamp)
@@ -473,7 +371,7 @@ namespace ktvr
 	{
 		ar & BOOST_SERIALIZATION_NVP(messageType)
 			& BOOST_SERIALIZATION_NVP(tracker_base)
-			& BOOST_SERIALIZATION_NVP(id)
+			& BOOST_SERIALIZATION_NVP(tracker)
 			& BOOST_SERIALIZATION_NVP(result)
 			& BOOST_SERIALIZATION_NVP(success)
 			& BOOST_SERIALIZATION_NVP(messageTimestamp)

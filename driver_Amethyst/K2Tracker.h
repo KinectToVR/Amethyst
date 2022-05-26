@@ -41,7 +41,22 @@ const boost::unordered_map<ktvr::ITrackerType, const char*>
 		(ktvr::ITrackerType::Tracker_Waist, "TrackerRole_Waist")
 		(ktvr::ITrackerType::Tracker_Chest, "TrackerRole_Chest")
 		(ktvr::ITrackerType::Tracker_Camera, "TrackerRole_Camera")
-		(ktvr::ITrackerType::Tracker_Keyboard, "TrackerRole_Keyboard");
+		(ktvr::ITrackerType::Tracker_Keyboard, "TrackerRole_Keyboard"),
+
+	ITrackerType_Role_Serial = boost::assign::map_list_of
+		(ktvr::ITrackerType::Tracker_Handed, "AME-HANDED")
+		(ktvr::ITrackerType::Tracker_LeftFoot, "AME-LFOOT")
+		(ktvr::ITrackerType::Tracker_RightFoot, "AME-RFOOT")
+		(ktvr::ITrackerType::Tracker_LeftShoulder, "AME-LSHOULDER")
+		(ktvr::ITrackerType::Tracker_RightShoulder, "AME-RSHOULDER")
+		(ktvr::ITrackerType::Tracker_LeftElbow, "AME-LELBOW")
+		(ktvr::ITrackerType::Tracker_RightElbow, "AME-RELBOW")
+		(ktvr::ITrackerType::Tracker_LeftKnee, "AME-LKNEE")
+		(ktvr::ITrackerType::Tracker_RightKnee, "AME-RKNEE")
+		(ktvr::ITrackerType::Tracker_Waist, "AME-WAIST")
+		(ktvr::ITrackerType::Tracker_Chest, "AME-CHEST")
+		(ktvr::ITrackerType::Tracker_Camera, "AME-CAMERA")
+		(ktvr::ITrackerType::Tracker_Keyboard, "AME-KEYBOARD");
 
 class K2Tracker : public vr::ITrackedDeviceServerDriver
 {
@@ -128,9 +143,6 @@ public:
 
 	// Update pose
 	void set_pose(const ktvr::K2PosePacket& pose);
-
-	// Update data (only if uninitialized)
-	void set_data(const ktvr::K2DataPacket& data);
 
 	void set_state(bool state);
 	bool spawn(); // TrackedDeviceAdded

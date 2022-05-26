@@ -7,7 +7,7 @@
 K2Tracker::K2Tracker(const ktvr::K2TrackerBase& tracker_base)
 {
 	_serial = tracker_base.data.serial;
-	_role = tracker_base.data.role;
+	_role = static_cast<int>(tracker_base.data.role);
 	_active = tracker_base.data.isActive;
 
 	_pose = {0};
@@ -74,57 +74,6 @@ void K2Tracker::set_pose(const ktvr::K2PosePacket& pose)
 	catch (...)
 	{
 		LOG(ERROR) << "Couldn't set tracker pose. An exception occurred.";
-	}
-}
-
-void K2Tracker::set_data(const ktvr::K2DataPacket& data)
-{
-	try
-	{
-		// For handling PosePacket's time offset
-		std::thread([&, data]()
-		{
-			// Wait the specified time
-			if (data.millisFromNow > 0)
-				std::this_thread::sleep_for(std::chrono::milliseconds(
-					static_cast<int>(data.millisFromNow)));
-
-			// Not spawning, just pose validity
-			_active = data.isActive;
-
-			// Data may only change if the tracker isn't spawned
-			if (!_added && !_activated)
-			{
-				LOG(INFO) << "Updating tracker's role: " <<
-					ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(_role)) <<
-					" to: " <<
-					ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(data.role));
-
-				_role = data.role;
-				if (!data.serial.empty())
-				{
-					LOG(INFO) << "Updating tracker's serial: " << _serial << " to: " << data.serial;
-					_serial = data.serial;
-				}
-				else
-					LOG(ERROR) << "Couldn't set tracker data. The provided serial was empty.";
-
-				// Spawn automatically
-				if (_active)
-				{
-					// Spawn and set the state
-					spawn();
-					LOG(INFO) << "Tracker autospawned! Serial: " + get_serial() +
-						" Role: " + ITrackerType_Role_String.at(static_cast<ktvr::ITrackerType>(_role));
-				}
-			}
-			else
-				LOG(ERROR) << "Couldn't set tracker data. It has been already added.";
-		}).detach();
-	}
-	catch (...)
-	{
-		LOG(ERROR) << "Couldn't set tracker data. An exception occurred.";
 	}
 }
 
@@ -283,7 +232,7 @@ ktvr::K2TrackerBase K2Tracker::getTrackerBase()
 {
 	// Copy the data
 	_trackerBase.data.serial = _serial;
-	_trackerBase.data.role = _role;
+	_trackerBase.data.role = static_cast<ktvr::ITrackerType>(_role);
 	_trackerBase.data.isActive = _active;
 
 	// Copy the position

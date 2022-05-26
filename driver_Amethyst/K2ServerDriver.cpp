@@ -72,9 +72,24 @@ int K2ServerDriver::init_ServerDriver(
 		return -1;
 	}
 
+	// Add 1 tracker for each role
+	for(uint32_t role=0;
+		role<=static_cast<int>(ktvr::ITrackerType::Tracker_Keyboard);role++)
+		trackerVector.push_back(
+			K2Tracker(
+				ktvr::K2TrackerBase(
+				ktvr::K2TrackerPose(), // Default pose 
+				ktvr::K2TrackerData(
+					ITrackerType_Role_Serial.at(
+						static_cast<ktvr::ITrackerType>(role)), // Serial
+					static_cast<ktvr::ITrackerType>(role), // Role
+					false // AutoAdd
+				)
+			)));
+
 	// Log the prepended trackers
 	for (auto& _tracker : trackerVector)
-		LOG(INFO) << "Registered a pre-added tracker: " << _tracker.get_serial();
+		LOG(INFO) << "Registered a tracker: " << _tracker.get_serial();
 
 	std::thread([&](const std::string _k2_to_pipe)
 	{
@@ -217,120 +232,34 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 		// Switch based on the message type
 		switch (static_cast<ktvr::K2MessageType>(message.messageType))
 		{
-		case ktvr::K2MessageType::K2Message_AddTracker:
-			{
-				// Check if the base exists
-				if (message.tracker_base.has_value())
-				{
-					// Check if the serial is okay
-					if (!message.tracker_base.value().data.serial.empty())
-					{
-						// Check for tracker with same serial
-						bool exists_yet = false;
-						for (K2Tracker& t : trackerVector)
-							if (message.tracker_base.value().data.serial == t.get_serial())
-								exists_yet = true; // Already exists
-
-						if (!exists_yet)
-						{
-							// Push new tracker to vector and return its id
-							trackerVector.emplace_back(K2Tracker(message.tracker_base.value()));
-
-							LOG(INFO) << "New tracker added! Serial: " + message.tracker_base.value().data.serial +
-								" Role: " + ITrackerType_Role_String.at(
-									static_cast<ktvr::ITrackerType>(message.tracker_base.value().data.role));
-
-							if (message.tracker_base.value().data.isActive && // If autospawn is desired
-								!trackerVector.at(message.id).is_added())
-							{
-								// Spawn and set the state
-								if (trackerVector.at(message.id).spawn())
-								{
-									trackerVector.at(message.id).set_state(
-										message.tracker_base.value().data.isActive);
-
-									LOG(INFO) << "Tracker autospawned! Serial: " + message.tracker_base.value().data.
-										serial +
-										" Role: " + ITrackerType_Role_String.at(
-											static_cast<ktvr::ITrackerType>(message.tracker_base.value().data.role));
-								}
-								else
-								{
-									LOG(INFO) << "Tracker autospawn exception! Serial: " + message.tracker_base.value().
-										data.serial +
-										" Role: " + ITrackerType_Role_String.at(
-											static_cast<ktvr::ITrackerType>(message.tracker_base.value().data.role));
-									_response.result = static_cast<int>(
-										ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
-								}
-							}
-
-							// Compose the response
-							_response.success = true;
-							_response.id = static_cast<int>(trackerVector.size()) - 1; // ID
-
-							// Copy the tracker base object
-							_response.tracker_base = trackerVector.back().getTrackerBase();
-							_response.messageType = static_cast<int>(
-								ktvr::K2ResponseMessageType::K2ResponseMessage_Tracker);
-						}
-						else
-						{
-							LOG(ERROR) << "Couldn't add new tracker. Serial already present.";
-							_response.result = static_cast<int>(
-								ktvr::K2ResponseMessageCode::K2ResponseMessageCode_AlreadyPresent);
-						}
-					}
-					else
-					{
-						LOG(ERROR) << "Couldn't add new tracker. Serial is empty.";
-						_response.result = static_cast<int>(
-							ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadSerial);
-					}
-				}
-				else
-				{
-					LOG(ERROR) << "Couldn't add new tracker. Tracker base is empty.";
-					_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-				}
-			}
-			break;
 
 		case ktvr::K2MessageType::K2Message_SetTrackerState:
 			{
 				// Check if desired tracker exists
-				if (message.id < trackerVector.size() && message.id >= 0)
-				{
 					// Set tracker's state to one gathered from argument
-					if (!trackerVector.at(message.id).is_added())
-						if (!trackerVector.at(message.id).spawn())
+					if (!trackerVector.at(static_cast<int>(message.tracker)).is_added())
+						if (!trackerVector.at(static_cast<int>(message.tracker)).spawn())
 						{
 							// spawn if needed
-							LOG(INFO) << "Tracker autospawn exception! Serial: " + trackerVector.at(message.id).
+							LOG(INFO) << "Tracker autospawn exception! Serial: " + 
+								trackerVector.at(static_cast<int>(message.tracker)).
 								get_serial();
 							_response.result = static_cast<int>(
 								ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
 						}
 
 					// Set the state
-					trackerVector.at(message.id).set_state(message.state);
-					LOG(INFO) << "Tracker id: " + std::to_string(message.id) +
+					trackerVector.at(static_cast<int>(message.tracker)).set_state(message.state);
+					LOG(INFO) << "Tracker role: " << static_cast<int>(message.tracker) <<
 						" state has been set to: " + std::to_string(message.state);
 
 					// Update the tracker
-					trackerVector.at(message.id).update();
+					trackerVector.at(static_cast<int>(message.tracker)).update();
 
 					// Compose the response
 					_response.success = true;
-					_response.id = message.id; // ID
-					_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_ID);
-				}
-				else
-				{
-					LOG(ERROR) << "Couldn't set tracker id: " +
-						std::to_string(message.id) + " state. Index out of bounds.";
-					_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-				}
+					_response.tracker = message.tracker; // ID
+					_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 			}
 			break;
 
@@ -364,191 +293,33 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 				if (message.tracker_pose.has_value())
 				{
 					// Check if desired tracker exists
-					if (message.id < trackerVector.size() && message.id >= 0)
-					{
 						// Update tracker pose (with time offset)
-						trackerVector.at(message.id).set_pose(message.tracker_pose.value());
+						trackerVector.at(static_cast<int>(message.tracker))
+					.set_pose(message.tracker_pose.value());
 
 						// Compose the response
 						_response.success = true;
-						_response.id = message.id; // ID
-						_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_ID);
-					}
-					else
-					{
-						LOG(ERROR) << "Couldn't set tracker id: " +
-							std::to_string(message.id) + " pose. Index out of bounds.";
-						_response.result = static_cast<int>(
-							ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-					}
+						_response.tracker = message.tracker; // ID
+						_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 				}
 				else
 				{
 					LOG(ERROR) << "Couldn't set tracker id: " +
-						std::to_string(message.id) + " pose. Pose is empty.";
+						std::to_string(static_cast<int>(message.tracker)) + " pose. Pose is empty.";
 					_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
 				}
 			}
 			break;
-
-		case ktvr::K2MessageType::K2Message_UpdateTrackerData:
-			{
-				// Check if desired tracker exists
-				if (message.id < trackerVector.size() && message.id >= 0)
-				{
-					// Update tracker data (with time offset)
-					trackerVector.at(message.id).set_data(message.tracker_data);
-
-					// Compose the response
-					_response.success = true;
-					_response.id = message.id; // ID
-					_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_ID);
-				}
-				else
-				{
-					LOG(ERROR) << "Couldn't set tracker id: " +
-						std::to_string(message.id) + " data. Index out of bounds.";
-					_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-				}
-			}
-			break;
-
-		case ktvr::K2MessageType::K2Message_DownloadTracker:
-			{
-				// Check if we're downloading via role or not
-				if (message.message_string.find("role") != std::string::npos) // Via role
-				{
-					// If we can even search
-					if (!trackerVector.empty())
-					{
-						// Search for the tracker and get the first one
-						for (auto& tracker : trackerVector)
-							if (tracker.get_role() == static_cast<ktvr::ITrackerType>(message.tracker_data.role))
-							{
-								// Copy the tracker object
-								_response.tracker_base = tracker.getTrackerBase();
-
-								// Compose the response
-								_response.success = true;
-								_response.id = message.id; // ID
-								_response.messageType = static_cast<int>(
-									ktvr::K2ResponseMessageType::K2ResponseMessage_Tracker);
-
-								// Break the 'for'
-								break;
-							}
-
-						// Check if we've got anything
-						if (!_response.success)
-						{
-							LOG(ERROR) << "Couldn't download tracker via role: " +
-								std::to_string(message.tracker_data.role) + " No matches.";
-							_response.result = static_cast<int>(
-								ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-						}
-					}
-					else
-					{
-						// If tracker was not found
-						LOG(ERROR) << "Couldn't download tracker via serial: " +
-							message.tracker_data.serial + " because there are no trackers added.";
-						_response.result = static_cast<int>(
-							ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-					}
-				}
-				else // Via id / serial
-				{
-					// Check if desired tracker exists
-					if (message.id < trackerVector.size() && message.id >= 0)
-					{
-						// Copy the tracker object
-						_response.tracker_base =
-							trackerVector.at(message.id).getTrackerBase();
-
-						// Compose the response
-						_response.success = true;
-						_response.id = message.id; // ID
-						_response.messageType = static_cast<int>(
-							ktvr::K2ResponseMessageType::K2ResponseMessage_Tracker);
-					}
-					// In case we're searching with serial
-					else if (message.id < 0 && !message.tracker_data.serial.empty())
-					{
-						bool trackerFound = false;
-
-						// If we can even search
-						if (!trackerVector.empty())
-						{
-							// Search in our trackers vector
-							for (int _tracker_id = 0; _tracker_id < trackerVector.size(); _tracker_id++)
-							{
-								// If we've found the one
-								if (message.tracker_data.serial == trackerVector.at(_tracker_id).get_serial())
-								{
-									// Copy the tracker object
-									_response.tracker_base = trackerVector.at(_tracker_id).getTrackerBase();
-
-									// Compose the response
-									_response.success = true;
-									_response.id = _tracker_id; // Return the ID
-									_response.messageType = static_cast<int>(
-										ktvr::K2ResponseMessageType::K2ResponseMessage_Tracker);
-
-									LOG(INFO) << "Serial: " + trackerVector.at(_tracker_id).get_serial() + " <-> id: " +
-										std::to_string(_response.id);
-
-									// Exit loop
-									trackerFound = true;
-									break;
-								}
-							}
-						}
-						else
-						{
-							// If tracker was not found
-							LOG(ERROR) << "Couldn't download tracker via serial: " +
-								message.tracker_data.serial + " because there are no trackers added.";
-							_response.result = static_cast<int>(
-								ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-						}
-
-						// If tracker was not found
-						if (!trackerFound)
-							LOG(ERROR) << "Couldn't download tracker via serial: " +
-								message.tracker_data.serial + ". Not found.";
-						_response.result = static_cast<int>(
-							ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-					}
-					else
-					{
-						LOG(ERROR) << "Couldn't download tracker via id: " +
-							std::to_string(message.id) + " or serial. Index out of bounds / null.";
-						_response.result = static_cast<int>(
-							ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-					}
-				}
-			}
-			break;
-
+			
 		case ktvr::K2MessageType::K2Message_RefreshTracker:
 			{
-				// Check if desired tracker exists
-				if (message.id < trackerVector.size() && message.id >= 0)
-				{
 					// Update the tracker
-					trackerVector.at(message.id).update();
+					trackerVector.at(static_cast<int>(message.tracker)).update();
 
 					// Compose the response
 					_response.success = true;
-					_response.id = message.id; // ID
-					_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_ID);
-				}
-				else
-				{
-					LOG(ERROR) << "Couldn't refresh tracker with id: " +
-						std::to_string(message.id) + ". Index out of bounds.";
-					_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-				}
+					_response.tracker = message.tracker; // ID
+					_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 			}
 			break;
 
@@ -584,7 +355,7 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 			}
 			break;
 
-		case ktvr::K2MessageType::K2Message_UpdateTrackerVector:
+		case ktvr::K2MessageType::K2Message_UpdateTrackerPoseVector:
 			{
 				// Check if the pose exists
 				if (message.tracker_bases_vector.has_value())
@@ -594,46 +365,14 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 						/* Pose */
 
 						// Check if desired tracker exists
-						if (_tracker.id < trackerVector.size() && _tracker.id >= 0)
-						{
 							// Update tracker pose (with time offset)
-							trackerVector.at(_tracker.id).set_pose(_tracker.pose);
+							trackerVector.at(static_cast<int>(_tracker.tracker)).set_pose(_tracker.pose);
 
 							// Compose the response
 							_response.success = true;
-							_response.id = _tracker.id; // ID
-							_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_ID);
-						}
-						else
-						{
-							LOG(ERROR) << "Couldn't set tracker id: " +
-								std::to_string(_tracker.id) + " pose. Index out of bounds.";
-							_response.result = static_cast<int>(
-								ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-						}
+							_response.tracker = _tracker.tracker; // ID
+							_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 
-						/* Data */
-
-						// Check if desired tracker exists
-						if (_tracker.id < trackerVector.size() && _tracker.id >= 0)
-						{
-							// Additionally check not to spam logs
-							if (!trackerVector.at(_tracker.id).is_added())
-								// Update tracker data (with time offset)
-								trackerVector.at(_tracker.id).set_data(_tracker.data);
-
-							// Compose the response
-							_response.success = true;
-							_response.id = _tracker.id; // ID
-							_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_ID);
-						}
-						else
-						{
-							LOG(ERROR) << "Couldn't set tracker id: " +
-								std::to_string(_tracker.id) + " data. Index out of bounds.";
-							_response.result = static_cast<int>(
-								ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-						}
 					}
 				}
 				else
