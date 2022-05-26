@@ -22,7 +22,7 @@ std::shared_ptr<Controls::FontIcon> updateIconDot;
 
 // Helper local variables
 HANDLE hNamedMutex = nullptr;
-bool updateFound = false, showRating = false,
+bool updateFound = false,
      main_localInitFinished = false;
 
 std::atomic_bool checkingUpdatesNow = false;
@@ -139,11 +139,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 						// And maybe log it too
 						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
 						LOG(INFO) << "Local version number: " << k2app::interfacing::K2InternalVersion;
-
-						// Check if we should show the rating notice (once 7...9...11... sessions)
-						if (root.find("show_rating") != root.not_found())
-							showRating = root.get<bool>("show_rating", false);
-
+						
 						// Thanks to this chad: https://stackoverflow.com/a/45123408
 						// Now check for push notifications aka toasts
 
@@ -271,19 +267,6 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 		// (or if the cheack was manual)
 		if (updateFound || show)
 			UpdateFlyout().ShowAt(show_el, options);
-
-			// Otherwise, show the rating request
-			// (once per 7,9,11... sessions, skip for -1)
-		else if (k2app::K2Settings.ratingRemainingSessions >= 0 &&
-			k2app::K2Settings.ratingRemainingElapsedSessions >=
-			k2app::K2Settings.ratingRemainingSessions && showRating)
-		{
-			k2app::K2Settings.ratingRemainingSessions += 2;
-			k2app::K2Settings.ratingRemainingElapsedSessions = 1;
-			k2app::K2Settings.saveSettings();
-
-			RatingFlyout().ShowAt(show_el, options); // Show
-		}
 
 		// Uncheck
 		checkingUpdatesNow = false;
@@ -547,9 +530,6 @@ namespace winrt::KinectToVR::implementation
 		if (!k2app::interfacing::EVRActionsStartup())
 			LOG(ERROR) << "Could not set up VR Input Actions! The app will lack some functionality.";
 
-		// After-Setup Priority: Set up an AI session
-		K2InsightsCLR::Initialize();
-
 		// Priority: Set up the K2API & Server
 		static std::thread serverStatusThread(k2app::interfacing::K2ServerDriverSetup);
 		serverStatusThread.detach();
@@ -557,10 +537,7 @@ namespace winrt::KinectToVR::implementation
 		// Read settings
 		LOG(INFO) << "Now reading saved settings...";
 		k2app::K2Settings.readSettings();
-
-		// It's been one more, innit?
-		k2app::K2Settings.ratingRemainingElapsedSessions += 1;
-
+		
 		// Start the main loop
 		std::thread(k2app::main::K2MainLoop).detach();
 
@@ -1425,8 +1402,6 @@ void h_exit()
 {
 	// Mark exiting as true
 	k2app::interfacing::isExitingNow = true;
-
-	K2InsightsCLR::LogEvent("Amethyst shutting down");
 	LOG(INFO) << "AtExit handler called, starting the shutdown routine...";
 
 	// Mark trackers as inactive
@@ -1481,33 +1456,4 @@ void h_exit()
 	// Wait a moment & exit
 	LOG(INFO) << "Shutdown actions completed, exiting in 1000ms...";
 	Sleep(1000); // Sleep a bit for a proper server disconnect
-}
-
-
-// Disable rating prompts button
-void KinectToVR::implementation::MainWindow::HyperlinkButton_Click(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
-{
-	// Disable all rating prompts
-	k2app::K2Settings.ratingRemainingSessions = -1;
-	k2app::K2Settings.saveSettings();
-	RatingFlyout().Hide();
-}
-
-
-// AutoHide after rated, we don't care anymore
-Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::RatingControl_ValueChanged(
-	const winrt::Microsoft::UI::Xaml::Controls::RatingControl& sender, const Windows::Foundation::IInspectable& args)
-{
-	// Log the rated value
-	K2InsightsCLR::LogMetric("Rating", sender.Value());
-	BetaRatingControl().IsReadOnly(true);
-
-	// Sleep on UI (Non-blocking)
-	apartment_context ui_thread;
-	co_await resume_background();
-	Sleep(300);
-	co_await ui_thread;
-
-	RatingFlyout().Hide();
 }

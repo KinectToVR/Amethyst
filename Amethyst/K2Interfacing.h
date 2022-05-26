@@ -4,20 +4,6 @@
 #include "K2EVRInput.h"
 #include "K2Shared.h"
 
-// The AI namespace & functions (do not rename!)
-namespace K2InsightsCLR
-{
-	__declspec(dllimport) void Initialize();
-
-	__declspec(dllimport) void LogEvent(const char* name);
-
-	__declspec(dllimport) void LogTrace(const char* message);
-
-	__declspec(dllimport) void LogMetric(const char* name, DOUBLE value);
-
-	__declspec(dllimport) void LogPageView(const char* name);
-}
-
 namespace k2app::interfacing
 {
 	// Internal version number

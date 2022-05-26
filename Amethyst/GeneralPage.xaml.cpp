@@ -1338,8 +1338,6 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 		? box_value(L"Unfreeze")
 		: box_value(L"Freeze"));
 	k2app::shared::general::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
-
-	K2InsightsCLR::LogPageView("General");
 }
 
 

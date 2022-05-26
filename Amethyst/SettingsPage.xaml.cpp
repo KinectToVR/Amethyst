@@ -306,7 +306,6 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 
 	// Notify of the setup end
 	k2app::shared::settings::settings_localInitFinished = true;
-	K2InsightsCLR::LogPageView("Settings");
 }
 
 void KinectToVR::implementation::SettingsPage::AutoSpawn_Checked(
@@ -932,7 +931,6 @@ void KinectToVR::implementation::SettingsPage::AutoStartFlyout_Opening(
 void KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Checked(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	K2InsightsCLR::LogEvent("Amethyst auto-start enabled");
 	k2app::interfacing::installApplicationManifest(); // Just in case
 
 	const auto app_error = vr::VRApplications()->
@@ -947,7 +945,6 @@ void KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Checked(
 void KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	K2InsightsCLR::LogEvent("Amethyst auto-start disabled");
 	k2app::interfacing::installApplicationManifest(); // Just in case
 
 	const auto app_error = vr::VRApplications()->
@@ -963,8 +960,6 @@ void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 	const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
 	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args)
 {
-	K2InsightsCLR::LogEvent("Amethyst re-manifest");
-
 	switch (k2app::interfacing::installApplicationManifest())
 	{
 	// Not found failure
@@ -999,8 +994,6 @@ void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 void KinectToVR::implementation::SettingsPage::ReRegisterButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	K2InsightsCLR::LogEvent("Amethyst Driver re-register");
-
 	if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
 	{
 		std::thread([]

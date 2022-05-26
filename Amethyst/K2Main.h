@@ -2447,7 +2447,6 @@ namespace k2app::main
 		shared::devices::smphSignalStartMain.acquire();
 
 		LOG(INFO) << "[K2Main] Starting the main app loop now...";
-		K2InsightsCLR::LogEvent("Amethyst started up");
 
 		// Errors' case
 		bool server_giveUp = false;
@@ -2482,7 +2481,6 @@ namespace k2app::main
 			catch (...) // Catch everything
 			{
 				LOG(ERROR) << "The main loop has crashed! Restarting it now...";
-				K2InsightsCLR::LogEvent("Main loop crashed");
 
 				server_tries++; // One more?
 				if (server_tries > 3 && server_tries <= 7)

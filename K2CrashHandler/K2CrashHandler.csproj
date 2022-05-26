@@ -41,9 +41,6 @@
 	<ItemGroup>
 		<Folder Include="Helpers\" />
 	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\K2InsightsHandler\K2InsightsHandler.csproj" />
-	</ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y /i /e &quot;$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\K2CrashHandler&quot;" />
 	</Target>

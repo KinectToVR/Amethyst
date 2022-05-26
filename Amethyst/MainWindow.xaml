@@ -89,24 +89,6 @@
                                          Tapped="UpdateButton_Tapped"
                                          Loaded="UpdateButton_Loaded">
 
-                    <muxc:NavigationViewItem.Resources>
-                        <Flyout x:Name="RatingFlyout">
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="How do you like this build?" FontWeight="SemiBold" />
-                                <RatingControl x:Name="BetaRatingControl" IsClearEnabled="False"
-                                               IsReadOnly="False" Margin="0,5"
-                                               ValueChanged="RatingControl_ValueChanged" />
-                                <Grid>
-                                    <HyperlinkButton Content="Learn more" HorizontalAlignment="Right"
-                                                     FontSize="11"
-                                                     NavigateUri="https://github.com/KinectToVR/Amethyst#beta-rating" />
-                                    <HyperlinkButton Content="Don't ask me" HorizontalAlignment="Left"
-                                                     FontSize="11" Click="HyperlinkButton_Click" />
-                                </Grid>
-                            </StackPanel>
-                        </Flyout>
-                    </muxc:NavigationViewItem.Resources>
-
                     <FlyoutBase.AttachedFlyout>
                         <Flyout x:Name="UpdateFlyout">
                             <StackPanel>

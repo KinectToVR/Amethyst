@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.Graphics;
 using K2CrashHandler.Helpers;
-using K2InsightsHandler;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -93,10 +92,6 @@ namespace K2CrashHandler
                         if (ProcessExitCode == 0)
                             Close(); // We're OK to exit
 
-                        // Register AI handler
-                        var handler = new InsightsHandler();
-                        handler.Initialize();
-
                         // Parse the exit code into strings
                         handlerTitle = LangResString("Title/Crash/Default");
                         primaryButtonText = LangResString("PrimaryButton/Crash");
@@ -108,8 +103,6 @@ namespace K2CrashHandler
                                 primaryButtonHandler = Action_ResetConfig;
                                 handlerContent = LangResString("Content/Crash/Panic");
                                 primaryButtonText = LangResString("PrimaryButton/Crash/Panic");
-
-                                handler.LogException(new OverflowException("Too many main loop crashes"));
                             }
                                 break;
                             case -12:
@@ -117,8 +110,6 @@ namespace K2CrashHandler
                                 // No devices
                                 primaryButtonHandler = Action_VRDocs;
                                 handlerContent = LangResString("Content/Crash/NoDevices");
-
-                                handler.LogException(new MissingFieldException("No devices available"));
                             }
                                 break;
                             case -11:
@@ -126,8 +117,6 @@ namespace K2CrashHandler
                                 // OpenVR error
                                 primaryButtonHandler = Action_DeviceDocs;
                                 handlerContent = LangResString("Content/Crash/OpenVR");
-
-                                handler.LogException(new NotSupportedException("OpenVR initialization error"));
                             }
                                 break;
                             case 0:
@@ -142,8 +131,6 @@ namespace K2CrashHandler
                                 primaryButtonHandler = Action_Discord;
                                 handlerContent = LangResString("Content/Crash/Unknown");
                                 primaryButtonText = LangResString("PrimaryButton/Crash/Unknown");
-
-                                handler.LogException(new NotImplementedException("Something else this time"));
                             }
                                 break;
                         }

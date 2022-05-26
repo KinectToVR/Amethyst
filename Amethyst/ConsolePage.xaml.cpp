@@ -29,7 +29,6 @@ void KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	LOG(INFO) << "Ohhhhh, How Sweeet!";
-	K2InsightsCLR::LogPageView("Okashi");
 }
 
 

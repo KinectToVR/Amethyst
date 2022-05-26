@@ -87,11 +87,6 @@ namespace winrt::KinectToVR::implementation
 		                                                      const
 		                                                      winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs&
 		                                                      e);
-		void HyperlinkButton_Click(const Windows::Foundation::IInspectable& sender,
-		                           const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		Windows::Foundation::IAsyncAction RatingControl_ValueChanged(
-			const winrt::Microsoft::UI::Xaml::Controls::RatingControl& sender,
-			const Windows::Foundation::IInspectable& args);
 	};
 }
 

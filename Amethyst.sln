@@ -17,10 +17,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "device_PSMoveService", "dev
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "K2CrashHandler", "K2CrashHandler\K2CrashHandler.csproj", "{23B53935-CFBA-4E05-B129-8CF3BD826A6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "K2InsightsHandler", "K2InsightsHandler\K2InsightsHandler.csproj", "{A6C7F301-A687-4113-B4D9-42C0CF0162A4}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "K2InsightsWrapper", "K2InsightsWrapper\K2InsightsWrapper.vcxproj", "{71C023FF-1BF7-4B01-AF2A-F7938D1FB1C0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -57,14 +53,6 @@ Global
 		{23B53935-CFBA-4E05-B129-8CF3BD826A6E}.Debug|x64.Build.0 = Debug|x64
 		{23B53935-CFBA-4E05-B129-8CF3BD826A6E}.Release|x64.ActiveCfg = Release|x64
 		{23B53935-CFBA-4E05-B129-8CF3BD826A6E}.Release|x64.Build.0 = Release|x64
-		{A6C7F301-A687-4113-B4D9-42C0CF0162A4}.Debug|x64.ActiveCfg = Debug|x64
-		{A6C7F301-A687-4113-B4D9-42C0CF0162A4}.Debug|x64.Build.0 = Debug|x64
-		{A6C7F301-A687-4113-B4D9-42C0CF0162A4}.Release|x64.ActiveCfg = Release|x64
-		{A6C7F301-A687-4113-B4D9-42C0CF0162A4}.Release|x64.Build.0 = Release|x64
-		{71C023FF-1BF7-4B01-AF2A-F7938D1FB1C0}.Debug|x64.ActiveCfg = Debug|x64
-		{71C023FF-1BF7-4B01-AF2A-F7938D1FB1C0}.Debug|x64.Build.0 = Debug|x64
-		{71C023FF-1BF7-4B01-AF2A-F7938D1FB1C0}.Release|x64.ActiveCfg = Release|x64
-		{71C023FF-1BF7-4B01-AF2A-F7938D1FB1C0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

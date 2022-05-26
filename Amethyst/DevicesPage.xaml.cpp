@@ -2658,7 +2658,7 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::string deviceName = "[UNKNOWN]";
-	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
+	std::wstring device_status = L"Something's wrong!\nE_UNKNOWN\nWhat's happened here?";
 
 	// Only if override -> select enabled combos
 	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -3017,7 +3017,6 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 	// Now we're good
 	devices_tab_re_setup_finished = true;
-	K2InsightsCLR::LogPageView("Devices");
 }
 
 

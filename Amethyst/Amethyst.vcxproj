@@ -92,7 +92,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)external\openvr\lib\win64</AdditionalLibraryDirectories>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\K2InsightsWrapper.lib;shell32.lib;Amethyst_API.lib;WindowsApp.lib;openvr_api.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">shell32.lib;Amethyst_API.lib;WindowsApp.lib;openvr_api.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/DELAYLOAD:Microsoft.WindowsAppRuntime.dll %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -118,7 +118,7 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)external\openvr\lib\win64</AdditionalLibraryDirectories>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)\K2InsightsWrapper.lib;shell32.lib;Amethyst_API.lib;WindowsApp.lib;openvr_api.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">shell32.lib;Amethyst_API.lib;WindowsApp.lib;openvr_api.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/DELAYLOAD:Microsoft.WindowsAppRuntime.dll %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -338,9 +338,6 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <ResourceCompile Include="Amethyst.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\K2InsightsWrapper\K2InsightsWrapper.vcxproj">
-      <Project>{71c023ff-1bf7-4b01-af2a-f7938d1fb1c0}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Amethyst_API\Amethyst_API.vcxproj">
       <Project>{3fb99a4e-d168-4efc-b909-ce2951543cf8}</Project>
     </ProjectReference>

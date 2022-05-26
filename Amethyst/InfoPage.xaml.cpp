@@ -32,5 +32,4 @@ void winrt::KinectToVR::implementation::InfoPage::Grid_Loaded(
 	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	// The info page was loaded
-	K2InsightsCLR::LogPageView("Info");
 }
