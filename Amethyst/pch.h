@@ -61,6 +61,7 @@
 #include "winrt/Microsoft.UI.Xaml.XamlTypeInfo.h"
 #include "winrt/Windows.UI.Core.h"
 #include "winrt/Windows.UI.Input.h"
+#include "winrt/Windows.UI.Text.h"
 
 #include <wil/result.h>
 #include <wil/cppwinrt.h>

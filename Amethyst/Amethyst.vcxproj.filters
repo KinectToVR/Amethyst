@@ -71,6 +71,9 @@
     <ClInclude Include="K2Main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="JointExpander.h">
+      <Filter>Header Files\Custom Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -267,8 +270,8 @@
     <Filter Include="Strings\en-US">
       <UniqueIdentifier>{0c073a15-b136-4bd2-b2de-67d72d3fedc0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Strings\lc-LC">
-      <UniqueIdentifier>{de212c51-1d57-46a2-901e-001547c32519}</UniqueIdentifier>
+    <Filter Include="Header Files\Custom Controls">
+      <UniqueIdentifier>{fee0c485-5d6e-48cc-bc58-75a411e0eae9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -287,32 +290,17 @@
     <PRIResource Include="Strings\en-US\InfoPage.resw">
       <Filter>Strings\en-US</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\lc-LC\InfoPage.resw">
-      <Filter>Strings\lc-LC</Filter>
-    </PRIResource>
     <PRIResource Include="Strings\en-US\SettingsPage.resw">
       <Filter>Strings\en-US</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\lc-LC\SettingsPage.resw">
-      <Filter>Strings\lc-LC</Filter>
     </PRIResource>
     <PRIResource Include="Strings\en-US\DevicesPage.resw">
       <Filter>Strings\en-US</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\lc-LC\DevicesPage.resw">
-      <Filter>Strings\lc-LC</Filter>
-    </PRIResource>
     <PRIResource Include="Strings\en-US\SharedStrings.resw">
       <Filter>Strings\en-US</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\lc-LC\SharedStrings.resw">
-      <Filter>Strings\lc-LC</Filter>
-    </PRIResource>
     <PRIResource Include="Strings\en-US\SettingsLearn.resw">
       <Filter>Strings\en-US</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\lc-LC\SettingsLearn.resw">
-      <Filter>Strings\lc-LC</Filter>
     </PRIResource>
   </ItemGroup>
 </Project>

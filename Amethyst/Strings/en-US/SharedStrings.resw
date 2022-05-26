@@ -117,6 +117,67 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Joints.Enum.0" xml:space="preserve">
+    <value>Handed Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.1" xml:space="preserve">
+    <value>Left Foot Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.10" xml:space="preserve">
+    <value>Chest Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.11" xml:space="preserve">
+    <value>Camera Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.12" xml:space="preserve">
+    <value>Keyboard Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.2" xml:space="preserve">
+    <value>Right Foot Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.3" xml:space="preserve">
+    <value>Left Shoulder Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.4" xml:space="preserve">
+    <value>Right Shoulder Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.5" xml:space="preserve">
+    <value>Left Elbow Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.6" xml:space="preserve">
+    <value>Right Elbow Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.7" xml:space="preserve">
+    <value>Left Knee Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.8" xml:space="preserve">
+    <value>Right Knee Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Enum.9" xml:space="preserve">
+    <value>Waist Tracker</value>
+    <comment>From the ktvr::ITrackerType enum</comment>
+  </data>
+  <data name="Joints.Pairs.Elbows" xml:space="preserve">
+    <value>Elbow Trackers</value>
+  </data>
+  <data name="Joints.Pairs.Feet" xml:space="preserve">
+    <value>Feet Trackers</value>
+  </data>
+  <data name="Joints.Pairs.Knees" xml:space="preserve">
+    <value>Knee Trackers</value>
+  </data>
   <data name="Toasts.AutoSpawnFailed.Content" xml:space="preserve">
     <value>A server failure occurred and body trackers couldn't be spawned</value>
   </data>

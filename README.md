@@ -1,6 +1,6 @@
 # **Amethyst**
 
-## <ins>__[Discord server](https://discord.gg/YBQCRDG)__</ins> and I'm **公彦赤屋先#5023**
+No one besides the team can read this anyway. Have fun, human
 
 ## **License**
 This project is licensed under the GNU GPL v3 License 
@@ -27,11 +27,5 @@ I try to document the code as I go (not to forget stuff), it should kind-of read
 For questions about how something works or how to use it, please search through this repo, or just ask.<br>
 
 Currently, all available docs (as for plugins) is [the K2TrackingDevice-Samples repo](https://github.com/KinectToVR/K2TrackingDevice-Samples).<br>
-To learn about the Amethyst API (K2API for short), please go to [the k2vr-application repo](https://github.com/KinectToVR/k2vr-application/wiki).<br>
-(Though, in [the k2vr-application repo](https://github.com/KinectToVR/k2vr-application/wiki), you're going to find only the old, default API methods)
-
-## **Beta Rating**
-From time to time, Amethyst may ask what do you think about the current build - you just rate it.<br>
-This is meant to tell us if the latest changes are good or bad, and to help us improve the next build.<br>
-You can opt-out clicking `Don't ask me`. <ins>This is anonymous, no personal information is collected.</ins><br>
-Everything is being done via an [Azure Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) instance, and fully managed by Azure.
+~~To learn about the Amethyst API (K2API for short), please go to [the k2vr-application repo](https://github.com/KinectToVR/k2vr-application/wiki).<br>~~
+~~(Though, in [the k2vr-application repo](https://github.com/KinectToVR/k2vr-application/wiki), you're going to find only the old, default API methods)~~

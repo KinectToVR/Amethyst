@@ -3,44 +3,6 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/export.hpp>
-
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/array.hpp>
-#include <boost/serialization/utility.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/serialization/optional.hpp>
-
-namespace boost::serialization
-{
-	// Eigen serialization
-	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
-	void serialize(Archive& ar,
-	               Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
-	               const unsigned int file_version
-	)
-	{
-		for (size_t i = 0; i < t.size(); i++)
-			ar & make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
-	}
-
-	template <class Archive, typename _Scalar>
-	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
-	{
-		ar & make_nvp("w", q.w())
-			& make_nvp("x", q.x())
-			& make_nvp("y", q.y())
-			& make_nvp("z", q.z());
-	}
-
-	template <class Archive, typename _Scalar>
-	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
-	{
-		ar & make_nvp("x", v.x())
-			& make_nvp("y", v.y())
-			& make_nvp("z", v.z());
-	}
-}
 
 void replace_all(std::string& str, const std::string& from, const std::string& to)
 {
@@ -300,47 +262,7 @@ namespace ktvr
 
 		return ret.str();
 	}
-
-	template <class Archive>
-	KTVR_API void K2TrackerPose::serialize(Archive& ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(orientation) & BOOST_SERIALIZATION_NVP(position);
-	}
-
-	template <class Archive>
-	KTVR_API void K2TrackerData::serialize(Archive& ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(serial) & BOOST_SERIALIZATION_NVP(role) & BOOST_SERIALIZATION_NVP(isActive);
-	}
-
-	template <class Archive>
-	KTVR_API void K2PosePacket::serialize(Archive& ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(orientation) & BOOST_SERIALIZATION_NVP(position) &
-			BOOST_SERIALIZATION_NVP(millisFromNow); // Serialize
-	}
-
-	template <class Archive>
-	KTVR_API void K2TrackerBase::serialize(Archive& ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(pose) & BOOST_SERIALIZATION_NVP(data) & BOOST_SERIALIZATION_NVP(tracker);
-	}
-
-	template <class Archive>
-	KTVR_API void K2Message::serialize(Archive& ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(messageType)
-			& BOOST_SERIALIZATION_NVP(tracker_base)
-			& BOOST_SERIALIZATION_NVP(tracker_pose)
-			& BOOST_SERIALIZATION_NVP(tracker_bases_vector)
-			& BOOST_SERIALIZATION_NVP(message_string)
-			& BOOST_SERIALIZATION_NVP(tracker)
-			& BOOST_SERIALIZATION_NVP(state)
-			& BOOST_SERIALIZATION_NVP(want_reply)
-			& BOOST_SERIALIZATION_NVP(messageTimestamp)
-			& BOOST_SERIALIZATION_NVP(messageManualTimestamp);
-	}
-
+	
 	std::string K2Message::serializeToString()
 	{
 		std::ostringstream o;
@@ -365,19 +287,7 @@ namespace ktvr
 			return K2Message();
 		}
 	}
-
-	template <class Archive>
-	KTVR_API void K2ResponseMessage::serialize(Archive& ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(messageType)
-			& BOOST_SERIALIZATION_NVP(tracker_base)
-			& BOOST_SERIALIZATION_NVP(tracker)
-			& BOOST_SERIALIZATION_NVP(result)
-			& BOOST_SERIALIZATION_NVP(success)
-			& BOOST_SERIALIZATION_NVP(messageTimestamp)
-			& BOOST_SERIALIZATION_NVP(messageManualTimestamp);
-	}
-
+	
 	std::string K2ResponseMessage::serializeToString()
 	{
 		std::ostringstream o;

@@ -7,7 +7,8 @@ inline std::array<std::wstring, 3> split_status(const std::wstring& s)
 	// If there are 3 strings separated by \n
 	return std::array<std::wstring, 3>{
 		s.substr(0, s.find(L"\n")),
-		s.substr(s.find(L"\n") + 1, s.rfind(L"\n") - (s.find(L"\n") + 1)),
+		s.substr(s.find(L"\n") + 1, 
+			s.rfind(L"\n") - (s.find(L"\n") + 1)),
 		s.substr(s.rfind(L"\n") + 1)
 	};
 }
@@ -231,19 +232,7 @@ namespace k2app::shared
 		inline bool settings_localInitFinished = false;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button> restartButton;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBox>
-			waistPositionFilterOptionBox,
-			waistRotationFilterOptionBox,
-			feetPositionFilterOptionBox,
-			feetRotationFilterOptionBox,
-			kneePositionFilterOptionBox,
-			kneeRotationFilterOptionBox,
-			elbowsPositionFilterOptionBox,
-			elbowsRotationFilterOptionBox;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem> softwareRotationItem;
-
+		
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
 			externalFlipCheckBox,
 			autoSpawnCheckbox,
@@ -255,25 +244,30 @@ namespace k2app::shared
 			setErrorFlyoutText;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
-		flipDropDownGrid;
+			flipDropDownGrid;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>
-		flipToggle;
-
-		// Waist, Feet, Elbows, Knees
-		inline std::array<std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>, 4>
-		trackerPairEnabledToggles;
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch> flipToggle;
 		
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Slider> soundsVolumeSlider;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander>
-			waistDropDown,
-			feetDropDown,
-			kneesDropDown,
-			elbowsDropDown,
-			flipDropDown;
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander> flipDropDown;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel>
-		externalFlipStackPanel;
+			externalFlipStackPanel, jointExpanderHostStackPanel;
+	}
+}
+
+namespace k2app::interfacing
+{
+	// Get a string from resources (crash handler's LAngResString)
+	inline std::wstring LocalizedResourceWString(const std::wstring& dictionary, const std::wstring& key)
+	{
+		winrt::Windows::Globalization::Language language{
+			winrt::Windows::System::UserProfile::GlobalizationPreferences::Languages().GetAt(0) };
+
+		k2app::shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language.LanguageTag();
+
+		return k2app::shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
+			(dictionary + L"/" + key).c_str()).ValueAsString().c_str();
 	}
 }

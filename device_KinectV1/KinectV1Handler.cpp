@@ -38,6 +38,20 @@ void KinectV1Handler::initialize()
 		LOG(INFO) << "Initializing: updated Kinect V1 status with: " <<
 			WStringToString(statusResultWString(getStatusResult()));
 
+		if (_loaded) {
+			m_main_progress_bar->Progress(100);
+			m_main_progress_bar->ShowPaused(getStatusResult() != S_OK);
+
+			m_message_text_block->Visibility(getStatusResult() != S_OK);
+			m_elevation_label->Visibility(getStatusResult() == S_OK);
+			m_elevation_spinner->Visibility(getStatusResult() == S_OK);
+		}
+
+		if (getStatusResult() == S_OK) {
+			NuiCameraElevationGetAngle(reinterpret_cast<long*>(&sensorAngle));
+			save_settings();
+		}
+
 		if (!initialized) throw FailedKinectInitialization;
 	}
 	catch (std::exception& e)

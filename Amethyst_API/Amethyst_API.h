@@ -9,12 +9,50 @@
 #include <chrono>
 #include <cmath>
 
-#include <Eigen/Dense>
-
 #include <boost/optional.hpp>
+
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/array.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/optional.hpp>
+
+#include <Eigen/Dense>
 
 #include "Amethyst_API_Devices.h"
 #include "Amethyst_API_Paths.h"
+
+namespace boost::serialization
+{
+	// Eigen serialization
+	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
+	void serialize(Archive& ar,
+	               Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
+	               const unsigned int file_version
+	)
+	{
+		for (size_t i = 0; i < t.size(); i++)
+			ar & make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
+	}
+
+	template <class Archive, typename _Scalar>
+	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
+	{
+		ar & make_nvp("w", q.w())
+			& make_nvp("x", q.x())
+			& make_nvp("y", q.y())
+			& make_nvp("z", q.z());
+	}
+
+	template <class Archive, typename _Scalar>
+	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
+	{
+		ar & make_nvp("x", v.x())
+			& make_nvp("y", v.y())
+			& make_nvp("z", v.z());
+	}
+}
 
 /*
  * Default IPC defines are:
@@ -31,7 +69,7 @@
 	std::chrono::time_point_cast<std::chrono::microseconds>	\
 	(std::chrono::system_clock::now()).time_since_epoch().count()
 
-#ifdef Amethyst_API_EXPORTS
+#ifdef AMETHYST_API_EXPORTS
 #define KTVR_API __declspec(dllexport)
 #else
 #define KTVR_API __declspec(dllimport)
@@ -151,7 +189,10 @@ namespace ktvr
 		Eigen::Vector3f position = Eigen::Vector3f(0.f, 0.f, 0.f);
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, unsigned int version);
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar & BOOST_SERIALIZATION_NVP(orientation) & BOOST_SERIALIZATION_NVP(position);
+		}
 
 		// Default constructors
 		K2TrackerPose() = default;
@@ -183,7 +224,10 @@ namespace ktvr
 		bool isActive = false;
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, unsigned int version);
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar & BOOST_SERIALIZATION_NVP(serial) & BOOST_SERIALIZATION_NVP(role) & BOOST_SERIALIZATION_NVP(isActive);
+		}
 
 		// Default constructors
 		K2TrackerData() = default;
@@ -240,7 +284,11 @@ namespace ktvr
 		}
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, unsigned int version);
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar & BOOST_SERIALIZATION_NVP(orientation) & BOOST_SERIALIZATION_NVP(position) &
+				BOOST_SERIALIZATION_NVP(millisFromNow); // Serialize
+		}
 	};
 
 	class K2TrackerBase
@@ -251,7 +299,10 @@ namespace ktvr
 		ITrackerType tracker = ITrackerType::Tracker_Handed;
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, unsigned int version);
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar & BOOST_SERIALIZATION_NVP(pose) & BOOST_SERIALIZATION_NVP(data) & BOOST_SERIALIZATION_NVP(tracker);
+		}
 
 		// Default constructors
 		K2TrackerBase() = default;
@@ -299,7 +350,19 @@ namespace ktvr
 		std::string message_string; // Placeholder for anything
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, unsigned int version);
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar & BOOST_SERIALIZATION_NVP(messageType)
+				& BOOST_SERIALIZATION_NVP(tracker_base)
+				& BOOST_SERIALIZATION_NVP(tracker_pose)
+				& BOOST_SERIALIZATION_NVP(tracker_bases_vector)
+				& BOOST_SERIALIZATION_NVP(message_string)
+				& BOOST_SERIALIZATION_NVP(tracker)
+				& BOOST_SERIALIZATION_NVP(state)
+				& BOOST_SERIALIZATION_NVP(want_reply)
+				& BOOST_SERIALIZATION_NVP(messageTimestamp)
+				& BOOST_SERIALIZATION_NVP(messageManualTimestamp);
+		}
 
 		// Serialize as string
 		KTVR_API std::string serializeToString();
@@ -382,7 +445,16 @@ namespace ktvr
 		bool success = false;
 
 		template <class Archive>
-		KTVR_API void serialize(Archive& ar, unsigned int version);
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar & BOOST_SERIALIZATION_NVP(messageType)
+				& BOOST_SERIALIZATION_NVP(tracker_base)
+				& BOOST_SERIALIZATION_NVP(tracker)
+				& BOOST_SERIALIZATION_NVP(result)
+				& BOOST_SERIALIZATION_NVP(success)
+				& BOOST_SERIALIZATION_NVP(messageTimestamp)
+				& BOOST_SERIALIZATION_NVP(messageManualTimestamp);
+		}
 
 		// Serialize as string
 		KTVR_API std::string serializeToString();

@@ -992,17 +992,17 @@ namespace winrt::KinectToVR::implementation
 							// Kinect Basis
 							{
 								// Update options for the device
-								if (k2app::K2Settings.jointRotationTrackingOption[1] ==
+								if (k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
 									k2app::k2_SoftwareCalculatedRotation &&
 									!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
 									isAppOrientationSupported())
-									k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
+									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption = k2app::k2_DeviceInferredRotation;
 
-								if (k2app::K2Settings.jointRotationTrackingOption[2] ==
+								if (k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
 									k2app::k2_SoftwareCalculatedRotation &&
 									!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
 									isAppOrientationSupported())
-									k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
+									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption = k2app::k2_DeviceInferredRotation;
 
 								//Init
 								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
@@ -1012,13 +1012,13 @@ namespace winrt::KinectToVR::implementation
 							// Joints Basis
 							{
 								// Update options for the device
-								if (k2app::K2Settings.jointRotationTrackingOption[1] ==
+								if (k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
 									k2app::k2_SoftwareCalculatedRotation)
-									k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
+									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption = k2app::k2_DeviceInferredRotation;
 
-								if (k2app::K2Settings.jointRotationTrackingOption[2] ==
+								if (k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
 									k2app::k2_SoftwareCalculatedRotation)
-									k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
+									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption = k2app::k2_DeviceInferredRotation;
 
 								k2app::K2Settings.isFlipEnabled = false;
 

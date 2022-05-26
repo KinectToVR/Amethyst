@@ -4,6 +4,58 @@
 #include "K2EVRInput.h"
 #include "K2Shared.h"
 
+namespace winrt::Microsoft::UI::Xaml::Controls
+{
+	inline void AppendGridStarColumn(Controls::Grid& _grid)
+	{
+		Controls::ColumnDefinition _col;
+		_col.Width(GridLengthHelper::FromValueAndType(1, GridUnitType::Star));
+
+		_grid.ColumnDefinitions().Append(_col);
+	}
+
+	inline void AppendGridStarsColumn(Controls::Grid& _grid, uint32_t stars)
+	{
+		Controls::ColumnDefinition _col;
+		_col.Width(GridLengthHelper::FromValueAndType(stars, GridUnitType::Star));
+
+		_grid.ColumnDefinitions().Append(_col);
+	}
+
+	inline void AppendGridPixelsColumn(Controls::Grid& _grid, uint32_t pixels)
+	{
+		Controls::ColumnDefinition _col;
+		_col.Width(GridLengthHelper::FromValueAndType(pixels, GridUnitType::Pixel));
+
+		_grid.ColumnDefinitions().Append(_col);
+	}
+
+	inline void AppendGridStarRow(Controls::Grid& _grid)
+	{
+		Controls::RowDefinition _col;
+		_col.Height(GridLengthHelper::FromValueAndType(1, GridUnitType::Star));
+
+		_grid.RowDefinitions().Append(_col);
+	}
+
+	inline void AppendGridStarsRow(Controls::Grid& _grid, uint32_t stars)
+	{
+		Controls::RowDefinition _col;
+		_col.Height(GridLengthHelper::FromValueAndType(stars, GridUnitType::Star));
+
+		_grid.RowDefinitions().Append(_col);
+	}
+
+	inline void AppendGridPixelsRow(Controls::Grid& _grid, uint32_t pixels)
+	{
+		Controls::RowDefinition _col;
+		_col.Height(GridLengthHelper::FromValueAndType(pixels, GridUnitType::Pixel));
+
+		_grid.RowDefinitions().Append(_col);
+	}
+}
+
+// The main k2/interfacing namespace
 namespace k2app::interfacing
 {
 	// Internal version number
@@ -11,18 +63,7 @@ namespace k2app::interfacing
 
 	// App closing check
 	inline bool isExitingNow = false;
-
-	// In-App tracker vector
-	inline std::vector<K2AppTracker> K2TrackersVector{
-		K2AppTracker("AME-00WAIST0", ktvr::ITrackerType::Tracker_Waist),
-		K2AppTracker("AME-L0FOOT00", ktvr::ITrackerType::Tracker_LeftFoot),
-		K2AppTracker("AME-R0FOOT00", ktvr::ITrackerType::Tracker_RightFoot),
-		K2AppTracker("AME-L0ELBOW0", ktvr::ITrackerType::Tracker_LeftElbow, 0.41),
-		K2AppTracker("AME-R0ELBOW0", ktvr::ITrackerType::Tracker_RightElbow, 0.41),
-		K2AppTracker("AME-L0KNEE00", ktvr::ITrackerType::Tracker_LeftKnee),
-		K2AppTracker("AME-R0KNEE00", ktvr::ITrackerType::Tracker_RightKnee)
-	};
-
+	
 	inline std::pair<Eigen::Vector3f, Eigen::Vector3f> // Position helpers for k2 devices -> Base, Override
 		kinectHeadPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}, // But this one's kinect-only
 		kinectWaistPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}; // This one applies to both bases
@@ -32,18 +73,6 @@ namespace k2app::interfacing
 	// OpenVR playspace rotation
 	inline float vrPlayspaceOrientation = 0.f; // Note: radians
 	inline Eigen::Quaternionf vrPlayspaceOrientationQuaternion{1, 0, 0, 0};
-
-	// Get a string from resources (crash handler's LAngResString)
-	inline std::wstring LocalizedResourceWString(const std::wstring& dictionary, const std::wstring& key)
-	{
-		winrt::Windows::Globalization::Language language{
-			winrt::Windows::System::UserProfile::GlobalizationPreferences::Languages().GetAt(0) };
-		
-		shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language.LanguageTag();
-		
-		return shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
-			(dictionary + L"/" + key).c_str()).ValueAsString().c_str();
-	}
 
 	// Show an app toast / notification
 	inline void ShowToast(const std::wstring& header, 
@@ -104,7 +133,7 @@ namespace k2app::interfacing
 	inline std::atomic_bool isAlreadyAddedTrackersScanRunning = false;
 
 	// Function to spawn default' enabled trackers
-	inline bool SpawnDefaultEnabledTrackers()
+	inline bool SpawnEnabledTrackers()
 	{
 		if (!K2AppTrackersSpawned)
 		{
@@ -113,75 +142,49 @@ namespace k2app::interfacing
 			// K2Driver is now auto-adding default lower body trackers.
 			// That means that ids are: W-0 L-1 R-2
 			// We may skip downloading them then ^_~
-
-			// Setup default IDs
-			K2TrackersVector.at(0).id = 0; // W
-			K2TrackersVector.at(1).id = 1; // L
-			K2TrackersVector.at(2).id = 2; // R
-
-			K2TrackersVector.at(3).id = 3; // LE
-			K2TrackersVector.at(4).id = 4; // RE
-			K2TrackersVector.at(5).id = 5; // LK
-			K2TrackersVector.at(6).id = 6; // RK
-
+			
 			LOG(INFO) << "[K2Interfacing] App will be using K2Driver's default prepended trackers!";
 
 			// Helper bool array
-			std::array<bool, 7> spawned = {false, false, false, false, false, false, false};
+			std::vector<bool> spawned;
 
 			// Try 3 times
 			for (int i = 0; i < 3; i++)
-			{
-				// Add only default trackers from the vector (0-2) & (3-6)
-				for (int t = 0; t < 7; t++)
-				{
-					if (K2Settings.isJointPairEnabled[floor((t + 1) / 2)])
+				for(const auto& tracker : K2Settings.K2TrackersVector)
+					if (tracker.data.isActive) 
 					{
-						if (K2TrackersVector.at(t).id != -1)
+						spawned.push_back(false);
+
+						if (const auto& m_result =
+							set_tracker_state(tracker.tracker, true); // We WANT a reply
+							m_result.tracker == tracker.tracker && m_result.success)
 						{
-							if (const auto& m_result =
-									ktvr::set_tracker_state(K2TrackersVector.at(t).id, true); // We WANT a reply
-								m_result.id == K2TrackersVector.at(t).id && m_result.success)
-							{
-								LOG(INFO) << "Tracker with serial " + K2TrackersVector.at(t).data.serial +
-									" and id " +
-									std::to_string(
-										K2TrackersVector.at(t).id) +
-									" was successfully updated with status [active]";
-								spawned[t] = true;
-							}
-
-							else if (m_result.id != K2TrackersVector.at(t).id && m_result.success)
-								LOG(ERROR) << "Tracker with serial " + K2TrackersVector.at(t).data.serial + " and id "
-									+
-									std::to_string(
-										K2TrackersVector.at(t).id) +
-									" could not be spawned due to ID mismatch.";
-
-							else
-							{
-								LOG(ERROR) << "Tracker with serial " + K2TrackersVector.at(t).data.serial +
-									" and id " +
-									std::to_string(
-										K2TrackersVector.at(t).id) +
-									" could not be spawned due to internal server error.";
-								if (!ktvr::GetLastError().empty())
-									LOG(ERROR) << "Last Amethyst API error: " + ktvr::GetLastError();
-							}
+							LOG(INFO) << "Tracker with serial " + tracker.data.serial +
+								" and role " +
+								std::to_string(static_cast<int>(tracker.tracker)) +
+								" was successfully updated with status [active]";
+							spawned.back() = true;
 						}
+
+						else if (m_result.tracker != tracker.tracker && m_result.success)
+							LOG(ERROR) << "Tracker with serial " + tracker.data.serial + " and id "
+							+
+							std::to_string(static_cast<int>(tracker.tracker)) +
+							" could not be spawned due to return mismatch.";
+
 						else
-							LOG(ERROR) << "Not spawning active tracker since its id is -1";
+						{
+							LOG(ERROR) << "Tracker with serial " + tracker.data.serial +
+								" and role " +
+								std::to_string(static_cast<int>(tracker.tracker)) +
+								" could not be spawned due to internal server error.";
+							if (!ktvr::GetLastError().empty())
+								LOG(ERROR) << "Last Amethyst API error: " + ktvr::GetLastError();
+						}
 					}
-					else
-					{
-						LOG(ERROR) << "Not spawning this tracker since it's disabled, marking as success.";
-						spawned[t] = true;
-					}
-				}
-			}
 
 			// If one or more trackers failed to spawn
-			if (std::ranges::find(spawned.begin(), spawned.end(), false) != spawned.end())
+			if (!spawned.empty() && std::ranges::find(spawned, false) != spawned.end())
 			{
 				LOG(INFO) << "One or more trackers couldn't be spawned after 3 tries. Giving up...";
 
@@ -549,7 +552,7 @@ namespace k2app::interfacing
 				bool _can_return = true;
 
 				if (!_can_be_ame)
-					for (const auto& _tracker : k2app::interfacing::K2TrackersVector)
+					for (const auto& _tracker : k2app::K2Settings.K2TrackersVector)
 						if (std::string(buf_p) == _tracker.data.serial)
 						{
 							LOG_IF(INFO, _log) << 
@@ -668,44 +671,44 @@ namespace k2app::interfacing
 		if (waistJointOptionBox.get() == nullptr)return;
 
 		// Optionally fix combos for disabled trackers -> joint selectors for base
-		waistJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[0]);
-		if (!K2Settings.isJointPairEnabled[0])
+		waistJointOptionBox.get()->IsEnabled(K2Settings.K2TrackersVector[0].data.isActive);
+		if (!K2Settings.K2TrackersVector[0].data.isActive)
 			waistJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		leftFootJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
-		if (!K2Settings.isJointPairEnabled[1])
+		leftFootJointOptionBox.get()->IsEnabled(K2Settings.K2TrackersVector[1].data.isActive);
+		if (!K2Settings.K2TrackersVector[1].data.isActive)
 			leftFootJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		rightFootJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
-		if (!K2Settings.isJointPairEnabled[1])
+		rightFootJointOptionBox.get()->IsEnabled(K2Settings.K2TrackersVector[2].data.isActive);
+		if (!K2Settings.K2TrackersVector[2].data.isActive)
 			rightFootJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		leftElbowJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
-		if (!K2Settings.isJointPairEnabled[2])
+		leftElbowJointOptionBox.get()->IsEnabled(K2Settings.K2TrackersVector[3].data.isActive);
+		if (!K2Settings.K2TrackersVector[3].data.isActive)
 			leftElbowJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		rightElbowJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
-		if (!K2Settings.isJointPairEnabled[2])
+		rightElbowJointOptionBox.get()->IsEnabled(K2Settings.K2TrackersVector[4].data.isActive);
+		if (!K2Settings.K2TrackersVector[4].data.isActive)
 			rightElbowJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		leftKneeJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
-		if (!K2Settings.isJointPairEnabled[3])
+		leftKneeJointOptionBox.get()->IsEnabled(K2Settings.K2TrackersVector[5].data.isActive);
+		if (!K2Settings.K2TrackersVector[5].data.isActive)
 			leftKneeJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
-		rightKneeJointOptionBox.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
-		if (!K2Settings.isJointPairEnabled[3])
+		rightKneeJointOptionBox.get()->IsEnabled(K2Settings.K2TrackersVector[6].data.isActive);
+		if (!K2Settings.K2TrackersVector[6].data.isActive)
 			rightKneeJointOptionBox.get()->SelectedIndex(-1); // Show the placeholder
 
 		// Optionally fix combos for disabled trackers -> joint selectors for override
 		waistPositionOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[0] && K2Settings.isPositionOverriddenJoint[0]);
+			K2Settings.K2TrackersVector[0].data.isActive && K2Settings.K2TrackersVector[0].isPositionOverridden);
 		waistRotationOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[0] && K2Settings.isRotationOverriddenJoint[0]);
+			K2Settings.K2TrackersVector[0].data.isActive && K2Settings.K2TrackersVector[0].isRotationOverridden);
 
-		overrideWaistPosition.get()->IsEnabled(K2Settings.isJointPairEnabled[0]);
-		overrideWaistRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[0]);
+		overrideWaistPosition.get()->IsEnabled(K2Settings.K2TrackersVector[0].data.isActive);
+		overrideWaistRotation.get()->IsEnabled(K2Settings.K2TrackersVector[0].data.isActive);
 
-		if (!K2Settings.isJointPairEnabled[0])
+		if (!K2Settings.K2TrackersVector[0].data.isActive)
 		{
 			overrideWaistPosition.get()->IsChecked(false);
 			overrideWaistRotation.get()->IsChecked(false);
@@ -715,14 +718,14 @@ namespace k2app::interfacing
 		}
 
 		leftFootPositionOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[1] && K2Settings.isPositionOverriddenJoint[1]);
+			K2Settings.K2TrackersVector[1].data.isActive && K2Settings.K2TrackersVector[1].isPositionOverridden);
 		leftFootRotationOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[1] && K2Settings.isRotationOverriddenJoint[1]);
+			K2Settings.K2TrackersVector[1].data.isActive && K2Settings.K2TrackersVector[1].isRotationOverridden);
 
-		overrideLeftFootPosition.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
-		overrideLeftFootRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
+		overrideLeftFootPosition.get()->IsEnabled(K2Settings.K2TrackersVector[1].data.isActive);
+		overrideLeftFootRotation.get()->IsEnabled(K2Settings.K2TrackersVector[1].data.isActive);
 
-		if (!K2Settings.isJointPairEnabled[1])
+		if (!K2Settings.K2TrackersVector[1].data.isActive)
 		{
 			overrideLeftFootPosition.get()->IsChecked(false);
 			overrideLeftFootRotation.get()->IsChecked(false);
@@ -732,14 +735,14 @@ namespace k2app::interfacing
 		}
 
 		rightFootPositionOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[1] && K2Settings.isPositionOverriddenJoint[2]);
+			K2Settings.K2TrackersVector[2].data.isActive && K2Settings.K2TrackersVector[2].isPositionOverridden);
 		rightFootRotationOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[1] && K2Settings.isRotationOverriddenJoint[2]);
+			K2Settings.K2TrackersVector[2].data.isActive && K2Settings.K2TrackersVector[2].isRotationOverridden);
 
-		overrideRightFootPosition.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
-		overrideRightFootRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[1]);
+		overrideRightFootPosition.get()->IsEnabled(K2Settings.K2TrackersVector[2].data.isActive);
+		overrideRightFootRotation.get()->IsEnabled(K2Settings.K2TrackersVector[2].data.isActive);
 
-		if (!K2Settings.isJointPairEnabled[1])
+		if (!K2Settings.K2TrackersVector[2].data.isActive)
 		{
 			overrideRightFootPosition.get()->IsChecked(false);
 			overrideRightFootRotation.get()->IsChecked(false);
@@ -749,14 +752,14 @@ namespace k2app::interfacing
 		}
 
 		leftElbowPositionOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[2] && K2Settings.isPositionOverriddenJoint[3]);
+			K2Settings.K2TrackersVector[3].data.isActive && K2Settings.K2TrackersVector[3].isPositionOverridden);
 		leftElbowRotationOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[2] && K2Settings.isRotationOverriddenJoint[3]);
+			K2Settings.K2TrackersVector[3].data.isActive && K2Settings.K2TrackersVector[3].isRotationOverridden);
 
-		overrideLeftElbowPosition.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
-		overrideLeftElbowRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
+		overrideLeftElbowPosition.get()->IsEnabled(K2Settings.K2TrackersVector[3].data.isActive);
+		overrideLeftElbowRotation.get()->IsEnabled(K2Settings.K2TrackersVector[3].data.isActive);
 
-		if (!K2Settings.isJointPairEnabled[2])
+		if (!K2Settings.K2TrackersVector[3].data.isActive)
 		{
 			overrideLeftElbowPosition.get()->IsChecked(false);
 			overrideLeftElbowRotation.get()->IsChecked(false);
@@ -766,14 +769,14 @@ namespace k2app::interfacing
 		}
 
 		rightElbowPositionOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[2] && K2Settings.isPositionOverriddenJoint[4]);
+			K2Settings.K2TrackersVector[4].data.isActive && K2Settings.K2TrackersVector[4].isPositionOverridden);
 		rightElbowRotationOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[2] && K2Settings.isRotationOverriddenJoint[4]);
+			K2Settings.K2TrackersVector[4].data.isActive && K2Settings.K2TrackersVector[4].isRotationOverridden);
 
-		overrideRightElbowPosition.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
-		overrideRightElbowRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[2]);
+		overrideRightElbowPosition.get()->IsEnabled(K2Settings.K2TrackersVector[4].data.isActive);
+		overrideRightElbowRotation.get()->IsEnabled(K2Settings.K2TrackersVector[4].data.isActive);
 
-		if (!K2Settings.isJointPairEnabled[2])
+		if (!K2Settings.K2TrackersVector[4].data.isActive)
 		{
 			overrideRightElbowPosition.get()->IsChecked(false);
 			overrideRightElbowRotation.get()->IsChecked(false);
@@ -783,14 +786,14 @@ namespace k2app::interfacing
 		}
 
 		leftKneePositionOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[3] && K2Settings.isPositionOverriddenJoint[5]);
+			K2Settings.K2TrackersVector[5].data.isActive && K2Settings.K2TrackersVector[5].isPositionOverridden);
 		leftKneeRotationOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[3] && K2Settings.isRotationOverriddenJoint[5]);
+			K2Settings.K2TrackersVector[5].data.isActive && K2Settings.K2TrackersVector[5].isRotationOverridden);
 
-		overrideLeftKneePosition.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
-		overrideLeftKneeRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
+		overrideLeftKneePosition.get()->IsEnabled(K2Settings.K2TrackersVector[5].data.isActive);
+		overrideLeftKneeRotation.get()->IsEnabled(K2Settings.K2TrackersVector[5].data.isActive);
 
-		if (!K2Settings.isJointPairEnabled[3])
+		if (!K2Settings.K2TrackersVector[5].data.isActive)
 		{
 			overrideLeftKneePosition.get()->IsChecked(false);
 			overrideLeftKneeRotation.get()->IsChecked(false);
@@ -800,14 +803,14 @@ namespace k2app::interfacing
 		}
 
 		rightKneePositionOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[3] && K2Settings.isPositionOverriddenJoint[6]);
+			K2Settings.K2TrackersVector[6].data.isActive && K2Settings.K2TrackersVector[6].isPositionOverridden);
 		rightKneeRotationOverrideOptionBox.get()->IsEnabled(
-			K2Settings.isJointPairEnabled[3] && K2Settings.isRotationOverriddenJoint[6]);
+			K2Settings.K2TrackersVector[6].data.isActive && K2Settings.K2TrackersVector[6].isRotationOverridden);
 
-		overrideRightKneePosition.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
-		overrideRightKneeRotation.get()->IsEnabled(K2Settings.isJointPairEnabled[3]);
+		overrideRightKneePosition.get()->IsEnabled(K2Settings.K2TrackersVector[6].data.isActive);
+		overrideRightKneeRotation.get()->IsEnabled(K2Settings.K2TrackersVector[6].data.isActive);
 
-		if (!K2Settings.isJointPairEnabled[3])
+		if (!K2Settings.K2TrackersVector[6].data.isActive)
 		{
 			overrideRightKneePosition.get()->IsChecked(false);
 			overrideRightKneeRotation.get()->IsChecked(false);
@@ -930,13 +933,20 @@ namespace k2app::interfacing
 		{
 			return std::array<ktvr::K2TrackedJoint, 7>
 			{
-				K2TrackersVector.at(0).getK2TrackedJoint(K2Settings.isJointPairEnabled[0], "Waist"),
-				K2TrackersVector.at(1).getK2TrackedJoint(K2Settings.isJointPairEnabled[1], "Left Foot"),
-				K2TrackersVector.at(2).getK2TrackedJoint(K2Settings.isJointPairEnabled[1], "Right Foot"),
-				K2TrackersVector.at(3).getK2TrackedJoint(K2Settings.isJointPairEnabled[2], "Left Elbow"),
-				K2TrackersVector.at(4).getK2TrackedJoint(K2Settings.isJointPairEnabled[2], "Right Elbow"),
-				K2TrackersVector.at(5).getK2TrackedJoint(K2Settings.isJointPairEnabled[3], "Left Knee"),
-				K2TrackersVector.at(6).getK2TrackedJoint(K2Settings.isJointPairEnabled[3], "Right Knee"),
+				K2Settings.K2TrackersVector.at(0).getK2TrackedJoint(
+					K2Settings.K2TrackersVector[0].data.isActive, "Waist"),
+				K2Settings.K2TrackersVector.at(1).getK2TrackedJoint(
+					K2Settings.K2TrackersVector[1].data.isActive, "Left Foot"),
+				K2Settings.K2TrackersVector.at(2).getK2TrackedJoint(
+					K2Settings.K2TrackersVector[2].data.isActive, "Right Foot"),
+				K2Settings.K2TrackersVector.at(3).getK2TrackedJoint(
+					K2Settings.K2TrackersVector[3].data.isActive, "Left Elbow"),
+				K2Settings.K2TrackersVector.at(4).getK2TrackedJoint(
+					K2Settings.K2TrackersVector[4].data.isActive, "Right Elbow"),
+				K2Settings.K2TrackersVector.at(5).getK2TrackedJoint(
+					K2Settings.K2TrackersVector[5].data.isActive, "Left Knee"),
+				K2Settings.K2TrackersVector.at(6).getK2TrackedJoint(
+					K2Settings.K2TrackersVector[6].data.isActive, "Right Knee"),
 			};
 		}
 	}
@@ -1377,7 +1387,7 @@ namespace k2app::interfacing
 				Controls::NumberBox _number_box;
 				_number_box.Value(value);
 
-				_number_box.SpinButtonPlacementMode(Controls::NumberBoxSpinButtonPlacementMode::Compact);
+				_number_box.SpinButtonPlacementMode(Controls::NumberBoxSpinButtonPlacementMode::Inline);
 				_number_box.SmallChange(1);
 				_number_box.LargeChange(10);
 
@@ -2382,14 +2392,6 @@ namespace k2app::interfacing
 			}
 		}
 
-		inline void AppendGridStarColumn(Controls::Grid& _grid)
-		{
-			Controls::ColumnDefinition _col;
-			_col.Width(GridLengthHelper::FromValueAndType(1, GridUnitType::Star));
-
-			_grid.ColumnDefinitions().Append(_col);
-		}
-
 		class AppLayoutRoot final : public Interface::LayoutRoot
 		{
 		public:
@@ -2576,8 +2578,8 @@ namespace k2app::interfacing
 				Controls::Grid _grid;
 				_grid.HorizontalAlignment(HorizontalAlignment::Stretch);
 
-				AppendGridStarColumn(_grid);
-				AppendGridStarColumn(_grid);
+				Controls::AppendGridStarColumn(_grid);
+				Controls::AppendGridStarColumn(_grid);
 
 				// Parse and append the first pair element
 				{
@@ -2953,7 +2955,7 @@ namespace k2app::interfacing
 				for (uint32_t i = 0; i < element_vector.size(); i++)
 				{
 					// Append a column
-					AppendGridStarColumn(_grid);
+					Controls::AppendGridStarColumn(_grid);
 
 					// Parse the alignment : Centered by default
 					auto _alignment = HorizontalAlignment::Center;

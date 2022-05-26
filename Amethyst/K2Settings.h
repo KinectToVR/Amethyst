@@ -33,37 +33,6 @@ T radiansToDegrees(T angleRadians)
 	return angleRadians * 180.0 / _PI;
 }
 
-namespace boost::serialization
-{
-	// Eigen serialization
-	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
-	void serialize(Archive& ar,
-	               Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
-	               const unsigned int file_version
-	)
-	{
-		for (size_t i = 0; i < t.size(); i++)
-			ar & make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
-	}
-
-	template <class Archive, typename _Scalar>
-	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
-	{
-		ar & make_nvp("w", q.w())
-			& make_nvp("x", q.x())
-			& make_nvp("y", q.y())
-			& make_nvp("z", q.z());
-	}
-
-	template <class Archive, typename _Scalar>
-	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
-	{
-		ar & make_nvp("x", v.x())
-			& make_nvp("y", v.y())
-			& make_nvp("z", v.z());
-	}
-}
-
 namespace k2app
 {
 	class K2AppSettings
@@ -74,22 +43,14 @@ namespace k2app
 		template <class Archive>
 		void serialize(Archive& archive, unsigned int version)
 		{
-			archive& BOOST_SERIALIZATION_NVP(trackingDeviceID)
+			archive & BOOST_SERIALIZATION_NVP(K2TrackersVector)
+				& BOOST_SERIALIZATION_NVP(useTrackerPairs)
+				& BOOST_SERIALIZATION_NVP(checkForOverlappingTrackers)
+				& BOOST_SERIALIZATION_NVP(trackingDeviceID)
 				& BOOST_SERIALIZATION_NVP(overrideDeviceID)
-				& BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
-				& BOOST_SERIALIZATION_NVP(positionOverrideJointID)
-				& BOOST_SERIALIZATION_NVP(rotationOverrideJointID)
-				& BOOST_SERIALIZATION_NVP(isPositionOverriddenJoint)
-				& BOOST_SERIALIZATION_NVP(isRotationOverriddenJoint)
-				& BOOST_SERIALIZATION_NVP(positionJointsOffsets)
-				& BOOST_SERIALIZATION_NVP(rotationJointsOffsets)
-				& BOOST_SERIALIZATION_NVP(jointRotationTrackingOption)
-				& BOOST_SERIALIZATION_NVP(positionTrackingFilterOptions)
-				& BOOST_SERIALIZATION_NVP(rotationFilterOption)
 				& BOOST_SERIALIZATION_NVP(isFlipEnabled)
 				& BOOST_SERIALIZATION_NVP(isExternalFlipEnabled)
 				& BOOST_SERIALIZATION_NVP(externalFlipCalibrationYaw)
-				& BOOST_SERIALIZATION_NVP(isJointPairEnabled)
 				& BOOST_SERIALIZATION_NVP(autoSpawnEnabledJoints)
 				& BOOST_SERIALIZATION_NVP(enableAppSounds)
 				& BOOST_SERIALIZATION_NVP(appSoundsVolume)
@@ -110,82 +71,20 @@ namespace k2app
 	public:
 		/* Members part */
 
+		// Current joints
+		std::vector<K2AppTracker> K2TrackersVector;
+		bool useTrackerPairs = true; // Pair feet, elbows and knees
+		bool checkForOverlappingTrackers = true; // Check for overlapping roles
+
 		// Current tracking device: 0 is the default
 		uint32_t trackingDeviceID = 0; // -> Always set and >= 0
 		int32_t overrideDeviceID = -1;
-
-		// Joint tracking device selected joints: 0s are the defaults
-		// On the first time refresh the joints are assigned like W0 L1 R2
-		std::array<uint32_t, 7> // W,L,R -> always >= 0
-		selectedTrackedJointID = {0, 0, 0, 0, 0, 0, 0};
-
-		// Waist, Left Foot, Right Foot,
-		// Left Elbow, Right Elbow, Left Knee, Right Knee
-
-		// Current override joints: W,L,R and 0 is the default for waist
-		std::array<uint32_t, 7> // W,L,R -> always >= 0
-			positionOverrideJointID = {0, 0, 0, 0, 0, 0, 0},
-			rotationOverrideJointID = {0, 0, 0, 0, 0, 0, 0};
-
-		// Current override joints: W,L,R and true is the default for waist
-		std::array<bool, 7>
-			isPositionOverriddenJoint = {true, false, false, false, false, false, false},
-			isRotationOverriddenJoint = {true, false, false, false, false, false, false};
-
-		// Joint offsets: W,L,R and pos/meters | rot/eulers(rad)
-		std::array<Eigen::Vector3d, 7>
-			positionJointsOffsets = {
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0)
-			},
-			rotationJointsOffsets = {
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0),
-				Eigen::Vector3d(0, 0, 0)
-			};
-
-		// Rotation tracking options: W,L,R and Internal is the default
-		std::array<JointRotationTrackingOption, 7> jointRotationTrackingOption = {
-			k2_DeviceInferredRotation,
-			k2_DeviceInferredRotation,
-			k2_DeviceInferredRotation,
-			k2_DeviceInferredRotation,
-			k2_DeviceInferredRotation,
-			k2_DeviceInferredRotation,
-			k2_DeviceInferredRotation
-		};
-
-		// Joint filter pos options: LERP is the default
-		std::array<PositionTrackingFilterOption, 7> positionTrackingFilterOptions = {
-			k2_PositionTrackingFilter_LERP,
-			k2_PositionTrackingFilter_LERP,
-			k2_PositionTrackingFilter_LERP,
-			k2_PositionTrackingFilter_LERP,
-			k2_PositionTrackingFilter_LERP,
-			k2_PositionTrackingFilter_LERP,
-			k2_PositionTrackingFilter_LERP
-		};
-
-		// Joint filter rot options: One-For-All and SLERP (normal) is the default
-		RotationTrackingFilterOption rotationFilterOption = k2_OrientationTrackingFilter_SLERP;
 
 		// Skeleton flip when facing away: One-For-All and on is the default
 		bool isFlipEnabled = true;
 
 		// Skeleton flip based on non-flip override devices' waist tracker
 		bool isExternalFlipEnabled = false;
-
-		// Currently enabled (spawn-able) joints: W; L,R and true is the default, LE,RE; LK,RK
-		std::array<bool, 4> isJointPairEnabled = {true, true, false, false};
 
 		// Automatically spawn enabled trackers on startup and off is the default
 		bool autoSpawnEnabledJoints = false;
@@ -224,7 +123,7 @@ namespace k2app
 
 		// Already shown toasts vector
 		std::vector<std::string> shownToastsGuidVector;
-		
+
 		/* Saving and loading part */
 
 		// Save settings with boost and output file stream
@@ -254,19 +153,46 @@ namespace k2app
 				boost::archive::xml_iarchive archive(input);
 				archive >> boost::serialization::make_nvp("K2AppSettings", *this);
 				LOG(INFO) << "Settings have been read from file \"Amethyst_settings.xml\" (inside K2AppData)";
-
-				// Optionally fix volume if too big somehow
-				appSoundsVolume = std::clamp(
-					appSoundsVolume, static_cast<uint32_t>(0), static_cast<uint32_t>(100));
-
-				// Optionally fix calibration points
-				calibrationPointsNumber = std::clamp(
-					calibrationPointsNumber, static_cast<uint32_t>(3), static_cast<uint32_t>(5));
 			}
 			catch (const boost::archive::archive_exception& e)
 			{
 				LOG(ERROR) << "Settings archive serialization error: " << e.what();
 			}
+
+			// Optionally fix the trackers vector
+			while (K2TrackersVector.size() < 7)
+				K2TrackersVector.push_back(K2AppTracker());
+
+			// Force the first 7 trackers to be the default ones : roles
+			K2TrackersVector.at(0).tracker = ktvr::ITrackerType::Tracker_Waist;
+			K2TrackersVector.at(1).tracker = ktvr::ITrackerType::Tracker_LeftFoot;
+			K2TrackersVector.at(2).tracker = ktvr::ITrackerType::Tracker_RightFoot;
+			K2TrackersVector.at(3).tracker = ktvr::ITrackerType::Tracker_LeftElbow;
+			K2TrackersVector.at(4).tracker = ktvr::ITrackerType::Tracker_RightElbow;
+			K2TrackersVector.at(5).tracker = ktvr::ITrackerType::Tracker_LeftKnee;
+			K2TrackersVector.at(6).tracker = ktvr::ITrackerType::Tracker_RightKnee;
+
+			// Force the first 7 trackers to be the default ones : serials
+			for (auto& tracker : K2TrackersVector)
+				tracker.data.serial = ITrackerType_Role_Serial[tracker.tracker];
+
+			// Fix statuses (optional)
+			if (useTrackerPairs) {
+				K2TrackersVector.at(2).data.isActive =
+					K2TrackersVector.at(1).data.isActive;
+				K2TrackersVector.at(4).data.isActive =
+					K2TrackersVector.at(3).data.isActive;
+				K2TrackersVector.at(6).data.isActive =
+					K2TrackersVector.at(5).data.isActive;
+			}
+
+			// Optionally fix volume if too big somehow
+			appSoundsVolume = std::clamp(
+				appSoundsVolume, static_cast<uint32_t>(0), static_cast<uint32_t>(100));
+
+			// Optionally fix calibration points
+			calibrationPointsNumber = std::clamp(
+				calibrationPointsNumber, static_cast<uint32_t>(3), static_cast<uint32_t>(5));
 		}
 	} inline K2Settings;
 }

@@ -145,10 +145,10 @@ checking the currently active Waist Tracker in SteamVR</value>
   <data name="Captions.FaceTheKinect.Text" xml:space="preserve">
     <value>Face the Kinect!</value>
   </data>
-  <data name="Captions.Filters.Orientation.Text" xml:space="preserve">
+  <data name="Captions.Filters.Orientation" xml:space="preserve">
     <value>Rotation Tracking:</value>
   </data>
-  <data name="Captions.Filters.Position.Text" xml:space="preserve">
+  <data name="Captions.Filters.Position" xml:space="preserve">
     <value>Position Tracking Filter:</value>
   </data>
   <data name="Captions.SkeletonFlip.Text" xml:space="preserve">
@@ -163,6 +163,12 @@ checking the currently active Waist Tracker in SteamVR</value>
   <data name="Captions.SoundsWhen.Line2.Text" xml:space="preserve">
     <value>or skeleton mirroring.</value>
   </data>
+  <data name="Captions.TrackerPairs" xml:space="preserve">
+    <value>Use Tracker Pairs</value>
+  </data>
+  <data name="Captions.TrackersAutoCheck.Text" xml:space="preserve">
+    <value>Check for and disable already existing trackers</value>
+  </data>
   <data name="Captions.TrackersAutoSpawn.Text" xml:space="preserve">
     <value>Automatically connect enabled trackers at launch</value>
   </data>
@@ -172,51 +178,35 @@ checking the currently active Waist Tracker in SteamVR</value>
   <data name="Captions.TrackersRestart.Line2.Text" xml:space="preserve">
     <value>and Amethyst for changes to take effect.</value>
   </data>
-  <data name="Elements.ElbowsToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Disabling will stop elbow trackers
-from spawning on app startup.</value>
-  </data>
   <data name="Elements.ExtFlipCalibration.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Calibration</value>
-  </data>
-  <data name="Elements.FeetToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Disabling will stop feet trackers
-from spawning on app startup.</value>
   </data>
   <data name="Elements.FlipToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Disabling will stop tracking
 from flipping when you turn around.</value>
   </data>
-  <data name="Elements.KneesToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Disabling will stop knee trackers
-from spawning on app startup.</value>
-  </data>
-  <data name="Elements.WaistToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Disabling will stop waist tracker
-from spawning on app startup.</value>
-  </data>
-  <data name="Filters.Orientation.Device.Content" xml:space="preserve">
+  <data name="Filters.Orientation.Device" xml:space="preserve">
     <value>Device-inferred Rotation</value>
   </data>
-  <data name="Filters.Orientation.HMD.Content" xml:space="preserve">
+  <data name="Filters.Orientation.HMD" xml:space="preserve">
     <value>Follow Headset</value>
   </data>
-  <data name="Filters.Orientation.MathBased.Content" xml:space="preserve">
+  <data name="Filters.Orientation.MathBased" xml:space="preserve">
     <value>Software-calculated Rotation</value>
   </data>
-  <data name="Filters.Orientation.Off.Content" xml:space="preserve">
+  <data name="Filters.Orientation.Off" xml:space="preserve">
     <value>Disable Rotation</value>
   </data>
-  <data name="Filters.Position.Kalman.Content" xml:space="preserve">
+  <data name="Filters.Position.Kalman" xml:space="preserve">
     <value>Extended Kalman Filter</value>
   </data>
-  <data name="Filters.Position.LERP.Content" xml:space="preserve">
+  <data name="Filters.Position.LERP" xml:space="preserve">
     <value>Linear Interpolation</value>
   </data>
-  <data name="Filters.Position.LowPass.Content" xml:space="preserve">
+  <data name="Filters.Position.LowPass" xml:space="preserve">
     <value>Low Pass Filter</value>
   </data>
-  <data name="Filters.Position.Off.Content" xml:space="preserve">
+  <data name="Filters.Position.Off" xml:space="preserve">
     <value>Disable Filter</value>
   </data>
   <data name="ReManifest.Error.NotFound" xml:space="preserve">
@@ -240,23 +230,11 @@ It's needed for the reregistration, please check if it's there.</value>
   <data name="Titles.Sounds.Text" xml:space="preserve">
     <value>Sounds</value>
   </data>
-  <data name="Titles.TrackerConfig.Elbows.Text" xml:space="preserve">
-    <value>Elbow Trackers</value>
-  </data>
-  <data name="Titles.TrackerConfig.Feet.Text" xml:space="preserve">
-    <value>Feet Trackers</value>
-  </data>
   <data name="Titles.TrackerConfig.Header.Text" xml:space="preserve">
     <value>Tracker Configuration</value>
   </data>
-  <data name="Titles.TrackerConfig.Knees.Text" xml:space="preserve">
-    <value>Knee Trackers</value>
-  </data>
   <data name="Titles.TrackerConfig.Learn.Content" xml:space="preserve">
     <value>Learn more about these settings</value>
-  </data>
-  <data name="Titles.TrackerConfig.Waist.Text" xml:space="preserve">
-    <value>Waist Tracker</value>
   </data>
   <data name="Titles.Troubleshooting.Text" xml:space="preserve">
     <value>Troubleshooting</value>

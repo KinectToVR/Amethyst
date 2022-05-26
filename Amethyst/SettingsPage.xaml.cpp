@@ -11,6 +11,27 @@ using namespace winrt::Microsoft::UI::Xaml;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+void settings_safe_clear(const std::shared_ptr<Controls::StackPanel>& panel)
+{
+	[&]
+	{
+		__try
+		{
+			[&]
+			{
+				panel.get()->Children().Clear();
+			}();
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			[&]
+			{
+				LOG(WARNING) << "Couldn't clear a StackPanel. You better call an exorcist.";
+			}();
+		}
+	}();
+}
+
 namespace winrt::KinectToVR::implementation
 {
 	SettingsPage::SettingsPage()
@@ -20,27 +41,9 @@ namespace winrt::KinectToVR::implementation
 		// Cache needed UI elements
 		using namespace k2app::shared::settings;
 
+		LOG(INFO) << "Appending settings' page elements to the shared context";
+
 		restartButton = std::make_shared<Controls::Button>(RestartButton());
-
-		waistPositionFilterOptionBox =
-			std::make_shared<Controls::ComboBox>(WaistPositionFilterOptionBox());
-		waistRotationFilterOptionBox =
-			std::make_shared<Controls::ComboBox>(WaistRotationFilterOptionBox());
-		feetPositionFilterOptionBox =
-			std::make_shared<Controls::ComboBox>(FeetPositionFilterOptionBox());
-		feetRotationFilterOptionBox =
-			std::make_shared<Controls::ComboBox>(FeetRotationFilterOptionBox());
-		kneePositionFilterOptionBox =
-			std::make_shared<Controls::ComboBox>(KneePositionFilterOptionBox());
-		kneeRotationFilterOptionBox =
-			std::make_shared<Controls::ComboBox>(KneeRotationFilterOptionBox());
-		elbowsPositionFilterOptionBox =
-			std::make_shared<Controls::ComboBox>(ElbowsPositionFilterOptionBox());
-		elbowsRotationFilterOptionBox =
-			std::make_shared<Controls::ComboBox>(ElbowsRotationFilterOptionBox());
-
-		softwareRotationItem =
-			std::make_shared<Controls::ComboBoxItem>(SoftwareRotationItem());
 
 		externalFlipCheckBox = std::make_shared<Controls::CheckBox>(ExternalFlipCheckBox());
 		autoSpawnCheckbox = std::make_shared<Controls::CheckBox>(AutoSpawnCheckBox());
@@ -48,25 +51,86 @@ namespace winrt::KinectToVR::implementation
 		autoStartCheckBox = std::make_shared<Controls::CheckBox>(AutoStartCheckBox());
 
 		flipDropDownGrid = std::make_shared<Controls::Grid>(FlipDropDownGrid());
+
+		jointExpanderHostStackPanel = std::make_shared<Controls::StackPanel>(JointExpanderHostStackPanel());
+
 		flipToggle = std::make_shared<Controls::ToggleSwitch>(FlipToggle());
 
 		externalFlipCheckBoxLabel = std::make_shared<Controls::TextBlock>(ExternalFlipCheckBoxLabel());
 		setErrorFlyoutText = std::make_shared<Controls::TextBlock>(SetErrorFlyoutText());
 
-		trackerPairEnabledToggles.at(0) = std::make_shared<Controls::ToggleSwitch>(WaistTrackerEnabledToggle());
-		trackerPairEnabledToggles.at(1) = std::make_shared<Controls::ToggleSwitch>(FeetTrackersEnabledToggle());
-		trackerPairEnabledToggles.at(2) = std::make_shared<Controls::ToggleSwitch>(ElbowTrackersEnabledToggle());
-		trackerPairEnabledToggles.at(3) = std::make_shared<Controls::ToggleSwitch>(KneeTrackersEnabledToggle());
-
-		waistDropDown = std::make_shared<Controls::Expander>(WaistDropDown());
-		feetDropDown = std::make_shared<Controls::Expander>(FeetDropDown());
-		kneesDropDown = std::make_shared<Controls::Expander>(KneesDropDown());
-		elbowsDropDown = std::make_shared<Controls::Expander>(ElbowsDropDown());
 		flipDropDown = std::make_shared<Controls::Expander>(FlipDropDown());
-
 		soundsVolumeSlider = std::make_shared<Controls::Slider>(SoundsVolumeSlider());
-
 		externalFlipStackPanel = std::make_shared<Controls::StackPanel>(ExternalFlipStackPanel());
+
+		LOG(INFO) << "Rebuilding joint expanders... this may take a while...";
+
+		jointExpanderVector.clear();
+		jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+			new Controls::JointExpander({ &k2app::K2Settings.K2TrackersVector[0] }))));
+
+		if (k2app::K2Settings.useTrackerPairs)
+		{
+			LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
+
+			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+				new Controls::JointExpander(
+					{ &k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2] },
+					k2app::interfacing::LocalizedResourceWString(
+						L"SharedStrings", L"Joints/Pairs/Feet")))));
+
+			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+				new Controls::JointExpander(
+					{ &k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4] },
+					k2app::interfacing::LocalizedResourceWString(
+						L"SharedStrings", L"Joints/Pairs/Elbows")))));
+
+			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+				new Controls::JointExpander(
+					{ &k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6] },
+					k2app::interfacing::LocalizedResourceWString(
+						L"SharedStrings", L"Joints/Pairs/Knees")))));
+		}
+
+		LOG(INFO) << "Appending additional expanders (if they exist)...";
+
+		// k2app::K2Settings.useTrackerPairs ? 7 : 1 means that if pairs have
+		// already been appended, we'll start after them, and if not -
+		// - we'll append them as individual tracker/joint expanders
+
+		for (uint32_t index = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
+			index < k2app::K2Settings.K2TrackersVector.size(); index++)
+			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+				new Controls::JointExpander({ &k2app::K2Settings.K2TrackersVector[index] }))));
+
+		LOG(INFO) << "Clearing the appended expanders (UI Node)";
+		settings_safe_clear(jointExpanderHostStackPanel);
+
+		LOG(INFO) << "Appending the new expanders to the UI Node";
+
+		int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
+		for (auto expander : jointExpanderVector)
+		{
+			// Append the expander
+			jointExpanderHostStackPanel->Children().Append(*expander->Container());
+
+			// Append the separator (optionally)
+			if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+			{
+				auto separator = Shapes::Rectangle();
+				separator.HorizontalAlignment(HorizontalAlignment::Stretch);
+				separator.Height(1);
+				separator.Margin({ 0, 10, 0, 0 });
+				separator.Stroke(Media::SolidColorBrush(
+					Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
+				separator.Fill(Media::SolidColorBrush(
+					Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
+
+				jointExpanderHostStackPanel->Children().Append(separator);
+				_expander_number = 1;
+			}
+			else _expander_number++;
+		}
 	}
 }
 
@@ -172,107 +236,24 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 {
 	using namespace k2app::shared::settings;
 
+	// Notify of the setup end
+	k2app::shared::settings::settings_localInitFinished = false;
+	CheckOverlapsCheckBox().IsChecked(k2app::K2Settings.checkForOverlappingTrackers);
+
 	// Select saved flip, position and rotation options
 	flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);
 	externalFlipCheckBox.get()->IsChecked(k2app::K2Settings.isExternalFlipEnabled);
 
-	// Waist (pos)
-	waistPositionFilterOptionBox.get()->SelectedIndex(
-		k2app::K2Settings.positionTrackingFilterOptions[0]);
-
-	// Feet (pos)
-	feetPositionFilterOptionBox.get()->SelectedIndex(
-		k2app::K2Settings.positionTrackingFilterOptions[1]);
-
-	// Elbows (pos)
-	elbowsPositionFilterOptionBox.get()->SelectedIndex(
-		k2app::K2Settings.positionTrackingFilterOptions[3]);
-
-	// Knees (pos)
-	kneePositionFilterOptionBox.get()->SelectedIndex(
-		k2app::K2Settings.positionTrackingFilterOptions[5]);
-
-	// Feet
-	feetRotationFilterOptionBox.get()->SelectedIndex(
-		k2app::K2Settings.jointRotationTrackingOption[1]);
-
-	// Waist
-	switch (k2app::K2Settings.jointRotationTrackingOption[0]) // Waist
-	{
-	default:
-		waistRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
-	// Device
-	case k2app::k2_DeviceInferredRotation:
-		waistRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
-		break;
-	// Software
-	case k2app::k2_SoftwareCalculatedRotation: // If somehow...
-		waistRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
-		break;
-	// Headset
-	case k2app::k2_FollowHMDRotation:
-		waistRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_FollowHMDRotation - 1); // -1 to skip app-based rot
-		break;
-	// Disable
-	case k2app::k2_DisableJointRotation:
-		waistRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DisableJointRotation - 1);
-	// -1 to skip app-based rot
-		break;
-	}
-
-	// Elbows
-	switch (k2app::K2Settings.jointRotationTrackingOption[3]) // LElbow
-	{
-	default:
-		elbowsRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
-	// Device
-	case k2app::k2_DeviceInferredRotation:
-		elbowsRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
-		break;
-	// Software
-	case k2app::k2_SoftwareCalculatedRotation: // If somehow...
-		elbowsRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
-		break;
-	// Headset
-	case k2app::k2_FollowHMDRotation:
-		elbowsRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_FollowHMDRotation - 1); // -1 to skip app-based rot
-		break;
-	// Disable
-	case k2app::k2_DisableJointRotation:
-		elbowsRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DisableJointRotation - 1);
-	// -1 to skip app-based rot
-		break;
-	}
-
-	// Knees
-	switch (k2app::K2Settings.jointRotationTrackingOption[5]) // LKnee
-	{
-	default:
-		kneeRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
-	// Device
-	case k2app::k2_DeviceInferredRotation:
-		kneeRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
-		break;
-	// Software
-	case k2app::k2_SoftwareCalculatedRotation: // If somehow...
-		kneeRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
-		break;
-	// Headset
-	case k2app::k2_FollowHMDRotation:
-		kneeRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_FollowHMDRotation - 1); // -1 to skip app-based rot
-		break;
-	// Disable
-	case k2app::k2_DisableJointRotation:
-		kneeRotationFilterOptionBox.get()->SelectedIndex(k2app::k2_DisableJointRotation - 1);
-	// -1 to skip app-based rot
-		break;
-	}
-
-	if (const auto& trackingDevice = TrackingDevices::getCurrentDevice(); trackingDevice.index() == 0)
+	if (const auto& trackingDevice = TrackingDevices::getCurrentDevice();
+		trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		softwareRotationItem.get()->IsEnabled(
-			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported());
+		const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+			isAppOrientationSupported();
+
+		for (auto expander : jointExpanderVector)
+			expander->EnableSoftwareOrientation(_sup);
+
 		flipToggle.get()->IsEnabled(
 			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
 		flipDropDown.get()->IsEnabled(
@@ -283,7 +264,9 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	else if (trackingDevice.index() == 1)
 	{
 		// Joints Basis
-		softwareRotationItem.get()->IsEnabled(false);
+		for (auto expander : jointExpanderVector)
+			expander->EnableSoftwareOrientation(false);
+
 		flipToggle.get()->IsEnabled(false);
 		flipDropDown.get()->IsEnabled(false);
 		flipDropDownGrid.get()->Opacity(0.5);
@@ -291,10 +274,8 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	}
 
 	// Load the tracker configuration
-	trackerPairEnabledToggles.at(0).get()->IsOn(k2app::K2Settings.isJointPairEnabled[0]);
-	trackerPairEnabledToggles.at(1).get()->IsOn(k2app::K2Settings.isJointPairEnabled[1]);
-	trackerPairEnabledToggles.at(2).get()->IsOn(k2app::K2Settings.isJointPairEnabled[2]);
-	trackerPairEnabledToggles.at(3).get()->IsOn(k2app::K2Settings.isJointPairEnabled[3]);
+	for (auto expander : jointExpanderVector)
+		expander->UpdateIsActive();
 
 	// Load auto-spawn and sounds config
 	autoSpawnCheckbox->IsChecked(k2app::K2Settings.autoSpawnEnabledJoints);
@@ -303,7 +284,7 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 
 	// Load tracker settings/enabled
 	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
-
+	
 	// Notify of the setup end
 	k2app::shared::settings::settings_localInitFinished = true;
 }
@@ -385,508 +366,10 @@ void KinectToVR::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutIt
 {
 	k2app::K2Settings.externalFlipCalibrationYaw =
 		EigenUtils::QuatToEulers(
-			k2app::interfacing::K2TrackersVector.at(0).pose.orientation).y();
+			k2app::K2Settings.K2TrackersVector.at(0).pose.orientation).y();
 
 	LOG(INFO) << "Captured yaw for external flip: " <<
 		radiansToDegrees(k2app::K2Settings.externalFlipCalibrationYaw) << "deg";
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::WaistDropDown_Expanding(
-	const Controls::Expander& sender,
-	const Controls::ExpanderExpandingEventArgs& args)
-{
-	if (!k2app::shared::settings::settings_localInitFinished)return; // Don't even try if we're not set up yet
-	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
-
-	// Close all others if valid
-	if (k2app::K2Settings.isJointPairEnabled[0])
-	{
-		k2app::shared::settings::feetDropDown.get()->IsExpanded(false);
-		k2app::shared::settings::elbowsDropDown.get()->IsExpanded(false);
-		k2app::shared::settings::kneesDropDown.get()->IsExpanded(false);
-	}
-}
-
-
-Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::WaistTrackerEnabledToggle_Toggled(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)co_return;
-
-	// Mark trackers as inactive, back up the current one
-	const bool _trackersInitialized =
-		k2app::interfacing::K2AppTrackersInitialized;
-	k2app::interfacing::K2AppTrackersInitialized = false;
-	{
-		// Sleep on UI
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(20);
-		co_await ui_thread;
-	}
-
-	// Make actual changes
-	k2app::K2Settings.isJointPairEnabled[0] = 
-		k2app::shared::settings::trackerPairEnabledToggles.at(0).get()->IsOn();
-
-	// Check if we've disabled any joints from spawning and disable their mods
-	k2app::interfacing::devices_check_disabled_joints();
-	TrackingDevices::settings_trackersConfigChanged();
-
-	// Mark trackers as active (or backup)
-	{
-		// Sleep on UI
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(20);
-		co_await ui_thread;
-	}
-	k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::WaistPositionFilterOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)return;
-
-	switch (const uint32_t index = k2app::shared::settings::waistPositionFilterOptionBox.get()->SelectedIndex(); index)
-	{
-	// LERP
-	case 0:
-		k2app::K2Settings.positionTrackingFilterOptions[0] = k2app::k2_PositionTrackingFilter_LERP;
-		break;
-	// Lowpass
-	case 1:
-		k2app::K2Settings.positionTrackingFilterOptions[0] = k2app::k2_PositionTrackingFilter_Lowpass;
-		break;
-	// Kalman
-	case 2:
-		k2app::K2Settings.positionTrackingFilterOptions[0] = k2app::k2_PositionTrackingFilter_Kalman;
-		break;
-	// Disable
-	case 3:
-		k2app::K2Settings.positionTrackingFilterOptions[0] = k2app::k2_NoPositionTrackingFilter;
-		break;
-	}
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::WaistRotationFilterOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)return;
-
-	switch (const uint32_t index = k2app::shared::settings::waistRotationFilterOptionBox.get()->SelectedIndex(); index)
-	{
-	// Device
-	case 0:
-		k2app::K2Settings.jointRotationTrackingOption[0] = k2app::k2_DeviceInferredRotation;
-		break;
-	// Headset
-	case 1:
-		k2app::K2Settings.jointRotationTrackingOption[0] = k2app::k2_FollowHMDRotation;
-		break;
-	// Disable
-	case 2:
-		k2app::K2Settings.jointRotationTrackingOption[0] = k2app::k2_DisableJointRotation;
-		break;
-	}
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::FeetDropDown_Expanding(
-	const Controls::Expander& sender,
-	const Controls::ExpanderExpandingEventArgs& args)
-{
-	if (!k2app::shared::settings::settings_localInitFinished)return; // Don't even try if we're not set up yet
-	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
-
-	// Close all others if valid
-	if (k2app::K2Settings.isJointPairEnabled[1])
-	{
-		k2app::shared::settings::waistDropDown.get()->IsExpanded(false);
-		k2app::shared::settings::elbowsDropDown.get()->IsExpanded(false);
-		k2app::shared::settings::kneesDropDown.get()->IsExpanded(false);
-	}
-}
-
-
-Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::FeetTrackersEnabledToggle_Toggled(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)co_return;
-
-	// Mark trackers as inactive, back up the current one
-	const bool _trackersInitialized =
-		k2app::interfacing::K2AppTrackersInitialized;
-	k2app::interfacing::K2AppTrackersInitialized = false;
-	{
-		// Sleep on UI
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(20);
-		co_await ui_thread;
-	}
-
-	// Make actual changes
-	k2app::K2Settings.isJointPairEnabled[1] = 
-		k2app::shared::settings::trackerPairEnabledToggles.at(1).get()->IsOn();
-
-	// Check if we've disabled any joints from spawning and disable their mods
-	k2app::interfacing::devices_check_disabled_joints();
-	TrackingDevices::settings_trackersConfigChanged();
-
-	// Mark trackers as active (or backup)
-	{
-		// Sleep on UI
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(20);
-		co_await ui_thread;
-	}
-	k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::FeetPositionFilterOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)return;
-
-	switch (const uint32_t index = k2app::shared::settings::feetPositionFilterOptionBox.get()->SelectedIndex(); index)
-	{
-	// LERP
-	case 0:
-		k2app::K2Settings.positionTrackingFilterOptions[1] = k2app::k2_PositionTrackingFilter_LERP;
-		k2app::K2Settings.positionTrackingFilterOptions[2] = k2app::k2_PositionTrackingFilter_LERP;
-		break;
-	// Lowpass
-	case 1:
-		k2app::K2Settings.positionTrackingFilterOptions[1] = k2app::k2_PositionTrackingFilter_Lowpass;
-		k2app::K2Settings.positionTrackingFilterOptions[2] = k2app::k2_PositionTrackingFilter_Lowpass;
-		break;
-	// Kalman
-	case 2:
-		k2app::K2Settings.positionTrackingFilterOptions[1] = k2app::k2_PositionTrackingFilter_Kalman;
-		k2app::K2Settings.positionTrackingFilterOptions[2] = k2app::k2_PositionTrackingFilter_Kalman;
-		break;
-	// Disable
-	case 3:
-		k2app::K2Settings.positionTrackingFilterOptions[1] = k2app::k2_NoPositionTrackingFilter;
-		k2app::K2Settings.positionTrackingFilterOptions[2] = k2app::k2_NoPositionTrackingFilter;
-		break;
-	}
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::FeetRotationFilterOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)return;
-
-	switch (const uint32_t index = k2app::shared::settings::feetRotationFilterOptionBox.get()->SelectedIndex(); index)
-	{
-	// Device
-	case 0:
-		k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
-		k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
-		break;
-	// Software
-	case 1:
-		k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_SoftwareCalculatedRotation;
-		k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_SoftwareCalculatedRotation;
-		break;
-	// Headset
-	case 2:
-		k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_FollowHMDRotation;
-		k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_FollowHMDRotation;
-		break;
-	// Disable
-	case 3:
-		k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DisableJointRotation;
-		k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DisableJointRotation;
-		break;
-	}
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::ElbowsDropDown_Expanding(
-	const Controls::Expander& sender,
-	const Controls::ExpanderExpandingEventArgs& args)
-{
-	if (!k2app::shared::settings::settings_localInitFinished)return; // Don't even try if we're not set up yet
-	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
-
-	// Close all others if valid
-	if (k2app::K2Settings.isJointPairEnabled[2])
-	{
-		k2app::shared::settings::feetDropDown.get()->IsExpanded(false);
-		k2app::shared::settings::waistDropDown.get()->IsExpanded(false);
-		k2app::shared::settings::kneesDropDown.get()->IsExpanded(false);
-	}
-}
-
-
-Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::ElbowTrackersEnabledToggle_Toggled(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)co_return;
-
-	// Mark trackers as inactive, back up the current one
-	const bool _trackersInitialized =
-		k2app::interfacing::K2AppTrackersInitialized;
-	k2app::interfacing::K2AppTrackersInitialized = false;
-	{
-		// Sleep on UI
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(20);
-		co_await ui_thread;
-	}
-
-	// Make actual changes
-	k2app::K2Settings.isJointPairEnabled[2] = 
-		k2app::shared::settings::trackerPairEnabledToggles.at(2).get()->IsOn();
-
-	// Check if we've disabled any joints from spawning and disable their mods
-	k2app::interfacing::devices_check_disabled_joints();
-	TrackingDevices::settings_trackersConfigChanged();
-
-	// Mark trackers as active (or backup)
-	{
-		// Sleep on UI
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(20);
-		co_await ui_thread;
-	}
-	k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::ElbowsPositionFilterOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)return;
-
-	switch (const uint32_t index = k2app::shared::settings::elbowsPositionFilterOptionBox.get()->SelectedIndex(); index)
-	{
-	// LERP
-	case 0:
-		k2app::K2Settings.positionTrackingFilterOptions[3] = k2app::k2_PositionTrackingFilter_LERP;
-		k2app::K2Settings.positionTrackingFilterOptions[4] = k2app::k2_PositionTrackingFilter_LERP;
-		break;
-	// Lowpass
-	case 1:
-		k2app::K2Settings.positionTrackingFilterOptions[3] = k2app::k2_PositionTrackingFilter_Lowpass;
-		k2app::K2Settings.positionTrackingFilterOptions[4] = k2app::k2_PositionTrackingFilter_Lowpass;
-		break;
-	// Kalman
-	case 2:
-		k2app::K2Settings.positionTrackingFilterOptions[3] = k2app::k2_PositionTrackingFilter_Kalman;
-		k2app::K2Settings.positionTrackingFilterOptions[4] = k2app::k2_PositionTrackingFilter_Kalman;
-		break;
-	// Disable
-	case 3:
-		k2app::K2Settings.positionTrackingFilterOptions[3] = k2app::k2_NoPositionTrackingFilter;
-		k2app::K2Settings.positionTrackingFilterOptions[4] = k2app::k2_NoPositionTrackingFilter;
-		break;
-	}
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::ElbowsRotationFilterOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)return;
-
-	switch (const uint32_t index = k2app::shared::settings::elbowsRotationFilterOptionBox.get()->SelectedIndex(); index)
-	{
-	// Device
-	case 0:
-		k2app::K2Settings.jointRotationTrackingOption[3] = k2app::k2_DeviceInferredRotation;
-		k2app::K2Settings.jointRotationTrackingOption[4] = k2app::k2_DeviceInferredRotation;
-		break;
-	// Headset
-	case 1:
-		k2app::K2Settings.jointRotationTrackingOption[3] = k2app::k2_FollowHMDRotation;
-		k2app::K2Settings.jointRotationTrackingOption[4] = k2app::k2_FollowHMDRotation;
-		break;
-	// Disable
-	case 2:
-		k2app::K2Settings.jointRotationTrackingOption[3] = k2app::k2_DisableJointRotation;
-		k2app::K2Settings.jointRotationTrackingOption[4] = k2app::k2_DisableJointRotation;
-		break;
-	}
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::KneesDropDown_Expanding(
-	const Controls::Expander& sender,
-	const Controls::ExpanderExpandingEventArgs& args)
-{
-	if (!k2app::shared::settings::settings_localInitFinished)return; // Don't even try if we're not set up yet
-	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
-
-	// Close all others if valid
-	if (k2app::K2Settings.isJointPairEnabled[3])
-	{
-		k2app::shared::settings::feetDropDown.get()->IsExpanded(false);
-		k2app::shared::settings::elbowsDropDown.get()->IsExpanded(false);
-		k2app::shared::settings::waistDropDown.get()->IsExpanded(false);
-	}
-}
-
-
-Windows::Foundation::IAsyncAction KinectToVR::implementation::SettingsPage::KneeTrackersEnabledToggle_Toggled(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)co_return;
-
-	// Mark trackers as inactive, back up the current one
-	const bool _trackersInitialized =
-		k2app::interfacing::K2AppTrackersInitialized;
-	k2app::interfacing::K2AppTrackersInitialized = false;
-	{
-		// Sleep on UI
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(20);
-		co_await ui_thread;
-	}
-
-	// Make actual changes
-	k2app::K2Settings.isJointPairEnabled[3] = 
-		k2app::shared::settings::trackerPairEnabledToggles.at(3).get()->IsOn();
-
-	// Check if we've disabled any joints from spawning and disable their mods
-	k2app::interfacing::devices_check_disabled_joints();
-	TrackingDevices::settings_trackersConfigChanged();
-
-	// Mark trackers as active (or backup)
-	{
-		// Sleep on UI
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(20);
-		co_await ui_thread;
-	}
-	k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::KneePositionFilterOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)return;
-
-	switch (const uint32_t index = k2app::shared::settings::kneePositionFilterOptionBox.get()->SelectedIndex(); index)
-	{
-	// LERP
-	case 0:
-		k2app::K2Settings.positionTrackingFilterOptions[5] = k2app::k2_PositionTrackingFilter_LERP;
-		k2app::K2Settings.positionTrackingFilterOptions[6] = k2app::k2_PositionTrackingFilter_LERP;
-		break;
-	// Lowpass
-	case 1:
-		k2app::K2Settings.positionTrackingFilterOptions[5] = k2app::k2_PositionTrackingFilter_Lowpass;
-		k2app::K2Settings.positionTrackingFilterOptions[6] = k2app::k2_PositionTrackingFilter_Lowpass;
-		break;
-	// Kalman
-	case 2:
-		k2app::K2Settings.positionTrackingFilterOptions[5] = k2app::k2_PositionTrackingFilter_Kalman;
-		k2app::K2Settings.positionTrackingFilterOptions[6] = k2app::k2_PositionTrackingFilter_Kalman;
-		break;
-	// Disable
-	case 3:
-		k2app::K2Settings.positionTrackingFilterOptions[5] = k2app::k2_NoPositionTrackingFilter;
-		k2app::K2Settings.positionTrackingFilterOptions[6] = k2app::k2_NoPositionTrackingFilter;
-		break;
-	}
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::SettingsPage::KneeRotationFilterOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)return;
-
-	switch (const uint32_t index = k2app::shared::settings::kneeRotationFilterOptionBox.get()->SelectedIndex(); index)
-	{
-	// Device
-	case 0:
-		k2app::K2Settings.jointRotationTrackingOption[5] = k2app::k2_DeviceInferredRotation;
-		k2app::K2Settings.jointRotationTrackingOption[6] = k2app::k2_DeviceInferredRotation;
-		break;
-	// Headset
-	case 1:
-		k2app::K2Settings.jointRotationTrackingOption[5] = k2app::k2_FollowHMDRotation;
-		k2app::K2Settings.jointRotationTrackingOption[6] = k2app::k2_FollowHMDRotation;
-		break;
-	// Disable
-	case 2:
-		k2app::K2Settings.jointRotationTrackingOption[5] = k2app::k2_DisableJointRotation;
-		k2app::K2Settings.jointRotationTrackingOption[6] = k2app::k2_DisableJointRotation;
-		break;
-	}
-
-	// Save settings
 	k2app::K2Settings.saveSettings();
 }
 
@@ -1032,12 +515,444 @@ void winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersButton_Cl
 	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
 	LearnAboutFiltersFlyout().ShowAt(LearnAboutFiltersButton(), options);
-	DimGrid().Visibility(Visibility::Visible);
+	DimGrid().Opacity(0.5);
+	DimGrid().IsHitTestVisible(true);
 }
 
 
 void winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersFlyout_Closed(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
 {
-	DimGrid().Visibility(Visibility::Collapsed);
+	DimGrid().Opacity(0.0);
+	DimGrid().IsHitTestVisible(false);
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::TrackerConfigButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	auto trackerConfigFlyout = Controls::MenuFlyout();
+
+	enum i_tracker_list
+	{
+		Tracker_Waist,
+		Tracker_LeftFoot,
+		Tracker_RightFoot,
+		Tracker_LeftElbow,
+		Tracker_RightElbow,
+		Tracker_LeftKnee,
+		Tracker_RightKnee,
+
+		Tracker_Chest,
+		Tracker_LeftShoulder,
+		Tracker_RightShoulder,
+		Tracker_Handed,
+		Tracker_Camera,
+		Tracker_Keyboard
+	};
+
+	std::map<i_tracker_list, ktvr::ITrackerType> tracker_map
+	{
+		{i_tracker_list::Tracker_Handed, ktvr::ITrackerType::Tracker_Handed},
+		{i_tracker_list::Tracker_LeftFoot, ktvr::ITrackerType::Tracker_LeftFoot},
+		{i_tracker_list::Tracker_RightFoot, ktvr::ITrackerType::Tracker_RightFoot},
+		{i_tracker_list::Tracker_LeftShoulder, ktvr::ITrackerType::Tracker_LeftShoulder},
+		{i_tracker_list::Tracker_RightShoulder, ktvr::ITrackerType::Tracker_RightShoulder},
+		{i_tracker_list::Tracker_LeftElbow, ktvr::ITrackerType::Tracker_LeftElbow},
+		{i_tracker_list::Tracker_RightElbow, ktvr::ITrackerType::Tracker_RightElbow},
+		{i_tracker_list::Tracker_LeftKnee, ktvr::ITrackerType::Tracker_LeftKnee},
+		{i_tracker_list::Tracker_RightKnee, ktvr::ITrackerType::Tracker_RightKnee},
+		{i_tracker_list::Tracker_Waist, ktvr::ITrackerType::Tracker_Waist},
+		{i_tracker_list::Tracker_Chest, ktvr::ITrackerType::Tracker_Chest},
+		{i_tracker_list::Tracker_Camera, ktvr::ITrackerType::Tracker_Camera},
+		{i_tracker_list::Tracker_Keyboard, ktvr::ITrackerType::Tracker_Keyboard}
+	};
+
+	for (uint32_t index = i_tracker_list::Tracker_Chest;
+	     index <= static_cast<int>(i_tracker_list::Tracker_Keyboard); index++)
+	{
+		// Back the current tracker's role up
+		ktvr::ITrackerType current_tracker =
+			tracker_map[static_cast<i_tracker_list>(index)];
+
+		auto menuTrackerToggleItem = Controls::ToggleMenuFlyoutItem();
+
+		menuTrackerToggleItem.Text(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SharedStrings", L"Joints/Enum/" +
+				std::to_wstring(static_cast<int>(current_tracker))));
+
+		bool isEnabled = (index >= static_cast<int>(
+			     i_tracker_list::Tracker_Chest)),
+		     isChecked = (index < static_cast<int>(
+			     i_tracker_list::Tracker_Chest));
+
+		for (const auto& tracker : k2app::K2Settings.K2TrackersVector)
+			if (tracker.tracker == tracker_map[static_cast<i_tracker_list>(index)])
+				isChecked = true; // Tracker is enabled
+
+		menuTrackerToggleItem.IsEnabled(isEnabled);
+		menuTrackerToggleItem.IsChecked(isChecked);
+
+		menuTrackerToggleItem.Click(
+			[&, index, tracker_map, current_tracker, this]
+		(const winrt::Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e) 
+			-> winrt::Windows::Foundation::IAsyncAction
+			{
+				// Notify of the setup end
+				k2app::shared::settings::settings_localInitFinished = false;
+
+				// Create a new tracker / Remove the unchecked one
+				if (sender.as<Controls::ToggleMenuFlyoutItem>().IsChecked())
+				{
+					// If not checked, add a new tracker
+					k2app::K2Settings.K2TrackersVector.push_back(k2app::K2AppTracker());
+
+					// Set the newly created tracker up
+					k2app::K2Settings.K2TrackersVector.back().tracker = current_tracker;
+					k2app::K2Settings.K2TrackersVector.back().data.serial =
+						k2app::ITrackerType_Role_Serial[k2app::K2Settings.K2TrackersVector.back().tracker];
+				}
+				else
+				// If the tracker was unchecked
+					for (uint32_t _t = 0; _t < k2app::K2Settings.K2TrackersVector.size(); _t++)
+						if (k2app::K2Settings.K2TrackersVector[_t].tracker == current_tracker) {
+
+							// Mark trackers as inactive, back up the current one
+							const bool _trackersInitialized =
+								k2app::interfacing::K2AppTrackersInitialized;
+							k2app::interfacing::K2AppTrackersInitialized = false;
+							{
+								// Sleep on UI
+								apartment_context ui_thread;
+								co_await resume_background();
+								Sleep(20);
+								co_await ui_thread;
+							}
+
+							// Make actual changes
+							k2app::K2Settings.K2TrackersVector.erase(
+								k2app::K2Settings.K2TrackersVector.begin() + _t);
+
+							// Check if we've disabled any joints from spawning and disable their mods
+							k2app::interfacing::devices_check_disabled_joints();
+							TrackingDevices::settings_trackersConfigChanged();
+
+							// Mark trackers as active (or backup)
+							{
+								// Sleep on UI
+								apartment_context ui_thread;
+								co_await resume_background();
+								Sleep(20);
+								co_await ui_thread;
+							}
+							k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
+
+							// Save settings
+							k2app::K2Settings.saveSettings();
+						}
+
+				// Rebuild joint the expander stack
+				using namespace k2app::shared::settings;
+
+				LOG(INFO) << "Rebuilding joint expanders... this may take a while...";
+				jointExpanderHostStackPanel->Transitions().Append(Media::Animation::ContentThemeTransition());
+
+				jointExpanderVector.clear();
+				jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+					new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[0]}))));
+
+				if (k2app::K2Settings.useTrackerPairs)
+				{
+					LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
+
+					jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+						new Controls::JointExpander(
+							{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
+							k2app::interfacing::LocalizedResourceWString(
+								L"SharedStrings", L"Joints/Pairs/Feet")))));
+
+					jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+						new Controls::JointExpander(
+							{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
+							k2app::interfacing::LocalizedResourceWString(
+								L"SharedStrings", L"Joints/Pairs/Elbows")))));
+
+					jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+						new Controls::JointExpander(
+							{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
+							k2app::interfacing::LocalizedResourceWString(
+								L"SharedStrings", L"Joints/Pairs/Knees")))));
+				}
+
+				LOG(INFO) << "Appending additional expanders (if they exist)...";
+
+				// k2app::K2Settings.useTrackerPairs ? 7 : 1 means that if pairs have
+				// already been appended, we'll start after them, and if not -
+				// - we'll append them as individual tracker/joint expanders
+
+				for (uint32_t ind = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
+				     ind < k2app::K2Settings.K2TrackersVector.size(); ind++)
+					jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+						new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[ind]}))));
+
+				LOG(INFO) << "Clearing the appended expanders (UI Node)";
+				settings_safe_clear(jointExpanderHostStackPanel);
+
+				LOG(INFO) << "Appending the new expanders to the UI Node";
+
+				int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
+				for (auto expander : jointExpanderVector)
+				{
+					// Append the expander
+					jointExpanderHostStackPanel->Children().Append(*expander->Container());
+
+					// Append the separator (optionally)
+					if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+					{
+						auto separator = Shapes::Rectangle();
+						separator.HorizontalAlignment(HorizontalAlignment::Stretch);
+						separator.Height(1);
+						separator.Margin({0, 10, 0, 0});
+						separator.Stroke(Media::SolidColorBrush(
+							Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
+						separator.Fill(Media::SolidColorBrush(
+							Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
+
+						jointExpanderHostStackPanel->Children().Append(separator);
+						_expander_number = 1;
+					}
+					else _expander_number++;
+				}
+
+				if (const auto& trackingDevice = TrackingDevices::getCurrentDevice();
+					trackingDevice.index() == 0)
+				{
+					// Kinect Basis
+					const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+						isAppOrientationSupported();
+
+					for (auto expander : jointExpanderVector)
+						expander->EnableSoftwareOrientation(_sup);
+
+					flipToggle.get()->IsEnabled(
+						std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+					flipDropDown.get()->IsEnabled(
+						std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+					flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
+					TrackingDevices::settings_set_external_flip_is_enabled();
+				}
+				else if (trackingDevice.index() == 1)
+				{
+					// Joints Basis
+					for (auto expander : jointExpanderVector)
+						expander->EnableSoftwareOrientation(false);
+
+					flipToggle.get()->IsEnabled(false);
+					flipDropDown.get()->IsEnabled(false);
+					flipDropDownGrid.get()->Opacity(0.5);
+					TrackingDevices::settings_set_external_flip_is_enabled(false);
+				}
+
+				// Load the tracker configuration
+				for (auto expander : jointExpanderVector)
+					expander->UpdateIsActive();
+
+				// Enable/Disable combos
+				TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
+
+				// Enable/Disable ExtFlip
+				TrackingDevices::settings_set_external_flip_is_enabled();
+
+				// Notify of the setup end
+				k2app::shared::settings::settings_localInitFinished = true;
+				k2app::K2Settings.saveSettings();
+
+				{
+					// Sleep on UI
+					apartment_context ui_thread;
+					co_await resume_background();
+					Sleep(100);
+					co_await ui_thread;
+				}
+				jointExpanderHostStackPanel->Transitions().RemoveAtEnd();
+				co_return;
+			});
+
+		// Append the item
+		trackerConfigFlyout.Items().Append(menuTrackerToggleItem);
+	}
+
+	auto menuPairsToggleItem = Controls::ToggleMenuFlyoutItem();
+	menuPairsToggleItem.Text(
+		k2app::interfacing::LocalizedResourceWString(
+			L"SettingsPage", L"Captions/TrackerPairs"));
+
+	menuPairsToggleItem.IsChecked(k2app::K2Settings.useTrackerPairs);
+	menuPairsToggleItem.Click(
+		[&, this](const winrt::Windows::Foundation::IInspectable& sender, 
+			const RoutedEventArgs& e) -> Windows::Foundation::IAsyncAction
+		{
+			// Notify of the setup end
+			k2app::shared::settings::settings_localInitFinished = false;
+
+			k2app::K2Settings.useTrackerPairs = sender.as<Controls::ToggleMenuFlyoutItem>().IsChecked();
+
+			// Rebuild joint the expander stack
+			using namespace k2app::shared::settings;
+
+			LOG(INFO) << "Rebuilding joint expanders... this may take a while...";
+			jointExpanderHostStackPanel->Transitions().Append(Media::Animation::ContentThemeTransition());
+
+			jointExpanderVector.clear();
+			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+				new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[0]}))));
+
+			if (k2app::K2Settings.useTrackerPairs)
+			{
+				LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
+
+				jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+					new Controls::JointExpander(
+						{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
+						k2app::interfacing::LocalizedResourceWString(
+							L"SharedStrings", L"Joints/Pairs/Feet")))));
+
+				jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+					new Controls::JointExpander(
+						{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
+						k2app::interfacing::LocalizedResourceWString(
+							L"SharedStrings", L"Joints/Pairs/Elbows")))));
+
+				jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+					new Controls::JointExpander(
+						{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
+						k2app::interfacing::LocalizedResourceWString(
+							L"SharedStrings", L"Joints/Pairs/Knees")))));
+			}
+
+			LOG(INFO) << "Appending additional expanders (if they exist)...";
+
+			// k2app::K2Settings.useTrackerPairs ? 7 : 1 means that if pairs have
+			// already been appended, we'll start after them, and if not -
+			// - we'll append them as individual tracker/joint expanders
+
+			for (uint32_t ind = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
+			     ind < k2app::K2Settings.K2TrackersVector.size(); ind++)
+				jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
+					new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[ind]}))));
+
+			LOG(INFO) << "Clearing the appended expanders (UI Node)";
+			settings_safe_clear(jointExpanderHostStackPanel);
+
+			LOG(INFO) << "Appending the new expanders to the UI Node";
+
+			int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
+			for (auto expander : jointExpanderVector)
+			{
+				// Append the expander
+				jointExpanderHostStackPanel->Children().Append(*expander->Container());
+
+				// Append the separator (optionally)
+				if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+				{
+					auto separator = Shapes::Rectangle();
+					separator.HorizontalAlignment(HorizontalAlignment::Stretch);
+					separator.Height(1);
+					separator.Margin({0, 10, 0, 0});
+					separator.Stroke(Media::SolidColorBrush(
+						Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
+					separator.Fill(Media::SolidColorBrush(
+						Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
+
+					jointExpanderHostStackPanel->Children().Append(separator);
+					_expander_number = 1;
+				}
+				else _expander_number++;
+			}
+
+			if (const auto& trackingDevice = TrackingDevices::getCurrentDevice();
+				trackingDevice.index() == 0)
+			{
+				// Kinect Basis
+				const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+					isAppOrientationSupported();
+
+				for (auto expander : jointExpanderVector)
+					expander->EnableSoftwareOrientation(_sup);
+
+				flipToggle.get()->IsEnabled(
+					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+				flipDropDown.get()->IsEnabled(
+					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+				flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
+				TrackingDevices::settings_set_external_flip_is_enabled();
+			}
+			else if (trackingDevice.index() == 1)
+			{
+				// Joints Basis
+				for (auto expander : jointExpanderVector)
+					expander->EnableSoftwareOrientation(false);
+
+				flipToggle.get()->IsEnabled(false);
+				flipDropDown.get()->IsEnabled(false);
+				flipDropDownGrid.get()->Opacity(0.5);
+				TrackingDevices::settings_set_external_flip_is_enabled(false);
+			}
+
+			// Load the tracker configuration
+			for (auto expander : jointExpanderVector)
+				expander->UpdateIsActive();
+
+			// Enable/Disable combos
+			TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
+
+			// Enable/Disable ExtFlip
+			TrackingDevices::settings_set_external_flip_is_enabled();
+
+			// Notify of the setup end
+			k2app::shared::settings::settings_localInitFinished = true;
+			k2app::K2Settings.saveSettings();
+			k2app::K2Settings.readSettings(); // Calls config check
+
+			{
+				// Sleep on UI
+				apartment_context ui_thread;
+				co_await resume_background();
+				Sleep(100);
+				co_await ui_thread;
+			}
+			jointExpanderHostStackPanel->Transitions().RemoveAtEnd();
+			co_return;
+		});
+
+	// Append the item
+	trackerConfigFlyout.Items().Append(Controls::MenuFlyoutSeparator());
+	trackerConfigFlyout.Items().Append(menuPairsToggleItem);
+
+	trackerConfigFlyout.Placement(Controls::Primitives::FlyoutPlacementMode::LeftEdgeAlignedBottom);
+	trackerConfigFlyout.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+	trackerConfigFlyout.ShowAt(TrackerConfigButton());
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::CheckOverlapsCheckBox_Checked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!k2app::shared::settings::settings_localInitFinished)return;
+
+	k2app::K2Settings.checkForOverlappingTrackers = true;
+	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::SettingsPage::CheckOverlapsCheckBox_Unchecked(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!k2app::shared::settings::settings_localInitFinished)return;
+
+	k2app::K2Settings.checkForOverlappingTrackers = false;
+	k2app::K2Settings.saveSettings();
 }

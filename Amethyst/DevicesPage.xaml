@@ -65,7 +65,7 @@
                           VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                      x:Name="DevicesMainContentGridOuter">
+                      x:Name="DevicesMainContentGridOuter" Margin="0,0,0,15">
 
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                           x:Name="DevicesMainContentGridInner">
@@ -328,7 +328,7 @@
 
                                     <!--W,L,R-->
 
-                                    <Expander Margin="40,15,30,0" IsExpanded="True" x:Name="OverridesDropDown"
+                                    <Expander Margin="40,17,30,0" IsExpanded="True" x:Name="OverridesDropDown"
                                               ExpandDirection="Down" Visibility="Collapsed"
                                               Expanding="OverridesDropDown_Expanding"
                                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
@@ -351,52 +351,18 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="50" />
+                                                    <RowDefinition Height="30" />
+                                                    <RowDefinition Height="20" />
                                                     <RowDefinition Height="50" />
                                                     <RowDefinition Height="50" />
                                                     <RowDefinition Height="50" />
                                                 </Grid.RowDefinitions>
 
-                                                <!-- Background -->
-                                                <Grid Grid.Column="1" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      CornerRadius="5,0,0,0" Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="2" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="3" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="4" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="5" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="6" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      CornerRadius="0,5,0,0" Canvas.ZIndex="-1" />
-
-                                                <!-- Background -->
-                                                <Grid Grid.Column="1" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="2" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="3" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="4" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="5" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="6" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="1"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="2"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="3"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="4"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="5"/>
 
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            x:Uid="/DevicesPage/Titles/Set/Tracker"
@@ -411,7 +377,7 @@
                                                            FontWeight="SemiBold"
                                                            Margin="0,0,0,0" Grid.Column="5" Grid.Row="0" />
 
-                                                <Grid Grid.Column="1" Grid.Row="1" Width="130" Margin="0,0,0,0"
+                                                <Grid Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                                     <Grid.ColumnDefinitions>
@@ -452,7 +418,7 @@
                                                           x:Name="WaistPositionOverrideOptionBox"
                                                           SelectionChanged="WaistPositionOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideWaistPosition, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="3" Grid.Row="1" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
@@ -467,14 +433,14 @@
                                                           x:Name="WaistRotationOverrideOptionBox"
                                                           SelectionChanged="WaistRotationOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideWaistRotation, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="5" Grid.Row="1" Margin="0,0,0,0">
+                                                          Grid.Column="5" Grid.Row="2" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
                                                 </ComboBox>
 
-                                                <Grid Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
+                                                <Grid Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                                     <Grid.ColumnDefinitions>
@@ -512,7 +478,7 @@
                                                           x:Name="LeftFootPositionOverrideOptionBox"
                                                           SelectionChanged="LeftFootPositionOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideLeftFootPosition, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
@@ -527,14 +493,14 @@
                                                           x:Name="LeftFootRotationOverrideOptionBox"
                                                           SelectionChanged="LeftFootRotationOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideLeftFootRotation, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="5" Grid.Row="2" Margin="0,0,0,0">
+                                                          Grid.Column="5" Grid.Row="3" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
                                                 </ComboBox>
 
-                                                <Grid Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
+                                                <Grid Grid.Column="1" Grid.Row="4" Width="130" Margin="0,0,0,0"
                                                       Name="RightFootOverrideLabel"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center">
 
@@ -575,7 +541,7 @@
                                                           x:Name="RightFootPositionOverrideOptionBox"
                                                           SelectionChanged="RightFootPositionOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideRightFootPosition, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="4" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
@@ -590,7 +556,7 @@
                                                           x:Name="RightFootRotationOverrideOptionBox"
                                                           SelectionChanged="RightFootRotationOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideRightFootRotation, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="5" Grid.Row="3" Margin="0,0,0,0">
+                                                          Grid.Column="5" Grid.Row="4" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
@@ -605,7 +571,7 @@
 
                                     <!--LE,RE,LK,RK-->
 
-                                    <Expander Margin="40,15,30,0" IsExpanded="False" x:Name="OverridesDropDown_1"
+                                    <Expander Margin="40,17,30,0" IsExpanded="False" x:Name="OverridesDropDown_1"
                                               ExpandDirection="Down" Visibility="Collapsed"
                                               Expanding="OverridesDropDown_1_Expanding"
                                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
@@ -628,73 +594,19 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="50" />
+                                                    <RowDefinition Height="30" />
+                                                    <RowDefinition Height="20" />
                                                     <RowDefinition Height="50" />
                                                     <RowDefinition Height="50" />
                                                     <RowDefinition Height="50" />
                                                     <RowDefinition Height="50" />
                                                 </Grid.RowDefinitions>
 
-
-                                                <!-- Background -->
-                                                <Grid Grid.Column="1" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      CornerRadius="5,0,0,0" Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="2" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="3" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="4" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="5" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="6" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      CornerRadius="0,5,0,0" Canvas.ZIndex="-1" />
-
-                                                <!-- Background -->
-                                                <Grid Grid.Column="1" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="2" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="3" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="4" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="5" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="6" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-
-                                                <!-- Background -->
-                                                <Grid Grid.Column="1" Grid.Row="4"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="2" Grid.Row="4"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="3" Grid.Row="4"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="4" Grid.Row="4"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="5" Grid.Row="4"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="6" Grid.Row="4"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="1"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="2"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="3"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="4"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="5"/>
 
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            FontWeight="SemiBold" 
@@ -709,7 +621,7 @@
                                                            x:Uid="/DevicesPage/Titles/Set/Orientation"
                                                            Margin="0,0,0,0" Grid.Column="5" Grid.Row="0" />
 
-                                                <Grid Grid.Column="1" Grid.Row="1" Width="130" Margin="0,0,0,0"
+                                                <Grid Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                                     <Grid.ColumnDefinitions>
@@ -749,7 +661,7 @@
                                                           x:Name="LeftElbowPositionOverrideOptionBox"
                                                           SelectionChanged="LeftElbowPositionOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideLeftElbowPosition, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="3" Grid.Row="1" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
@@ -764,14 +676,14 @@
                                                           x:Name="LeftElbowRotationOverrideOptionBox"
                                                           SelectionChanged="LeftElbowRotationOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideLeftElbowRotation, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="5" Grid.Row="1" Margin="0,0,0,0">
+                                                          Grid.Column="5" Grid.Row="2" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
                                                 </ComboBox>
 
-                                                <Grid Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
+                                                <Grid Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                                     <Grid.ColumnDefinitions>
@@ -811,7 +723,7 @@
                                                           x:Name="RightElbowPositionOverrideOptionBox"
                                                           SelectionChanged="RightElbowPositionOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideRightElbowPosition, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
@@ -826,14 +738,14 @@
                                                           x:Name="RightElbowRotationOverrideOptionBox"
                                                           SelectionChanged="RightElbowRotationOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideRightElbowRotation, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="5" Grid.Row="2" Margin="0,0,0,0">
+                                                          Grid.Column="5" Grid.Row="3" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
                                                 </ComboBox>
 
-                                                <Grid Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
+                                                <Grid Grid.Column="1" Grid.Row="4" Width="130" Margin="0,0,0,0"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                                     <Grid.ColumnDefinitions>
@@ -871,7 +783,7 @@
                                                           x:Name="LeftKneePositionOverrideOptionBox"
                                                           SelectionChanged="LeftKneePositionOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideLeftKneePosition, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="4" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
@@ -886,14 +798,14 @@
                                                           x:Name="LeftKneeRotationOverrideOptionBox"
                                                           SelectionChanged="LeftKneeRotationOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideLeftKneeRotation, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="5" Grid.Row="3" Margin="0,0,0,0">
+                                                          Grid.Column="5" Grid.Row="4" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
                                                 </ComboBox>
 
-                                                <Grid Grid.Column="1" Grid.Row="4" Width="130" Margin="0,0,0,0"
+                                                <Grid Grid.Column="1" Grid.Row="5" Width="130" Margin="0,0,0,0"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                                     <Grid.ColumnDefinitions>
@@ -933,7 +845,7 @@
                                                           x:Name="RightKneePositionOverrideOptionBox"
                                                           SelectionChanged="RightKneePositionOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideRightKneePosition, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="3" Grid.Row="4" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="5" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
@@ -948,7 +860,7 @@
                                                           x:Name="RightKneeRotationOverrideOptionBox"
                                                           SelectionChanged="RightKneeRotationOverrideOptionBox_SelectionChanged"
                                                           IsEnabled="{Binding ElementName=OverrideRightKneeRotation, Path=IsChecked, TargetNullValue=False}"
-                                                          Grid.Column="5" Grid.Row="4" Margin="0,0,0,0">
+                                                          Grid.Column="5" Grid.Row="5" Margin="0,0,0,0">
                                                     <x:String>No Override</x:String>
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
@@ -956,6 +868,78 @@
                                                 </ComboBox>
 
                                             </Grid>
+
+                                        </Expander.Content>
+
+                                    </Expander>
+
+                                    <!--OTHERS TODO-->
+
+                                    <Expander Margin="40,17,30,0" IsExpanded="False" x:Name="OverridesDropDown_2"
+                                              ExpandDirection="Down" Visibility="Visible"
+                                              HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+
+                                        <Expander.Header>
+                                            <TextBlock FontWeight="SemiBold" Text="Other Trackers" />
+                                        </Expander.Header>
+
+                                        <Expander.Content>
+
+                                            <StackPanel Orientation="Vertical" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                                                <Grid Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="00" />
+                                                        <ColumnDefinition Width="3*" MinWidth="80" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="3*" MinWidth="140" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="3*" MinWidth="140" />
+                                                        <ColumnDefinition Width="0" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="30" />
+                                                        <RowDefinition Height="20" />
+                                                    </Grid.RowDefinitions>
+
+                                                    <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="1"/>
+                                                    <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="2"/>
+                                                    <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="3"/>
+                                                    <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="4"/>
+                                                    <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="5"/>
+
+                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               FontWeight="SemiBold" 
+                                                               x:Uid="/DevicesPage/Titles/Set/Tracker"
+                                                               Margin="0,0,40,0" Grid.Column="1" Grid.Row="0" />
+                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               FontWeight="SemiBold" 
+                                                               x:Uid="/DevicesPage/Titles/Set/Position"
+                                                               Margin="0,0,0,0" Grid.Column="3" Grid.Row="0" />
+                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               FontWeight="SemiBold" 
+                                                               x:Uid="/DevicesPage/Titles/Set/Orientation"
+                                                               Margin="0,0,0,0" Grid.Column="5" Grid.Row="0" />
+                                                </Grid>
+
+                                                <Grid Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="0" />
+                                                        <ColumnDefinition Width="3*" MinWidth="80" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="3*" MinWidth="150" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="50" />
+                                                        <RowDefinition Height="50" />
+                                                        <RowDefinition Height="50" />
+                                                        <RowDefinition Height="50" />
+                                                    </Grid.RowDefinitions>
+
+                                                </Grid>
+
+                                            </StackPanel>
 
                                         </Expander.Content>
 
@@ -984,7 +968,7 @@
 
                                     <!--W,L,R-->
 
-                                    <Expander Margin="40,15,30,0" IsExpanded="True" x:Name="JointBasisDropDown"
+                                    <Expander Margin="40,17,30,0" IsExpanded="True" x:Name="JointBasisDropDown"
                                               ExpandDirection="Down" Visibility="Collapsed"
                                               HorizontalContentAlignment="Stretch"
                                               HorizontalAlignment="Stretch" Expanding="JointBasisDropDown_Expanding">
@@ -1006,33 +990,16 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="50" />
+                                                    <RowDefinition Height="30" />
+                                                    <RowDefinition Height="20" />
                                                     <RowDefinition Height="50" />
                                                     <RowDefinition Height="50" />
                                                     <RowDefinition Height="50" />
                                                 </Grid.RowDefinitions>
 
-                                                <!-- Background -->
-                                                <Grid Grid.Column="1" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      CornerRadius="5,0,0,0" Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="2" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="3" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      CornerRadius="0,5,0,0" Canvas.ZIndex="-1" />
-
-                                                <!-- Background -->
-                                                <Grid Grid.Column="1" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="2" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="3" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="1"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="2"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="3"/>
 
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            x:Uid="/DevicesPage/Titles/Set/Tracker"
@@ -1043,7 +1010,7 @@
                                                            FontWeight="SemiBold"
                                                            Margin="0,0,0,0" Grid.Column="3" Grid.Row="0" />
 
-                                                <TextBlock Grid.Column="1" Grid.Row="1" Width="130" Margin="0,0,0,0"
+                                                <TextBlock Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            x:Uid="/DevicesPage/Joints/Waist"
                                                            FontWeight="SemiBold"
@@ -1056,13 +1023,13 @@
                                                           x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="WaistJointOptionBox"
                                                           SelectionChanged="WaistJointOptionBox_SelectionChanged"
-                                                          Grid.Column="3" Grid.Row="1" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
                                                 </ComboBox>
 
-                                                <TextBlock Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
+                                                <TextBlock Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            x:Uid="/DevicesPage/Joints/LeftFoot"
                                                            FontWeight="SemiBold"
@@ -1075,13 +1042,13 @@
                                                           x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="LeftFootJointOptionBox"
                                                           SelectionChanged="LeftFootJointOptionBox_SelectionChanged"
-                                                          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
                                                 </ComboBox>
 
-                                                <TextBlock Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
+                                                <TextBlock Grid.Column="1" Grid.Row="4" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            x:Uid="/DevicesPage/Joints/RightFoot"
                                                            FontWeight="SemiBold"
@@ -1094,7 +1061,7 @@
                                                           x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="RightFootJointOptionBox"
                                                           SelectionChanged="RightFootJointOptionBox_SelectionChanged"
-                                                          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="4" Margin="0,0,0,0">
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
@@ -1108,7 +1075,7 @@
 
                                     <!--LE,RE,LK,RK-->
 
-                                    <Expander Margin="40,15,30,0" IsExpanded="False" x:Name="JointBasisDropDown_1"
+                                    <Expander Margin="40,17,30,0" IsExpanded="False" x:Name="JointBasisDropDown_1"
                                               ExpandDirection="Down" Visibility="Collapsed"
                                               HorizontalContentAlignment="Stretch"
                                               HorizontalAlignment="Stretch" Expanding="JointBasisDropDown_1_Expanding">
@@ -1130,45 +1097,17 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="50" />
+                                                    <RowDefinition Height="30" />
+                                                    <RowDefinition Height="20" />
                                                     <RowDefinition Height="50" />
                                                     <RowDefinition Height="50" />
                                                     <RowDefinition Height="50" />
                                                     <RowDefinition Height="50" />
                                                 </Grid.RowDefinitions>
 
-                                                <!-- Background -->
-                                                <Grid Grid.Column="1" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      CornerRadius="5,0,0,0" Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="2" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="3" Grid.Row="0"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      CornerRadius="0,5,0,0" Canvas.ZIndex="-1" />
-
-                                                <!-- Background -->
-                                                <Grid Grid.Column="1" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="2" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="3" Grid.Row="2"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-
-                                                <!-- Background -->
-                                                <Grid Grid.Column="1" Grid.Row="4"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="2" Grid.Row="4"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
-                                                <Grid Grid.Column="3" Grid.Row="4"
-                                                      Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}"
-                                                      Canvas.ZIndex="-1" />
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="1"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="2"/>
+                                                <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="3"/>
 
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            x:Uid="/DevicesPage/Titles/Set/Tracker"
@@ -1179,7 +1118,7 @@
                                                            FontWeight="SemiBold"
                                                            Margin="0,0,0,0" Grid.Column="3" Grid.Row="0" />
 
-                                                <TextBlock Grid.Column="1" Grid.Row="1" Width="130" Margin="0,0,0,0"
+                                                <TextBlock Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            x:Uid="/DevicesPage/Joints/LeftElbow"
                                                            FontWeight="SemiBold"
@@ -1192,13 +1131,13 @@
                                                           x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="LeftElbowJointOptionBox"
                                                           SelectionChanged="LeftElbowJointOptionBox_SelectionChanged"
-                                                          Grid.Column="3" Grid.Row="1" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
                                                 </ComboBox>
 
-                                                <TextBlock Grid.Column="1" Grid.Row="2" Width="130" Margin="0,0,0,0"
+                                                <TextBlock Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            x:Uid="/DevicesPage/Joints/RightElbow"
                                                            FontWeight="SemiBold"
@@ -1211,13 +1150,13 @@
                                                           x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="RightElbowJointOptionBox"
                                                           SelectionChanged="RightElbowJointOptionBox_SelectionChanged"
-                                                          Grid.Column="3" Grid.Row="2" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
                                                 </ComboBox>
 
-                                                <TextBlock Grid.Column="1" Grid.Row="3" Width="130" Margin="0,0,0,0"
+                                                <TextBlock Grid.Column="1" Grid.Row="4" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            x:Uid="/DevicesPage/Joints/LeftKnee"
                                                            FontWeight="SemiBold"
@@ -1230,13 +1169,13 @@
                                                           x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="LeftKneeJointOptionBox"
                                                           SelectionChanged="LeftKneeJointOptionBox_SelectionChanged"
-                                                          Grid.Column="3" Grid.Row="3" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="4" Margin="0,0,0,0">
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
                                                 </ComboBox>
 
-                                                <TextBlock Grid.Column="1" Grid.Row="4" Width="130" Margin="0,0,0,0"
+                                                <TextBlock Grid.Column="1" Grid.Row="5" Width="130" Margin="0,0,0,0"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                                            x:Uid="/DevicesPage/Joints/RightKnee"
                                                            FontWeight="SemiBold"
@@ -1249,7 +1188,7 @@
                                                           x:Uid="/DevicesPage/Placeholders/Joints/Disabled"
                                                           x:Name="RightKneeJointOptionBox"
                                                           SelectionChanged="RightKneeJointOptionBox_SelectionChanged"
-                                                          Grid.Column="3" Grid.Row="4" Margin="0,0,0,0">
+                                                          Grid.Column="3" Grid.Row="5" Margin="0,0,0,0">
                                                     <x:String>DUM_Joint0</x:String>
                                                     <x:String>DUM_Joint1</x:String>
                                                     <x:String>DUM_Joint2</x:String>
@@ -1259,6 +1198,69 @@
 
                                         </Expander.Content>
 
+                                    </Expander>
+
+                                    <!--OTHERS TODO-->
+
+                                    <Expander Margin="40,17,30,0" IsExpanded="False" x:Name="JointBasisDropDown_2"
+                                              ExpandDirection="Down" Visibility="Visible"
+                                              HorizontalContentAlignment="Stretch"
+                                              HorizontalAlignment="Stretch">
+
+                                        <Expander.Header>
+                                            <TextBlock FontWeight="SemiBold" Text="Other Trackers" />
+                                        </Expander.Header>
+
+                                        <Expander.Content>
+
+                                            <StackPanel Orientation="Vertical" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                                                <Grid Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="0" />
+                                                        <ColumnDefinition Width="3*" MinWidth="80" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="3*" MinWidth="150" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="30" />
+                                                        <RowDefinition Height="20" />
+                                                    </Grid.RowDefinitions>
+
+                                                    <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="1"/>
+                                                    <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="2"/>
+                                                    <MenuFlyoutSeparator Margin="4,0" Grid.Row="1" Grid.Column="3"/>
+
+                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                           x:Uid="/DevicesPage/Titles/Set/Tracker"
+                                                           FontWeight="SemiBold"
+                                                           Margin="0,0,0,0" Grid.Column="1" Grid.Row="0" />
+                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                           x:Uid="/DevicesPage/Titles/Set/TrackedJoint"
+                                                           FontWeight="SemiBold"
+                                                           Margin="0,0,0,0" Grid.Column="3" Grid.Row="0" />
+                                                </Grid>
+
+                                                <Grid Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="0" />
+                                                        <ColumnDefinition Width="3*" MinWidth="80" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="3*" MinWidth="150" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="50" />
+                                                        <RowDefinition Height="50" />
+                                                        <RowDefinition Height="50" />
+                                                        <RowDefinition Height="50" />
+                                                    </Grid.RowDefinitions>
+
+                                                </Grid>
+
+                                            </StackPanel>
+
+                                        </Expander.Content>
                                     </Expander>
 
                                 </StackPanel>

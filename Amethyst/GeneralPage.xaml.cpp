@@ -138,102 +138,102 @@ void KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 	pending_offsets_update = true;
 
 	k2app::shared::general::waistXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[0].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(0).positionOffset.x() * 100.0));
 	k2app::shared::general::waistYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[0].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(0).positionOffset.y() * 100.0));
 	k2app::shared::general::waistZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[0].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(0).positionOffset.z() * 100.0));
 
 	k2app::shared::general::leftFootXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[1].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(1).positionOffset.x() * 100.0));
 	k2app::shared::general::leftFootYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[1].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(1).positionOffset.y() * 100.0));
 	k2app::shared::general::leftFootZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[1].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(1).positionOffset.z() * 100.0));
 
 	k2app::shared::general::rightFootXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[2].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(2).positionOffset.x() * 100.0));
 	k2app::shared::general::rightFootYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[2].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(2).positionOffset.y() * 100.0));
 	k2app::shared::general::rightFootZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[2].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(2).positionOffset.z() * 100.0));
 
 	k2app::shared::general::leftElbowXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[3].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(3).positionOffset.x() * 100.0));
 	k2app::shared::general::leftElbowYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[3].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(3).positionOffset.y() * 100.0));
 	k2app::shared::general::leftElbowZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[3].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(3).positionOffset.z() * 100.0));
 
 	k2app::shared::general::rightElbowXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[4].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(4).positionOffset.x() * 100.0));
 	k2app::shared::general::rightElbowYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[4].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(4).positionOffset.y() * 100.0));
 	k2app::shared::general::rightElbowZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[4].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(4).positionOffset.z() * 100.0));
 
 	k2app::shared::general::leftKneeXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[5].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(5).positionOffset.x() * 100.0));
 	k2app::shared::general::leftKneeYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[5].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(5).positionOffset.y() * 100.0));
 	k2app::shared::general::leftKneeZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[5].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(5).positionOffset.z() * 100.0));
 
 	k2app::shared::general::rightKneeXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[6].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(6).positionOffset.x() * 100.0));
 	k2app::shared::general::rightKneeYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[6].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(6).positionOffset.y() * 100.0));
 	k2app::shared::general::rightKneeZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[6].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(6).positionOffset.z() * 100.0));
 
 	k2app::shared::general::waistPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.x()))));
 	k2app::shared::general::waistYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.y()))));
 	k2app::shared::general::waistRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.z()))));
 
 	k2app::shared::general::leftFootPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.x()))));
 	k2app::shared::general::leftFootYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.y()))));
 	k2app::shared::general::leftFootRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.z()))));
 
 	k2app::shared::general::rightFootPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.x()))));
 	k2app::shared::general::rightFootYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.y()))));
 	k2app::shared::general::rightFootRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.z()))));
 
 	k2app::shared::general::leftElbowRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.z()))));
 	k2app::shared::general::leftElbowYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.y()))));
 	k2app::shared::general::leftElbowPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.x()))));
 
 	k2app::shared::general::rightElbowRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.z()))));
 	k2app::shared::general::rightElbowYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.y()))));
 	k2app::shared::general::rightElbowPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.x()))));
 
 	k2app::shared::general::leftKneeRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.z()))));
 	k2app::shared::general::leftKneeYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.y()))));
 	k2app::shared::general::leftKneePitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.x()))));
 
 	k2app::shared::general::rightKneeRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.z()))));
 	k2app::shared::general::rightKneeYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.y()))));
 	k2app::shared::general::rightKneePitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.x()))));
 
 	// Notice that we're finished
 	pending_offsets_update = false;
@@ -301,102 +301,102 @@ void KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
 	pending_offsets_update = true;
 
 	k2app::shared::general::waistXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[0].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(0).positionOffset.x() * 100.0));
 	k2app::shared::general::waistYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[0].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(0).positionOffset.y() * 100.0));
 	k2app::shared::general::waistZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[0].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(0).positionOffset.z() * 100.0));
 
 	k2app::shared::general::leftFootXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[1].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(1).positionOffset.x() * 100.0));
 	k2app::shared::general::leftFootYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[1].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(1).positionOffset.y() * 100.0));
 	k2app::shared::general::leftFootZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[1].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(1).positionOffset.z() * 100.0));
 
 	k2app::shared::general::rightFootXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[2].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(2).positionOffset.x() * 100.0));
 	k2app::shared::general::rightFootYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[2].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(2).positionOffset.y() * 100.0));
 	k2app::shared::general::rightFootZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[2].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(2).positionOffset.z() * 100.0));
 
 	k2app::shared::general::leftElbowXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[3].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(3).positionOffset.x() * 100.0));
 	k2app::shared::general::leftElbowYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[3].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(3).positionOffset.y() * 100.0));
 	k2app::shared::general::leftElbowZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[3].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(3).positionOffset.z() * 100.0));
 
 	k2app::shared::general::rightElbowXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[4].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(4).positionOffset.x() * 100.0));
 	k2app::shared::general::rightElbowYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[4].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(4).positionOffset.y() * 100.0));
 	k2app::shared::general::rightElbowZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[4].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(4).positionOffset.z() * 100.0));
 
 	k2app::shared::general::leftKneeXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[5].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(5).positionOffset.x() * 100.0));
 	k2app::shared::general::leftKneeYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[5].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(5).positionOffset.y() * 100.0));
 	k2app::shared::general::leftKneeZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[5].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(5).positionOffset.z() * 100.0));
 
 	k2app::shared::general::rightKneeXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[6].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(6).positionOffset.x() * 100.0));
 	k2app::shared::general::rightKneeYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[6].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(6).positionOffset.y() * 100.0));
 	k2app::shared::general::rightKneeZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[6].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(6).positionOffset.z() * 100.0));
 
 	k2app::shared::general::waistPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.x()))));
 	k2app::shared::general::waistYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.y()))));
 	k2app::shared::general::waistRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.z()))));
 
 	k2app::shared::general::leftFootPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.x()))));
 	k2app::shared::general::leftFootYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.y()))));
 	k2app::shared::general::leftFootRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.z()))));
 
 	k2app::shared::general::rightFootPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.x()))));
 	k2app::shared::general::rightFootYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.y()))));
 	k2app::shared::general::rightFootRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.z()))));
 
 	k2app::shared::general::leftElbowRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.z()))));
 	k2app::shared::general::leftElbowYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.y()))));
 	k2app::shared::general::leftElbowPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.x()))));
 
 	k2app::shared::general::rightElbowRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.z()))));
 	k2app::shared::general::rightElbowYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.y()))));
 	k2app::shared::general::rightElbowPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.x()))));
 
 	k2app::shared::general::leftKneeRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.z()))));
 	k2app::shared::general::leftKneeYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.y()))));
 	k2app::shared::general::leftKneePitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.x()))));
 
 	k2app::shared::general::rightKneeRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.z()))));
 	k2app::shared::general::rightKneeYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.y()))));
 	k2app::shared::general::rightKneePitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.x()))));
 
 	// Notice that we're finished
 	pending_offsets_update = false;
@@ -518,102 +518,102 @@ void KinectToVR::implementation::GeneralPage::OffsetsFrontendValueChanged(
 	pending_offsets_update = false;
 
 	// Update backend offsets with new values BUT NOT SAVE
-	k2app::K2Settings.positionJointsOffsets[0].x() = k2app::shared::general::waistXNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[0].y() = k2app::shared::general::waistYNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[0].z() = k2app::shared::general::waistZNumberBox.
-	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(0).positionOffset.x() = k2app::shared::general::waistXNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(0).positionOffset.y() = k2app::shared::general::waistYNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(0).positionOffset.z() = k2app::shared::general::waistZNumberBox.
+		get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[1].x() = k2app::shared::general::leftFootXNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[1].y() = k2app::shared::general::leftFootYNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[1].z() = k2app::shared::general::leftFootZNumberBox.
-	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(1).positionOffset.x() = k2app::shared::general::leftFootXNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(1).positionOffset.y() = k2app::shared::general::leftFootYNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(1).positionOffset.z() = k2app::shared::general::leftFootZNumberBox.
+		get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[2].x() = k2app::shared::general::rightFootXNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[2].y() = k2app::shared::general::rightFootYNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[2].z() = k2app::shared::general::rightFootZNumberBox.
-	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(2).positionOffset.x() = k2app::shared::general::rightFootXNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(2).positionOffset.y() = k2app::shared::general::rightFootYNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(2).positionOffset.z() = k2app::shared::general::rightFootZNumberBox.
+		get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[3].x() = k2app::shared::general::leftElbowXNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[3].y() = k2app::shared::general::leftElbowYNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[3].z() = k2app::shared::general::leftElbowZNumberBox.
-	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(3).positionOffset.x() = k2app::shared::general::leftElbowXNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(3).positionOffset.y() = k2app::shared::general::leftElbowYNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(3).positionOffset.z() = k2app::shared::general::leftElbowZNumberBox.
+		get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[4].x() = k2app::shared::general::rightElbowXNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[4].y() = k2app::shared::general::rightElbowYNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[4].z() = k2app::shared::general::rightElbowZNumberBox.
-	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(4).positionOffset.x() = k2app::shared::general::rightElbowXNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(4).positionOffset.y() = k2app::shared::general::rightElbowYNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(4).positionOffset.z() = k2app::shared::general::rightElbowZNumberBox.
+		get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[5].x() = k2app::shared::general::leftKneeXNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[5].y() = k2app::shared::general::leftKneeYNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[5].z() = k2app::shared::general::leftKneeZNumberBox.
-	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(5).positionOffset.x() = k2app::shared::general::leftKneeXNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(5).positionOffset.y() = k2app::shared::general::leftKneeYNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(5).positionOffset.z() = k2app::shared::general::leftKneeZNumberBox.
+		get()->Value() / 100.0;
 
-	k2app::K2Settings.positionJointsOffsets[6].x() = k2app::shared::general::rightKneeXNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[6].y() = k2app::shared::general::rightKneeYNumberBox.
-	                                                 get()->Value() / 100.0;
-	k2app::K2Settings.positionJointsOffsets[6].z() = k2app::shared::general::rightKneeZNumberBox.
-	                                                 get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(6).positionOffset.x() = k2app::shared::general::rightKneeXNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(6).positionOffset.y() = k2app::shared::general::rightKneeYNumberBox.
+		get()->Value() / 100.0;
+	k2app::K2Settings.K2TrackersVector.at(6).positionOffset.z() = k2app::shared::general::rightKneeZNumberBox.
+		get()->Value() / 100.0;
 
-	k2app::K2Settings.rotationJointsOffsets[0].x() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.x() = degreesToRadians(
 		k2app::shared::general::waistPitchNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[0].y() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.y() = degreesToRadians(
 		k2app::shared::general::waistYawNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[0].z() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.z() = degreesToRadians(
 		k2app::shared::general::waistRollNumberBox.get()->Value());
 
-	k2app::K2Settings.rotationJointsOffsets[1].x() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.x() = degreesToRadians(
 		k2app::shared::general::leftFootPitchNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[1].y() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.y() = degreesToRadians(
 		k2app::shared::general::leftFootYawNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[1].z() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.z() = degreesToRadians(
 		k2app::shared::general::leftFootRollNumberBox.get()->Value());
 
-	k2app::K2Settings.rotationJointsOffsets[2].x() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.x() = degreesToRadians(
 		k2app::shared::general::rightFootPitchNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[2].y() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.y() = degreesToRadians(
 		k2app::shared::general::rightFootYawNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[2].z() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.z() = degreesToRadians(
 		k2app::shared::general::rightFootRollNumberBox.get()->Value());
 
-	k2app::K2Settings.rotationJointsOffsets[3].x() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.x() = degreesToRadians(
 		k2app::shared::general::leftElbowPitchNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[3].y() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.y() = degreesToRadians(
 		k2app::shared::general::leftElbowYawNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[3].z() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.z() = degreesToRadians(
 		k2app::shared::general::leftElbowRollNumberBox.get()->Value());
 
-	k2app::K2Settings.rotationJointsOffsets[4].x() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.x() = degreesToRadians(
 		k2app::shared::general::rightElbowPitchNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[4].y() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.y() = degreesToRadians(
 		k2app::shared::general::rightElbowYawNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[4].z() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.z() = degreesToRadians(
 		k2app::shared::general::rightElbowRollNumberBox.get()->Value());
 
-	k2app::K2Settings.rotationJointsOffsets[5].x() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.x() = degreesToRadians(
 		k2app::shared::general::leftKneePitchNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[5].y() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.y() = degreesToRadians(
 		k2app::shared::general::leftKneeYawNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[5].z() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.z() = degreesToRadians(
 		k2app::shared::general::leftKneeRollNumberBox.get()->Value());
 
-	k2app::K2Settings.rotationJointsOffsets[6].x() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.x() = degreesToRadians(
 		k2app::shared::general::rightKneePitchNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[6].y() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.y() = degreesToRadians(
 		k2app::shared::general::rightKneeYawNumberBox.get()->Value());
-	k2app::K2Settings.rotationJointsOffsets[6].z() = degreesToRadians(
+	k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.z() = degreesToRadians(
 		k2app::shared::general::rightKneeRollNumberBox.get()->Value());
 }
 
@@ -1133,7 +1133,7 @@ void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(
 	// Optionally spawn trackers
 	if (!k2app::interfacing::K2AppTrackersSpawned)
 	{
-		if (!k2app::interfacing::SpawnDefaultEnabledTrackers()) // Mark as spawned
+		if (!k2app::interfacing::SpawnEnabledTrackers()) // Mark as spawned
 		{
 			k2app::interfacing::serverDriverFailure = true; // WAAAAAAA
 			k2app::interfacing::K2ServerDriverSetup(); // Refresh
@@ -1200,7 +1200,7 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 		k2app::interfacing::isServerDriverPresent && // If the driver's ok
 		k2app::K2Settings.autoSpawnEnabledJoints) // If autospawn
 	{
-		if (k2app::interfacing::SpawnDefaultEnabledTrackers()) // Mark as spawned
+		if (k2app::interfacing::SpawnEnabledTrackers()) // Mark as spawned
 			k2app::shared::general::toggleTrackersButton->IsChecked(true);
 
 		// Cry about it
@@ -1225,102 +1225,102 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 
 	// Load values into number boxes
 	k2app::shared::general::waistXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[0].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(0).positionOffset.x() * 100.0));
 	k2app::shared::general::waistYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[0].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(0).positionOffset.y() * 100.0));
 	k2app::shared::general::waistZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[0].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(0).positionOffset.z() * 100.0));
 
 	k2app::shared::general::leftFootXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[1].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(1).positionOffset.x() * 100.0));
 	k2app::shared::general::leftFootYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[1].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(1).positionOffset.y() * 100.0));
 	k2app::shared::general::leftFootZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[1].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(1).positionOffset.z() * 100.0));
 
 	k2app::shared::general::rightFootXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[2].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(2).positionOffset.x() * 100.0));
 	k2app::shared::general::rightFootYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[2].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(2).positionOffset.y() * 100.0));
 	k2app::shared::general::rightFootZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[2].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(2).positionOffset.z() * 100.0));
 
 	k2app::shared::general::leftElbowXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[3].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(3).positionOffset.x() * 100.0));
 	k2app::shared::general::leftElbowYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[3].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(3).positionOffset.y() * 100.0));
 	k2app::shared::general::leftElbowZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[3].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(3).positionOffset.z() * 100.0));
 
 	k2app::shared::general::rightElbowXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[4].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(4).positionOffset.x() * 100.0));
 	k2app::shared::general::rightElbowYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[4].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(4).positionOffset.y() * 100.0));
 	k2app::shared::general::rightElbowZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[4].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(4).positionOffset.z() * 100.0));
 
 	k2app::shared::general::leftKneeXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[5].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(5).positionOffset.x() * 100.0));
 	k2app::shared::general::leftKneeYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[5].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(5).positionOffset.y() * 100.0));
 	k2app::shared::general::leftKneeZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[5].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(5).positionOffset.z() * 100.0));
 
 	k2app::shared::general::rightKneeXNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[6].x() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(6).positionOffset.x() * 100.0));
 	k2app::shared::general::rightKneeYNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[6].y() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(6).positionOffset.y() * 100.0));
 	k2app::shared::general::rightKneeZNumberBox.get()->Value(
-		static_cast<int>(k2app::K2Settings.positionJointsOffsets[6].z() * 100.0));
+		static_cast<int>(k2app::K2Settings.K2TrackersVector.at(6).positionOffset.z() * 100.0));
 
 	k2app::shared::general::waistPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.x()))));
 	k2app::shared::general::waistYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.y()))));
 	k2app::shared::general::waistRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[0].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(0).orientationOffset.z()))));
 
 	k2app::shared::general::leftFootPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.x()))));
 	k2app::shared::general::leftFootYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.y()))));
 	k2app::shared::general::leftFootRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[1].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(1).orientationOffset.z()))));
 
 	k2app::shared::general::rightFootPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.x()))));
 	k2app::shared::general::rightFootYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.y()))));
 	k2app::shared::general::rightFootRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[2].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(2).orientationOffset.z()))));
 
 	k2app::shared::general::leftElbowRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.z()))));
 	k2app::shared::general::leftElbowYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.y()))));
 	k2app::shared::general::leftElbowPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[3].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(3).orientationOffset.x()))));
 
 	k2app::shared::general::rightElbowRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.z()))));
 	k2app::shared::general::rightElbowYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.y()))));
 	k2app::shared::general::rightElbowPitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[4].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(4).orientationOffset.x()))));
 
 	k2app::shared::general::leftKneeRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.z()))));
 	k2app::shared::general::leftKneeYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.y()))));
 	k2app::shared::general::leftKneePitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[5].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(5).orientationOffset.x()))));
 
 	k2app::shared::general::rightKneeRollNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].z()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.z()))));
 	k2app::shared::general::rightKneeYawNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].y()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.y()))));
 	k2app::shared::general::rightKneePitchNumberBox.get()->Value(
-		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.rotationJointsOffsets[6].x()))));
+		static_cast<int>(round(radiansToDegrees(k2app::K2Settings.K2TrackersVector.at(6).orientationOffset.x()))));
 
 	// Notice that we're finished
 	pending_offsets_update = false;
@@ -1512,12 +1512,12 @@ std::pair<bool, bool> IsJointUsedAsOverride(const uint32_t& joint)
 	std::pair<bool, bool> _o{false, false};
 
 	// Scan for position overrides
-	for (const auto& _j_p : k2app::K2Settings.positionOverrideJointID)
-		if (joint == _j_p)_o.first = true;
+	for (const auto& _j_p : k2app::K2Settings.K2TrackersVector)
+		if (joint == _j_p.positionOverrideJointID)_o.first = true;
 
 	// Scan for rotation overrides
-	for (const auto& _j_r : k2app::K2Settings.rotationOverrideJointID)
-		if (joint == _j_r)_o.second = true;
+	for (const auto& _j_r : k2app::K2Settings.K2TrackersVector)
+		if (joint == _j_r.rotationOverrideJointID)_o.second = true;
 
 	return (k2app::K2Settings.overrideDeviceID >= 0)
 		       ? _o
@@ -1529,8 +1529,8 @@ std::pair<bool, bool> IsJointOverriden(const uint32_t& joint)
 {
 	return (k2app::K2Settings.overrideDeviceID >= 0)
 		       ? std::make_pair(
-			       k2app::K2Settings.isPositionOverriddenJoint[joint],
-			       k2app::K2Settings.isRotationOverriddenJoint[joint])
+			       k2app::K2Settings.K2TrackersVector.at(joint).isPositionOverridden,
+			       k2app::K2Settings.K2TrackersVector.at(joint).isRotationOverridden)
 		       : std::make_pair(false, false);
 }
 

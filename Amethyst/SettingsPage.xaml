@@ -14,17 +14,38 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid x:Name="DimGrid" Canvas.ZIndex="1" Visibility="Collapsed" />
+        <Grid x:Name="DimGrid" Canvas.ZIndex="1" Opacity="0.0" IsHitTestVisible="False" >
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+        </Grid>
 
-        <Grid Grid.Column="0" Canvas.ZIndex="1" Visibility="{Binding ElementName=DimGrid, Path=Visibility}"
+        <Grid Grid.Column="0" Canvas.ZIndex="1"
               Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-              Opacity="0.5" IsHitTestVisible="True" />
-        <Grid Grid.Column="1" Canvas.ZIndex="1" Visibility="{Binding ElementName=DimGrid, Path=Visibility}"
+              Opacity="{Binding ElementName=DimGrid, Path=Opacity}" 
+              IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+        </Grid>
+
+        <Grid Grid.Column="1" Canvas.ZIndex="1"
               Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-              Opacity="0.5" IsHitTestVisible="True" />
-        <Grid Grid.Column="2" Canvas.ZIndex="1" Visibility="{Binding ElementName=DimGrid, Path=Visibility}"
+              Opacity="{Binding ElementName=DimGrid, Path=Opacity}" 
+              IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+        </Grid>
+
+        <Grid Grid.Column="2" Canvas.ZIndex="1"
               Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-              Opacity="0.5" IsHitTestVisible="True" />
+              Opacity="{Binding ElementName=DimGrid, Path=Opacity}" 
+              IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+        </Grid>
 
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
                       VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
@@ -115,7 +136,7 @@
 
 
                 <Grid>
-                    <Grid Margin="0,20,0,0" Grid.Row="0">
+                    <Grid Margin="0,30,0,0" Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
@@ -134,7 +155,7 @@
 
                                     <Flyout.FlyoutPresenterStyle>
                                         <Style TargetType="FlyoutPresenter">
-                                            <Setter Property="MaxHeight" Value="600" />
+                                            <Setter Property="MaxHeight" Value="615" />
                                             <Setter Property="MaxWidth" Value="720" />
                                             <Setter Property="MinWidth" Value="720" />
                                             <Setter Property="Margin" Value="30,15,0,0" />
@@ -244,290 +265,17 @@
                     </Grid>
                 </Grid>
 
-                <Grid>
-                    <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/TrackerConfig/Waist" FontSize="14"
-                                   Margin="0,-3,0,0"
-                                   Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-
-                        <ToggleSwitch IsOn="True" x:Name="WaistTrackerEnabledToggle"
-                                      Toggled="WaistTrackerEnabledToggle_Toggled"
-                                      x:Uid="/SettingsPage/Elements/WaistToggle"
-                                      Grid.Column="1" Margin="0,0,-125,0"
-                                      OnContent="" OffContent=""
-                                      VerticalAlignment="Center"
-                                      HorizontalAlignment="Right" />
-                    </Grid>
-
-                    <Expander Margin="0,10,0,0" IsExpanded="True" x:Name="WaistDropDown"
-                              Expanding="WaistDropDown_Expanding"
-                              ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-
-                        <Expander.Content>
-                            <Grid Padding="0,-5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="5*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="80" />
-                                    <RowDefinition Height="80" />
-                                </Grid.RowDefinitions>
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/SettingsPage/Captions/Filters/Position"
-                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
-
-                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                          x:Name="WaistPositionFilterOptionBox"
-                                          SelectionChanged="WaistPositionFilterOptionBox_SelectionChanged"
-                                          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LERP" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LowPass" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Kalman" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Off" />
-                                </ComboBox>
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/SettingsPage/Captions/Filters/Orientation"
-                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
-
-                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                          x:Name="WaistRotationFilterOptionBox"
-                                          SelectionChanged="WaistRotationFilterOptionBox_SelectionChanged"
-                                          Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Device" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/HMD" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Off" />
-                                </ComboBox>
-
-                            </Grid>
-                        </Expander.Content>
-                    </Expander>
-                </Grid>
-
-                <Grid>
-                    <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/TrackerConfig/Feet" FontSize="14"
-                                   Margin="0,-3,0,0"
-                                   Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-
-                        <ToggleSwitch IsOn="True" x:Name="FeetTrackersEnabledToggle"
-                                      Toggled="FeetTrackersEnabledToggle_Toggled"
-                                      x:Uid="/SettingsPage/Elements/FeetToggle"
-                                      Grid.Column="1" Margin="0,0,-125,0"
-                                      OnContent="" OffContent=""
-                                      VerticalAlignment="Center"
-                                      HorizontalAlignment="Right" />
-                    </Grid>
-
-                    <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="FeetDropDown"
-                              Expanding="FeetDropDown_Expanding"
-                              ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-
-                        <Expander.Content>
-                            <Grid Padding="0,-5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="5*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="80" />
-                                    <RowDefinition Height="80" />
-                                </Grid.RowDefinitions>
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/SettingsPage/Captions/Filters/Position"
-                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
-
-                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                          x:Name="FeetPositionFilterOptionBox"
-                                          SelectionChanged="FeetPositionFilterOptionBox_SelectionChanged"
-                                          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LERP" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LowPass" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Kalman" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Off" />
-                                </ComboBox>
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/SettingsPage/Captions/Filters/Orientation"
-                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
-
-                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                          x:Name="FeetRotationFilterOptionBox"
-                                          SelectionChanged="FeetRotationFilterOptionBox_SelectionChanged"
-                                          Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Device" />
-                                    <ComboBoxItem x:Name="SoftwareRotationItem" IsEnabled="True"
-                                                  x:Uid="/SettingsPage/Filters/Orientation/MathBased" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/HMD" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Off" />
-                                </ComboBox>
-                            </Grid>
-                        </Expander.Content>
-                    </Expander>
-
-                </Grid>
-
-                <Rectangle HorizontalAlignment="Stretch" Height="1" Margin="0,10,0,0"
-                           Stroke="#3b3b3b" Fill="#3b3b3b" />
-
-                <Grid>
-                    <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/TrackerConfig/Elbows"
-                                   FontSize="14" Margin="0,-3,0,0"
-                                   Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-
-                        <ToggleSwitch IsOn="False" x:Name="ElbowTrackersEnabledToggle"
-                                      Toggled="ElbowTrackersEnabledToggle_Toggled"
-                                      x:Uid="/SettingsPage/Elements/ElbowsToggle"
-                                      Grid.Column="1" Margin="0,0,-125,0"
-                                      OnContent="" OffContent=""
-                                      VerticalAlignment="Center"
-                                      HorizontalAlignment="Right" />
-                    </Grid>
-
-                    <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="ElbowsDropDown"
-                              Expanding="ElbowsDropDown_Expanding"
-                              ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-
-                        <Expander.Content>
-                            <Grid Padding="0,-5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="5*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="80" />
-                                    <RowDefinition Height="80" />
-                                </Grid.RowDefinitions>
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/SettingsPage/Captions/Filters/Position"
-                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
-
-                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                          x:Name="ElbowsPositionFilterOptionBox"
-                                          SelectionChanged="ElbowsPositionFilterOptionBox_SelectionChanged"
-                                          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LERP" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LowPass" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Kalman" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Off" />
-                                </ComboBox>
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/SettingsPage/Captions/Filters/Orientation"
-                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
-
-                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                          x:Name="ElbowsRotationFilterOptionBox"
-                                          SelectionChanged="ElbowsRotationFilterOptionBox_SelectionChanged"
-                                          Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Device" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/HMD" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Off" />
-                                </ComboBox>
-
-                            </Grid>
-                        </Expander.Content>
-                    </Expander>
-                </Grid>
-
-                <Grid>
-                    <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/TrackerConfig/Knees" FontSize="14"
-                                   Margin="0,-3,0,0"
-                                   Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-
-                        <ToggleSwitch IsOn="False" x:Name="KneeTrackersEnabledToggle"
-                                      Toggled="KneeTrackersEnabledToggle_Toggled"
-                                      x:Uid="/SettingsPage/Elements/KneesToggle"
-                                      Grid.Column="1" Margin="0,0,-125,0"
-                                      OnContent="" OffContent=""
-                                      VerticalAlignment="Center"
-                                      HorizontalAlignment="Right" />
-                    </Grid>
-
-                    <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="KneesDropDown"
-                              Expanding="KneesDropDown_Expanding"
-                              ExpandDirection="Down" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-
-                        <Expander.Content>
-                            <Grid Padding="0,-5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="5*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="80" />
-                                    <RowDefinition Height="80" />
-                                </Grid.RowDefinitions>
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/SettingsPage/Captions/Filters/Position"
-                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
-
-                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                          x:Name="KneePositionFilterOptionBox"
-                                          SelectionChanged="KneePositionFilterOptionBox_SelectionChanged"
-                                          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LERP" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/LowPass" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Kalman" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Position/Off" />
-                                </ComboBox>
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/SettingsPage/Captions/Filters/Orientation"
-                                           Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
-
-                                <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                                          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                          x:Name="KneeRotationFilterOptionBox"
-                                          SelectionChanged="KneeRotationFilterOptionBox_SelectionChanged"
-                                          Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Device" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/HMD" />
-                                    <ComboBoxItem x:Uid="/SettingsPage/Filters/Orientation/Off" />
-                                </ComboBox>
-
-                            </Grid>
-                        </Expander.Content>
-                    </Expander>
-                </Grid>
+                <!--For the waist & pair trackers' expanders-->
+                <StackPanel x:Name="JointExpanderHostStackPanel" HorizontalAlignment="Stretch" 
+                      VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0" >
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition />
+                            <!--<AddDeleteThemeTransition />-->
+                            <!--<ContentThemeTransition />-->
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
 
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
@@ -538,7 +286,11 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="50" />
                         <RowDefinition Height="50" />
+                        <RowDefinition Height="33" />
                     </Grid.RowDefinitions>
+
+                    <AppBarButton x:Name="TrackerConfigButton" VerticalAlignment="Top"
+                                  Icon="Setting" Width="38" Height="46" Click="TrackerConfigButton_Click"/>
 
                     <Button Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" Height="40"
                             Style="{StaticResource AccentButtonStyle}" x:Name="RestartButton"
@@ -565,9 +317,18 @@
                                   MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="False" />
                     </Grid>
 
+                    <Grid Grid.Column="0" Grid.Row="2">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+                                   x:Uid="/SettingsPage/Captions/TrackersAutoCheck" Margin="30,0,0,10" />
+                        <CheckBox x:Name="CheckOverlapsCheckBox" Checked="CheckOverlapsCheckBox_Checked"
+                                  Unchecked="CheckOverlapsCheckBox_Unchecked"
+                                  HorizontalAlignment="Left" VerticalAlignment="Center"
+                                  MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="False" />
+                    </Grid>
+
                 </Grid>
 
-                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Sounds" FontSize="25" Margin="0,50,0,0" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Sounds" FontSize="25" Margin="0,30,0,0" />
 
                 <Grid Grid.Column="0" Grid.Row="1" Margin="0,15,0,0">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
@@ -592,7 +353,7 @@
                 </StackPanel>
 
                 <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Troubleshooting" FontSize="25"
-                           Margin="0,50,0,15" />
+                           Margin="0,40,0,15" />
 
                 <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
                         x:Name="ResetButton" Width="270" Click="ResetButton_Click"

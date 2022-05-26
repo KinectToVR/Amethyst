@@ -1,19 +1,12 @@
 #pragma once
 #include "pch.h"
 
+#include "JointExpander.h"
 #include "K2Interfacing.h"
 #include "K2Shared.h"
 
 namespace TrackingDevices
 {
-	// Vector of currently available tracking devices
-	// std::variant cause there are 3 possible device types
-	inline std::vector<
-		std::variant<
-			ktvr::K2TrackingDeviceBase_KinectBasis*,
-			ktvr::K2TrackingDeviceBase_JointsBasis*>>
-	TrackingDevicesVector;
-
 	// Variant of current devices' layout root pointers
 	// Note: the size must be the same as TrackingDevicesVector's
 	inline std::vector<k2app::interfacing::AppInterface::AppLayoutRoot*>
@@ -21,135 +14,6 @@ namespace TrackingDevices
 
 	// Pointer to the device's constructing function
 	using TrackingDeviceBaseFactory = void* (*)(const char* pVersionName, int* pReturnCode);
-
-	// Extract the current device (variant of it)
-	inline auto getCurrentDevice()
-	{
-		// trackingDeviceID is always >= 0 anyway
-		return TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
-	}
-
-	// Extract the current device (variant of it)
-	inline auto getCurrentDevice(const uint32_t& id)
-	{
-		// trackingDeviceID is always >= 0 anyway
-		return TrackingDevicesVector.at(id);
-	}
-
-	// Extract the current device (variant of it)
-	inline auto getCurrentOverrideDevice()
-	{
-		// trackingDeviceID is always >= 0 anyway
-		return TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
-	}
-
-	// Extract the current device (variant of it)
-	inline std::pair<
-		bool, std::variant<
-			ktvr::K2TrackingDeviceBase_KinectBasis*,
-			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe()
-	{
-		bool _exists = k2app::K2Settings.overrideDeviceID >= 0 &&
-			TrackingDevicesVector.size() > k2app::K2Settings.overrideDeviceID;
-
-		// Assuming that the caller will test in pair.first is true,
-		// we can push the id0 device here as well if pair.first is gonna be false
-		uint32_t _deviceID = _exists ? k2app::K2Settings.overrideDeviceID : 0;
-
-		// trackingDeviceID is always >= 0 anyway
-		return std::make_pair(_exists,
-		                      TrackingDevicesVector.at(_deviceID));
-	}
-
-	// Extract the current device (variant of it)
-	inline std::pair<
-		bool, std::variant<
-			ktvr::K2TrackingDeviceBase_KinectBasis*,
-			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe(const uint32_t& id)
-	{
-		bool _exists = TrackingDevicesVector.size() > id;
-
-		// Assuming that the caller will test in pair.first is true,
-		// we can push the id0 device here as well if pair.first is gonna be false
-		uint32_t _deviceID = _exists ? id : 0;
-
-		// trackingDeviceID is always >= 0 anyway
-		return std::make_pair(_exists,
-		                      TrackingDevicesVector.at(_deviceID));
-	}
-
-	inline bool isExternalFlipSupportable()
-	{
-		bool isFlipSupported = false;
-
-		/* First check if our tracking device even supports normal flip */
-
-		const auto& trackingDevice =
-			getCurrentDevice();
-
-		if (trackingDevice.index() == 0)
-			isFlipSupported = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
-				trackingDevice)->isFlipSupported();
-
-		bool isExternalFlipSupported = false, // inapp - overridden/disabled
-		     isExternalFlipSupported_Global = false; // global - steamvr
-
-		/* Now check if either waist tracker is overridden or disabled
-		 * And then search in OpenVR for a one with waist role */
-
-		const auto& overrideDevice =
-			getCurrentOverrideDevice_Safe();
-
-		// If we have an override and if it's actually affecting the waist rotation
-		if (overrideDevice.first &&
-			k2app::K2Settings.isJointPairEnabled[0] &&
-			k2app::K2Settings.isRotationOverriddenJoint[0])
-		{
-			// If the override device is a kinect then it HAS NOT TO support flip
-			if (overrideDevice.second.index() == 0)
-				isExternalFlipSupported = !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
-					overrideDevice.second)->isFlipSupported();
-
-				// If the override device is a joints then it's always ok
-			else if (overrideDevice.second.index() == 1)
-				isExternalFlipSupported = true;
-		}
-
-		// If still not, then also check if the waist is disabled by any chance
-		else if (!k2app::K2Settings.isJointPairEnabled[0])
-			isExternalFlipSupported = true;
-
-		/* Here check if there's a proper waist tracker in steamvr to pull data from */
-		if (isExternalFlipSupported)
-			isExternalFlipSupported_Global = k2app::interfacing::findVRTracker("waist").first; // .first is [Success?]
-
-		return isExternalFlipSupported_Global;
-	}
-
-	// autoCheck->true will force the function to check and false will assume unsupported
-	inline void settings_set_external_flip_is_enabled(bool autoCheck = true)
-	{
-		if (k2app::shared::settings::externalFlipCheckBox.get() == nullptr)return;
-
-		if (autoCheck)
-		{
-			k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(
-				isExternalFlipSupportable() &&
-				k2app::K2Settings.isFlipEnabled);
-		}
-		else
-			k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(false);
-
-		k2app::shared::settings::externalFlipCheckBoxLabel.get()->Opacity(
-			k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled() ? 1 : 0.5);
-
-		if (!k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled())
-		{
-			k2app::shared::settings::externalFlipCheckBox.get()->IsChecked(false);
-			k2app::K2Settings.isExternalFlipEnabled = false;
-			k2app::K2Settings.saveSettings();
-		}
-	}
 
 	// Select proper tracking device in the UI
 	inline void updateTrackingDeviceUI(const uint32_t& index)
@@ -213,14 +77,19 @@ namespace TrackingDevices
 
 		/* Update the device in settings tab */
 
-		if (k2app::shared::settings::softwareRotationItem.get() != nullptr)
+		if (k2app::shared::settings::flipDropDown.get() != nullptr)
 		{
 			if (trackingDevice.index() == 0)
 			{
 				// Kinect Basis
 				k2app::shared::settings::flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);
-				k2app::shared::settings::softwareRotationItem.get()->IsEnabled(
-					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported());
+
+				const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
+				(trackingDevice)->isAppOrientationSupported();
+
+				for (auto expander : k2app::shared::settings::jointExpanderVector)
+					expander->EnableSoftwareOrientation(_sup);
+				
 				k2app::shared::settings::flipToggle.get()->IsEnabled(
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
 				k2app::shared::settings::flipDropDown.get()->IsEnabled(
@@ -229,38 +98,20 @@ namespace TrackingDevices
 					k2app::shared::settings::flipToggle.get()->IsEnabled() ? 1 : 0.5);
 
 				settings_set_external_flip_is_enabled();
-
-				if (!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isAppOrientationSupported() &&
-					(k2app::K2Settings.jointRotationTrackingOption[1] == k2app::k2_SoftwareCalculatedRotation ||
-						k2app::K2Settings.jointRotationTrackingOption[2] == k2app::k2_SoftwareCalculatedRotation))
-				{
-					k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
-					k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
-
-					k2app::shared::settings::feetRotationFilterOptionBox.get()->SelectedIndex(
-						k2app::K2Settings.jointRotationTrackingOption[1]); // Feet
-				}
 			}
 			else if (trackingDevice.index() == 1)
 			{
 				// Joints Basis
 				k2app::K2Settings.isFlipEnabled = false;
-				k2app::shared::settings::softwareRotationItem.get()->IsEnabled(false);
+
+				for (auto expander : k2app::shared::settings::jointExpanderVector)
+					expander->EnableSoftwareOrientation(false);
+
 				k2app::shared::settings::flipToggle.get()->IsEnabled(false);
 				k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
 				k2app::shared::settings::flipDropDownGrid.get()->Opacity(0.5);
 
 				settings_set_external_flip_is_enabled(false);
-
-				if (k2app::K2Settings.jointRotationTrackingOption[1] == k2app::k2_SoftwareCalculatedRotation ||
-					k2app::K2Settings.jointRotationTrackingOption[2] == k2app::k2_SoftwareCalculatedRotation)
-				{
-					k2app::K2Settings.jointRotationTrackingOption[1] = k2app::k2_DeviceInferredRotation;
-					k2app::K2Settings.jointRotationTrackingOption[2] = k2app::k2_DeviceInferredRotation;
-
-					k2app::shared::settings::feetRotationFilterOptionBox.get()->SelectedIndex(
-						k2app::K2Settings.jointRotationTrackingOption[1]); // Feet
-				}
 			}
 		}
 
@@ -480,35 +331,13 @@ namespace TrackingDevices
 				const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
 					(device_pair.second)->getTrackedJoints().size();
 
-				if (k2app::K2Settings.positionOverrideJointID[0] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[0] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[1] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[1] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[2] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[2] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[3] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[3] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[4] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[4] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[5] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[5] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[6] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[6] = 0;
+				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+					if (tracker.positionOverrideJointID >= num_joints)
+						tracker.positionOverrideJointID = 0;
 
-				if (k2app::K2Settings.rotationOverrideJointID[0] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[0] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[1] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[1] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[2] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[2] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[3] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[3] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[4] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[4] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[5] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[5] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[6] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[6] = 0;
+				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+					if (tracker.rotationOverrideJointID >= num_joints)
+						tracker.rotationOverrideJointID = 0;
 			}
 			else if (device_pair.second.index() == 0) // If Kinect
 			{
@@ -524,35 +353,13 @@ namespace TrackingDevices
 				else if (characteristics == ktvr::K2_Character_Basic)
 					num_joints = 3;
 
-				if (k2app::K2Settings.positionOverrideJointID[0] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[0] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[1] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[1] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[2] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[2] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[3] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[3] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[4] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[4] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[5] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[5] = 0;
-				if (k2app::K2Settings.positionOverrideJointID[6] >= num_joints)
-					k2app::K2Settings.positionOverrideJointID[6] = 0;
+				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+					if (tracker.positionOverrideJointID >= num_joints)
+						tracker.positionOverrideJointID = 0;
 
-				if (k2app::K2Settings.rotationOverrideJointID[0] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[0] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[1] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[1] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[2] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[2] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[3] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[3] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[4] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[4] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[5] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[5] = 0;
-				if (k2app::K2Settings.rotationOverrideJointID[6] >= num_joints)
-					k2app::K2Settings.rotationOverrideJointID[6] = 0;
+				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+					if (tracker.rotationOverrideJointID >= num_joints)
+						tracker.rotationOverrideJointID = 0;
 			}
 
 			// Save it
@@ -570,21 +377,10 @@ namespace TrackingDevices
 			const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
 				(device_pair)->getTrackedJoints().size();
 
-			if (k2app::K2Settings.selectedTrackedJointID[0] >= num_joints)
-				k2app::K2Settings.selectedTrackedJointID[0] = 0;
-			if (k2app::K2Settings.selectedTrackedJointID[1] >= num_joints)
-				k2app::K2Settings.selectedTrackedJointID[1] = 0;
-			if (k2app::K2Settings.selectedTrackedJointID[2] >= num_joints)
-				k2app::K2Settings.selectedTrackedJointID[2] = 0;
-			if (k2app::K2Settings.selectedTrackedJointID[3] >= num_joints)
-				k2app::K2Settings.selectedTrackedJointID[3] = 0;
-			if (k2app::K2Settings.selectedTrackedJointID[4] >= num_joints)
-				k2app::K2Settings.selectedTrackedJointID[4] = 0;
-			if (k2app::K2Settings.selectedTrackedJointID[5] >= num_joints)
-				k2app::K2Settings.selectedTrackedJointID[5] = 0;
-			if (k2app::K2Settings.selectedTrackedJointID[6] >= num_joints)
-				k2app::K2Settings.selectedTrackedJointID[6] = 0;
-
+			for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+				if (tracker.selectedTrackedJointID >= num_joints)
+					tracker.selectedTrackedJointID = 0;
+			
 			// Save it
 			k2app::K2Settings.saveSettings();
 		}
@@ -637,93 +433,5 @@ namespace TrackingDevices
 			/* Update local statuses */
 			k2app::shared::devices::overrideDeviceName.get()->Text(StringToWString(deviceName));
 		}
-	}
-
-	inline void settings_trackersConfig_UpdateIsEnabled()
-	{
-		// Skip if not set up yet
-		if (k2app::shared::settings::flipDropDown.get() == nullptr)return;
-
-		// Make expander opacity .5 and collapse it
-		// to imitate that it's disabled
-
-		// Flip
-		if (!k2app::K2Settings.isFlipEnabled)
-		{
-			k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
-			k2app::shared::settings::flipDropDown.get()->IsExpanded(false);
-		}
-		else
-			k2app::shared::settings::flipDropDown.get()->IsEnabled(true);
-
-		// Waist
-		if (!k2app::K2Settings.isJointPairEnabled[0])
-		{
-			k2app::shared::settings::waistDropDown.get()->IsEnabled(false);
-			k2app::shared::settings::waistDropDown.get()->IsExpanded(false);
-		}
-		else
-			k2app::shared::settings::waistDropDown.get()->IsEnabled(true);
-
-		// Feet
-		if (!k2app::K2Settings.isJointPairEnabled[1])
-		{
-			k2app::shared::settings::feetDropDown.get()->IsEnabled(false);
-			k2app::shared::settings::feetDropDown.get()->IsExpanded(false);
-		}
-		else
-			k2app::shared::settings::feetDropDown.get()->IsEnabled(true);
-
-		// Elbows
-		if (!k2app::K2Settings.isJointPairEnabled[2])
-		{
-			k2app::shared::settings::elbowsDropDown.get()->IsEnabled(false);
-			k2app::shared::settings::elbowsDropDown.get()->IsExpanded(false);
-		}
-		else
-			k2app::shared::settings::elbowsDropDown.get()->IsEnabled(true);
-
-		// Knees
-		if (!k2app::K2Settings.isJointPairEnabled[3])
-		{
-			k2app::shared::settings::kneesDropDown.get()->IsEnabled(false);
-			k2app::shared::settings::kneesDropDown.get()->IsExpanded(false);
-		}
-		else
-			k2app::shared::settings::kneesDropDown.get()->IsEnabled(true);
-	}
-
-	inline void settings_trackersConfigChanged(const bool showToasts = true)
-	{
-		// Don't react to pre-init signals
-		if (!k2app::shared::settings::settings_localInitFinished)return;
-
-		// If this is the first time, also show the notification
-		if (k2app::shared::settings::restartButton.get() != nullptr && showToasts)
-			if (!k2app::shared::settings::restartButton.get()->IsEnabled())
-				k2app::interfacing::ShowToast(
-					k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersConfigChanged/Title"),
-					k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersConfigChanged/Content"));
-
-		// If all trackers were turned off then SCREAM
-		if (showToasts && std::ranges::all_of(
-			k2app::K2Settings.isJointPairEnabled,
-			[](const bool& i) { return !i; }
-		))
-			k2app::interfacing::ShowToast(L"YOU'VE JUST DISABLED ALL TRACKERS",
-				L"WHAT SORT OF A TOTAL FUCKING LIFE FAILURE ARE YOU TO DO THAT YOU STUPID BITCH LOSER?!?!");
-
-		// Compare with saved settings and unlock the restart
-		if (k2app::shared::settings::restartButton.get() != nullptr)
-			k2app::shared::settings::restartButton.get()->IsEnabled(true);
-
-		// Enable/Disable combos
-		TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
-
-		// Enable/Disable ExtFlip
-		TrackingDevices::settings_set_external_flip_is_enabled();
-
-		// Save settings
-		k2app::K2Settings.saveSettings();
 	}
 }

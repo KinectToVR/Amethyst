@@ -93,7 +93,7 @@
     <Link>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)external\openvr\lib\win64</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">shell32.lib;Amethyst_API.lib;WindowsApp.lib;openvr_api.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/DELAYLOAD:Microsoft.WindowsAppRuntime.dll %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(OutDir)"
@@ -119,7 +119,7 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)external\openvr\lib\win64</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">shell32.lib;Amethyst_API.lib;WindowsApp.lib;openvr_api.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/DELAYLOAD:Microsoft.WindowsAppRuntime.dll %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(OutDir)"
@@ -154,6 +154,7 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
       <DependentUpon>InfoPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="JointExpander.h" />
     <ClInclude Include="K2AppTracker.h" />
     <ClInclude Include="K2EVRInput.h" />
     <ClInclude Include="K2Interfacing.h" />
@@ -348,11 +349,6 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <PRIResource Include="Strings\en-US\SettingsLearn.resw" />
     <PRIResource Include="Strings\en-US\SettingsPage.resw" />
     <PRIResource Include="Strings\en-US\SharedStrings.resw" />
-    <PRIResource Include="Strings\lc-LC\DevicesPage.resw" />
-    <PRIResource Include="Strings\lc-LC\InfoPage.resw" />
-    <PRIResource Include="Strings\lc-LC\SettingsLearn.resw" />
-    <PRIResource Include="Strings\lc-LC\SettingsPage.resw" />
-    <PRIResource Include="Strings\lc-LC\SharedStrings.resw" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

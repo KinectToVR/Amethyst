@@ -20,8 +20,19 @@ namespace k2app
 		k2_DisableJointRotation
 	};
 
+	// Tracking filter option enumeration - rotation
+	enum RotationTrackingFilterOption
+	{
+		// Spherical interpolation
+		k2_OrientationTrackingFilter_SLERP,
+		// Spherical interpolation, but slower
+		k2_OrientationTrackingFilter_SLERP_Slow,
+		// Filter Off
+		k2_NoOrientationTrackingFilter
+	};
+
 	// Tracking filter option enumeration - position
-	enum PositionTrackingFilterOption
+	enum JointPositionTrackingOption
 	{
 		// Interpolation
 		k2_PositionTrackingFilter_LERP,
@@ -33,15 +44,73 @@ namespace k2app
 		k2_NoPositionTrackingFilter
 	};
 
-	// Tracking filter option enumeration - rotation
-	enum RotationTrackingFilterOption
+	// Mapping enum to string for eliminating if-else loop
+	inline std::map<ktvr::ITrackerType, std::string> ITrackerType_Serial
 	{
-		// Spherical interpolation
-		k2_OrientationTrackingFilter_SLERP,
-		// Spherical interpolation, but slower
-		k2_OrientationTrackingFilter_SLERP_Slow,
-		// Filter Off
-		k2_NoOrientationTrackingFilter
+		{ktvr::ITrackerType::Tracker_Handed, "vive_tracker_handed"},
+		{ktvr::ITrackerType::Tracker_LeftFoot, "vive_tracker_left_foot"},
+		{ktvr::ITrackerType::Tracker_RightFoot, "vive_tracker_right_foot"},
+		{ktvr::ITrackerType::Tracker_LeftShoulder, "vive_tracker_left_Shoulder"},
+		{ktvr::ITrackerType::Tracker_RightShoulder, "vive_tracker_right_shoulder"},
+		{ktvr::ITrackerType::Tracker_LeftElbow, "vive_tracker_left_elbow"},
+		{ktvr::ITrackerType::Tracker_RightElbow, "vive_tracker_right_elbow"},
+		{ktvr::ITrackerType::Tracker_LeftKnee, "vive_tracker_left_knee"},
+		{ktvr::ITrackerType::Tracker_RightKnee, "vive_tracker_right_knee"},
+		{ktvr::ITrackerType::Tracker_Waist, "vive_tracker_waist"},
+		{ktvr::ITrackerType::Tracker_Chest, "vive_tracker_chest"},
+		{ktvr::ITrackerType::Tracker_Camera, "vive_tracker_camera"},
+		{ktvr::ITrackerType::Tracker_Keyboard, "vive_tracker_keyboard"}
+	};
+
+	inline std::map<ktvr::ITrackerType, std::string> ITrackerType_Role_Serial
+	{
+		{ktvr::ITrackerType::Tracker_Handed, "AME-HANDED"},
+		{ktvr::ITrackerType::Tracker_LeftFoot, "AME-LFOOT"},
+		{ktvr::ITrackerType::Tracker_RightFoot, "AME-RFOOT"},
+		{ktvr::ITrackerType::Tracker_LeftShoulder, "AME-LSHOULDER"},
+		{ktvr::ITrackerType::Tracker_RightShoulder, "AME-RSHOULDER"},
+		{ktvr::ITrackerType::Tracker_LeftElbow, "AME-LELBOW"},
+		{ktvr::ITrackerType::Tracker_RightElbow, "AME-RELBOW"},
+		{ktvr::ITrackerType::Tracker_LeftKnee, "AME-LKNEE"},
+		{ktvr::ITrackerType::Tracker_RightKnee, "AME-RKNEE"},
+		{ktvr::ITrackerType::Tracker_Waist, "AME-WAIST"},
+		{ktvr::ITrackerType::Tracker_Chest, "AME-CHEST"},
+		{ktvr::ITrackerType::Tracker_Camera, "AME-CAMERA"},
+		{ktvr::ITrackerType::Tracker_Keyboard, "AME-KEYBOARD"}
+	};
+
+	inline std::map<ktvr::ITrackerType, ktvr::ITrackedJointType> ITrackerType_Joint
+	{
+		{ktvr::ITrackerType::Tracker_Handed, ktvr::ITrackedJointType::Joint_HandLeft},
+		{ktvr::ITrackerType::Tracker_LeftFoot, ktvr::ITrackedJointType::Joint_FootLeft},
+		{ktvr::ITrackerType::Tracker_RightFoot, ktvr::ITrackedJointType::Joint_FootRight},
+		{ktvr::ITrackerType::Tracker_LeftShoulder, ktvr::ITrackedJointType::Joint_ShoulderLeft},
+		{ktvr::ITrackerType::Tracker_RightShoulder, ktvr::ITrackedJointType::Joint_ShoulderRight},
+		{ktvr::ITrackerType::Tracker_LeftElbow, ktvr::ITrackedJointType::Joint_ElbowLeft},
+		{ktvr::ITrackerType::Tracker_RightElbow, ktvr::ITrackedJointType::Joint_ElbowRight},
+		{ktvr::ITrackerType::Tracker_LeftKnee, ktvr::ITrackedJointType::Joint_KneeLeft},
+		{ktvr::ITrackerType::Tracker_RightKnee, ktvr::ITrackedJointType::Joint_KneeRight},
+		{ktvr::ITrackerType::Tracker_Waist, ktvr::ITrackedJointType::Joint_SpineWaist},
+		{ktvr::ITrackerType::Tracker_Chest, ktvr::ITrackedJointType::Joint_SpineMiddle},
+		{ktvr::ITrackerType::Tracker_Camera, ktvr::ITrackedJointType::Joint_Head},
+		{ktvr::ITrackerType::Tracker_Keyboard, ktvr::ITrackedJointType::Joint_HandRight}
+	};
+
+	inline std::map<ktvr::ITrackedJointType, ktvr::ITrackerType> Joint_ITrackerType
+	{
+		{ktvr::ITrackedJointType::Joint_HandLeft, ktvr::ITrackerType::Tracker_Handed},
+		{ktvr::ITrackedJointType::Joint_FootLeft, ktvr::ITrackerType::Tracker_LeftFoot},
+		{ktvr::ITrackedJointType::Joint_FootRight, ktvr::ITrackerType::Tracker_RightFoot},
+		{ktvr::ITrackedJointType::Joint_ShoulderLeft, ktvr::ITrackerType::Tracker_LeftShoulder},
+		{ktvr::ITrackedJointType::Joint_ShoulderRight, ktvr::ITrackerType::Tracker_RightShoulder},
+		{ktvr::ITrackedJointType::Joint_ElbowLeft, ktvr::ITrackerType::Tracker_LeftElbow},
+		{ktvr::ITrackedJointType::Joint_ElbowRight, ktvr::ITrackerType::Tracker_RightElbow},
+		{ktvr::ITrackedJointType::Joint_KneeLeft, ktvr::ITrackerType::Tracker_LeftKnee},
+		{ktvr::ITrackedJointType::Joint_KneeRight, ktvr::ITrackerType::Tracker_RightKnee},
+		{ktvr::ITrackedJointType::Joint_SpineWaist, ktvr::ITrackerType::Tracker_Waist},
+		{ktvr::ITrackedJointType::Joint_SpineMiddle, ktvr::ITrackerType::Tracker_Chest},
+		{ktvr::ITrackedJointType::Joint_Head, ktvr::ITrackerType::Tracker_Camera},
+		{ktvr::ITrackedJointType::Joint_HandRight, ktvr::ITrackerType::Tracker_Keyboard}
 	};
 
 	class K2AppTracker : public ktvr::K2TrackerBase
@@ -62,7 +131,7 @@ namespace k2app
 		{
 			// Copy serial and role
 			data.serial = _serial;
-			data.role = static_cast<uint32_t>(_role);
+			data.role = _role;
 
 			// Init the Kalman filter
 			for (auto& filter : kalmanFilter)
@@ -74,12 +143,12 @@ namespace k2app
 		{
 			// Copy serial and role
 			data.serial = _serial;
-			data.role = static_cast<uint32_t>(_role);
+			data.role = _role;
 
 			// Init the Kalman filter
 			for (auto& filter : kalmanFilter)
 				filter.init();
-
+			
 			// Overwrite the lerp const
 			_lerp_const = m_lerp_const;
 		}
@@ -89,17 +158,6 @@ namespace k2app
 			return ktvr::K2TrackedJoint(pose.position, pose.orientation,
 			                            _state ? ktvr::State_Tracked : ktvr::State_NotTracked, _name);
 		}
-
-		// Position filter update option
-		int positionTrackingFilterOption = k2_NoPositionTrackingFilter,
-		    orientationTrackingFilterOption = k2_NoOrientationTrackingFilter;
-
-		// Should values be overwritten (for default ones)
-		bool overwriteDefaultSerial = false;
-
-		// Internal data offset
-		Eigen::Vector3f positionOffset = Eigen::Vector3f(0, 0, 0);
-		Eigen::Quaternionf orientationOffset = Eigen::Quaternionf(1, 0, 0, 0);
 
 		// For internal filters
 		void updatePositionFilters()
@@ -201,7 +259,7 @@ namespace k2app
 		// Additionally, this adds the offsets
 		[[nodiscard]] Eigen::Vector3f getFullPosition(int filter = -1) const
 		{
-			return getFilteredPosition(filter) + positionOffset;
+			return getFilteredPosition(filter) + positionOffset.cast<float>();
 		}
 
 		// Get filtered data
@@ -210,7 +268,7 @@ namespace k2app
 		// Additionally, this adds the offsets
 		[[nodiscard]] Eigen::Quaternionf getFullOrientation(int filter = -1) const
 		{
-			return getFilteredOrientation(filter) * orientationOffset;
+			return getFilteredOrientation(filter) * EigenUtils::EulersToQuat(orientationOffset.cast<float>());
 		}
 
 		// Get filtered data
@@ -246,7 +304,7 @@ namespace k2app
 			);
 
 			// Return the calibrated pose with offset
-			return calibrated_pose_gl + positionOffset;
+			return calibrated_pose_gl + positionOffset.cast<float>();
 		}
 
 		// Get tracker base
@@ -283,7 +341,7 @@ namespace k2app
 			);
 
 			// Add id and return
-			tracker_base.id = id;
+			tracker_base.tracker = tracker;
 			return tracker_base;
 		}
 
@@ -307,8 +365,49 @@ namespace k2app
 			);
 
 			// Add id and return
-			tracker_base.id = id;
+			tracker_base.tracker = tracker;
 			return tracker_base;
+		}
+
+		// Position filter update option
+		RotationTrackingFilterOption orientationTrackingFilterOption = k2_OrientationTrackingFilter_SLERP;
+		JointRotationTrackingOption orientationTrackingOption = k2_DeviceInferredRotation;
+
+		// Position and orientation option
+		JointPositionTrackingOption positionTrackingFilterOption = k2_PositionTrackingFilter_LERP;
+
+		// Internal data offset
+		Eigen::Vector3d positionOffset = Eigen::Vector3d(0, 0, 0),
+			orientationOffset = Eigen::Vector3d(0, 0, 0);
+
+		// If using JointsBasis, the assigned host joint
+		uint32_t selectedTrackedJointID = 0;
+
+		// Is this joint overridden?
+		bool isPositionOverridden = false,
+			isRotationOverridden = false;
+
+		// If the joint is overridden, overrides' ids
+		uint32_t positionOverrideJointID = 0,
+			rotationOverrideJointID = 0;
+
+		template <class Archive>
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar & boost::serialization::make_nvp("K2AppTracker",
+			                                    boost::serialization::base_object<K2TrackerBase>(*this))
+				& BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
+				& BOOST_SERIALIZATION_NVP(isPositionOverridden)
+				& BOOST_SERIALIZATION_NVP(isRotationOverridden)
+				& BOOST_SERIALIZATION_NVP(positionOverrideJointID)
+				& BOOST_SERIALIZATION_NVP(rotationOverrideJointID)
+				& BOOST_SERIALIZATION_NVP(pose) // Just why not
+				& BOOST_SERIALIZATION_NVP(data) // IsActive
+				& BOOST_SERIALIZATION_NVP(orientationTrackingOption) // e.g. from HMD
+				& BOOST_SERIALIZATION_NVP(orientationTrackingFilterOption) // e.g. SLERP
+				& BOOST_SERIALIZATION_NVP(positionTrackingFilterOption) // e.g. EKF
+				& BOOST_SERIALIZATION_NVP(positionOffset) // Offsets - pos
+				& BOOST_SERIALIZATION_NVP(orientationOffset); // Offsets - ori
 		}
 
 		// Internal filters' datas
@@ -323,18 +422,6 @@ namespace k2app
 		Eigen::Vector3f lastLERPPosition = Eigen::Vector3f(0, 0, 0);
 		Eigen::Quaternionf lastSLERPOrientation = Eigen::Quaternionf(1, 0, 0, 0),
 		                   lastSLERPSlowOrientation = Eigen::Quaternionf(1, 0, 0, 0);
-
-		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
-		{
-			ar & boost::serialization::make_nvp("K2AppTracker",
-			                                    boost::serialization::base_object<K2TrackerBase>(*this))
-				& BOOST_SERIALIZATION_NVP(positionTrackingFilterOption)
-				& BOOST_SERIALIZATION_NVP(orientationTrackingFilterOption)
-				& BOOST_SERIALIZATION_NVP(overwriteDefaultSerial)
-				& BOOST_SERIALIZATION_NVP(positionOffset)
-				& BOOST_SERIALIZATION_NVP(orientationOffset);
-		}
 
 	private:
 		/* Position filters */
