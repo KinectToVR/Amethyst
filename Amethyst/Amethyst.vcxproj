@@ -155,6 +155,8 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="JointExpander.h" />
+    <ClInclude Include="JointSelectorExpander.h" />
+    <ClInclude Include="JointSelectorRow.h" />
     <ClInclude Include="K2AppTracker.h" />
     <ClInclude Include="K2EVRInput.h" />
     <ClInclude Include="K2Interfacing.h" />

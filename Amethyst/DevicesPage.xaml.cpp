@@ -10,8 +10,6 @@ using namespace k2app::shared::devices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-bool devices_tab_setup_finished = false,
-     devices_tab_re_setup_finished = false;
 
 void devices_clear_combo(const std::shared_ptr<Controls::ComboBox>& cbox)
 {
@@ -57,14 +55,6 @@ void devices_push_combobox(
 	}();
 }
 
-std::wstring eraseSubStr(std::wstring mainStr, const std::wstring& toErase)
-{
-	// If found then erase it from string
-	if (mainStr.find(toErase) != std::wstring::npos)
-		mainStr.erase(mainStr.find(toErase), toErase.length());
-
-	return mainStr;
-}
 
 void devices_push_override_joints_combo(
 	const std::shared_ptr<Controls::ComboBox>& cbox,

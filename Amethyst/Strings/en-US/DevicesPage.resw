@@ -168,27 +168,6 @@ of one or more virtual trackers.</value>
   <data name="Buttons.ViewDocs.Content" xml:space="preserve">
     <value>View Docs</value>
   </data>
-  <data name="Joints.LeftElbow.Text" xml:space="preserve">
-    <value>Left Elbow</value>
-  </data>
-  <data name="Joints.LeftFoot.Text" xml:space="preserve">
-    <value>Left Foot</value>
-  </data>
-  <data name="Joints.LeftKnee.Text" xml:space="preserve">
-    <value>Left Knee</value>
-  </data>
-  <data name="Joints.RightElbow.Text" xml:space="preserve">
-    <value>Right Elbow</value>
-  </data>
-  <data name="Joints.RightFoot.Text" xml:space="preserve">
-    <value>Right Foot</value>
-  </data>
-  <data name="Joints.RightKnee.Text" xml:space="preserve">
-    <value>Right Knee</value>
-  </data>
-  <data name="Joints.Waist.Text" xml:space="preserve">
-    <value>Waist</value>
-  </data>
   <data name="Placeholders.Joints.Disabled.PlaceholderText" xml:space="preserve">
     <value>Joint Disabled</value>
     <comment>Displays when no joint override is set</comment>
@@ -231,6 +210,9 @@ You won't be able to use it as an override.</value>
   </data>
   <data name="Titles.Joints.ElbowsAndKnees.Text" xml:space="preserve">
     <value>Elbow and Knee Trackers</value>
+  </data>
+  <data name="Titles.Joints.Other.Text" xml:space="preserve">
+    <value>Other Trackers</value>
   </data>
   <data name="Titles.Joints.WaistAndFeet.Text" xml:space="preserve">
     <value>Waist and Feet Trackers</value>

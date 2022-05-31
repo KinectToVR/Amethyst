@@ -876,7 +876,7 @@
                                     <!--OTHERS TODO-->
 
                                     <Expander Margin="40,17,30,0" IsExpanded="False" x:Name="OverridesDropDown_2"
-                                              ExpandDirection="Down" Visibility="Visible"
+                                              ExpandDirection="Down" Visibility="Collapsed"
                                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
                                         <Expander.Header>
@@ -1203,7 +1203,7 @@
                                     <!--OTHERS TODO-->
 
                                     <Expander Margin="40,17,30,0" IsExpanded="False" x:Name="JointBasisDropDown_2"
-                                              ExpandDirection="Down" Visibility="Visible"
+                                              ExpandDirection="Down" Visibility="Collapsed"
                                               HorizontalContentAlignment="Stretch"
                                               HorizontalAlignment="Stretch">
 

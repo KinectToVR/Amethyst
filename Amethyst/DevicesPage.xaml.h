@@ -5,6 +5,8 @@
 #include "TrackingDevices.h"
 #include "K2Shared.h"
 
+#include "JointSelectorRow.h"
+
 namespace winrt::KinectToVR::implementation
 {
 	struct DevicesPage : DevicesPageT<DevicesPage>
