@@ -283,6 +283,8 @@ namespace winrt::KinectToVR::implementation
 		InitializeComponent();
 
 		// Cache needed UI elements
+		jointsBasisExpanderHostStackPanel = std::make_shared<Controls::StackPanel>(JointsBasisExpanderHostStackPanel());
+
 		deviceNameLabel = std::make_shared<Controls::TextBlock>(SelectedDeviceNameLabel());
 		deviceStatusLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceStatusLabel());
 		errorWhatText = std::make_shared<Controls::TextBlock>(ErrorWhatText());
@@ -296,13 +298,9 @@ namespace winrt::KinectToVR::implementation
 		trackingDeviceChangePanel = std::make_shared<Controls::Grid>(TrackingDeviceChangePanel());
 		overridesControls = std::make_shared<Controls::Grid>(OverridesControls());
 		overridesControls_1 = std::make_shared<Controls::Grid>(OverridesControls_1());
-		jointBasisControls = std::make_shared<Controls::Grid>(JointBasisControls());
-		jointBasisControls_1 = std::make_shared<Controls::Grid>(JointBasisControls_1());
 		devicesMainContentGridOuter = std::make_shared<Controls::Grid>(DevicesMainContentGridOuter());
 		devicesMainContentGridInner = std::make_shared<Controls::Grid>(DevicesMainContentGridInner());
-
-		jointBasisDropDown = std::make_shared<Controls::Expander>(JointBasisDropDown());
-		jointBasisDropDown_1 = std::make_shared<Controls::Expander>(JointBasisDropDown_1());
+		
 		overridesDropDown = std::make_shared<Controls::Expander>(OverridesDropDown());
 		overridesDropDown_1 = std::make_shared<Controls::Expander>(OverridesDropDown_1());
 
@@ -311,14 +309,6 @@ namespace winrt::KinectToVR::implementation
 		setAsOverrideButton = std::make_shared<Controls::Button>(SetAsOverrideButton());
 		setAsBaseButton = std::make_shared<Controls::Button>(SetAsBaseButton());
 		deselectDeviceButton = std::make_shared<Controls::Button>(DeselectDeviceButton());
-
-		waistJointOptionBox = std::make_shared<Controls::ComboBox>(WaistJointOptionBox());
-		leftFootJointOptionBox = std::make_shared<Controls::ComboBox>(LeftFootJointOptionBox());
-		rightFootJointOptionBox = std::make_shared<Controls::ComboBox>(RightFootJointOptionBox());
-		leftElbowJointOptionBox = std::make_shared<Controls::ComboBox>(LeftElbowJointOptionBox());
-		rightElbowJointOptionBox = std::make_shared<Controls::ComboBox>(RightElbowJointOptionBox());
-		leftKneeJointOptionBox = std::make_shared<Controls::ComboBox>(LeftKneeJointOptionBox());
-		rightKneeJointOptionBox = std::make_shared<Controls::ComboBox>(RightKneeJointOptionBox());
 
 		waistRotationOverrideOptionBox = std::make_shared<Controls::ComboBox>(WaistRotationOverrideOptionBox());
 		waistPositionOverrideOptionBox = std::make_shared<Controls::ComboBox>(WaistPositionOverrideOptionBox());
@@ -354,8 +344,6 @@ namespace winrt::KinectToVR::implementation
 
 		overridesDropDown = std::make_shared<Controls::Expander>(OverridesDropDown());
 		overridesDropDown_1 = std::make_shared<Controls::Expander>(OverridesDropDown_1());
-		jointBasisDropDown = std::make_shared<Controls::Expander>(JointBasisDropDown());
-		jointBasisDropDown_1 = std::make_shared<Controls::Expander>(JointBasisDropDown_1());
 
 		devicesMainContentScrollViewer = std::make_shared<Controls::ScrollViewer>(DevicesMainContentScrollViewer());
 
@@ -432,6 +420,27 @@ namespace winrt::KinectToVR::implementation
 		// RadioButton is set on ItemChanged
 		devicesListView.get()->SelectedIndex(k2app::K2Settings.trackingDeviceID);
 
+		// Set joint expanders up
+
+		// Type 0: WF
+		jointSelectorExpanders[0] = std::move(std::shared_ptr<Controls::JointSelectorExpander>(
+			new Controls::JointSelectorExpander({ &k2app::K2Settings.K2TrackersVector[0], 
+				&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2] }, 0)));
+
+		// Type 1: EK
+		jointSelectorExpanders[1] = std::move(std::shared_ptr<Controls::JointSelectorExpander>(
+			new Controls::JointSelectorExpander({ &k2app::K2Settings.K2TrackersVector[3], 
+				&k2app::K2Settings.K2TrackersVector[4], &k2app::K2Settings.K2TrackersVector[5],
+				&k2app::K2Settings.K2TrackersVector[6] }, 1)));
+
+		// Type 2: OTHER
+		std::vector<k2app::K2AppTracker*> _tracker_p_vector;
+		for (uint32_t index = 7; index < k2app::K2Settings.K2TrackersVector.size(); index++)
+			_tracker_p_vector.push_back(&k2app::K2Settings.K2TrackersVector[index]);
+
+		jointSelectorExpanders[2] = std::move(std::shared_ptr<Controls::JointSelectorExpander>(
+			new Controls::JointSelectorExpander(_tracker_p_vector, 2)));
+
 		NavigationCacheMode(Navigation::NavigationCacheMode::Required);
 		TrackingDevices::devices_update_current();
 	}
@@ -500,10 +509,9 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 				: *k2app::interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a kinectbasis device, so this should be hidden
-		jointBasisControls.get()->Visibility(Visibility::Collapsed);
-		jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown_1.get()->Visibility(Visibility::Collapsed);
+		for(auto& expander: jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+		
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 		// Set up combos if the device's OK
@@ -596,100 +604,27 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
-		jointBasisControls.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
-
+		
 		jointBasisLabel.get()->Visibility(
 			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
-
-		jointBasisControls_1.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
-		jointBasisDropDown.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
-		jointBasisDropDown_1.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
+		
 		// Set up combos if the device's OK
 		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
 			// If we're reconnecting a base device, also refresh joints
 			if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 			{
-				// Clear items
-				// Waist
-				devices_clear_combo(waistJointOptionBox);
-				// LeftF
-				devices_clear_combo(leftFootJointOptionBox);
-				// RightF
-				devices_clear_combo(rightFootJointOptionBox);
-				// LeftEL
-				devices_clear_combo(leftElbowJointOptionBox);
-				// RightEL
-				devices_clear_combo(rightElbowJointOptionBox);
-				// LeftK
-				devices_clear_combo(leftKneeJointOptionBox);
-				// RightK
-				devices_clear_combo(rightKneeJointOptionBox);
-
-				// Append all joints to all combos
-				for (auto& _joint : device->getTrackedJoints())
-				{
-					// Get the name into string
-					auto _jointname = _joint.getJointName();
-
-					// Push the name to all combos
-					// Waist
-					waistJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// LeftF
-					leftFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// RightF
-					rightFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// LeftEL
-					leftElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// RightEL
-					rightElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// LeftK
-					leftKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// RightK
-					rightKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-				}
-
-				// Check base IDs if wrong
-				TrackingDevices::devices_check_base_ids(selectedTrackingDeviceID);
-
-				// Select the first (or next, if exists) joint
-				// Set the placeholder text on disabled combos
-				// Waist
-				waistJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[0].selectedTrackedJointID);
-				// LeftF
-				leftFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[1].selectedTrackedJointID);
-				// RightF
-				rightFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[2].selectedTrackedJointID);
-				// LeftEL
-				leftElbowJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[3].selectedTrackedJointID);
-				// RightEL
-				rightElbowJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[4].selectedTrackedJointID);
-				// LeftEL
-				leftKneeJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[5].selectedTrackedJointID);
-				// RightEL
-				rightKneeJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[6].selectedTrackedJointID);
+				for (auto& expander : jointSelectorExpanders)
+					expander.get()->ReAppendTrackers();
 			}
 			// If we're reconnecting an override device, also refresh joints
 			else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -857,10 +792,9 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a kinectbasis device, so this should be hidden
-		jointBasisControls.get()->Visibility(Visibility::Collapsed);
-		jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown_1.get()->Visibility(Visibility::Collapsed);
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 		// Set up combos if the device's OK
@@ -937,100 +871,27 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
-		jointBasisControls.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
-
+		
 		jointBasisLabel.get()->Visibility(
 			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
-
-		jointBasisControls_1.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
-		jointBasisDropDown.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
-		jointBasisDropDown_1.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
+		
 		// Set up combos if the device's OK
 		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
 			// If we're reconnecting a base device, also refresh joints
 			if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 			{
-				// Clear items
-				// Waist
-				devices_clear_combo(waistJointOptionBox);
-				// LeftF
-				devices_clear_combo(leftFootJointOptionBox);
-				// RightF
-				devices_clear_combo(rightFootJointOptionBox);
-				// LeftEL
-				devices_clear_combo(leftElbowJointOptionBox);
-				// RightEL
-				devices_clear_combo(rightElbowJointOptionBox);
-				// LeftK
-				devices_clear_combo(leftKneeJointOptionBox);
-				// RightK
-				devices_clear_combo(rightKneeJointOptionBox);
-
-				// Append all joints to all combos
-				for (auto& _joint : device->getTrackedJoints())
-				{
-					// Get the name into string
-					auto _jointname = _joint.getJointName();
-
-					// Push the name to all combos
-					// Waist
-					waistJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// LeftF
-					leftFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// RightF
-					rightFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// LeftEL
-					leftElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// RightEL
-					rightElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// LeftK
-					leftKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// RightK
-					rightKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-				}
-
-				// Check base IDs if wrong
-				TrackingDevices::devices_check_base_ids(selectedTrackingDeviceID);
-
-				// Select the first (or next, if exists) joint
-				// Set the placeholder text on disabled combos
-				// Waist
-				waistJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[0].selectedTrackedJointID);
-				// LeftF
-				leftFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[1].selectedTrackedJointID);
-				// RightF
-				rightFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[2].selectedTrackedJointID);
-				// LeftEL
-				leftElbowJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[3].selectedTrackedJointID);
-				// RightEL
-				rightElbowJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[4].selectedTrackedJointID);
-				// LeftEL
-				leftKneeJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[5].selectedTrackedJointID);
-				// RightEL
-				rightKneeJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[6].selectedTrackedJointID);
+				for (auto& expander : jointSelectorExpanders)
+					expander.get()->ReAppendTrackers();
 			}
 			// If we're reconnecting an override device, also refresh joints
 			else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -1132,10 +993,9 @@ void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a kinectbasis device, so this should be hidden
-		jointBasisControls.get()->Visibility(Visibility::Collapsed);
-		jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown_1.get()->Visibility(Visibility::Collapsed);
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (trackingDevice.index() == 1)
@@ -1148,31 +1008,14 @@ void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
-		jointBasisControls.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
-
+		
 		jointBasisLabel.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
-		jointBasisControls_1.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
-		jointBasisDropDown.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
-		jointBasisDropDown_1.get()->Visibility(
 			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
@@ -1217,10 +1060,9 @@ void KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	LOG(INFO) << "Now deselecting the tracking device...";
 
-	jointBasisControls.get()->Visibility(Visibility::Collapsed);
-	jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
-	jointBasisDropDown.get()->Visibility(Visibility::Collapsed);
-	jointBasisDropDown_1.get()->Visibility(Visibility::Collapsed);
+	for (auto& expander : jointSelectorExpanders)
+		expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+
 	jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 	setAsOverrideButton.get()->IsEnabled(true);
@@ -1358,10 +1200,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a kinectbasis device, so this should be hidden
-		jointBasisControls.get()->Visibility(Visibility::Collapsed);
-		jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown_1.get()->Visibility(Visibility::Collapsed);
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (trackingDevice.index() == 1)
@@ -1430,10 +1271,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected an override device, so this should be hidden
-		jointBasisControls.get()->Visibility(Visibility::Collapsed);
-		jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown_1.get()->Visibility(Visibility::Collapsed);
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
 
@@ -1533,10 +1373,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a kinectbasis device, so this should be hidden
-		jointBasisControls.get()->Visibility(Visibility::Collapsed);
-		jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown_1.get()->Visibility(Visibility::Collapsed);
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (trackingDevice.index() == 1)
@@ -1554,83 +1393,11 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		}
 
 		// Also refresh joints
-
-		// Clear items
-		// Waist
-		devices_clear_combo(waistJointOptionBox);
-		// LeftF
-		devices_clear_combo(leftFootJointOptionBox);
-		// RightF
-		devices_clear_combo(rightFootJointOptionBox);
-		// LeftEL
-		devices_clear_combo(leftElbowJointOptionBox);
-		// RightEL
-		devices_clear_combo(rightElbowJointOptionBox);
-		// LeftK
-		devices_clear_combo(leftKneeJointOptionBox);
-		// RightK
-		devices_clear_combo(rightKneeJointOptionBox);
-
-		// Append all joints to all combos
-		for (auto& _joint : device->getTrackedJoints())
-		{
-			// Get the name into string
-			auto _jointname = _joint.getJointName();
-
-			// Push the name to all combos
-			// Waist
-			waistJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-			// LeftF
-			leftFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-			// RightF
-			rightFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-			// LeftEL
-			leftElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-			// RightEL
-			rightElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-			// LeftK
-			leftKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-			// RightK
-			rightKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-		}
-
-		// Check base IDs if wrong
-		TrackingDevices::devices_check_base_ids(selectedTrackingDeviceID);
-
-		// Select the first (or next, if exists) joint
-		// Set the placeholder text on disabled combos
-		// Waist
-		waistJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[0].selectedTrackedJointID);
-		// LeftF
-		leftFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[1].selectedTrackedJointID);
-		// RightF
-		rightFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[2].selectedTrackedJointID);
-		// LeftEL
-		leftElbowJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[3].selectedTrackedJointID);
-		// RightEL
-		rightElbowJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[4].selectedTrackedJointID);
-		// LeftEL
-		leftKneeJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[5].selectedTrackedJointID);
-		// RightEL
-		rightKneeJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[6].selectedTrackedJointID);
-
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ReAppendTrackers();
+		
 		// Update the status
 		device_status = device->statusResultWString(device->getStatusResult());
-
-		// We've selected a jointsbasis device, so this should be visible
-		//	at least when the device is online
-		jointBasisControls.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
-
-		jointBasisControls_1.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
-
-		jointBasisDropDown.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
-
-		jointBasisDropDown_1.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
-
 		jointBasisLabel.get()->Visibility(
 			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
 	}
@@ -1688,7 +1455,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
 
 	// If controls are set to be visible
-	if (jointBasisControls.get()->Visibility() == Visibility::Visible)
+	if (jointSelectorExpanders[0].get()->ContainerExpander().get()->Visibility() == Visibility::Visible)
 	{
 		// Remove the only one child of our outer main content grid
 		// (What a bestiality it is to do that!!1)
@@ -1721,135 +1488,6 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 	co_await ui_thread;
 
 	devicesJointsBasisSelectorStackPanelInner.get()->Transitions().Clear();
-}
-
-/* For JointBasis device type: joints selector */
-
-void KinectToVR::implementation::DevicesPage::WaistJointOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (waistJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[0].selectedTrackedJointID = waistJointOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
-			signalJoint(k2app::K2Settings.K2TrackersVector[0].selectedTrackedJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (leftFootJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[1].selectedTrackedJointID = leftFootJointOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
-			signalJoint(k2app::K2Settings.K2TrackersVector[1].selectedTrackedJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-void KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (rightFootJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[2].selectedTrackedJointID = rightFootJointOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
-			signalJoint(k2app::K2Settings.K2TrackersVector[2].selectedTrackedJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-void KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (leftElbowJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[3].selectedTrackedJointID = leftElbowJointOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
-			signalJoint(k2app::K2Settings.K2TrackersVector[3].selectedTrackedJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-void KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (rightElbowJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[4].selectedTrackedJointID = rightElbowJointOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
-			signalJoint(k2app::K2Settings.K2TrackersVector[4].selectedTrackedJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-void KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (leftKneeJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[5].selectedTrackedJointID = leftKneeJointOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
-			signalJoint(k2app::K2Settings.K2TrackersVector[5].selectedTrackedJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-void KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (rightKneeJointOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[6].selectedTrackedJointID = rightKneeJointOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevice = TrackingDevices::getCurrentDevice();
-	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
-			signalJoint(k2app::K2Settings.K2TrackersVector[6].selectedTrackedJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
 }
 
 /* For *Override* device type: position & rotation joints selector */
@@ -2528,47 +2166,6 @@ void KinectToVR::implementation::DevicesPage::OverrideRightKneeRotation_Click(
 
 /* For comboboxes: update before opening */
 
-void KinectToVR::implementation::DevicesPage::WaistJointOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftFootJointOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightFootJointOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftElbowJointOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightElbowJointOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftKneeJointOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightKneeJointOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
 
 void KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_DropDownOpened(
 	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
@@ -2732,10 +2329,9 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 				: *k2app::interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a kinectbasis device, so this should be hidden
-		jointBasisControls.get()->Visibility(Visibility::Collapsed);
-		jointBasisControls_1.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown.get()->Visibility(Visibility::Collapsed);
-		jointBasisDropDown_1.get()->Visibility(Visibility::Collapsed);
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 		// Set up combos if the device's OK
@@ -2828,100 +2424,27 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
-		jointBasisControls.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+		for (auto& expander : jointSelectorExpanders)
+			expander.get()->ContainerExpander().get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
-
+		
 		jointBasisLabel.get()->Visibility(
 			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
-
-		jointBasisControls_1.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
-		jointBasisDropDown.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
-		jointBasisDropDown_1.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-
+		
 		// Set up combos if the device's OK
 		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
 			// If we're reconnecting a base device, also refresh joints
 			if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 			{
-				// Clear items
-				// Waist
-				devices_clear_combo(waistJointOptionBox);
-				// LeftF
-				devices_clear_combo(leftFootJointOptionBox);
-				// RightF
-				devices_clear_combo(rightFootJointOptionBox);
-				// LeftEL
-				devices_clear_combo(leftElbowJointOptionBox);
-				// RightEL
-				devices_clear_combo(rightElbowJointOptionBox);
-				// LeftK
-				devices_clear_combo(leftKneeJointOptionBox);
-				// RightK
-				devices_clear_combo(rightKneeJointOptionBox);
-
-				// Append all joints to all combos
-				for (auto& _joint : device->getTrackedJoints())
-				{
-					// Get the name into string
-					auto _jointname = _joint.getJointName();
-
-					// Push the name to all combos
-					// Waist
-					waistJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// LeftF
-					leftFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// RightF
-					rightFootJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// LeftEL
-					leftElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// RightEL
-					rightElbowJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// LeftK
-					leftKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-					// RightK
-					rightKneeJointOptionBox.get()->Items().Append(box_value(StringToWString(_jointname)));
-				}
-
-				// Check base IDs if wrong
-				TrackingDevices::devices_check_base_ids(selectedTrackingDeviceID);
-
-				// Select the first (or next, if exists) joint
-				// Set the placeholder text on disabled combos
-				// Waist
-				waistJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[0].selectedTrackedJointID);
-				// LeftF
-				leftFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[1].selectedTrackedJointID);
-				// RightF
-				rightFootJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[2].selectedTrackedJointID);
-				// LeftEL
-				leftElbowJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[3].selectedTrackedJointID);
-				// RightEL
-				rightElbowJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[4].selectedTrackedJointID);
-				// LeftEL
-				leftKneeJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[5].selectedTrackedJointID);
-				// RightEL
-				rightKneeJointOptionBox.get()->SelectedIndex(k2app::K2Settings.K2TrackersVector[6].selectedTrackedJointID);
+				for (auto& expander : jointSelectorExpanders)
+					expander.get()->ReAppendTrackers();
 			}
 			// If we're reconnecting an override device, also refresh joints
 			else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -3058,24 +2581,6 @@ void KinectToVR::implementation::DevicesPage::OverridesDropDown_1_Expanding(
 {
 	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
 	overridesDropDown.get()->IsExpanded(false);
-}
-
-
-void KinectToVR::implementation::DevicesPage::JointBasisDropDown_Expanding(
-	const Controls::Expander& sender,
-	const Controls::ExpanderExpandingEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	jointBasisDropDown_1.get()->IsExpanded(false);
-}
-
-
-void KinectToVR::implementation::DevicesPage::JointBasisDropDown_1_Expanding(
-	const Controls::Expander& sender,
-	const Controls::ExpanderExpandingEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	jointBasisDropDown.get()->IsExpanded(false);
 }
 
 

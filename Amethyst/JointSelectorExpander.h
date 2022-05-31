@@ -15,8 +15,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 // Extension of the k2/shared namespace
 namespace k2app::shared::devices
 {
-	inline std::vector<std::shared_ptr<
-		winrt::Microsoft::UI::Xaml::Controls::JointSelectorExpander>> jointSelectorExpanderVector;
+	inline std::array<std::shared_ptr<
+		winrt::Microsoft::UI::Xaml::Controls::JointSelectorExpander>, 3> jointSelectorExpanders;
 }
 
 namespace winrt::Microsoft::UI::Xaml::Controls

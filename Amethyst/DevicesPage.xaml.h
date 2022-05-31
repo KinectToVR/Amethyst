@@ -6,6 +6,7 @@
 #include "K2Shared.h"
 
 #include "JointSelectorRow.h"
+#include "JointSelectorExpander.h"
 
 namespace winrt::KinectToVR::implementation
 {
@@ -28,33 +29,6 @@ namespace winrt::KinectToVR::implementation
 		                                const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ReconnectDeviceButton_Click(const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
 		                                 const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args);
-		void WaistJointOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
-		                                          const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs&
-		                                          e);
-		void LeftFootJointOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
-		                                             const
-		                                             winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs&
-		                                             e);
-		void RightFootJointOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
-		                                              const
-		                                              winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs&
-		                                              e);
-		void LeftElbowJointOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
-		                                              const
-		                                              winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs&
-		                                              e);
-		void RightElbowJointOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
-		                                               const
-		                                               winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs&
-		                                               e);
-		void LeftKneeJointOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
-		                                             const
-		                                             winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs&
-		                                             e);
-		void RightKneeJointOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
-		                                              const
-		                                              winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs&
-		                                              e);
 		void WaistRotationOverrideOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
 		                                                     const
 		                                                     winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
@@ -167,20 +141,6 @@ namespace winrt::KinectToVR::implementation
 		                                                       const Windows::Foundation::IInspectable& e);
 		void RightKneeRotationOverrideOptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
 		                                                       const Windows::Foundation::IInspectable& e);
-		void WaistJointOptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
-		                                        const Windows::Foundation::IInspectable& e);
-		void LeftFootJointOptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
-		                                           const Windows::Foundation::IInspectable& e);
-		void RightFootJointOptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
-		                                            const Windows::Foundation::IInspectable& e);
-		void LeftElbowJointOptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
-		                                            const Windows::Foundation::IInspectable& e);
-		void RightElbowJointOptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
-		                                             const Windows::Foundation::IInspectable& e);
-		void LeftKneeJointOptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
-		                                           const Windows::Foundation::IInspectable& e);
-		void RightKneeJointOptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
-		                                            const Windows::Foundation::IInspectable& e);
 		void DismissOverrideTipNoJointsButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DevicesPage_Loaded(const Windows::Foundation::IInspectable& sender,
@@ -189,10 +149,6 @@ namespace winrt::KinectToVR::implementation
 		                                 const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e);
 		void OverridesDropDown_1_Expanding(const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
 		                                   const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e);
-		void JointBasisDropDown_Expanding(const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-		                                  const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e);
-		void JointBasisDropDown_1_Expanding(const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-		                                    const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& e);
 		void OpenDiscordButton_Click(const Windows::Foundation::IInspectable& sender,
 		                             const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void OpenDocsButton_Click(const Windows::Foundation::IInspectable& sender,

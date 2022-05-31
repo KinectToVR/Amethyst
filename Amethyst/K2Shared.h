@@ -155,14 +155,10 @@ namespace k2app::shared
 			trackingDeviceChangePanel,
 			overridesControls,
 			overridesControls_1,
-			jointBasisControls,
-			jointBasisControls_1,
 			devicesMainContentGridOuter,
 			devicesMainContentGridInner;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander>
-			jointBasisDropDown,
-			jointBasisDropDown_1,
 			overridesDropDown,
 			overridesDropDown_1;
 
@@ -174,13 +170,6 @@ namespace k2app::shared
 			deselectDeviceButton; // This one's override-only
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBox>
-			waistJointOptionBox,
-			leftFootJointOptionBox,
-			rightFootJointOptionBox,
-			leftElbowJointOptionBox,
-			rightElbowJointOptionBox,
-			leftKneeJointOptionBox,
-			rightKneeJointOptionBox,
 			rightFootPositionOverrideOptionBox,
 			rightFootRotationOverrideOptionBox,
 			leftFootRotationOverrideOptionBox,
@@ -223,7 +212,8 @@ namespace k2app::shared
 			devicesOverridesSelectorStackPanelInner,
 			devicesJointsBasisSelectorStackPanelOuter,
 			devicesJointsBasisSelectorStackPanelInner,
-			selectedDeviceSettingsRootLayoutPanel;
+			selectedDeviceSettingsRootLayoutPanel,
+			jointsBasisExpanderHostStackPanel;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::AppBarButton> selectedDeviceSettingsButton;
 
