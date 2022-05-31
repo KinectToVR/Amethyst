@@ -57,11 +57,12 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
 				// Try to clear the combo box
-				[&]
+				// (this weird shit is an unwrapper for __try)
+				[&, this]
 				{
 					__try
 					{
-						[&]
+						[&, this]
 						{
 							_ptr_tracker_combo.get()->Items().Clear();
 						}();
@@ -77,25 +78,27 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 				// Try to push all available joints in
 				// Append all joints to all combos
+				// (this weird shit is an unwrapper for __try)
 				for (auto& _joint : device->getTrackedJoints())
 					// Push the name to the combo
-					[&]
-				{
-					__try
+					[&, this]
 					{
-						[&]
+						__try
 						{
-							_ptr_tracker_combo.get()->Items().Append(box_value(StringToWString(_joint.getJointName())));
-						}();
-					}
-					__except (EXCEPTION_EXECUTE_HANDLER)
-					{
-						[&]
+							[&, this]
+							{
+								_ptr_tracker_combo.get()->Items().Append(
+									box_value(StringToWString(_joint.getJointName())));
+							}();
+						}
+						__except (EXCEPTION_EXECUTE_HANDLER)
 						{
-							LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
-						}();
-					}
-				}();
+							[&]
+							{
+								LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
+							}();
+						}
+					}();
 			}
 
 			// Check base IDs if wrong
@@ -107,6 +110,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 		std::shared_ptr<TextBlock> TrackedJointName() { return _ptr_title; }
 		std::shared_ptr<ComboBox> TrackerCombo() { return _ptr_tracker_combo; }
+
+		k2app::K2AppTracker* Tracker() { return _tracker_pointer; }
 
 	protected:
 		k2app::K2AppTracker* _tracker_pointer;
@@ -135,12 +140,14 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_title.Text(eraseSubStr(k2app::interfacing::LocalizedResourceWString(
 				                        L"SharedStrings", L"Joints/Enum/" +
-				                        std::to_wstring(static_cast<int>(_tracker_pointer->tracker))), L" Tracker"));
+				                        std::to_wstring(static_cast<int>(_tracker_pointer->tracker))),
+			                        L" Tracker"));
 
 			_title.FontSize(14);
 			_title.Margin({0, -3, 0, 0});
 			_title.HorizontalAlignment(HorizontalAlignment::Center);
 			_title.VerticalAlignment(VerticalAlignment::Center);
+			_title.HorizontalTextAlignment(TextAlignment::Center);
 
 			// Set up content combo
 			ComboBox _tracker_combo;
@@ -153,19 +160,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracker_combo.PlaceholderText(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
 
-			// Append tracked joints
-			ReAppendJoints();
-			
-			// Append all elements to the container
-			_container.Children().Append(_title);
-			_container.Children().Append(_tracker_combo);
-
-			_container.SetColumn(_title, 0);
-			_container.SetRow(_title, 2);
-
-			_container.SetColumn(_tracker_combo, 2);
-			_container.SetRow(_tracker_combo, 2);
-			
 			// Back everything up
 			_ptr_container = std::make_shared<Grid>(_container);
 			_ptr_title = std::make_shared<TextBlock>(_title);
@@ -176,19 +170,34 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
 				       const Controls::SelectionChangedEventArgs& e) -> void
 				{
-					if (!k2app::shared::devices::devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+					if (!k2app::shared::devices::devices_tab_setup_finished)return;
+					// Don't even try if we're not set up yet
 					if (_ptr_tracker_combo.get()->SelectedIndex() >= 0)
 						_tracker_pointer->selectedTrackedJointID = _ptr_tracker_combo.get()->SelectedIndex();
 
 					// If we're using a joints device then also signal the joint
 					const auto& trackingDevice = TrackingDevices::getCurrentDevice();
-					if (trackingDevice.index() == 1 && k2app::shared::devices::devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+					if (trackingDevice.index() == 1 && k2app::shared::devices::devices_tab_re_setup_finished)
+						// if JointsBasis & Setup Finished
 						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
-						signalJoint(_tracker_pointer->selectedTrackedJointID);
+							signalJoint(_tracker_pointer->selectedTrackedJointID);
 
 					// Save settings
 					k2app::K2Settings.saveSettings();
 				});
+
+			// Append tracked joints
+			ReAppendJoints();
+
+			// Append all elements to the container
+			_container.Children().Append(_title);
+			_container.Children().Append(_tracker_combo);
+
+			_container.SetColumn(_title, 0);
+			_container.SetRow(_title, 2);
+
+			_container.SetColumn(_tracker_combo, 2);
+			_container.SetRow(_tracker_combo, 2);
 		}
 	};
 }

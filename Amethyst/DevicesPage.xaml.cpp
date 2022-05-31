@@ -424,22 +424,18 @@ namespace winrt::KinectToVR::implementation
 
 		// Type 0: WF
 		jointSelectorExpanders[0] = std::move(std::shared_ptr<Controls::JointSelectorExpander>(
-			new Controls::JointSelectorExpander({ &k2app::K2Settings.K2TrackersVector[0], 
-				&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2] }, 0)));
+			new Controls::JointSelectorExpander(0)));
 
 		// Type 1: EK
 		jointSelectorExpanders[1] = std::move(std::shared_ptr<Controls::JointSelectorExpander>(
-			new Controls::JointSelectorExpander({ &k2app::K2Settings.K2TrackersVector[3], 
-				&k2app::K2Settings.K2TrackersVector[4], &k2app::K2Settings.K2TrackersVector[5],
-				&k2app::K2Settings.K2TrackersVector[6] }, 1)));
+			new Controls::JointSelectorExpander(1)));
 
 		// Type 2: OTHER
-		std::vector<k2app::K2AppTracker*> _tracker_p_vector;
-		for (uint32_t index = 7; index < k2app::K2Settings.K2TrackersVector.size(); index++)
-			_tracker_p_vector.push_back(&k2app::K2Settings.K2TrackersVector[index]);
-
 		jointSelectorExpanders[2] = std::move(std::shared_ptr<Controls::JointSelectorExpander>(
-			new Controls::JointSelectorExpander(_tracker_p_vector, 2)));
+			new Controls::JointSelectorExpander(2)));
+
+		for (auto& expander : jointSelectorExpanders)
+			jointsBasisExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
 
 		NavigationCacheMode(Navigation::NavigationCacheMode::Required);
 		TrackingDevices::devices_update_current();
@@ -510,7 +506,7 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 
 		// We've selected a kinectbasis device, so this should be hidden
 		for(auto& expander: jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+			expander.get()->SetVisibility(Visibility::Collapsed);
 		
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
@@ -605,7 +601,7 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(
+			expander.get()->SetVisibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
@@ -793,7 +789,7 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 
 		// We've selected a kinectbasis device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
@@ -872,7 +868,7 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(
+			expander.get()->SetVisibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
@@ -994,7 +990,7 @@ void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 
 		// We've selected a kinectbasis device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
@@ -1009,7 +1005,7 @@ void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(
+			expander.get()->SetVisibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
@@ -1061,7 +1057,7 @@ void KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 	LOG(INFO) << "Now deselecting the tracking device...";
 
 	for (auto& expander : jointSelectorExpanders)
-		expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+		expander.get()->SetVisibility(Visibility::Collapsed);
 
 	jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
@@ -1201,7 +1197,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 
 		// We've selected a kinectbasis device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
@@ -1272,7 +1268,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 
 		// We've selected an override device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
@@ -1374,7 +1370,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 
 		// We've selected a kinectbasis device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 	}
@@ -2330,7 +2326,7 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 		// We've selected a kinectbasis device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(Visibility::Collapsed);
+			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
@@ -2425,7 +2421,7 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->Visibility(
+			expander.get()->SetVisibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible

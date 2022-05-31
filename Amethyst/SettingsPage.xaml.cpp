@@ -772,7 +772,7 @@ void winrt::KinectToVR::implementation::SettingsPage::TrackerConfigButton_Click(
 					// Sleep on UI
 					apartment_context ui_thread;
 					co_await resume_background();
-					Sleep(100);
+					Sleep(50);
 					co_await ui_thread;
 				}
 				jointExpanderHostStackPanel->Transitions().RemoveAtEnd();
