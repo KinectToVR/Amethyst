@@ -153,54 +153,18 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
 			deviceErrorGrid,
 			trackingDeviceChangePanel,
-			overridesControls,
-			overridesControls_1,
 			devicesMainContentGridOuter,
 			devicesMainContentGridInner;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander>
-			overridesDropDown,
-			overridesDropDown_1;
-
+		
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ListView> devicesListView;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Flyout> noJointsFlyout;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
 			setAsOverrideButton,
 			setAsBaseButton,
 			deselectDeviceButton; // This one's override-only
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ComboBox>
-			rightFootPositionOverrideOptionBox,
-			rightFootRotationOverrideOptionBox,
-			leftFootRotationOverrideOptionBox,
-			leftFootPositionOverrideOptionBox,
-			waistRotationOverrideOptionBox,
-			waistPositionOverrideOptionBox,
-			leftElbowPositionOverrideOptionBox,
-			leftElbowRotationOverrideOptionBox,
-			rightElbowPositionOverrideOptionBox,
-			rightElbowRotationOverrideOptionBox,
-			leftKneePositionOverrideOptionBox,
-			leftKneeRotationOverrideOptionBox,
-			rightKneePositionOverrideOptionBox,
-			rightKneeRotationOverrideOptionBox;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>
-			overrideWaistPosition,
-			overrideWaistRotation,
-			overrideLeftFootPosition,
-			overrideLeftFootRotation,
-			overrideRightFootPosition,
-			overrideRightFootRotation,
-			overrideLeftElbowPosition,
-			overrideLeftElbowRotation,
-			overrideRightElbowPosition,
-			overrideRightElbowRotation,
-			overrideLeftKneePosition,
-			overrideLeftKneeRotation,
-			overrideRightKneePosition,
-			overrideRightKneeRotation;
-
+		
 		inline std::binary_semaphore smphSignalCurrentUpdate{0},
 		                             smphSignalStartMain{0};
 		inline uint32_t selectedTrackingDeviceID = 0;
@@ -210,10 +174,14 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel>
 			devicesOverridesSelectorStackPanelOuter,
 			devicesOverridesSelectorStackPanelInner,
+
 			devicesJointsBasisSelectorStackPanelOuter,
 			devicesJointsBasisSelectorStackPanelInner,
+
 			selectedDeviceSettingsRootLayoutPanel,
-			jointsBasisExpanderHostStackPanel;
+
+			jointsBasisExpanderHostStackPanel,
+			overridesExpanderHostStackPanel;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::AppBarButton> selectedDeviceSettingsButton;
 

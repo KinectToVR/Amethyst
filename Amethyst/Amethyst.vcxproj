@@ -165,6 +165,8 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <ClInclude Include="K2Shared.h" />
     <ClInclude Include="KalmanFilter.h" />
     <ClInclude Include="LowpassFilter.h" />
+    <ClInclude Include="OverrideSelectorExpander.h" />
+    <ClInclude Include="OverrideSelectorRow.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>

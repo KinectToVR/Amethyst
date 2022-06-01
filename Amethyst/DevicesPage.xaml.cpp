@@ -11,270 +11,270 @@ using namespace k2app::shared::devices;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-void devices_clear_combo(const std::shared_ptr<Controls::ComboBox>& cbox)
-{
-	[&]
-	{
-		__try
-		{
-			[&]
-			{
-				cbox.get()->Items().Clear();
-			}();
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER)
-		{
-			[&]
-			{
-				LOG(WARNING) << "Couldn't clear a ComboBox. You better call an exorcist.";
-			}();
-		}
-	}();
-}
-
-void devices_push_combobox(
-	const std::shared_ptr<Controls::ComboBox>& cbox,
-	const hstring& str)
-{
-	[&]
-	{
-		__try
-		{
-			[&]
-			{
-				cbox.get()->Items().Append(box_value(str));
-			}();
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER)
-		{
-			[&]
-			{
-				LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
-			}();
-		}
-	}();
-}
-
-
-void devices_push_override_joints_combo(
-	const std::shared_ptr<Controls::ComboBox>& cbox,
-	const bool& all = true)
-{
-	devices_push_combobox(cbox, 
-		eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-		L"SharedStrings", L"Joints/Enum/" +
-		std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_Chest))), L" Tracker").c_str());
-
-	if (all)
-	{
-		devices_push_combobox(cbox,
-			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftElbow))), L" Tracker").c_str());
-		devices_push_combobox(cbox,
-			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightElbow))), L" Tracker").c_str());
-	}
-
-	devices_push_combobox(cbox,
-		eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-			L"SharedStrings", L"Joints/Enum/" +
-			std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_Waist))), L" Tracker").c_str());
-
-	if (all)
-	{
-		devices_push_combobox(cbox,
-			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftKnee))), L" Tracker").c_str());
-		devices_push_combobox(cbox,
-			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightKnee))), L" Tracker").c_str());
-	}
-
-	devices_push_combobox(cbox,
-		eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-			L"SharedStrings", L"Joints/Enum/" +
-			std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftFoot))), L" Tracker").c_str());
-	devices_push_combobox(cbox,
-		eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-			L"SharedStrings", L"Joints/Enum/" +
-			std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightFoot))), L" Tracker").c_str());
-}
-
-void devices_push_override_joints(const bool& all = true)
-{
-	// Waist
-	devices_push_override_joints_combo(waistPositionOverrideOptionBox, all);
-	devices_push_override_joints_combo(waistRotationOverrideOptionBox, all);
-
-	// LFoot
-	devices_push_override_joints_combo(leftFootPositionOverrideOptionBox, all);
-	devices_push_override_joints_combo(leftFootRotationOverrideOptionBox, all);
-
-	// RFoot
-	devices_push_override_joints_combo(rightFootPositionOverrideOptionBox, all);
-	devices_push_override_joints_combo(rightFootRotationOverrideOptionBox, all);
-
-	// LElbow
-	devices_push_override_joints_combo(leftElbowPositionOverrideOptionBox, all);
-	devices_push_override_joints_combo(leftElbowRotationOverrideOptionBox, all);
-
-	// RElbow
-	devices_push_override_joints_combo(rightElbowPositionOverrideOptionBox, all);
-	devices_push_override_joints_combo(rightElbowRotationOverrideOptionBox, all);
-
-	// LKnee
-	devices_push_override_joints_combo(leftKneePositionOverrideOptionBox, all);
-	devices_push_override_joints_combo(leftKneeRotationOverrideOptionBox, all);
-
-	// RKnee
-	devices_push_override_joints_combo(rightKneePositionOverrideOptionBox, all);
-	devices_push_override_joints_combo(rightKneeRotationOverrideOptionBox, all);
-}
-
-void devices_push_override_joints(const std::wstring& _string)
-{
-	// Convert
-	const hstring string = _string.c_str();
-
-	// Waist
-	devices_push_combobox(waistPositionOverrideOptionBox, string);
-	devices_push_combobox(waistRotationOverrideOptionBox, string);
-
-	// LFoot
-	devices_push_combobox(leftFootPositionOverrideOptionBox, string);
-	devices_push_combobox(leftFootRotationOverrideOptionBox, string);
-
-	// RFoot
-	devices_push_combobox(rightFootPositionOverrideOptionBox, string);
-	devices_push_combobox(rightFootRotationOverrideOptionBox, string);
-
-	// LElbow
-	devices_push_combobox(leftElbowPositionOverrideOptionBox, string);
-	devices_push_combobox(leftElbowRotationOverrideOptionBox, string);
-
-	// RElbow
-	devices_push_combobox(rightElbowPositionOverrideOptionBox, string);
-	devices_push_combobox(rightElbowRotationOverrideOptionBox, string);
-
-	// LKnee
-	devices_push_combobox(leftKneePositionOverrideOptionBox, string);
-	devices_push_combobox(leftKneeRotationOverrideOptionBox, string);
-
-	// RKnee
-	devices_push_combobox(rightKneePositionOverrideOptionBox, string);
-	devices_push_combobox(rightKneeRotationOverrideOptionBox, string);
-}
-
-void devices_select_combobox_safe(
-	const std::shared_ptr<Controls::ComboBox>& cbox,
-	const int& index)
-{
-	[&]
-	{
-		__try
-		{
-			cbox.get()->SelectedIndex(index);
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER)
-		{
-			[&]
-			{
-				LOG(WARNING) << "Couldn't select a ComboBox index. You better call an exorcist.";
-			}();
-		}
-	}();
-}
-
-void devices_select_combobox()
-{
-	// Waist
-	devices_select_combobox_safe(
-		waistPositionOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[0].isPositionOverridden
-			? k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID
-			: -1);
-	devices_select_combobox_safe(
-		waistRotationOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[0].isRotationOverridden
-			? k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID
-			: -1);
-
-	// LeftF
-	devices_select_combobox_safe(
-		leftFootPositionOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[1].isPositionOverridden
-			? k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID
-			: -1);
-	devices_select_combobox_safe(
-		leftFootRotationOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[1].isRotationOverridden
-			? k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID
-			: -1);
-
-	// RightF
-	devices_select_combobox_safe(
-		rightFootPositionOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[2].isPositionOverridden
-			? k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID
-			: -1);
-	devices_select_combobox_safe(
-		rightFootRotationOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[2].isRotationOverridden
-			? k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID
-			: -1);
-
-	// LeftEL
-	devices_select_combobox_safe(
-		leftElbowPositionOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[3].isPositionOverridden
-			? k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID
-			: -1);
-	devices_select_combobox_safe(
-		leftElbowRotationOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[3].isRotationOverridden
-			? k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID
-			: -1);
-
-	// RightEL
-	devices_select_combobox_safe(
-		rightElbowPositionOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[4].isPositionOverridden
-			? k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID
-			: -1);
-	devices_select_combobox_safe(
-		rightElbowRotationOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[4].isRotationOverridden
-			? k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID
-			: -1);
-
-	// LeftK
-	devices_select_combobox_safe(
-		leftKneePositionOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[5].isPositionOverridden
-			? k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID
-			: -1);
-	devices_select_combobox_safe(
-		leftKneeRotationOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[5].isRotationOverridden
-			? k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID
-			: -1);
-
-	// RightK
-	devices_select_combobox_safe(
-		rightKneePositionOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[6].isPositionOverridden
-			? k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID
-			: -1);
-	devices_select_combobox_safe(
-		rightKneeRotationOverrideOptionBox,
-		k2app::K2Settings.K2TrackersVector[6].isRotationOverridden
-			? k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID
-			: -1);
-}
+//void devices_clear_combo(const std::shared_ptr<Controls::ComboBox>& cbox)
+//{
+//	[&]
+//	{
+//		__try
+//		{
+//			[&]
+//			{
+//				cbox.get()->Items().Clear();
+//			}();
+//		}
+//		__except (EXCEPTION_EXECUTE_HANDLER)
+//		{
+//			[&]
+//			{
+//				LOG(WARNING) << "Couldn't clear a ComboBox. You better call an exorcist.";
+//			}();
+//		}
+//	}();
+//}
+//
+//void devices_push_combobox(
+//	const std::shared_ptr<Controls::ComboBox>& cbox,
+//	const hstring& str)
+//{
+//	[&]
+//	{
+//		__try
+//		{
+//			[&]
+//			{
+//				cbox.get()->Items().Append(box_value(str));
+//			}();
+//		}
+//		__except (EXCEPTION_EXECUTE_HANDLER)
+//		{
+//			[&]
+//			{
+//				LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
+//			}();
+//		}
+//	}();
+//}
+//
+//
+//void devices_push_override_joints_combo(
+//	const std::shared_ptr<Controls::ComboBox>& cbox,
+//	const bool& all = true)
+//{
+//	devices_push_combobox(cbox, 
+//		eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+//		L"SharedStrings", L"Joints/Enum/" +
+//		std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_Chest))), L" Tracker").c_str());
+//
+//	if (all)
+//	{
+//		devices_push_combobox(cbox,
+//			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+//				L"SharedStrings", L"Joints/Enum/" +
+//				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftElbow))), L" Tracker").c_str());
+//		devices_push_combobox(cbox,
+//			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+//				L"SharedStrings", L"Joints/Enum/" +
+//				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightElbow))), L" Tracker").c_str());
+//	}
+//
+//	devices_push_combobox(cbox,
+//		eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+//			L"SharedStrings", L"Joints/Enum/" +
+//			std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_Waist))), L" Tracker").c_str());
+//
+//	if (all)
+//	{
+//		devices_push_combobox(cbox,
+//			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+//				L"SharedStrings", L"Joints/Enum/" +
+//				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftKnee))), L" Tracker").c_str());
+//		devices_push_combobox(cbox,
+//			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+//				L"SharedStrings", L"Joints/Enum/" +
+//				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightKnee))), L" Tracker").c_str());
+//	}
+//
+//	devices_push_combobox(cbox,
+//		eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+//			L"SharedStrings", L"Joints/Enum/" +
+//			std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftFoot))), L" Tracker").c_str());
+//	devices_push_combobox(cbox,
+//		eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+//			L"SharedStrings", L"Joints/Enum/" +
+//			std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightFoot))), L" Tracker").c_str());
+//}
+//
+//void devices_push_override_joints(const bool& all = true)
+//{
+//	// Waist
+//	devices_push_override_joints_combo(waistPositionOverrideOptionBox, all);
+//	devices_push_override_joints_combo(waistRotationOverrideOptionBox, all);
+//
+//	// LFoot
+//	devices_push_override_joints_combo(leftFootPositionOverrideOptionBox, all);
+//	devices_push_override_joints_combo(leftFootRotationOverrideOptionBox, all);
+//
+//	// RFoot
+//	devices_push_override_joints_combo(rightFootPositionOverrideOptionBox, all);
+//	devices_push_override_joints_combo(rightFootRotationOverrideOptionBox, all);
+//
+//	// LElbow
+//	devices_push_override_joints_combo(leftElbowPositionOverrideOptionBox, all);
+//	devices_push_override_joints_combo(leftElbowRotationOverrideOptionBox, all);
+//
+//	// RElbow
+//	devices_push_override_joints_combo(rightElbowPositionOverrideOptionBox, all);
+//	devices_push_override_joints_combo(rightElbowRotationOverrideOptionBox, all);
+//
+//	// LKnee
+//	devices_push_override_joints_combo(leftKneePositionOverrideOptionBox, all);
+//	devices_push_override_joints_combo(leftKneeRotationOverrideOptionBox, all);
+//
+//	// RKnee
+//	devices_push_override_joints_combo(rightKneePositionOverrideOptionBox, all);
+//	devices_push_override_joints_combo(rightKneeRotationOverrideOptionBox, all);
+//}
+//
+//void devices_push_override_joints(const std::wstring& _string)
+//{
+//	// Convert
+//	const hstring string = _string.c_str();
+//
+//	// Waist
+//	devices_push_combobox(waistPositionOverrideOptionBox, string);
+//	devices_push_combobox(waistRotationOverrideOptionBox, string);
+//
+//	// LFoot
+//	devices_push_combobox(leftFootPositionOverrideOptionBox, string);
+//	devices_push_combobox(leftFootRotationOverrideOptionBox, string);
+//
+//	// RFoot
+//	devices_push_combobox(rightFootPositionOverrideOptionBox, string);
+//	devices_push_combobox(rightFootRotationOverrideOptionBox, string);
+//
+//	// LElbow
+//	devices_push_combobox(leftElbowPositionOverrideOptionBox, string);
+//	devices_push_combobox(leftElbowRotationOverrideOptionBox, string);
+//
+//	// RElbow
+//	devices_push_combobox(rightElbowPositionOverrideOptionBox, string);
+//	devices_push_combobox(rightElbowRotationOverrideOptionBox, string);
+//
+//	// LKnee
+//	devices_push_combobox(leftKneePositionOverrideOptionBox, string);
+//	devices_push_combobox(leftKneeRotationOverrideOptionBox, string);
+//
+//	// RKnee
+//	devices_push_combobox(rightKneePositionOverrideOptionBox, string);
+//	devices_push_combobox(rightKneeRotationOverrideOptionBox, string);
+//}
+//
+//void devices_select_combobox_safe(
+//	const std::shared_ptr<Controls::ComboBox>& cbox,
+//	const int& index)
+//{
+//	[&]
+//	{
+//		__try
+//		{
+//			cbox.get()->SelectedIndex(index);
+//		}
+//		__except (EXCEPTION_EXECUTE_HANDLER)
+//		{
+//			[&]
+//			{
+//				LOG(WARNING) << "Couldn't select a ComboBox index. You better call an exorcist.";
+//			}();
+//		}
+//	}();
+//}
+//
+//void devices_select_combobox()
+//{
+//	// Waist
+//	devices_select_combobox_safe(
+//		waistPositionOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[0].isPositionOverridden
+//			? k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID
+//			: -1);
+//	devices_select_combobox_safe(
+//		waistRotationOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[0].isRotationOverridden
+//			? k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID
+//			: -1);
+//
+//	// LeftF
+//	devices_select_combobox_safe(
+//		leftFootPositionOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[1].isPositionOverridden
+//			? k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID
+//			: -1);
+//	devices_select_combobox_safe(
+//		leftFootRotationOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[1].isRotationOverridden
+//			? k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID
+//			: -1);
+//
+//	// RightF
+//	devices_select_combobox_safe(
+//		rightFootPositionOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[2].isPositionOverridden
+//			? k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID
+//			: -1);
+//	devices_select_combobox_safe(
+//		rightFootRotationOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[2].isRotationOverridden
+//			? k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID
+//			: -1);
+//
+//	// LeftEL
+//	devices_select_combobox_safe(
+//		leftElbowPositionOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[3].isPositionOverridden
+//			? k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID
+//			: -1);
+//	devices_select_combobox_safe(
+//		leftElbowRotationOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[3].isRotationOverridden
+//			? k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID
+//			: -1);
+//
+//	// RightEL
+//	devices_select_combobox_safe(
+//		rightElbowPositionOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[4].isPositionOverridden
+//			? k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID
+//			: -1);
+//	devices_select_combobox_safe(
+//		rightElbowRotationOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[4].isRotationOverridden
+//			? k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID
+//			: -1);
+//
+//	// LeftK
+//	devices_select_combobox_safe(
+//		leftKneePositionOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[5].isPositionOverridden
+//			? k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID
+//			: -1);
+//	devices_select_combobox_safe(
+//		leftKneeRotationOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[5].isRotationOverridden
+//			? k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID
+//			: -1);
+//
+//	// RightK
+//	devices_select_combobox_safe(
+//		rightKneePositionOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[6].isPositionOverridden
+//			? k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID
+//			: -1);
+//	devices_select_combobox_safe(
+//		rightKneeRotationOverrideOptionBox,
+//		k2app::K2Settings.K2TrackersVector[6].isRotationOverridden
+//			? k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID
+//			: -1);
+//}
 
 namespace winrt::KinectToVR::implementation
 {
@@ -284,6 +284,7 @@ namespace winrt::KinectToVR::implementation
 
 		// Cache needed UI elements
 		jointsBasisExpanderHostStackPanel = std::make_shared<Controls::StackPanel>(JointsBasisExpanderHostStackPanel());
+		overridesExpanderHostStackPanel = std::make_shared<Controls::StackPanel>(OverridesExpanderHostStackPanel());
 
 		deviceNameLabel = std::make_shared<Controls::TextBlock>(SelectedDeviceNameLabel());
 		deviceStatusLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceStatusLabel());
@@ -296,55 +297,16 @@ namespace winrt::KinectToVR::implementation
 
 		deviceErrorGrid = std::make_shared<Controls::Grid>(DeviceErrorGrid());
 		trackingDeviceChangePanel = std::make_shared<Controls::Grid>(TrackingDeviceChangePanel());
-		overridesControls = std::make_shared<Controls::Grid>(OverridesControls());
-		overridesControls_1 = std::make_shared<Controls::Grid>(OverridesControls_1());
 		devicesMainContentGridOuter = std::make_shared<Controls::Grid>(DevicesMainContentGridOuter());
 		devicesMainContentGridInner = std::make_shared<Controls::Grid>(DevicesMainContentGridInner());
 		
-		overridesDropDown = std::make_shared<Controls::Expander>(OverridesDropDown());
-		overridesDropDown_1 = std::make_shared<Controls::Expander>(OverridesDropDown_1());
-
 		devicesListView = std::make_shared<Controls::ListView>(TrackingDeviceListView());
+		noJointsFlyout = std::make_shared<Controls::Flyout>(NoJointsFlyout());
 
 		setAsOverrideButton = std::make_shared<Controls::Button>(SetAsOverrideButton());
 		setAsBaseButton = std::make_shared<Controls::Button>(SetAsBaseButton());
 		deselectDeviceButton = std::make_shared<Controls::Button>(DeselectDeviceButton());
-
-		waistRotationOverrideOptionBox = std::make_shared<Controls::ComboBox>(WaistRotationOverrideOptionBox());
-		waistPositionOverrideOptionBox = std::make_shared<Controls::ComboBox>(WaistPositionOverrideOptionBox());
-		leftFootRotationOverrideOptionBox = std::make_shared<Controls::ComboBox>(LeftFootRotationOverrideOptionBox());
-		leftFootPositionOverrideOptionBox = std::make_shared<Controls::ComboBox>(LeftFootPositionOverrideOptionBox());
-		rightFootPositionOverrideOptionBox = std::make_shared<Controls::ComboBox>(RightFootPositionOverrideOptionBox());
-		rightFootRotationOverrideOptionBox = std::make_shared<Controls::ComboBox>(RightFootRotationOverrideOptionBox());
-		leftElbowPositionOverrideOptionBox = std::make_shared<Controls::ComboBox>(LeftElbowPositionOverrideOptionBox());
-		leftElbowRotationOverrideOptionBox = std::make_shared<Controls::ComboBox>(LeftElbowRotationOverrideOptionBox());
-		rightElbowPositionOverrideOptionBox = std::make_shared<Controls::ComboBox>(
-			RightElbowPositionOverrideOptionBox());
-		rightElbowRotationOverrideOptionBox = std::make_shared<Controls::ComboBox>(
-			RightElbowRotationOverrideOptionBox());
-		leftKneePositionOverrideOptionBox = std::make_shared<Controls::ComboBox>(LeftKneePositionOverrideOptionBox());
-		leftKneeRotationOverrideOptionBox = std::make_shared<Controls::ComboBox>(LeftKneeRotationOverrideOptionBox());
-		rightKneePositionOverrideOptionBox = std::make_shared<Controls::ComboBox>(RightKneePositionOverrideOptionBox());
-		rightKneeRotationOverrideOptionBox = std::make_shared<Controls::ComboBox>(RightKneeRotationOverrideOptionBox());
-
-		overrideWaistPosition = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideWaistPosition());
-		overrideWaistRotation = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideWaistRotation());
-		overrideLeftFootPosition = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideLeftFootPosition());
-		overrideLeftFootRotation = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideLeftFootRotation());
-		overrideRightFootPosition = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideRightFootPosition());
-		overrideRightFootRotation = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideRightFootRotation());
-		overrideLeftElbowPosition = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideLeftElbowPosition());
-		overrideLeftElbowRotation = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideLeftElbowRotation());
-		overrideRightElbowPosition = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideRightElbowPosition());
-		overrideRightElbowRotation = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideRightElbowRotation());
-		overrideLeftKneePosition = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideLeftKneePosition());
-		overrideLeftKneeRotation = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideLeftKneeRotation());
-		overrideRightKneePosition = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideRightKneePosition());
-		overrideRightKneeRotation = std::make_shared<Controls::ToggleMenuFlyoutItem>(OverrideRightKneeRotation());
-
-		overridesDropDown = std::make_shared<Controls::Expander>(OverridesDropDown());
-		overridesDropDown_1 = std::make_shared<Controls::Expander>(OverridesDropDown_1());
-
+		
 		devicesMainContentScrollViewer = std::make_shared<Controls::ScrollViewer>(DevicesMainContentScrollViewer());
 
 		devicesOverridesSelectorStackPanelOuter = std::make_shared<Controls::StackPanel>(
@@ -437,6 +399,23 @@ namespace winrt::KinectToVR::implementation
 		for (auto& expander : jointSelectorExpanders)
 			jointsBasisExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
 
+		// Set override expanders up
+
+		// Type 0: WF
+		overrideSelectorExpanders[0] = std::move(std::shared_ptr<Controls::OverrideSelectorExpander>(
+			new Controls::OverrideSelectorExpander(0)));
+
+		// Type 1: EK
+		overrideSelectorExpanders[1] = std::move(std::shared_ptr<Controls::OverrideSelectorExpander>(
+			new Controls::OverrideSelectorExpander(1)));
+
+		// Type 2: OTHER
+		overrideSelectorExpanders[2] = std::move(std::shared_ptr<Controls::OverrideSelectorExpander>(
+			new Controls::OverrideSelectorExpander(2)));
+
+		for (auto& expander : overrideSelectorExpanders)
+			overridesExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
+
 		NavigationCacheMode(Navigation::NavigationCacheMode::Required);
 		TrackingDevices::devices_update_current();
 	}
@@ -458,27 +437,8 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 
 	// Only if override -> select enabled combos
 	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-	{
-		overrideWaistPosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[0].isPositionOverridden);
-		overrideLeftFootPosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[1].isPositionOverridden);
-		overrideRightFootPosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[2].isPositionOverridden);
-
-		overrideWaistRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[0].isRotationOverridden);
-		overrideLeftFootRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[1].isRotationOverridden);
-		overrideRightFootRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[2].isRotationOverridden);
-
-		overrideLeftElbowPosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[3].isPositionOverridden);
-		overrideLeftElbowRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[3].isRotationOverridden);
-
-		overrideRightElbowPosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[4].isPositionOverridden);
-		overrideRightElbowRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[4].isRotationOverridden);
-
-		overrideLeftKneePosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[5].isPositionOverridden);
-		overrideLeftKneeRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[5].isRotationOverridden);
-
-		overrideRightKneePosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[6].isPositionOverridden);
-		overrideRightKneeRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[6].isRotationOverridden);
-	}
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->UpdateOverrideToggles();
 
 	if (trackingDevice.index() == 0)
 	{
@@ -517,50 +477,28 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 			if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 			{
 				// Clear items
-				// // Waist
-				devices_clear_combo(waistPositionOverrideOptionBox);
-				devices_clear_combo(waistRotationOverrideOptionBox);
-
-				// LeftF
-				devices_clear_combo(leftFootPositionOverrideOptionBox);
-				devices_clear_combo(leftFootRotationOverrideOptionBox);
-
-				// RightF
-				devices_clear_combo(rightFootPositionOverrideOptionBox);
-				devices_clear_combo(rightFootRotationOverrideOptionBox);
-
-				// LeftEL
-				devices_clear_combo(leftElbowPositionOverrideOptionBox);
-				devices_clear_combo(leftElbowRotationOverrideOptionBox);
-
-				// RightEL
-				devices_clear_combo(rightElbowPositionOverrideOptionBox);
-				devices_clear_combo(rightElbowRotationOverrideOptionBox);
-
-				// LeftK
-				devices_clear_combo(leftKneePositionOverrideOptionBox);
-				devices_clear_combo(leftKneeRotationOverrideOptionBox);
-
-				// RightK
-				devices_clear_combo(rightKneePositionOverrideOptionBox);
-				devices_clear_combo(rightKneeRotationOverrideOptionBox);
-
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->ReAppendTrackers();
+				
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
 				{
 				case ktvr::K2_Character_Basic:
 					{
-						devices_push_override_joints(false);
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoints(false);
 					}
 					break;
 				case ktvr::K2_Character_Simple:
 					{
-						devices_push_override_joints();
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoints();
 					}
 					break;
 				case ktvr::K2_Character_Full:
 					{
-						devices_push_override_joints();
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoints();
 					}
 					break;
 				}
@@ -570,7 +508,8 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
-				devices_select_combobox();
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->SelectComboItems();
 			}
 		}
 	}
@@ -626,34 +565,9 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 			else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 			{
 				// Clear items
-				// Waist
-				devices_clear_combo(waistPositionOverrideOptionBox);
-				devices_clear_combo(waistRotationOverrideOptionBox);
-
-				// LeftF
-				devices_clear_combo(leftFootPositionOverrideOptionBox);
-				devices_clear_combo(leftFootRotationOverrideOptionBox);
-
-				// RightF
-				devices_clear_combo(rightFootPositionOverrideOptionBox);
-				devices_clear_combo(rightFootRotationOverrideOptionBox);
-
-				// LeftEL
-				devices_clear_combo(leftElbowPositionOverrideOptionBox);
-				devices_clear_combo(leftElbowRotationOverrideOptionBox);
-
-				// RightEL
-				devices_clear_combo(rightElbowPositionOverrideOptionBox);
-				devices_clear_combo(rightElbowRotationOverrideOptionBox);
-
-				// LeftK
-				devices_clear_combo(leftKneePositionOverrideOptionBox);
-				devices_clear_combo(leftKneeRotationOverrideOptionBox);
-
-				// RightK
-				devices_clear_combo(rightKneePositionOverrideOptionBox);
-				devices_clear_combo(rightKneeRotationOverrideOptionBox);
-
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->ReAppendTrackers();
+				
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
 				{
@@ -661,7 +575,8 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 					auto _jointname = _joint.getJointName();
 
 					// Push the name to all combos
-					devices_push_override_joints(StringToWString(_jointname));
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoint(StringToWString(_jointname));
 				}
 
 				// Try fix override IDs if wrong
@@ -669,7 +584,8 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
-				devices_select_combobox();
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->SelectComboItems();
 			}
 		}
 	}
@@ -702,11 +618,10 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 		setAsBaseButton.get()->IsEnabled(false);
 
 		overridesLabel.get()->Visibility(Visibility::Collapsed);
-		overridesControls.get()->Visibility(Visibility::Collapsed);
-		overridesControls_1.get()->Visibility(Visibility::Collapsed);
-		overridesDropDown.get()->Visibility(Visibility::Collapsed);
-		overridesDropDown_1.get()->Visibility(Visibility::Collapsed);
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
+
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->SetVisibility(Visibility::Collapsed);
 	}
 	else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 	{
@@ -715,11 +630,10 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 		setAsBaseButton.get()->IsEnabled(true);
 
 		overridesLabel.get()->Visibility(Visibility::Visible);
-		overridesControls.get()->Visibility(Visibility::Visible);
-		overridesControls_1.get()->Visibility(Visibility::Visible);
-		overridesDropDown.get()->Visibility(Visibility::Visible);
-		overridesDropDown_1.get()->Visibility(Visibility::Visible);
 		deselectDeviceButton.get()->Visibility(Visibility::Visible);
+
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->SetVisibility(Visibility::Visible);
 	}
 	else
 	{
@@ -728,11 +642,10 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 		setAsBaseButton.get()->IsEnabled(true);
 
 		overridesLabel.get()->Visibility(Visibility::Collapsed);
-		overridesControls.get()->Visibility(Visibility::Collapsed);
-		overridesControls_1.get()->Visibility(Visibility::Collapsed);
-		overridesDropDown.get()->Visibility(Visibility::Collapsed);
-		overridesDropDown_1.get()->Visibility(Visibility::Collapsed);
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
+
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->SetVisibility(Visibility::Collapsed);
 	}
 
 	{
@@ -800,52 +713,30 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 			if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 			{
 				// Clear items
-				// Waist
-				devices_clear_combo(waistPositionOverrideOptionBox);
-				devices_clear_combo(waistRotationOverrideOptionBox);
-
-				// LeftF
-				devices_clear_combo(leftFootPositionOverrideOptionBox);
-				devices_clear_combo(leftFootRotationOverrideOptionBox);
-
-				// RightF
-				devices_clear_combo(rightFootPositionOverrideOptionBox);
-				devices_clear_combo(rightFootRotationOverrideOptionBox);
-
-				// LeftEL
-				devices_clear_combo(leftElbowPositionOverrideOptionBox);
-				devices_clear_combo(leftElbowRotationOverrideOptionBox);
-
-				// RightEL
-				devices_clear_combo(rightElbowPositionOverrideOptionBox);
-				devices_clear_combo(rightElbowRotationOverrideOptionBox);
-
-				// LeftK
-				devices_clear_combo(leftKneePositionOverrideOptionBox);
-				devices_clear_combo(leftKneeRotationOverrideOptionBox);
-
-				// RightK
-				devices_clear_combo(rightKneePositionOverrideOptionBox);
-				devices_clear_combo(rightKneeRotationOverrideOptionBox);
-
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->ReAppendTrackers();
+				
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
 				{
 				case ktvr::K2_Character_Basic:
-					{
-						devices_push_override_joints(false);
-					}
-					break;
+				{
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoints(false);
+				}
+				break;
 				case ktvr::K2_Character_Simple:
-					{
-						devices_push_override_joints();
-					}
-					break;
+				{
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoints();
+				}
+				break;
 				case ktvr::K2_Character_Full:
-					{
-						devices_push_override_joints();
-					}
-					break;
+				{
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoints();
+				}
+				break;
 				}
 
 				// Try fix override IDs if wrong
@@ -853,7 +744,8 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
-				devices_select_combobox();
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->SelectComboItems();
 			}
 		}
 	}
@@ -893,33 +785,8 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 			else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 			{
 				// Clear items
-				// Waist
-				devices_clear_combo(waistPositionOverrideOptionBox);
-				devices_clear_combo(waistRotationOverrideOptionBox);
-
-				// LeftF
-				devices_clear_combo(leftFootPositionOverrideOptionBox);
-				devices_clear_combo(leftFootRotationOverrideOptionBox);
-
-				// RightF
-				devices_clear_combo(rightFootPositionOverrideOptionBox);
-				devices_clear_combo(rightFootRotationOverrideOptionBox);
-
-				// LeftEL
-				devices_clear_combo(leftElbowPositionOverrideOptionBox);
-				devices_clear_combo(leftElbowRotationOverrideOptionBox);
-
-				// RightEL
-				devices_clear_combo(rightElbowPositionOverrideOptionBox);
-				devices_clear_combo(rightElbowRotationOverrideOptionBox);
-
-				// LeftK
-				devices_clear_combo(leftKneePositionOverrideOptionBox);
-				devices_clear_combo(leftKneeRotationOverrideOptionBox);
-
-				// RightK
-				devices_clear_combo(rightKneePositionOverrideOptionBox);
-				devices_clear_combo(rightKneeRotationOverrideOptionBox);
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->ReAppendTrackers();
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
@@ -928,7 +795,8 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 					auto _jointname = _joint.getJointName();
 
 					// Push the name to all combos
-					devices_push_override_joints(StringToWString(_jointname));
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoint(StringToWString(_jointname));
 				}
 
 				// Try fix override IDs if wrong
@@ -936,7 +804,8 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
-				devices_select_combobox();
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->SelectComboItems();
 			}
 		}
 	}
@@ -1065,11 +934,10 @@ void KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 	setAsBaseButton.get()->IsEnabled(true);
 
 	overridesLabel.get()->Visibility(Visibility::Collapsed);
-	overridesControls.get()->Visibility(Visibility::Collapsed);
-	overridesControls_1.get()->Visibility(Visibility::Collapsed);
-	overridesDropDown.get()->Visibility(Visibility::Collapsed);
-	overridesDropDown_1.get()->Visibility(Visibility::Collapsed);
 	deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
+
+	for (auto& expander : overrideSelectorExpanders)
+		expander.get()->SetVisibility(Visibility::Collapsed);
 
 	if (trackingDevice.index() == 0)
 	{
@@ -1137,52 +1005,30 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		// Also refresh joints
 
 		// Clear items
-		// Waist
-		devices_clear_combo(waistPositionOverrideOptionBox);
-		devices_clear_combo(waistRotationOverrideOptionBox);
-
-		// LeftF
-		devices_clear_combo(leftFootPositionOverrideOptionBox);
-		devices_clear_combo(leftFootRotationOverrideOptionBox);
-
-		// RightF
-		devices_clear_combo(rightFootPositionOverrideOptionBox);
-		devices_clear_combo(rightFootRotationOverrideOptionBox);
-
-		// LeftEL
-		devices_clear_combo(leftElbowPositionOverrideOptionBox);
-		devices_clear_combo(leftElbowRotationOverrideOptionBox);
-
-		// RightEL
-		devices_clear_combo(rightElbowPositionOverrideOptionBox);
-		devices_clear_combo(rightElbowRotationOverrideOptionBox);
-
-		// LeftK
-		devices_clear_combo(leftKneePositionOverrideOptionBox);
-		devices_clear_combo(leftKneeRotationOverrideOptionBox);
-
-		// RightK
-		devices_clear_combo(rightKneePositionOverrideOptionBox);
-		devices_clear_combo(rightKneeRotationOverrideOptionBox);
-
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->ReAppendTrackers();
+		
 		// Append all joints to all combos, depend on characteristics
 		switch (device->getDeviceCharacteristics())
 		{
 		case ktvr::K2_Character_Basic:
-			{
-				devices_push_override_joints(false);
-			}
-			break;
+		{
+			for (auto& expander : overrideSelectorExpanders)
+				expander.get()->PushOverrideJoints(false);
+		}
+		break;
 		case ktvr::K2_Character_Simple:
-			{
-				devices_push_override_joints();
-			}
-			break;
+		{
+			for (auto& expander : overrideSelectorExpanders)
+				expander.get()->PushOverrideJoints();
+		}
+		break;
 		case ktvr::K2_Character_Full:
-			{
-				devices_push_override_joints();
-			}
-			break;
+		{
+			for (auto& expander : overrideSelectorExpanders)
+				expander.get()->PushOverrideJoints();
+		}
+		break;
 		}
 
 		// Try fix override IDs if wrong
@@ -1190,7 +1036,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 
 		// Select the first (or next, if exists) joint
 		// Set the placeholder text on disabled combos
-		devices_select_combobox();
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->SelectComboItems();
 
 		// Backup the status
 		device_status = device->statusResultWString(device->getStatusResult());
@@ -1218,33 +1065,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 		// Also refresh joints
 
 		// Clear items
-		// Waist
-		devices_clear_combo(waistPositionOverrideOptionBox);
-		devices_clear_combo(waistRotationOverrideOptionBox);
-
-		// LeftF
-		devices_clear_combo(leftFootPositionOverrideOptionBox);
-		devices_clear_combo(leftFootRotationOverrideOptionBox);
-
-		// RightF
-		devices_clear_combo(rightFootPositionOverrideOptionBox);
-		devices_clear_combo(rightFootRotationOverrideOptionBox);
-
-		// LeftEL
-		devices_clear_combo(leftElbowPositionOverrideOptionBox);
-		devices_clear_combo(leftElbowRotationOverrideOptionBox);
-
-		// RightEL
-		devices_clear_combo(rightElbowPositionOverrideOptionBox);
-		devices_clear_combo(rightElbowRotationOverrideOptionBox);
-
-		// LeftK
-		devices_clear_combo(leftKneePositionOverrideOptionBox);
-		devices_clear_combo(leftKneeRotationOverrideOptionBox);
-
-		// RightK
-		devices_clear_combo(rightKneePositionOverrideOptionBox);
-		devices_clear_combo(rightKneeRotationOverrideOptionBox);
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->ReAppendTrackers();
 
 		// Append all joints to all combos
 		for (auto& _joint : device->getTrackedJoints())
@@ -1253,7 +1075,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 			auto _jointname = _joint.getJointName();
 
 			// Push the name to all combos
-			devices_push_override_joints(StringToWString(_jointname));
+			for (auto& expander : overrideSelectorExpanders)
+				expander.get()->PushOverrideJoint(StringToWString(_jointname));
 		}
 
 		// Try fix override IDs if wrong
@@ -1261,7 +1084,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 
 		// Select the first (or next, if exists) joint
 		// Set the placeholder text on disabled combos
-		devices_select_combobox();
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->SelectComboItems();
 
 		// Backup the status
 		device_status = device->statusResultWString(device->getStatusResult());
@@ -1286,11 +1110,10 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 	LOG(INFO) << "Changed the current tracking device (Override) to " << deviceName;
 
 	overridesLabel.get()->Visibility(Visibility::Visible);
-	overridesControls.get()->Visibility(Visibility::Visible);
-	overridesControls_1.get()->Visibility(Visibility::Visible);
-	overridesDropDown.get()->Visibility(Visibility::Visible);
-	overridesDropDown_1.get()->Visibility(Visibility::Visible);
 	deselectDeviceButton.get()->Visibility(Visibility::Visible);
+
+	for (auto& expander : overrideSelectorExpanders)
+		expander.get()->SetVisibility(Visibility::Visible);
 
 	// Register and etc
 	/* Update local statuses */
@@ -1414,11 +1237,10 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 	LOG(INFO) << "Changed the current tracking device (Base) to " << deviceName;
 
 	overridesLabel.get()->Visibility(Visibility::Collapsed);
-	overridesControls.get()->Visibility(Visibility::Collapsed);
-	overridesControls_1.get()->Visibility(Visibility::Collapsed);
-	overridesDropDown.get()->Visibility(Visibility::Collapsed);
-	overridesDropDown_1.get()->Visibility(Visibility::Collapsed);
 	deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
+
+	for (auto& expander : overrideSelectorExpanders)
+		expander.get()->SetVisibility(Visibility::Collapsed);
 
 	// Register and etc
 	/* Update local statuses */
@@ -1486,765 +1308,676 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 	devicesJointsBasisSelectorStackPanelInner.get()->Transitions().Clear();
 }
 
-/* For *Override* device type: position & rotation joints selector */
-
-void KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[0].isPositionOverridden &&
-		waistPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID = waistPositionOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[0].isRotationOverridden &&
-		waistRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID = waistRotationOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[1].isPositionOverridden &&
-		leftFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[1].positionOverrideJointID = leftFootPositionOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[1].positionOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[1].isRotationOverridden &&
-		leftFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID = leftFootRotationOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[2].isPositionOverridden &&
-		rightFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID = rightFootPositionOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[2].isRotationOverridden &&
-		rightFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID = rightFootRotationOverrideOptionBox.get()->SelectedIndex();
-
-	//// If we're using a joints device then also signal the joint
-	const auto& trackingDevice = TrackingDevices::getCurrentOverrideDevice();
-	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
-			signalJoint(k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[3].isPositionOverridden &&
-		leftElbowPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID = leftElbowPositionOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[3].isRotationOverridden &&
-		leftElbowRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID = leftElbowRotationOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[4].isPositionOverridden &&
-		rightElbowPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID = rightElbowPositionOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[4].isRotationOverridden &&
-		rightElbowRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID = rightElbowRotationOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[5].isPositionOverridden &&
-		leftKneePositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID = leftKneePositionOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[5].isRotationOverridden &&
-		leftKneeRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID = leftKneeRotationOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[6].isPositionOverridden &&
-		rightKneePositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID = rightKneePositionOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_SelectionChanged(
-	const Windows::Foundation::IInspectable& sender,
-	const Controls::SelectionChangedEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	if (k2app::K2Settings.K2TrackersVector[6].isRotationOverridden &&
-		rightKneeRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-		k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID = rightKneeRotationOverrideOptionBox.get()->SelectedIndex();
-
-	// If we're using a joints device then also signal the joint
-	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-	if (trackingDevicePair.first)
-		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-				signalJoint(k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID);
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-/* For *Override* device type: override elements for joints selector */
-
-void KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideWaistPosition().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[0].isPositionOverridden = overrideWaistPosition.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	waistPositionOverrideOptionBox.get()->SelectedIndex(
-		overrideWaistPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideWaistRotation().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[0].isRotationOverridden = overrideWaistRotation.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	waistRotationOverrideOptionBox.get()->SelectedIndex(
-		overrideWaistRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideLeftFootPosition().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[1].isPositionOverridden = overrideLeftFootPosition.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	leftFootPositionOverrideOptionBox.get()->SelectedIndex(
-		overrideLeftFootPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[1].positionOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideLeftFootRotation().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[1].isRotationOverridden = overrideLeftFootRotation.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	leftFootRotationOverrideOptionBox.get()->SelectedIndex(
-		overrideLeftFootRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideRightFootPosition().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[2].isPositionOverridden = overrideRightFootPosition.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	rightFootPositionOverrideOptionBox.get()->SelectedIndex(
-		overrideRightFootPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideRightFootRotation().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[2].isRotationOverridden = overrideRightFootRotation.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	rightFootRotationOverrideOptionBox.get()->SelectedIndex(
-		overrideRightFootRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideLeftElbowPosition_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideLeftElbowPosition().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[3].isPositionOverridden = overrideLeftElbowPosition.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	leftElbowPositionOverrideOptionBox.get()->SelectedIndex(
-		overrideLeftElbowPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideLeftElbowRotation_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideLeftElbowRotation().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[3].isRotationOverridden = overrideLeftElbowRotation.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	leftElbowRotationOverrideOptionBox.get()->SelectedIndex(
-		overrideLeftElbowRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideRightElbowPosition_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideRightElbowPosition().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[4].isPositionOverridden = overrideRightElbowPosition.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	rightElbowPositionOverrideOptionBox.get()->SelectedIndex(
-		overrideRightElbowPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideRightElbowRotation_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideRightElbowRotation().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[4].isRotationOverridden = overrideRightElbowRotation.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	rightElbowRotationOverrideOptionBox.get()->SelectedIndex(
-		overrideRightElbowRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideLeftKneePosition_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideLeftKneePosition().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[5].isPositionOverridden = overrideLeftKneePosition.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	leftKneePositionOverrideOptionBox.get()->SelectedIndex(
-		overrideLeftKneePosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideLeftKneeRotation_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideLeftKneeRotation().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[5].isRotationOverridden = overrideLeftKneeRotation.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	leftKneeRotationOverrideOptionBox.get()->SelectedIndex(
-		overrideLeftKneeRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideRightKneePosition_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideRightKneePosition().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[6].isPositionOverridden = overrideRightKneePosition.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	rightKneePositionOverrideOptionBox.get()->SelectedIndex(
-		overrideRightKneePosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverrideRightKneeRotation_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-	{
-		OverrideRightKneeRotation().IsChecked(false);
-		NoJointsFlyout().ShowAt(OverridesLabel());
-		return; // Don't set up any overrides (yet)
-	}
-
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	k2app::K2Settings.K2TrackersVector[6].isRotationOverridden = overrideRightKneeRotation.get()->IsChecked();
-
-	// If we've disabled the override, set the placeholder text
-	rightKneeRotationOverrideOptionBox.get()->SelectedIndex(
-		overrideRightKneeRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID : -1);
-
-	// Check for errors and disable combos
-	k2app::interfacing::devices_check_disabled_joints();
-
-	// Save settings
-	k2app::K2Settings.saveSettings();
-}
-
-
-/* For comboboxes: update before opening */
-
-
-void KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
-
-
-void KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_DropDownOpened(
-	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
-{
-}
+//void KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[0].isPositionOverridden &&
+//		waistPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID = waistPositionOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[0].isRotationOverridden &&
+//		waistRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID = waistRotationOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[1].isPositionOverridden &&
+//		leftFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[1].positionOverrideJointID = leftFootPositionOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[1].positionOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[1].isRotationOverridden &&
+//		leftFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID = leftFootRotationOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[2].isPositionOverridden &&
+//		rightFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID = rightFootPositionOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[2].isRotationOverridden &&
+//		rightFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID = rightFootRotationOverrideOptionBox.get()->SelectedIndex();
+//
+//	//// If we're using a joints device then also signal the joint
+//	const auto& trackingDevice = TrackingDevices::getCurrentOverrideDevice();
+//	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
+//			signalJoint(k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[3].isPositionOverridden &&
+//		leftElbowPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID = leftElbowPositionOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[3].isRotationOverridden &&
+//		leftElbowRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID = leftElbowRotationOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[4].isPositionOverridden &&
+//		rightElbowPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID = rightElbowPositionOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[4].isRotationOverridden &&
+//		rightElbowRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID = rightElbowRotationOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[5].isPositionOverridden &&
+//		leftKneePositionOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID = leftKneePositionOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[5].isRotationOverridden &&
+//		leftKneeRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID = leftKneeRotationOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[6].isPositionOverridden &&
+//		rightKneePositionOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID = rightKneePositionOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_SelectionChanged(
+//	const Windows::Foundation::IInspectable& sender,
+//	const Controls::SelectionChangedEventArgs& e)
+//{
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	if (k2app::K2Settings.K2TrackersVector[6].isRotationOverridden &&
+//		rightKneeRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
+//		k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID = rightKneeRotationOverrideOptionBox.get()->SelectedIndex();
+//
+//	// If we're using a joints device then also signal the joint
+//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+//	if (trackingDevicePair.first)
+//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
+//				signalJoint(k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID);
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+///* For *Override* device type: override elements for joints selector */
+//
+//void KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideWaistPosition().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[0].isPositionOverridden = overrideWaistPosition.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	waistPositionOverrideOptionBox.get()->SelectedIndex(
+//		overrideWaistPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideWaistRotation().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[0].isRotationOverridden = overrideWaistRotation.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	waistRotationOverrideOptionBox.get()->SelectedIndex(
+//		overrideWaistRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideLeftFootPosition().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[1].isPositionOverridden = overrideLeftFootPosition.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	leftFootPositionOverrideOptionBox.get()->SelectedIndex(
+//		overrideLeftFootPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[1].positionOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideLeftFootRotation().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[1].isRotationOverridden = overrideLeftFootRotation.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	leftFootRotationOverrideOptionBox.get()->SelectedIndex(
+//		overrideLeftFootRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideRightFootPosition().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[2].isPositionOverridden = overrideRightFootPosition.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	rightFootPositionOverrideOptionBox.get()->SelectedIndex(
+//		overrideRightFootPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideRightFootRotation().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[2].isRotationOverridden = overrideRightFootRotation.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	rightFootRotationOverrideOptionBox.get()->SelectedIndex(
+//		overrideRightFootRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideLeftElbowPosition_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideLeftElbowPosition().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[3].isPositionOverridden = overrideLeftElbowPosition.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	leftElbowPositionOverrideOptionBox.get()->SelectedIndex(
+//		overrideLeftElbowPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideLeftElbowRotation_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideLeftElbowRotation().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[3].isRotationOverridden = overrideLeftElbowRotation.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	leftElbowRotationOverrideOptionBox.get()->SelectedIndex(
+//		overrideLeftElbowRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideRightElbowPosition_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideRightElbowPosition().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[4].isPositionOverridden = overrideRightElbowPosition.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	rightElbowPositionOverrideOptionBox.get()->SelectedIndex(
+//		overrideRightElbowPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideRightElbowRotation_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideRightElbowRotation().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[4].isRotationOverridden = overrideRightElbowRotation.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	rightElbowRotationOverrideOptionBox.get()->SelectedIndex(
+//		overrideRightElbowRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideLeftKneePosition_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideLeftKneePosition().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[5].isPositionOverridden = overrideLeftKneePosition.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	leftKneePositionOverrideOptionBox.get()->SelectedIndex(
+//		overrideLeftKneePosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideLeftKneeRotation_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideLeftKneeRotation().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[5].isRotationOverridden = overrideLeftKneeRotation.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	leftKneeRotationOverrideOptionBox.get()->SelectedIndex(
+//		overrideLeftKneeRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideRightKneePosition_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideRightKneePosition().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[6].isPositionOverridden = overrideRightKneePosition.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	rightKneePositionOverrideOptionBox.get()->SelectedIndex(
+//		overrideRightKneePosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
+//
+//
+//void KinectToVR::implementation::DevicesPage::OverrideRightKneeRotation_Click(
+//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+//{
+//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
+//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+//	{
+//		OverrideRightKneeRotation().IsChecked(false);
+//		NoJointsFlyout().ShowAt(OverridesLabel());
+//		return; // Don't set up any overrides (yet)
+//	}
+//
+//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+//	k2app::K2Settings.K2TrackersVector[6].isRotationOverridden = overrideRightKneeRotation.get()->IsChecked();
+//
+//	// If we've disabled the override, set the placeholder text
+//	rightKneeRotationOverrideOptionBox.get()->SelectedIndex(
+//		overrideRightKneeRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID : -1);
+//
+//	// Check for errors and disable combos
+//	k2app::interfacing::devices_check_disabled_joints();
+//
+//	// Save settings
+//	k2app::K2Settings.saveSettings();
+//}
 
 
 void KinectToVR::implementation::DevicesPage::DismissOverrideTipNoJointsButton_Click(
@@ -2278,27 +2011,8 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 	// Only if override -> select enabled combos
 	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-	{
-		overrideWaistPosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[0].isPositionOverridden);
-		overrideLeftFootPosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[1].isPositionOverridden);
-		overrideRightFootPosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[2].isPositionOverridden);
-
-		overrideWaistRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[0].isRotationOverridden);
-		overrideLeftFootRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[1].isRotationOverridden);
-		overrideRightFootRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[2].isRotationOverridden);
-
-		overrideLeftElbowPosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[3].isPositionOverridden);
-		overrideLeftElbowRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[3].isRotationOverridden);
-
-		overrideRightElbowPosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[4].isPositionOverridden);
-		overrideRightElbowRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[4].isRotationOverridden);
-
-		overrideLeftKneePosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[5].isPositionOverridden);
-		overrideLeftKneeRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[5].isRotationOverridden);
-
-		overrideRightKneePosition.get()->IsChecked(k2app::K2Settings.K2TrackersVector[6].isPositionOverridden);
-		overrideRightKneeRotation.get()->IsChecked(k2app::K2Settings.K2TrackersVector[6].isRotationOverridden);
-	}
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->UpdateOverrideToggles();
 
 	if (trackingDevice.index() == 0)
 	{
@@ -2337,52 +2051,30 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 			if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 			{
 				// Clear items
-				// Waist
-				devices_clear_combo(waistPositionOverrideOptionBox);
-				devices_clear_combo(waistRotationOverrideOptionBox);
-
-				// LeftF
-				devices_clear_combo(leftFootPositionOverrideOptionBox);
-				devices_clear_combo(leftFootRotationOverrideOptionBox);
-
-				// RightF
-				devices_clear_combo(rightFootPositionOverrideOptionBox);
-				devices_clear_combo(rightFootRotationOverrideOptionBox);
-
-				// LeftEL
-				devices_clear_combo(leftElbowPositionOverrideOptionBox);
-				devices_clear_combo(leftElbowRotationOverrideOptionBox);
-
-				// RightEL
-				devices_clear_combo(rightElbowPositionOverrideOptionBox);
-				devices_clear_combo(rightElbowRotationOverrideOptionBox);
-
-				// LeftK
-				devices_clear_combo(leftKneePositionOverrideOptionBox);
-				devices_clear_combo(leftKneeRotationOverrideOptionBox);
-
-				// RightK
-				devices_clear_combo(rightKneePositionOverrideOptionBox);
-				devices_clear_combo(rightKneeRotationOverrideOptionBox);
-
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->ReAppendTrackers();
+				
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
 				{
 				case ktvr::K2_Character_Basic:
-					{
-						devices_push_override_joints(false);
-					}
-					break;
+				{
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoints(false);
+				}
+				break;
 				case ktvr::K2_Character_Simple:
-					{
-						devices_push_override_joints();
-					}
-					break;
+				{
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoints();
+				}
+				break;
 				case ktvr::K2_Character_Full:
-					{
-						devices_push_override_joints();
-					}
-					break;
+				{
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoints();
+				}
+				break;
 				}
 
 				// Try fix override IDs if wrong
@@ -2390,7 +2082,8 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
-				devices_select_combobox();
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->SelectComboItems();
 			}
 		}
 	}
@@ -2446,33 +2139,8 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 			else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 			{
 				// Clear items
-				// Waist
-				devices_clear_combo(waistPositionOverrideOptionBox);
-				devices_clear_combo(waistRotationOverrideOptionBox);
-
-				// LeftF
-				devices_clear_combo(leftFootPositionOverrideOptionBox);
-				devices_clear_combo(leftFootRotationOverrideOptionBox);
-
-				// RightF
-				devices_clear_combo(rightFootPositionOverrideOptionBox);
-				devices_clear_combo(rightFootRotationOverrideOptionBox);
-
-				// LeftEL
-				devices_clear_combo(leftElbowPositionOverrideOptionBox);
-				devices_clear_combo(leftElbowRotationOverrideOptionBox);
-
-				// RightEL
-				devices_clear_combo(rightElbowPositionOverrideOptionBox);
-				devices_clear_combo(rightElbowRotationOverrideOptionBox);
-
-				// LeftK
-				devices_clear_combo(leftKneePositionOverrideOptionBox);
-				devices_clear_combo(leftKneeRotationOverrideOptionBox);
-
-				// RightK
-				devices_clear_combo(rightKneePositionOverrideOptionBox);
-				devices_clear_combo(rightKneeRotationOverrideOptionBox);
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->ReAppendTrackers();
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
@@ -2481,7 +2149,8 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 					auto _jointname = _joint.getJointName();
 
 					// Push the name to all combos
-					devices_push_override_joints(StringToWString(_jointname));
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoint(StringToWString(_jointname));
 				}
 
 				// Try fix override IDs if wrong
@@ -2489,7 +2158,8 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 
 				// Select the first (or next, if exists) joint
 				// Set the placeholder text on disabled combos
-				devices_select_combobox();
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->SelectComboItems();
 			}
 		}
 	}
@@ -2522,11 +2192,10 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		setAsBaseButton.get()->IsEnabled(false);
 
 		overridesLabel.get()->Visibility(Visibility::Collapsed);
-		overridesControls.get()->Visibility(Visibility::Collapsed);
-		overridesControls_1.get()->Visibility(Visibility::Collapsed);
-		overridesDropDown.get()->Visibility(Visibility::Collapsed);
-		overridesDropDown_1.get()->Visibility(Visibility::Collapsed);
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
+
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->SetVisibility(Visibility::Collapsed);
 	}
 	else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 	{
@@ -2535,11 +2204,10 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		setAsBaseButton.get()->IsEnabled(true);
 
 		overridesLabel.get()->Visibility(Visibility::Visible);
-		overridesControls.get()->Visibility(Visibility::Visible);
-		overridesControls_1.get()->Visibility(Visibility::Visible);
-		overridesDropDown.get()->Visibility(Visibility::Visible);
-		overridesDropDown_1.get()->Visibility(Visibility::Visible);
 		deselectDeviceButton.get()->Visibility(Visibility::Visible);
+
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->SetVisibility(Visibility::Visible);
 	}
 	else
 	{
@@ -2548,35 +2216,16 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 		setAsBaseButton.get()->IsEnabled(true);
 
 		overridesLabel.get()->Visibility(Visibility::Collapsed);
-		overridesControls.get()->Visibility(Visibility::Collapsed);
-		overridesControls_1.get()->Visibility(Visibility::Collapsed);
-		overridesDropDown.get()->Visibility(Visibility::Collapsed);
-		overridesDropDown_1.get()->Visibility(Visibility::Collapsed);
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
+
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->SetVisibility(Visibility::Collapsed);
 	}
 
 	LOG(INFO) << "Changed the currently selected device to " << deviceName;
 
 	// Now we're good
 	devices_tab_re_setup_finished = true;
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverridesDropDown_Expanding(
-	const Controls::Expander& sender,
-	const Controls::ExpanderExpandingEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	overridesDropDown_1.get()->IsExpanded(false);
-}
-
-
-void KinectToVR::implementation::DevicesPage::OverridesDropDown_1_Expanding(
-	const Controls::Expander& sender,
-	const Controls::ExpanderExpandingEventArgs& e)
-{
-	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-	overridesDropDown.get()->IsExpanded(false);
 }
 
 

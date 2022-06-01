@@ -80,6 +80,12 @@
     <ClInclude Include="JointSelectorExpander.h">
       <Filter>Header Files\Custom Controls</Filter>
     </ClInclude>
+    <ClInclude Include="OverrideSelectorRow.h">
+      <Filter>Header Files\Custom Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="OverrideSelectorExpander.h">
+      <Filter>Header Files\Custom Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
