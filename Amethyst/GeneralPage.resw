@@ -127,7 +127,7 @@
     <value>Roll (Z):</value>
   </data>
   <data name="Captions.Offsets.Position.X" xml:space="preserve">
-    <value>X (Right):</value>
+    <value>X (Left):</value>
   </data>
   <data name="Captions.Offsets.Position.Y" xml:space="preserve">
     <value>Y (Up):</value>

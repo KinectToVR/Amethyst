@@ -82,8 +82,8 @@ namespace k2app
 	inline std::map<ktvr::ITrackerType, ktvr::ITrackedJointType> ITrackerType_Joint
 	{
 		{ktvr::ITrackerType::Tracker_Handed, ktvr::ITrackedJointType::Joint_HandLeft},
-		{ktvr::ITrackerType::Tracker_LeftFoot, ktvr::ITrackedJointType::Joint_FootLeft},
-		{ktvr::ITrackerType::Tracker_RightFoot, ktvr::ITrackedJointType::Joint_FootRight},
+		{ktvr::ITrackerType::Tracker_LeftFoot, ktvr::ITrackedJointType::Joint_AnkleLeft},
+		{ktvr::ITrackerType::Tracker_RightFoot, ktvr::ITrackedJointType::Joint_AnkleRight},
 		{ktvr::ITrackerType::Tracker_LeftShoulder, ktvr::ITrackedJointType::Joint_ShoulderLeft},
 		{ktvr::ITrackerType::Tracker_RightShoulder, ktvr::ITrackedJointType::Joint_ShoulderRight},
 		{ktvr::ITrackerType::Tracker_LeftElbow, ktvr::ITrackedJointType::Joint_ElbowLeft},
@@ -99,8 +99,8 @@ namespace k2app
 	inline std::map<ktvr::ITrackedJointType, ktvr::ITrackerType> Joint_ITrackerType
 	{
 		{ktvr::ITrackedJointType::Joint_HandLeft, ktvr::ITrackerType::Tracker_Handed},
-		{ktvr::ITrackedJointType::Joint_FootLeft, ktvr::ITrackerType::Tracker_LeftFoot},
-		{ktvr::ITrackedJointType::Joint_FootRight, ktvr::ITrackerType::Tracker_RightFoot},
+		{ktvr::ITrackedJointType::Joint_AnkleLeft, ktvr::ITrackerType::Tracker_LeftFoot},
+		{ktvr::ITrackedJointType::Joint_AnkleRight, ktvr::ITrackerType::Tracker_RightFoot},
 		{ktvr::ITrackedJointType::Joint_ShoulderLeft, ktvr::ITrackerType::Tracker_LeftShoulder},
 		{ktvr::ITrackedJointType::Joint_ShoulderRight, ktvr::ITrackerType::Tracker_RightShoulder},
 		{ktvr::ITrackedJointType::Joint_ElbowLeft, ktvr::ITrackerType::Tracker_LeftElbow},

@@ -551,6 +551,11 @@ namespace k2app::interfacing
 			// If we've actually found the one
 			if (findStringIC(buf, _role))
 			{
+				const auto stat = vr::VRSystem()->GetTrackedDeviceActivityLevel(i);
+				if (stat != vr::k_EDeviceActivityLevel_UserInteraction &&
+					stat != vr::k_EDeviceActivityLevel_UserInteraction_Timeout)
+					continue;
+
 				char buf_p[1024];
 				vr::VRSystem()->
 					GetStringTrackedDeviceProperty(i, vr::Prop_SerialNumber_String, buf_p, sizeof buf_p);

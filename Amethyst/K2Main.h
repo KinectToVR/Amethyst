@@ -170,10 +170,10 @@ namespace k2app::main
 				// (When they're unfrozen, they go back to instant updates)
 				if (p_frozen_loops >= 1000)
 				{
-					for(const auto& tracker : K2Settings.K2TrackersVector)
-						if(tracker.data.isActive)
+					for (const auto& tracker : K2Settings.K2TrackersVector)
+						if (tracker.data.isActive)
 							ktvr::refresh_tracker_pose<false>(tracker.tracker);
-					
+
 					// Reset
 					p_loops = 0;
 				}
@@ -182,7 +182,8 @@ namespace k2app::main
 			// If the tracing's actually running
 			else
 			{
-				for (auto& tracker : K2Settings.K2TrackersVector) {
+				for (auto& tracker : K2Settings.K2TrackersVector)
+				{
 					// Update orientation filters
 					tracker.updateOrientationFilters();
 
@@ -209,9 +210,9 @@ namespace k2app::main
 						// Only lower body joints
 						for (auto& tracker : K2Settings.K2TrackersVector)
 							if (tracker.data.isActive &&
-								static_cast<int>(tracker.tracker) >= 16)
+								static_cast<int>(ITrackerType_Joint[tracker.tracker]) >= 16)
 								ktvr::refresh_tracker_pose<false>(tracker.tracker);
-						
+
 						// Reset
 						p_loops = 0;
 					}
@@ -219,11 +220,12 @@ namespace k2app::main
 				}
 
 				// Update trackers in the vector recursively
-				for (auto& tracker : K2Settings.K2TrackersVector) {
-
+				for (auto& tracker : K2Settings.K2TrackersVector)
+				{
 					// If lower body is omitted
-					if (static_cast<int>(tracker.tracker) < 16 
-						&& !_updateLowerBody) continue;
+					if (static_cast<int>(ITrackerType_Joint[tracker.tracker]) < 16
+						&& !_updateLowerBody)
+						continue;
 
 					// If the tracker is off
 					if (!tracker.data.isActive) continue;
@@ -271,105 +273,90 @@ namespace k2app::main
 								));
 					}
 				}
-				
+
 				// Now update the trackers
 				if (!k2_tracker_bases.empty())
 					update_tracker_vector(k2_tracker_bases);
 			}
 
-			// Update status 1/1100 loops / ~15s
+			// Update status 1/1200 loops / ~15s
 			// or right after any change
-			for (int i = 0; i < 3; i++)
+			if (p_loops >= 1200 ||
+				(initialized_bak != interfacing::K2AppTrackersInitialized))
 			{
+				// Scan for already-added body trackers from other apps
+				// (If any found, disable corresponding ame's trackers/pairs)
+				if (K2Settings.checkForOverlappingTrackers &&
+					!interfacing::isAlreadyAddedTrackersScanRunning)
+					shared::main::thisDispatcherQueue.get()->TryEnqueue(
+						[&]()-> winrt::Windows::Foundation::IAsyncAction
+						{
+							using namespace winrt;
+							interfacing::isAlreadyAddedTrackersScanRunning = true;
+							bool wereChangesMade = false; // At least not yet
+
+							// Do that on UI's background
+							apartment_context ui_thread;
+							co_await resume_background();
+
+							// Search for 
+							std::vector<bool> foundVRTracker;
+							for (const auto& _tracker : K2Settings.K2TrackersVector)
+								foundVRTracker.push_back(interfacing::findVRTracker(
+									ITrackerType_Serial[_tracker.tracker], false, true).first);
+							co_await ui_thread;
+
+							// Disable an (already-added tracker)'s been found
+							for (uint32_t tracker_index = 0;
+							     tracker_index < K2Settings.K2TrackersVector.size(); tracker_index++)
+								if (K2Settings.K2TrackersVector[tracker_index].data.isActive &&
+									foundVRTracker[tracker_index])
+								{
+									// Make actual changes
+									K2Settings.K2TrackersVector[tracker_index].data.isActive = false;
+									for (auto expander : shared::settings::jointExpanderVector)
+										expander->UpdateIsActive();
+
+									ktvr::set_tracker_state<false>(
+										K2Settings.K2TrackersVector[tracker_index].tracker, false);
+
+									// Sleep on UI's background
+									apartment_context _ui_thread;
+									co_await resume_background();
+									Sleep(20);
+									co_await _ui_thread;
+
+									// Check if we've disabled any joints from spawning and disable their mods
+									interfacing::devices_check_disabled_joints();
+									TrackingDevices::settings_trackersConfigChanged(false);
+
+									// Save settings
+									K2Settings.saveSettings();
+									K2Settings.readSettings();
+									wereChangesMade = true;
+								}
+
+							// Check if anything's changed
+							interfacing::isAlreadyAddedTrackersScanRunning = false;
+							if (wereChangesMade)
+								interfacing::ShowToast(
+									interfacing::LocalizedResourceWString(
+										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Title"),
+									interfacing::LocalizedResourceWString(
+										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Content"),
+									true); // This one's gonna be a high-priority one
+						});
+
 				// try 3 times
-				if (p_loops >= 1100 ||
-					(initialized_bak != interfacing::K2AppTrackersInitialized))
+				for (int i = 0; i < 3; i++)
 				{
-					// Scan for already-added body trackers from other apps
-					// (If any found, disable corresponding ame's pairs)
-
-					// Not that's a TODO for later
-					//     k2app::K2Settings.checkForOverlappingTrackers
-					//if (!interfacing::isAlreadyAddedTrackersScanRunning)
-					//	shared::main::thisDispatcherQueue.get()->TryEnqueue(
-					//		[&]()-> winrt::Windows::Foundation::IAsyncAction
-					//		{
-					//			using namespace winrt;
-					//			interfacing::isAlreadyAddedTrackersScanRunning = true;
-					//			bool wereChangesMade = false; // At least not yet
-
-					//			// Do that on UI's background
-					//			apartment_context ui_thread;
-					//			co_await resume_background();
-					//			const std::array foundTrackerFromPair
-					//			{
-					//				interfacing::findVRTracker("waist", false, true).first,
-					//				(interfacing::findVRTracker("left_foot", false, true).first ||
-					//					interfacing::findVRTracker("right_foot", false, true).first),
-					//				(interfacing::findVRTracker("left_elbow", false, true).first ||
-					//					interfacing::findVRTracker("right_elbow", false, true).first),
-					//				(interfacing::findVRTracker("left_knee", false, true).first ||
-					//					interfacing::findVRTracker("right_knee", false, true).first)
-					//			};
-					//			co_await ui_thread;
-
-					//			// Disable the waist tracker if found
-					//			for (uint32_t tracker_pair_index = 0; 
-					//				tracker_pair_index < 4; tracker_pair_index++)
-					//				if (K2Settings.isJointPairEnabled[tracker_pair_index] &&
-					//					foundTrackerFromPair.at(tracker_pair_index))
-					//				{
-					//					// Make actual changes
-					//					K2Settings.isJointPairEnabled[tracker_pair_index] = false;
-					//					if (shared::settings::trackerPairEnabledToggles.at(tracker_pair_index).get() !=
-					//						nullptr)
-					//						shared::settings::trackerPairEnabledToggles.at(tracker_pair_index).get()->
-					//							IsOn(false);
-
-					//					switch(tracker_pair_index)
-					//					{
-					//					case 0:
-					//						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(0).id, false);
-					//						break;
-					//					case 1:
-					//						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(1).id, false);
-					//						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(2).id, false);
-					//						break;
-					//					case 2:
-					//						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(3).id, false);
-					//						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(4).id, false);
-					//						break;
-					//					case 3:
-					//						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(5).id, false);
-					//						ktvr::set_tracker_state<false>(interfacing::K2TrackersVector.at(6).id, false);
-					//						break;
-					//					}
-
-					//					// Check if we've disabled any joints from spawning and disable their mods
-					//					interfacing::devices_check_disabled_joints();
-					//					TrackingDevices::settings_trackersConfigChanged(false);
-					//					
-					//					// Save settings
-					//					K2Settings.saveSettings();
-					//					wereChangesMade = true;
-					//				}
-
-					//			// Check if anything's changed
-					//			interfacing::isAlreadyAddedTrackersScanRunning = false;
-					//			if (wereChangesMade)
-					//				interfacing::ShowToast(
-					//					interfacing::LocalizedResourceWString(
-					//						L"SharedStrings", L"Toasts/TrackersAutoDisabled/Title"),
-					//					interfacing::LocalizedResourceWString(
-					//						L"SharedStrings", L"Toasts/TrackersAutoDisabled/Content"),
-					//					true); // This one's gonna be a high-priority one
-					//		});
-
 					// Update status in server
 					for (const auto& tracker : K2Settings.K2TrackersVector)
-						if(tracker.data.isActive)
-							ktvr::set_tracker_state<false>(tracker.tracker,
-								interfacing::K2AppTrackersInitialized);
+						if (tracker.data.isActive) {
+							ktvr::set_tracker_state<false>(
+								tracker.tracker, interfacing::K2AppTrackersInitialized);
+							std::this_thread::sleep_for(std::chrono::milliseconds(10));
+						}
 
 					// Update internal status
 					initialized_bak = interfacing::K2AppTrackersInitialized;
@@ -377,8 +364,8 @@ namespace k2app::main
 					// Reset
 					p_loops = 0;
 				}
-				else p_loops++;
 			}
+			else p_loops++;
 		}
 	}
 
@@ -441,31 +428,32 @@ namespace k2app::main
 			// Overwrite flip value depending on device & settings
 			// index() check should've already been done by the app tho
 			if (!K2Settings.isFlipEnabled || _device.index() == 1)base_flip = false;
-			
+
 			/*
-			 * Feet trackers orientation - preparations
+			 * Trackers orientation - preparations
 			 */
 
-			for (auto& tracker : K2Settings.K2TrackersVector) {
-
-				// Copy the orientation to the left foot tracker
+			for (auto& tracker : K2Settings.K2TrackersVector)
+			{
+				// Copy the orientation to the tracker
 				tracker.pose.orientation = _device.index() == 0
 
-					// KinectBasis Device - grab L or R depending on flip : index0
-					? (base_flip
+					                           // KinectBasis Device - grab L or R depending on flip : index0
+					                           ? (base_flip
 
-						// If flip
-						? std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
-						getJointOrientations()[ktvr::Joint_AnkleRight].inverse()
+						                              // If flip
+						                              ? std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
+						                              getJointOrientations()[interfacing::overrides::getFlippedJointType(
+														  ITrackerType_Joint[tracker.tracker])].inverse()
 
-						// If no flip
-						: std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
-						getJointOrientations()[ktvr::Joint_AnkleLeft]
-						)
+						                              // If no flip
+						                              : std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
+						                              getJointOrientations()[ITrackerType_Joint[tracker.tracker]]
+					                           )
 
-					// JointsBasis Device - select based on settings : index1
-					: std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_device)->
-					getTrackedJoints()[tracker.selectedTrackedJointID].getJointOrientation();
+					                           // JointsBasis Device - select based on settings : index1
+					                           : std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_device)->
+					                           getTrackedJoints()[tracker.selectedTrackedJointID].getJointOrientation();
 
 				// Optionally overwrite the rotation with HMD orientation
 				if (tracker.orientationTrackingOption == k2_FollowHMDRotation)
@@ -478,13 +466,13 @@ namespace k2app::main
 			}
 
 			/*
-			 * Feet trackers orientation - preparations : No-Yaw mode
+			 * Trackers orientation - preparations : No-Yaw mode
 			 */
 
 			// We've got no no-yaw mode in amethyst (✿◕‿◕✿)
 
 			/*
-			 * Feet trackers orientation - preparations : App / Software rotation
+			 * Trackers orientation - preparations : App / Software rotation
 			 *   Note: This is only available for feet as for now
 			 */
 
@@ -687,10 +675,13 @@ namespace k2app::main
 						if (K2Settings.K2TrackersVector[1].orientationTrackingOption == k2_SoftwareCalculatedRotation)
 						{
 							K2Settings.K2TrackersVector[1].pose.orientation = base_flip
-								// If flip
-								? ktvr::quaternion_normal(calculatedRightFootOrientation).inverse()
-								// If no flip
-								: ktvr::quaternion_normal(calculatedLeftFootOrientation);
+								                                                  // If flip
+								                                                  ? ktvr::quaternion_normal(
+									                                                  calculatedRightFootOrientation).
+								                                                  inverse()
+								                                                  // If no flip
+								                                                  : ktvr::quaternion_normal(
+									                                                  calculatedLeftFootOrientation);
 
 							// Apply fixes
 
@@ -723,10 +714,13 @@ namespace k2app::main
 						if (K2Settings.K2TrackersVector[2].orientationTrackingOption == k2_SoftwareCalculatedRotation)
 						{
 							K2Settings.K2TrackersVector[2].pose.orientation = base_flip
-								// If flip
-								? ktvr::quaternion_normal(calculatedLeftFootOrientation).inverse()
-								// If no flip
-								: ktvr::quaternion_normal(calculatedRightFootOrientation);
+								                                                  // If flip
+								                                                  ? ktvr::quaternion_normal(
+									                                                  calculatedLeftFootOrientation).
+								                                                  inverse()
+								                                                  // If no flip
+								                                                  : ktvr::quaternion_normal(
+									                                                  calculatedRightFootOrientation);
 
 							// Apply fixes
 
@@ -788,26 +782,30 @@ namespace k2app::main
 					float pitchOffOffset = 0.0; // May be applied when pitch is off
 					std::vector pitchShift(K2Settings.K2TrackersVector.size(), 0.f);
 
-					for (uint32_t index = 0; index < K2Settings.K2TrackersVector.size(); index++) {
+					for (uint32_t index = 0; index < K2Settings.K2TrackersVector.size(); index++)
+					{
 						if (K2Settings.K2TrackersVector[index].orientationTrackingOption == k2_DeviceInferredRotation ||
-							K2Settings.K2TrackersVector[index].orientationTrackingOption == k2_SoftwareCalculatedRotation)
+							K2Settings.K2TrackersVector[index].orientationTrackingOption ==
+							k2_SoftwareCalculatedRotation)
 							pitchShift.at(index) = _PI / 6.f; // Normal offset
 					}
 
-					for (uint32_t index = 0; index < K2Settings.K2TrackersVector.size(); index++) {
+					for (uint32_t index = 0; index < K2Settings.K2TrackersVector.size(); index++)
+					{
 						if (K2Settings.K2TrackersVector[index].orientationTrackingOption != k2_FollowHMDRotation)
 						{
 							// Remove the pitch angle
 							// Grab original orientations and make them euler angles
-							Eigen::Vector3f left_ori_with_yaw =
+							Eigen::Vector3f tracker_ori_with_yaw =
 								EigenUtils::QuatToEulers(K2Settings.K2TrackersVector[index].pose.orientation);
 
 							// Remove pitch from eulers and apply to the parent
 							K2Settings.K2TrackersVector[index].pose.orientation = EigenUtils::EulersToQuat(
 								Eigen::Vector3f(
-									pitchOn ? left_ori_with_yaw.x() - pitchShift[index] : pitchOffOffset, // Disable the pitch
-									(base_flip ? -1.f : 1.f) * left_ori_with_yaw.y(),
-									-left_ori_with_yaw.z()));
+									pitchOn ? tracker_ori_with_yaw.x() - pitchShift[index] : pitchOffOffset,
+									// Disable the pitch
+									(base_flip ? -1.f : 1.f) * tracker_ori_with_yaw.y(),
+									-tracker_ori_with_yaw.z()));
 
 							// Apply the turn-around flip quaternion
 							K2Settings.K2TrackersVector[index].pose.orientation =
@@ -860,7 +858,7 @@ namespace k2app::main
 
 				for (auto& tracker : K2Settings.K2TrackersVector)
 					tracker.pose.position =
-					_joints->getTrackedJoints().at(tracker.selectedTrackedJointID).getJointPosition();
+						_joints->getTrackedJoints().at(tracker.selectedTrackedJointID).getJointPosition();
 			}
 		}
 
@@ -914,53 +912,57 @@ namespace k2app::main
 				 * Trackers orientation - preparations
 				 */
 
-				 // Check if we need to apply it, skip if it's set to either hmd or none
-				 for (auto& tracker : K2Settings.K2TrackersVector)
+				// Check if we need to apply it, skip if it's set to either hmd or none
+				for (auto& tracker : K2Settings.K2TrackersVector)
 					if (tracker.isRotationOverridden &&
 						(tracker.orientationTrackingOption == k2_DeviceInferredRotation ||
 							tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation))
 					{
-						// Copy the orientation to the left foot tracker
+						// Copy the orientation to the tracker
 						tracker.pose.orientation = _device.index() == 0
 
-							// KinectBasis Device - grab L or R depending on flip : index1
-							? (override_flip
+							                           // KinectBasis Device - grab L or R depending on flip : index1
+							                           ? (override_flip
 
-								// If flip
-								? std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
-								getJointOrientations()[interfacing::overrides::getFlippedJointType(
-									static_cast<ktvr::ITrackedJointType>(
-										TrackingDevices::devices_override_joint_id(
-											tracker.rotationOverrideJointID)))].inverse()
+								                              // If flip
+								                              ? std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+									                              _device)->
+								                              getJointOrientations()[
+									                              interfacing::overrides::getFlippedJointType(
+										                              static_cast<ktvr::ITrackedJointType>(
+											                              TrackingDevices::devices_override_joint_id(
+												                              tracker.rotationOverrideJointID)))].
+								                              inverse()
 
-								// If no flip
-								: std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
-								getJointOrientations()[
-									TrackingDevices::devices_override_joint_id(
-										tracker.rotationOverrideJointID)]
-								)
+								                              // If no flip
+								                              : std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+									                              _device)->
+								                              getJointOrientations()[
+									                              TrackingDevices::devices_override_joint_id(
+										                              tracker.rotationOverrideJointID)]
+							                           )
 
-							// JointsBasis Device - select based on settings : index1
-										: std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_device)->
-										getTrackedJoints()[
-											TrackingDevices::devices_override_joint_id(
-												tracker.rotationOverrideJointID)].getJointOrientation();
+							                           // JointsBasis Device - select based on settings : index1
+							                           : std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_device)->
+							                           getTrackedJoints()[
+								                           TrackingDevices::devices_override_joint_id(
+									                           tracker.rotationOverrideJointID)].getJointOrientation();
 					}
-				
+
 				/*
-				 * Feet trackers orientation - preparations : No-Yaw mode
+				 * Trackers orientation - preparations : No-Yaw mode
 				 */
 
 				// We've got no no-yaw mode in amethyst (✿◕‿◕✿)
 
 				/*
-				 * Feet trackers orientation - preparations : App / Software rotation
+				 * Trackers orientation - preparations : App / Software rotation
 				 */
 
 				// We've got no math-based for override devices (✿◕‿◕✿)
 
 				/*
-				 * Feet trackers orientation - Calibration-related fixes (kinectbasis-only)
+				 * Trackers orientation - Calibration-related fixes (kinectbasis-only)
 				 */
 
 				if (_device.index() == 0)
@@ -991,26 +993,27 @@ namespace k2app::main
 						      pitchShift_EL = 0.f, pitchShift_ER = 0.f,
 						      pitchShift_KL = 0.f, pitchShift_KR = 0.f;
 
-						for (auto& tracker : K2Settings.K2TrackersVector) {
+						for (auto& tracker : K2Settings.K2TrackersVector)
+						{
 							if (tracker.orientationTrackingOption == k2_DeviceInferredRotation ||
 								tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation)
 								pitchShift_L = _PI / 8.f; // Normal offset
-							
-							if (tracker.orientationTrackingOption != k2_FollowHMDRotation 
+
+							if (tracker.orientationTrackingOption != k2_FollowHMDRotation
 								&& tracker.isRotationOverridden)
 							{
 								// Remove the pitch angle
 								// Grab original orientations and make them euler angles
-								Eigen::Vector3f left_ori_with_yaw =
+								Eigen::Vector3f tracker_ori_with_yaw =
 									EigenUtils::QuatToEulers(tracker.pose.orientation);
 
 								// Remove pitch from eulers and apply to the parent
 								tracker.pose.orientation = EigenUtils::EulersToQuat(
 									Eigen::Vector3f(
-										pitchOn ? left_ori_with_yaw.x() - pitchShift_L : pitchOffOffset,
+										pitchOn ? tracker_ori_with_yaw.x() - pitchShift_L : pitchOffOffset,
 										// Disable the pitch
-										(override_flip ? -1.f : 1.f) * left_ori_with_yaw.y(),
-										-left_ori_with_yaw.z()));
+										(override_flip ? -1.f : 1.f) * tracker_ori_with_yaw.y(),
+										-tracker_ori_with_yaw.z()));
 
 								// Apply the turn-around flip quaternion
 								tracker.pose.orientation = yawFlipQuaternion * tracker.pose.orientation;
@@ -1021,7 +1024,7 @@ namespace k2app::main
 						}
 					}
 					else
-						// It'll make the tracker face the kinect
+					// It'll make the tracker face the kinect
 						for (auto& tracker : K2Settings.K2TrackersVector)
 							if (tracker.orientationTrackingOption != k2_FollowHMDRotation &&
 								tracker.isRotationOverridden)
@@ -1051,8 +1054,9 @@ namespace k2app::main
 						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_device);
 
 					for (auto& tracker : K2Settings.K2TrackersVector)
-						if (tracker.isPositionOverridden) tracker.pose.position =
-							_joints->getTrackedJoints().at(tracker.positionOverrideJointID).getJointPosition();
+						if (tracker.isPositionOverridden)
+							tracker.pose.position =
+								_joints->getTrackedJoints().at(tracker.positionOverrideJointID).getJointPosition();
 				}
 			}
 		}
