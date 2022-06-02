@@ -223,7 +223,7 @@ namespace k2app::main
 				for (auto& tracker : K2Settings.K2TrackersVector)
 				{
 					// If lower body is omitted
-					if (static_cast<int>(ITrackerType_Joint[tracker.tracker]) < 16
+					if (static_cast<int>(ITrackerType_Joint[tracker.tracker]) >= 16
 						&& !_updateLowerBody)
 						continue;
 

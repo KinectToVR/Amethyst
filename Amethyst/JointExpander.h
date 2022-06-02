@@ -494,22 +494,20 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)co_return;
+					
+					// Make actual changes
+					for (auto tracker_p : _tracker_pointers) {
+						tracker_p->data.isActive = _ptr_joint_switch.get()->IsOn();
 
-					// Mark trackers as inactive, back up the current one
-					const bool _trackersInitialized =
-						k2app::interfacing::K2AppTrackersInitialized;
-					k2app::interfacing::K2AppTrackersInitialized = false;
-					{
-						// Sleep on UI
-						apartment_context ui_thread;
+						ktvr::set_tracker_state<false>(
+							tracker_p->tracker, tracker_p->data.isActive);
+
+						// Sleep on UI's background
+						apartment_context _ui_thread;
 						co_await resume_background();
 						Sleep(20);
-						co_await ui_thread;
+						co_await _ui_thread;
 					}
-
-					// Make actual changes
-					for (auto tracker_p : _tracker_pointers)
-						tracker_p->data.isActive = _ptr_joint_switch.get()->IsOn();
 					
 					if (!_tracker_pointers[0]->data.isActive)
 					{
@@ -522,17 +520,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Check if we've disabled any joints from spawning and disable their mods
 					k2app::interfacing::devices_check_disabled_joints();
 					TrackingDevices::settings_trackersConfigChanged();
-
-					// Mark trackers as active (or backup)
-					{
-						// Sleep on UI
-						apartment_context ui_thread;
-						co_await resume_background();
-						Sleep(20);
-						co_await ui_thread;
-					}
-					k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
-
+					
 					// Save settings
 					k2app::K2Settings.saveSettings();
 				});

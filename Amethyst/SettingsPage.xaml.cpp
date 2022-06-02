@@ -617,37 +617,24 @@ void winrt::KinectToVR::implementation::SettingsPage::TrackerConfigButton_Click(
 				// If the tracker was unchecked
 					for (uint32_t _t = 0; _t < k2app::K2Settings.K2TrackersVector.size(); _t++)
 						if (k2app::K2Settings.K2TrackersVector[_t].tracker == current_tracker) {
-
-							// Mark trackers as inactive, back up the current one
-							const bool _trackersInitialized =
-								k2app::interfacing::K2AppTrackersInitialized;
-							k2app::interfacing::K2AppTrackersInitialized = false;
-							{
-								// Sleep on UI
-								apartment_context ui_thread;
-								co_await resume_background();
-								Sleep(20);
-								co_await ui_thread;
-							}
-
+							
 							// Make actual changes
+							ktvr::set_tracker_state<false>(
+								k2app::K2Settings.K2TrackersVector.at(_t).tracker, false);
+
+							// Sleep on UI's background
+							apartment_context _ui_thread;
+							co_await resume_background();
+							Sleep(20);
+							co_await _ui_thread;
+
 							k2app::K2Settings.K2TrackersVector.erase(
 								k2app::K2Settings.K2TrackersVector.begin() + _t);
 
 							// Check if we've disabled any joints from spawning and disable their mods
 							k2app::interfacing::devices_check_disabled_joints();
 							TrackingDevices::settings_trackersConfigChanged();
-
-							// Mark trackers as active (or backup)
-							{
-								// Sleep on UI
-								apartment_context ui_thread;
-								co_await resume_background();
-								Sleep(20);
-								co_await ui_thread;
-							}
-							k2app::interfacing::K2AppTrackersInitialized = _trackersInitialized;
-
+							
 							// Save settings
 							k2app::K2Settings.saveSettings();
 						}

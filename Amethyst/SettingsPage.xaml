@@ -286,7 +286,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="50" />
                         <RowDefinition Height="50" />
-                        <RowDefinition Height="33" />
+                        <RowDefinition Height="40" />
                     </Grid.RowDefinitions>
 
                     <AppBarButton x:Name="TrackerConfigButton" VerticalAlignment="Top"
