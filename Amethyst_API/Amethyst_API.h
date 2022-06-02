@@ -78,7 +78,7 @@ namespace boost::serialization
 namespace ktvr
 {
 	// Interace Version
-	static const char* IK2API_Version = "IK2API_Version_008";
+	static const char* IK2API_Version = "IK2API_Version_009";
 
 	// OpenVR Tracker types
 	enum class ITrackerType
