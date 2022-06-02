@@ -84,7 +84,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					[&]
 					{
-						LOG(WARNING) << "Couldn't clear a ComboBox. You better call an exorcist.";
+						LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
 					}();
 				}
 			}();
@@ -110,7 +110,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					{
 						[&]
 						{
-							LOG(WARNING) << "Couldn't clear a ComboBox. You better call an exorcist.";
+							LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
 						}();
 					}
 				}();

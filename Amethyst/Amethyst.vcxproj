@@ -165,6 +165,8 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <ClInclude Include="K2Shared.h" />
     <ClInclude Include="KalmanFilter.h" />
     <ClInclude Include="LowpassFilter.h" />
+    <ClInclude Include="OffsetsController.h" />
+    <ClInclude Include="OffsetsPivotItem.h" />
     <ClInclude Include="OverrideSelectorExpander.h" />
     <ClInclude Include="OverrideSelectorRow.h" />
     <ClInclude Include="pch.h" />
@@ -348,6 +350,7 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PRIResource Include="GeneralPage.resw" />
     <PRIResource Include="Strings\en-US\DevicesPage.resw" />
     <PRIResource Include="Strings\en-US\InfoPage.resw" />
     <PRIResource Include="Strings\en-US\SettingsLearn.resw" />

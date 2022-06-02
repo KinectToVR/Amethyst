@@ -42,6 +42,9 @@ namespace k2app::shared
 	namespace general
 	{
 		// General Page
+		inline bool general_tab_setup_finished = false,
+			pending_offsets_update = false;
+
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>
 		toggleTrackersButton;
 
@@ -71,63 +74,14 @@ namespace k2app::shared
 			forceRenderText;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
+			offsetsControlHostGrid,
 			errorButtonsGrid,
 			errorWhatGrid,
 			overrideErrorButtonsGrid,
 			overrideErrorWhatGrid,
 			serverErrorWhatGrid,
 			serverErrorButtonsGrid;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::NumberBox>
-			waistRollNumberBox,
-			waistYawNumberBox,
-			waistPitchNumberBox,
-			waistXNumberBox,
-			waistYNumberBox,
-			waistZNumberBox,
-
-			leftFootRollNumberBox,
-			leftFootYawNumberBox,
-			leftFootPitchNumberBox,
-			leftFootXNumberBox,
-			leftFootYNumberBox,
-			leftFootZNumberBox,
-
-			rightFootRollNumberBox,
-			rightFootYawNumberBox,
-			rightFootPitchNumberBox,
-			rightFootXNumberBox,
-			rightFootYNumberBox,
-			rightFootZNumberBox,
-
-			leftElbowRollNumberBox,
-			leftElbowYawNumberBox,
-			leftElbowPitchNumberBox,
-			leftElbowXNumberBox,
-			leftElbowYNumberBox,
-			leftElbowZNumberBox,
-
-			rightElbowRollNumberBox,
-			rightElbowYawNumberBox,
-			rightElbowPitchNumberBox,
-			rightElbowXNumberBox,
-			rightElbowYNumberBox,
-			rightElbowZNumberBox,
-			leftKneeRollNumberBox,
-
-			leftKneeYawNumberBox,
-			leftKneePitchNumberBox,
-			leftKneeXNumberBox,
-			leftKneeYNumberBox,
-			leftKneeZNumberBox,
-
-			rightKneeRollNumberBox,
-			rightKneeYawNumberBox,
-			rightKneePitchNumberBox,
-			rightKneeXNumberBox,
-			rightKneeYNumberBox,
-			rightKneeZNumberBox;
-
+		
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSplitButton>
 		toggleFreezeButton;
 

@@ -11,13 +11,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 	class OverrideSelectorRow;
 }
 
-// Extension of the k2/shared namespace
-namespace k2app::shared::settings
-{
-	//inline std::vector<std::shared_ptr<
-	//	winrt::Microsoft::UI::Xaml::Controls::JointExpander>> jointExpanderVector;
-}
-
 // Defined in JointSelectorRow.h
 inline std::wstring eraseSubStr(std::wstring mainStr, const std::wstring& toErase);
 

@@ -86,6 +86,12 @@
     <ClInclude Include="OverrideSelectorExpander.h">
       <Filter>Header Files\Custom Controls</Filter>
     </ClInclude>
+    <ClInclude Include="OffsetsPivotItem.h">
+      <Filter>Header Files\Custom Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="OffsetsController.h">
+      <Filter>Header Files\Custom Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -312,6 +318,9 @@
       <Filter>Strings\en-US</Filter>
     </PRIResource>
     <PRIResource Include="Strings\en-US\SettingsLearn.resw">
+      <Filter>Strings\en-US</Filter>
+    </PRIResource>
+    <PRIResource Include="GeneralPage.resw">
       <Filter>Strings\en-US</Filter>
     </PRIResource>
   </ItemGroup>
