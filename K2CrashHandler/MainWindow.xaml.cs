@@ -93,8 +93,8 @@ namespace K2CrashHandler
                             Close(); // We're OK to exit
 
                         // Parse the exit code into strings
-                        handlerTitle = LangResString("Title/Crash/Default");
-                        primaryButtonText = LangResString("PrimaryButton/Crash");
+                        handlerTitle = LangResString("Title/Crash");
+                        primaryButtonText = LangResString("PrimaryButton/Crash/Default");
                         switch (ProcessExitCode)
                         {
                             case -13:
@@ -145,9 +145,9 @@ namespace K2CrashHandler
                     // Parse the strings
                     primaryButtonHandler = Action_ForceQuit;
 
-                    handlerTitle = LangResString("Title.AlreadyRunning");
-                    handlerContent = LangResString("PrimaryButton.AlreadyRunning");
-                    primaryButtonText = LangResString("PrimaryButton.AlreadyRunning");
+                    handlerTitle = LangResString("Title/AlreadyRunning");
+                    handlerContent = LangResString("Content/AlreadyRunning");
+                    primaryButtonText = LangResString("PrimaryButton/AlreadyRunning");
                 }
             }
 
@@ -158,7 +158,7 @@ namespace K2CrashHandler
             // Set window title, drag-space and size
             Title = launcherMode
                 ? relaunchMode
-                    ? LangResString("Title.AlreadyRunning")
+                    ? LangResString("Title/AlreadyRunning")
                     : LangResString("Title/Crash")
                 : LangResString("Title/Recovery");
 
