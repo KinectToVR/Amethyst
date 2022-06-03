@@ -73,7 +73,7 @@ namespace winrt::KinectToVR::implementation
 		overrideErrorWhatGrid = std::make_shared<Controls::Grid>(OverrideErrorWhatGrid());
 		serverErrorWhatGrid = std::make_shared<Controls::Grid>(ServerErrorWhatGrid());
 		serverErrorButtonsGrid = std::make_shared<Controls::Grid>(ServerErrorButtonsGrid());
-		
+
 		toggleFreezeButton = std::make_shared<Controls::ToggleSplitButton>(ToggleTrackingButton());
 		freezeOnlyLowerCheckBox = std::make_shared<Controls::CheckBox>(FreezeOnlyLowerCheckBox());
 
@@ -98,7 +98,7 @@ void KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 	pending_offsets_update = true;
 
 	offsetsController->ReAppendTrackerPivots();
-	
+
 	// Notice that we're finished
 	pending_offsets_update = false;
 
@@ -165,7 +165,7 @@ void KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
 	pending_offsets_update = true;
 
 	offsetsController->ReReadOffsets();
-	
+
 	// Notice that we're finished
 	pending_offsets_update = false;
 
@@ -195,12 +195,13 @@ void KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(
 {
 	AutoCalibrationPane().Visibility(Visibility::Visible);
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
-	CalibrationSelectionPane().Visibility(Visibility::Collapsed);
+
+	CalibrationRunningView().IsPaneOpen(true);
 
 	StartAutoCalibrationButton().IsEnabled(true);
+	CalibrationPointsNumberBox().IsEnabled(true);
 	CalibrationInstructionsLabel().Text(L"Start the calibration");
 	CalibrationCountdownLabel().Text(L"~");
-
 	DiscardAutoCalibrationButton().Content(box_value(L"Cancel"));
 }
 
@@ -210,7 +211,8 @@ void KinectToVR::implementation::GeneralPage::ManualCalibrationButton_Click(
 {
 	AutoCalibrationPane().Visibility(Visibility::Collapsed);
 	ManualCalibrationPane().Visibility(Visibility::Visible);
-	CalibrationSelectionPane().Visibility(Visibility::Collapsed);
+
+	CalibrationRunningView().IsPaneOpen(true);
 
 	StartManualCalibrationButton().IsEnabled(true);
 	DiscardManualCalibrationButton().Content(box_value(L"Cancel"));
@@ -227,6 +229,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 
 	// Disable the start button and change [cancel]'s text
 	StartAutoCalibrationButton().IsEnabled(false);
+	CalibrationPointsNumberBox().IsEnabled(false);
 	DiscardAutoCalibrationButton().Content(box_value(L"Abort"));
 
 	// Ref current matrices to helper pointers
@@ -304,7 +307,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 			if (!CalibrationPending)break; // Check for exiting
 		}
 
-		CalibrationInstructionsLabel().Text(L"Stand still!");
+		CalibrationInstructionsLabel().Text(L"Please stand still!");
 		for (int i = 3; i >= 0; i--)
 		{
 			CalibrationCountdownLabel().Text(std::to_wstring(i));
@@ -335,6 +338,8 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 						 : k2app::interfacing::kinectHeadPosition.second
 					).cast<double>());
 			}
+			else if (i == 0)
+				CalibrationInstructionsLabel().Text(L"Position captured!");
 
 			// Wait and eventually break
 			{
@@ -445,20 +450,22 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 	}
 
 	// Exit the pane
-	CalibrationView().IsPaneOpen(false);
+	CalibrationSelectView().IsPaneOpen(false);
+	CalibrationRunningView().IsPaneOpen(false);
 
 	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 }
 
 
-void KinectToVR::implementation::GeneralPage::DiscardAutoCalibrationButton_Click(
+void KinectToVR::implementation::GeneralPage::DiscardCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Just exit
 	if (!CalibrationPending)
 	{
-		CalibrationView().IsPaneOpen(false);
+		CalibrationSelectView().IsPaneOpen(false);
+		CalibrationRunningView().IsPaneOpen(false);
 
 		// Play a nice sound - exiting
 		ElementSoundPlayer::Play(ElementSoundKind::GoBack);
@@ -653,30 +660,12 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 	}
 
 	// Exit the pane and reset
-	CalibrationView().IsPaneOpen(false);
+	CalibrationSelectView().IsPaneOpen(false);
+	CalibrationRunningView().IsPaneOpen(false);
 	k2app::interfacing::calibration_confirm = false;
 
 	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
-}
-
-
-void KinectToVR::implementation::GeneralPage::DiscardManualCalibrationButton_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	// Just exit
-	if (!CalibrationPending)
-	{
-		CalibrationView().IsPaneOpen(false);
-
-		// Play a nice sound - exiting
-		ElementSoundPlayer::Play(ElementSoundKind::GoBack);
-
-		k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
-		skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
-	}
-	// Begin abort
-	else CalibrationPending = false;
 }
 
 
@@ -781,7 +770,7 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 
 	// Load values into number boxes
 	offsetsController->ReAppendTrackerPivots();
-	
+
 	// Notice that we're finished
 	pending_offsets_update = false;
 
@@ -795,8 +784,8 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	// Setup the freeze button
 	k2app::shared::general::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
 	k2app::shared::general::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		? box_value(L"Unfreeze")
-		: box_value(L"Freeze"));
+		                                                          ? box_value(L"Unfreeze")
+		                                                          : box_value(L"Freeze"));
 	k2app::shared::general::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
 }
 
@@ -1326,9 +1315,9 @@ void KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
 	{
 		AutoCalibrationPane().Visibility(Visibility::Collapsed);
 		ManualCalibrationPane().Visibility(Visibility::Collapsed);
-		CalibrationSelectionPane().Visibility(Visibility::Visible);
 
-		CalibrationView().IsPaneOpen(true);
+		CalibrationSelectView().IsPaneOpen(true);
+		CalibrationRunningView().IsPaneOpen(false);
 
 		show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
 		k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
@@ -1351,9 +1340,9 @@ void KinectToVR::implementation::GeneralPage::BaseCalibration_Click(
 
 	AutoCalibrationPane().Visibility(Visibility::Collapsed);
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
-	CalibrationSelectionPane().Visibility(Visibility::Visible);
 
-	CalibrationView().IsPaneOpen(true);
+	CalibrationSelectView().IsPaneOpen(true);
+	CalibrationRunningView().IsPaneOpen(false);
 
 	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
 	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
@@ -1381,9 +1370,9 @@ void KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
 
 	AutoCalibrationPane().Visibility(Visibility::Collapsed);
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
-	CalibrationSelectionPane().Visibility(Visibility::Visible);
 
-	CalibrationView().IsPaneOpen(true);
+	CalibrationSelectView().IsPaneOpen(true);
+	CalibrationRunningView().IsPaneOpen(false);
 
 	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
 	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
@@ -1405,20 +1394,20 @@ void KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
 
 
 void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackingButton_Click(
-	winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender, 
+	winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args)
 {
 	k2app::interfacing::isTrackingFrozen = !k2app::interfacing::isTrackingFrozen;
 
 	k2app::shared::general::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
 	k2app::shared::general::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		? box_value(L"Unfreeze")
-		: box_value(L"Freeze"));
+		                                                          ? box_value(L"Unfreeze")
+		                                                          : box_value(L"Freeze"));
 }
 
 
 void winrt::KinectToVR::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender, 
+	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	k2app::K2Settings.freezeLowerOnly = true;
@@ -1427,9 +1416,42 @@ void winrt::KinectToVR::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Che
 
 
 void winrt::KinectToVR::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender, 
+	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	k2app::K2Settings.freezeLowerOnly = false;
 	k2app::K2Settings.saveSettings();
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::CalibrationSelectView_PaneClosing(
+	winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
+{
+	args.Cancel(true);
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::CalibrationRunningView_PaneClosing(
+	winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
+{
+	args.Cancel(true);
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::CalibrationPointsNumberBox_ValueChanged(
+	winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender,
+	winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args)
+{
+	// Don't react to dummy changes
+	if (!general_tab_setup_finished)return;
+
+	// Attempt automatic fixes
+	if (isnan(sender.as<Controls::NumberBox>().Value()))
+		sender.as<Controls::NumberBox>().Value(k2app::K2Settings.calibrationPointsNumber);
+
+	k2app::K2Settings.calibrationPointsNumber =
+		static_cast<int>(sender.as<Controls::NumberBox>().Value());
+	k2app::K2Settings.saveSettings(); // Save it
 }

@@ -45,53 +45,186 @@
             </SplitView.Pane>
         </SplitView>
 
-        <SplitView Canvas.ZIndex="1" x:Name="CalibrationView"
+        <SplitView Canvas.ZIndex="1" x:Name="CalibrationSelectView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-                   PaneClosing="CalibrationView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
+                   PaneClosing="CalibrationSelectView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
                    CompactPaneLength="48"
                    DisplayMode="Overlay" CornerRadius="10">
             <SplitView.Pane>
                 <Grid>
                     <Grid x:Name="CalibrationSelectionPane">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="70" />
+                            <RowDefinition Height="60" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Pick a calibration mode" Margin="0,15,0,0"
+                        <TextBlock Text="Choose a calibration mode" Margin="0,15,0,0"
                                    HorizontalAlignment="Center" FontSize="26"
+                                   VerticalAlignment="Center"
                                    Style="{StaticResource BaseTextBlockStyle}" />
 
-                        <Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
-                              Background="{StaticResource SystemControlAcrylicElementBrush}">
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="0,0,0,20">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="*" />
+                                <RowDefinition Height="50" />
                             </Grid.RowDefinitions>
 
-                            <Button x:Name="AutoCalibrationButton" Grid.Row="0" MaxWidth="320" Margin="20,20,20,10"
-                                    Click="AutoCalibrationButton_Click" HorizontalAlignment="Center">
-                                <Image Source="ms-appx:///Assets/autocalibration.png" />
-                            </Button>
+                            <Button x:Name="AutoCalibrationButton" Grid.Row="0" Margin="20,20,20,10" Width="460"
+                                    Click="AutoCalibrationButton_Click" HorizontalAlignment="Stretch">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="260"
+                                      Width="435">
+                                    <Border Height="20" CornerRadius="3" Padding="5,0"
+                                            BorderBrush="{StaticResource SystemAccentColorLight2}"
+                                            Background="{StaticResource SystemAccentColorLight2}"
+                                            VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,7,0,0">
+                                        <TextBlock Text="Recommended" FontWeight="Medium" Foreground="Black" />
+                                    </Border>
 
-                            <Button x:Name="ManualCalibrationButton" Grid.Row="1" MaxWidth="320" Margin="20,10,20,20"
-                                    Click="ManualCalibrationButton_Click" HorizontalAlignment="Center">
-                                <Image Source="ms-appx:///Assets/manualcalibration.png" />
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch" Height="260">
+                                        <Image Width="150" Margin="0,10,0,0"
+                                               Source="ms-appx:///Assets/autocalibration.png" />
+                                        <TextBlock Text="Automatic" HorizontalAlignment="Center" FontSize="26"
+                                                   FontWeight="SemiBold" />
+                                        <TextBlock Text="Stand in three locations of your play area." Margin="0,20,0,0"
+                                                   HorizontalAlignment="Center" FontSize="16" FontWeight="Medium" />
+                                    </StackPanel>
+                                </Grid>
                             </Button>
+                            <Button x:Name="ManualCalibrationButton" Grid.Row="1" Margin="20,10,20,20" Width="460"
+                                    Click="ManualCalibrationButton_Click" HorizontalAlignment="Stretch">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch" Height="260" Width="435">
+                                    <Image Width="150" Margin="0,10,0,0"
+                                           Source="ms-appx:///Assets/manualcalibration.png" />
+                                    <TextBlock Text="Manual" HorizontalAlignment="Center" FontSize="26"
+                                               FontWeight="SemiBold" />
+                                    <TextBlock Text="Move trackers using your VR controllers." Margin="0,20,0,0"
+                                               HorizontalAlignment="Center" FontSize="16" FontWeight="Medium" />
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="CancelCalibrationButton" Grid.Row="2"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                    Content="Cancel" Height="50" Grid.Column="0" Width="170"
+                                    FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
                     </Grid>
+                </Grid>
+            </SplitView.Pane>
+        </SplitView>
 
+        <SplitView Canvas.ZIndex="2" x:Name="CalibrationRunningView"
+                   PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                   PaneClosing="CalibrationRunningView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
+                   CompactPaneLength="48"
+                   DisplayMode="Overlay" CornerRadius="10">
+            <SplitView.Pane>
+                <Grid>
                     <Grid x:Name="AutoCalibrationPane">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="70" />
+                            <RowDefinition Height="60" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Text="Automatic Calibration" Margin="0,15,0,0"
                                    HorizontalAlignment="Center" FontSize="26"
+                                   VerticalAlignment="Center"
                                    Style="{StaticResource BaseTextBlockStyle}" />
 
-                        <Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="0,20,0,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="4*" />
+                                <RowDefinition Height="50" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="50" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="45" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="50" />
+                            </Grid.RowDefinitions>
+
+                            <Border Margin="20,0,20,20" Width="460"
+                                    HorizontalAlignment="Stretch"
+                                    Grid.Row="0"
+
+                                    CornerRadius="3"
+                                    Background="Transparent">
+                                <Grid>
+
+                                    <Image Margin="0,0,0,80" Stretch="UniformToFill"
+                                           Source="ms-appx:///Assets/crab.gif" />
+
+                                    <Border Margin="0,0,0,0" Width="460" Height="80"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Bottom" Grid.Row="0"
+
+                                            CornerRadius="0,0,3,3"
+                                            Background="{StaticResource SystemControlAcrylicWindowBrush}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="80" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock x:Name="CalibrationCountdownLabel" HorizontalAlignment="Stretch"
+                                                       VerticalAlignment="Stretch"
+                                                       Foreground="{StaticResource SystemAccentColorLight2}"
+                                                       Margin="0,3,0,0" Grid.Column="0"
+                                                       HorizontalTextAlignment="Center"
+                                                       Text="~" FontSize="48" FontWeight="Bold" />
+
+                                            <TextBlock x:Name="CalibrationInstructionsLabel" Grid.Column="1"
+                                                       Text="Start the calibration" VerticalAlignment="Center"
+                                                       Margin="0,0,0,5"
+                                                       HorizontalAlignment="Stretch" FontSize="26"
+                                                       FontWeight="SemiBold" />
+
+                                        </Grid>
+                                    </Border>
+
+                                </Grid>
+                            </Border>
+
+                            <Button x:Name="StartAutoCalibrationButton"
+                                    Click="StartAutoCalibrationButton_Click"
+                                    Content="Begin Calibration"
+                                    HorizontalAlignment="Stretch" Height="50"
+                                    Grid.Row="1" Margin="20,0,20,0" Width="460"
+                                    Style="{StaticResource AccentButtonStyle}" FontWeight="SemiBold" />
+
+                            <Grid Margin="20,0,20,0" Width="460"
+                                  HorizontalAlignment="Stretch" Grid.Row="3">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="270" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                           Margin="0,0,0,3" Grid.Column="0" HorizontalTextAlignment="Center"
+                                           Text="Capture Points:" FontWeight="SemiBold" />
+
+                                <NumberBox Minimum="3" Maximum="5" Value="3" Grid.Column="1" x:Name="CalibrationPointsNumberBox"
+                                           SpinButtonPlacementMode="Inline" ValueChanged="CalibrationPointsNumberBox_ValueChanged"
+                                           FontSize="26" FontWeight="Normal" SmallChange="1" LargeChange="1" />
+
+                            </Grid>
+
+                            <Grid Margin="20,0,20,0" Width="460"
+                                  HorizontalAlignment="Stretch" Grid.Row="5">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Try increasing capture points if the calibration puts the trackers in the wrong place."
+                                           Margin="0,0,0,0" Foreground="LightGray" TextWrapping="WrapWholeWords" />
+                            </Grid>
+
+                            <Button x:Name="DiscardAutoCalibrationButton" Grid.Row="7"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                    Content="Cancel" Height="50" Grid.Column="0" Width="170"
+                                    FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
+                        </Grid>
+
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="50,20,50,50" Visibility="Collapsed"
                               Background="{StaticResource SystemControlAcrylicElementBrush}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="70" />
@@ -111,33 +244,7 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Background="{StaticResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}">
-                                <TextBlock x:Name="CalibrationCountdownLabel" HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Margin="0,0,0,30"
-                                           Text="~" FontSize="75" FontWeight="Bold" />
                             </Border>
-
-                            <TextBlock x:Name="CalibrationInstructionsLabel"
-                                       Text="Start the calibration" Margin="0,15,0,0"
-                                       HorizontalAlignment="Center" FontSize="27" Grid.Row="3"
-                                       Style="{StaticResource BaseTextBlockStyle}" />
-
-                            <Grid Grid.Row="5" VerticalAlignment="Bottom" Margin="0,0,0,20">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Button x:Name="StartAutoCalibrationButton"
-                                        Click="StartAutoCalibrationButton_Click" CornerRadius="3" FontSize="14"
-                                        Content="Start" Height="50" Grid.Column="1" Width="130"
-                                        Style="{StaticResource AccentButtonStyle}"
-                                        FontWeight="Medium" Margin="5,15,5,0" HorizontalAlignment="Left" />
-                                <Button x:Name="DiscardAutoCalibrationButton"
-                                        Click="DiscardAutoCalibrationButton_Click" CornerRadius="3" FontSize="14"
-                                        Content="Cancel" Height="50" Grid.Column="0" Width="130"
-                                        FontWeight="Medium" Margin="0,15,5,0" HorizontalAlignment="Right" />
-                            </Grid>
 
                         </Grid>
                     </Grid>
@@ -175,14 +282,13 @@
                                         Style="{StaticResource AccentButtonStyle}"
                                         FontWeight="Medium" Margin="5,15,5,0" HorizontalAlignment="Left" />
                                 <Button x:Name="DiscardManualCalibrationButton"
-                                        Click="DiscardManualCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                        Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
                                         Content="Cancel" Height="50" Grid.Column="0" Width="130"
                                         FontWeight="Medium" Margin="0,15,5,0" HorizontalAlignment="Right" />
                             </Grid>
 
                         </Grid>
                     </Grid>
-
                 </Grid>
             </SplitView.Pane>
         </SplitView>

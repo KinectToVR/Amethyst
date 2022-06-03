@@ -276,6 +276,7 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <Image Include="Assets\autocalibration.png" />
     <Image Include="Assets\flat_ktvr.ico" />
     <Image Include="Assets\flat_ktvr.png" />
+    <Image Include="Assets\crab.gif" />
     <Image Include="Assets\hug.gif" />
     <Image Include="Assets\ktvr.ico" />
     <Image Include="Assets\ktvr.png" />
