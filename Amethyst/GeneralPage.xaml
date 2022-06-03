@@ -30,14 +30,13 @@
                             <ColumnDefinition Width="7" />
                         </Grid.ColumnDefinitions>
                         <Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="3"
-                                FontSize="14" Content="Save"
+                                x:Uid="/GeneralPage/Buttons/Save" FontSize="14"
                                 Height="50" Grid.Column="2" Style="{StaticResource AccentButtonStyle}"
                                 FontWeight="Medium"
                                 Margin="5,15,5,0" HorizontalAlignment="Stretch" />
                         <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="3"
-                                FontSize="14"
-                                Content="Discard" Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0"
-                                HorizontalAlignment="Stretch" />
+                                FontSize="14" x:Uid="/GeneralPage/Buttons/Discard" HorizontalAlignment="Stretch"
+                                Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0"/>
                     </Grid>
 
                 </Grid>
@@ -58,9 +57,9 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Choose a calibration mode" Margin="0,15,0,0"
-                                   HorizontalAlignment="Center" FontSize="26"
-                                   VerticalAlignment="Center"
+                        <TextBlock x:Uid="/GeneralPage/Calibration/Titles/Choose"
+                                   Margin="0,15,0,0" HorizontalAlignment="Center" 
+                                   FontSize="26" VerticalAlignment="Center"
                                    Style="{StaticResource BaseTextBlockStyle}" />
 
                         <Grid Grid.Row="1" CornerRadius="5" Margin="0,0,0,20">
@@ -78,7 +77,8 @@
                                             BorderBrush="{StaticResource SystemAccentColorLight2}"
                                             Background="{StaticResource SystemAccentColorLight2}"
                                             VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,7,0,0">
-                                        <TextBlock Text="Recommended" FontWeight="Medium" Foreground="Black" />
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Captions/Recommended" 
+                                                   FontWeight="Medium" Foreground="Black" />
                                     </Border>
 
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
@@ -88,9 +88,9 @@
                                                 <SvgImageSource UriSource="ms-appx:///Assets/autocalibration.svg"/>
                                             </Image.Source>
                                         </Image>
-                                        <TextBlock Text="Automatic" HorizontalAlignment="Center" FontSize="26"
-                                                   FontWeight="SemiBold" />
-                                        <TextBlock Text="Stand in three locations of your play area." Margin="0,20,0,0"
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Titles/Automatic" 
+                                                   HorizontalAlignment="Center" FontSize="26" FontWeight="SemiBold" />
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Captions/Automatic" Margin="0,20,0,0"
                                                    HorizontalAlignment="Center" FontSize="16" FontWeight="Medium" />
                                     </StackPanel>
                                 </Grid>
@@ -104,15 +104,16 @@
                                             <SvgImageSource UriSource="ms-appx:///Assets/manualcalibration.svg"/>
                                         </Image.Source>
                                     </Image>
-                                    <TextBlock Text="Manual" HorizontalAlignment="Center" FontSize="26"
+                                    <TextBlock x:Uid="/GeneralPage/Calibration/Titles/Manual" 
+                                               HorizontalAlignment="Center" FontSize="26"
                                                FontWeight="SemiBold" />
-                                    <TextBlock Text="Move trackers using your VR controllers." Margin="0,20,0,0"
+                                    <TextBlock x:Uid="/GeneralPage/Calibration/Captions/Manual" Margin="0,20,0,0"
                                                HorizontalAlignment="Center" FontSize="16" FontWeight="Medium" />
                                 </StackPanel>
                             </Button>
                             <Button x:Name="CancelCalibrationButton" Grid.Row="2"
                                     Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
-                                    Content="Cancel" Height="50" Grid.Column="0" Width="170"
+                                    x:Uid="/GeneralPage/Buttons/Cancel" Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
                     </Grid>
@@ -133,9 +134,9 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Automatic Calibration" Margin="0,15,0,0"
-                                   HorizontalAlignment="Center" FontSize="26"
-                                   VerticalAlignment="Center"
+                        <TextBlock x:Uid="/GeneralPage/Calibration/Headers/Automatic"
+                                   Margin="0,15,0,0" HorizontalAlignment="Center" 
+                                   FontSize="26" VerticalAlignment="Center"
                                    Style="{StaticResource BaseTextBlockStyle}" />
 
                         <Grid Grid.Row="1" CornerRadius="5" Margin="0,20,0,20">
@@ -181,8 +182,8 @@
                                                        Text="~" FontSize="48" FontWeight="Bold" />
 
                                             <TextBlock x:Name="CalibrationInstructionsLabel" Grid.Column="1"
-                                                       Text="Start the calibration" VerticalAlignment="Center"
-                                                       Margin="0,0,0,5"
+                                                       x:Uid="/GeneralPage/Calibration/Captions/Start"
+                                                       VerticalAlignment="Center" Margin="0,0,0,5"
                                                        HorizontalAlignment="Stretch" FontSize="26"
                                                        FontWeight="SemiBold" />
 
@@ -194,7 +195,7 @@
 
                             <Button x:Name="StartAutoCalibrationButton"
                                     Click="StartAutoCalibrationButton_Click"
-                                    Content="Begin Calibration"
+                                    x:Uid="/GeneralPage/Buttons/Calibration/Begin"
                                     HorizontalAlignment="Stretch" Height="50"
                                     Grid.Row="1" Margin="20,0,20,0" Width="460"
                                     Style="{StaticResource AccentButtonStyle}" FontWeight="SemiBold" />
@@ -209,7 +210,7 @@
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
                                            Margin="0,0,0,3" Grid.Column="0" HorizontalTextAlignment="Center"
-                                           Text="Capture Points:" FontWeight="SemiBold" />
+                                           x:Uid="/GeneralPage/Calibration/Titles/Points" FontWeight="SemiBold" />
 
                                 <NumberBox Minimum="3" Maximum="5" Value="3" Grid.Column="1"
                                            x:Name="CalibrationPointsNumberBox"
@@ -222,13 +223,13 @@
                             <Grid Margin="20,0,20,0" Width="460"
                                   HorizontalAlignment="Stretch" Grid.Row="5">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Try increasing capture points if the calibration puts the trackers in the wrong place."
+                                           x:Uid="/GeneralPage/Calibration/Captions/Points"
                                            Margin="0,0,0,0" Foreground="LightGray" TextWrapping="WrapWholeWords" />
                             </Grid>
 
                             <Button x:Name="DiscardAutoCalibrationButton" Grid.Row="7"
                                     Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
-                                    Content="Cancel" Height="50" Grid.Column="0" Width="170"
+                                    x:Uid="/GeneralPage/Buttons/Cancel" Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
                     </Grid>
@@ -239,9 +240,9 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Manual Calibration" Margin="0,15,0,0"
-                                   HorizontalAlignment="Center" FontSize="26"
-                                   VerticalAlignment="Center"
+                        <TextBlock x:Uid="/GeneralPage/Calibration/Headers/Manual"
+                                   Margin="0,15,0,0" HorizontalAlignment="Center" 
+                                   FontSize="26" VerticalAlignment="Center"
                                    Style="{StaticResource BaseTextBlockStyle}" />
 
                         <Grid Grid.Row="1" Margin="0,0,0,20">
@@ -275,13 +276,14 @@
                                     <Border Margin="0,0,0,0" Width="50" Height="50"
                                             HorizontalAlignment="Center" VerticalAlignment="Center" 
                                             Grid.Row="0" CornerRadius="100" BorderThickness="5" BorderBrush="White" >
-                                        <TextBlock Text="L" FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Brief/Left" 
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
-                                               Text="Move left/right/forward/back&#x0a;Rotate on Y axis"/>
+                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Brief/Left"/>
                                 </Grid>
                             </Border>
 
@@ -302,13 +304,14 @@
                                     <Border Margin="0,0,0,0" Width="50" Height="50"
                                             HorizontalAlignment="Center" VerticalAlignment="Center" 
                                             Grid.Row="0" CornerRadius="100" BorderThickness="5" BorderBrush="White" >
-                                        <TextBlock Text="R" FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Brief/Right"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
-                                               Text="Move up/down&#x0a;Rotate on X axis"/>
+                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Brief/Right"/>
                                 </Grid>
                             </Border>
 
@@ -329,13 +332,14 @@
                                     <Border Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
                                             HorizontalAlignment="Center" VerticalAlignment="Center" 
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White" >
-                                        <TextBlock Text="L Grip" FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Grips/Left" 
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
-                                               Text="Fine-tune"/>
+                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Grips/Left"/>
                                 </Grid>
                             </Border>
 
@@ -356,13 +360,14 @@
                                     <Border Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
                                             HorizontalAlignment="Center" VerticalAlignment="Center" 
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White" >
-                                        <TextBlock Text="R Grip" FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Grips/Right" 
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
-                                               Text="Switch move/rotate"/>
+                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Grips/Right" />
                                 </Grid>
                             </Border>
 
@@ -383,26 +388,27 @@
                                     <Border Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
                                             HorizontalAlignment="Center" VerticalAlignment="Center" 
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White" >
-                                        <TextBlock Text="L+R Trigger" FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Triggers"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
-                                               Text="Confirm"/>
+                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Triggers"/>
                                 </Grid>
                             </Border>
 
                             <Grid Margin="20,0,20,0" Width="460"
                                   HorizontalAlignment="Stretch" Grid.Row="6">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Inputs may differ when using custom bindings. Please refer to the SteamVR input bindings screen for Amethyst in that case."
+                                           x:Uid="/GeneralPage/Calibration/Labels/InputsNotice"
                                            Margin="0,0,0,0" Foreground="LightGray" TextWrapping="WrapWholeWords" />
                             </Grid>
 
                             <Button x:Name="DiscardCalibrationButton_Click" Grid.Row="8"
                                     Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
-                                    Content="Cancel" Height="50" Grid.Column="0" Width="170"
+                                    x:Uid="/GeneralPage/Buttons/Cancel" Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
                     </Grid>
@@ -427,7 +433,8 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock FontWeight="SemiBold" Text="Trackers" FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/GeneralPage/Titles/Trackers"
+                           FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
 
                 <Grid HorizontalAlignment="Stretch" Grid.Row="1">
                     <Grid.ColumnDefinitions>
@@ -445,7 +452,8 @@
                         </Grid.ColumnDefinitions>
 
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
-                                VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Begin Calibration"
+                                x:Uid="/GeneralPage/Buttons/Calibration/Begin"
+                                VerticalContentAlignment="Center" FontWeight="SemiBold"
                                 Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}">
                             <FlyoutBase.AttachedFlyout>
@@ -468,7 +476,7 @@
                                             <Button FontSize="15" x:Name="BaseCalibration"
                                                     Click="BaseCalibration_Click"
                                                     VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                    Content="Base"
+                                                    x:Uid="/GeneralPage/Buttons/Calibration/Base"
                                                     Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch"
@@ -476,7 +484,7 @@
                                             <Button FontSize="15" x:Name="OverrideCalibration"
                                                     Click="OverrideCalibration_Click"
                                                     VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                    Content="Override"
+                                                    x:Uid="/GeneralPage/Buttons/Calibration/Override"
                                                     Margin="0,10,5,0" CornerRadius="3" Grid.Column="0"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch" />
@@ -487,7 +495,7 @@
                                                    VerticalAlignment="Stretch"
                                                    Grid.Row="0" FontWeight="SemiBold"
                                                    Style="{ThemeResource BaseTextBlockStyle}"
-                                                   Text="You have tracking overrides set up.&#x0a;Which device do you want to calibrate?" />
+                                                   x:Uid="/GeneralPage/Captions/CalibrateOverrides" />
 
 
                                     </Grid>
@@ -495,7 +503,7 @@
                             </FlyoutBase.AttachedFlyout>
                         </Button>
                         <Button FontSize="15" x:Name="OffsetsButton" Click="OffsetsButton_Click"
-                                VerticalContentAlignment="Center" FontWeight="SemiBold" Content="Adjust Offsets"
+                                VerticalContentAlignment="Center" FontWeight="SemiBold" x:Uid="/GeneralPage/Buttons/Offsets"
                                 Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" />
 
@@ -503,7 +511,7 @@
 
                     <ToggleButton FontSize="15" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked"
                                   Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center"
-                                  FontWeight="SemiBold" Content="Connect Trackers" Margin="40,10" CornerRadius="3"
+                                  FontWeight="SemiBold" x:Uid="/GeneralPage/Buttons/TrackersToggle/Connect" Margin="40,10" CornerRadius="3"
                                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
 
                 </Grid>
@@ -514,31 +522,32 @@
                     <StackPanel Grid.Row="4" Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,0,0,30">
 
                         <StackPanel Orientation="Vertical" Margin="0,5,0,0" VerticalAlignment="Bottom">
-                            <TextBlock FontWeight="SemiBold" Text="Device" FontSize="25"
+                            <TextBlock FontWeight="SemiBold" x:Uid="/GeneralPage/Titles/Device" FontSize="25"
                                        Margin="40,20,0,10" Grid.Row="3" />
 
                             <!--Base Status-->
 
                             <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Current Device:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           x:Uid="/GeneralPage/Captions/Device/Name"
+                                           Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Xbox One Kinect (V2)" Margin="5,0,0,0"
+                                           Text="[DUM_DEVICE]" Margin="5,0,0,0"
                                            x:Name="SelectedDeviceNameLabel" />
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           x:Uid="/GeneralPage/Captions/Device/Status" Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Not Powered" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
+                                           Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
                             </StackPanel>
 
                             <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
                                   Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                           Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
+                                           Text="[DUM_STATUS_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
                                            x:Name="TrackingDeviceErrorLabel"
                                            Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
 
@@ -560,18 +569,17 @@
                                 <Button FontSize="15" x:Name="OpenDiscordButton" Click="OpenDiscordButton_Click"
                                         Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="Get help on Discord"
+                                        x:Uid="/GeneralPage/Buttons/Help/Discord"
                                         Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
                                 <Button FontSize="15" x:Name="OpenDocsButton" Click="ServerOpenDocsButton_Click"
                                         Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="View Online Docs"
+                                        x:Uid="/GeneralPage/Buttons/Help/Docs"
                                         Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
-
                             </Grid>
 
                             <!--Override Status-->
@@ -580,9 +588,9 @@
                                         Visibility="{Binding ElementName=SelectedOverrideDeviceNameLabel, 
 									Path=Visibility,TargetNullValue=Collapsed}">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Override Device:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           x:Uid="/GeneralPage/Captions/OverrideDevice/Name" Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Xbox One Kinect (V2)" Margin="5,0,0,0"
+                                           Text="[DUM_DEVICE]" Margin="5,0,0,0"
                                            x:Name="SelectedOverrideDeviceNameLabel" />
                             </StackPanel>
 
@@ -590,9 +598,9 @@
                                         Visibility="{Binding ElementName=SelectedOverrideDeviceNameLabel, 
 									Path=Visibility,TargetNullValue=Collapsed}">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Status:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           x:Uid="/GeneralPage/Captions/Device/Status" Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Not Powered" Margin="5,0,0,0" x:Name="OverrideDeviceStatusLabel" />
+                                           Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="OverrideDeviceStatusLabel" />
                             </StackPanel>
 
                             <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
@@ -600,7 +608,7 @@
                                   x:Name="OverrideErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                           Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
+                                           Text="[DUM_STATUS_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
                                            x:Name="OverrideTrackingDeviceErrorLabel"
                                            Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
 
@@ -623,7 +631,7 @@
                                         Click="OpenDiscordButton_Click"
                                         Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="Get help on Discord"
+                                        x:Uid="/GeneralPage/Buttons/Help/Discord"
                                         Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
@@ -631,7 +639,7 @@
                                         Click="ServerOpenDocsButton_Click"
                                         Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="View Online Docs"
+                                        x:Uid="/GeneralPage/Buttons/Help/Docs"
                                         Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
@@ -641,7 +649,7 @@
                         </StackPanel>
 
                         <Grid Height="60" VerticalAlignment="Bottom">
-                            <TextBlock FontWeight="SemiBold" Text="Status" FontSize="25" Margin="40,20,0,0"
+                            <TextBlock FontWeight="SemiBold" x:Uid="/GeneralPage/Titles/Status" FontSize="25" Margin="40,20,0,0"
                                        Grid.Row="5" />
                         </Grid>
 
@@ -649,9 +657,11 @@
 
                             <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="SteamVR Driver:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           x:Uid="/GeneralPage/Captions/DriverStatus/Label"
+                                           Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Success! (Code 1)" Margin="5,0,0,0" x:Name="ServerStatusLabel" />
+                                           x:Uid="/GeneralPage/Captions/DriverStatus/Content" 
+                                           Margin="5,0,0,0" x:Name="ServerStatusLabel" />
                             </StackPanel>
 
                             <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
@@ -659,7 +669,7 @@
                                   x:Name="ServerErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                           Text="CODE_MINUS10" Margin="10,7,0,0" FontFamily="Consolas"
+                                           Text="[DUM_SERVER_ERROR_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
                                            x:Name="ServerErrorLabel"
                                            Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
 
@@ -681,14 +691,14 @@
                                 <Button FontSize="15" x:Name="ServerOpenDiscordButton" Click="OpenDiscordButton_Click"
                                         Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="Get help on Discord"
+                                        x:Uid="/GeneralPage/Buttons/Help/Discord"
                                         Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
                                 <Button FontSize="15" x:Name="ServerOpenDocsButton" Click="OpenDocsButton_Click"
                                         Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="View Online Docs"
+                                        x:Uid="/GeneralPage/Buttons/Help/Docs"
                                         Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
@@ -697,9 +707,9 @@
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="Amethyst Version:" Margin="0,0,0,0" Foreground="LightGray" />
+                                           x:Uid="/GeneralPage/Captions/VersionText" Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="v1.0.0 (Ame0)" Margin="5,0,0,0" x:Name="VersionLabel" />
+                                           Text="[DUM_VERSION_STRING]" Margin="5,0,0,0" x:Name="VersionLabel" />
                             </StackPanel>
 
                         </StackPanel>
@@ -730,17 +740,12 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" />
-                        <TextBlock Margin="10,0,0,7" Text="No skeleton found" FontSize="50" FontWeight="SemiBold" />
+                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoSkeleton" 
+                                   FontSize="50" FontWeight="SemiBold" />
                     </StackPanel>
 
-                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-                        <Run>Make sure the device works properly</Run>
-                    </TextBlock>
-
-                    <TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-                        <Run>and can see your body for tracking.</Run>
-                    </TextBlock>
-
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               x:Uid="/GeneralPage/Captions/Preview/NoSkeletonText"/>
                 </StackPanel>
             </Viewbox>
 
@@ -752,18 +757,12 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
-                        <TextBlock Margin="10,0,0,7" Text="Skeleton preview disabled" FontSize="50"
-                                   FontWeight="SemiBold" />
+                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/Disabled" 
+                                   FontSize="50" FontWeight="SemiBold" />
                     </StackPanel>
 
-                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-                        <Run>To re-enable it please click the</Run>
-                    </TextBlock>
-
-                    <TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-                        <Run>"Show Skeleton" button.</Run>
-                    </TextBlock>
-
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               x:Uid="/GeneralPage/Captions/Preview/DisabledText" />
                 </StackPanel>
             </Viewbox>
 
@@ -775,18 +774,12 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
-                        <TextBlock Margin="10,0,0,7" Text="Window is out of focus" FontSize="50"
-                                   FontWeight="SemiBold" />
+                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoFocus" 
+                                   FontSize="50" FontWeight="SemiBold" />
                     </StackPanel>
 
-                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-                        <Run>The preview's stopped to save resources</Run>
-                    </TextBlock>
-
-                    <TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-                        <Run>and will run again when you're back.</Run>
-                    </TextBlock>
-
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               x:Uid="/GeneralPage/Captions/Preview/NoFocusText" />
                 </StackPanel>
             </Viewbox>
 
@@ -798,18 +791,12 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
-                        <TextBlock Margin="10,0,0,7" Text="The dashboard is closed" FontSize="50"
-                                   FontWeight="SemiBold" />
+                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoDashboard" 
+                                   FontSize="50" FontWeight="SemiBold" />
                     </StackPanel>
 
-                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-                        <Run>The preview's stopped to save resources</Run>
-                    </TextBlock>
-
-                    <TextBlock Margin="0,0,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center">
-                        <Run>and will run again when you're back.</Run>
-                    </TextBlock>
-
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               x:Uid="/GeneralPage/Captions/Preview/NoDashboardText" />
                 </StackPanel>
             </Viewbox>
 
@@ -831,7 +818,8 @@
 
                     <ToggleSplitButton x:Name="SkeletonToggleButton" Click="SkeletonToggleButton_Click"
                                        IsChecked="True" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                       Content="Hide Skeleton" Margin="20,0,0,0" CornerRadius="3" Grid.Column="0"
+                                       x:Uid="/GeneralPage/Buttons/Skeleton/Hide" 
+                                       Margin="20,0,0,0" CornerRadius="3" Grid.Column="0"
                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                         <ToggleSplitButton.Flyout>
@@ -843,7 +831,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Opacity="1"
-                                               FontWeight="Medium" Text="Force Preview" Margin="30,0,0,2"
+                                               x:Uid="/GeneralPage/Captions/Preview/Force" 
+                                               FontWeight="Medium" Margin="30,0,0,2"
                                                Grid.Column="0" x:Name="ForceRenderText" />
                                     <CheckBox x:Name="ForceRenderCheckBox"
                                               Checked="ForceRenderCheckBox_Checked"
@@ -867,7 +856,7 @@
                     <ToggleSplitButton Grid.Column="0" Margin="20,0,0,0" x:Name="ToggleTrackingButton"
                                        Click="ToggleTrackingButton_Click" FontWeight="SemiBold"
                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                       Content="Freeze" FontSize="16">
+                                       x:Uid="/GeneralPage/Buttons/Skeleton/Freeze" FontSize="16">
 
                         <ToggleSplitButton.Flyout>
                             <Flyout Placement="Bottom">
@@ -880,7 +869,7 @@
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
                                                FontWeight="Medium" Opacity="1"
                                                x:Name="FreezeOnlyLowerCheckBoxLabel"
-                                               Text="Only Lower Body"
+                                               x:Uid="/GeneralPage/Captions/FreezeLowerOnly" 
                                                Margin="30,0,0,0"
                                                Grid.Column="0" />
                                     <CheckBox x:Name="FreezeOnlyLowerCheckBox"

@@ -9,6 +9,8 @@
 #include "OffsetsPivotItem.h"
 #include "OffsetsController.h"
 
+#include <boost/algorithm/string/replace.hpp>
+
 namespace winrt::KinectToVR::implementation
 {
 	struct GeneralPage : GeneralPageT<GeneralPage>

@@ -22,7 +22,11 @@ void skeleton_visibility_set_ui(const bool& v)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	k2app::shared::general::skeletonToggleButton.get()->IsChecked(v);
-	k2app::shared::general::skeletonToggleButton.get()->Content(box_value(v ? L"Hide Skeleton" : L"Show Skeleton"));
+	k2app::shared::general::skeletonToggleButton.get()->Content(box_value(v 
+		? box_value(k2app::interfacing::LocalizedResourceWString(
+		L"GeneralPage", L"Buttons/Skeleton/Hide/Content"))
+		: box_value(k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Buttons/Skeleton/Show/Content"))));
 
 	k2app::shared::general::forceRenderCheckBox.get()->IsEnabled(v);
 	k2app::shared::general::forceRenderText.get()->Opacity(v ? 1.0 : 0.5);
@@ -32,6 +36,14 @@ void skeleton_force_set_ui(const bool& v)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	k2app::shared::general::forceRenderCheckBox.get()->IsChecked(v);
+}
+
+std::wstring points_format(std::wstring fmt, 
+	const int32_t& p1, const int32_t& p2)
+{
+	boost::replace_all(fmt, "{1}", std::to_wstring(p1));
+	boost::replace_all(fmt, "{2}", std::to_wstring(p2));
+	return fmt;
 }
 
 namespace winrt::KinectToVR::implementation
@@ -116,8 +128,10 @@ void KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Click(
 
 	k2app::shared::general::skeletonToggleButton.get()->Content(
 		k2app::K2Settings.skeletonPreviewEnabled
-			? box_value(L"Hide Skeleton")
-			: box_value(L"Show Skeleton"));
+			? box_value(k2app::interfacing::LocalizedResourceWString(
+				L"GeneralPage", L"Buttons/Skeleton/Hide/Content"))
+			: box_value(k2app::interfacing::LocalizedResourceWString(
+				L"GeneralPage", L"Buttons/Skeleton/Show/Content")));
 
 	k2app::shared::general::forceRenderCheckBox.get()->IsEnabled(
 		k2app::shared::general::skeletonToggleButton.get()->IsChecked());
@@ -200,9 +214,13 @@ void KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(
 
 	StartAutoCalibrationButton().IsEnabled(true);
 	CalibrationPointsNumberBox().IsEnabled(true);
-	CalibrationInstructionsLabel().Text(L"Start the calibration");
+	CalibrationInstructionsLabel().Text(
+		k2app::interfacing::LocalizedResourceWString(
+		L"GeneralPage", L"Calibration/Captions/Start/Text"));
 	CalibrationCountdownLabel().Text(L"~");
-	DiscardAutoCalibrationButton().Content(box_value(L"Cancel"));
+	DiscardAutoCalibrationButton().Content(box_value(
+		k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Buttons/Cancel/Content")));
 }
 
 
@@ -218,7 +236,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 	// Disable the start button and change [cancel]'s text
 	StartAutoCalibrationButton().IsEnabled(false);
 	CalibrationPointsNumberBox().IsEnabled(false);
-	DiscardAutoCalibrationButton().Content(box_value(L"Abort"));
+	DiscardAutoCalibrationButton().Content(box_value(
+		k2app::interfacing::LocalizedResourceWString(
+		L"GeneralPage", L"Buttons/Abort/Content")));
 
 	// Ref current matrices to helper pointers
 	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
@@ -275,7 +295,11 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 		Eigen::Vector3d vrHMDPosition;
 
 		// Wait for the user to move
-		CalibrationInstructionsLabel().Text(L"Move somewhere else");
+		CalibrationInstructionsLabel().Text(
+			points_format(k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Calibration/Captions/Move/Text"), 
+				point + 1, k2app::K2Settings.calibrationPointsNumber));
+
 		for (int i = 3; i >= 0; i--)
 		{
 			CalibrationCountdownLabel().Text(std::to_wstring(i));
@@ -294,8 +318,12 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 			}
 			if (!CalibrationPending)break; // Check for exiting
 		}
+		
+		CalibrationInstructionsLabel().Text(
+			points_format(k2app::interfacing::LocalizedResourceWString(
+				L"GeneralPage", L"Calibration/Captions/Stand/Text"),
+				point + 1, k2app::K2Settings.calibrationPointsNumber));
 
-		CalibrationInstructionsLabel().Text(L"Please stand still!");
 		for (int i = 3; i >= 0; i--)
 		{
 			CalibrationCountdownLabel().Text(std::to_wstring(i));
@@ -327,7 +355,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 					).cast<double>());
 			}
 			else if (i == 0)
-				CalibrationInstructionsLabel().Text(L"Position captured!");
+				CalibrationInstructionsLabel().Text(
+					k2app::interfacing::LocalizedResourceWString(
+					L"GeneralPage", L"Calibration/Captions/Captured/Text"));
 
 			// Wait and eventually break
 			{
@@ -425,9 +455,12 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 	}
 
 	// Notify that we're finished
-	CalibrationInstructionsLabel().Text(
-		CalibrationPending ? L"Calibration done!" : L"Calibration aborted!");
 	CalibrationCountdownLabel().Text(L"~");
+	CalibrationInstructionsLabel().Text(CalibrationPending 
+		? k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Calibration/Captions/Done/Text") 
+		: k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Calibration/Captions/Aborted/Text"));
 
 	{
 		// Sleep on UI
@@ -662,7 +695,9 @@ void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
-	ToggleTrackersButton().Content(box_value(L"Disconnect Trackers"));
+	ToggleTrackersButton().Content(box_value(
+		k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Buttons/TrackersToggle/Disconnect")));
 
 	// Optionally spawn trackers
 	if (!k2app::interfacing::K2AppTrackersSpawned)
@@ -690,7 +725,9 @@ void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
-	ToggleTrackersButton().Content(box_value(L"Reconnect Trackers"));
+	ToggleTrackersButton().Content(box_value(
+		k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Buttons/TrackersToggle/Reconnect")));
 
 	// Mark trackers as inactive
 	k2app::interfacing::K2AppTrackersInitialized = false;
@@ -773,8 +810,11 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 	// Setup the freeze button
 	k2app::shared::general::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
 	k2app::shared::general::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		                                                          ? box_value(L"Unfreeze")
-		                                                          : box_value(L"Freeze"));
+		? box_value(k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Buttons/Skeleton/Unfreeze/Content"))
+		: box_value(k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Buttons/Skeleton/Freeze/Content")));
+
 	k2app::shared::general::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
 }
 
@@ -1390,8 +1430,10 @@ void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackingButton_Click(
 
 	k2app::shared::general::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
 	k2app::shared::general::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		                                                          ? box_value(L"Unfreeze")
-		                                                          : box_value(L"Freeze"));
+		? box_value(k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Buttons/Skeleton/Unfreeze/Content"))
+		: box_value(k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Buttons/Skeleton/Freeze/Content")));
 }
 
 
