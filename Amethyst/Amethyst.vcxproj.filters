@@ -92,6 +92,9 @@
     <ClInclude Include="OffsetsController.h">
       <Filter>Header Files\Custom Controls</Filter>
     </ClInclude>
+    <ClInclude Include="LocalizedServerStatuses.h">
+      <Filter>Header Files\Strings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -107,15 +110,6 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\SplashScreen.scale-200.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\autocalibration.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\manualcalibration.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\manualcalibrationinstructions.png">
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\SmallTile.scale-100.png">
@@ -268,6 +262,9 @@
     <Image Include="Assets\hug.gif">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\autocalibration.svg" />
+    <Image Include="Assets\crab.gif" />
+    <Image Include="Assets\manualcalibration.svg" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">
@@ -290,6 +287,9 @@
     </Filter>
     <Filter Include="Header Files\Custom Controls">
       <UniqueIdentifier>{fee0c485-5d6e-48cc-bc58-75a411e0eae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Strings">
+      <UniqueIdentifier>{5a3e1d2e-63a6-4335-ae44-681e3cd7d18c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

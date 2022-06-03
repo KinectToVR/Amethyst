@@ -1122,7 +1122,7 @@ void KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 				const auto joints = device->getJointPositions();
 				const auto states = device->getTrackingStates();
 
-				StartAutoCalibrationButton().IsEnabled(device->isSkeletonTracked());
+				StartAutoCalibrationButton().IsEnabled(device->isSkeletonTracked() && !CalibrationPending);
 
 				if (device->isSkeletonTracked())
 				{
@@ -1312,7 +1312,7 @@ void KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 				const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 				auto joints = device->getTrackedJoints();
 
-				StartAutoCalibrationButton().IsEnabled(device->isSkeletonTracked());
+				StartAutoCalibrationButton().IsEnabled(device->isSkeletonTracked() && !CalibrationPending);
 
 				if (device->isSkeletonTracked() && !joints.empty())
 				{
