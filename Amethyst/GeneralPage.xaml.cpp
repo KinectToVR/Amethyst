@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "GeneralPage.xaml.h"
 #if __has_include("GeneralPage.g.cpp")
 #include "GeneralPage.g.cpp"
@@ -699,16 +699,14 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Manua
 	{
 		k2app::K2Settings.saveSettings();
 		ElementSoundPlayer::Play(ElementSoundKind::Show);
-	}
 
-	{
 		// Sleep on UI
 		apartment_context ui_thread;
 		co_await resume_background();
 		Sleep(1000); // Just right
 		co_await ui_thread;
 	}
-
+	
 	// Exit the pane and reset
 	CalibrationSelectView().IsPaneOpen(false);
 	CalibrationRunningView().IsPaneOpen(false);
