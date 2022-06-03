@@ -45,16 +45,13 @@ namespace winrt::KinectToVR::implementation
 		                                 args);
 		void AutoCalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void ManualCalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
+		Windows::Foundation::IAsyncAction ManualCalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                   const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		Windows::Foundation::IAsyncAction StartAutoCalibrationButton_Click(
 			const Windows::Foundation::IInspectable& sender,
 			const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DiscardCalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                        const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		Windows::Foundation::IAsyncAction StartManualCalibrationButton_Click(
-			const Windows::Foundation::IInspectable& sender,
-			const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ToggleTrackersButton_Checked(const Windows::Foundation::IInspectable& sender,
 		                                  const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ToggleTrackersButton_Unchecked(const Windows::Foundation::IInspectable& sender,

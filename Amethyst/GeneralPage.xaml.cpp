@@ -206,18 +206,6 @@ void KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(
 }
 
 
-void KinectToVR::implementation::GeneralPage::ManualCalibrationButton_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	AutoCalibrationPane().Visibility(Visibility::Collapsed);
-	ManualCalibrationPane().Visibility(Visibility::Visible);
-
-	CalibrationRunningView().IsPaneOpen(true);
-
-	StartManualCalibrationButton().IsEnabled(true);
-	DiscardManualCalibrationButton().Content(box_value(L"Cancel"));
-}
-
 Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::StartAutoCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
@@ -478,19 +466,20 @@ void KinectToVR::implementation::GeneralPage::DiscardCalibrationButton_Click(
 }
 
 
-Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::StartManualCalibrationButton_Click(
+Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::ManualCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	AutoCalibrationPane().Visibility(Visibility::Collapsed);
+	ManualCalibrationPane().Visibility(Visibility::Visible);
+
+	CalibrationRunningView().IsPaneOpen(true);
+
 	// Set the [calibration pending] bool
 	CalibrationPending = true;
 
 	// Play a nice sound - starting
 	ElementSoundPlayer::Play(ElementSoundKind::Show);
-
-	// Disable the start button and change [cancel]'s text
-	StartManualCalibrationButton().IsEnabled(false);
-	DiscardManualCalibrationButton().Content(box_value(L"Abort"));
-
+	
 	// Ref current matrices to helper pointers
 	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
 		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice

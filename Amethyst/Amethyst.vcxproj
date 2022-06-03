@@ -273,7 +273,7 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\autocalibration.png" />
+    <Image Include="Assets\autocalibration.svg" />
     <Image Include="Assets\flat_ktvr.ico" />
     <Image Include="Assets\flat_ktvr.png" />
     <Image Include="Assets\crab.gif" />
@@ -285,8 +285,7 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     <Image Include="Assets\LargeTile.scale-150.png" />
     <Image Include="Assets\LargeTile.scale-200.png" />
     <Image Include="Assets\LargeTile.scale-400.png" />
-    <Image Include="Assets\manualcalibration.png" />
-    <Image Include="Assets\manualcalibrationinstructions.png" />
+    <Image Include="Assets\manualcalibration.svg" />
     <Image Include="Assets\SmallTile.scale-100.png" />
     <Image Include="Assets\SmallTile.scale-125.png" />
     <Image Include="Assets\SmallTile.scale-150.png" />

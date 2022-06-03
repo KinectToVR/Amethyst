@@ -83,8 +83,11 @@
 
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Stretch" Height="260">
-                                        <Image Width="150" Margin="0,10,0,0"
-                                               Source="ms-appx:///Assets/autocalibration.png" />
+                                        <Image Width="150" Margin="0,45,0,40">
+                                            <Image.Source>
+                                                <SvgImageSource UriSource="ms-appx:///Assets/autocalibration.svg"/>
+                                            </Image.Source>
+                                        </Image>
                                         <TextBlock Text="Automatic" HorizontalAlignment="Center" FontSize="26"
                                                    FontWeight="SemiBold" />
                                         <TextBlock Text="Stand in three locations of your play area." Margin="0,20,0,0"
@@ -95,9 +98,12 @@
                             <Button x:Name="ManualCalibrationButton" Grid.Row="1" Margin="20,10,20,20" Width="460"
                                     Click="ManualCalibrationButton_Click" HorizontalAlignment="Stretch">
                                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch" Height="260" Width="435">
-                                    <Image Width="150" Margin="0,10,0,0"
-                                           Source="ms-appx:///Assets/manualcalibration.png" />
+                                            VerticalAlignment="Stretch" Height="260">
+                                    <Image Width="80" Margin="0,45,0,30">
+                                        <Image.Source>
+                                            <SvgImageSource UriSource="ms-appx:///Assets/manualcalibration.svg"/>
+                                        </Image.Source>
+                                    </Image>
                                     <TextBlock Text="Manual" HorizontalAlignment="Center" FontSize="26"
                                                FontWeight="SemiBold" />
                                     <TextBlock Text="Move trackers using your VR controllers." Margin="0,20,0,0"
@@ -205,8 +211,10 @@
                                            Margin="0,0,0,3" Grid.Column="0" HorizontalTextAlignment="Center"
                                            Text="Capture Points:" FontWeight="SemiBold" />
 
-                                <NumberBox Minimum="3" Maximum="5" Value="3" Grid.Column="1" x:Name="CalibrationPointsNumberBox"
-                                           SpinButtonPlacementMode="Inline" ValueChanged="CalibrationPointsNumberBox_ValueChanged"
+                                <NumberBox Minimum="3" Maximum="5" Value="3" Grid.Column="1"
+                                           x:Name="CalibrationPointsNumberBox"
+                                           SpinButtonPlacementMode="Inline"
+                                           ValueChanged="CalibrationPointsNumberBox_ValueChanged"
                                            FontSize="26" FontWeight="Normal" SmallChange="1" LargeChange="1" />
 
                             </Grid>
@@ -223,70 +231,179 @@
                                     Content="Cancel" Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
-
-                        <Grid Grid.Row="1" CornerRadius="5" Margin="50,20,50,50" Visibility="Collapsed"
-                              Background="{StaticResource SystemControlAcrylicElementBrush}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="70" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="170" />
-                                <RowDefinition Height="5*" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Text="Follow the directions" Margin="0,40,0,0"
-                                       HorizontalAlignment="Center" FontSize="20" Grid.Row="0"
-                                       Style="{StaticResource BaseTextBlockStyle}" />
-
-                            <Border CornerRadius="75"
-                                    Grid.Row="2" Width="150"
-                                    Height="150" Margin="10"
-                                    Padding="0,20,0,0"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Background="{StaticResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}">
-                            </Border>
-
-                        </Grid>
                     </Grid>
 
                     <Grid x:Name="ManualCalibrationPane">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="70" />
+                            <RowDefinition Height="60" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Text="Manual Calibration" Margin="0,15,0,0"
                                    HorizontalAlignment="Center" FontSize="26"
+                                   VerticalAlignment="Center"
                                    Style="{StaticResource BaseTextBlockStyle}" />
 
-                        <Grid Grid.Row="1" CornerRadius="5" Margin="50,0,50,50"
-                              Background="{StaticResource SystemControlAcrylicElementBrush}">
+                        <Grid Grid.Row="1" Margin="0,0,0,20">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
-                                <RowDefinition Height="100" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="45" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="50" />
                             </Grid.RowDefinitions>
 
-                            <Image Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,40,0,10"
-                                   MaxWidth="350"
-                                   Source="ms-appx:///Assets/manualcalibrationinstructions.png" />
+                            <Border Margin="0,0,0,0" Width="460" Height="80"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom" Grid.Row="0"
 
-                            <Grid Grid.Row="1" VerticalAlignment="Bottom" Margin="0,0,0,20">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                                    CornerRadius="3"
+                                    Background="{StaticResource SystemControlAcrylicWindowBrush}" >
 
-                                <Button x:Name="StartManualCalibrationButton"
-                                        Click="StartManualCalibrationButton_Click" CornerRadius="3" FontSize="14"
-                                        Content="Start" Height="50" Grid.Column="1" Width="130"
-                                        Style="{StaticResource AccentButtonStyle}"
-                                        FontWeight="Medium" Margin="5,15,5,0" HorizontalAlignment="Left" />
-                                <Button x:Name="DiscardManualCalibrationButton"
-                                        Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
-                                        Content="Cancel" Height="50" Grid.Column="0" Width="130"
-                                        FontWeight="Medium" Margin="0,15,5,0" HorizontalAlignment="Right" />
+                                <Grid Margin="10,0" VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Margin="0,0,0,0" Width="50" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                            Grid.Row="0" CornerRadius="100" BorderThickness="5" BorderBrush="White" >
+                                        <TextBlock Text="L" FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
+                                               Text="Move left/right/forward/back&#x0a;Rotate on Y axis"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Margin="0,0,0,0" Width="460" Height="80"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom" Grid.Row="1"
+
+                                    CornerRadius="3"
+                                    Background="{StaticResource SystemControlAcrylicWindowBrush}" >
+
+                                <Grid Margin="10,0" VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Margin="0,0,0,0" Width="50" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                            Grid.Row="0" CornerRadius="100" BorderThickness="5" BorderBrush="White" >
+                                        <TextBlock Text="R" FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
+                                               Text="Move up/down&#x0a;Rotate on X axis"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Margin="0,0,0,0" Width="460" Height="80"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom" Grid.Row="2"
+
+                                    CornerRadius="3"
+                                    Background="{StaticResource SystemControlAcrylicWindowBrush}" >
+
+                                <Grid Margin="10,0" VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White" >
+                                        <TextBlock Text="L Grip" FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
+                                               Text="Fine-tune"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Margin="0,0,0,0" Width="460" Height="80"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom" Grid.Row="3"
+
+                                    CornerRadius="3"
+                                    Background="{StaticResource SystemControlAcrylicWindowBrush}" >
+
+                                <Grid Margin="10,0" VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White" >
+                                        <TextBlock Text="R Grip" FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
+                                               Text="Switch move/rotate"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Margin="0,0,0,0" Width="460" Height="80"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom" Grid.Row="4"
+
+                                    CornerRadius="3"
+                                    Background="{StaticResource SystemControlAcrylicWindowBrush}" >
+
+                                <Grid Margin="10,0" VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White" >
+                                        <TextBlock Text="L+R Trigger" FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
+                                               Text="Confirm"/>
+                                </Grid>
+                            </Border>
+
+                            <Grid Margin="20,0,20,0" Width="460"
+                                  HorizontalAlignment="Stretch" Grid.Row="6">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="Inputs may differ when using custom bindings. Please refer to the SteamVR input bindings screen for Amethyst in that case."
+                                           Margin="0,0,0,0" Foreground="LightGray" TextWrapping="WrapWholeWords" />
                             </Grid>
 
+                            <Button x:Name="DiscardCalibrationButton_Click" Grid.Row="8"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                    Content="Cancel" Height="50" Grid.Column="0" Width="170"
+                                    FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
                     </Grid>
                 </Grid>
