@@ -212,6 +212,9 @@ Please stand still!</value>
   <data name="Calibration.Labels.Brief.Right.Text" xml:space="preserve">
     <value>R</value>
   </data>
+  <data name="Calibration.Labels.Grips.Both.Text" xml:space="preserve">
+    <value>L+R Grip</value>
+  </data>
   <data name="Calibration.Labels.Grips.Left.Text" xml:space="preserve">
     <value>L Grip</value>
   </data>
@@ -221,8 +224,14 @@ Please stand still!</value>
   <data name="Calibration.Labels.InputsNotice.Text" xml:space="preserve">
     <value>Inputs may differ when using custom bindings. Please refer to the SteamVR input bindings screen for Amethyst in that case.</value>
   </data>
-  <data name="Calibration.Labels.Triggers.Text" xml:space="preserve">
+  <data name="Calibration.Labels.Triggers.Both.Text" xml:space="preserve">
     <value>L+R Trigger</value>
+  </data>
+  <data name="Calibration.Labels.Triggers.Left.Text" xml:space="preserve">
+    <value>L Triggers</value>
+  </data>
+  <data name="Calibration.Labels.Triggers.Right.Text" xml:space="preserve">
+    <value>R Triggers</value>
   </data>
   <data name="Calibration.LabelsWhat.Brief.Left.Text" xml:space="preserve">
     <value>Move left/right/forward/back
@@ -323,6 +332,10 @@ and will run again when you're back.</value>
   <data name="Captions.Preview.NoSkeletonText.Text" xml:space="preserve">
     <value>Make sure the device works properly
 and can see your body for tracking.</value>
+  </data>
+  <data name="Captions.Preview.NoSkeletonTextCalibrating.Text" xml:space="preserve">
+    <value>You must have working skeleton 
+tracking to use automatic calibration.</value>
   </data>
   <data name="Captions.Tooltips.Orientation" xml:space="preserve">
     <value>Rotation is in degrees.</value>

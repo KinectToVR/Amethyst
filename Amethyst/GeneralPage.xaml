@@ -36,7 +36,7 @@
                                 Margin="5,15,5,0" HorizontalAlignment="Stretch" />
                         <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="3"
                                 FontSize="14" x:Uid="/GeneralPage/Buttons/Discard" HorizontalAlignment="Stretch"
-                                Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0"/>
+                                Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0" />
                     </Grid>
 
                 </Grid>
@@ -58,7 +58,7 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock x:Uid="/GeneralPage/Calibration/Titles/Choose"
-                                   Margin="0,15,0,0" HorizontalAlignment="Center" 
+                                   Margin="0,15,0,0" HorizontalAlignment="Center"
                                    FontSize="26" VerticalAlignment="Center"
                                    Style="{StaticResource BaseTextBlockStyle}" />
 
@@ -77,7 +77,7 @@
                                             BorderBrush="{StaticResource SystemAccentColorLight2}"
                                             Background="{StaticResource SystemAccentColorLight2}"
                                             VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,7,0,0">
-                                        <TextBlock x:Uid="/GeneralPage/Calibration/Captions/Recommended" 
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Captions/Recommended"
                                                    FontWeight="Medium" Foreground="Black" />
                                     </Border>
 
@@ -85,12 +85,13 @@
                                                 VerticalAlignment="Stretch" Height="260">
                                         <Image Width="150" Margin="0,45,0,40">
                                             <Image.Source>
-                                                <SvgImageSource UriSource="ms-appx:///Assets/autocalibration.svg"/>
+                                                <SvgImageSource UriSource="ms-appx:///Assets/autocalibration.svg" />
                                             </Image.Source>
                                         </Image>
-                                        <TextBlock x:Uid="/GeneralPage/Calibration/Titles/Automatic" 
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Titles/Automatic"
                                                    HorizontalAlignment="Center" FontSize="26" FontWeight="SemiBold" />
-                                        <TextBlock x:Uid="/GeneralPage/Calibration/Captions/Automatic" Margin="0,20,0,0"
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Captions/Automatic"
+                                                   Margin="0,20,0,0"
                                                    HorizontalAlignment="Center" FontSize="16" FontWeight="Medium" />
                                     </StackPanel>
                                 </Grid>
@@ -101,10 +102,10 @@
                                             VerticalAlignment="Stretch" Height="260">
                                     <Image Width="80" Margin="0,45,0,30">
                                         <Image.Source>
-                                            <SvgImageSource UriSource="ms-appx:///Assets/manualcalibration.svg"/>
+                                            <SvgImageSource UriSource="ms-appx:///Assets/manualcalibration.svg" />
                                         </Image.Source>
                                     </Image>
-                                    <TextBlock x:Uid="/GeneralPage/Calibration/Titles/Manual" 
+                                    <TextBlock x:Uid="/GeneralPage/Calibration/Titles/Manual"
                                                HorizontalAlignment="Center" FontSize="26"
                                                FontWeight="SemiBold" />
                                     <TextBlock x:Uid="/GeneralPage/Calibration/Captions/Manual" Margin="0,20,0,0"
@@ -135,7 +136,7 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock x:Uid="/GeneralPage/Calibration/Headers/Automatic"
-                                   Margin="0,15,0,0" HorizontalAlignment="Center" 
+                                   Margin="0,15,0,0" HorizontalAlignment="Center"
                                    FontSize="26" VerticalAlignment="Center"
                                    Style="{StaticResource BaseTextBlockStyle}" />
 
@@ -241,7 +242,7 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock x:Uid="/GeneralPage/Calibration/Headers/Manual"
-                                   Margin="0,15,0,0" HorizontalAlignment="Center" 
+                                   Margin="0,15,0,0" HorizontalAlignment="Center"
                                    FontSize="26" VerticalAlignment="Center"
                                    Style="{StaticResource BaseTextBlockStyle}" />
 
@@ -264,7 +265,7 @@
                                     VerticalAlignment="Bottom" Grid.Row="0"
 
                                     CornerRadius="3"
-                                    Background="{StaticResource SystemControlAcrylicWindowBrush}" >
+                                    Background="{StaticResource SystemControlAcrylicWindowBrush}">
 
                                 <Grid Margin="10,0" VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch">
@@ -274,16 +275,18 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Border Margin="0,0,0,0" Width="50" Height="50"
-                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                            Grid.Row="0" CornerRadius="100" BorderThickness="5" BorderBrush="White" >
-                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Brief/Left" 
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="100" BorderThickness="5" BorderBrush="White">
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Brief/Left"
                                                    FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
-                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
-                                               VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
-                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Brief/Left"/>
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1"
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Brief/Left" />
                                 </Grid>
                             </Border>
 
@@ -292,7 +295,7 @@
                                     VerticalAlignment="Bottom" Grid.Row="1"
 
                                     CornerRadius="3"
-                                    Background="{StaticResource SystemControlAcrylicWindowBrush}" >
+                                    Background="{StaticResource SystemControlAcrylicWindowBrush}">
 
                                 <Grid Margin="10,0" VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch">
@@ -302,16 +305,18 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Border Margin="0,0,0,0" Width="50" Height="50"
-                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                            Grid.Row="0" CornerRadius="100" BorderThickness="5" BorderBrush="White" >
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="100" BorderThickness="5" BorderBrush="White">
                                         <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Brief/Right"
                                                    FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
-                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
-                                               VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
-                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Brief/Right"/>
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1"
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Brief/Right" />
                                 </Grid>
                             </Border>
 
@@ -320,7 +325,7 @@
                                     VerticalAlignment="Bottom" Grid.Row="2"
 
                                     CornerRadius="3"
-                                    Background="{StaticResource SystemControlAcrylicWindowBrush}" >
+                                    Background="{StaticResource SystemControlAcrylicWindowBrush}">
 
                                 <Grid Margin="10,0" VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch">
@@ -329,17 +334,29 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Border Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
-                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White" >
-                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Grips/Left" 
+                                    <Border x:Name="LabelFineTuneNormal" Visibility="Visible"
+                                        Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White">
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Grips/Left"
                                                    FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
-                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
-                                               VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
-                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Grips/Left"/>
+                                    <Border x:Name="LabelFineTuneVive" Visibility="Collapsed"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White">
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Triggers/Left"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1"
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Grips/Left" />
                                 </Grid>
                             </Border>
 
@@ -348,7 +365,7 @@
                                     VerticalAlignment="Bottom" Grid.Row="3"
 
                                     CornerRadius="3"
-                                    Background="{StaticResource SystemControlAcrylicWindowBrush}" >
+                                    Background="{StaticResource SystemControlAcrylicWindowBrush}">
 
                                 <Grid Margin="10,0" VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch">
@@ -357,16 +374,28 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Border Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
-                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White" >
-                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Grips/Right" 
+                                    <Border Visibility="{Binding ElementName=LabelFineTuneNormal, Path=Visibility}"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White">
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Grips/Right"
                                                    FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
-                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
-                                               VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
+                                    <Border Visibility="{Binding ElementName=LabelFineTuneVive, Path=Visibility}"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White">
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Grips/Right"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1"
+                                               Style="{StaticResource BaseTextBlockStyle}"
                                                x:Uid="/GeneralPage/Calibration/LabelsWhat/Grips/Right" />
                                 </Grid>
                             </Border>
@@ -376,7 +405,7 @@
                                     VerticalAlignment="Bottom" Grid.Row="4"
 
                                     CornerRadius="3"
-                                    Background="{StaticResource SystemControlAcrylicWindowBrush}" >
+                                    Background="{StaticResource SystemControlAcrylicWindowBrush}">
 
                                 <Grid Margin="10,0" VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch">
@@ -385,17 +414,29 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Border Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
-                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White" >
-                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Triggers"
+                                    <Border Visibility="{Binding ElementName=LabelFineTuneNormal, Path=Visibility}"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White">
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Triggers/Both"
                                                    FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
-                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5" HorizontalAlignment="Stretch" FontSize="23"
-                                               VerticalAlignment="Center" Grid.Column="1" Style="{StaticResource BaseTextBlockStyle}"
-                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Triggers"/>
+                                    <Border Visibility="{Binding ElementName=LabelFineTuneVive, Path=Visibility}"
+                                        Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White">
+                                        <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Triggers/Both"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1"
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               x:Uid="/GeneralPage/Calibration/LabelsWhat/Triggers" />
                                 </Grid>
                             </Border>
 
@@ -503,7 +544,8 @@
                             </FlyoutBase.AttachedFlyout>
                         </Button>
                         <Button FontSize="15" x:Name="OffsetsButton" Click="OffsetsButton_Click"
-                                VerticalContentAlignment="Center" FontWeight="SemiBold" x:Uid="/GeneralPage/Buttons/Offsets"
+                                VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                x:Uid="/GeneralPage/Buttons/Offsets"
                                 Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" />
 
@@ -511,7 +553,8 @@
 
                     <ToggleButton FontSize="15" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked"
                                   Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center"
-                                  FontWeight="SemiBold" x:Uid="/GeneralPage/Buttons/TrackersToggle/Connect" Margin="40,10" CornerRadius="3"
+                                  FontWeight="SemiBold" x:Uid="/GeneralPage/Buttons/TrackersToggle/Connect"
+                                  Margin="40,10" CornerRadius="3"
                                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
 
                 </Grid>
@@ -538,7 +581,8 @@
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/GeneralPage/Captions/Device/Status" Margin="0,0,0,0" Foreground="LightGray" />
+                                           x:Uid="/GeneralPage/Captions/Device/Status" Margin="0,0,0,0"
+                                           Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
                             </StackPanel>
@@ -588,7 +632,8 @@
                                         Visibility="{Binding ElementName=SelectedOverrideDeviceNameLabel, 
 									Path=Visibility,TargetNullValue=Collapsed}">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/GeneralPage/Captions/OverrideDevice/Name" Margin="0,0,0,0" Foreground="LightGray" />
+                                           x:Uid="/GeneralPage/Captions/OverrideDevice/Name" Margin="0,0,0,0"
+                                           Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_DEVICE]" Margin="5,0,0,0"
                                            x:Name="SelectedOverrideDeviceNameLabel" />
@@ -598,7 +643,8 @@
                                         Visibility="{Binding ElementName=SelectedOverrideDeviceNameLabel, 
 									Path=Visibility,TargetNullValue=Collapsed}">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/GeneralPage/Captions/Device/Status" Margin="0,0,0,0" Foreground="LightGray" />
+                                           x:Uid="/GeneralPage/Captions/Device/Status" Margin="0,0,0,0"
+                                           Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="OverrideDeviceStatusLabel" />
                             </StackPanel>
@@ -649,7 +695,8 @@
                         </StackPanel>
 
                         <Grid Height="60" VerticalAlignment="Bottom">
-                            <TextBlock FontWeight="SemiBold" x:Uid="/GeneralPage/Titles/Status" FontSize="25" Margin="40,20,0,0"
+                            <TextBlock FontWeight="SemiBold" x:Uid="/GeneralPage/Titles/Status" FontSize="25"
+                                       Margin="40,20,0,0"
                                        Grid.Row="5" />
                         </Grid>
 
@@ -660,7 +707,7 @@
                                            x:Uid="/GeneralPage/Captions/DriverStatus/Label"
                                            Margin="0,0,0,0" Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/GeneralPage/Captions/DriverStatus/Content" 
+                                           x:Uid="/GeneralPage/Captions/DriverStatus/Content"
                                            Margin="5,0,0,0" x:Name="ServerStatusLabel" />
                             </StackPanel>
 
@@ -707,7 +754,8 @@
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/GeneralPage/Captions/VersionText" Margin="0,0,0,0" Foreground="LightGray" />
+                                           x:Uid="/GeneralPage/Captions/VersionText" Margin="0,0,0,0"
+                                           Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_VERSION_STRING]" Margin="5,0,0,0" x:Name="VersionLabel" />
                             </StackPanel>
@@ -740,12 +788,13 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" />
-                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoSkeleton" 
+                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoSkeleton"
                                    FontSize="50" FontWeight="SemiBold" />
                     </StackPanel>
 
                     <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
-                               x:Uid="/GeneralPage/Captions/Preview/NoSkeletonText"/>
+                               x:Uid="/GeneralPage/Captions/Preview/NoSkeletonText" x:Name="NoSkeletonTextNotice"
+                               HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
 
@@ -757,12 +806,12 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
-                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/Disabled" 
+                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/Disabled"
                                    FontSize="50" FontWeight="SemiBold" />
                     </StackPanel>
 
                     <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
-                               x:Uid="/GeneralPage/Captions/Preview/DisabledText" />
+                               x:Uid="/GeneralPage/Captions/Preview/DisabledText" HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
 
@@ -774,12 +823,12 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
-                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoFocus" 
+                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoFocus"
                                    FontSize="50" FontWeight="SemiBold" />
                     </StackPanel>
 
                     <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
-                               x:Uid="/GeneralPage/Captions/Preview/NoFocusText" />
+                               x:Uid="/GeneralPage/Captions/Preview/NoFocusText" HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
 
@@ -791,12 +840,12 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
-                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoDashboard" 
+                        <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoDashboard"
                                    FontSize="50" FontWeight="SemiBold" />
                     </StackPanel>
 
                     <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
-                               x:Uid="/GeneralPage/Captions/Preview/NoDashboardText" />
+                               x:Uid="/GeneralPage/Captions/Preview/NoDashboardText" HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
 
@@ -818,7 +867,7 @@
 
                     <ToggleSplitButton x:Name="SkeletonToggleButton" Click="SkeletonToggleButton_Click"
                                        IsChecked="True" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                       x:Uid="/GeneralPage/Buttons/Skeleton/Hide" 
+                                       x:Uid="/GeneralPage/Buttons/Skeleton/Hide"
                                        Margin="20,0,0,0" CornerRadius="3" Grid.Column="0"
                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
@@ -831,7 +880,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Opacity="1"
-                                               x:Uid="/GeneralPage/Captions/Preview/Force" 
+                                               x:Uid="/GeneralPage/Captions/Preview/Force"
                                                FontWeight="Medium" Margin="30,0,0,2"
                                                Grid.Column="0" x:Name="ForceRenderText" />
                                     <CheckBox x:Name="ForceRenderCheckBox"
@@ -869,7 +918,7 @@
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
                                                FontWeight="Medium" Opacity="1"
                                                x:Name="FreezeOnlyLowerCheckBoxLabel"
-                                               x:Uid="/GeneralPage/Captions/FreezeLowerOnly" 
+                                               x:Uid="/GeneralPage/Captions/FreezeLowerOnly"
                                                Margin="30,0,0,0"
                                                Grid.Column="0" />
                                     <CheckBox x:Name="FreezeOnlyLowerCheckBox"

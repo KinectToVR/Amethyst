@@ -211,8 +211,7 @@ void KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
 
 	CalibrationRunningView().IsPaneOpen(true);
-
-	StartAutoCalibrationButton().IsEnabled(true);
+	
 	CalibrationPointsNumberBox().IsEnabled(true);
 	CalibrationInstructionsLabel().Text(
 		k2app::interfacing::LocalizedResourceWString(
@@ -221,6 +220,9 @@ void KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(
 	DiscardAutoCalibrationButton().Content(box_value(
 		k2app::interfacing::LocalizedResourceWString(
 			L"GeneralPage", L"Buttons/Cancel/Content")));
+
+	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Captions/Preview/NoSkeletonTextCalibrating/Text"));
 }
 
 
@@ -474,6 +476,9 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 	CalibrationSelectView().IsPaneOpen(false);
 	CalibrationRunningView().IsPaneOpen(false);
 
+	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
+		L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
+
 	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 }
@@ -487,6 +492,9 @@ void KinectToVR::implementation::GeneralPage::DiscardCalibrationButton_Click(
 	{
 		CalibrationSelectView().IsPaneOpen(false);
 		CalibrationRunningView().IsPaneOpen(false);
+
+		NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
 
 		// Play a nice sound - exiting
 		ElementSoundPlayer::Play(ElementSoundKind::GoBack);
@@ -502,6 +510,26 @@ void KinectToVR::implementation::GeneralPage::DiscardCalibrationButton_Click(
 Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::ManualCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Swap trigger/grip if we're on index or vive
+	char _controller_model[1024];
+	vr::VRSystem()->GetStringTrackedDeviceProperty(
+		vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
+		vr::ETrackedDeviceProperty::Prop_ModelNumber_String, _controller_model, std::size(_controller_model));
+
+	// Set up as default (just in case)
+	LabelFineTuneVive().Visibility(Visibility::Collapsed);
+	LabelFineTuneNormal().Visibility(Visibility::Visible);
+
+	// Swap (optionally)
+	if (k2app::interfacing::findStringIC(_controller_model, "knuckles") ||
+		k2app::interfacing::findStringIC(_controller_model, "index") ||
+		k2app::interfacing::findStringIC(_controller_model, "vive"))
+	{
+		LabelFineTuneVive().Visibility(Visibility::Visible);
+		LabelFineTuneNormal().Visibility(Visibility::Collapsed);
+	}
+
+	// Set up panels
 	AutoCalibrationPane().Visibility(Visibility::Collapsed);
 	ManualCalibrationPane().Visibility(Visibility::Visible);
 
@@ -1094,6 +1122,8 @@ void KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 				const auto joints = device->getJointPositions();
 				const auto states = device->getTrackingStates();
 
+				StartAutoCalibrationButton().IsEnabled(device->isSkeletonTracked());
+
 				if (device->isSkeletonTracked())
 				{
 					// Don't waste cpu & ram, ok?
@@ -1280,8 +1310,9 @@ void KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 		case 1:
 			{
 				const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
-
 				auto joints = device->getTrackedJoints();
+
+				StartAutoCalibrationButton().IsEnabled(device->isSkeletonTracked());
 
 				if (device->isSkeletonTracked() && !joints.empty())
 				{

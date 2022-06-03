@@ -159,6 +159,9 @@ namespace k2app
 				LOG(ERROR) << "Settings archive serialization error: " << e.what();
 			}
 
+			// Check if the trackers vector is broken
+			const bool _vector_broken = K2TrackersVector.size() < 7;
+
 			// Optionally fix the trackers vector
 			while (K2TrackersVector.size() < 7)
 				K2TrackersVector.push_back(K2AppTracker());
@@ -176,8 +179,17 @@ namespace k2app
 			for (auto& tracker : K2TrackersVector)
 				tracker.data.serial = ITrackerType_Role_Serial[tracker.tracker];
 
+			// If the vector was broken, override waist & feet statuses
+			if (_vector_broken)
+			{
+				K2TrackersVector.at(0).data.isActive = true;
+				K2TrackersVector.at(1).data.isActive = true;
+				K2TrackersVector.at(2).data.isActive = true;
+			}
+
 			// Fix statuses (optional)
-			if (useTrackerPairs) {
+			if (useTrackerPairs)
+			{
 				K2TrackersVector.at(2).data.isActive =
 					K2TrackersVector.at(1).data.isActive;
 				K2TrackersVector.at(4).data.isActive =

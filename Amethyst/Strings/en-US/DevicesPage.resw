@@ -142,7 +142,7 @@ unset it from Override role.</value>
     <comment>This is separate from Titles-Overrides-Header cause it is a tooltip</comment>
   </data>
   <data name="Buttons.Reconnect.Content" xml:space="preserve">
-    <value>Reconnect</value>
+    <value>Refresh</value>
   </data>
   <data name="Buttons.SetAs.Base.Content" xml:space="preserve">
     <value>Set as Base</value>
