@@ -6,8 +6,25 @@
 
 HRESULT KinectV1Handler::getStatusResult()
 {
-	if (kinectSensor)
-		return kinectSensor->NuiStatus();
+	if (kinectSensor) {
+		const auto res =  kinectSensor->NuiStatus();
+
+		if (_loaded) {
+			m_main_progress_bar->Progress(100);
+			m_main_progress_bar->ShowPaused(res != S_OK);
+
+			m_message_text_block->Visibility(res != S_OK);
+			m_elevation_label->Visibility(res == S_OK);
+			m_elevation_spinner->Visibility(res == S_OK);
+		}
+
+		if (res == S_OK) {
+			NuiCameraElevationGetAngle(reinterpret_cast<long*>(&sensorAngle));
+			save_settings();
+		}
+
+		return res;
+	}
 	return E_NUI_NOTCONNECTED;
 }
 
