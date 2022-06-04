@@ -240,6 +240,10 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	k2app::shared::settings::settings_localInitFinished = false;
 	CheckOverlapsCheckBox().IsChecked(k2app::K2Settings.checkForOverlappingTrackers);
 
+	// Optionally show the foreign language grid
+	if (!status_ok_map.contains(GetUserLocale()))
+		ForeignLangGrid().Visibility(Visibility::Visible);
+
 	// Select saved flip, position and rotation options
 	flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);
 	externalFlipCheckBox.get()->IsChecked(k2app::K2Settings.isExternalFlipEnabled);
