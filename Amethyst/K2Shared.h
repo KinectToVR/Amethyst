@@ -56,6 +56,8 @@ namespace k2app::shared
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
 			calibrationButton,
+			reRegisterButton,
+			serverOpenDiscordButton,
 			offsetsButton;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>

@@ -66,13 +66,6 @@ winrt::Microsoft::Windows::AppNotifications::AppNotification CreateToastNotifica
 /// </summary>
 App::App()
 {
-	/* Set up everything before the launch */
-
-	// Request the dark theme to be set
-	this->RequestedTheme(ApplicationTheme::Dark);
-
-	/* Bootstrap here (still waiting for stable 1.1) */
-
 	/* Initialize the main app and launch it */
 
 	InitializeComponent();

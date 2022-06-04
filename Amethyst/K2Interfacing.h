@@ -655,6 +655,16 @@ namespace k2app::interfacing
 				split_status(serverStatusString)[1]);
 			shared::general::serverErrorWhatText.get()->Text(
 				split_status(serverStatusString)[2]);
+
+			// Optionally setup & show the reregister button
+			shared::general::reRegisterButton.get()->Visibility(
+				serverDriverStatusCode == -10
+				? Visibility::Visible
+				: Visibility::Collapsed);
+
+			shared::general::serverOpenDiscordButton.get()->Height(
+				serverDriverStatusCode == -10
+				? 40 : 65);
 		}
 
 		// Block some things if server isn't working properly

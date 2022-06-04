@@ -743,14 +743,18 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
                                 <Button FontSize="15" x:Name="ServerOpenDocsButton" Click="OpenDocsButton_Click"
-                                        Height="65"
+                                        Height="{Binding ElementName=ServerOpenDiscordButton, Path=Height}"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         x:Uid="/GeneralPage/Buttons/Help/Docs"
                                         Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
-
                             </Grid>
+
+                            <!--If this button is visible, set the (upper two)'s height to 40-->
+                            <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="40,10"
+                                    x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold"
+                                    x:Uid="/SettingsPage/Buttons/ReRegister" FontSize="15" Visibility="Collapsed" />
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
@@ -932,6 +936,45 @@
                         </ToggleSplitButton.Flyout>
                     </ToggleSplitButton>
                 </Grid>
+
+                <!--Flyout for manifest and reregister errors-->
+                <FlyoutBase.AttachedFlyout>
+                    <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button FontSize="15" x:Name="DismissSetErrorButton"
+                                        Click="DismissSetErrorButton_Click"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        x:Uid="/SettingsPage/Buttons/Error/Dismiss"
+                                        Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
+
+                            </Grid>
+
+                            <TextBlock FontSize="15" HorizontalAlignment="Stretch"
+                                       x:Name="SetErrorFlyoutText"
+                                       VerticalAlignment="Stretch"
+                                       Grid.Row="0" FontWeight="SemiBold"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       Text="[NO CONTENT SET]" />
+
+                        </Grid>
+                    </Flyout>
+                </FlyoutBase.AttachedFlyout>
 
             </Grid>
         </Grid>

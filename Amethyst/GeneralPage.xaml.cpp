@@ -63,6 +63,8 @@ namespace winrt::KinectToVR::implementation
 
 		calibrationButton = std::make_shared<Controls::Button>(CalibrationButton());
 		offsetsButton = std::make_shared<Controls::Button>(OffsetsButton());
+		reRegisterButton = std::make_shared<Controls::Button>(ReRegisterButton());
+		serverOpenDiscordButton = std::make_shared<Controls::Button>(ServerOpenDiscordButton());
 
 		versionLabel = std::make_shared<Controls::TextBlock>(VersionLabel());
 		deviceNameLabel = std::make_shared<Controls::TextBlock>(SelectedDeviceNameLabel());
@@ -1514,4 +1516,36 @@ void winrt::KinectToVR::implementation::GeneralPage::CalibrationPointsNumberBox_
 	k2app::K2Settings.calibrationPointsNumber =
 		static_cast<int>(sender.as<Controls::NumberBox>().Value());
 	k2app::K2Settings.saveSettings(); // Save it
+}
+
+void winrt::KinectToVR::implementation::GeneralPage::ReRegisterButton_Click(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
+	{
+		std::thread([]
+			{
+				ShellExecuteA(nullptr, "open",
+					(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
+					.string().c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
+			}).detach();
+	}
+	else
+	{
+		LOG(WARNING) << "Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!";
+
+		SetErrorFlyoutText().Text(
+			k2app::interfacing::LocalizedResourceWString(L"SettingsPage", L"ReRegister/Error/NotFound"));
+
+		Controls::Primitives::FlyoutShowOptions _opt;
+		_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
+		SetErrorFlyout().ShowAt(ReRegisterButton(), _opt);
+	}
+}
+
+
+void winrt::KinectToVR::implementation::GeneralPage::DismissSetErrorButton_Click(
+	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	SetErrorFlyout().Hide();
 }
