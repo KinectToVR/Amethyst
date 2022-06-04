@@ -5,16 +5,11 @@
     
     Version 2.0
     
-    The primary goals of this format is- DOIN YOUR MOM
-    DOIN DOIN DOIN YOUR MOM
-    DOIN YOUR MOM
-    DOIN DOIN YOUR MOM
-    No bitches?
-    L + ratio + you fell off + didn't ask + don't care + I bet you suck Greg Driver's dick.
-
-    For any inquiries regarding why Microsoft chose this god awful format
-    Please refer to who asked.
-
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
     Example:
     
     ... ado.net/XML headers & schema ...
@@ -156,7 +151,7 @@ Si le problème persiste, envoyez nous les logs sur Discord.</value>
   <data name="Content.Recovery" xml:space="preserve">
     <value>Vous avez lancé le Crash Handler manuellement, que voulez-vous faire?
 
-Si l'add-on SteamVR pour Amethyst n'est pas détecté correctement, vous pouvez le ré-inscrire dans la liste (bouton ci-dessous) et essayer à nouveau.</value>
+Si l'extension SteamVR pour Amethyst n'est pas détectée correctement, vous pouvez la ré-inscrire dans la liste (bouton ci-dessous) et essayer à nouveau.</value>
   </data>
   <data name="PrimaryButton.AlreadyRunning" xml:space="preserve">
     <value>Quitter de force</value>
@@ -171,14 +166,14 @@ Si l'add-on SteamVR pour Amethyst n'est pas détecté correctement, vous pouvez 
     <value>Serveur Discord</value>
   </data>
   <data name="PrimaryButton.Recovery" xml:space="preserve">
-    <value>Ré-inscrire l'add-on</value>
+    <value>Ré-inscrire l'extension</value>
   </data>
   <data name="ReRegister.DriverNotFound" xml:space="preserve">
-    <value>L'add-on SteamVR pour Amethyst n'a pas été trouvé.
-Est-il présent dans le même dossier que le Crash Handler?</value>
+    <value>L'extension SteamVR pour Amethyst n'a pas été trouvée.
+Est-elle présente dans le même dossier que le Crash Handler?</value>
   </data>
   <data name="ReRegister.ExistingDrivers.Content" xml:space="preserve">
-    <value>Un ou plusieurs add-ons nommés `Amethyst` sont déjà inscrits dans la liste.
+    <value>Une ou plusieurs extensions nommées `Amethyst` sont déjà inscrites dans la liste.
 Voulez-vous les enlever?</value>
   </data>
   <data name="ReRegister.ExistingDrivers.PrimaryButton" xml:space="preserve">
@@ -188,11 +183,11 @@ Voulez-vous les enlever?</value>
     <value>Annuler</value>
   </data>
   <data name="ReRegister.FatalRegisterException" xml:space="preserve">
-    <value>L'add-on pour Amethyst n'a pu être inscrit.
+    <value>L'extension pour Amethyst n'a pu être inscrite.
 Un problème est survenu.</value>
   </data>
   <data name="ReRegister.FatalRemoveException" xml:space="preserve">
-    <value>L'add-on pour Amethyst n'a pu être enlevé.
+    <value>L'extension pour Amethyst n'a pu être enlevée.
 Un problème est survenu.</value>
   </data>
   <data name="ReRegister.Finished" xml:space="preserve">
@@ -200,7 +195,7 @@ Un problème est survenu.</value>
   </data>
   <data name="ReRegister.KillSteamVR.Content" xml:space="preserve">
     <value>SteamVR doit être fermé
-pour inscrire l'add-on, Voulez-vous le faire maintenant?</value>
+pour inscrire l'extension, Voulez-vous le faire maintenant?</value>
   </data>
   <data name="ReRegister.KillSteamVR.PrimaryButton" xml:space="preserve">
     <value>Quitter SteamVR</value>
@@ -214,7 +209,7 @@ Assurez vous que le fichier n'est pas corrompu
 et d'avoir lancé SteamVR au moins une fois.</value>
   </data>
   <data name="ReRegister.OpenVRPathsWriteError" xml:space="preserve">
-    <value>Impossible d'inscire l'add-on pour Amethyst.
+    <value>Impossible d'inscire l'extension pour Amethyst.
 Erreur lors de l'écriture du fichier OpenVRPaths.</value>
   </data>
   <data name="ReRegister.SteamVRNotFound" xml:space="preserve">
@@ -231,6 +226,6 @@ L'avez-vous bien installé?</value>
     <value>Amethyst vous a laissé tomber!</value>
   </data>
   <data name="Title.Recovery" xml:space="preserve">
-    <value>Réparation d'Amethyst</value>
+    <value>Maintenance d'Amethyst</value>
   </data>
 </root>
