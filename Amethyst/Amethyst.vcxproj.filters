@@ -291,6 +291,9 @@
     <Filter Include="Header Files\Strings">
       <UniqueIdentifier>{5a3e1d2e-63a6-4335-ae44-681e3cd7d18c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Strings\fr-FR">
+      <UniqueIdentifier>{f6179d06-76df-4234-bb42-3604a5e853ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
@@ -320,8 +323,26 @@
     <PRIResource Include="Strings\en-US\SettingsLearn.resw">
       <Filter>Strings\en-US</Filter>
     </PRIResource>
-    <PRIResource Include="GeneralPage.resw">
+    <PRIResource Include="Strings\fr-FR\DevicesPage.resw">
+      <Filter>Strings\fr-FR</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\fr-FR\InfoPage.resw">
+      <Filter>Strings\fr-FR</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\fr-FR\SettingsLearn.resw">
+      <Filter>Strings\fr-FR</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\fr-FR\SettingsPage.resw">
+      <Filter>Strings\fr-FR</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\fr-FR\SharedStrings.resw">
+      <Filter>Strings\fr-FR</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\en-US\GeneralPage.resw">
       <Filter>Strings\en-US</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\fr-FR\GeneralPage.resw">
+      <Filter>Strings\fr-FR</Filter>
     </PRIResource>
   </ItemGroup>
 </Project>

@@ -1,0 +1,358 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Buttons.Abort.Content" xml:space="preserve">
+    <value>Abort</value>
+  </data>
+  <data name="Buttons.Calibration.Base.Content" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="Buttons.Calibration.Begin.Content" xml:space="preserve">
+    <value>Begin Calibration</value>
+  </data>
+  <data name="Buttons.Calibration.Override.Content" xml:space="preserve">
+    <value>Override</value>
+  </data>
+  <data name="Buttons.Cancel.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Buttons.Discard.Content" xml:space="preserve">
+    <value>Discard</value>
+  </data>
+  <data name="Buttons.Help.Discord.Content" xml:space="preserve">
+    <value>Get help on Discord</value>
+  </data>
+  <data name="Buttons.Help.Docs.Content" xml:space="preserve">
+    <value>View Online Docs</value>
+  </data>
+  <data name="Buttons.Offsets.Content" xml:space="preserve">
+    <value>Adjust Offsets</value>
+  </data>
+  <data name="Buttons.Save.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Buttons.Skeleton.Freeze.Content" xml:space="preserve">
+    <value>Freeze</value>
+  </data>
+  <data name="Buttons.Skeleton.Hide.Content" xml:space="preserve">
+    <value>Hide Skeleton</value>
+  </data>
+  <data name="Buttons.Skeleton.Show.Content" xml:space="preserve">
+    <value>Show Skeleton</value>
+  </data>
+  <data name="Buttons.Skeleton.Unfreeze.Content" xml:space="preserve">
+    <value>Unfreeze</value>
+  </data>
+  <data name="Buttons.TrackersToggle.Connect.Content" xml:space="preserve">
+    <value>Connect Trackers</value>
+  </data>
+  <data name="Buttons.TrackersToggle.Disconnect" xml:space="preserve">
+    <value>Disconnect Trackers</value>
+  </data>
+  <data name="Buttons.TrackersToggle.Reconnect" xml:space="preserve">
+    <value>Reconnect Trackers</value>
+  </data>
+  <data name="Calibration.Captions.Aborted.Text" xml:space="preserve">
+    <value>Calibration aborted!</value>
+  </data>
+  <data name="Calibration.Captions.Automatic.Text" xml:space="preserve">
+    <value>Stand in three locations of your play area.</value>
+  </data>
+  <data name="Calibration.Captions.Captured.Text" xml:space="preserve">
+    <value>Position captured!</value>
+  </data>
+  <data name="Calibration.Captions.Done.Text" xml:space="preserve">
+    <value>Calibration done!</value>
+  </data>
+  <data name="Calibration.Captions.Manual.Text" xml:space="preserve">
+    <value>Move trackers using your VR controllers.</value>
+  </data>
+  <data name="Calibration.Captions.Move.Text" xml:space="preserve">
+    <value>Position {1} of {2}
+Move somewhere else</value>
+  </data>
+  <data name="Calibration.Captions.Points.Text" xml:space="preserve">
+    <value>Try increasing capture points if the calibration puts the trackers in the wrong place.</value>
+  </data>
+  <data name="Calibration.Captions.Recommended.Text" xml:space="preserve">
+    <value>Recommended</value>
+  </data>
+  <data name="Calibration.Captions.Stand.Text" xml:space="preserve">
+    <value>Position {1} of {2}
+Please stand still!</value>
+  </data>
+  <data name="Calibration.Captions.Start.Text" xml:space="preserve">
+    <value>Start the calibration</value>
+  </data>
+  <data name="Calibration.Headers.Automatic.Text" xml:space="preserve">
+    <value>Automatic Calibration</value>
+  </data>
+  <data name="Calibration.Headers.Manual.Text" xml:space="preserve">
+    <value>Manual Calibration</value>
+  </data>
+  <data name="Calibration.Labels.Brief.Left.Text" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Calibration.Labels.Brief.Right.Text" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Calibration.Labels.Grips.Both.Text" xml:space="preserve">
+    <value>L+R Grip</value>
+  </data>
+  <data name="Calibration.Labels.Grips.Left.Text" xml:space="preserve">
+    <value>L Grip</value>
+  </data>
+  <data name="Calibration.Labels.Grips.Right.Text" xml:space="preserve">
+    <value>R Grip</value>
+  </data>
+  <data name="Calibration.Labels.InputsNotice.Text" xml:space="preserve">
+    <value>Inputs may differ when using custom bindings. Please refer to the SteamVR input bindings screen for Amethyst in that case.</value>
+  </data>
+  <data name="Calibration.Labels.Triggers.Both.Text" xml:space="preserve">
+    <value>L+R Trigger</value>
+  </data>
+  <data name="Calibration.Labels.Triggers.Left.Text" xml:space="preserve">
+    <value>L Triggers</value>
+  </data>
+  <data name="Calibration.Labels.Triggers.Right.Text" xml:space="preserve">
+    <value>R Triggers</value>
+  </data>
+  <data name="Calibration.LabelsWhat.Brief.Left.Text" xml:space="preserve">
+    <value>Move left/right/forward/back
+Rotate on Y axis</value>
+  </data>
+  <data name="Calibration.LabelsWhat.Brief.Right.Text" xml:space="preserve">
+    <value>Move up/down
+Rotate on X axis</value>
+  </data>
+  <data name="Calibration.LabelsWhat.Grips.Left.Text" xml:space="preserve">
+    <value>Fine-tune</value>
+  </data>
+  <data name="Calibration.LabelsWhat.Grips.Right.Text" xml:space="preserve">
+    <value>Switch move/rotate</value>
+  </data>
+  <data name="Calibration.LabelsWhat.Triggers.Text" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Calibration.Titles.Automatic.Text" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="Calibration.Titles.Choose.Text" xml:space="preserve">
+    <value>Choose a calibration mode</value>
+  </data>
+  <data name="Calibration.Titles.Manual.Text" xml:space="preserve">
+    <value>Manual</value>
+  </data>
+  <data name="Calibration.Titles.Points.Text" xml:space="preserve">
+    <value>Capture Points:</value>
+  </data>
+  <data name="Captions.CalibrateOverrides.Text" xml:space="preserve">
+    <value>You have tracking overrides set up.
+Which device do you want to calibrate?</value>
+  </data>
+  <data name="Captions.Device.Name.Text" xml:space="preserve">
+    <value>Current Device:</value>
+  </data>
+  <data name="Captions.Device.Status.Text" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="Captions.DriverStatus.Content.Text" xml:space="preserve">
+    <value>Success! (Code 1)</value>
+  </data>
+  <data name="Captions.DriverStatus.Label.Text" xml:space="preserve">
+    <value>SteamVR Driver:</value>
+  </data>
+  <data name="Captions.FreezeLowerOnly.Text" xml:space="preserve">
+    <value>Only Lower Body</value>
+  </data>
+  <data name="Captions.Offsets.Orientation.X" xml:space="preserve">
+    <value>Pitch (X):</value>
+  </data>
+  <data name="Captions.Offsets.Orientation.Y" xml:space="preserve">
+    <value>Yaw (Y):</value>
+  </data>
+  <data name="Captions.Offsets.Orientation.Z" xml:space="preserve">
+    <value>Roll (Z):</value>
+  </data>
+  <data name="Captions.Offsets.Position.X" xml:space="preserve">
+    <value>X (Left):</value>
+  </data>
+  <data name="Captions.Offsets.Position.Y" xml:space="preserve">
+    <value>Y (Up):</value>
+  </data>
+  <data name="Captions.Offsets.Position.Z" xml:space="preserve">
+    <value>Z (Front):</value>
+  </data>
+  <data name="Captions.OverrideDevice.Name.Text" xml:space="preserve">
+    <value>Override Device:</value>
+  </data>
+  <data name="Captions.Preview.Disabled.Text" xml:space="preserve">
+    <value>Skeleton preview disabled</value>
+  </data>
+  <data name="Captions.Preview.DisabledText.Text" xml:space="preserve">
+    <value>To re-enable it please click the
+"Show Skeleton" button.</value>
+  </data>
+  <data name="Captions.Preview.Force.Text" xml:space="preserve">
+    <value>Force Preview</value>
+  </data>
+  <data name="Captions.Preview.NoDashboard.Text" xml:space="preserve">
+    <value>The dashboard is closed</value>
+  </data>
+  <data name="Captions.Preview.NoDashboardText.Text" xml:space="preserve">
+    <value>The preview's stopped to save resources
+and will run again when you're back.</value>
+  </data>
+  <data name="Captions.Preview.NoFocus.Text" xml:space="preserve">
+    <value>Window is out of focus</value>
+  </data>
+  <data name="Captions.Preview.NoFocusText.Text" xml:space="preserve">
+    <value>The preview's stopped to save resources
+and will run again when you're back.</value>
+  </data>
+  <data name="Captions.Preview.NoSkeleton.Text" xml:space="preserve">
+    <value>No skeleton found</value>
+  </data>
+  <data name="Captions.Preview.NoSkeletonText.Text" xml:space="preserve">
+    <value>Make sure the device works properly
+and can see your body for tracking.</value>
+  </data>
+  <data name="Captions.Preview.NoSkeletonTextCalibrating.Text" xml:space="preserve">
+    <value>You must have working skeleton 
+tracking to use automatic calibration.</value>
+  </data>
+  <data name="Captions.Tooltips.Orientation" xml:space="preserve">
+    <value>Rotation is in degrees.</value>
+  </data>
+  <data name="Captions.Tooltips.Position" xml:space="preserve">
+    <value>Position is in centimeters.</value>
+  </data>
+  <data name="Captions.VersionText.Text" xml:space="preserve">
+    <value>Amethyst Version:</value>
+  </data>
+  <data name="Titles.Device.Text" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="Titles.Status.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Titles.Trackers.Text" xml:space="preserve">
+    <value>Trackers</value>
+  </data>
+</root>

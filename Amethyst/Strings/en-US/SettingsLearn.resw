@@ -185,7 +185,7 @@ And the range is reduced to 50% to avoid jitter. This allows for foot rotation o
     <value>- Disable Rotation</value>
   </data>
   <data name="Captions.TrackerConfig.Text" xml:space="preserve">
-    <value>Amethyst supports up to 7 base trackers. Additional ones can be enabled or disabled from the gear icon.
+    <value>Amethyst supports up to 7 base trackers. Additional ones can be toggled from the gear icon.
 Each tracker or set of trackers contains settings to adjust how rotation and filtering is handled for particular trackers.
 This allows you to for example set a strong filter on your feet and waist if you intend on sitting 
 down a lot, while also using a faster setting for elbows so they follow your hands more closely.</value>

@@ -351,12 +351,18 @@ xcopy /y /d "$(SolutionDir)external\AppSDK\MddBootstrapAutoInitializer.cpp" "$(S
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="GeneralPage.resw" />
     <PRIResource Include="Strings\en-US\DevicesPage.resw" />
+    <PRIResource Include="Strings\en-US\GeneralPage.resw" />
     <PRIResource Include="Strings\en-US\InfoPage.resw" />
     <PRIResource Include="Strings\en-US\SettingsLearn.resw" />
     <PRIResource Include="Strings\en-US\SettingsPage.resw" />
     <PRIResource Include="Strings\en-US\SharedStrings.resw" />
+    <PRIResource Include="Strings\fr-FR\DevicesPage.resw" />
+    <PRIResource Include="Strings\fr-FR\GeneralPage.resw" />
+    <PRIResource Include="Strings\fr-FR\InfoPage.resw" />
+    <PRIResource Include="Strings\fr-FR\SettingsLearn.resw" />
+    <PRIResource Include="Strings\fr-FR\SettingsPage.resw" />
+    <PRIResource Include="Strings\fr-FR\SharedStrings.resw" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
