@@ -14,6 +14,10 @@ inline std::map<std::wstring, std::wstring> status_ok_map
 	{
 		L"lc-LC",
 		L"Shucshesh!\nS_OK\nEvewytshin's gud!"
+	},
+	{
+		L"fr-FR",
+		L"Succès!\nS_OK\nTout fonctionne!"
 	}
 };
 
@@ -26,6 +30,10 @@ inline std::map<std::wstring, std::wstring> status_initializing_map
 	{
 		L"lc-LC",
 		L"INITIALIZING\nS_NUI_INITIALIZING\nDe wevice ish connectd, but shtil intiawiziwg."
+	},
+	{
+		L"fr-FR",
+		L"INITIALIZING\nS_NUI_INITIALIZING\nL'appareil est connecté, mais encore en initialisation."
 	}
 };
 
@@ -38,6 +46,10 @@ inline std::map<std::wstring, std::wstring> status_not_connected_map
 	{
 		L"lc-LC",
 		L"NOTCONNECTED\nE_NUI_NOTCONNECTED\nDe wevice ish nat cowwecshtd."
+	},
+	{
+		L"fr-FR",
+		L"NOTCONNECTED\nE_NUI_NOTCONNECTED\nL'appareil n'est pas connecté."
 	}
 };
 
@@ -45,11 +57,15 @@ inline std::map<std::wstring, std::wstring> status_not_genuine_map
 {
 	{
 		L"en-US",
-		L"NOTGENUINE\nE_NUI_NOTGENUINE\nThe device is not a valid Kinect."
+		L"NOTGENUINE\nE_NUI_NOTGENUINE\nThe SDK is reporting the Kinect as invalid."
 	},
 	{
 		L"lc-LC",
-		L"NOTGUINEA\nE_NUI_NOTGUINEA\nDe wevice ish nat e veeld K'nect."
+		L"NOTGUINEA\nE_NUI_NOTGUINEA\nDe ESSDEKAY sayz K'nect ish nat veeld."
+	},
+	{
+		L"fr-FR",
+		L"NOTGENUINE\nE_NUI_NOTGENUINE\nLe SDK reporte la Kinect comme étant invalide."
 	}
 };
 
@@ -57,11 +73,15 @@ inline std::map<std::wstring, std::wstring> status_not_supported_map
 {
 	{
 		L"en-US",
-		L"NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nThe device is an unsupported model."
+		L"NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nThe device is unsupported. (Xbox Kinect requires the SDK)"
 	},
 	{
 		L"lc-LC",
-		L"NOTSHUPPOWTD\nE_NUI_NOTSHUPPOWTD\nDe w'vice ish n unshuppowted modew."
+		L"NOTSHUPPOWTD\nE_NUI_NOTSHUPPOWTD\nDe w'vice ish unshuppowted. (Ecksbawk K'nect wequiez de ESSDEKAY)"
+	},
+	{
+		L"fr-FR",
+		L"NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nL'appareil n'est pas supporté. (Kinect pour Xbox requiert le SDK)"
 	}
 };
 
@@ -74,6 +94,10 @@ inline std::map<std::wstring, std::wstring> status_insufficient_bandwidth_map
 	{
 		L"lc-LC",
 		L"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nDe wev'ce s wonwectd t hab w/ot e necshesshawy bandwidtsch wequiwmentsh."
+	},
+	{
+		L"fr-FR",
+		L"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nL'appareil est connecté a un hub qui n'offre pas pas la bande passante nécessaire."
 	}
 };
 
@@ -86,6 +110,10 @@ inline std::map<std::wstring, std::wstring> status_not_powered_map
 	{
 		L"lc-LC",
 		L"NOTPOWERED\nE_NUI_NOTPOWERED\nWre s withew a pwobwem wif y'r awaptew/wabwes o witw e K'nect d'v'ce dwivew wegistwatiown in Windowows."
+	},
+	{
+		L"fr-FR",
+		L"NOTPOWERED\nE_NUI_NOTPOWERED\nIl y a un problème soit avec votre adaptateur/cables, ou avec les pilotes de la Kinect dans Windows."
 	}
 };
 
@@ -98,6 +126,10 @@ inline std::map<std::wstring, std::wstring> status_not_ready_map
 	{
 		L"lc-LC",
 		L"NOTREADY\nE_NUI_NOTREADY\nWeadwy.. Shteadwy.. Oh nayyyy!."
+	},
+	{
+		L"fr-FR",
+		L"NOTREADY\nE_NUI_NOTREADY\nUne erreur non spécifiée est survenue."
 	}
 };
 
