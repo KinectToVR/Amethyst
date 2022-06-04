@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Graphics;
 using K2CrashHandler.Helpers;
 using Microsoft.UI;
@@ -212,7 +213,7 @@ namespace K2CrashHandler
                 secondaryButtonHandler,
                 launcherMode
             );
-
+            
             // And push it into the main grid
             RGrid.Children.Add(DialogView);
         }
@@ -319,7 +320,12 @@ namespace K2CrashHandler
                         LangResString("ReRegister/KillSteamVR/Content"),
                         LangResString("ReRegister/KillSteamVR/PrimaryButton"),
                         LangResString("ReRegister/KillSteamVR/SecondaryButton")))
-                    helper.CloseSteamVR();
+                {
+                    DialogView.PrimaryButtonActionPending(true);
+                    await Task.Factory.StartNew(
+                        () => helper.CloseSteamVR());
+                    DialogView.PrimaryButtonActionPending(false);
+                }
                 else
                     return;
             }

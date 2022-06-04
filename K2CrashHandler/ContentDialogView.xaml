@@ -118,7 +118,9 @@
                         Margin="{StaticResource ContentDialogButton1HostMargin}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        d:Content="OK" >
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Height="33" d:Content="OK" >
 
                         <FlyoutBase.AttachedFlyout>
                             <Flyout x:Name="ConfirmationFlyout" Closing="ConfirmationFlyout_Closing">
@@ -139,8 +141,10 @@
 
                                         <Button FontSize="15" x:Name="ConfirmationFlyoutConfirmActionButton"
                                                     Click="ConfirmationFlyoutConfirmActionButton_Click"
-                                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                    Content="[ NOT SET ]" 
+                                                    FontWeight="SemiBold"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Content="[ NOT SET ]" Height="33"
                                                     Margin="0,10,5,0" CornerRadius="3" Grid.Column="0"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch"
@@ -148,8 +152,10 @@
 
                                         <Button FontSize="15" x:Name="ConfirmationFlyoutCancelActionButton"
                                                     Click="ConfirmationFlyoutCancelActionButton_Click"
-                                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                    Content="[ NOT SET ]"
+                                                    FontWeight="SemiBold"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Content="[ NOT SET ]" Height="33"
                                                     Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch" />
@@ -169,8 +175,10 @@
                     </Button>
 
                     <Button
-                        x:Name="DialogSecondaryButton"
+                        x:Name="DialogSecondaryButton" Height="33"
                         Grid.Column="3" FontWeight="SemiBold"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Margin="{StaticResource ContentDialogButton2HostMargin}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"

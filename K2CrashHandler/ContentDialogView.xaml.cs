@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 
@@ -15,6 +16,9 @@ public sealed partial class ContentDialogView
     private bool confirmationFlyoutResult = false,
         confirmationFlyoutRunning = false;
 
+    private string primaryButtonText = "[NOT SET]";
+    private string secondaryButtonText = "[NOT SET]";
+
     public ContentDialogView()
     {
         InitializeComponent();
@@ -24,8 +28,8 @@ public sealed partial class ContentDialogView
     (
         string title = "[NO TITLE]",
         string content = "[CONTENT NOT SET]",
-        string primaryButtonText = "[NOT SET]",
-        string secondaryButtonText = "[NOT SET]",
+        string _primaryButtonText = "[NOT SET]",
+        string _secondaryButtonText = "[NOT SET]",
         RoutedEventHandler primaryButtonHandler = null,
         RoutedEventHandler secondaryButtonHandler = null,
         bool accentPrimaryButton = true
@@ -36,6 +40,10 @@ public sealed partial class ContentDialogView
         DialogTitle.Content = title;
         DialogContent.Content = content;
 
+        // Back up
+        primaryButtonText = _primaryButtonText;
+        secondaryButtonText = _secondaryButtonText;
+
         DialogPrimaryButton.Content = primaryButtonText;
         DialogSecondaryButton.Content = secondaryButtonText;
 
@@ -43,9 +51,6 @@ public sealed partial class ContentDialogView
         DialogSecondaryButton.Click += secondaryButtonHandler;
 
         if (accentPrimaryButton) DialogPrimaryButton.Style = (Style)Resources["AccentButtonStyle"];
-
-        // Disabled until we can somehow find ame inside registry or just decide to blind shoot with c:/k2ex TODO
-        //if (!accentPrimaryButton) DialogPrimaryButton.IsEnabled = false;
     }
 
     private void LogsHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
@@ -147,5 +152,37 @@ public sealed partial class ContentDialogView
         semaphoreObject.Release();
 
         confirmationFlyoutRunning = false;
+    }
+
+    public void PrimaryButtonActionPending(bool actionPending)
+    {
+        ProgressRing ring = new()
+        {
+            IsActive = true,
+            IsIndeterminate = true
+        };
+        Viewbox viewbox = new()
+        {
+            Child = ring,
+            Height = 20
+        };
+
+        DialogPrimaryButton.Content = actionPending ? viewbox : primaryButtonText;
+    }
+
+    public void SecondaryButtonActionPending(bool actionPending)
+    {
+        ProgressRing ring = new()
+        {
+            IsActive = true,
+            IsIndeterminate = true
+        };
+        Viewbox viewbox = new()
+        {
+            Child = ring,
+            Height = 22
+        };
+
+        DialogSecondaryButton.Content = actionPending ? viewbox : secondaryButtonText;
     }
 }
