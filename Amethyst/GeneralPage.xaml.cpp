@@ -481,6 +481,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
 		L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
 
+	CalibrationPending = false; // We're finished
 	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 }
@@ -714,6 +715,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Manua
 	CalibrationRunningView().IsPaneOpen(false);
 	k2app::interfacing::calibration_confirm = false;
 
+	CalibrationPending = false; // We're finished
 	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 }
