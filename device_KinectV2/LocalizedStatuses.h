@@ -14,6 +14,10 @@ inline std::map<std::wstring, std::wstring> status_ok_map
 	{
 		L"lc-LC",
 		L"Shucshesh!\nS_OK\nEvewytshin's gud!"
+	},
+	{
+		L"fr-FR",
+		L"Succès!\nS_OK\nTout fonctionne!"
 	}
 };
 
@@ -26,6 +30,10 @@ inline std::map<std::wstring, std::wstring> status_unavailable_map
 	{
 		L"lc-LC",
 		L"Shenshor Unvable!\nE_NOTAVAILABLE\nCshecsk if de K'nect's pwuggwed into y'r PC's UShB and powew pwugwsh."
+	},
+	{
+		L"fr-FR",
+		L"Capteur non disponible!\nE_NOTAVAILABLE\nVérifiez que la Kinect est bien connectée via USB et alimentation."
 	}
 };
 
