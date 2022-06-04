@@ -15,6 +15,10 @@ inline std::map<std::wstring, std::wstring> status_ok_map
 	{
 		L"lc-LC",
 		L"Wohoo! (Code 1)\nI_OK\nAll gud!"
+	},
+	{
+		L"fr-FR",
+		L"Succès! (Code 1)\nI_OK\nTout fonctionne!"
 	}
 };
 
@@ -25,8 +29,8 @@ inline std::map<std::wstring, std::wstring> status_wtf_map
 		L"COULD NOT CHECK STATUS (Code -12)\nE_WTF\nSomething's fucked a really big time."
 	},
 	{
-		L"lc-LC",
-		L"WHERE SHTATUS (Code -12)\nE_WTF\nSomethings wucksed big big."
+		L"fr-FR",
+		L"STATUT INACCESSIBLE (Code -12)\nE_WTF\nQuelque chose de grave s'est produit."
 	}
 };
 
@@ -40,6 +44,11 @@ inline std::map<std::wstring, std::wstring> status_exception_map
 		L"lc-LC",
 		L"CULD NO CHECK WUUU (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nChecsk iw Amethysht wishibwe in ShteamVR n wabwwe it if nay."
 	}
+	,
+	{
+		L"fr-FR",
+		L"UNE EXCEPTION EST SURVENUE (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nVérifiez qu'Amethyst est activé dans les extensions (PAS les overlays) de SteamVR."
+	}
 };
 
 inline std::map<std::wstring, std::wstring> status_connection_error_map
@@ -51,6 +60,10 @@ inline std::map<std::wstring, std::wstring> status_connection_error_map
 	{
 		L"lc-LC",
 		L"NO KINNECSHTION (Code -1)\nE_CONNECTION_ERROR\nY'r Amethysht ShteamVR diver jump'd into a fwozen pool, oww."
+	},
+	{
+		L"fr-FR",
+		L"ERREUR DE CONNEXION (Code -1)\nE_CONNECTION_ERROR\nLa version de L'extension SteamVR n'est probablement pas à jour."
 	}
 };
 
@@ -63,6 +76,10 @@ inline std::map<std::wstring, std::wstring> status_server_failure_map
 	{
 		L"lc-LC",
 		L"SOMETHINS KINDA NOT WIGHWT (Code 10)\nE_FATAL_SERVER_FAILURE\nReshtart n den cry, u do nothinnn."
+	},
+	{
+		L"fr-FR",
+		L"ERREUR FATALE (Code 10)\nE_FATAL_SERVER_FAILURE\nRelancez Amethyst. Si le problème persiste contactez-nous sur Discord."
 	}
 };
 
@@ -75,6 +92,10 @@ inline std::map<std::wstring, std::wstring> status_api_failure_map
 	{
 		L"lc-LC",
 		L"WHERE K2API (Code -11)\nE_K2API_FAILURE\nHoww d'd y even caus this ewwow, YUU CHEETAHHH!"
+	},
+	{
+		L"fr-FR",
+		L"CONNEXION A K4API IMPOSSIBLE (Code -11)\nE_K2API_FAILURE\nÇa devrait vraiment pas arriver. En fait, quelque chose est foutu grave."
 	}
 };
 
