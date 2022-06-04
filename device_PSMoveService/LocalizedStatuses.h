@@ -14,6 +14,10 @@ inline std::map<std::wstring, std::wstring> status_ok_map
 	{
 		L"lc-LC",
 		L"Shucshesh!\nS_OK\nEvewytshin's gud!"
+	},
+	{
+		L"fr-FR",
+		L"Succès!\nS_OK\nTout fonctionne!"
 	}
 };
 
@@ -26,6 +30,10 @@ inline std::map<std::wstring, std::wstring> status_not_running_map
 	{
 		L"lc-LC",
 		L"Connecschtion ewow!\nE_PSMS_NOT_RUNNING\nChsechk f PShMoveShervish ish wunniwng, wowkinwg n acshcshesshsshibwe b clientsh."
+	},
+	{
+		L"fr-FR",
+		L"Erreur de connexion!\nE_PSMS_NOT_RUNNING\nVérifiez si PSMoveService est bien lancé, fonctionne et est accessible aux clients."
 	}
 };
 
