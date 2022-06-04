@@ -117,92 +117,126 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Captions.Filters.Explanations.EKF.Text" xml:space="preserve">
-    <value>Highest latency, but very clean results. All jitter is removed,
-fast movement is still responsive because the filter is predictive.</value>
+  <data name="Button.Error.Dismiss.Content" xml:space="preserve">
+    <value>Annuler</value>
   </data>
-  <data name="Captions.Filters.Explanations.LERP.Text" xml:space="preserve">
-    <value>Minimal latency, makes all movement appear to be faster than what the sensor is capable of.
-Jitter is still noticeable.</value>
+  <data name="Buttons.ReManifest.Content" xml:space="preserve">
+    <value>Réinstaller les manifests pour SteamVR</value>
   </data>
-  <data name="Captions.Filters.Explanations.LowPass.Text" xml:space="preserve">
-    <value>Latency is slightly noticeable, but it removes jitter and looks overall smoother than no filter.</value>
+  <data name="Buttons.ReRegister.Content" xml:space="preserve">
+    <value>Ré-inscrire l'extension pour SteamVR</value>
   </data>
-  <data name="Captions.Filters.Explanations.None.Text" xml:space="preserve">
-    <value>Raw 30hz output from the sensor.</value>
+  <data name="Buttons.Reset.Content" xml:space="preserve">
+    <value>Supprimer la configuration et relancer</value>
   </data>
-  <data name="Captions.Filters.Names.EKF.Text" xml:space="preserve">
-    <value>- Extended Kalman Filter</value>
+  <data name="Buttons.RestartSteamVR.Content" xml:space="preserve">
+    <value>Relancer SteamVR</value>
   </data>
-  <data name="Captions.Filters.Names.LERP.Text" xml:space="preserve">
-    <value>- Linear Interpolation (default)</value>
+  <data name="Captions.AutoStart.Text" xml:space="preserve">
+    <value>Lancer automatiquement avec SteamVR</value>
   </data>
-  <data name="Captions.Filters.Names.LowPass.Text" xml:space="preserve">
-    <value>- Low Pass Filter</value>
+  <data name="Captions.CalibrateExtFlip.Text" xml:space="preserve">
+    <value>Cliquez pour calibrer</value>
   </data>
-  <data name="Captions.Filters.Names.None.Text" xml:space="preserve">
-    <value>- Disable Filter</value>
+  <data name="Captions.ExtFlip.Text" xml:space="preserve">
+    <value>Lorsqu'actif: Amethyst décidera si vous êtes retourné
+en se basant sur le tracker actif dans SteamVR avec le rôle de taille.</value>
   </data>
-  <data name="Captions.ManageTrackers.Text" xml:space="preserve">
-    <value>When you enable or disable a set of trackers they will be spawned or despawned right away,
-but will still exist in the list of devices in SteamVR. 
-Trackers you've just disabled will appear turned off until SteamVR is restarted.
-If you run into issues with tracker detection in apps, please restart SteamVR first.</value>
+  <data name="Captions.FaceTheKinect.Text" xml:space="preserve">
+    <value>Faites face à la Kinect!</value>
   </data>
-  <data name="Captions.Orientation.Explanations.Default.Text" xml:space="preserve">
-    <value>This setting can be unstable for some users on Xbox One Kinect, try Software-Calculated Rotation
-if that's the case. This is the joint orientation guessed by the Kinect SDK based on the position
-of each joint in the chain. Imagine if you were to stick arrows on every limb of your body pointing
-towards your extremities. For foot trackers, behavior differs between Kinect models.
-On Xbox One, the rotation is based on the tip of the foot, which means that your feet can turn.
-On Xbox 360, the rotation is based on the ankle alone, meaning there is no foot rotation.</value>
+  <data name="Captions.Filters.Orientation" xml:space="preserve">
+    <value>Options de rotation:</value>
   </data>
-  <data name="Captions.Orientation.Explanations.HMD.Text" xml:space="preserve">
-    <value>Trackers will follow the direction the headset is facing in the Y axis (turning around)
-but won't rotate on the other two axes.</value>
+  <data name="Captions.Filters.Position" xml:space="preserve">
+    <value>Filtres de position:</value>
   </data>
-  <data name="Captions.Orientation.Explanations.MathBased.Text" xml:space="preserve">
-    <value>This option is only available for feet trackers.
-The direction of your feet is calculated from the angle between the ankle and the tip of the foot.
-And the range is reduced to 50% to avoid jitter. This allows for foot rotation on Xbox 360 Kinect.</value>
+  <data name="Captions.SkeletonFlip.Text" xml:space="preserve">
+    <value>Retourner les trackers quand vous êtes dos à la Kinect.</value>
   </data>
-  <data name="Captions.Orientation.Explanations.None.Text" xml:space="preserve">
-    <value>Trackers don't rotate at all, except for when tracker mirroring (flip) is engaged by facing away.</value>
+  <data name="Captions.Sounds.Text" xml:space="preserve">
+    <value>Activer les sons de l'app</value>
   </data>
-  <data name="Captions.Orientation.Introduction.Text" xml:space="preserve">
-    <value>All rotation settings are still affected by tracker mirroring (skeleton flip) when it is enabled.</value>
+  <data name="Captions.SoundsWhen.Line1.Text" xml:space="preserve">
+    <value>Les sons se produisent durant la calibration, et dans certains événements comme lorsque vous mettez le tracking en pause</value>
   </data>
-  <data name="Captions.Orientation.Names.Default.Text" xml:space="preserve">
-    <value>- Device-inferred Rotation</value>
+  <data name="Captions.SoundsWhen.Line2.Text" xml:space="preserve">
+    <value>ou des erreurs arrivent.</value>
   </data>
-  <data name="Captions.Orientation.Names.HMD.Text" xml:space="preserve">
-    <value>- Follow Headset</value>
+  <data name="Captions.TrackerPairs" xml:space="preserve">
+    <value>Combiner les trackers en paires</value>
   </data>
-  <data name="Captions.Orientation.Names.MathBased.Text" xml:space="preserve">
-    <value>- Software-Calculated Rotation</value>
+  <data name="Captions.TrackersAutoCheck.Text" xml:space="preserve">
+    <value>Désactiver les trackers qui existent déjà</value>
   </data>
-  <data name="Captions.Orientation.Names.None.Text" xml:space="preserve">
-    <value>- Disable Rotation</value>
+  <data name="Captions.TrackersAutoSpawn.Text" xml:space="preserve">
+    <value>Connecter les trackers automatiquement quand l'app est lancée</value>
   </data>
-  <data name="Captions.TrackerConfig.Text" xml:space="preserve">
-    <value>Amethyst supports up to 7 base trackers. Additional ones can be enabled or disabled from the gear icon.
-Each tracker or set of trackers contains settings to adjust how rotation and filtering is handled for particular trackers.
-This allows you to for example set a strong filter on your feet and waist if you intend on sitting 
-down a lot, while also using a faster setting for elbows so they follow your hands more closely.</value>
+  <data name="Captions.TrackersRestart.Line1.Text" xml:space="preserve">
+    <value>Activer ou désactiver un tracker nécessaite de relancer SteamVR</value>
   </data>
-  <data name="Captions.TrackerConfigNote.Text" xml:space="preserve">
-    <value>Note: Some of these settings are only relevant when using Kinect.</value>
+  <data name="Captions.TrackersRestart.Line2.Text" xml:space="preserve">
+    <value>et Amethyst pour que les changements prennent effet.</value>
   </data>
-  <data name="Titles.FilterSettings.Text" xml:space="preserve">
-    <value>Filter settings:</value>
+  <data name="Elements.ExtFlipCalibration.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Calibration</value>
   </data>
-  <data name="Titles.ManageTrackers.Text" xml:space="preserve">
-    <value>Enabling and disabling trackers:</value>
+  <data name="Elements.FlipToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Désactiver pour empêcher les trackers de
+vous suivre en tournant.</value>
   </data>
-  <data name="Titles.RotationSettings.Text" xml:space="preserve">
-    <value>Rotation settings:</value>
+  <data name="Filters.Orientation.Device" xml:space="preserve">
+    <value>Rotation inférée par l'appareil</value>
   </data>
-  <data name="Titles.TrackerConfig.Text" xml:space="preserve">
-    <value>About tracker configuration</value>
+  <data name="Filters.Orientation.HMD" xml:space="preserve">
+    <value>Suivre le casque</value>
+  </data>
+  <data name="Filters.Orientation.MathBased" xml:space="preserve">
+    <value>Rotation calculée logiciel</value>
+  </data>
+  <data name="Filters.Orientation.Off" xml:space="preserve">
+    <value>Désactiver la rotation</value>
+  </data>
+  <data name="Filters.Position.Kalman" xml:space="preserve">
+    <value>Filtre Kalman Étendu</value>
+  </data>
+  <data name="Filters.Position.LERP" xml:space="preserve">
+    <value>Interpolation Linéaire</value>
+  </data>
+  <data name="Filters.Position.LowPass" xml:space="preserve">
+    <value>Filtre passe-bas</value>
+  </data>
+  <data name="Filters.Position.Off" xml:space="preserve">
+    <value>Désactiver le filtre</value>
+  </data>
+  <data name="ReManifest.Error.NotFound" xml:space="preserve">
+    <value>Le manifest n'a pu être installé.
+Assurez-vous qu'il existe dans le dossier où se trouve Amethyst.exe</value>
+  </data>
+  <data name="ReManifest.Error.Other" xml:space="preserve">
+    <value>Le manifest n'a pu être installé.
+Vérifiez les logs de SteamVR et considérez rapporter le bug.</value>
+  </data>
+  <data name="ReRegister.Error.NotFound" xml:space="preserve">
+    <value>L'éxécutable du Crash Handler pour Amethyst n'a pas été
+trouvé. Il est nécessaire pour ré-inscrire l'extension. Vérifiez qu'il est présent.</value>
+  </data>
+  <data name="Titles.ExtFlip.Text" xml:space="preserve">
+    <value>Utiliser le tracking externe au lieu de l'orientation du casque</value>
+  </data>
+  <data name="Titles.SkeletonFlip.Text" xml:space="preserve">
+    <value>Retournement</value>
+  </data>
+  <data name="Titles.Sounds.Text" xml:space="preserve">
+    <value>Sons</value>
+  </data>
+  <data name="Titles.TrackerConfig.Header.Text" xml:space="preserve">
+    <value>Configuration des trackers</value>
+  </data>
+  <data name="Titles.TrackerConfig.Learn.Content" xml:space="preserve">
+    <value>À propos de ces paramêtres</value>
+  </data>
+  <data name="Titles.Troubleshooting.Text" xml:space="preserve">
+    <value>Dépannage</value>
   </data>
 </root>

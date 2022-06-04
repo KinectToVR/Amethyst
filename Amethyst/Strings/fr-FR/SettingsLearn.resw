@@ -118,91 +118,92 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Captions.Filters.Explanations.EKF.Text" xml:space="preserve">
-    <value>Highest latency, but very clean results. All jitter is removed,
-fast movement is still responsive because the filter is predictive.</value>
+    <value>Plus grande latence de tous le filtres, mais d'excellents résultats fluides.
+Les mouvements rapides restent sensibles vu que le filtre est prédictif.</value>
   </data>
   <data name="Captions.Filters.Explanations.LERP.Text" xml:space="preserve">
-    <value>Minimal latency, makes all movement appear to be faster than what the sensor is capable of.
-Jitter is still noticeable.</value>
+    <value>Latence minimale, donne l'impression que le tracking est plus rapide qu'il l'est vraiment.
+Les instabilités sont encore visibles.</value>
   </data>
   <data name="Captions.Filters.Explanations.LowPass.Text" xml:space="preserve">
-    <value>Latency is slightly noticeable, but it removes jitter and looks overall smoother than no filter.</value>
+    <value>La latence est un peu visible, mais c'est plus fluide que sans filtre et les instabilités sont cachées.</value>
   </data>
   <data name="Captions.Filters.Explanations.None.Text" xml:space="preserve">
-    <value>Raw 30hz output from the sensor.</value>
+    <value>Le squelette a 30hz directement du capteur.</value>
   </data>
   <data name="Captions.Filters.Names.EKF.Text" xml:space="preserve">
-    <value>- Extended Kalman Filter</value>
+    <value>- Filtre Kalman Étendu</value>
   </data>
   <data name="Captions.Filters.Names.LERP.Text" xml:space="preserve">
-    <value>- Linear Interpolation (default)</value>
+    <value>- Interpolation Linéaire (Défaut)</value>
   </data>
   <data name="Captions.Filters.Names.LowPass.Text" xml:space="preserve">
-    <value>- Low Pass Filter</value>
+    <value>- Filtre pass-bas</value>
   </data>
   <data name="Captions.Filters.Names.None.Text" xml:space="preserve">
-    <value>- Disable Filter</value>
+    <value>- Déasctier le filtre</value>
   </data>
   <data name="Captions.ManageTrackers.Text" xml:space="preserve">
-    <value>When you enable or disable a set of trackers they will be spawned or despawned right away,
-but will still exist in the list of devices in SteamVR. 
-Trackers you've just disabled will appear turned off until SteamVR is restarted.
-If you run into issues with tracker detection in apps, please restart SteamVR first.</value>
+    <value>Lorsqu'un tracker est activé ou désactivé, il apparait immédiatement
+dans SteamVR. Sauf que lorsque vous désactivez un tracker qui était présent. Il existe encore dans la liste, juste éteint.
+Et restera dans cet état jusqu'a ce que vous relanciez SteamVR.</value>
   </data>
   <data name="Captions.Orientation.Explanations.Default.Text" xml:space="preserve">
-    <value>This setting can be unstable for some users on Xbox One Kinect, try Software-Calculated Rotation
-if that's the case. This is the joint orientation guessed by the Kinect SDK based on the position
-of each joint in the chain. Imagine if you were to stick arrows on every limb of your body pointing
-towards your extremities. For foot trackers, behavior differs between Kinect models.
-On Xbox One, the rotation is based on the tip of the foot, which means that your feet can turn.
-On Xbox 360, the rotation is based on the ankle alone, meaning there is no foot rotation.</value>
+    <value>Cette option peut être instable pour certains utilisateurs sur la Kinect One. Si c'est le cas, 
+essayez avec la rotation calculée logiciel. L'orientation de chaque articulation est inférée par le SDK
+de la Kinect basée sur la position de chaque partie du corps. Imaginez qu'une flèche est attachée au bout
+de chaque articulation, et que le tracker pointe dans cette direction. Cette option fonctionne différemment
+sur Kinect 360 et Kinect One.
+Sur la Kinect Xbox One, la rotation est basée sur le bout du pied, donc vous pouvez tourner vos pieds.
+Sur la Kinect Xbox 360, elle est basée sur le talon, donc le tracker suit seulement la jambe.</value>
   </data>
   <data name="Captions.Orientation.Explanations.HMD.Text" xml:space="preserve">
-    <value>Trackers will follow the direction the headset is facing in the Y axis (turning around)
-but won't rotate on the other two axes.</value>
+    <value>Les trackers suivent l'orientation du casque de VR sur l'axe Y
+mais perdent toute rotation dans les deux autres.</value>
   </data>
   <data name="Captions.Orientation.Explanations.MathBased.Text" xml:space="preserve">
-    <value>This option is only available for feet trackers.
-The direction of your feet is calculated from the angle between the ankle and the tip of the foot.
-And the range is reduced to 50% to avoid jitter. This allows for foot rotation on Xbox 360 Kinect.</value>
+    <value>Cette option est disponible seulement pour les pieds.
+La direction des pieds est calculée en se basant sur l'orientation du bout des pieds jusqu'au talon.
+Le mouvement est limité à 50% pour éviter les glitch. Cette option permet de tourner les pieds sur la Kinect 360.</value>
   </data>
   <data name="Captions.Orientation.Explanations.None.Text" xml:space="preserve">
-    <value>Trackers don't rotate at all, except for when tracker mirroring (flip) is engaged by facing away.</value>
+    <value>Les trackers ne tournent pas. Sauf quand le retournement est actif en étant dos à la Kinect.</value>
   </data>
   <data name="Captions.Orientation.Introduction.Text" xml:space="preserve">
-    <value>All rotation settings are still affected by tracker mirroring (skeleton flip) when it is enabled.</value>
+    <value>Toutes les options de rotation sont affectées par le retournement des trackers.</value>
   </data>
   <data name="Captions.Orientation.Names.Default.Text" xml:space="preserve">
-    <value>- Device-inferred Rotation</value>
+    <value>- Rotation inférée par l'appareil</value>
   </data>
   <data name="Captions.Orientation.Names.HMD.Text" xml:space="preserve">
-    <value>- Follow Headset</value>
+    <value>- Suivre le casque</value>
   </data>
   <data name="Captions.Orientation.Names.MathBased.Text" xml:space="preserve">
-    <value>- Software-Calculated Rotation</value>
+    <value>- Rotation calculée logiciel</value>
   </data>
   <data name="Captions.Orientation.Names.None.Text" xml:space="preserve">
-    <value>- Disable Rotation</value>
+    <value>- Désactiver la rotation</value>
   </data>
   <data name="Captions.TrackerConfig.Text" xml:space="preserve">
-    <value>Amethyst supports up to 7 base trackers. Additional ones can be enabled or disabled from the gear icon.
-Each tracker or set of trackers contains settings to adjust how rotation and filtering is handled for particular trackers.
-This allows you to for example set a strong filter on your feet and waist if you intend on sitting 
-down a lot, while also using a faster setting for elbows so they follow your hands more closely.</value>
+    <value>Amethyst supporte jusqu'à 7 trackers de base, et des trackers additionels peuvent être
+activés ou désactivés en cliquant sur l'icône d'engrenage. Chaque tracker ou ensemble de trackers
+a ses propres paramêtres pour configurer comment leur rotation fonctionne et quel filtre est utilisé
+pour les mouvements. Ceci vous permet par exemple d'appliquer un filtre plus rapide aux coudes et
+un filtre plus prononcé sur les pieds si vous comptez vous asseoir souvent.</value>
   </data>
   <data name="Captions.TrackerConfigNote.Text" xml:space="preserve">
-    <value>Note: Some of these settings are only relevant when using Kinect.</value>
+    <value>Note: Certeines de ces options fonctionnent seulement avec Kinect.</value>
   </data>
   <data name="Titles.FilterSettings.Text" xml:space="preserve">
-    <value>Filter settings:</value>
+    <value>Paramêtres de filtre:</value>
   </data>
   <data name="Titles.ManageTrackers.Text" xml:space="preserve">
-    <value>Enabling and disabling trackers:</value>
+    <value>Activer/désactiver les trackers:</value>
   </data>
   <data name="Titles.RotationSettings.Text" xml:space="preserve">
-    <value>Rotation settings:</value>
+    <value>Paramêtres de rotation:</value>
   </data>
   <data name="Titles.TrackerConfig.Text" xml:space="preserve">
-    <value>About tracker configuration</value>
+    <value>À propos de la configuration des trackers</value>
   </data>
 </root>
