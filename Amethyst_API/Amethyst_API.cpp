@@ -19,39 +19,42 @@ void replace_all(std::string& str, const std::string& from, const std::string& t
 namespace ktvr
 {
 	int init_k2api(
-		const std::string& k2_to_pipe,
-		const std::string& k2_from_pipe,
-		const std::string& k2_to_sem,
-		const std::string& k2_from_sem,
-		const std::string& k2_start_sem) noexcept
+		const std::wstring& k2_to_pipe,
+		const std::wstring& k2_from_pipe,
+		const std::wstring& k2_to_sem,
+		const std::wstring& k2_from_sem,
+		const std::wstring& k2_start_sem) noexcept
 	{
 		try
 		{
-			// Copy pipe addresses
+			// Copy pipe & semaphore addresses
 			k2api_to_pipe_address = k2_to_pipe;
 			k2api_from_pipe_address = k2_from_pipe;
+			k2api_to_semaphore_address = k2_to_sem;
+			k2api_from_semaphore_address = k2_from_sem;
+			k2api_start_semaphore_address = k2_start_sem;
 
 			// Open existing *to* semaphore
-			k2api_to_Semaphore = OpenSemaphoreA(
+			k2api_to_semaphore = OpenSemaphoreW(
 				SYNCHRONIZE | SEMAPHORE_MODIFY_STATE,
 				FALSE,
 				k2_to_sem.c_str()); //Semaphore Name
 
 			// Open existing *from* semaphore
-			k2api_from_Semaphore = OpenSemaphoreA(
+			k2api_from_semaphore = OpenSemaphoreW(
 				SYNCHRONIZE | SEMAPHORE_MODIFY_STATE,
 				FALSE,
 				k2_from_sem.c_str()); //Semaphore Name
 
 			// Open existing *start* semaphore
-			k2api_start_Semaphore = OpenSemaphoreA(
+			k2api_start_semaphore = OpenSemaphoreW(
 				SYNCHRONIZE | SEMAPHORE_MODIFY_STATE,
 				FALSE,
 				k2_start_sem.c_str()); //Semaphore Name
 
-			if (k2api_to_Semaphore == nullptr ||
-				k2api_from_Semaphore == nullptr ||
-				k2api_start_Semaphore == nullptr)
+			if (k2api_to_semaphore == nullptr ||
+				k2api_from_semaphore == nullptr ||
+				k2api_start_semaphore == nullptr)
 				return -1;
 		}
 		catch (const std::exception& e)
@@ -66,9 +69,9 @@ namespace ktvr
 	{
 		try
 		{
-			CloseHandle(k2api_to_Semaphore);
-			CloseHandle(k2api_from_Semaphore);
-			CloseHandle(k2api_start_Semaphore);
+			CloseHandle(k2api_to_semaphore);
+			CloseHandle(k2api_from_semaphore);
+			CloseHandle(k2api_start_semaphore);
 		}
 		catch (const std::exception& e)
 		{
@@ -85,10 +88,10 @@ namespace ktvr
 		///// Send the message via named pipe /////
 
 		// Wait for the semaphore if it's locked
-		WaitForSingleObject(k2api_to_Semaphore, INFINITE);
+		WaitForSingleObject(k2api_to_semaphore, INFINITE);
 
 		// Here, write to the *to* pipe
-		HANDLE API_WriterPipe = CreateNamedPipeA(
+		HANDLE API_WriterPipe = CreateNamedPipeW(
 			k2api_to_pipe_address.c_str(),
 			PIPE_ACCESS_INBOUND | PIPE_ACCESS_OUTBOUND,
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
@@ -96,7 +99,7 @@ namespace ktvr
 		DWORD Written;
 
 		// Let the server know we'll be writing soon
-		ReleaseSemaphore(k2api_start_Semaphore, 1, nullptr);
+		ReleaseSemaphore(k2api_start_semaphore, 1, nullptr);
 
 		// Read from the pipe
 		ConnectNamedPipe(API_WriterPipe, nullptr);
@@ -117,17 +120,17 @@ namespace ktvr
 		if (want_reply)
 		{
 			// Wait for the server to request a response, max 1s
-			if (WaitForSingleObject(k2api_from_Semaphore, 1000L) != WAIT_OBJECT_0)
+			if (WaitForSingleObject(k2api_from_semaphore, 1000L) != WAIT_OBJECT_0)
 			{
-				k2api_last_error = "Server didn't respond after 1 second.\n";
+				k2api_last_error = "Server didn't respond by the max timeout / 1 second.\n";
 				return "";
 				//LOG(ERROR) << "Server didn't respond after 1 second.\n";
 			}
 
 			// Here, read from the *from* pipe
 			// Create the pipe file
-			std::optional<HANDLE> API_ReaderPipe = CreateFile(
-				TEXT("\\\\.\\pipe\\k2api_amethyst_from_pipe"),
+			std::optional<HANDLE> API_ReaderPipe = CreateFileW(
+				k2api_from_pipe_address.c_str(),
 				GENERIC_READ | GENERIC_WRITE,
 				0, nullptr, OPEN_EXISTING, 0, nullptr);
 
@@ -153,7 +156,7 @@ namespace ktvr
 			CloseHandle(API_ReaderPipe.value());
 
 			// Unlock the semaphore after job done
-			ReleaseSemaphore(k2api_to_Semaphore, 1, nullptr);
+			ReleaseSemaphore(k2api_to_semaphore, 1, nullptr);
 
 			///// Receive the response via named pipe /////
 
@@ -166,7 +169,7 @@ namespace ktvr
 			return asciiString(_s); // Return only the reply
 		}
 		// Unlock the semaphore after job done
-		ReleaseSemaphore(k2api_to_Semaphore, 1, nullptr);
+		ReleaseSemaphore(k2api_to_semaphore, 1, nullptr);
 		return ""; // No reply
 	}
 

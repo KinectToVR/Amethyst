@@ -54,17 +54,6 @@ namespace boost::serialization
 	}
 }
 
-/*
- * Default IPC defines are:
- *
- * \\\\.\\pipe\\k2api_amethyst_to_pipe
- * \\\\.\\pipe\\k2api_amethyst_from_pipe
- *
- * Global\\k2api_amethyst_to_semaphore
- * Global\\k2api_amethyst_from_semaphore
- * Global\\k2api_amethyst_start_semaphore
- */
-
 #define K2API_GET_TIMESTAMP_NOW \
 	std::chrono::time_point_cast<std::chrono::microseconds>	\
 	(std::chrono::system_clock::now()).time_since_epoch().count()
@@ -77,7 +66,7 @@ namespace boost::serialization
 
 namespace ktvr
 {
-	// Interace Version
+	// Interface Version
 	static const char* IK2API_Version = "IK2API_Version_009";
 
 	// OpenVR Tracker types
@@ -521,9 +510,9 @@ namespace ktvr
 	/// <summary>
 	/// K2API Semaphore handles for WINAPI calls
 	/// </summary>
-	inline HANDLE k2api_to_Semaphore,
-	              k2api_from_Semaphore,
-	              k2api_start_Semaphore;
+	inline HANDLE k2api_to_semaphore,
+	              k2api_from_semaphore,
+	              k2api_start_semaphore;
 
 	/// <summary>
 	/// K2API's last error string, check for empty
@@ -538,20 +527,23 @@ namespace ktvr
 	/// <summary>
 	/// K2API Pipe handle addresses for WINAPI calls
 	/// </summary>
-	inline std::string
-		k2api_to_pipe_address,
-		k2api_from_pipe_address;
+	inline std::wstring
+		k2api_to_pipe_address = L"\\\\.\\pipe\\k2api_amethyst_to_pipe" + StringToWString(IK2API_Version),
+		k2api_from_pipe_address = L"\\\\.\\pipe\\k2api_amethyst_from_pipe" + StringToWString(IK2API_Version),
+		k2api_to_semaphore_address = L"Global\\k2api_amethyst_to_semaphore" + StringToWString(IK2API_Version),
+		k2api_from_semaphore_address = L"Global\\k2api_amethyst_from_semaphore" + StringToWString(IK2API_Version),
+		k2api_start_semaphore_address = L"Global\\k2api_amethyst_start_semaphore" + StringToWString(IK2API_Version);
 
 	/**
 	 * \brief Connects socket object to selected port, K2 uses 7135
 	 * \return Returns 0 for success and -1 for failure
 	 */
 	KTVR_API int init_k2api(
-		const std::string& k2_to_pipe = "\\\\.\\pipe\\k2api_amethyst_to_pipe",
-		const std::string& k2_from_pipe = "\\\\.\\pipe\\k2api_amethyst_from_pipe",
-		const std::string& k2_to_sem = "Global\\k2api_amethyst_to_semaphore",
-		const std::string& k2_from_sem = "Global\\k2api_amethyst_from_semaphore",
-		const std::string& k2_start_sem = "Global\\k2api_amethyst_start_semaphore") noexcept;
+		const std::wstring& k2_to_pipe = k2api_to_pipe_address,
+		const std::wstring& k2_from_pipe = k2api_from_pipe_address,
+		const std::wstring& k2_to_sem = k2api_to_semaphore_address,
+		const std::wstring& k2_from_sem = k2api_from_semaphore_address,
+		const std::wstring& k2_start_sem = k2api_start_semaphore_address) noexcept;
 
 	/**
 	 * \brief Disconnects socket object from port

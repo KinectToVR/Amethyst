@@ -6,11 +6,11 @@
 #include <boost/serialization/string.hpp>
 
 int K2ServerDriver::init_ServerDriver(
-	const std::string& k2_to_pipe,
-	const std::string& k2_from_pipe,
-	const std::string& k2_to_sem,
-	const std::string& k2_from_sem,
-	const std::string& k2_start_sem)
+	const std::wstring& k2_to_pipe,
+	const std::wstring& k2_from_pipe,
+	const std::wstring& k2_to_sem,
+	const std::wstring& k2_from_sem,
+	const std::wstring& k2_start_sem)
 {
 	using namespace std::chrono_literals;
 	_isActive = true;
@@ -19,7 +19,7 @@ int K2ServerDriver::init_ServerDriver(
 	try
 	{
 		// Create the *to* semaphore
-		k2api_to_Semaphore = CreateSemaphoreA(
+		k2api_to_Semaphore = CreateSemaphoreW(
 			nullptr, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
@@ -37,7 +37,7 @@ int K2ServerDriver::init_ServerDriver(
 		ReleaseSemaphore(k2api_to_Semaphore, 1, nullptr);
 
 		// Create the *from* semaphore
-		k2api_from_Semaphore = CreateSemaphoreA(
+		k2api_from_Semaphore = CreateSemaphoreW(
 			nullptr, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
@@ -52,7 +52,7 @@ int K2ServerDriver::init_ServerDriver(
 		LOG(INFO) << "*FROM* Semaphore Creation Success\n";
 
 		// Create the *start* semaphore
-		k2api_start_Semaphore = CreateSemaphoreA(
+		k2api_start_Semaphore = CreateSemaphoreW(
 			nullptr, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
@@ -91,7 +91,7 @@ int K2ServerDriver::init_ServerDriver(
 	for (auto& _tracker : trackerVector)
 		LOG(INFO) << "Registered a tracker: " << _tracker.get_serial();
 
-	std::thread([&](const std::string _k2_to_pipe)
+	std::thread([&, k2_to_pipe]
 	{
 		LOG(INFO) << "Server thread started";
 
@@ -122,8 +122,8 @@ int K2ServerDriver::init_ServerDriver(
 
 						// Here, read from the *TO* pipe
 						// Create the pipe file
-						std::optional<HANDLE> ReaderPipe = CreateFileA(
-							_k2_to_pipe.c_str(),
+						std::optional<HANDLE> ReaderPipe = CreateFileW(
+							k2_to_pipe.c_str(),
 							GENERIC_READ | GENERIC_WRITE,
 							0, nullptr, OPEN_EXISTING, 0, nullptr);
 
@@ -200,7 +200,7 @@ int K2ServerDriver::init_ServerDriver(
 				}
 			}
 		}
-	}, k2_to_pipe).detach();
+	}).detach();
 
 	// if everything went ok, return 0
 	return 0;
@@ -414,8 +414,8 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 	if (message.want_reply)
 	{
 		// Here, write to the *from* pipe
-		HANDLE WriterPipe = CreateNamedPipe(
-			TEXT("\\\\.\\pipe\\k2api_amethyst_from_pipe"),
+		HANDLE WriterPipe = CreateNamedPipeW(
+			ktvr::k2api_from_pipe_address.c_str(),
 			PIPE_ACCESS_INBOUND | PIPE_ACCESS_OUTBOUND,
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
 			1, 4096, 4096, 1000L, nullptr);

@@ -29,7 +29,7 @@ inline std::string WStringToString(const std::wstring& s)
 
 namespace ktvr
 {
-	// Interace Version
+	// Interface Version
 	static const char* IK2API_Devices_Version = "IK2API_Version_009";
 
 	// Return messaging types

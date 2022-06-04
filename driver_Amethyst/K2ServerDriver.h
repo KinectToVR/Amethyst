@@ -23,11 +23,11 @@ public:
 	       k2api_start_Semaphore;
 
 	[[nodiscard]] int init_ServerDriver(
-		const std::string& k2_to_pipe = "\\\\.\\pipe\\k2api_amethyst_to_pipe",
-		const std::string& k2_from_pipe = "\\\\.\\pipe\\k2api_amethyst_from_pipe",
-		const std::string& k2_to_sem = "Global\\k2api_amethyst_to_semaphore",
-		const std::string& k2_from_sem = "Global\\k2api_amethyst_from_semaphore",
-		const std::string& k2_start_sem = "Global\\k2api_amethyst_start_semaphore");
+		const std::wstring& k2_to_pipe = ktvr::k2api_to_pipe_address,
+		const std::wstring& k2_from_pipe = ktvr::k2api_from_pipe_address,
+		const std::wstring& k2_to_sem = ktvr::k2api_to_semaphore_address,
+		const std::wstring& k2_from_sem = ktvr::k2api_from_semaphore_address,
+		const std::wstring& k2_start_sem = ktvr::k2api_start_semaphore_address);
 	void setActive(bool m_isActive) { _isActive = m_isActive; }
 
 	// Value should not be discarded, it'd be useless
