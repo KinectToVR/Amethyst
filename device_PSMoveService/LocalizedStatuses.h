@@ -18,6 +18,10 @@ inline std::map<std::wstring, std::wstring> status_ok_map
 	{
 		L"fr-FR",
 		L"Succès!\nS_OK\nTout fonctionne!"
+	},
+	{
+		L"ru-RU",
+		L"Успешно!\nS_OK\nВсе работает!"
 	}
 };
 
@@ -34,6 +38,10 @@ inline std::map<std::wstring, std::wstring> status_not_running_map
 	{
 		L"fr-FR",
 		L"Erreur de connexion!\nE_PSMS_NOT_RUNNING\nVérifiez si PSMoveService est bien lancé, fonctionne et est accessible aux clients."
+	},
+	{
+		L"ru-RU",
+		L"Ошибка подключения!\nE_PSMS_NOT_RUNNING\nУбедитесь, что PSMoveService запущен и доступен для подключения клиентами."
 	}
 };
 

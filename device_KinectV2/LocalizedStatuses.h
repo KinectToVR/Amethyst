@@ -18,6 +18,10 @@ inline std::map<std::wstring, std::wstring> status_ok_map
 	{
 		L"fr-FR",
 		L"Succès!\nS_OK\nTout fonctionne!"
+	},
+	{
+		L"ru-RU",
+		L"Успешно!\nS_OK\nВсе работает!"
 	}
 };
 
@@ -34,6 +38,10 @@ inline std::map<std::wstring, std::wstring> status_unavailable_map
 	{
 		L"fr-FR",
 		L"Capteur non disponible!\nE_NOTAVAILABLE\nVérifiez que la Kinect est bien connectée via USB et alimentation."
+	},
+	{
+		L"ru-RU",
+		L"Сенсор недоступен!\nE_NOTAVAILABLE\nУбедитесь, что Kinect подключен к блоку питания и USB-порту компьютера."
 	}
 };
 

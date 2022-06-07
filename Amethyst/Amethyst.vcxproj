@@ -361,6 +361,12 @@ xcopy /y /d /s /i "$(SolutionDir)external\app_resources\*" "$(OutDir)"</Command>
     <PRIResource Include="Strings\fr-FR\SettingsLearn.resw" />
     <PRIResource Include="Strings\fr-FR\SettingsPage.resw" />
     <PRIResource Include="Strings\fr-FR\SharedStrings.resw" />
+    <PRIResource Include="Strings\ru-RU\DevicesPage.resw" />
+    <PRIResource Include="Strings\ru-RU\GeneralPage.resw" />
+    <PRIResource Include="Strings\ru-RU\InfoPage.resw" />
+    <PRIResource Include="Strings\ru-RU\SettingsLearn.resw" />
+    <PRIResource Include="Strings\ru-RU\SettingsPage.resw" />
+    <PRIResource Include="Strings\ru-RU\SharedStrings.resw" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

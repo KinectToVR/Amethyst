@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Button.Error.Dismiss.Content" xml:space="preserve">
+    <value>Отклонить</value>
+  </data>
+  <data name="Buttons.ReManifest.Content" xml:space="preserve">
+    <value>Переустановить манифесты SteamVR</value>
+  </data>
+  <data name="Buttons.ReRegister.Content" xml:space="preserve">
+    <value>Перерегистрировать драйвер SteamVR</value>
+  </data>
+  <data name="Buttons.Reset.Content" xml:space="preserve">
+    <value>Удалить конфигурацию и перезапустить</value>
+  </data>
+  <data name="Buttons.RestartSteamVR.Content" xml:space="preserve">
+    <value>Перезапустить SteamVR</value>
+  </data>
+  <data name="Captions.AutoStart.Text" xml:space="preserve">
+    <value>Автоматически запускать при открытии SteamVR</value>
+  </data>
+  <data name="Captions.CalibrateExtFlip.Text" xml:space="preserve">
+    <value>Нажмите для калибровки</value>
+  </data>
+  <data name="Captions.ExtFlip.Text" xml:space="preserve">
+    <value>Когда включено: Amethyst будет решать, если вы повернуты назад,
+проверяя текущий активный трекер пояса в SteamVR</value>
+  </data>
+  <data name="Captions.FaceTheKinect.Text" xml:space="preserve">
+    <value>Повернитесь лицом к Kinect!</value>
+  </data>
+  <data name="Captions.Filters.Orientation" xml:space="preserve">
+    <value>Трекинг вращения:</value>
+  </data>
+  <data name="Captions.Filters.Position" xml:space="preserve">
+    <value>Фильтрация трекинга положения:</value>
+  </data>
+  <data name="Captions.SkeletonFlip.Text" xml:space="preserve">
+    <value>Отражение трекеров, если отвернуться от Kinect</value>
+  </data>
+  <data name="Captions.Sounds.Text" xml:space="preserve">
+    <value>Включить звуки приложения</value>
+  </data>
+  <data name="Captions.SoundsWhen.Line1.Text" xml:space="preserve">
+    <value>Звуковой сигнал происходит при запуске, калибровке, ошибках, заморозке трекеров</value>
+  </data>
+  <data name="Captions.SoundsWhen.Line2.Text" xml:space="preserve">
+    <value>или отражении скелета.</value>
+  </data>
+  <data name="Captions.TrackerPairs" xml:space="preserve">
+    <value>Использовать трекеры</value>
+  </data>
+  <data name="Captions.TrackersAutoCheck.Text" xml:space="preserve">
+    <value>Проверьте трекеры и отключите уже существующие.</value>
+  </data>
+  <data name="Captions.TrackersAutoSpawn.Text" xml:space="preserve">
+    <value>Автоматически подключать доступные трекеры при запуске</value>
+  </data>
+  <data name="Captions.TrackersRestart.Line1.Text" xml:space="preserve">
+    <value>При переключении трекера требуется перезагрузка SteamVR</value>
+  </data>
+  <data name="Captions.TrackersRestart.Line2.Text" xml:space="preserve">
+    <value>и Amethyst для применения настроек.</value>
+  </data>
+  <data name="Elements.ExtFlipCalibration.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Калибровка</value>
+  </data>
+  <data name="Elements.FlipToggle.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Отключение приведет к остановке отражения
+трекинга когда вы отворачиваетесь.</value>
+  </data>
+  <data name="Filters.Orientation.Device" xml:space="preserve">
+    <value>Аппаратное вращение</value>
+  </data>
+  <data name="Filters.Orientation.HMD" xml:space="preserve">
+    <value>Следовать гарнитуре</value>
+  </data>
+  <data name="Filters.Orientation.MathBased" xml:space="preserve">
+    <value>Программное вращение</value>
+  </data>
+  <data name="Filters.Orientation.Off" xml:space="preserve">
+    <value>Отключить вращение</value>
+  </data>
+  <data name="Filters.Position.Kalman" xml:space="preserve">
+    <value>Расширенная фильтрация Калмана (Kalman)</value>
+  </data>
+  <data name="Filters.Position.LERP" xml:space="preserve">
+    <value>Линейная интерполяция (Linear)</value>
+  </data>
+  <data name="Filters.Position.LowPass" xml:space="preserve">
+    <value>Фильтрация низких частот (Low Pass)</value>
+  </data>
+  <data name="Filters.Position.Off" xml:space="preserve">
+    <value>Отключить фильтрацию</value>
+  </data>
+  <data name="ReManifest.Error.NotFound" xml:space="preserve">
+    <value>Невозможно установить манифест Amethyst VR.
+Убедитесь, что он существует в корневом (.exe) пути.</value>
+  </data>
+  <data name="ReManifest.Error.Other" xml:space="preserve">
+    <value>Невозможно установить манифест Amethyst VR.
+Проверьте журнал событий для SteamVR и сообщите об этом нам.</value>
+  </data>
+  <data name="ReRegister.Error.NotFound" xml:space="preserve">
+    <value>Исполняемый файл обработчика ошибок (Crash Handler) Amethyst не найден.
+Он необходим для перерегистрации, пожалуйста, убедитесь, что он установлен.</value>
+  </data>
+  <data name="Titles.ExtFlip.Text" xml:space="preserve">
+    <value>Использовать внешние данные для трекинга пояса вместо гарнитуры</value>
+  </data>
+  <data name="Titles.SkeletonFlip.Text" xml:space="preserve">
+    <value>Отражение скелета</value>
+  </data>
+  <data name="Titles.Sounds.Text" xml:space="preserve">
+    <value>Звуки</value>
+  </data>
+  <data name="Titles.TrackerConfig.Header.Text" xml:space="preserve">
+    <value>Конфигурация трекеров</value>
+  </data>
+  <data name="Titles.TrackerConfig.Learn.Content" xml:space="preserve">
+    <value>Узнать больше об этих настройках</value>
+  </data>
+  <data name="Titles.Troubleshooting.Text" xml:space="preserve">
+    <value>Диагностика</value>
+  </data>
+</root>

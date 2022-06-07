@@ -18,6 +18,10 @@ inline std::map<std::wstring, std::wstring> status_ok_map
 	{
 		L"fr-FR",
 		L"Succès!\nS_OK\nTout fonctionne!"
+	},
+	{
+		L"ru-RU",
+		L"Успешно!\nS_OK\nВсе работает!"
 	}
 };
 
@@ -34,6 +38,10 @@ inline std::map<std::wstring, std::wstring> status_initializing_map
 	{
 		L"fr-FR",
 		L"INITIALIZING\nS_NUI_INITIALIZING\nL'appareil est connecté, mais encore en initialisation."
+	},
+	{
+		L"ru-RU",
+		L"INITIALIZING\nS_NUI_INITIALIZING\nУстройство подключено, но все еще идет инициализация."
 	}
 };
 
@@ -50,6 +58,10 @@ inline std::map<std::wstring, std::wstring> status_not_connected_map
 	{
 		L"fr-FR",
 		L"NOTCONNECTED\nE_NUI_NOTCONNECTED\nL'appareil n'est pas connecté."
+	},
+	{
+		L"ru-RU",
+		L"NOTCONNECTED\nE_NUI_NOTCONNECTED\nУстройство не подключено."
 	}
 };
 
@@ -66,6 +78,10 @@ inline std::map<std::wstring, std::wstring> status_not_genuine_map
 	{
 		L"fr-FR",
 		L"NOTGENUINE\nE_NUI_NOTGENUINE\nLe SDK reporte la Kinect comme étant invalide."
+	},
+	{
+		L"ru-RU",
+		L"NOTGENUINE\nE_NUI_NOTGENUINE\nSDK сообщил, что Kinect недоступен."
 	}
 };
 
@@ -82,6 +98,10 @@ inline std::map<std::wstring, std::wstring> status_not_supported_map
 	{
 		L"fr-FR",
 		L"NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nL'appareil n'est pas supporté. (Kinect pour Xbox requiert le SDK)"
+	},
+	{
+		L"ru-RU",
+		L"NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nУстройство не поддерживается. (Xbox Kinect требует SDK)"
 	}
 };
 
@@ -98,6 +118,10 @@ inline std::map<std::wstring, std::wstring> status_insufficient_bandwidth_map
 	{
 		L"fr-FR",
 		L"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nL'appareil est connecté a un hub qui n'offre pas pas la bande passante nécessaire."
+	},
+	{
+		L"ru-RU",
+		L"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nУстройство подключено к хабу у которого не хватает достаточной пропускной способности."
 	}
 };
 
@@ -114,6 +138,10 @@ inline std::map<std::wstring, std::wstring> status_not_powered_map
 	{
 		L"fr-FR",
 		L"NOTPOWERED\nE_NUI_NOTPOWERED\nIl y a un problème soit avec votre adaptateur/cables, ou avec les pilotes de la Kinect dans Windows."
+	},
+	{
+		L"ru-RU",
+		L"NOTPOWERED\nE_NUI_NOTPOWERED\nВозможна проблема с адаптером/проводом или регистрацией драйвера Kinect в Windows."
 	}
 };
 
@@ -130,6 +158,10 @@ inline std::map<std::wstring, std::wstring> status_not_ready_map
 	{
 		L"fr-FR",
 		L"NOTREADY\nE_NUI_NOTREADY\nUne erreur non spécifiée est survenue."
+	},
+	{
+		L"ru-RU",
+		L"NOTREADY\nE_NUI_NOTREADY\nВозникла неопределенная ошибка."
 	}
 };
 
