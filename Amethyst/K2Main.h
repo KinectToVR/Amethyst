@@ -159,7 +159,7 @@ namespace k2app::main
 	inline bool initialized_bak = false; // Backup initialized? value
 	inline void K2UpdateServerTrackers()
 	{
-		// Update only if we're connected
+		// Update only if we're connected and running
 		if (interfacing::K2AppTrackersSpawned &&
 			!interfacing::serverDriverFailure)
 		{
@@ -1089,8 +1089,12 @@ namespace k2app::main
 					K2UpdateVRPositions(); // Update HMD poses
 					K2UpdateInputBindings(); // Update input
 
-					K2UpdateTrackingDevices(); // Update actual tracking
-					K2UpdateAppTrackers(); // Track joints from raw data
+					// Skip some things if we're getting ready to exit
+					if (!interfacing::isExitingNow) {
+
+						K2UpdateTrackingDevices(); // Update actual tracking
+						K2UpdateAppTrackers(); // Track joints from raw data
+					}
 
 					K2UpdateServerTrackers(); // Send it to the server
 

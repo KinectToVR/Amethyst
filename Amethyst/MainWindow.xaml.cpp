@@ -31,9 +31,6 @@ std::atomic_bool checkingUpdatesNow = false;
 std::string K2RemoteVersion =
 	k2app::interfacing::K2InternalVersion;
 
-// Exit handler
-void h_exit(void);
-
 // Toast struct (json)
 struct toast
 {
@@ -503,7 +500,7 @@ namespace winrt::KinectToVR::implementation
 
 		// Priority: Register the app exit handler
 		LOG(INFO) << "Registering an atexit handler for the app...";
-		atexit(h_exit);
+		atexit(k2app::interfacing::handle_app_exit_n);
 
 		// Priority: Launch the crash handler
 		LOG(INFO) << "Starting the crash handler passing the app PID...";
@@ -1363,7 +1360,7 @@ void KinectToVR::implementation::MainWindow::InstallNowButton_Click(
 void KinectToVR::implementation::MainWindow::ExitButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	h_exit();
+	k2app::interfacing::handle_app_exit();
 }
 
 
@@ -1411,14 +1408,37 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::Update
 }
 
 
-void h_exit()
+void k2app::interfacing::handle_app_exit(const uint32_t& p_sleep_millis)
 {
 	// Mark exiting as true
-	k2app::interfacing::isExitingNow = true;
+	isExitingNow = true;
 	LOG(INFO) << "AtExit handler called, starting the shutdown routine...";
 
 	// Mark trackers as inactive
-	k2app::interfacing::K2AppTrackersInitialized = false;
+	K2AppTrackersInitialized = false;
+	
+	// Wait a moment & exit
+	LOG(INFO) << "Shutdown actions completed, " <<
+		"disconnecting devices and exiting in " << p_sleep_millis << "ms...";
+	Sleep(p_sleep_millis); // Sleep a bit for a proper server disconnect
+
+	// Close the multi-process mutex
+	[&]
+	{
+		__try
+		{
+			ReleaseMutex(hNamedMutex); // Explicitly release mutex
+			CloseHandle(hNamedMutex); // Close handle before terminating
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			[&]
+			{
+				LOG(INFO) <<
+					"Shutting down: com_kinecttovr_k2app_amethyst named mutex close failed! The app may misbehave.";
+			}();
+		}
+	}();
 
 	// Disconnect all tracking devices and don't care about any errors
 	[&]
@@ -1447,26 +1467,4 @@ void h_exit()
 		{
 		}
 	}();
-
-	// Close the multi-process mutex
-	[&]
-	{
-		__try
-		{
-			ReleaseMutex(hNamedMutex); // Explicitly release mutex
-			CloseHandle(hNamedMutex); // Close handle before terminating
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER)
-		{
-			[&]
-			{
-				LOG(INFO) <<
-					"Shutting down: com_kinecttovr_k2app_amethyst named mutex close failed! The app may misbehave.";
-			}();
-		}
-	}();
-
-	// Wait a moment & exit
-	LOG(INFO) << "Shutdown actions completed, exiting in 1000ms...";
-	Sleep(1000); // Sleep a bit for a proper server disconnect
 }

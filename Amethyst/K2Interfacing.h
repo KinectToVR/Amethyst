@@ -134,6 +134,10 @@ namespace k2app::interfacing
 		return time_pid_stream.str();
 	}
 
+	// Handle the exit, implemented in MainWindow.xaml.cpp
+	void handle_app_exit(const uint32_t& p_sleep_millis = 1000);
+	inline void handle_app_exit_n(void) { handle_app_exit(); } // Wrapper
+
 	// This sessions' log file dir
 	inline std::string thisLogDestination;
 

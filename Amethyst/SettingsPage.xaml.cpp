@@ -165,8 +165,8 @@ void KinectToVR::implementation::SettingsPage::RestartButton_Click(
 	ktvr::request_vr_restart<false>("SteamVR needs to be restarted to enable/disable trackers properly.");
 }
 
-
-void KinectToVR::implementation::SettingsPage::ResetButton_Click(
+winrt::Windows::Foundation::IAsyncAction
+KinectToVR::implementation::SettingsPage::ResetButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Mark trackers as inactive
@@ -177,57 +177,33 @@ void KinectToVR::implementation::SettingsPage::ResetButton_Click(
 	// Read settings after reset
 	k2app::K2Settings = k2app::K2AppSettings(); // Reset settings
 	k2app::K2Settings.saveSettings(); // Save empty settings
+	k2app::K2Settings.readSettings(); // Reload empty settings
 
 	/* Restart app */
 
-	// Literals
-	using namespace std::string_literals;
+	// Handle a typical app exit
+	apartment_context ui_thread;
+	co_await resume_background();
+	k2app::interfacing::handle_app_exit(500);
+	co_await ui_thread;
 
-	// Get current caller path
-	const auto fileName = new CHAR[MAX_PATH + 1];
-	const DWORD charsWritten = GetModuleFileNameA(nullptr, fileName, MAX_PATH + 1);
-
-	// If we've found who asked
-	if (charsWritten != 0)
+	// Request a restart from the WASDK Restart API
+	switch (Microsoft::Windows::AppLifecycle::AppInstance::GetCurrent().Restart(L""))
 	{
-		// Compose the restart command: sleep 3 seconds and start the same process
-		const std::string _cmd =
-			"powershell Start-Process powershell -ArgumentList 'Start-Sleep -Seconds 3; " +
-			"Start-Process -WorkingDirectory (Split-Path -Path (Resolve-Path \""s +
-			fileName +
-			"\")) -filepath \"" +
-			fileName +
-			"\"' -WindowStyle hidden";
-
-		// Log the caller
-		LOG(INFO) << "The current caller process is: "s + fileName;
-		LOG(INFO) << "Restart command used: "s + _cmd;
-
-
-		// Restart the app
-		if (WinExec(_cmd.c_str(), SW_HIDE) != NO_ERROR)
-		{
-			LOG(ERROR) << "App will not be restarted due to new process creation error.";
-			k2app::interfacing::ShowToast(
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content"));
-			return;
-		}
-
-		// Mark exiting as true
-		k2app::interfacing::isExitingNow = true;
-
-		// Exit the app
-		LOG(INFO) << "Configuration has been reset, exiting...";
-		Application::Current().Exit();
+	case Windows::ApplicationModel::Core::AppRestartFailureReason::RestartPending:
+		LOG(ERROR) << "Couldn't restart Amethyst! Another restart is currently pending.";
+		break;
+	case Windows::ApplicationModel::Core::AppRestartFailureReason::InvalidUser:
+		LOG(ERROR) << "Couldn't restart Amethyst! Another restart is currently pending.";
+		break;
+	case Windows::ApplicationModel::Core::AppRestartFailureReason::Other:
+		LOG(ERROR) << "Couldn't restart Amethyst! Some other error has occurred.";
+		break;
 	}
-	else
-	{
-		LOG(ERROR) << "App will not be restarted due to caller process identification error.";
-		k2app::interfacing::ShowToast(
-			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
-			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content"));
-	}
+
+	k2app::interfacing::ShowToast(
+		k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
+		k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content"));
 }
 
 

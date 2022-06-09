@@ -10,14 +10,16 @@ namespace winrt::KinectToVR::implementation
 	struct SettingsPage : SettingsPageT<SettingsPage>
 	{
 		SettingsPage();
+
 		void ExternalFlipCheckBox_Checked(const Windows::Foundation::IInspectable& sender,
 		                                  const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ExternalFlipCheckBox_Unchecked(const Windows::Foundation::IInspectable& sender,
 		                                    const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void RestartButton_Click(const Windows::Foundation::IInspectable& sender,
 		                         const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void ResetButton_Click(const Windows::Foundation::IInspectable& sender,
-		                       const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		winrt::Windows::Foundation::IAsyncAction ResetButton_Click(
+			const Windows::Foundation::IInspectable& sender,
+			const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void SettingsPage_Loaded(const Windows::Foundation::IInspectable& sender,
 		                         const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void AutoSpawn_Checked(const Windows::Foundation::IInspectable& sender,
@@ -52,10 +54,14 @@ namespace winrt::KinectToVR::implementation
 		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void LearnAboutFiltersButton_Click(winrt::Windows::Foundation::IInspectable const& sender,
 		                                   winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void LearnAboutFiltersFlyout_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
-		void TrackerConfigButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void CheckOverlapsCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void CheckOverlapsCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void LearnAboutFiltersFlyout_Closed(winrt::Windows::Foundation::IInspectable const& sender,
+		                                    winrt::Windows::Foundation::IInspectable const& e);
+		void TrackerConfigButton_Click(winrt::Windows::Foundation::IInspectable const& sender,
+		                               winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void CheckOverlapsCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender,
+		                                   winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void CheckOverlapsCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender,
+		                                     winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 	};
 }
 
