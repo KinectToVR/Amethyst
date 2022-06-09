@@ -67,31 +67,31 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					}();
 				}
 			}();
-			
+
 			for (auto& _tracker : k2app::K2Settings.K2TrackersVector)
 				_offsetsPivotItems.push_back(std::shared_ptr<OffsetsPivotItem>(
-						new OffsetsPivotItem(&_tracker)));
+					new OffsetsPivotItem(&_tracker)));
 
 			// Append selectors to the UI Node
 			// (this weird shit is an unwrapper for __try)
 			for (const auto& _item : _offsetsPivotItems)
 				[&, this]
-			{
-				__try
 				{
-					[&, this]
+					__try
 					{
-						_ptr_container.get()->Items().Append(*(_item)->Container());
-					}();
-				}
-				__except (EXCEPTION_EXECUTE_HANDLER)
-				{
-					[&]
+						[&, this]
+						{
+							_ptr_container.get()->Items().Append(*(_item)->Container());
+						}();
+					}
+					__except (EXCEPTION_EXECUTE_HANDLER)
 					{
-						LOG(WARNING) << "Couldn't append to a Pivot. You better call an exorcist.";
-					}();
-				}
-			}();
+						[&]
+						{
+							LOG(WARNING) << "Couldn't append to a Pivot. You better call an exorcist.";
+						}();
+					}
+				}();
 
 			ReReadOffsets();
 		}
@@ -99,13 +99,13 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		std::vector<std::shared_ptr<OffsetsPivotItem>>* OffsetsPivotItems() { return &_offsetsPivotItems; }
 
 		std::shared_ptr<Pivot> Container() { return _ptr_container; }
-		
+
 	protected:
 		std::vector<std::shared_ptr<OffsetsPivotItem>> _offsetsPivotItems;
-		
+
 		// Underlying object shared pointer
 		std::shared_ptr<Pivot> _ptr_container;
-		
+
 		// Creation: register a host and a callback
 		void Create()
 		{

@@ -19,8 +19,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 // Extension of the k2/shared namespace
 namespace k2app::shared::devices
 {
-	inline std::array<std::shared_ptr<
-		winrt::Microsoft::UI::Xaml::Controls::OverrideSelectorExpander>, 3> overrideSelectorExpanders;
+	inline std::array<std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::OverrideSelectorExpander>, 3>
+	overrideSelectorExpanders;
 }
 
 namespace winrt::Microsoft::UI::Xaml::Controls
@@ -81,7 +81,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		void UpdateIsEnabled()
 		{
 			bool _isEnabled = false;
-			for (const auto& _row : _overrideSelectorRows) {
+			for (const auto& _row : _overrideSelectorRows)
+			{
 				if (_row.get()->Tracker()->data.isActive)_isEnabled = true;
 
 				_row.get()->TrackerPositionCombo().get()->IsEnabled(
@@ -92,7 +93,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				_row.get()->OverridePosition().get()->IsEnabled(_row.get()->Tracker()->data.isActive);
 				_row.get()->OverrideOrientation().get()->IsEnabled(_row.get()->Tracker()->data.isActive);
 
-				if(!_row.get()->Tracker()->data.isActive)
+				if (!_row.get()->Tracker()->data.isActive)
 				{
 					_row.get()->OverridePosition().get()->IsChecked(false);
 					_row.get()->OverrideOrientation().get()->IsChecked(false);
@@ -102,7 +103,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				}
 			}
 
-			if(!_isEnabled)
+			if (!_isEnabled)
 			{
 				_ptr_container_expander.get()->IsEnabled(true);
 				_ptr_container_expander.get()->IsExpanded(false);
@@ -165,30 +166,30 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			// (this weird shit is an unwrapper for __try)
 			for (const auto& _row : _overrideSelectorRows)
 				[&, this]
-			{
-				__try
 				{
-					[&, this]
+					__try
 					{
-						_ptr_container_panel.get()->Children().Append(*_row->Container());
-					}();
-				}
-				__except (EXCEPTION_EXECUTE_HANDLER)
-				{
-					[&]
+						[&, this]
+						{
+							_ptr_container_panel.get()->Children().Append(*_row->Container());
+						}();
+					}
+					__except (EXCEPTION_EXECUTE_HANDLER)
 					{
-						LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
-					}();
-				}
-			}();
+						[&]
+						{
+							LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
+						}();
+					}
+				}();
 		}
 
 		void SetVisibility(const Visibility& visibility)
 		{
 			_ptr_container_expander->Visibility(
 				(_type == 2 && GetTrackerPointerSpan(_type).empty())
-				? Visibility::Collapsed
-				: visibility);
+					? Visibility::Collapsed
+					: visibility);
 		}
 
 		std::vector<std::shared_ptr<OverrideSelectorRow>>* OverrideSelectorRows() { return &_overrideSelectorRows; }
@@ -219,7 +220,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		uint32_t _type = 0;
 
 		std::vector<k2app::K2AppTracker*>
-			GetTrackerPointerSpan(const uint32_t& type)
+		GetTrackerPointerSpan(const uint32_t& type)
 		{
 			switch (type)
 			{
@@ -237,21 +238,21 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					&k2app::K2Settings.K2TrackersVector[6]
 				};
 			case 2:
-			{
-				std::vector<k2app::K2AppTracker*> _tracker_p_vector;
-				for (uint32_t index = 7; index < k2app::K2Settings.K2TrackersVector.size(); index++)
-					_tracker_p_vector.push_back(&k2app::K2Settings.K2TrackersVector[index]);
+				{
+					std::vector<k2app::K2AppTracker*> _tracker_p_vector;
+					for (uint32_t index = 7; index < k2app::K2Settings.K2TrackersVector.size(); index++)
+						_tracker_p_vector.push_back(&k2app::K2Settings.K2TrackersVector[index]);
 
-				return _tracker_p_vector;
-			}
+					return _tracker_p_vector;
+				}
 			default:
-			{
-				std::vector<k2app::K2AppTracker*> _tracker_p_vector;
-				for (auto& _t : k2app::K2Settings.K2TrackersVector)
-					_tracker_p_vector.push_back(&_t);
+				{
+					std::vector<k2app::K2AppTracker*> _tracker_p_vector;
+					for (auto& _t : k2app::K2Settings.K2TrackersVector)
+						_tracker_p_vector.push_back(&_t);
 
-				return _tracker_p_vector;
-			}
+					return _tracker_p_vector;
+				}
 			}
 		}
 
@@ -282,7 +283,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_e_header.Text(_type_title[type]);
 
 			_container_expander.Header(_e_header);
-			_container_expander.Margin({ 40, 17, 30, 0 });
+			_container_expander.Margin({40, 17, 30, 0});
 			_container_expander.IsExpanded(false);
 			_container_expander.ExpandDirection(ExpandDirection::Down);
 			_container_expander.Visibility(Visibility::Collapsed);
@@ -307,7 +308,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			{
 				MenuFlyoutSeparator _separator;
 
-				_separator.Margin({ 4, 0, 4, 0 });
+				_separator.Margin({4, 0, 4, 0});
 				_header.Children().Append(_separator);
 
 				_header.SetRow(_separator, 1);
@@ -370,7 +371,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			// Set up some signals
 			_ptr_container_expander.get()->Expanding(
 				[this](const Controls::Expander& sender,
-					const Controls::ExpanderExpandingEventArgs& e) -> void
+				       const Controls::ExpanderExpandingEventArgs& e) -> void
 				{
 					for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
 						if (expander->ContainerExpander().get() != nullptr &&

@@ -67,7 +67,7 @@ namespace winrt::KinectToVR::implementation
 
 		jointExpanderVector.clear();
 		jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-			new Controls::JointExpander({ &k2app::K2Settings.K2TrackersVector[0] }))));
+			new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[0]}))));
 
 		if (k2app::K2Settings.useTrackerPairs)
 		{
@@ -75,19 +75,19 @@ namespace winrt::KinectToVR::implementation
 
 			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
 				new Controls::JointExpander(
-					{ &k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2] },
+					{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
 					k2app::interfacing::LocalizedResourceWString(
 						L"SharedStrings", L"Joints/Pairs/Feet")))));
 
 			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
 				new Controls::JointExpander(
-					{ &k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4] },
+					{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
 					k2app::interfacing::LocalizedResourceWString(
 						L"SharedStrings", L"Joints/Pairs/Elbows")))));
 
 			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
 				new Controls::JointExpander(
-					{ &k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6] },
+					{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
 					k2app::interfacing::LocalizedResourceWString(
 						L"SharedStrings", L"Joints/Pairs/Knees")))));
 		}
@@ -99,9 +99,9 @@ namespace winrt::KinectToVR::implementation
 		// - we'll append them as individual tracker/joint expanders
 
 		for (uint32_t index = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
-			index < k2app::K2Settings.K2TrackersVector.size(); index++)
+		     index < k2app::K2Settings.K2TrackersVector.size(); index++)
 			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-				new Controls::JointExpander({ &k2app::K2Settings.K2TrackersVector[index] }))));
+				new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[index]}))));
 
 		LOG(INFO) << "Clearing the appended expanders (UI Node)";
 		settings_safe_clear(jointExpanderHostStackPanel);
@@ -120,7 +120,7 @@ namespace winrt::KinectToVR::implementation
 				auto separator = Shapes::Rectangle();
 				separator.HorizontalAlignment(HorizontalAlignment::Stretch);
 				separator.Height(1);
-				separator.Margin({ 0, 10, 0, 0 });
+				separator.Margin({0, 10, 0, 0});
 				separator.Stroke(Media::SolidColorBrush(
 					Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
 				separator.Fill(Media::SolidColorBrush(
@@ -288,7 +288,7 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 
 	// Load tracker settings/enabled
 	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
-	
+
 	// Notify of the setup end
 	k2app::shared::settings::settings_localInitFinished = true;
 }
@@ -600,8 +600,8 @@ void winrt::KinectToVR::implementation::SettingsPage::TrackerConfigButton_Click(
 
 		menuTrackerToggleItem.Click(
 			[&, index, tracker_map, current_tracker, this]
-		(const winrt::Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e) 
-			-> winrt::Windows::Foundation::IAsyncAction
+		(const winrt::Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+		-> winrt::Windows::Foundation::IAsyncAction
 			{
 				// Notify of the setup end
 				k2app::shared::settings::settings_localInitFinished = false;
@@ -620,11 +620,12 @@ void winrt::KinectToVR::implementation::SettingsPage::TrackerConfigButton_Click(
 				else
 				// If the tracker was unchecked
 					for (uint32_t _t = 0; _t < k2app::K2Settings.K2TrackersVector.size(); _t++)
-						if (k2app::K2Settings.K2TrackersVector[_t].tracker == current_tracker) {
-							
+						if (k2app::K2Settings.K2TrackersVector[_t].tracker == current_tracker)
+						{
 							// Make actual changes
-							ktvr::set_tracker_state<false>(
-								k2app::K2Settings.K2TrackersVector.at(_t).tracker, false);
+							if (k2app::interfacing::K2AppTrackersInitialized)
+								ktvr::set_tracker_state<false>(
+									k2app::K2Settings.K2TrackersVector.at(_t).tracker, false);
 
 							// Sleep on UI's background
 							apartment_context _ui_thread;
@@ -638,7 +639,7 @@ void winrt::KinectToVR::implementation::SettingsPage::TrackerConfigButton_Click(
 							// Check if we've disabled any joints from spawning and disable their mods
 							k2app::interfacing::devices_check_disabled_joints();
 							TrackingDevices::settings_trackersConfigChanged();
-							
+
 							// Save settings
 							k2app::K2Settings.saveSettings();
 						}
@@ -781,8 +782,8 @@ void winrt::KinectToVR::implementation::SettingsPage::TrackerConfigButton_Click(
 
 	menuPairsToggleItem.IsChecked(k2app::K2Settings.useTrackerPairs);
 	menuPairsToggleItem.Click(
-		[&, this](const winrt::Windows::Foundation::IInspectable& sender, 
-			const RoutedEventArgs& e) -> Windows::Foundation::IAsyncAction
+		[&, this](const winrt::Windows::Foundation::IInspectable& sender,
+		          const RoutedEventArgs& e) -> Windows::Foundation::IAsyncAction
 		{
 			// Notify of the setup end
 			k2app::shared::settings::settings_localInitFinished = false;

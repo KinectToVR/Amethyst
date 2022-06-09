@@ -23,9 +23,9 @@ namespace TrackingDevices
 	// std::variant cause there are 3 possible device types
 	inline std::vector<
 		std::variant<
-		ktvr::K2TrackingDeviceBase_KinectBasis*,
-		ktvr::K2TrackingDeviceBase_JointsBasis*>>
-		TrackingDevicesVector;
+			ktvr::K2TrackingDeviceBase_KinectBasis*,
+			ktvr::K2TrackingDeviceBase_JointsBasis*>>
+	TrackingDevicesVector;
 
 	// Extract the current device (variant of it)
 	inline auto getCurrentDevice()
@@ -51,8 +51,8 @@ namespace TrackingDevices
 	// Extract the current device (variant of it)
 	inline std::pair<
 		bool, std::variant<
-		ktvr::K2TrackingDeviceBase_KinectBasis*,
-		ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe()
+			ktvr::K2TrackingDeviceBase_KinectBasis*,
+			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe()
 	{
 		bool _exists = k2app::K2Settings.overrideDeviceID >= 0 &&
 			TrackingDevicesVector.size() > k2app::K2Settings.overrideDeviceID;
@@ -63,14 +63,14 @@ namespace TrackingDevices
 
 		// trackingDeviceID is always >= 0 anyway
 		return std::make_pair(_exists,
-			TrackingDevicesVector.at(_deviceID));
+		                      TrackingDevicesVector.at(_deviceID));
 	}
 
 	// Extract the current device (variant of it)
 	inline std::pair<
 		bool, std::variant<
-		ktvr::K2TrackingDeviceBase_KinectBasis*,
-		ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe(const uint32_t& id)
+			ktvr::K2TrackingDeviceBase_KinectBasis*,
+			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe(const uint32_t& id)
 	{
 		bool _exists = TrackingDevicesVector.size() > id;
 
@@ -80,7 +80,7 @@ namespace TrackingDevices
 
 		// trackingDeviceID is always >= 0 anyway
 		return std::make_pair(_exists,
-			TrackingDevicesVector.at(_deviceID));
+		                      TrackingDevicesVector.at(_deviceID));
 	}
 
 	inline bool isExternalFlipSupportable()
@@ -97,10 +97,10 @@ namespace TrackingDevices
 				trackingDevice)->isFlipSupported();
 
 		bool isExternalFlipSupported = false, // inapp - overridden/disabled
-			isExternalFlipSupported_Global = false; // global - steamvr
+		     isExternalFlipSupported_Global = false; // global - steamvr
 
-	   /* Now check if either waist tracker is overridden or disabled
-		* And then search in OpenVR for a one with waist role */
+		/* Now check if either waist tracker is overridden or disabled
+		 * And then search in OpenVR for a one with waist role */
 
 		const auto& overrideDevice =
 			getCurrentOverrideDevice_Safe();
@@ -115,7 +115,7 @@ namespace TrackingDevices
 				isExternalFlipSupported = !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
 					overrideDevice.second)->isFlipSupported();
 
-			// If the override device is a joints then it's always ok
+				// If the override device is a joints then it's always ok
 			else if (overrideDevice.second.index() == 1)
 				isExternalFlipSupported = true;
 		}
@@ -183,8 +183,10 @@ namespace TrackingDevices
 		if (k2app::shared::settings::restartButton.get() != nullptr && showToasts)
 			if (!k2app::shared::settings::restartButton.get()->IsEnabled())
 				k2app::interfacing::ShowToast(
-					k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersConfigChanged/Title"),
-					k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/TrackersConfigChanged/Content"));
+					k2app::interfacing::LocalizedResourceWString(L"SharedStrings",
+					                                             L"Toasts/TrackersConfigChanged/Title"),
+					k2app::interfacing::LocalizedResourceWString(L"SharedStrings",
+					                                             L"Toasts/TrackersConfigChanged/Content"));
 
 		// Compare with saved settings and unlock the restart
 		if (k2app::shared::settings::restartButton.get() != nullptr)
@@ -203,7 +205,6 @@ namespace TrackingDevices
 
 namespace winrt::Microsoft::UI::Xaml::Controls
 {
-
 	/*
 	 * Joint expander that allows to :
 	 *  - select the position filter
@@ -215,13 +216,13 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 	{
 	public:
 		// Note: Signals have to be set up manually
-		JointExpander(std::vector<k2app::K2AppTracker*> tracker_pointers, 
-			std::optional<std::wstring> title = std::nullopt)
+		JointExpander(std::vector<k2app::K2AppTracker*> tracker_pointers,
+		              std::optional<std::wstring> title = std::nullopt)
 		{
 			_tracker_pointers = tracker_pointers;
 			Create(title);
 		}
-		
+
 		std::shared_ptr<Grid> Container() { return _ptr_container; }
 		std::shared_ptr<Grid> MainGrid() { return _ptr_main_grid; }
 		std::shared_ptr<Grid> Content() { return _ptr_content; }
@@ -259,7 +260,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		void EnableSoftwareOrientation(const bool& enable)
 		{
 			if (_tracker_pointers[0]->tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
-				_tracker_pointers[0]->tracker == ktvr::ITrackerType::Tracker_RightFoot) {
+				_tracker_pointers[0]->tracker == ktvr::ITrackerType::Tracker_RightFoot)
+			{
 				_ptr_software_orientation.get()->IsEnabled(enable);
 
 				for (auto tracker_p : _tracker_pointers)
@@ -283,7 +285,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		                           _ptr_position, _ptr_orientation;
 		std::shared_ptr<ComboBox> _ptr_position_combo,
 		                          _ptr_orientation_combo;
-		
+
 		// Creation: register a host and a callback
 		void Create(std::optional<std::wstring> title = std::nullopt)
 		{
@@ -304,7 +306,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_title.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 
 			_title.Text(title.value_or(k2app::interfacing::LocalizedResourceWString(
-					L"SharedStrings", L"Joints/Enum/" + 
+				L"SharedStrings", L"Joints/Enum/" +
 				std::to_wstring(static_cast<int>(_tracker_pointers[0]->tracker)))));
 
 			_title.FontSize(14);
@@ -380,13 +382,13 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			// Set up (content caption / pos)'s items
 			ComboBoxItem _lerp, _low_pass, _kalman, _pos_off;
 			_lerp.Content(box_value(k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage", L"Filters/Position/LERP")));
+				L"SettingsPage", L"Filters/Position/LERP")));
 			_low_pass.Content(box_value(k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage", L"Filters/Position/LowPass")));
+				L"SettingsPage", L"Filters/Position/LowPass")));
 			_kalman.Content(box_value(k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage", L"Filters/Position/Kalman")));
+				L"SettingsPage", L"Filters/Position/Kalman")));
 			_pos_off.Content(box_value(k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage", L"Filters/Position/Off")));
+				L"SettingsPage", L"Filters/Position/Off")));
 
 			_position_combo.Items().Append(_lerp);
 			_position_combo.Items().Append(_low_pass);
@@ -411,13 +413,13 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			// Set up (content caption / pos)'s items
 			ComboBoxItem _device, _software, _hmd, _off;
 			_device.Content(box_value(k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage", L"Filters/Orientation/Device")));
+				L"SettingsPage", L"Filters/Orientation/Device")));
 			_software.Content(box_value(k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage", L"Filters/Orientation/MathBased")));
+				L"SettingsPage", L"Filters/Orientation/MathBased")));
 			_hmd.Content(box_value(k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage", L"Filters/Orientation/HMD")));
+				L"SettingsPage", L"Filters/Orientation/HMD")));
 			_off.Content(box_value(k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage", L"Filters/Orientation/Off")));
+				L"SettingsPage", L"Filters/Orientation/Off")));
 
 			_software.Visibility(Visibility::Collapsed);
 
@@ -437,7 +439,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_main_expander.ExpandDirection(ExpandDirection::Down);
 			_main_expander.HorizontalAlignment(HorizontalAlignment::Stretch);
 			_main_expander.VerticalAlignment(VerticalAlignment::Stretch);
-			_main_expander.Margin({ 0,10,0,0 });
+			_main_expander.Margin({0, 10, 0, 0});
 
 			_main_expander.Content(_content);
 			_container.Children().Append(_main_expander);
@@ -469,7 +471,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_main_expander.Expanding(
 				[this](const Controls::Expander& sender,
-					const Controls::ExpanderExpandingEventArgs& e) -> void
+				       const Controls::ExpanderExpandingEventArgs& e) -> void
 				{
 					for (auto& expander : k2app::shared::settings::jointExpanderVector)
 						if (expander->MainExpander().get() != nullptr &&
@@ -490,17 +492,20 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_joint_switch.Toggled(
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
-					const RoutedEventArgs& e) -> winrt::Windows::Foundation::IAsyncAction
+				       const RoutedEventArgs& e) -> winrt::Windows::Foundation::IAsyncAction
 				{
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)co_return;
-					
+
 					// Make actual changes
-					for (auto tracker_p : _tracker_pointers) {
+					for (auto tracker_p : _tracker_pointers)
+					{
 						tracker_p->data.isActive = _ptr_joint_switch.get()->IsOn();
 
-						ktvr::set_tracker_state<false>(
-							tracker_p->tracker, tracker_p->data.isActive);
+						// Spawn the tracker (only if the rest is spawned)
+						if (k2app::interfacing::K2AppTrackersInitialized)
+							ktvr::set_tracker_state<false>(
+								tracker_p->tracker, tracker_p->data.isActive);
 
 						// Sleep on UI's background
 						apartment_context _ui_thread;
@@ -508,7 +513,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						Sleep(20);
 						co_await _ui_thread;
 					}
-					
+
 					if (!_tracker_pointers[0]->data.isActive)
 					{
 						_ptr_main_expander->IsEnabled(false);
@@ -520,37 +525,38 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Check if we've disabled any joints from spawning and disable their mods
 					k2app::interfacing::devices_check_disabled_joints();
 					TrackingDevices::settings_trackersConfigChanged();
-					
+
 					// Save settings
 					k2app::K2Settings.saveSettings();
 				});
 
 			_ptr_position_combo->SelectionChanged(
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
-					const Controls::SelectionChangedEventArgs& e) -> void
+				       const Controls::SelectionChangedEventArgs& e) -> void
 				{
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)return;
 
 					for (auto tracker_p : _tracker_pointers)
-						tracker_p->positionTrackingFilterOption = 
-						static_cast<k2app::JointPositionTrackingOption>(_ptr_position_combo.get()->SelectedIndex());
-			
+						tracker_p->positionTrackingFilterOption =
+							static_cast<k2app::JointPositionTrackingOption>(_ptr_position_combo.get()->SelectedIndex());
+
 					// Save settings
 					k2app::K2Settings.saveSettings();
 				});
 
 			_ptr_orientation_combo->SelectionChanged(
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
-					const Controls::SelectionChangedEventArgs& e) -> void
+				       const Controls::SelectionChangedEventArgs& e) -> void
 				{
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)return;
 
 					for (auto tracker_p : _tracker_pointers)
 						tracker_p->orientationTrackingOption =
-						static_cast<k2app::JointRotationTrackingOption>(_ptr_orientation_combo.get()->SelectedIndex());
-					
+							static_cast<k2app::JointRotationTrackingOption>(_ptr_orientation_combo.get()->
+								SelectedIndex());
+
 					// Save settings
 					k2app::K2Settings.saveSettings();
 				});

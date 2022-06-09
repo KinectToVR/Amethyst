@@ -68,47 +68,56 @@ namespace winrt::Microsoft::UI::Xaml::Controls::Helpers
 		const std::optional<bool>& all = std::nullopt)
 	{
 		PushComboBox_Safe(cbox,
-			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_Chest))), L" Tracker").c_str());
+		                  eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+			                              L"SharedStrings", L"Joints/Enum/" +
+			                              std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_Chest))),
+		                              L" Tracker").c_str());
 
 		if (all.value_or(false))
 		{
 			PushComboBox_Safe(cbox,
-				eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-					L"SharedStrings", L"Joints/Enum/" +
-					std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftElbow))), L" Tracker").c_str());
+			                  eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+				                              L"SharedStrings", L"Joints/Enum/" +
+				                              std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftElbow))),
+			                              L" Tracker").c_str());
 			PushComboBox_Safe(cbox,
-				eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-					L"SharedStrings", L"Joints/Enum/" +
-					std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightElbow))), L" Tracker").c_str());
+			                  eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+				                              L"SharedStrings", L"Joints/Enum/" +
+				                              std::to_wstring(
+					                              static_cast<int>(ktvr::ITrackerType::Tracker_RightElbow))),
+			                              L" Tracker").c_str());
 		}
 
 		PushComboBox_Safe(cbox,
-			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_Waist))), L" Tracker").c_str());
+		                  eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+			                              L"SharedStrings", L"Joints/Enum/" +
+			                              std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_Waist))),
+		                              L" Tracker").c_str());
 
 		if (all.value_or(false))
 		{
 			PushComboBox_Safe(cbox,
-				eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-					L"SharedStrings", L"Joints/Enum/" +
-					std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftKnee))), L" Tracker").c_str());
+			                  eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+				                              L"SharedStrings", L"Joints/Enum/" +
+				                              std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftKnee))),
+			                              L" Tracker").c_str());
 			PushComboBox_Safe(cbox,
-				eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-					L"SharedStrings", L"Joints/Enum/" +
-					std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightKnee))), L" Tracker").c_str());
+			                  eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+				                              L"SharedStrings", L"Joints/Enum/" +
+				                              std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightKnee))),
+			                              L" Tracker").c_str());
 		}
 
 		PushComboBox_Safe(cbox,
-			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftFoot))), L" Tracker").c_str());
+		                  eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+			                              L"SharedStrings", L"Joints/Enum/" +
+			                              std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_LeftFoot))),
+		                              L" Tracker").c_str());
 		PushComboBox_Safe(cbox,
-			eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightFoot))), L" Tracker").c_str());
+		                  eraseSubStr(k2app::interfacing::LocalizedResourceWString(
+			                              L"SharedStrings", L"Joints/Enum/" +
+			                              std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_RightFoot))),
+		                              L" Tracker").c_str());
 	}
 
 	// devices_select_combobox_safe
@@ -165,13 +174,13 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			Helpers::SelectComboBoxItem_Safe(
 				_ptr_tracker_position_combo,
 				_tracker_pointer->isPositionOverridden
-				? _tracker_pointer->positionOverrideJointID
-				: -1);
+					? _tracker_pointer->positionOverrideJointID
+					: -1);
 			Helpers::SelectComboBoxItem_Safe(
 				_ptr_tracker_orientation_combo,
 				_tracker_pointer->isRotationOverridden
-				? _tracker_pointer->rotationOverrideJointID
-				: -1);
+					? _tracker_pointer->rotationOverrideJointID
+					: -1);
 		}
 
 		void UpdateOverrideToggles()
@@ -193,7 +202,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			Helpers::PushComboBox_Safe(_ptr_tracker_position_combo, _string.c_str());
 			Helpers::PushComboBox_Safe(_ptr_tracker_orientation_combo, _string.c_str());
 		}
-		
+
 		std::shared_ptr<Grid> Container() { return _ptr_container; }
 		std::shared_ptr<Grid> TitleContainer() { return _ptr_title_container; }
 
@@ -224,10 +233,10 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		std::shared_ptr<MenuFlyout> _ptr_selector_flyout;
 
 		std::shared_ptr<ToggleMenuFlyoutItem> _ptr_override_position,
-			_ptr_override_orientation;
+		                                      _ptr_override_orientation;
 
 		std::shared_ptr<ComboBox> _ptr_tracker_position_combo,
-			_ptr_tracker_orientation_combo;
+		                          _ptr_tracker_orientation_combo;
 
 		// Creation: register a host and a callback
 		void Create()
@@ -248,12 +257,12 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_title.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 
 			_title.Text(eraseSubStr(k2app::interfacing::LocalizedResourceWString(
-				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(_tracker_pointer->tracker))),
-				L" Tracker"));
+				                        L"SharedStrings", L"Joints/Enum/" +
+				                        std::to_wstring(static_cast<int>(_tracker_pointer->tracker))),
+			                        L" Tracker"));
 
 			_title.FontSize(14);
-			_title.Margin({ 0, -3, 0, 0 });
+			_title.Margin({0, -3, 0, 0});
 			_title.HorizontalAlignment(HorizontalAlignment::Center);
 			_title.VerticalAlignment(VerticalAlignment::Center);
 			_title.HorizontalTextAlignment(TextAlignment::Center);
@@ -290,7 +299,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_title_container.SetColumn(_title, 0);
 			_title_container.SetColumn(_selector, 1);
-			
+
 			// Push the toggle to the main container
 			_container.Children().Append(_title_container);
 			_container.SetColumn(_title_container, 0);
@@ -344,9 +353,10 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			// Set up some signals
 			_ptr_tracker_position_combo->SelectionChanged(
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
-					const Controls::SelectionChangedEventArgs& e) -> void
+				       const Controls::SelectionChangedEventArgs& e) -> void
 				{
-					if (!k2app::shared::devices::devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+					if (!k2app::shared::devices::devices_tab_setup_finished)return;
+					// Don't even try if we're not set up yet
 					if (_tracker_pointer->isPositionOverridden &&
 						_ptr_tracker_position_combo.get()->SelectedIndex() >= 0)
 						_tracker_pointer->positionOverrideJointID = _ptr_tracker_position_combo.get()->SelectedIndex();
@@ -354,9 +364,10 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// If we're using a joints device then also signal the joint
 					const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 					if (trackingDevicePair.first)
-						if (trackingDevicePair.second.index() == 1 && k2app::shared::devices::devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+						if (trackingDevicePair.second.index() == 1 &&
+							k2app::shared::devices::devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-							signalJoint(_tracker_pointer->positionOverrideJointID);
+								signalJoint(_tracker_pointer->positionOverrideJointID);
 
 					// Save settings
 					k2app::K2Settings.saveSettings();
@@ -364,27 +375,30 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_ptr_tracker_orientation_combo->SelectionChanged(
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
-					const Controls::SelectionChangedEventArgs& e) -> void
+				       const Controls::SelectionChangedEventArgs& e) -> void
 				{
-					if (!k2app::shared::devices::devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+					if (!k2app::shared::devices::devices_tab_setup_finished)return;
+					// Don't even try if we're not set up yet
 					if (_tracker_pointer->isRotationOverridden &&
 						_ptr_tracker_orientation_combo.get()->SelectedIndex() >= 0)
-						_tracker_pointer->rotationOverrideJointID = _ptr_tracker_orientation_combo.get()->SelectedIndex();
+						_tracker_pointer->rotationOverrideJointID = _ptr_tracker_orientation_combo.get()->
+							SelectedIndex();
 
 					// If we're using a joints device then also signal the joint
 					const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
 					if (trackingDevicePair.first)
-						if (trackingDevicePair.second.index() == 1 && k2app::shared::devices::devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
+						if (trackingDevicePair.second.index() == 1 &&
+							k2app::shared::devices::devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-							signalJoint(_tracker_pointer->rotationOverrideJointID);
+								signalJoint(_tracker_pointer->rotationOverrideJointID);
 
 					// Save settings
 					k2app::K2Settings.saveSettings();
 				});
 
 			_ptr_override_position->Click(
-				[this](const winrt::Windows::Foundation::IInspectable& sender, 
-					const RoutedEventArgs& e) -> void
+				[this](const winrt::Windows::Foundation::IInspectable& sender,
+				       const RoutedEventArgs& e) -> void
 				{
 					if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -395,13 +409,15 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						return; // Don't set up any overrides (yet)
 					}
 
-					if (!k2app::shared::devices::devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+					if (!k2app::shared::devices::devices_tab_setup_finished)return;
+					// Don't even try if we're not set up yet
 					_tracker_pointer->isPositionOverridden = _ptr_override_position.get()->IsChecked();
 
 					// If we've disabled the override, set the placeholder text
 					Helpers::SelectComboBoxItem_Safe(_ptr_tracker_position_combo,
-						_ptr_override_position.get()->IsChecked()
-						? _tracker_pointer->positionOverrideJointID : -1);
+					                                 _ptr_override_position.get()->IsChecked()
+						                                 ? _tracker_pointer->positionOverrideJointID
+						                                 : -1);
 
 					// Check for errors and disable combos
 					k2app::interfacing::devices_check_disabled_joints();
@@ -411,8 +427,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				});
 
 			_ptr_override_orientation->Click(
-				[this](const winrt::Windows::Foundation::IInspectable& sender, 
-					const RoutedEventArgs& e) -> void
+				[this](const winrt::Windows::Foundation::IInspectable& sender,
+				       const RoutedEventArgs& e) -> void
 				{
 					if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -423,13 +439,15 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						return; // Don't set up any overrides (yet)
 					}
 
-					if (!k2app::shared::devices::devices_tab_setup_finished)return; // Don't even try if we're not set up yet
+					if (!k2app::shared::devices::devices_tab_setup_finished)return;
+					// Don't even try if we're not set up yet
 					_tracker_pointer->isRotationOverridden = _ptr_override_orientation.get()->IsChecked();
 
 					// If we've disabled the override, set the placeholder text
 					Helpers::SelectComboBoxItem_Safe(_ptr_tracker_orientation_combo,
-						_ptr_override_orientation.get()->IsChecked()
-						? _tracker_pointer->rotationOverrideJointID : -1);
+					                                 _ptr_override_orientation.get()->IsChecked()
+						                                 ? _tracker_pointer->rotationOverrideJointID
+						                                 : -1);
 
 					// Check for errors and disable combos
 					k2app::interfacing::devices_check_disabled_joints();
