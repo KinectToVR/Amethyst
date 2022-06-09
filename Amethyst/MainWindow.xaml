@@ -40,7 +40,7 @@
                              FontSize="16"
                              PaneDisplayMode="Left"
                              IsPaneOpen="False"
-                             SelectionFollowsFocus="Enabled"
+                             SelectionFollowsFocus="Disabled"
                              IsBackButtonVisible="Collapsed"
                              IsSettingsVisible="False"
                              SelectedItem="general"
