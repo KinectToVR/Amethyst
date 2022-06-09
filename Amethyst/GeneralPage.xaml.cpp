@@ -215,6 +215,8 @@ void KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(
 	CalibrationRunningView().IsPaneOpen(true);
 	
 	CalibrationPointsNumberBox().IsEnabled(true);
+	CalibrationPointsNumberBox().Value(k2app::K2Settings.calibrationPointsNumber);
+
 	CalibrationInstructionsLabel().Text(
 		k2app::interfacing::LocalizedResourceWString(
 		L"GeneralPage", L"Calibration/Captions/Start/Text"));
@@ -240,6 +242,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 	// Disable the start button and change [cancel]'s text
 	StartAutoCalibrationButton().IsEnabled(false);
 	CalibrationPointsNumberBox().IsEnabled(false);
+
 	DiscardAutoCalibrationButton().Content(box_value(
 		k2app::interfacing::LocalizedResourceWString(
 		L"GeneralPage", L"Buttons/Abort/Content")));
