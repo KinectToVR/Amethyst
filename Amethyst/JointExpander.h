@@ -179,18 +179,21 @@ namespace TrackingDevices
 		// Don't react to pre-init signals
 		if (!k2app::shared::settings::settings_localInitFinished)return;
 
-		// If this is the first time, also show the notification
-		if (k2app::shared::settings::restartButton.get() != nullptr && showToasts)
-			if (!k2app::shared::settings::restartButton.get()->IsEnabled())
-				k2app::interfacing::ShowToast(
-					k2app::interfacing::LocalizedResourceWString(L"SharedStrings",
-					                                             L"Toasts/TrackersConfigChanged/Title"),
-					k2app::interfacing::LocalizedResourceWString(L"SharedStrings",
-					                                             L"Toasts/TrackersConfigChanged/Content"));
+		// If this is the first time and happened runtime, also show the notification
+		if (k2app::interfacing::K2AppTrackersSpawned)
+		{
+			if (k2app::shared::settings::restartButton.get() != nullptr && showToasts)
+				if (!k2app::shared::settings::restartButton.get()->IsEnabled())
+					k2app::interfacing::ShowToast(
+						k2app::interfacing::LocalizedResourceWString(L"SharedStrings",
+						                                             L"Toasts/TrackersConfigChanged/Title"),
+						k2app::interfacing::LocalizedResourceWString(L"SharedStrings",
+						                                             L"Toasts/TrackersConfigChanged/Content"));
 
-		// Compare with saved settings and unlock the restart
-		if (k2app::shared::settings::restartButton.get() != nullptr)
-			k2app::shared::settings::restartButton.get()->IsEnabled(true);
+			// Compare with saved settings and unlock the restart
+			if (k2app::shared::settings::restartButton.get() != nullptr)
+				k2app::shared::settings::restartButton.get()->IsEnabled(true);
+		}
 
 		// Enable/Disable combos
 		TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
