@@ -48,7 +48,8 @@ namespace K2CrashHandler
             string handlerTitle = LangResString("Title/Recovery"),
                 handlerContent = LangResString("Content/Recovery"),
                 primaryButtonText = LangResString("PrimaryButton/Recovery"),
-                secondaryButtonText = LangResString("SecondaryButton/Recovery");
+                secondaryButtonText = LangResString("SecondaryButton/Recovery"),
+                logFileLocation = "0";
 
             // Prepare placeholder callbacks (recovery mode)
             RoutedEventHandler primaryButtonHandler = Action_ReRegister,
@@ -70,6 +71,8 @@ namespace K2CrashHandler
                 {
                     // Get argv[1] for the launch
                     var appPid = args[1];
+                    if (args.Length > 2)
+                        logFileLocation = args[2];
 
                     // Wait for the app to exit and grab the exit code
                     try
@@ -211,9 +214,10 @@ namespace K2CrashHandler
                 secondaryButtonText,
                 primaryButtonHandler,
                 secondaryButtonHandler,
-                launcherMode
+                launcherMode,
+                logFileLocation
             );
-            
+
             // And push it into the main grid
             RGrid.Children.Add(DialogView);
         }

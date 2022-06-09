@@ -87,10 +87,10 @@
                             TextWrapping="WrapWholeWords">
                             <TextBlock>
                                 <LineBreak />
-                                <Run>If you're looking for app logs, they're </Run>
+                                <Run x:Name="LogFilesRun"/>
                                 <Hyperlink Click="LogsHyperlink_OnClick">here</Hyperlink>
                                 <LineBreak />
-                                <Run>Please consider joining our </Run>
+                                <Run>Please consider joining our</Run>
                                 <Hyperlink Click="DiscordHyperlink_OnClick">Discord Server</Hyperlink>
                             </TextBlock>
                         </ContentPresenter>

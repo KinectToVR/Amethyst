@@ -111,6 +111,32 @@ namespace k2app::interfacing
 		shared::main::thisNotificationManager.get()->Show(toast);
 	}
 
+	// Get log timestamp
+	inline std::string GetLogTimestamp()
+	{
+		// From glog/logging.cc
+		struct ::tm tm_time;
+		const auto tm_now = time(NULL);
+		localtime_s(&tm_time, &tm_now);
+		
+		std::ostringstream time_pid_stream;
+		time_pid_stream.fill('0');
+		time_pid_stream << 1900 + tm_time.tm_year
+			<< std::setw(2) << 1 + tm_time.tm_mon
+			<< std::setw(2) << tm_time.tm_mday
+			<< '-'
+			<< std::setw(2) << tm_time.tm_hour
+			<< std::setw(2) << tm_time.tm_min
+			<< std::setw(2) << tm_time.tm_sec
+			<< '.'
+			<< _getpid();
+
+		return time_pid_stream.str();
+	}
+
+	// This sessions' log file dir
+	inline std::string thisLogDestination;
+
 	// Input actions' handler
 	inline K2EVRInput::SteamEVRInput evr_input;
 

@@ -13,11 +13,13 @@ namespace K2CrashHandler;
 public sealed partial class ContentDialogView
 {
     private SemaphoreSlim semaphoreObject = new(0);
+
     private bool confirmationFlyoutResult = false,
         confirmationFlyoutRunning = false;
 
     private string primaryButtonText = "[NOT SET]";
     private string secondaryButtonText = "[NOT SET]";
+    private string logFileLocation = "0";
 
     public ContentDialogView()
     {
@@ -32,7 +34,8 @@ public sealed partial class ContentDialogView
         string _secondaryButtonText = "[NOT SET]",
         RoutedEventHandler primaryButtonHandler = null,
         RoutedEventHandler secondaryButtonHandler = null,
-        bool accentPrimaryButton = true
+        bool accentPrimaryButton = true,
+        string _logFileLocation = "0"
     )
     {
         InitializeComponent();
@@ -43,6 +46,7 @@ public sealed partial class ContentDialogView
         // Back up
         primaryButtonText = _primaryButtonText;
         secondaryButtonText = _secondaryButtonText;
+        logFileLocation = _logFileLocation;
 
         DialogPrimaryButton.Content = primaryButtonText;
         DialogSecondaryButton.Content = secondaryButtonText;
@@ -51,14 +55,19 @@ public sealed partial class ContentDialogView
         DialogSecondaryButton.Click += secondaryButtonHandler;
 
         if (accentPrimaryButton) DialogPrimaryButton.Style = (Style)Resources["AccentButtonStyle"];
+
+        LogFilesRun.Text = File.Exists(logFileLocation)
+            ? "If you're looking the log file, it's"
+            : "If you're looking log files, they're";
     }
 
     private void LogsHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
     {
-        var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Amethyst\\logs");
+        var appData = Path.Combine(Environment.GetFolderPath(
+            Environment.SpecialFolder.ApplicationData), "Amethyst\\logs");
 
-        Process.Start("explorer.exe", appData);
+        Process.Start("explorer.exe", File.Exists(logFileLocation)
+            ? $"/select,\"{logFileLocation}\"" : appData);
     }
 
     private void DiscordHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)

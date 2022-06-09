@@ -139,7 +139,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 						// And maybe log it too
 						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
 						LOG(INFO) << "Local version number: " << k2app::interfacing::K2InternalVersion;
-						
+
 						// Thanks to this chad: https://stackoverflow.com/a/45123408
 						// Now check for push notifications aka toasts
 
@@ -187,7 +187,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkU
 
 									// Show the toast (and optionally cache it)
 									k2app::interfacing::ShowToast(
-										StringToWString(itr.title), 
+										StringToWString(itr.title),
 										StringToWString(itr.message));
 
 									// If the toast isn't meant to be shown always, cache it
@@ -315,6 +315,32 @@ namespace winrt::KinectToVR::implementation
 	{
 		InitializeComponent();
 
+		// If logging was set up by some other thing / assembly,
+		// "peacefully" ask it to exit and note that 
+		if (google::IsGoogleLoggingInitialized())
+		{
+			LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n" <<
+				"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n" <<
+				"Logging will be shut down, re-initialized, and forwarded to \"" <<
+				ktvr::GetK2AppDataLogFileDir("Amethyst_").c_str() << "*.log\"";
+			google::ShutdownGoogleLogging();
+		}
+
+		// Set up logging : flags
+		FLAGS_logbufsecs = 0; //Set max timeout
+		FLAGS_minloglevel = google::GLOG_INFO;
+		FLAGS_timestamp_in_logfile_name = false;
+
+		// Set up logging
+		k2app::interfacing::thisLogDestination =
+			ktvr::GetK2AppDataLogFileDir("Amethyst_") + k2app::interfacing::GetLogTimestamp();
+
+		google::InitGoogleLogging(k2app::interfacing::thisLogDestination.c_str());
+
+		// Log everything >=INFO to same file
+		google::SetLogDestination(google::GLOG_INFO, k2app::interfacing::thisLogDestination.c_str());
+		google::SetLogFilenameExtension(".log");
+
 		// Set up mica controllers
 		if (Microsoft::UI::Composition::SystemBackdrops::MicaController::IsSupported())
 		{
@@ -396,26 +422,6 @@ namespace winrt::KinectToVR::implementation
 			}
 		});
 
-		// If logging was set up by some other thing / assembly,
-		// "peacefully" ask it to exit and note that 
-		if (google::IsGoogleLoggingInitialized())
-		{
-			LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n" <<
-				"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n" <<
-				"Logging will be shut down, re-initialized, and forwarded to \"" <<
-				ktvr::GetK2AppDataLogFileDir("Amethyst_").c_str() << "*.log\"";
-			google::ShutdownGoogleLogging();
-		}
-		
-		// Set up logging
-		google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("Amethyst_").c_str());
-		// Log everything >=INFO to same file
-		google::SetLogDestination(google::GLOG_INFO, ktvr::GetK2AppDataLogFileDir("Amethyst_").c_str());
-		google::SetLogFilenameExtension(".log");
-
-		FLAGS_logbufsecs = 0; //Set max timeout
-		FLAGS_minloglevel = google::GLOG_INFO;
-
 		// Cache needed UI elements
 		updateIconDot = std::make_shared<Controls::FontIcon>(UpdateIconDot());
 
@@ -446,17 +452,17 @@ namespace winrt::KinectToVR::implementation
 
 		LOG(INFO) << "Registering the notification manager (may fail on WinAppSDK <1.1)...";
 		k2app::shared::main::thisNotificationManager.get()->Register();
-		
+
 		LOG(INFO) << "Creating and registering the default resource manager (may fail on WinAppSDK <1.1)...";
 		k2app::shared::main::thisResourceManager =
 			std::make_shared<Microsoft::Windows::ApplicationModel::Resources::ResourceManager>(
 				Microsoft::Windows::ApplicationModel::Resources::ResourceManager(L"resources.pri"));
-		
+
 		LOG(INFO) << "Creating and registering the default resource context (may fail on WinAppSDK <1.1)...";
 		k2app::shared::main::thisResourceContext =
 			std::make_shared<Microsoft::Windows::ApplicationModel::Resources::ResourceContext>(
 				k2app::shared::main::thisResourceManager.get()->CreateResourceContext());
-		
+
 		LOG(INFO) << "Pushing control pages to window...";
 		m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"general", winrt::xaml_typename<GeneralPage>()));
@@ -508,7 +514,10 @@ namespace winrt::KinectToVR::implementation
 			{
 				ShellExecuteA(nullptr, "open",
 				              (boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
-				              .string().c_str(), std::to_string(GetCurrentProcessId()).c_str(), nullptr,
+				              .string().c_str(),
+				              (std::to_string(GetCurrentProcessId()) +
+					              "\"" + k2app::interfacing::thisLogDestination + "\"").c_str(),
+				              nullptr,
 				              SW_SHOWDEFAULT);
 			}).detach();
 		}
@@ -537,7 +546,7 @@ namespace winrt::KinectToVR::implementation
 		// Read settings
 		LOG(INFO) << "Now reading saved settings...";
 		k2app::K2Settings.readSettings();
-		
+
 		// Start the main loop
 		std::thread(k2app::main::K2MainLoop).detach();
 
@@ -678,7 +687,7 @@ namespace winrt::KinectToVR::implementation
 														k2app::interfacing::AppInterface::CreateAppProgressRing_Sliced;
 													pDevice->CreateProgressBar =
 														k2app::interfacing::AppInterface::CreateAppProgressBar_Sliced;
-													
+
 													LOG(INFO) << "Appending the device to the global registry...";
 
 													// Push the device to pointers' vector
@@ -996,13 +1005,15 @@ namespace winrt::KinectToVR::implementation
 									k2app::k2_SoftwareCalculatedRotation &&
 									!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
 									isAppOrientationSupported())
-									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption = k2app::k2_DeviceInferredRotation;
+									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption =
+										k2app::k2_DeviceInferredRotation;
 
 								if (k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
 									k2app::k2_SoftwareCalculatedRotation &&
 									!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
 									isAppOrientationSupported())
-									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption = k2app::k2_DeviceInferredRotation;
+									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption =
+										k2app::k2_DeviceInferredRotation;
 
 								//Init
 								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
@@ -1014,11 +1025,13 @@ namespace winrt::KinectToVR::implementation
 								// Update options for the device
 								if (k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
 									k2app::k2_SoftwareCalculatedRotation)
-									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption = k2app::k2_DeviceInferredRotation;
+									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption =
+										k2app::k2_DeviceInferredRotation;
 
 								if (k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
 									k2app::k2_SoftwareCalculatedRotation)
-									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption = k2app::k2_DeviceInferredRotation;
+									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption =
+										k2app::k2_DeviceInferredRotation;
 
 								k2app::K2Settings.isFlipEnabled = false;
 
