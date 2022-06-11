@@ -1082,7 +1082,7 @@ namespace k2app::main
 
 		// Errors' case
 		bool server_giveUp = false;
-		int server_tries = 0;
+		int server_tries = 0, server_loops = 0;
 
 		while (!server_giveUp)
 		{
@@ -1110,20 +1110,27 @@ namespace k2app::main
 					// Wait until certain loop time has passed
 					if (auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(
 							std::chrono::high_resolution_clock::now() - loop_start_time).count();
-						duration <= 10000000.f) // If we were too fast, sleep peacefully @100hz
-						std::this_thread::sleep_for(std::chrono::nanoseconds(
-							std::clamp(7000000 - (int)duration, 0, 7000000)));
+						duration <= 10000000.f) // Try to run peacefully @100hz
+					{
+						std::this_thread::sleep_for(std::chrono::nanoseconds(10000000 - duration));
+						if (server_loops >= 10000)
+						{
+							server_loops = 0; // Reset the counter
+							LOG(INFO) << "10000 loops have passed: this loop took " << duration <<
+								"ns, the loop's time after time correction (sleep) is: " <<
+								std::chrono::duration_cast<std::chrono::nanoseconds>(
+									std::chrono::high_resolution_clock::now() - loop_start_time).count() << "ns";
+						}
+						else server_loops++;
+					}
 
 					else if (duration > 35000000.f)
 						LOG(WARNING) << "Can't keep up! The last loop took " <<
-							std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(
+							std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(
 								std::chrono::high_resolution_clock::now() - loop_start_time).count()) <<
-							"us. (Ran at approximately " <<
+							"ns. (Ran at approximately " <<
 							std::to_string(1000000.f / std::chrono::duration_cast<std::chrono::microseconds>(
 								std::chrono::high_resolution_clock::now() - loop_start_time).count()) << "fps)";
-
-					OutputDebugStringA((std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(
-						std::chrono::high_resolution_clock::now() - loop_start_time).count()) + '\n').c_str());
 				}
 			}
 			catch (...) // Catch everything
