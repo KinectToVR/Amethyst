@@ -11,7 +11,7 @@ using namespace k2app::shared::devices;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	DevicesPage::DevicesPage()
 	{
@@ -63,11 +63,11 @@ namespace winrt::KinectToVR::implementation
 
 		// Create tracking devices' list
 		static auto m_TrackingDevicesViewModels =
-			multi_threaded_observable_vector<KinectToVR::TrackingDevicesView>();
+			multi_threaded_observable_vector<Amethyst::TrackingDevicesView>();
 
 		// Watch for insertions
 		m_TrackingDevicesViewModels.VectorChanged(
-			[&](const Windows::Foundation::Collections::IObservableVector<KinectToVR::TrackingDevicesView>& sender,
+			[&](const Windows::Foundation::Collections::IObservableVector<Amethyst::TrackingDevicesView>& sender,
 			    const Windows::Foundation::Collections::IVectorChangedEventArgs& args)
 			{
 				// Report a registration and parse
@@ -158,7 +158,7 @@ namespace winrt::KinectToVR::implementation
 
 
 Windows::Foundation::IAsyncAction
-KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
+Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 	const Windows::Foundation::IInspectable& sender,
 	const Controls::SelectionChangedEventArgs& e)
 {
@@ -417,7 +417,7 @@ KinectToVR::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged
 }
 
 
-void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
+void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(
 	const Controls::SplitButton& sender,
 	const Controls::SplitButtonClickEventArgs& args)
 {
@@ -574,7 +574,7 @@ void KinectToVR::implementation::DevicesPage::ReconnectDeviceButton_Click(
 }
 
 // *Nearly* the same as reconnect
-void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
+void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	const Windows::Foundation::IInspectable& sender,
 	const RoutedEventArgs& e)
 {
@@ -650,7 +650,7 @@ void KinectToVR::implementation::DevicesPage::DisconnectDeviceButton_Click(
 }
 
 // Mark override device as -1 -> deselect it
-void KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
+void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	const Windows::Foundation::IInspectable& sender,
 	const RoutedEventArgs& e)
 {
@@ -722,7 +722,7 @@ void KinectToVR::implementation::DevicesPage::DeselectDeviceButton_Click(
 }
 
 
-Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAsOverrideButton_Click(
+Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOverrideButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
@@ -909,7 +909,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 }
 
 
-Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAsBaseButton_Click(
+Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBaseButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
@@ -1043,7 +1043,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 	devicesJointsBasisSelectorStackPanelInner.get()->Transitions().Clear();
 }
 
-//void KinectToVR::implementation::DevicesPage::WaistPositionOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::WaistPositionOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1064,7 +1064,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::WaistRotationOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::WaistRotationOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1085,7 +1085,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1106,7 +1106,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1127,7 +1127,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::RightFootPositionOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::RightFootPositionOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1148,7 +1148,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::RightFootRotationOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::RightFootRotationOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1168,7 +1168,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1189,7 +1189,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1210,7 +1210,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1231,7 +1231,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1252,7 +1252,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1273,7 +1273,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1294,7 +1294,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::RightKneePositionOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::RightKneePositionOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1315,7 +1315,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_SelectionChanged(
+//void Amethyst::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_SelectionChanged(
 //	const Windows::Foundation::IInspectable& sender,
 //	const Controls::SelectionChangedEventArgs& e)
 //{
@@ -1337,7 +1337,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //
 ///* For *Override* device type: override elements for joints selector */
 //
-//void KinectToVR::implementation::DevicesPage::OverrideWaistPosition_Click(
+//void Amethyst::implementation::DevicesPage::OverrideWaistPosition_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1364,7 +1364,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideWaistRotation_Click(
+//void Amethyst::implementation::DevicesPage::OverrideWaistRotation_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1391,7 +1391,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideLeftFootPosition_Click(
+//void Amethyst::implementation::DevicesPage::OverrideLeftFootPosition_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1418,7 +1418,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideLeftFootRotation_Click(
+//void Amethyst::implementation::DevicesPage::OverrideLeftFootRotation_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1445,7 +1445,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideRightFootPosition_Click(
+//void Amethyst::implementation::DevicesPage::OverrideRightFootPosition_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1472,7 +1472,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideRightFootRotation_Click(
+//void Amethyst::implementation::DevicesPage::OverrideRightFootRotation_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1499,7 +1499,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideLeftElbowPosition_Click(
+//void Amethyst::implementation::DevicesPage::OverrideLeftElbowPosition_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1526,7 +1526,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideLeftElbowRotation_Click(
+//void Amethyst::implementation::DevicesPage::OverrideLeftElbowRotation_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1553,7 +1553,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideRightElbowPosition_Click(
+//void Amethyst::implementation::DevicesPage::OverrideRightElbowPosition_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1580,7 +1580,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideRightElbowRotation_Click(
+//void Amethyst::implementation::DevicesPage::OverrideRightElbowRotation_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1607,7 +1607,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideLeftKneePosition_Click(
+//void Amethyst::implementation::DevicesPage::OverrideLeftKneePosition_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1634,7 +1634,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideLeftKneeRotation_Click(
+//void Amethyst::implementation::DevicesPage::OverrideLeftKneeRotation_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1661,7 +1661,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideRightKneePosition_Click(
+//void Amethyst::implementation::DevicesPage::OverrideRightKneePosition_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1688,7 +1688,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 //
 //
-//void KinectToVR::implementation::DevicesPage::OverrideRightKneeRotation_Click(
+//void Amethyst::implementation::DevicesPage::OverrideRightKneeRotation_Click(
 //	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 //{
 //	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -1715,7 +1715,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::DevicesPage::SetAs
 //}
 
 
-void KinectToVR::implementation::DevicesPage::DismissOverrideTipNoJointsButton_Click(
+void Amethyst::implementation::DevicesPage::DismissOverrideTipNoJointsButton_Click(
 	const Windows::Foundation::IInspectable& sender,
 	const RoutedEventArgs& e)
 {
@@ -1723,7 +1723,7 @@ void KinectToVR::implementation::DevicesPage::DismissOverrideTipNoJointsButton_C
 }
 
 
-void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
+void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Reset
@@ -1964,21 +1964,21 @@ void KinectToVR::implementation::DevicesPage::DevicesPage_Loaded(
 }
 
 
-void KinectToVR::implementation::DevicesPage::OpenDiscordButton_Click(
+void Amethyst::implementation::DevicesPage::OpenDiscordButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ShellExecuteA(nullptr, nullptr, "https://discord.gg/YBQCRDG", nullptr, nullptr, SW_SHOW);
 }
 
 
-void KinectToVR::implementation::DevicesPage::OpenDocsButton_Click(
+void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/", nullptr, nullptr, SW_SHOW);
 }
 
 
-void KinectToVR::implementation::DevicesPage::SelectedDeviceSettingsButton_Click(
+void Amethyst::implementation::DevicesPage::SelectedDeviceSettingsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	selectedDeviceSettingsFlyout.get()->ShowAt(sender.as<FrameworkElement>());

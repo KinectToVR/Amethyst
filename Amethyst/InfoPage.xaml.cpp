@@ -10,7 +10,7 @@ using namespace winrt::Microsoft::UI::Xaml;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	InfoPage::InfoPage()
 	{
@@ -27,7 +27,7 @@ namespace winrt::KinectToVR::implementation
 }
 
 
-void winrt::KinectToVR::implementation::InfoPage::Grid_Loaded(
+void winrt::Amethyst::implementation::InfoPage::Grid_Loaded(
 	winrt::Windows::Foundation::IInspectable const& sender, 
 	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {

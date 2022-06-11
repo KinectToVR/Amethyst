@@ -9,7 +9,7 @@
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{776470d2-46b2-41ac-8a04-0ed36e96d605}</ProjectGuid>
     <ProjectName>Amethyst</ProjectName>
-    <RootNamespace>KinectToVR</RootNamespace>
+    <RootNamespace>Amethyst</RootNamespace>
     <!--
       $(TargetName) should be same as $(RootNamespace) so that the produced binaries (.exe/.pri/etc.)
       have a name that matches the .winmd

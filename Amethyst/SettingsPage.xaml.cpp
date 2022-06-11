@@ -32,7 +32,7 @@ void settings_safe_clear(const std::shared_ptr<Controls::StackPanel>& panel)
 	}();
 }
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	SettingsPage::SettingsPage()
 	{
@@ -135,7 +135,7 @@ namespace winrt::KinectToVR::implementation
 }
 
 
-void KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Checked(
+void Amethyst::implementation::SettingsPage::ExternalFlipCheckBox_Checked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
@@ -147,7 +147,7 @@ void KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Checked(
 }
 
 
-void KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Unchecked(
+void Amethyst::implementation::SettingsPage::ExternalFlipCheckBox_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
@@ -159,14 +159,14 @@ void KinectToVR::implementation::SettingsPage::ExternalFlipCheckBox_Unchecked(
 }
 
 
-void KinectToVR::implementation::SettingsPage::RestartButton_Click(
+void Amethyst::implementation::SettingsPage::RestartButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ktvr::request_vr_restart<false>("SteamVR needs to be restarted to enable/disable trackers properly.");
 }
 
 winrt::Windows::Foundation::IAsyncAction
-KinectToVR::implementation::SettingsPage::ResetButton_Click(
+Amethyst::implementation::SettingsPage::ResetButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Mark trackers as inactive
@@ -207,7 +207,7 @@ KinectToVR::implementation::SettingsPage::ResetButton_Click(
 }
 
 
-void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
+void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	using namespace k2app::shared::settings;
@@ -269,7 +269,7 @@ void KinectToVR::implementation::SettingsPage::SettingsPage_Loaded(
 	k2app::shared::settings::settings_localInitFinished = true;
 }
 
-void KinectToVR::implementation::SettingsPage::AutoSpawn_Checked(
+void Amethyst::implementation::SettingsPage::AutoSpawn_Checked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
@@ -281,7 +281,7 @@ void KinectToVR::implementation::SettingsPage::AutoSpawn_Checked(
 }
 
 
-void KinectToVR::implementation::SettingsPage::AutoSpawn_Unchecked(
+void Amethyst::implementation::SettingsPage::AutoSpawn_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
@@ -293,7 +293,7 @@ void KinectToVR::implementation::SettingsPage::AutoSpawn_Unchecked(
 }
 
 
-void KinectToVR::implementation::SettingsPage::EnableSounds_Checked(
+void Amethyst::implementation::SettingsPage::EnableSounds_Checked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
@@ -308,7 +308,7 @@ void KinectToVR::implementation::SettingsPage::EnableSounds_Checked(
 }
 
 
-void KinectToVR::implementation::SettingsPage::EnableSounds_Unchecked(
+void Amethyst::implementation::SettingsPage::EnableSounds_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
@@ -323,7 +323,7 @@ void KinectToVR::implementation::SettingsPage::EnableSounds_Unchecked(
 }
 
 
-void KinectToVR::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
+void Amethyst::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
 	const Windows::Foundation::IInspectable& sender,
 	const Controls::Primitives::RangeBaseValueChangedEventArgs& e)
 {
@@ -340,7 +340,7 @@ void KinectToVR::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
 }
 
 
-void KinectToVR::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem_Click(
+void Amethyst::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem_Click(
 	const Windows::Foundation::IInspectable& sender,
 	const RoutedEventArgs& e)
 {
@@ -354,7 +354,7 @@ void KinectToVR::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutIt
 }
 
 
-void KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(
+void Amethyst::implementation::SettingsPage::FlipDropDown_Expanding(
 	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
 	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
 {
@@ -366,7 +366,7 @@ void KinectToVR::implementation::SettingsPage::FlipDropDown_Expanding(
 }
 
 
-void KinectToVR::implementation::SettingsPage::FlipToggle_Toggled(
+void Amethyst::implementation::SettingsPage::FlipToggle_Toggled(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
@@ -383,7 +383,7 @@ void KinectToVR::implementation::SettingsPage::FlipToggle_Toggled(
 }
 
 
-void KinectToVR::implementation::SettingsPage::AutoStartFlyout_Opening(
+void Amethyst::implementation::SettingsPage::AutoStartFlyout_Opening(
 	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	k2app::shared::settings::autoStartCheckBox->IsChecked(
@@ -391,7 +391,7 @@ void KinectToVR::implementation::SettingsPage::AutoStartFlyout_Opening(
 }
 
 
-void KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Checked(
+void Amethyst::implementation::SettingsPage::AutoStartCheckBox_Checked(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	k2app::interfacing::installApplicationManifest(); // Just in case
@@ -405,7 +405,7 @@ void KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Checked(
 }
 
 
-void KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
+void Amethyst::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	k2app::interfacing::installApplicationManifest(); // Just in case
@@ -419,7 +419,7 @@ void KinectToVR::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
 }
 
 
-void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
+void Amethyst::implementation::SettingsPage::ReManifestButton_Click(
 	const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
 	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args)
 {
@@ -454,7 +454,7 @@ void KinectToVR::implementation::SettingsPage::ReManifestButton_Click(
 }
 
 
-void KinectToVR::implementation::SettingsPage::ReRegisterButton_Click(
+void Amethyst::implementation::SettingsPage::ReRegisterButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
@@ -480,14 +480,14 @@ void KinectToVR::implementation::SettingsPage::ReRegisterButton_Click(
 }
 
 
-void KinectToVR::implementation::SettingsPage::DismissSetErrorButton_Click(
+void Amethyst::implementation::SettingsPage::DismissSetErrorButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	SetErrorFlyout().Hide();
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersButton_Click(
+void winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersButton_Click(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	Controls::Primitives::FlyoutShowOptions options;
@@ -500,7 +500,7 @@ void winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersButton_Cl
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersFlyout_Closed(
+void winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersFlyout_Closed(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
 {
 	DimGrid().Opacity(0.0);
@@ -508,7 +508,7 @@ void winrt::KinectToVR::implementation::SettingsPage::LearnAboutFiltersFlyout_Cl
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::TrackerConfigButton_Click(
+void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	auto trackerConfigFlyout = Controls::MenuFlyout();
@@ -908,7 +908,7 @@ void winrt::KinectToVR::implementation::SettingsPage::TrackerConfigButton_Click(
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::CheckOverlapsCheckBox_Checked(
+void winrt::Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Checked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	// Don't react to pre-init signals
@@ -919,7 +919,7 @@ void winrt::KinectToVR::implementation::SettingsPage::CheckOverlapsCheckBox_Chec
 }
 
 
-void winrt::KinectToVR::implementation::SettingsPage::CheckOverlapsCheckBox_Unchecked(
+void winrt::Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Unchecked(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	// Don't react to pre-init signals

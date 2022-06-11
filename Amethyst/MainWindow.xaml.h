@@ -32,7 +32,7 @@ namespace wuxc
 	using namespace winrt::Windows::UI::Xaml::Controls;
 };
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	struct MainWindow : MainWindowT<MainWindow>
 	{
@@ -90,7 +90,7 @@ namespace winrt::KinectToVR::implementation
 	};
 }
 
-namespace winrt::KinectToVR::factory_implementation
+namespace winrt::Amethyst::factory_implementation
 {
 	struct MainWindow : MainWindowT<MainWindow, implementation::MainWindow>
 	{

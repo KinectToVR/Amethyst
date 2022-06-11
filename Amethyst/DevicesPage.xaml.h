@@ -11,7 +11,7 @@
 #include "OverrideSelectorRow.h"
 #include "OverrideSelectorExpander.h"
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	struct DevicesPage : DevicesPageT<DevicesPage>
 	{
@@ -46,7 +46,7 @@ namespace winrt::KinectToVR::implementation
 	};
 }
 
-namespace winrt::KinectToVR::factory_implementation
+namespace winrt::Amethyst::factory_implementation
 {
 	struct DevicesPage : DevicesPageT<DevicesPage, implementation::DevicesPage>
 	{

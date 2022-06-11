@@ -2,7 +2,7 @@
 
 #include "ConsolePage.g.h"
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	struct ConsolePage : ConsolePageT<ConsolePage>
 	{
@@ -23,7 +23,7 @@ namespace winrt::KinectToVR::implementation
 	};
 }
 
-namespace winrt::KinectToVR::factory_implementation
+namespace winrt::Amethyst::factory_implementation
 {
 	struct ConsolePage : ConsolePageT<ConsolePage, implementation::ConsolePage>
 	{

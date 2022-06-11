@@ -39,7 +39,7 @@ struct toast
 };
 
 // Updates checking function
-Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::checkUpdates(
+Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpdates(
 	const UIElement& show_el, const bool show, const DWORD delay_ms)
 {
 	// Attempt only after init
@@ -298,7 +298,7 @@ winrt::Microsoft::UI::Composition::SystemBackdrops::SystemBackdropTheme ConvertT
 	}
 }
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	Microsoft::UI::Composition::SystemBackdrops::SystemBackdropConfiguration m_configuration{nullptr};
 	Microsoft::UI::Composition::SystemBackdrops::MicaController m_micaController{nullptr};
@@ -474,9 +474,9 @@ namespace winrt::KinectToVR::implementation
 
 		LOG(INFO) << "~~~Amethyst new logging session begins here!~~~";
 
-		LOG(INFO) << "Registering a named mutex for com_kinecttovr_k2app_amethyst...";
+		LOG(INFO) << "Registering a named mutex for com_kinecttovr_amethyst...";
 
-		hNamedMutex = CreateMutexA(nullptr, TRUE, "com_kinecttovr_k2app_amethyst");
+		hNamedMutex = CreateMutexA(nullptr, TRUE, "com_kinecttovr_amethyst");
 		if (ERROR_ALREADY_EXISTS == GetLastError())
 		{
 			LOG(ERROR) << "Startup failed! The app is already running.";
@@ -1170,7 +1170,7 @@ namespace winrt::KinectToVR::implementation
 	}
 }
 
-void KinectToVR::implementation::MainWindow::NavView_Loaded(
+void Amethyst::implementation::MainWindow::NavView_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// NavView doesn't load any page by default, so load home page.
@@ -1197,7 +1197,7 @@ void KinectToVR::implementation::MainWindow::NavView_Loaded(
 		ktvr::Interface::SingleLayoutHorizontalAlignment::Left);
 }
 
-void KinectToVR::implementation::MainWindow::NavView_ItemInvoked(
+void Amethyst::implementation::MainWindow::NavView_ItemInvoked(
 	const Controls::NavigationView& sender,
 	const Controls::NavigationViewItemInvokedEventArgs& args)
 {
@@ -1207,7 +1207,7 @@ void KinectToVR::implementation::MainWindow::NavView_ItemInvoked(
 		args.RecommendedNavigationTransitionInfo());
 }
 
-void KinectToVR::implementation::MainWindow::NavView_Navigate(
+void Amethyst::implementation::MainWindow::NavView_Navigate(
 	std::wstring navItemTag,
 	const Media::Animation::NavigationTransitionInfo& transitionInfo)
 {
@@ -1234,7 +1234,7 @@ void KinectToVR::implementation::MainWindow::NavView_Navigate(
 	}
 }
 
-void KinectToVR::implementation::MainWindow::ContentFrame_NavigationFailed(
+void Amethyst::implementation::MainWindow::ContentFrame_NavigationFailed(
 	const Windows::Foundation::IInspectable& sender,
 	const Navigation::NavigationFailedEventArgs& e)
 {
@@ -1242,14 +1242,14 @@ void KinectToVR::implementation::MainWindow::ContentFrame_NavigationFailed(
 		E_FAIL, hstring(L"Failed to load Page ") + e.SourcePageType().Name);
 }
 
-void KinectToVR::implementation::MainWindow::NavView_BackRequested(
+void Amethyst::implementation::MainWindow::NavView_BackRequested(
 	const Controls::NavigationView& sender,
 	const Controls::NavigationViewBackRequestedEventArgs& args)
 {
 	TryGoBack();
 }
 
-void KinectToVR::implementation::MainWindow::CoreDispatcher_AcceleratorKeyActivated(
+void Amethyst::implementation::MainWindow::CoreDispatcher_AcceleratorKeyActivated(
 	const Windows::UI::Core::CoreDispatcher& /* sender */,
 	const Windows::UI::Core::AcceleratorKeyEventArgs& args)
 {
@@ -1263,7 +1263,7 @@ void KinectToVR::implementation::MainWindow::CoreDispatcher_AcceleratorKeyActiva
 	}
 }
 
-void KinectToVR::implementation::MainWindow::CoreWindow_PointerPressed(
+void Amethyst::implementation::MainWindow::CoreWindow_PointerPressed(
 	const Windows::UI::Core::CoreWindow& /* sender */,
 	const Windows::UI::Core::PointerEventArgs& args)
 {
@@ -1274,7 +1274,7 @@ void KinectToVR::implementation::MainWindow::CoreWindow_PointerPressed(
 	}
 }
 
-void KinectToVR::implementation::MainWindow::System_BackRequested(
+void Amethyst::implementation::MainWindow::System_BackRequested(
 	const Windows::Foundation::IInspectable& /* sender */,
 	const Windows::UI::Core::BackRequestedEventArgs& args)
 {
@@ -1284,7 +1284,7 @@ void KinectToVR::implementation::MainWindow::System_BackRequested(
 	}
 }
 
-bool KinectToVR::implementation::MainWindow::TryGoBack()
+bool Amethyst::implementation::MainWindow::TryGoBack()
 {
 	if (!ContentFrame().CanGoBack())
 		return false;
@@ -1297,7 +1297,7 @@ bool KinectToVR::implementation::MainWindow::TryGoBack()
 	return true;
 }
 
-void KinectToVR::implementation::MainWindow::On_Navigated(
+void Amethyst::implementation::MainWindow::On_Navigated(
 	const Windows::Foundation::IInspectable& /* sender */,
 	const Windows::UI::Xaml::Navigation::NavigationEventArgs& args)
 {
@@ -1342,13 +1342,13 @@ Windows::UI::Xaml::Controls::Primitives::Popup GetPopup()
 	return nullptr;
 }
 
-void KinectToVR::implementation::MainWindow::InstallLaterButton_Click(
+void Amethyst::implementation::MainWindow::InstallLaterButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	UpdateFlyout().Hide();
 }
 
-void KinectToVR::implementation::MainWindow::InstallNowButton_Click(
+void Amethyst::implementation::MainWindow::InstallNowButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ShellExecuteA(nullptr, nullptr, "https://github.com/KinectToVR/Amethyst-Releases/releases/latest", nullptr, nullptr,
@@ -1357,14 +1357,14 @@ void KinectToVR::implementation::MainWindow::InstallNowButton_Click(
 }
 
 
-void KinectToVR::implementation::MainWindow::ExitButton_Click(
+void Amethyst::implementation::MainWindow::ExitButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	k2app::interfacing::handle_app_exit();
 }
 
 
-void KinectToVR::implementation::MainWindow::MinimizeButton_Click(
+void Amethyst::implementation::MainWindow::MinimizeButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Minimize with win+down
@@ -1389,7 +1389,7 @@ void KinectToVR::implementation::MainWindow::MinimizeButton_Click(
 }
 
 
-Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::UpdateButton_Loaded(
+Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateButton_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Check for updates (and show)
@@ -1397,7 +1397,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::Update
 }
 
 
-Windows::Foundation::IAsyncAction KinectToVR::implementation::MainWindow::UpdateButton_Tapped(
+Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateButton_Tapped(
 	const Windows::Foundation::IInspectable& sender,
 	const Input::TappedRoutedEventArgs& e)
 {
@@ -1435,7 +1435,7 @@ void k2app::interfacing::handle_app_exit(const uint32_t& p_sleep_millis)
 			[&]
 			{
 				LOG(INFO) <<
-					"Shutting down: com_kinecttovr_k2app_amethyst named mutex close failed! The app may misbehave.";
+					"Shutting down: com_kinecttovr_amethyst named mutex close failed! The app may misbehave.";
 			}();
 		}
 	}();

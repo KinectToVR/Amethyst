@@ -1,4 +1,4 @@
-namespace KinectToVR
+namespace Amethyst
 {
     [default_interface]
     runtimeclass InfoPage : Microsoft.UI.Xaml.Controls.Page

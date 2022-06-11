@@ -4,7 +4,7 @@
 #include "K2Shared.h"
 #include "K2Interfacing.h"
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	struct InfoPage : InfoPageT<InfoPage>
 	{
@@ -15,7 +15,7 @@ namespace winrt::KinectToVR::implementation
 	};
 }
 
-namespace winrt::KinectToVR::factory_implementation
+namespace winrt::Amethyst::factory_implementation
 {
 	struct InfoPage : InfoPageT<InfoPage, implementation::InfoPage>
 	{

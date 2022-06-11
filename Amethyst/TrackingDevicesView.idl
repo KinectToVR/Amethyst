@@ -1,4 +1,4 @@
-namespace KinectToVR
+namespace Amethyst
 {
 	runtimeclass TrackingDevicesView : Windows.UI.Xaml.Data.INotifyPropertyChanged
 	{

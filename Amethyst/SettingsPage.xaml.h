@@ -5,7 +5,7 @@
 #include "JointExpander.h"
 #include "LocalizedServerStatuses.h"
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	struct SettingsPage : SettingsPageT<SettingsPage>
 	{
@@ -65,7 +65,7 @@ namespace winrt::KinectToVR::implementation
 	};
 }
 
-namespace winrt::KinectToVR::factory_implementation
+namespace winrt::Amethyst::factory_implementation
 {
 	struct SettingsPage : SettingsPageT<SettingsPage, implementation::SettingsPage>
 	{

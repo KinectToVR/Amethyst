@@ -2,7 +2,7 @@
 
 #include "App.xaml.g.h"
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	struct App : AppT<App>
 	{

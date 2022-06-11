@@ -4,7 +4,7 @@
 #include "TrackingDevicesView.g.cpp"
 #endif
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	TrackingDevicesView::TrackingDevicesView(
 		const hstring& DeviceName) :

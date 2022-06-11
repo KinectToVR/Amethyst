@@ -9,7 +9,7 @@ using namespace Windows::Foundation;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
 using namespace winrt::Microsoft::UI::Xaml::Navigation;
-using namespace KinectToVR;
+using namespace Amethyst;
 using namespace implementation;
 
 // To learn more about WinUI, the WinUI project structure,

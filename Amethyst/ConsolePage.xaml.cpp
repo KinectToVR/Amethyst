@@ -16,7 +16,7 @@ using namespace winrt::Microsoft::UI::Xaml;
 
 bool console_setup_finished = false;
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	ConsolePage::ConsolePage()
 	{
@@ -25,42 +25,42 @@ namespace winrt::KinectToVR::implementation
 }
 
 
-void KinectToVR::implementation::ConsolePage::ConsolePage_Loaded(
+void Amethyst::implementation::ConsolePage::ConsolePage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	LOG(INFO) << "Ohhhhh, How Sweeet!";
 }
 
 
-void KinectToVR::implementation::ConsolePage::DevicesCrashButton_Click(
+void Amethyst::implementation::ConsolePage::DevicesCrashButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	exit(-12);
 }
 
 
-void KinectToVR::implementation::ConsolePage::OpenVRCrashButton_Click(
+void Amethyst::implementation::ConsolePage::OpenVRCrashButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	exit(-11);
 }
 
 
-void KinectToVR::implementation::ConsolePage::HRESULTCrashButton_Click(
+void Amethyst::implementation::ConsolePage::HRESULTCrashButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	check_hresult(FALSE);
 }
 
 
-void KinectToVR::implementation::ConsolePage::DelegateCrashButton_Click(
+void Amethyst::implementation::ConsolePage::DelegateCrashButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	throw hresult_illegal_delegate_assignment();
 }
 
 
-void KinectToVR::implementation::ConsolePage::NullCrashButton_Click(
+void Amethyst::implementation::ConsolePage::NullCrashButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// This is only a sample, null pointer exceptions
@@ -72,7 +72,7 @@ void KinectToVR::implementation::ConsolePage::NullCrashButton_Click(
 }
 
 
-void KinectToVR::implementation::ConsolePage::DatePicker_SelectedDateChanged(
+void Amethyst::implementation::ConsolePage::DatePicker_SelectedDateChanged(
 	const Controls::DatePicker& sender, const Controls::DatePickerSelectedValueChangedEventArgs& args)
 {
 	if (Windows::Globalization::DateTimeFormatting::DateTimeFormatter(

@@ -1,7 +1,7 @@
 #pragma once
 #include "TrackingDevicesView.g.h"
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	struct TrackingDevicesView : TrackingDevicesViewT<TrackingDevicesView>
 	{
@@ -30,7 +30,7 @@ namespace winrt::KinectToVR::implementation
 }
 
 
-namespace winrt::KinectToVR::factory_implementation
+namespace winrt::Amethyst::factory_implementation
 {
 	struct TrackingDevicesView : TrackingDevicesViewT<TrackingDevicesView, implementation::TrackingDevicesView>
 	{

@@ -1,8 +1,8 @@
 ﻿<Application
-    x:Class="KinectToVR.App"
+    x:Class="Amethyst.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:KinectToVR">
+    xmlns:local="using:Amethyst">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -46,7 +46,7 @@ std::wstring points_format(std::wstring fmt,
 	return fmt;
 }
 
-namespace winrt::KinectToVR::implementation
+namespace winrt::Amethyst::implementation
 {
 	GeneralPage::GeneralPage()
 	{
@@ -102,7 +102,7 @@ namespace winrt::KinectToVR::implementation
 	}
 }
 
-void KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
+void Amethyst::implementation::GeneralPage::OffsetsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Push saved offsets' by reading them from settings
@@ -121,7 +121,7 @@ void KinectToVR::implementation::GeneralPage::OffsetsButton_Click(
 }
 
 
-void KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Click(
+void Amethyst::implementation::GeneralPage::SkeletonToggleButton_Click(
 	const Windows::Foundation::IInspectable& sender,
 	const Controls::SplitButtonClickEventArgs& e)
 {
@@ -143,7 +143,7 @@ void KinectToVR::implementation::GeneralPage::SkeletonToggleButton_Click(
 	k2app::K2Settings.saveSettings();
 }
 
-void KinectToVR::implementation::GeneralPage::ForceRenderCheckBox_Checked(
+void Amethyst::implementation::GeneralPage::ForceRenderCheckBox_Checked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
@@ -152,7 +152,7 @@ void KinectToVR::implementation::GeneralPage::ForceRenderCheckBox_Checked(
 	k2app::K2Settings.saveSettings();
 }
 
-void KinectToVR::implementation::GeneralPage::ForceRenderCheckBox_Unchecked(
+void Amethyst::implementation::GeneralPage::ForceRenderCheckBox_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
@@ -161,7 +161,7 @@ void KinectToVR::implementation::GeneralPage::ForceRenderCheckBox_Unchecked(
 	k2app::K2Settings.saveSettings();
 }
 
-void KinectToVR::implementation::GeneralPage::SaveOffsetsButton_Click(
+void Amethyst::implementation::GeneralPage::SaveOffsetsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	OffsetsView().IsPaneOpen(false);
@@ -171,7 +171,7 @@ void KinectToVR::implementation::GeneralPage::SaveOffsetsButton_Click(
 	k2app::K2Settings.saveSettings();
 }
 
-void KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
+void Amethyst::implementation::GeneralPage::DiscardOffsetsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Discard backend offsets' values by re-reading them from settings
@@ -190,7 +190,7 @@ void KinectToVR::implementation::GeneralPage::DiscardOffsetsButton_Click(
 }
 
 
-void KinectToVR::implementation::GeneralPage::OffsetsView_PaneClosing(
+void Amethyst::implementation::GeneralPage::OffsetsView_PaneClosing(
 	const Controls::SplitView& sender,
 	const Controls::SplitViewPaneClosingEventArgs& args)
 {
@@ -198,7 +198,7 @@ void KinectToVR::implementation::GeneralPage::OffsetsView_PaneClosing(
 }
 
 
-void KinectToVR::implementation::GeneralPage::CalibrationView_PaneClosing(
+void Amethyst::implementation::GeneralPage::CalibrationView_PaneClosing(
 	const Controls::SplitView& sender,
 	const Controls::SplitViewPaneClosingEventArgs& args)
 {
@@ -206,7 +206,7 @@ void KinectToVR::implementation::GeneralPage::CalibrationView_PaneClosing(
 }
 
 
-void KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(
+void Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	AutoCalibrationPane().Visibility(Visibility::Visible);
@@ -230,7 +230,7 @@ void KinectToVR::implementation::GeneralPage::AutoCalibrationButton_Click(
 }
 
 
-Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::StartAutoCalibrationButton_Click(
+Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAutoCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Set the [calibration pending] bool
@@ -490,7 +490,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Start
 }
 
 
-void KinectToVR::implementation::GeneralPage::DiscardCalibrationButton_Click(
+void Amethyst::implementation::GeneralPage::DiscardCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Just exit
@@ -513,7 +513,7 @@ void KinectToVR::implementation::GeneralPage::DiscardCalibrationButton_Click(
 }
 
 
-Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::ManualCalibrationButton_Click(
+Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Swap trigger/grip if we're on index or vive
@@ -724,7 +724,7 @@ Windows::Foundation::IAsyncAction KinectToVR::implementation::GeneralPage::Manua
 }
 
 
-void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(
+void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Checked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
@@ -757,7 +757,7 @@ void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(
 }
 
 
-void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
+void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't check if setup's finished since we're gonna emulate a click rather than change the state only
@@ -773,28 +773,28 @@ void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
 }
 
 
-void KinectToVR::implementation::GeneralPage::OpenDiscordButton_Click(
+void Amethyst::implementation::GeneralPage::OpenDiscordButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ShellExecuteA(nullptr, nullptr, "https://discord.gg/YBQCRDG", nullptr, nullptr, SW_SHOW);
 }
 
 
-void KinectToVR::implementation::GeneralPage::OpenDocsButton_Click(
+void Amethyst::implementation::GeneralPage::OpenDocsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/", nullptr, nullptr, SW_SHOW);
 }
 
 
-void KinectToVR::implementation::GeneralPage::ServerOpenDocsButton_Click(
+void Amethyst::implementation::GeneralPage::ServerOpenDocsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/minus10", nullptr, nullptr, SW_SHOW);
 }
 
 
-void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
+void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Start the main loop since we're done with basic setup
@@ -858,7 +858,7 @@ void KinectToVR::implementation::GeneralPage::GeneralPage_Loaded(
 }
 
 
-void KinectToVR::implementation::GeneralPage::sk_line(
+void Amethyst::implementation::GeneralPage::sk_line(
 	Shapes::Line& line,
 	const std::array<Eigen::Vector3f, 25>& joints,
 	const std::array<ktvr::JointTrackingState, 25>& states,
@@ -909,7 +909,7 @@ void KinectToVR::implementation::GeneralPage::sk_line(
 
 
 // the tuple goes like <position, rotation>
-void KinectToVR::implementation::GeneralPage::sk_dot(
+void Amethyst::implementation::GeneralPage::sk_dot(
 	Shapes::Ellipse& ellipse,
 	const Eigen::Vector3f& joint,
 	const ktvr::JointTrackingState& state,
@@ -1052,7 +1052,7 @@ std::pair<bool, bool> IsJointOverriden(const uint32_t& joint)
 }
 
 
-void KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
+void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	static auto boneLines = std::array<Shapes::Line, 24>();
@@ -1365,7 +1365,7 @@ void KinectToVR::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 }
 
 
-void KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
+void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Capture playspace details one more time, before the calibration
@@ -1404,7 +1404,7 @@ void KinectToVR::implementation::GeneralPage::CalibrationButton_Click(
 }
 
 
-void KinectToVR::implementation::GeneralPage::BaseCalibration_Click(
+void Amethyst::implementation::GeneralPage::BaseCalibration_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ChooseDeviceFlyout().Hide();
@@ -1434,7 +1434,7 @@ void KinectToVR::implementation::GeneralPage::BaseCalibration_Click(
 }
 
 
-void KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
+void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ChooseDeviceFlyout().Hide();
@@ -1464,7 +1464,7 @@ void KinectToVR::implementation::GeneralPage::OverrideCalibration_Click(
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackingButton_Click(
+void winrt::Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 	winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args)
 {
@@ -1479,7 +1479,7 @@ void winrt::KinectToVR::implementation::GeneralPage::ToggleTrackingButton_Click(
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Checked(
+void winrt::Amethyst::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Checked(
 	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
@@ -1488,7 +1488,7 @@ void winrt::KinectToVR::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Che
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Unchecked(
+void winrt::Amethyst::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Unchecked(
 	winrt::Windows::Foundation::IInspectable const& sender,
 	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
@@ -1497,7 +1497,7 @@ void winrt::KinectToVR::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Unc
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::CalibrationSelectView_PaneClosing(
+void winrt::Amethyst::implementation::GeneralPage::CalibrationSelectView_PaneClosing(
 	winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
 {
@@ -1505,7 +1505,7 @@ void winrt::KinectToVR::implementation::GeneralPage::CalibrationSelectView_PaneC
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::CalibrationRunningView_PaneClosing(
+void winrt::Amethyst::implementation::GeneralPage::CalibrationRunningView_PaneClosing(
 	winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
 {
@@ -1513,7 +1513,7 @@ void winrt::KinectToVR::implementation::GeneralPage::CalibrationRunningView_Pane
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::CalibrationPointsNumberBox_ValueChanged(
+void winrt::Amethyst::implementation::GeneralPage::CalibrationPointsNumberBox_ValueChanged(
 	winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender,
 	winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args)
 {
@@ -1529,7 +1529,7 @@ void winrt::KinectToVR::implementation::GeneralPage::CalibrationPointsNumberBox_
 	k2app::K2Settings.saveSettings(); // Save it
 }
 
-void winrt::KinectToVR::implementation::GeneralPage::ReRegisterButton_Click(
+void winrt::Amethyst::implementation::GeneralPage::ReRegisterButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
@@ -1555,7 +1555,7 @@ void winrt::KinectToVR::implementation::GeneralPage::ReRegisterButton_Click(
 }
 
 
-void winrt::KinectToVR::implementation::GeneralPage::DismissSetErrorButton_Click(
+void winrt::Amethyst::implementation::GeneralPage::DismissSetErrorButton_Click(
 	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	SetErrorFlyout().Hide();
