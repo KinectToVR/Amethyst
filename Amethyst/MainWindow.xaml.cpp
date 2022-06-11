@@ -429,7 +429,7 @@ namespace winrt::Amethyst::implementation
 		k2app::shared::main::consoleItem = std::make_shared<Controls::NavigationViewItem>(ConsoleItem());
 
 		// Set up
-		this->Title(L"Amethyst [Preview]");
+		this->Title(L"Amethyst");
 
 		LOG(INFO) << "Extending the window titlebar...";
 		this->ExtendsContentIntoTitleBar(true);

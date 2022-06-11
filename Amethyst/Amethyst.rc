@@ -68,7 +68,7 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "K2VR Team"
-            VALUE "FileDescription", "Amethyst Desktop [Preview]"
+            VALUE "FileDescription", "Amethyst (Desktop)"
             VALUE "FileVersion", "1.0.2.2"
             VALUE "InternalName", "Amethyst.exe"
             VALUE "LegalCopyright", "Copyright (C) 2022"
