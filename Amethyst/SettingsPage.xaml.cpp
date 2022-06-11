@@ -744,6 +744,10 @@ void winrt::KinectToVR::implementation::SettingsPage::TrackerConfigButton_Click(
 					co_await ui_thread;
 				}
 				jointExpanderHostStackPanel->Transitions().RemoveAtEnd();
+
+				// Request a check for already-added trackers
+				LOG(INFO) << "Requesting a check for already-added trackers...";
+				k2app::interfacing::alreadyAddedTrackersScanRequested = true;
 				co_return;
 			});
 

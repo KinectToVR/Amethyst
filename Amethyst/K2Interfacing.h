@@ -75,7 +75,7 @@ namespace k2app::interfacing
 
 	// App closing check
 	inline bool isExitingNow = false;
-	
+
 	inline std::pair<Eigen::Vector3f, Eigen::Vector3f> // Position helpers for k2 devices -> Base, Override
 		kinectHeadPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}, // But this one's kinect-only
 		kinectWaistPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}; // This one applies to both bases
@@ -87,13 +87,13 @@ namespace k2app::interfacing
 	inline Eigen::Quaternionf vrPlayspaceOrientationQuaternion{1, 0, 0, 0};
 
 	// Show an app toast / notification
-	inline void ShowToast(const std::wstring& header, 
-		const std::wstring& text, const bool high_priority = false)
+	inline void ShowToast(const std::wstring& header,
+	                      const std::wstring& text, const bool high_priority = false)
 	{
 		if (header.empty() || text.empty())return;
 
 		winrt::hstring payload =
-			(LR"(<toast>
+		(LR"(<toast>
 						<visual>
 							<binding template = "ToastGeneric">
 								<text>)" + header + LR"(</text>"
@@ -118,7 +118,7 @@ namespace k2app::interfacing
 		struct ::tm tm_time;
 		const auto tm_now = time(NULL);
 		localtime_s(&tm_time, &tm_now);
-		
+
 		std::ostringstream time_pid_stream;
 		time_pid_stream.fill('0');
 		time_pid_stream << 1900 + tm_time.tm_year
@@ -173,6 +173,8 @@ namespace k2app::interfacing
 
 	// Check if we're currently scanning for trackers from other apps
 	inline std::atomic_bool isAlreadyAddedTrackersScanRunning = false;
+	// If the already-added trackers check was requested
+	inline std::atomic_bool alreadyAddedTrackersScanRequested = false;
 
 	// Forward-declared from JointSelectorExpander.h
 	inline void devices_check_disabled_joints();
@@ -187,7 +189,7 @@ namespace k2app::interfacing
 			// K2Driver is now auto-adding default lower body trackers.
 			// That means that ids are: W-0 L-1 R-2
 			// We may skip downloading them then ^_~
-			
+
 			LOG(INFO) << "[K2Interfacing] App will be using K2Driver's default prepended trackers!";
 
 			// Helper bool array
@@ -195,13 +197,13 @@ namespace k2app::interfacing
 
 			// Try 3 times
 			for (int i = 0; i < 3; i++)
-				for(const auto& tracker : K2Settings.K2TrackersVector)
-					if (tracker.data.isActive) 
+				for (const auto& tracker : K2Settings.K2TrackersVector)
+					if (tracker.data.isActive)
 					{
 						spawned.push_back(false);
 
 						if (const auto& m_result =
-							set_tracker_state(tracker.tracker, true); // We WANT a reply
+								set_tracker_state(tracker.tracker, true); // We WANT a reply
 							m_result.tracker == tracker.tracker && m_result.success)
 						{
 							LOG(INFO) << "Tracker with serial " + tracker.data.serial +
@@ -213,9 +215,9 @@ namespace k2app::interfacing
 
 						else if (m_result.tracker != tracker.tracker && m_result.success)
 							LOG(ERROR) << "Tracker with serial " + tracker.data.serial + " and id "
-							+
-							std::to_string(static_cast<int>(tracker.tracker)) +
-							" could not be spawned due to return mismatch.";
+								+
+								std::to_string(static_cast<int>(tracker.tracker)) +
+								" could not be spawned due to return mismatch.";
 
 						else
 						{
@@ -276,12 +278,12 @@ namespace k2app::interfacing
 		{
 			LOG(ERROR) << "IVRSystem could not be initialized: EVRInitError Code " << eError;
 			/*MessageBoxA(nullptr,
-				            std::string(
-					            "Couldn't initialise VR system. (Code " + std::to_string(eError) +
-					            ")\n\nPlease check if SteamVR is installed (or running) and try again."
-				            ).c_str(),
-				            "IVRSystem Init Failure!",
-				            MB_OK);*/
+							std::string(
+								"Couldn't initialise VR system. (Code " + std::to_string(eError) +
+								")\n\nPlease check if SteamVR is installed (or running) and try again."
+							).c_str(),
+							"IVRSystem Init Failure!",
+							MB_OK);*/
 
 			return false; // Fail
 		}
@@ -312,11 +314,11 @@ namespace k2app::interfacing
 		{
 			LOG(ERROR) << "Could not set up Input Actions. Please check the upper log for further information.";
 			/*MessageBoxA(nullptr,
-				            std::string(
-					            "Couldn't set up Input Actions.\n\nPlease check the log file for further information."
-				            ).c_str(),
-				            "EVR Input Actions Init Failure!",
-				            MB_OK);*/
+							std::string(
+								"Couldn't set up Input Actions.\n\nPlease check the log file for further information."
+							).c_str(),
+							"EVR Input Actions Init Failure!",
+							MB_OK);*/
 
 			return false;
 		}
@@ -523,23 +525,24 @@ namespace k2app::interfacing
 		{
 		case -10:
 			serverStatusString = GetLocalizedStatusWStringAutomatic(status_exception_map);
-				//L"EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
+		//L"EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
 			break;
 		case -1:
 			serverStatusString = GetLocalizedStatusWStringAutomatic(status_connection_error_map);
-				//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
+		//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
 			break;
 		case 10:
 			serverStatusString = GetLocalizedStatusWStringAutomatic(status_server_failure_map);
-				//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
+		//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
 			break;
 		case 1:
-			serverStatusString = GetLocalizedStatusWStringAutomatic(status_ok_map); //L"Success! (Code 1)\nI_OK\nEverything's good!";
+			serverStatusString = GetLocalizedStatusWStringAutomatic(status_ok_map);
+		//L"Success! (Code 1)\nI_OK\nEverything's good!";
 			isServerDriverPresent = true; // Change to success
 			break;
 		default:
 			serverStatusString = GetLocalizedStatusWStringAutomatic(status_api_failure_map);
-				//L"COULD NOT CONNECT TO K2API (Code -11)\nE_K2API_FAILURE\nThis error shouldn't occur, actually. Something's wrong a big part.";
+		//L"COULD NOT CONNECT TO K2API (Code -11)\nE_K2API_FAILURE\nThis error shouldn't occur, actually. Something's wrong a big part.";
 			break;
 		}
 
@@ -567,8 +570,8 @@ namespace k2app::interfacing
 		 * \return <Success?, id>
 		 */
 	inline std::pair<bool, uint32_t> findVRTracker(
-		const std::string &_role, 
-		const bool _can_be_ame = true, 
+		const std::string& _role,
+		const bool _can_be_ame = true,
 		const bool _log = true)
 	{
 		// Loop through all devices
@@ -606,13 +609,13 @@ namespace k2app::interfacing
 					for (const auto& _tracker : k2app::K2Settings.K2TrackersVector)
 						if (std::string(buf_p) == _tracker.data.serial)
 						{
-							LOG_IF(INFO, _log) << 
+							LOG_IF(INFO, _log) <<
 								"Skipping the latest found tracker because it's been added from Amethyst";
 							_can_return = false; // Maybe next time, bud
 						}
 
 				// Return what we've got
-				if(_can_return)
+				if (_can_return)
 					return std::make_pair(true, i);
 			}
 		}
@@ -689,12 +692,13 @@ namespace k2app::interfacing
 			// Optionally setup & show the reregister button
 			shared::general::reRegisterButton.get()->Visibility(
 				serverDriverStatusCode == -10
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 
 			shared::general::serverOpenDiscordButton.get()->Height(
 				serverDriverStatusCode == -10
-				? 40 : 65);
+					? 40
+					: 65);
 		}
 
 		// Block some things if server isn't working properly
@@ -900,7 +904,11 @@ namespace k2app::interfacing
 			}
 		}
 	}
+}
 
+
+namespace k2app::interfacing
+{
 	namespace AppInterface
 	{
 		using namespace winrt::Microsoft::UI::Xaml;
@@ -929,14 +937,14 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_text_block.get())
-								_ptr_text_block.get()->Visibility(
-									visibility
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_block.get())
+							_ptr_text_block.get()->Visibility(
+								visibility
 									? Visibility::Visible
 									: Visibility::Collapsed);
-						});
+					});
 			}
 
 			// Width Get and Set
@@ -951,11 +959,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_text_block.get())
-								_ptr_text_block.get()->Width(width);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_block.get())
+							_ptr_text_block.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -970,11 +978,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_text_block.get())
-								_ptr_text_block.get()->Height(height);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_block.get())
+							_ptr_text_block.get()->Height(height);
+					});
 			}
 
 			// Text Get and Set
@@ -989,11 +997,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_text_block.get())
-								_ptr_text_block.get()->Text(text);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_block.get())
+							_ptr_text_block.get()->Text(text);
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1041,14 +1049,14 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_button.get())
-								_ptr_button.get()->Visibility(
-									visibility
+					{
+						if (isExitingNow)return;
+						if (_ptr_button.get())
+							_ptr_button.get()->Visibility(
+								visibility
 									? Visibility::Visible
 									: Visibility::Collapsed);
-						});
+					});
 			}
 
 			// Width Get and Set
@@ -1063,11 +1071,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_button.get())
-								_ptr_button.get()->Width(width);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_button.get())
+							_ptr_button.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1082,11 +1090,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_button.get())
-								_ptr_button.get()->Height(height);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_button.get())
+							_ptr_button.get()->Height(height);
+					});
 			}
 
 			// IsEnabled Get and Set
@@ -1101,11 +1109,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_button.get())
-								_ptr_button.get()->IsEnabled(enabled);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_button.get())
+							_ptr_button.get()->IsEnabled(enabled);
+					});
 			}
 
 			// Label Set
@@ -1113,12 +1121,12 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_button.get())
-								_ptr_button.get()->Content(
-									winrt::box_value(content));
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_button.get())
+							_ptr_button.get()->Content(
+								winrt::box_value(content));
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1144,15 +1152,15 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-					const winrt::Windows::Foundation::IInspectable& sender,
-					const RoutedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable& sender,
+						const RoutedEventArgs& e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e) ->
+					                     const RoutedEventArgs& e) ->
 					void
-				{
-					if (OnClick) // Check if not null
-						OnClick(this);
-				};
+					{
+						if (OnClick) // Check if not null
+							OnClick(this);
+					};
 
 				// Set up the click handler to point to the base's one
 				_button.Click(_n_callback);
@@ -1187,14 +1195,14 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_number_box.get())
-								_ptr_number_box.get()->Visibility(
-									visibility
+					{
+						if (isExitingNow)return;
+						if (_ptr_number_box.get())
+							_ptr_number_box.get()->Visibility(
+								visibility
 									? Visibility::Visible
 									: Visibility::Collapsed);
-						});
+					});
 			}
 
 			// Width Get and Set
@@ -1209,11 +1217,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_number_box.get())
-								_ptr_number_box.get()->Width(width);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_number_box.get())
+							_ptr_number_box.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1228,11 +1236,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_number_box.get())
-								_ptr_number_box.get()->Height(height);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_number_box.get())
+							_ptr_number_box.get()->Height(height);
+					});
 			}
 
 			// IsEnabled Get and Set
@@ -1247,11 +1255,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_number_box.get())
-								_ptr_number_box.get()->IsEnabled(enabled);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_number_box.get())
+							_ptr_number_box.get()->IsEnabled(enabled);
+					});
 			}
 
 			// Value Get and Set
@@ -1266,11 +1274,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_number_box.get())
-								_ptr_number_box.get()->Value(value);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_number_box.get())
+							_ptr_number_box.get()->Value(value);
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1299,16 +1307,16 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-					const winrt::Windows::Foundation::IInspectable& sender,
-					const Controls::NumberBoxValueChangedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable& sender,
+						const Controls::NumberBoxValueChangedEventArgs& e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
-						const Controls::NumberBoxValueChangedEventArgs
-						& e) ->
+					                     const Controls::NumberBoxValueChangedEventArgs
+					                     & e) ->
 					void
-				{
-					if (OnValueChanged) // Check if not null
-						OnValueChanged(this, static_cast<int>(e.NewValue()));
-				};
+					{
+						if (OnValueChanged) // Check if not null
+							OnValueChanged(this, static_cast<int>(e.NewValue()));
+					};
 
 				// Set up the click handler to point to the base's one
 				_number_box.ValueChanged(_n_callback);
@@ -1320,7 +1328,7 @@ namespace k2app::interfacing
 		public:
 			AppComboBox()
 			{
-				Create({ L"Dummy Entry" });
+				Create({L"Dummy Entry"});
 			}
 
 			AppComboBox(const std::vector<std::wstring>& entries)
@@ -1343,14 +1351,14 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_combo_box.get())
-								_ptr_combo_box.get()->Visibility(
-									visibility
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get())
+							_ptr_combo_box.get()->Visibility(
+								visibility
 									? Visibility::Visible
 									: Visibility::Collapsed);
-						});
+					});
 			}
 
 			// Width Get and Set
@@ -1365,11 +1373,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_combo_box.get())
-								_ptr_combo_box.get()->Width(width);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get())
+							_ptr_combo_box.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1384,11 +1392,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_combo_box.get())
-								_ptr_combo_box.get()->Height(height);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get())
+							_ptr_combo_box.get()->Height(height);
+					});
 			}
 
 			// IsEnabled Get and Set
@@ -1403,11 +1411,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_combo_box.get())
-								_ptr_combo_box.get()->IsEnabled(enabled);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get())
+							_ptr_combo_box.get()->IsEnabled(enabled);
+					});
 			}
 
 			// Selected Index Get and Set
@@ -1422,12 +1430,12 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_combo_box.get() &&
-								_ptr_combo_box.get()->Items().Size() < value)
-								_ptr_combo_box.get()->SelectedIndex(value);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get() &&
+							_ptr_combo_box.get()->Items().Size() < value)
+							_ptr_combo_box.get()->SelectedIndex(value);
+					});
 			}
 
 			// Items Vector Get and Set
@@ -1451,23 +1459,23 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_combo_box.get())
 						{
-							if (isExitingNow)return;
-							if (_ptr_combo_box.get())
-							{
-								// Boiler start - reset selection to a safe spot
-								_ptr_combo_box.get()->SelectedIndex(0);
+							// Boiler start - reset selection to a safe spot
+							_ptr_combo_box.get()->SelectedIndex(0);
 
-								// Clear items and append the new ones
-								_ptr_combo_box.get()->Items().Clear();
-								for (const auto& str : entries)
-									_ptr_combo_box.get()->Items().Append(
-										winrt::box_value(str));
+							// Clear items and append the new ones
+							_ptr_combo_box.get()->Items().Clear();
+							for (const auto& str : entries)
+								_ptr_combo_box.get()->Items().Append(
+									winrt::box_value(str));
 
-								// Boiler end - reset selection to the start
-								_ptr_combo_box.get()->SelectedIndex(0);
-							}
-						});
+							// Boiler end - reset selection to the start
+							_ptr_combo_box.get()->SelectedIndex(0);
+						}
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1497,16 +1505,16 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-					const winrt::Windows::Foundation::IInspectable& sender,
-					const Controls::SelectionChangedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable& sender,
+						const Controls::SelectionChangedEventArgs& e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
-						const Controls::SelectionChangedEventArgs
-						& e) ->
+					                     const Controls::SelectionChangedEventArgs
+					                     & e) ->
 					void
-				{
-					if (OnSelectionChanged) // Check if not null
-						OnSelectionChanged(this, _ptr_combo_box.get()->SelectedIndex());
-				};
+					{
+						if (OnSelectionChanged) // Check if not null
+							OnSelectionChanged(this, _ptr_combo_box.get()->SelectedIndex());
+					};
 
 				// Set up the click handler to point to the base's one
 				_combo_box.SelectionChanged(_n_callback);
@@ -1536,14 +1544,14 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_check_box.get())
-								_ptr_check_box.get()->Visibility(
-									visibility
+					{
+						if (isExitingNow)return;
+						if (_ptr_check_box.get())
+							_ptr_check_box.get()->Visibility(
+								visibility
 									? Visibility::Visible
 									: Visibility::Collapsed);
-						});
+					});
 			}
 
 			// Width Get and Set
@@ -1558,11 +1566,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_check_box.get())
-								_ptr_check_box.get()->Width(width);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_check_box.get())
+							_ptr_check_box.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1577,11 +1585,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_check_box.get())
-								_ptr_check_box.get()->Height(height);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_check_box.get())
+							_ptr_check_box.get()->Height(height);
+					});
 			}
 
 			// IsEnabled Get and Set
@@ -1596,11 +1604,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_check_box.get())
-								_ptr_check_box.get()->IsEnabled(enabled);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_check_box.get())
+							_ptr_check_box.get()->IsEnabled(enabled);
+					});
 			}
 
 			// IsChecked Get and Set
@@ -1615,11 +1623,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_check_box.get())
-								_ptr_check_box.get()->IsChecked(is_checked);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_check_box.get())
+							_ptr_check_box.get()->IsChecked(is_checked);
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1643,27 +1651,27 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-					const winrt::Windows::Foundation::IInspectable& sender,
-					const RoutedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable& sender,
+						const RoutedEventArgs& e)>
 					_n_callback_checked = [this](const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e) ->
+					                             const RoutedEventArgs& e) ->
 					void
-				{
-					if (OnChecked) // Check if not null
-						OnChecked(this);
-				};
+					{
+						if (OnChecked) // Check if not null
+							OnChecked(this);
+					};
 
 				// Create a dummy callback
 				const std::function<void(
-					const winrt::Windows::Foundation::IInspectable& sender,
-					const RoutedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable& sender,
+						const RoutedEventArgs& e)>
 					_n_callback_unchecked = [this](const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e) ->
+					                               const RoutedEventArgs& e) ->
 					void
-				{
-					if (OnUnchecked) // Check if not null
-						OnUnchecked(this);
-				};
+					{
+						if (OnUnchecked) // Check if not null
+							OnUnchecked(this);
+					};
 
 				// Set up the click handler to point to the base's one
 				_check_box.Checked(_n_callback_checked);
@@ -1694,14 +1702,14 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_toggle_switch.get())
-								_ptr_toggle_switch.get()->Visibility(
-									visibility
+					{
+						if (isExitingNow)return;
+						if (_ptr_toggle_switch.get())
+							_ptr_toggle_switch.get()->Visibility(
+								visibility
 									? Visibility::Visible
 									: Visibility::Collapsed);
-						});
+					});
 			}
 
 			// Width Get and Set
@@ -1716,11 +1724,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_toggle_switch.get())
-								_ptr_toggle_switch.get()->Width(width);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_toggle_switch.get())
+							_ptr_toggle_switch.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1735,11 +1743,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_toggle_switch.get())
-								_ptr_toggle_switch.get()->Height(height);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_toggle_switch.get())
+							_ptr_toggle_switch.get()->Height(height);
+					});
 			}
 
 			// IsEnabled Get and Set
@@ -1754,11 +1762,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_toggle_switch.get())
-								_ptr_toggle_switch.get()->IsEnabled(enabled);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_toggle_switch.get())
+							_ptr_toggle_switch.get()->IsEnabled(enabled);
+					});
 			}
 
 			// IsChecked Get and Set
@@ -1773,11 +1781,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_toggle_switch.get())
-								_ptr_toggle_switch.get()->IsOn(is_checked);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_toggle_switch.get())
+							_ptr_toggle_switch.get()->IsOn(is_checked);
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1803,24 +1811,24 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-					const winrt::Windows::Foundation::IInspectable& sender,
-					const RoutedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable& sender,
+						const RoutedEventArgs& e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e) ->
+					                     const RoutedEventArgs& e) ->
 					void
-				{
-					// Check which handler to raise
-					if (this->Get().get()->IsOn())
 					{
-						if (OnChecked) // Check if not null
-							OnChecked(this);
-					}
-					else
-					{
-						if (OnUnchecked) // Check if not null
-							OnUnchecked(this);
-					}
-				};
+						// Check which handler to raise
+						if (this->Get().get()->IsOn())
+						{
+							if (OnChecked) // Check if not null
+								OnChecked(this);
+						}
+						else
+						{
+							if (OnUnchecked) // Check if not null
+								OnUnchecked(this);
+						}
+					};
 
 				// Set up the click handler to point to the base's one
 				_toggle_switch.Toggled(_n_callback);
@@ -1850,14 +1858,14 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_text_box.get())
-								_ptr_text_box.get()->Visibility(
-									visibility
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_box.get())
+							_ptr_text_box.get()->Visibility(
+								visibility
 									? Visibility::Visible
 									: Visibility::Collapsed);
-						});
+					});
 			}
 
 			// Width Get and Set
@@ -1872,11 +1880,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_text_box.get())
-								_ptr_text_box.get()->Width(width);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_box.get())
+							_ptr_text_box.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -1891,11 +1899,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_text_box.get())
-								_ptr_text_box.get()->Height(height);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_box.get())
+							_ptr_text_box.get()->Height(height);
+					});
 			}
 
 			// Text Get and Set
@@ -1910,11 +1918,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_text_box.get())
-								_ptr_text_box.get()->Text(text);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_box.get())
+							_ptr_text_box.get()->Text(text);
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -1938,15 +1946,15 @@ namespace k2app::interfacing
 
 				// Create a dummy callback
 				const std::function<void(
-					const winrt::Windows::Foundation::IInspectable& sender,
-					const Input::KeyRoutedEventArgs& e)>
+						const winrt::Windows::Foundation::IInspectable& sender,
+						const Input::KeyRoutedEventArgs& e)>
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
-						const Input::KeyRoutedEventArgs& e) ->
+					                     const Input::KeyRoutedEventArgs& e) ->
 					void
-				{
-					if (e.Key() == winrt::Windows::System::VirtualKey::Enter)
-						OnEnterKeyDown(this);
-				};
+					{
+						if (e.Key() == winrt::Windows::System::VirtualKey::Enter)
+							OnEnterKeyDown(this);
+					};
 
 				// Set up the click handler to point to the base's one
 				_text_box.KeyDown(_n_callback);
@@ -1982,14 +1990,14 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_progress_ring.get())
-								_ptr_progress_ring.get()->Visibility(
-									visibility
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_ring.get())
+							_ptr_progress_ring.get()->Visibility(
+								visibility
 									? Visibility::Visible
 									: Visibility::Collapsed);
-						});
+					});
 			}
 
 			// Width Get and Set
@@ -2004,11 +2012,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_progress_ring.get())
-								_ptr_progress_ring.get()->Width(width);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_ring.get())
+							_ptr_progress_ring.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -2023,11 +2031,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_progress_ring.get())
-								_ptr_progress_ring.get()->Height(height);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_ring.get())
+							_ptr_progress_ring.get()->Height(height);
+					});
 			}
 
 			// Progress Get and Set (Set <0 to mark as indeterminate)
@@ -2046,22 +2054,22 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_ring.get())
 						{
-							if (isExitingNow)return;
-							if (_ptr_progress_ring.get())
+							if (progress < 0)
 							{
-								if (progress < 0)
-								{
-									_ptr_progress_ring.get()->IsActive(true);
-									_ptr_progress_ring.get()->IsIndeterminate(true);
-								}
-								else
-								{
-									_ptr_progress_ring.get()->Value(progress);
-									_ptr_progress_ring.get()->IsIndeterminate(false);
-								}
+								_ptr_progress_ring.get()->IsActive(true);
+								_ptr_progress_ring.get()->IsIndeterminate(true);
 							}
-						});
+							else
+							{
+								_ptr_progress_ring.get()->Value(progress);
+								_ptr_progress_ring.get()->IsIndeterminate(false);
+							}
+						}
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -2125,14 +2133,14 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_progress_bar.get())
-								_ptr_progress_bar.get()->Visibility(
-									visibility
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+							_ptr_progress_bar.get()->Visibility(
+								visibility
 									? Visibility::Visible
 									: Visibility::Collapsed);
-						});
+					});
 			}
 
 			// Width Get and Set
@@ -2147,11 +2155,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_progress_bar.get())
-								_ptr_progress_bar.get()->Width(width);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+							_ptr_progress_bar.get()->Width(width);
+					});
 			}
 
 			// Height Get and Set
@@ -2166,11 +2174,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_progress_bar.get())
-								_ptr_progress_bar.get()->Height(height);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+							_ptr_progress_bar.get()->Height(height);
+					});
 			}
 
 			// Progress Get and Set (Set <0 to mark as indeterminate)
@@ -2189,21 +2197,21 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
 						{
-							if (isExitingNow)return;
-							if (_ptr_progress_bar.get())
+							if (progress < 0)
 							{
-								if (progress < 0)
-								{
-									_ptr_progress_bar.get()->IsIndeterminate(true);
-								}
-								else
-								{
-									_ptr_progress_bar.get()->Value(progress);
-									_ptr_progress_bar.get()->IsIndeterminate(false);
-								}
+								_ptr_progress_bar.get()->IsIndeterminate(true);
 							}
-						});
+							else
+							{
+								_ptr_progress_bar.get()->Value(progress);
+								_ptr_progress_bar.get()->IsIndeterminate(false);
+							}
+						}
+					});
 			}
 
 			// Paused Get and Set
@@ -2218,11 +2226,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_progress_bar.get())
-								_ptr_progress_bar.get()->ShowPaused(show_paused);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+							_ptr_progress_bar.get()->ShowPaused(show_paused);
+					});
 			}
 
 			// Error Get and Set
@@ -2237,11 +2245,11 @@ namespace k2app::interfacing
 			{
 				if (!isExitingNow)
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
-						{
-							if (isExitingNow)return;
-							if (_ptr_progress_bar.get())
-								_ptr_progress_bar.get()->ShowError(show_error);
-						});
+					{
+						if (isExitingNow)return;
+						if (_ptr_progress_bar.get())
+							_ptr_progress_bar.get()->ShowError(show_error);
+					});
 			}
 
 			// Get the underlying shared pointer
@@ -2311,171 +2319,171 @@ namespace k2app::interfacing
 				// Switch based on element type: all types
 				switch (element.index())
 				{
-					// TextBlock
+				// TextBlock
 				case 0:
-				{
-					const auto& pElement = static_cast<AppTextBlock*>(
-						std::get<Interface::TextBlock*>(element));
+					{
+						const auto& pElement = static_cast<AppTextBlock*>(
+							std::get<Interface::TextBlock*>(element));
 
-					(*pElement).Get().get()->VerticalAlignment(
-						VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-					(*pElement).Get().get()->HorizontalAlignment(
-						horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-					(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-					_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-					return;
-				}
+						return;
+					}
 				// Button
 				case 1:
-				{
-					const auto& pElement = static_cast<AppButton*>(std::get<Interface::Button*>(element));
+					{
+						const auto& pElement = static_cast<AppButton*>(std::get<Interface::Button*>(element));
 
-					(*pElement).Get().get()->VerticalAlignment(
-						VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-					(*pElement).Get().get()->HorizontalAlignment(
-						horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-					(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-					_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-					return;
-				}
+						return;
+					}
 				// NumberBox
 				case 2:
-				{
-					const auto& pElement = static_cast<AppNumberBox*>(
-						std::get<Interface::NumberBox*>(element));
+					{
+						const auto& pElement = static_cast<AppNumberBox*>(
+							std::get<Interface::NumberBox*>(element));
 
-					(*pElement).Get().get()->VerticalAlignment(
-						VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-					(*pElement).Get().get()->HorizontalAlignment(
-						horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-					(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-					_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-					return;
-				}
+						return;
+					}
 				// ComboBox
 				case 3:
-				{
-					const auto& pElement = static_cast<AppComboBox*>(
-						std::get<Interface::ComboBox*>(element));
+					{
+						const auto& pElement = static_cast<AppComboBox*>(
+							std::get<Interface::ComboBox*>(element));
 
-					(*pElement).Get().get()->VerticalAlignment(
-						VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-					(*pElement).Get().get()->HorizontalAlignment(
-						horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-					(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-					_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-					return;
-				}
+						return;
+					}
 				// CheckBox
 				case 4:
-				{
-					const auto& pElement = static_cast<AppCheckBox*>(
-						std::get<Interface::CheckBox*>(element));
+					{
+						const auto& pElement = static_cast<AppCheckBox*>(
+							std::get<Interface::CheckBox*>(element));
 
-					(*pElement).Get().get()->VerticalAlignment(
-						VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-					(*pElement).Get().get()->HorizontalAlignment(
-						horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-					(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-					_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-					return;
-				}
+						return;
+					}
 				// ToggleSwitch
 				case 5:
-				{
-					const auto& pElement = static_cast<AppToggleSwitch*>(
-						std::get<Interface::ToggleSwitch*>(element));
+					{
+						const auto& pElement = static_cast<AppToggleSwitch*>(
+							std::get<Interface::ToggleSwitch*>(element));
 
-					(*pElement).Get().get()->VerticalAlignment(
-						VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-					(*pElement).Get().get()->HorizontalAlignment(
-						horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-					(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-					_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-					return;
-				}
+						return;
+					}
 				// TextBox
 				case 6:
-				{
-					const auto& pElement = static_cast<AppTextBox*>(
-						std::get<Interface::TextBox*>(element));
+					{
+						const auto& pElement = static_cast<AppTextBox*>(
+							std::get<Interface::TextBox*>(element));
 
-					(*pElement).Get().get()->VerticalAlignment(
-						VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-					(*pElement).Get().get()->HorizontalAlignment(
-						horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-					(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-					_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-					return;
-				}
+						return;
+					}
 				// ProgressRing
 				case 7:
-				{
-					const auto& pElement = static_cast<AppProgressRing*>(
-						std::get<Interface::ProgressRing*>(element));
+					{
+						const auto& pElement = static_cast<AppProgressRing*>(
+							std::get<Interface::ProgressRing*>(element));
 
-					(*pElement).Get().get()->VerticalAlignment(
-						VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-					(*pElement).Get().get()->HorizontalAlignment(
-						horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-					(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-					_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
-					return;
-				}
+						return;
+					}
 				// ProgressBar
 				case 8:
-				{
-					const auto& pElement = static_cast<AppProgressBar*>(
-						std::get<Interface::ProgressBar*>(element));
+					{
+						const auto& pElement = static_cast<AppProgressBar*>(
+							std::get<Interface::ProgressBar*>(element));
 
-					(*pElement).Get().get()->VerticalAlignment(
-						VerticalAlignment::Center);
+						(*pElement).Get().get()->VerticalAlignment(
+							VerticalAlignment::Center);
 
-					(*pElement).Get().get()->HorizontalAlignment(
-						horizontalAlignmentConverter(alignment));
+						(*pElement).Get().get()->HorizontalAlignment(
+							horizontalAlignmentConverter(alignment));
 
-					(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-					_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
-				}
+						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
+					}
 				}
 			}
 
 			// Append a One-Row element pair : */* column space
 			void AppendElementPair(const Interface::Element& first_element,
-				const Interface::Element& second_element) override
+			                       const Interface::Element& second_element) override
 			{
 				// Set up a placeholder horizontally divided grid
 				Controls::Grid _grid;
@@ -2489,177 +2497,177 @@ namespace k2app::interfacing
 					// Switch based on element type: all types
 					switch (first_element.index())
 					{
-						// TextBlock
+					// TextBlock
 					case 0:
-					{
-						const auto& pElement = static_cast<AppTextBlock*>(
-							std::get<Interface::TextBlock*>(first_element));
+						{
+							const auto& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(first_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Left);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-						break;
-					}
+							break;
+						}
 					// Button
 					case 1:
-					{
-						const auto& pElement = static_cast<AppButton*>(
-							std::get<Interface::Button*>(first_element));
+						{
+							const auto& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(first_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Left);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-						break;
-					}
+							break;
+						}
 					// NumberBox
 					case 2:
-					{
-						const auto& pElement = static_cast<AppNumberBox*>(
-							std::get<Interface::NumberBox*>(first_element));
+						{
+							const auto& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(first_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Left);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-						break;
-					}
+							break;
+						}
 					// ComboBox
 					case 3:
-					{
-						const auto& pElement = static_cast<AppComboBox*>(
-							std::get<Interface::ComboBox*>(first_element));
+						{
+							const auto& pElement = static_cast<AppComboBox*>(
+								std::get<Interface::ComboBox*>(first_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Left);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-						break;
-					}
+							break;
+						}
 					// CheckBox
 					case 4:
-					{
-						const auto& pElement = static_cast<AppCheckBox*>(
-							std::get<Interface::CheckBox*>(first_element));
+						{
+							const auto& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(first_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Left);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-						break;
-					}
+							break;
+						}
 					// ToggleSwitch
 					case 5:
-					{
-						const auto& pElement = static_cast<AppToggleSwitch*>(
-							std::get<Interface::ToggleSwitch*>(first_element));
+						{
+							const auto& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(first_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Left);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-						break;
-					}
+							break;
+						}
 					// TextBox
 					case 6:
-					{
-						const auto& pElement = static_cast<AppTextBox*>(
-							std::get<Interface::TextBox*>(first_element));
+						{
+							const auto& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(first_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Left);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-						break;
-					}
+							break;
+						}
 					// ProgressRing
 					case 7:
-					{
-						const auto& pElement = static_cast<AppProgressRing*>(
-							std::get<Interface::ProgressRing*>(first_element));
+						{
+							const auto& pElement = static_cast<AppProgressRing*>(
+								std::get<Interface::ProgressRing*>(first_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Left);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-						break;
-					}
+							break;
+						}
 					// ProgressBar
 					case 8:
-					{
-						const auto& pElement = static_cast<AppProgressBar*>(
-							std::get<Interface::ProgressBar*>(first_element));
+						{
+							const auto& pElement = static_cast<AppProgressBar*>(
+								std::get<Interface::ProgressBar*>(first_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Left);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 0);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 0);
 
-						break;
-					}
+							break;
+						}
 					}
 				}
 
@@ -2668,177 +2676,177 @@ namespace k2app::interfacing
 					// Switch based on element type: all types
 					switch (second_element.index())
 					{
-						// TextBlock
+					// TextBlock
 					case 0:
-					{
-						const auto& pElement = static_cast<AppTextBlock*>(
-							std::get<Interface::TextBlock*>(second_element));
+						{
+							const auto& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(second_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Right);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-						break;
-					}
+							break;
+						}
 					// Button
 					case 1:
-					{
-						const auto& pElement = static_cast<AppButton*>(
-							std::get<Interface::Button*>(second_element));
+						{
+							const auto& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(second_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Right);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-						break;
-					}
+							break;
+						}
 					// NumberBox
 					case 2:
-					{
-						const auto& pElement = static_cast<AppNumberBox*>(
-							std::get<Interface::NumberBox*>(second_element));
+						{
+							const auto& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(second_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Right);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-						break;
-					}
+							break;
+						}
 					// ComboBox
 					case 3:
-					{
-						const auto& pElement = static_cast<AppComboBox*>(
-							std::get<Interface::ComboBox*>(second_element));
+						{
+							const auto& pElement = static_cast<AppComboBox*>(
+								std::get<Interface::ComboBox*>(second_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Right);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-						break;
-					}
+							break;
+						}
 					// CheckBox
 					case 4:
-					{
-						const auto& pElement = static_cast<AppCheckBox*>(
-							std::get<Interface::CheckBox*>(second_element));
+						{
+							const auto& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(second_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Right);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-						break;
-					}
+							break;
+						}
 					// ToggleSwitch
 					case 5:
-					{
-						const auto& pElement = static_cast<AppToggleSwitch*>(
-							std::get<Interface::ToggleSwitch*>(second_element));
+						{
+							const auto& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(second_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Right);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-						break;
-					}
+							break;
+						}
 					// TextBox
 					case 6:
-					{
-						const auto& pElement = static_cast<AppTextBox*>(
-							std::get<Interface::TextBox*>(second_element));
+						{
+							const auto& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(second_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Right);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-						break;
-					}
+							break;
+						}
 					// ProgressRing
 					case 7:
-					{
-						const auto& pElement = static_cast<AppProgressRing*>(
-							std::get<Interface::ProgressRing*>(second_element));
+						{
+							const auto& pElement = static_cast<AppProgressRing*>(
+								std::get<Interface::ProgressRing*>(second_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Right);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-						break;
-					}
+							break;
+						}
 					// ProgressBar
 					case 8:
-					{
-						const auto& pElement = static_cast<AppProgressBar*>(
-							std::get<Interface::ProgressBar*>(second_element));
+						{
+							const auto& pElement = static_cast<AppProgressBar*>(
+								std::get<Interface::ProgressBar*>(second_element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(
-							HorizontalAlignment::Right);
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), 1);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), 1);
 
-						break;
-					}
+							break;
+						}
 					}
 				}
 
@@ -2875,170 +2883,170 @@ namespace k2app::interfacing
 
 					// Switch based on element type: all types
 					switch (const auto& element = element_vector.at(i);
-					element.index())
+						element.index())
 					{
-						// TextBlock
+					// TextBlock
 					case 0:
-					{
-						const auto& pElement = static_cast<AppTextBlock*>(
-							std::get<Interface::TextBlock*>(element));
+						{
+							const auto& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(_alignment);
+							(*pElement).Get().get()->HorizontalAlignment(_alignment);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-						break;
-					}
+							break;
+						}
 					// Button
 					case 1:
-					{
-						const auto& pElement = static_cast<AppButton*>(
-							std::get<Interface::Button*>(element));
+						{
+							const auto& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(_alignment);
+							(*pElement).Get().get()->HorizontalAlignment(_alignment);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-						break;
-					}
+							break;
+						}
 					// NumberBox
 					case 2:
-					{
-						const auto& pElement = static_cast<AppNumberBox*>(
-							std::get<Interface::NumberBox*>(element));
+						{
+							const auto& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(_alignment);
+							(*pElement).Get().get()->HorizontalAlignment(_alignment);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-						break;
-					}
+							break;
+						}
 					// ComboBox
 					case 3:
-					{
-						const auto& pElement = static_cast<AppComboBox*>(
-							std::get<Interface::ComboBox*>(element));
+						{
+							const auto& pElement = static_cast<AppComboBox*>(
+								std::get<Interface::ComboBox*>(element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(_alignment);
+							(*pElement).Get().get()->HorizontalAlignment(_alignment);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-						break;
-					}
+							break;
+						}
 					// CheckBox
 					case 4:
-					{
-						const auto& pElement = static_cast<AppCheckBox*>(
-							std::get<Interface::CheckBox*>(element));
+						{
+							const auto& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(_alignment);
+							(*pElement).Get().get()->HorizontalAlignment(_alignment);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-						break;
-					}
+							break;
+						}
 					// ToggleSwitch
 					case 5:
-					{
-						const auto& pElement = static_cast<AppToggleSwitch*>(
-							std::get<Interface::ToggleSwitch*>(element));
+						{
+							const auto& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(_alignment);
+							(*pElement).Get().get()->HorizontalAlignment(_alignment);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-						break;
-					}
+							break;
+						}
 					// TextBox
 					case 6:
-					{
-						const auto& pElement = static_cast<AppTextBox*>(
-							std::get<Interface::TextBox*>(element));
+						{
+							const auto& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(_alignment);
+							(*pElement).Get().get()->HorizontalAlignment(_alignment);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-						break;
-					}
+							break;
+						}
 					// ProgressRing
 					case 7:
-					{
-						const auto& pElement = static_cast<AppProgressRing*>(
-							std::get<Interface::ProgressRing*>(element));
+						{
+							const auto& pElement = static_cast<AppProgressRing*>(
+								std::get<Interface::ProgressRing*>(element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(_alignment);
+							(*pElement).Get().get()->HorizontalAlignment(_alignment);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-						break;
-					}
+							break;
+						}
 					// ProgressBar
 					case 8:
-					{
-						const auto& pElement = static_cast<AppProgressBar*>(
-							std::get<Interface::ProgressBar*>(element));
+						{
+							const auto& pElement = static_cast<AppProgressBar*>(
+								std::get<Interface::ProgressBar*>(element));
 
-						(*pElement).Get().get()->VerticalAlignment(
-							VerticalAlignment::Center);
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
 
-						(*pElement).Get().get()->HorizontalAlignment(_alignment);
+							(*pElement).Get().get()->HorizontalAlignment(_alignment);
 
-						(*pElement).Get().get()->Margin({ 3, 3, 3, 3 });
+							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
-						_grid.Children().Append(*(*pElement).Get());
-						_grid.SetColumn(*(*pElement).Get(), i);
+							_grid.Children().Append(*(*pElement).Get());
+							_grid.SetColumn(*(*pElement).Get(), i);
 
-						break;
-					}
+							break;
+						}
 					}
 				}
 

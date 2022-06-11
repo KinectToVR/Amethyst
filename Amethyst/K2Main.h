@@ -279,13 +279,40 @@ namespace k2app::main
 					update_tracker_vector(k2_tracker_bases);
 			}
 
-			// Update status 1/1200 loops / ~15s
+			// Update status 1/7000 loops / ~90s
 			// or right after any change
-			if (p_loops >= 1200 ||
+			if (p_loops >= 7000 ||
 				(initialized_bak != interfacing::K2AppTrackersInitialized))
 			{
-				// Scan for already-added body trackers from other apps
-				// (If any found, disable corresponding ame's trackers/pairs)
+				// try 3 times
+				for (int i = 0; i < 3; i++)
+				{
+					// Update status in server
+					for (const auto& tracker : K2Settings.K2TrackersVector)
+						if (tracker.data.isActive)
+						{
+							ktvr::set_tracker_state<false>(
+								tracker.tracker, interfacing::K2AppTrackersInitialized);
+							std::this_thread::sleep_for(std::chrono::milliseconds(10));
+						}
+
+					// Update internal status
+					initialized_bak = interfacing::K2AppTrackersInitialized;
+
+					// Reset
+					p_loops = 0;
+				}
+			}
+			else p_loops++;
+
+			// Scan for already-added body trackers from other apps
+			// (If any found, disable corresponding ame's trackers/pairs)
+			if (interfacing::alreadyAddedTrackersScanRequested)
+			{
+				// Mark the request as done
+				interfacing::alreadyAddedTrackersScanRequested = false;
+
+				// Run the worker (if applicable)
 				if (K2Settings.checkForOverlappingTrackers &&
 					!interfacing::isAlreadyAddedTrackersScanRunning)
 					shared::main::thisDispatcherQueue.get()->TryEnqueue(
@@ -346,26 +373,7 @@ namespace k2app::main
 										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Content"),
 									true); // This one's gonna be a high-priority one
 						});
-
-				// try 3 times
-				for (int i = 0; i < 3; i++)
-				{
-					// Update status in server
-					for (const auto& tracker : K2Settings.K2TrackersVector)
-						if (tracker.data.isActive) {
-							ktvr::set_tracker_state<false>(
-								tracker.tracker, interfacing::K2AppTrackersInitialized);
-							std::this_thread::sleep_for(std::chrono::milliseconds(10));
-						}
-
-					// Update internal status
-					initialized_bak = interfacing::K2AppTrackersInitialized;
-
-					// Reset
-					p_loops = 0;
-				}
 			}
-			else p_loops++;
 		}
 	}
 
@@ -443,8 +451,9 @@ namespace k2app::main
 
 						                              // If flip
 						                              ? std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
-						                              getJointOrientations()[interfacing::overrides::getFlippedJointType(
-														  ITrackerType_Joint[tracker.tracker])].inverse()
+						                              getJointOrientations()[
+							                              interfacing::overrides::getFlippedJointType(
+								                              ITrackerType_Joint[tracker.tracker])].inverse()
 
 						                              // If no flip
 						                              : std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
@@ -1090,8 +1099,8 @@ namespace k2app::main
 					K2UpdateInputBindings(); // Update input
 
 					// Skip some things if we're getting ready to exit
-					if (!interfacing::isExitingNow) {
-
+					if (!interfacing::isExitingNow)
+					{
 						K2UpdateTrackingDevices(); // Update actual tracking
 						K2UpdateAppTrackers(); // Track joints from raw data
 					}

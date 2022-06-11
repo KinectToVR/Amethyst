@@ -751,6 +751,9 @@ void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Checked(
 
 	// Mark trackers as active
 	k2app::interfacing::K2AppTrackersInitialized = true;
+
+	// Request a check for already-added trackers
+	k2app::interfacing::alreadyAddedTrackersScanRequested = true;
 }
 
 
@@ -764,6 +767,9 @@ void KinectToVR::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
 
 	// Mark trackers as inactive
 	k2app::interfacing::K2AppTrackersInitialized = false;
+
+	// Request a check for already-added trackers
+	k2app::interfacing::alreadyAddedTrackersScanRequested = true;
 }
 
 
