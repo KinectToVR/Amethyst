@@ -1110,8 +1110,20 @@ namespace k2app::main
 					// Wait until certain loop time has passed
 					if (auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(
 							std::chrono::high_resolution_clock::now() - loop_start_time).count();
-						duration <= 12222222.f) // If we were too fast, sleep peacefully @80hz
-						std::this_thread::sleep_for(std::chrono::nanoseconds(12222222 - duration));
+						duration <= 10000000.f) // If we were too fast, sleep peacefully @100hz
+						std::this_thread::sleep_for(std::chrono::nanoseconds(
+							std::clamp(7000000 - (int)duration, 0, 7000000)));
+
+					else if (duration > 35000000.f)
+						LOG(WARNING) << "Can't keep up! The last loop took " <<
+							std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(
+								std::chrono::high_resolution_clock::now() - loop_start_time).count()) <<
+							"us. (Ran at approximately " <<
+							std::to_string(1000000.f / std::chrono::duration_cast<std::chrono::microseconds>(
+								std::chrono::high_resolution_clock::now() - loop_start_time).count()) << "fps)";
+
+					OutputDebugStringA((std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(
+						std::chrono::high_resolution_clock::now() - loop_start_time).count()) + '\n').c_str());
 				}
 			}
 			catch (...) // Catch everything
