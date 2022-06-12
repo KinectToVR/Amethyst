@@ -154,8 +154,7 @@ namespace k2app::main
 			}
 	}
 
-	inline int p_loops = 0, // Loops passed since last status update
-	           p_frozen_loops = 0; // Loops passed since last frozen update
+	inline int p_frozen_loops = 0; // Loops passed since last frozen update
 	inline bool initialized_bak = false; // Backup initialized? value
 	inline void K2UpdateServerTrackers()
 	{
@@ -175,9 +174,9 @@ namespace k2app::main
 							ktvr::refresh_tracker_pose<false>(tracker.tracker);
 
 					// Reset
-					p_loops = 0;
+					p_frozen_loops = 0;
 				}
-				else p_loops++;
+				else p_frozen_loops++;
 			}
 			// If the tracing's actually running
 			else
@@ -214,9 +213,9 @@ namespace k2app::main
 								ktvr::refresh_tracker_pose<false>(tracker.tracker);
 
 						// Reset
-						p_loops = 0;
+						p_frozen_loops = 0;
 					}
-					else p_loops++;
+					else p_frozen_loops++;
 				}
 
 				// Update trackers in the vector recursively
@@ -279,31 +278,26 @@ namespace k2app::main
 					update_tracker_vector(k2_tracker_bases);
 			}
 
-			// Update status 1/7000 loops / ~90s
-			// or right after any change
-			if (p_loops >= 7000 ||
-				(initialized_bak != interfacing::K2AppTrackersInitialized))
-			{
-				// try 3 times
-				for (int i = 0; i < 3; i++)
+			// Update status right after any change
+			if (initialized_bak != interfacing::K2AppTrackersInitialized)
+				std::thread([&]
 				{
-					// Update status in server
-					for (const auto& tracker : K2Settings.K2TrackersVector)
-						if (tracker.data.isActive)
-						{
-							ktvr::set_tracker_state<false>(
-								tracker.tracker, interfacing::K2AppTrackersInitialized);
-							std::this_thread::sleep_for(std::chrono::milliseconds(10));
-						}
+					// try 2 times cause why not
+					for (int i = 0; i < 2; i++)
+					{
+						// Update status in server
+						for (const auto& tracker : K2Settings.K2TrackersVector)
+							if (tracker.data.isActive)
+							{
+								ktvr::set_tracker_state<false>(
+									tracker.tracker, interfacing::K2AppTrackersInitialized);
+								std::this_thread::sleep_for(std::chrono::milliseconds(15));
+							}
 
-					// Update internal status
-					initialized_bak = interfacing::K2AppTrackersInitialized;
-
-					// Reset
-					p_loops = 0;
-				}
-			}
-			else p_loops++;
+						// Update internal status
+						initialized_bak = interfacing::K2AppTrackersInitialized;
+					}
+				}).detach();
 
 			// Scan for already-added body trackers from other apps
 			// (If any found, disable corresponding ame's trackers/pairs)
