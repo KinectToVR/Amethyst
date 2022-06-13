@@ -605,13 +605,27 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 		{
 			const double _multiplexer = k2app::interfacing::calibration_fineTune ? .0015 : .015;
 
-			(*calibrationTranslation)(0) +=
-				k2app::interfacing::calibration_joystick_positions[0][0] * _multiplexer; // Left X
-			(*calibrationTranslation)(1) +=
-				k2app::interfacing::calibration_joystick_positions[1][1] * _multiplexer; // Right Y
-			(*calibrationTranslation)(2) += -
-				k2app::interfacing::calibration_joystick_positions[0][1] * _multiplexer; // Left Y
+			// Compute the translation delta for the current calibration frame
+			Eigen::Vector3d _currentCalibrationTranslation_new{
+				k2app::interfacing::calibration_joystick_positions[0][0], // Left X
+				k2app::interfacing::calibration_joystick_positions[1][1], // Right Y
+				-k2app::interfacing::calibration_joystick_positions[0][1] // Left Y (inv)
+			};
 
+			// Apply the multiplexer
+			_currentCalibrationTranslation_new = _currentCalibrationTranslation_new * _multiplexer;
+
+			// Un-rotate the translation (sometimes broken due to SteamVR playspace)
+			Eigen::AngleAxisd rollAngle(0.f, Eigen::Vector3d::UnitZ());
+			Eigen::AngleAxisd yawAngle(-k2app::interfacing::vrPlayspaceOrientation, Eigen::Vector3d::UnitY());
+			Eigen::AngleAxisd pitchAngle(0.f, Eigen::Vector3d::UnitX());
+
+			Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
+			_currentCalibrationTranslation_new = q * _currentCalibrationTranslation_new;
+
+			// Apply to the global base
+			(*calibrationTranslation) = (*calibrationTranslation) + _currentCalibrationTranslation_new;
+			
 			// Sleep on UI
 			apartment_context ui_thread;
 			co_await resume_background();
