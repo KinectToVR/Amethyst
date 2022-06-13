@@ -187,6 +187,17 @@ namespace k2app
 				K2TrackersVector.at(2).data.isActive = true;
 			}
 
+			// Scan for duplicate trackers
+			std::vector<ktvr::ITrackerType> _thisK2TrackerTypes;
+			for (uint32_t _tracker_index = 0; _tracker_index < K2TrackersVector.size(); _tracker_index++)
+				for (const auto& _tracker_type : _thisK2TrackerTypes)
+					if (K2TrackersVector[_tracker_index].tracker == _tracker_type)
+					{
+						LOG(WARNING) << "A duplicate tracker was found in the trackers vector! Removing it...";
+						K2TrackersVector.erase(K2TrackersVector.begin() + _tracker_index);
+					}
+					else _thisK2TrackerTypes.push_back(K2TrackersVector[_tracker_index].tracker);
+
 			// Fix statuses (optional)
 			if (useTrackerPairs)
 			{
