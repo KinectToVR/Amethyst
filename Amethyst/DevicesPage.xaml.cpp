@@ -170,6 +170,14 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 	std::string deviceName = "[UNKNOWN]";
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 
+	// Collapse all joint expanders
+	for (auto& expander : jointSelectorExpanders)
+		expander.get()->ContainerExpander().get()->IsExpanded(false);
+
+	// Collapse all override expanders
+	for (auto& expander : overrideSelectorExpanders)
+		expander.get()->ContainerExpander().get()->IsExpanded(false);
+
 	// Only if override -> select enabled combos
 	if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 		for (auto& expander : overrideSelectorExpanders)
