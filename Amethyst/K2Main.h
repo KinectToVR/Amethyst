@@ -282,17 +282,18 @@ namespace k2app::main
 			if (initialized_bak != interfacing::K2AppTrackersInitialized)
 				std::thread([&]
 				{
+					// Create a dummy update vector
+					std::vector<std::pair<ktvr::ITrackerType, bool>> k2_tracker_statuses;
+					for (const auto& tracker : K2Settings.K2TrackersVector)
+						if (tracker.data.isActive) k2_tracker_statuses.push_back(
+							std::make_pair(tracker.tracker, interfacing::K2AppTrackersInitialized));
+
 					// try 3 times cause why not
-					for (int i = 0; i < 2; i++)
+					for (int i = 0; i < 3; i++)
 					{
 						// Update status in server
-						for (const auto& tracker : K2Settings.K2TrackersVector)
-							if (tracker.data.isActive)
-							{
-								ktvr::set_tracker_state<false>(
-									tracker.tracker, interfacing::K2AppTrackersInitialized);
-								std::this_thread::sleep_for(std::chrono::milliseconds(15));
-							}
+						ktvr::update_tracker_state_vector<false>(k2_tracker_statuses);
+						std::this_thread::sleep_for(std::chrono::milliseconds(15));
 
 						// Update internal status
 						initialized_bak = interfacing::K2AppTrackersInitialized;
@@ -342,12 +343,12 @@ namespace k2app::main
 									apartment_context _ui_thread;
 									co_await resume_background();
 
-									// try 3 times cause why not
-									for (int i = 0; i < 3; i++)
+									// try even 5 times cause why not
+									for (int i = 0; i < 5; i++)
 									{
 										ktvr::set_tracker_state<false>(
 											K2Settings.K2TrackersVector[tracker_index].tracker, false);
-										Sleep(15);
+										Sleep(20);
 									}
 									co_await _ui_thread;
 

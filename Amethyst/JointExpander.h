@@ -508,15 +508,22 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					{
 						tracker_p->data.isActive = _ptr_joint_switch.get()->IsOn();
 
-						// Spawn the tracker (only if the rest is spawned)
-						if (k2app::interfacing::K2AppTrackersInitialized)
-							ktvr::set_tracker_state<false>(
-								tracker_p->tracker, tracker_p->data.isActive);
-
-						// Sleep on UI's background
+						// Do that on UI's background
 						apartment_context _ui_thread;
 						co_await resume_background();
-						Sleep(20);
+
+						// Spawn the tracker (only if the rest is spawned)
+						if (k2app::interfacing::K2AppTrackersInitialized)
+						{
+							// try 3 times cause why not
+							for (int i = 0; i < 3; i++)
+							{
+								// Update status in server
+								ktvr::set_tracker_state<false>(
+									tracker_p->tracker, tracker_p->data.isActive);
+								Sleep(20); // Wait a bit
+							}
+						}
 						co_await _ui_thread;
 					}
 

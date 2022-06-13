@@ -94,6 +94,8 @@ namespace ktvr
 		K2Message_Invalid,
 		// State
 		K2Message_SetTrackerState,
+		// State but multiple at once
+		K2Message_SetTrackerStateVector,
 		// Set all trackers' state
 		K2Message_SetStateAll,
 		// Update
@@ -331,6 +333,7 @@ namespace ktvr
 		// Object, parsing depends on type
 		boost::optional<K2TrackerBase> tracker_base;
 		boost::optional<std::vector<K2TrackerBase>> tracker_bases_vector;
+		boost::optional<std::vector<std::pair<ITrackerType, bool>>> tracker_statuses_vector;
 		boost::optional<K2PosePacket> tracker_pose;
 
 		// Rest object, depends on type too
@@ -345,6 +348,7 @@ namespace ktvr
 				& BOOST_SERIALIZATION_NVP(tracker_base)
 				& BOOST_SERIALIZATION_NVP(tracker_pose)
 				& BOOST_SERIALIZATION_NVP(tracker_bases_vector)
+				& BOOST_SERIALIZATION_NVP(tracker_statuses_vector)
 				& BOOST_SERIALIZATION_NVP(message_string)
 				& BOOST_SERIALIZATION_NVP(tracker)
 				& BOOST_SERIALIZATION_NVP(state)
@@ -404,6 +408,13 @@ namespace ktvr
 		K2Message(ITrackerType m_tracker, const bool m_state) :
 			messageType{static_cast<int>(K2MessageType::K2Message_SetTrackerState)},
 			tracker{m_tracker}, state{m_state}
+		{
+		}
+
+		// Set multiple trackers' state
+		K2Message(std::vector<std::pair<ktvr::ITrackerType, bool>> m_tracker_statuses) :
+			messageType{static_cast<int>(K2MessageType::K2Message_SetTrackerStateVector)},
+			tracker_statuses_vector{ std::move(m_tracker_statuses) }
 		{
 		}
 	};
@@ -736,6 +747,32 @@ namespace ktvr
 		}
 	}
 
+
+	/**
+	 * \brief Update trackers' state in SteamVR driver
+	 * \param status_pairs New statuses for trackers
+	 * \return Returns tracker role / success?
+	 */
+	template <bool want_reply = false>
+	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
+		update_tracker_state_vector(const std::vector<std::pair<ITrackerType, bool>>& status_pairs) noexcept
+	{
+		try
+		{
+			// Send and grab the response
+			// Thanks to our constructors,
+			// message will set all
+			// Send the message and return
+			return send_message<want_reply>(
+				K2Message(status_pairs));
+		}
+		catch (const std::exception& e)
+		{
+			if constexpr (want_reply) return K2ResponseMessage(); // Success is set to false by default
+			else return std::monostate();
+		}
+	}
+
 	/**
 	 * \brief Update tracker's pose in SteamVR driver with already existing values
 	 * \param tracker Tracker for updating data
@@ -789,35 +826,7 @@ namespace ktvr
 			else return std::monostate();
 		}
 	}
-
-	/**
-	 * \brief Grab all possible data from existing tracker
-	 * \param tracker_id Tracker id for download
-	 * \return Returns tracker object / id / success?
-	 */
-	KTVR_API K2ResponseMessage download_tracker(const int& tracker_id) noexcept;
-
-	/**
-	 * \brief Grab all possible data from existing tracker
-	 * \param tracker_serial Tracker id for download
-	 * \return Returns tracker object / id / success?
-	 */
-	KTVR_API K2ResponseMessage download_tracker(const std::string& tracker_serial) noexcept;
-
-	/**
-	 * \brief Grab all possible data from existing tracker
-	 * \param tracker Tracker base id is to be grabbed from
-	 * \return Returns tracker object / id / success?
-	 */
-	KTVR_API K2ResponseMessage download_tracker(const K2TrackerBase& tracker) noexcept;
-
-	/**
-	 * \brief Grab all possible data from existing tracker
-	 * \param tracker_role Tracker role for download
-	 * \return Returns tracker object / id / success?
-	 */
-	KTVR_API K2ResponseMessage download_tracker(const ITrackerType& tracker_role) noexcept;
-
+	
 	/**
 	 * \brief Test connection with the server
 	 * \return Returns send_time / total_time / success?
