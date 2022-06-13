@@ -567,7 +567,7 @@ namespace k2app::interfacing
 	/**
 		 * \brief This will check if there's any tracker with waist role in steamvr
 		 * \_log Should we print logs?
-		 * \return <Found?, id>
+		 * \return <Success?, id>
 		 */
 	inline std::pair<bool, uint32_t> findVRTracker(
 		const std::string& _role,
@@ -624,69 +624,6 @@ namespace k2app::interfacing
 		LOG_IF(WARNING, _log) <<
 			"Didn't find any " + _role + " tracker in SteamVR with a proper role hint (Prop_ControllerType_String)";
 		return std::make_pair(false, vr::k_unTrackedDeviceIndexInvalid);
-	}
-
-	/**
-		 * \brief This will check if there's any tracker with waist role in steamvr
-		 * \_log Should we print logs?
-		 * \return <Found?>
-		 */
-	inline std::vector<bool> findOverlappingVRTrackers(
-		const bool _can_be_ame = true,
-		const bool _log = true)
-	{
-		// Prepare the return vector
-		std::vector<bool> foundVRTrackers;
-
-		// Loop through all devices
-		for (uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; i++)
-		{
-			char buf[1024];
-			vr::VRSystem()->GetStringTrackedDeviceProperty(i, vr::Prop_ControllerType_String, buf, sizeof buf);
-
-			if (strlen(buf) > 0) // If we've found anything
-				LOG_IF(INFO, _log) << "Found a device with roleHint: " << buf;
-			else continue; // Don't waste our time
-
-			// If we've actually found the one
-			for (const auto& _tracker : K2Settings.K2TrackersVector)
-				if (findStringIC(buf, ITrackerType_Serial[_tracker.tracker]))
-				{
-					const auto stat = vr::VRSystem()->GetTrackedDeviceActivityLevel(i);
-					if (stat != vr::k_EDeviceActivityLevel_UserInteraction &&
-						stat != vr::k_EDeviceActivityLevel_UserInteraction_Timeout)
-						continue;
-
-					char buf_p[1024];
-					vr::VRSystem()->
-						GetStringTrackedDeviceProperty(i, vr::Prop_SerialNumber_String, buf_p, sizeof buf_p);
-
-					// Log that we're finished
-					LOG_IF(INFO, _log) <<
-					"\nFound an active " + ITrackerType_Serial[_tracker.tracker] + " tracker with:\n    hint: " <<
-					buf << "\n    serial: " <<
-					buf_p << "\n    id: " << i;
-
-					// Check if it's not ame's
-					bool _v_return = true;
-					if (!_can_be_ame)
-						for (const auto& _tracker : k2app::K2Settings.K2TrackersVector)
-							if (std::string(buf_p) == _tracker.data.serial)
-							{
-								LOG_IF(INFO, _log) <<
-									"Skipping the latest found tracker because it's been added from Amethyst";
-								_v_return = false; // Maybe next time, bud
-							}
-
-					// Return what we've got
-					foundVRTrackers.push_back(_v_return);
-				}
-		}
-
-		// Return the results
-		return (foundVRTrackers.size() == K2Settings.K2TrackersVector.size())
-			? foundVRTrackers // If the sizes match, return the computed result
-			: std::vector<bool>(K2Settings.K2TrackersVector.size(), false);;
 	}
 
 	/**

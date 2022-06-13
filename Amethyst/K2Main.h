@@ -321,8 +321,10 @@ namespace k2app::main
 							co_await resume_background();
 
 							// Search for 
-							const std::vector<bool> foundVRTracker = 
-								interfacing::findOverlappingVRTrackers(false, true);
+							std::vector<bool> foundVRTracker;
+							for (const auto& _tracker : K2Settings.K2TrackersVector)
+								foundVRTracker.push_back(interfacing::findVRTracker(
+									ITrackerType_Serial[_tracker.tracker], false, true).first);
 							co_await ui_thread;
 
 							// Disable an (already-added tracker)'s been found
