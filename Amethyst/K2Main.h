@@ -282,7 +282,7 @@ namespace k2app::main
 			if (initialized_bak != interfacing::K2AppTrackersInitialized)
 				std::thread([&]
 				{
-					// try 2 times cause why not
+					// try 3 times cause why not
 					for (int i = 0; i < 2; i++)
 					{
 						// Update status in server
@@ -334,17 +334,21 @@ namespace k2app::main
 									foundVRTracker[tracker_index])
 								{
 									// Make actual changes
-									K2Settings.K2TrackersVector[tracker_index].data.isActive = false;
+									K2Settings.K2TrackersVector[tracker_index].data.isActive = false; // Deactivate
 									for (auto expander : shared::settings::jointExpanderVector)
 										expander->UpdateIsActive();
 
-									ktvr::set_tracker_state<false>(
-										K2Settings.K2TrackersVector[tracker_index].tracker, false);
-
-									// Sleep on UI's background
+									// Do that on UI's background
 									apartment_context _ui_thread;
 									co_await resume_background();
-									Sleep(20);
+
+									// try 3 times cause why not
+									for (int i = 0; i < 3; i++)
+									{
+										ktvr::set_tracker_state<false>(
+											K2Settings.K2TrackersVector[tracker_index].tracker, false);
+										Sleep(15);
+									}
 									co_await _ui_thread;
 
 									// Check if we've disabled any joints from spawning and disable their mods

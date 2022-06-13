@@ -624,7 +624,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 			_currentCalibrationTranslation_new = q * _currentCalibrationTranslation_new;
 
 			// Apply to the global base
-			(*calibrationTranslation) = (*calibrationTranslation) + _currentCalibrationTranslation_new;
+			(*calibrationTranslation)(0) += _currentCalibrationTranslation_new(0);
+			(*calibrationTranslation)(1) += _currentCalibrationTranslation_new(1);
+			(*calibrationTranslation)(2) += _currentCalibrationTranslation_new(2);
 			
 			// Sleep on UI
 			apartment_context ui_thread;
