@@ -383,6 +383,48 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 			}
 			break;
 
+		case ktvr::K2MessageType::K2Message_SetTrackerStateVector:
+			{
+				// Check if the pose exists
+				if (message.tracker_statuses_vector.has_value())
+				{
+					for (const auto& _tracker : message.tracker_statuses_vector.value())
+					{
+						/* State */
+
+						if (!trackerVector.at(static_cast<int>(_tracker.first)).is_added())
+							if (!trackerVector.at(static_cast<int>(_tracker.first)).spawn())
+							{
+								// spawn if needed
+								LOG(INFO) << "Tracker autospawn exception! Serial: " +
+									trackerVector.at(static_cast<int>(_tracker.first)).get_serial();
+								_response.result = static_cast<int>(
+									ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
+							}
+
+						// Set the state
+						trackerVector.at(static_cast<int>(_tracker.first)).set_state(_tracker.second);
+						LOG(INFO) << "Tracker role: " << static_cast<int>(_tracker.first) <<
+							" state has been set to: " + std::to_string(_tracker.second);
+
+						// Update the tracker
+						trackerVector.at(static_cast<int>(_tracker.first)).update();
+						
+						// Compose the response
+						_response.success = true;
+						_response.tracker = _tracker.first; // ID
+						_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
+
+					}
+				}
+				else
+				{
+					LOG(ERROR) << "Couldn't update multiple trackers, bases are empty.";
+					_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
+				}
+			}
+			break;
+
 		default:
 			LOG(ERROR) << "Couldn't process message. The message type was not set. (Type invalid)";
 			_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
