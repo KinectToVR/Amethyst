@@ -51,31 +51,31 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		void EraseComboItems()
 		{
 			for (const auto& _row : _overrideSelectorRows)
-				_row->ClearOverrideCombos();
+				_row.get()->ClearOverrideCombos();
 		}
 
 		void SelectComboItems()
 		{
 			for (const auto& _row : _overrideSelectorRows)
-				_row->SelectOverrideJoints();
+				_row.get()->SelectOverrideJoints();
 		}
 
 		void PushOverrideJoints(const std::optional<bool>& all = std::nullopt)
 		{
 			for (const auto& _row : _overrideSelectorRows)
-				_row->UpdateOverrideJoints(all);
+				_row.get()->UpdateOverrideJoints(all);
 		}
 
 		void PushOverrideJoint(const std::wstring& _string)
 		{
 			for (const auto& _row : _overrideSelectorRows)
-				_row->UpdateOverrideJoints(_string);
+				_row.get()->UpdateOverrideJoints(_string);
 		}
 
 		void UpdateOverrideToggles()
 		{
 			for (const auto& _row : _overrideSelectorRows)
-				_row->UpdateOverrideToggles();
+				_row.get()->UpdateOverrideToggles();
 		}
 
 		void UpdateIsEnabled()
@@ -171,7 +171,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					{
 						[&, this]
 						{
-							_ptr_container_panel.get()->Children().Append(*_row->Container());
+							_ptr_container_panel.get()->Children().Append(*_row.get()->Container());
 						}();
 					}
 					__except (EXCEPTION_EXECUTE_HANDLER)

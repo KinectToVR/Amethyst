@@ -34,14 +34,14 @@ namespace winrt::Amethyst::implementation
 		trackingDeviceChangePanel = std::make_shared<Controls::Grid>(TrackingDeviceChangePanel());
 		devicesMainContentGridOuter = std::make_shared<Controls::Grid>(DevicesMainContentGridOuter());
 		devicesMainContentGridInner = std::make_shared<Controls::Grid>(DevicesMainContentGridInner());
-		
+
 		devicesListView = std::make_shared<Controls::ListView>(TrackingDeviceListView());
 		noJointsFlyout = std::make_shared<Controls::Flyout>(NoJointsFlyout());
 
 		setAsOverrideButton = std::make_shared<Controls::Button>(SetAsOverrideButton());
 		setAsBaseButton = std::make_shared<Controls::Button>(SetAsBaseButton());
 		deselectDeviceButton = std::make_shared<Controls::Button>(DeselectDeviceButton());
-		
+
 		devicesMainContentScrollViewer = std::make_shared<Controls::ScrollViewer>(DevicesMainContentScrollViewer());
 
 		devicesOverridesSelectorStackPanelOuter = std::make_shared<Controls::StackPanel>(
@@ -200,9 +200,9 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 				: *k2app::interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a kinectbasis device, so this should be hidden
-		for(auto& expander: jointSelectorExpanders)
+		for (auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
-		
+
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 		// Set up combos if the device's OK
@@ -214,26 +214,26 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 				// Clear items
 				for (auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
-				
+
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
 				{
 				case ktvr::K2_Character_Basic:
 					{
-					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoints(false);
+						for (auto& expander : overrideSelectorExpanders)
+							expander.get()->PushOverrideJoints(false);
 					}
 					break;
 				case ktvr::K2_Character_Simple:
 					{
-					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoints();
+						for (auto& expander : overrideSelectorExpanders)
+							expander.get()->PushOverrideJoints();
 					}
 					break;
 				case ktvr::K2_Character_Full:
 					{
-					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoints();
+						for (auto& expander : overrideSelectorExpanders)
+							expander.get()->PushOverrideJoints();
 					}
 					break;
 				}
@@ -241,10 +241,15 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
 
-				// Select the first (or next, if exists) joint
-				// Set the placeholder text on disabled combos
 				for (auto& expander : overrideSelectorExpanders)
+				{
+					// Select the first (or next, if exists) joint
+					// Set the placeholder text on disabled combos
 					expander.get()->SelectComboItems();
+
+					// Select enabled overrides
+					expander.get()->UpdateOverrideToggles();
+				}
 			}
 		}
 	}
@@ -278,15 +283,15 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 			expander.get()->SetVisibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-		
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
 		jointBasisLabel.get()->Visibility(
 			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
-		
+
 		// Set up combos if the device's OK
 		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
@@ -302,7 +307,7 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 				// Clear items
 				for (auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
-				
+
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
 				{
@@ -317,10 +322,15 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
 
-				// Select the first (or next, if exists) joint
-				// Set the placeholder text on disabled combos
 				for (auto& expander : overrideSelectorExpanders)
+				{
+					// Select the first (or next, if exists) joint
+					// Set the placeholder text on disabled combos
 					expander.get()->SelectComboItems();
+
+					// Select enabled overrides
+					expander.get()->UpdateOverrideToggles();
+				}
 			}
 		}
 	}
@@ -450,37 +460,42 @@ void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(
 				// Clear items
 				for (auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
-				
+
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
 				{
 				case ktvr::K2_Character_Basic:
-				{
-					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoints(false);
-				}
-				break;
+					{
+						for (auto& expander : overrideSelectorExpanders)
+							expander.get()->PushOverrideJoints(false);
+					}
+					break;
 				case ktvr::K2_Character_Simple:
-				{
-					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoints();
-				}
-				break;
+					{
+						for (auto& expander : overrideSelectorExpanders)
+							expander.get()->PushOverrideJoints();
+					}
+					break;
 				case ktvr::K2_Character_Full:
-				{
-					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoints();
-				}
-				break;
+					{
+						for (auto& expander : overrideSelectorExpanders)
+							expander.get()->PushOverrideJoints();
+					}
+					break;
 				}
 
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
 
-				// Select the first (or next, if exists) joint
-				// Set the placeholder text on disabled combos
 				for (auto& expander : overrideSelectorExpanders)
+				{
+					// Select the first (or next, if exists) joint
+					// Set the placeholder text on disabled combos
 					expander.get()->SelectComboItems();
+
+					// Select enabled overrides
+					expander.get()->UpdateOverrideToggles();
+				}
 			}
 		}
 	}
@@ -498,15 +513,15 @@ void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(
 			expander.get()->SetVisibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-		
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
 		jointBasisLabel.get()->Visibility(
 			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
-		
+
 		// Set up combos if the device's OK
 		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
@@ -537,10 +552,15 @@ void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
 
-				// Select the first (or next, if exists) joint
-				// Set the placeholder text on disabled combos
 				for (auto& expander : overrideSelectorExpanders)
+				{
+					// Select the first (or next, if exists) joint
+					// Set the placeholder text on disabled combos
 					expander.get()->SelectComboItems();
+
+					// Select enabled overrides
+					expander.get()->UpdateOverrideToggles();
+				}
 			}
 		}
 	}
@@ -612,9 +632,9 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 			expander.get()->SetVisibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-		
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
 		jointBasisLabel.get()->Visibility(
 			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
@@ -732,6 +752,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 
 	if (trackingDevice.index() == 0)
 	{
+		k2app::K2Settings.overrideDeviceID = selectedTrackingDeviceID;
+
 		// Kinect Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 		deviceName = device->getDeviceName();
@@ -742,37 +764,42 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		// Clear items
 		for (auto& expander : overrideSelectorExpanders)
 			expander.get()->ReAppendTrackers();
-		
+
 		// Append all joints to all combos, depend on characteristics
 		switch (device->getDeviceCharacteristics())
 		{
 		case ktvr::K2_Character_Basic:
-		{
-			for (auto& expander : overrideSelectorExpanders)
-				expander.get()->PushOverrideJoints(false);
-		}
-		break;
+			{
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->PushOverrideJoints(false);
+			}
+			break;
 		case ktvr::K2_Character_Simple:
-		{
-			for (auto& expander : overrideSelectorExpanders)
-				expander.get()->PushOverrideJoints();
-		}
-		break;
+			{
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->PushOverrideJoints();
+			}
+			break;
 		case ktvr::K2_Character_Full:
-		{
-			for (auto& expander : overrideSelectorExpanders)
-				expander.get()->PushOverrideJoints();
-		}
-		break;
+			{
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->PushOverrideJoints();
+			}
+			break;
 		}
 
 		// Try fix override IDs if wrong
 		TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
 
-		// Select the first (or next, if exists) joint
-		// Set the placeholder text on disabled combos
 		for (auto& expander : overrideSelectorExpanders)
-			expander.get()->SelectComboItems();
+				{
+					// Select the first (or next, if exists) joint
+					// Set the placeholder text on disabled combos
+					expander.get()->SelectComboItems();
+
+					// Select enabled overrides
+					expander.get()->UpdateOverrideToggles();
+				}
 
 		// Backup the status
 		device_status = device->statusResultWString(device->getStatusResult());
@@ -797,6 +824,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 			co_return; // Don't set up any overrides (yet)
 		}
 
+		k2app::K2Settings.overrideDeviceID = selectedTrackingDeviceID;
+
 		// Also refresh joints
 
 		// Clear items
@@ -817,10 +846,15 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		// Try fix override IDs if wrong
 		TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
 
-		// Select the first (or next, if exists) joint
-		// Set the placeholder text on disabled combos
 		for (auto& expander : overrideSelectorExpanders)
+		{
+			// Select the first (or next, if exists) joint
+			// Set the placeholder text on disabled combos
 			expander.get()->SelectComboItems();
+
+			// Select enabled overrides
+			expander.get()->UpdateOverrideToggles();
+		}
 
 		// Backup the status
 		device_status = device->statusResultWString(device->getStatusResult());
@@ -871,7 +905,6 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
 
-	k2app::K2Settings.overrideDeviceID = selectedTrackingDeviceID;
 	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
 
 	{
@@ -919,6 +952,10 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 
 	if (trackingDevice.index() == 0)
 	{
+		k2app::K2Settings.trackingDeviceID = selectedTrackingDeviceID;
+		if (k2app::K2Settings.overrideDeviceID == k2app::K2Settings.trackingDeviceID)
+			k2app::K2Settings.overrideDeviceID = -1; // Reset the override
+
 		// Kinect Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 		deviceName = device->getDeviceName();
@@ -946,10 +983,17 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 			co_return; // Don't set up any overrides (yet)
 		}
 
+		k2app::K2Settings.trackingDeviceID = selectedTrackingDeviceID;
+		if (k2app::K2Settings.overrideDeviceID == k2app::K2Settings.trackingDeviceID)
+			k2app::K2Settings.overrideDeviceID = -1; // Reset the override
+
 		// Also refresh joints
 		for (auto& expander : jointSelectorExpanders)
-			expander.get()->ReAppendTrackers();
-		
+		{
+			expander.get()->ReAppendTrackers(); // Refresh trackers/joints
+			expander.get()->SetVisibility(Visibility::Visible); // Set as visible
+		}
+
 		// Update the status
 		device_status = device->statusResultWString(device->getStatusResult());
 		jointBasisLabel.get()->Visibility(
@@ -998,10 +1042,6 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
 
-	k2app::K2Settings.trackingDeviceID = selectedTrackingDeviceID;
-	if (k2app::K2Settings.overrideDeviceID == k2app::K2Settings.trackingDeviceID)
-		k2app::K2Settings.overrideDeviceID = -1; // Reset the override
-
 	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
 
 	// This is here too cause an override might've became a base... -_-
@@ -1042,677 +1082,6 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 
 	devicesJointsBasisSelectorStackPanelInner.get()->Transitions().Clear();
 }
-
-//void Amethyst::implementation::DevicesPage::WaistPositionOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[0].isPositionOverridden &&
-//		waistPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID = waistPositionOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::WaistRotationOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[0].isRotationOverridden &&
-//		waistRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID = waistRotationOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::LeftFootPositionOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[1].isPositionOverridden &&
-//		leftFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[1].positionOverrideJointID = leftFootPositionOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[1].positionOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::LeftFootRotationOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[1].isRotationOverridden &&
-//		leftFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID = leftFootRotationOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::RightFootPositionOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[2].isPositionOverridden &&
-//		rightFootPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID = rightFootPositionOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::RightFootRotationOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[2].isRotationOverridden &&
-//		rightFootRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID = rightFootRotationOverrideOptionBox.get()->SelectedIndex();
-//
-//	//// If we're using a joints device then also signal the joint
-//	const auto& trackingDevice = TrackingDevices::getCurrentOverrideDevice();
-//	if (trackingDevice.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
-//			signalJoint(k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::LeftElbowPositionOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[3].isPositionOverridden &&
-//		leftElbowPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID = leftElbowPositionOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::LeftElbowRotationOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[3].isRotationOverridden &&
-//		leftElbowRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID = leftElbowRotationOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::RightElbowPositionOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[4].isPositionOverridden &&
-//		rightElbowPositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID = rightElbowPositionOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::RightElbowRotationOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[4].isRotationOverridden &&
-//		rightElbowRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID = rightElbowRotationOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::LeftKneePositionOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[5].isPositionOverridden &&
-//		leftKneePositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID = leftKneePositionOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::LeftKneeRotationOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[5].isRotationOverridden &&
-//		leftKneeRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID = leftKneeRotationOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::RightKneePositionOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[6].isPositionOverridden &&
-//		rightKneePositionOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID = rightKneePositionOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::RightKneeRotationOverrideOptionBox_SelectionChanged(
-//	const Windows::Foundation::IInspectable& sender,
-//	const Controls::SelectionChangedEventArgs& e)
-//{
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	if (k2app::K2Settings.K2TrackersVector[6].isRotationOverridden &&
-//		rightKneeRotationOverrideOptionBox.get()->SelectedIndex() >= 0)
-//		k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID = rightKneeRotationOverrideOptionBox.get()->SelectedIndex();
-//
-//	// If we're using a joints device then also signal the joint
-//	const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-//	if (trackingDevicePair.first)
-//		if (trackingDevicePair.second.index() == 1 && devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
-//			std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-//				signalJoint(k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID);
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-///* For *Override* device type: override elements for joints selector */
-//
-//void Amethyst::implementation::DevicesPage::OverrideWaistPosition_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideWaistPosition().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[0].isPositionOverridden = overrideWaistPosition.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	waistPositionOverrideOptionBox.get()->SelectedIndex(
-//		overrideWaistPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[0].positionOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideWaistRotation_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideWaistRotation().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[0].isRotationOverridden = overrideWaistRotation.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	waistRotationOverrideOptionBox.get()->SelectedIndex(
-//		overrideWaistRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[0].rotationOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideLeftFootPosition_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideLeftFootPosition().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[1].isPositionOverridden = overrideLeftFootPosition.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	leftFootPositionOverrideOptionBox.get()->SelectedIndex(
-//		overrideLeftFootPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[1].positionOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideLeftFootRotation_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideLeftFootRotation().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[1].isRotationOverridden = overrideLeftFootRotation.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	leftFootRotationOverrideOptionBox.get()->SelectedIndex(
-//		overrideLeftFootRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[1].rotationOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideRightFootPosition_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideRightFootPosition().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[2].isPositionOverridden = overrideRightFootPosition.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	rightFootPositionOverrideOptionBox.get()->SelectedIndex(
-//		overrideRightFootPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[2].positionOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideRightFootRotation_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideRightFootRotation().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[2].isRotationOverridden = overrideRightFootRotation.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	rightFootRotationOverrideOptionBox.get()->SelectedIndex(
-//		overrideRightFootRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[2].rotationOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideLeftElbowPosition_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideLeftElbowPosition().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[3].isPositionOverridden = overrideLeftElbowPosition.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	leftElbowPositionOverrideOptionBox.get()->SelectedIndex(
-//		overrideLeftElbowPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[3].positionOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideLeftElbowRotation_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideLeftElbowRotation().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[3].isRotationOverridden = overrideLeftElbowRotation.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	leftElbowRotationOverrideOptionBox.get()->SelectedIndex(
-//		overrideLeftElbowRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[3].rotationOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideRightElbowPosition_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideRightElbowPosition().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[4].isPositionOverridden = overrideRightElbowPosition.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	rightElbowPositionOverrideOptionBox.get()->SelectedIndex(
-//		overrideRightElbowPosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[4].positionOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideRightElbowRotation_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideRightElbowRotation().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[4].isRotationOverridden = overrideRightElbowRotation.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	rightElbowRotationOverrideOptionBox.get()->SelectedIndex(
-//		overrideRightElbowRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[4].rotationOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideLeftKneePosition_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideLeftKneePosition().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[5].isPositionOverridden = overrideLeftKneePosition.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	leftKneePositionOverrideOptionBox.get()->SelectedIndex(
-//		overrideLeftKneePosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[5].positionOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideLeftKneeRotation_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideLeftKneeRotation().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[5].isRotationOverridden = overrideLeftKneeRotation.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	leftKneeRotationOverrideOptionBox.get()->SelectedIndex(
-//		overrideLeftKneeRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[5].rotationOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideRightKneePosition_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideRightKneePosition().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[6].isPositionOverridden = overrideRightKneePosition.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	rightKneePositionOverrideOptionBox.get()->SelectedIndex(
-//		overrideRightKneePosition.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[6].positionOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
-//
-//
-//void Amethyst::implementation::DevicesPage::OverrideRightKneeRotation_Click(
-//	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-//{
-//	if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-//		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-//			TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
-//	{
-//		OverrideRightKneeRotation().IsChecked(false);
-//		NoJointsFlyout().ShowAt(OverridesLabel());
-//		return; // Don't set up any overrides (yet)
-//	}
-//
-//	if (!devices_tab_setup_finished)return; // Don't even try if we're not set up yet
-//	k2app::K2Settings.K2TrackersVector[6].isRotationOverridden = overrideRightKneeRotation.get()->IsChecked();
-//
-//	// If we've disabled the override, set the placeholder text
-//	rightKneeRotationOverrideOptionBox.get()->SelectedIndex(
-//		overrideRightKneeRotation.get()->IsChecked() ? k2app::K2Settings.K2TrackersVector[6].rotationOverrideJointID : -1);
-//
-//	// Check for errors and disable combos
-//	k2app::interfacing::devices_check_disabled_joints();
-//
-//	// Save settings
-//	k2app::K2Settings.saveSettings();
-//}
 
 
 void Amethyst::implementation::DevicesPage::DismissOverrideTipNoJointsButton_Click(
@@ -1788,37 +1157,42 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 				// Clear items
 				for (auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
-				
+
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
 				{
 				case ktvr::K2_Character_Basic:
-				{
-					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoints(false);
-				}
-				break;
+					{
+						for (auto& expander : overrideSelectorExpanders)
+							expander.get()->PushOverrideJoints(false);
+					}
+					break;
 				case ktvr::K2_Character_Simple:
-				{
-					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoints();
-				}
-				break;
+					{
+						for (auto& expander : overrideSelectorExpanders)
+							expander.get()->PushOverrideJoints();
+					}
+					break;
 				case ktvr::K2_Character_Full:
-				{
-					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoints();
-				}
-				break;
+					{
+						for (auto& expander : overrideSelectorExpanders)
+							expander.get()->PushOverrideJoints();
+					}
+					break;
 				}
 
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
 
-				// Select the first (or next, if exists) joint
-				// Set the placeholder text on disabled combos
 				for (auto& expander : overrideSelectorExpanders)
+				{
+					// Select the first (or next, if exists) joint
+					// Set the placeholder text on disabled combos
 					expander.get()->SelectComboItems();
+
+					// Select enabled overrides
+					expander.get()->UpdateOverrideToggles();
+				}
 			}
 		}
 	}
@@ -1852,15 +1226,15 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 			expander.get()->SetVisibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
-		
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
 		jointBasisLabel.get()->Visibility(
 			(device_status.find(L"S_OK") != std::wstring::npos &&
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
-		
+
 		// Set up combos if the device's OK
 		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
@@ -1891,10 +1265,15 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
 
-				// Select the first (or next, if exists) joint
-				// Set the placeholder text on disabled combos
 				for (auto& expander : overrideSelectorExpanders)
+				{
+					// Select the first (or next, if exists) joint
+					// Set the placeholder text on disabled combos
 					expander.get()->SelectComboItems();
+
+					// Select enabled overrides
+					expander.get()->UpdateOverrideToggles();
+				}
 			}
 		}
 	}
