@@ -214,7 +214,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 
 			if (updateFound)
 			{
-				FlyoutHeader().Text(L"New Update Available");
+				FlyoutHeader().Text(k2app::interfacing::LocalizedResourceWString(
+					L"SharedStrings", L"Updates/NewUpdateFound"));
 				FlyoutFooter().Text(L"Amethyst v" + StringToWString(K2RemoteVersion));
 
 				std::string changelog_string;
@@ -238,9 +239,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 			}
 			else
 			{
-				FlyoutHeader().Text(L"You're Up To Date");
+				FlyoutHeader().Text(k2app::interfacing::LocalizedResourceWString(
+					L"SharedStrings", L"Updates/UpToDate"));
 				FlyoutFooter().Text(L"Amethyst v" + StringToWString(k2app::interfacing::K2InternalVersion));
-				FlyoutContent().Text(L"Please tell us if you have any ideas\nfor the next Amethyst update.");
+				FlyoutContent().Text(k2app::interfacing::LocalizedResourceWString(
+					L"SharedStrings", L"Updates/Suggestions"));
 
 				auto thickness = Thickness();
 				thickness.Left = 0;

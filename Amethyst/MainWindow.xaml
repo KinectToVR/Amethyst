@@ -60,17 +60,17 @@
 
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Icon="Home" Margin="0,10,0,5"
-                                         Content="General" Tag="general" x:Name="GeneralItem" />
+                                         x:Uid="/SharedStrings/Buttons/General" Tag="general" x:Name="GeneralItem" />
                 <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Icon="Setting" Margin="0,5,0,5"
-                                         Content="Settings" Tag="settings" x:Name="SettingsItem" />
+                                         x:Uid="/SharedStrings/Buttons/Settings" Tag="settings" x:Name="SettingsItem" />
                 <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"
-                                         Content="Devices" Tag="devices" x:Name="DevicesItem">
+                                         x:Uid="/SharedStrings/Buttons/Devices" Tag="devices" x:Name="DevicesItem">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE88E;" />
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
                 <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"
-                                         Content="Info" Tag="info" x:Name="InfoItem">
+                                         x:Uid="/SharedStrings/Buttons/Info" Tag="info" x:Name="InfoItem">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </muxc:NavigationViewItem.Icon>
@@ -98,9 +98,9 @@
                                 <TextBlock x:Name="FlyoutContent" Margin="0,0,0,12" />
                                 <StackPanel Orientation="Horizontal">
                                     <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click"
-                                            Content="Install Later" Margin="0,0,5,0" />
+                                            x:Uid="/SharedStrings/Buttons/Updates/Skip" Margin="0,0,5,0" />
                                     <Button x:Name="InstallNowButton" Click="InstallNowButton_Click"
-                                            Content="Install Now" Margin="5,0,0,0"
+                                            x:Uid="/SharedStrings/Buttons/Updates/Install" Margin="5,0,0,0"
                                             Style="{StaticResource AccentButtonStyle}" />
                                 </StackPanel>
                             </StackPanel>
@@ -117,7 +117,7 @@
                     </muxc:NavigationViewItem.Icon>
 
                     <Grid>
-                        <TextBlock Text="Updates" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock x:Uid="/SharedStrings/Buttons/Updates/Header" FontSize="16" FontWeight="SemiBold" />
 
                         <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="15" IsHitTestVisible="False"
                                   HorizontalAlignment="Left" VerticalAlignment="Bottom"

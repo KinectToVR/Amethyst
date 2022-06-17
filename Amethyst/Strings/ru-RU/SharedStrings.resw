@@ -117,6 +117,27 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Buttons.Devices.Content" xml:space="preserve">
+    <value>Устройства</value>
+  </data>
+  <data name="Buttons.General.Content" xml:space="preserve">
+    <value>Общие</value>
+  </data>
+  <data name="Buttons.Info.Content" xml:space="preserve">
+    <value>Информация</value>
+  </data>
+  <data name="Buttons.Settings.Content" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="Buttons.Updates.Header.Text" xml:space="preserve">
+    <value>Обновления</value>
+  </data>
+  <data name="Buttons.Updates.Install.Content" xml:space="preserve">
+    <value>Установить сейчас</value>
+  </data>
+  <data name="Buttons.Updates.Skip.Content" xml:space="preserve">
+    <value>Установить позже</value>
+  </data>
   <data name="Joints.Enum.0" xml:space="preserve">
     <value>Трекер рук</value>
     <comment>From the ktvr::ITrackerType enum</comment>
@@ -201,5 +222,15 @@
   </data>
   <data name="Toasts.TrackersConfigChanged.Title" xml:space="preserve">
     <value>Конфигурация трекеров была изменена</value>
+  </data>
+  <data name="Updates.NewUpdateFound" xml:space="preserve">
+    <value>Доступно обновление</value>
+  </data>
+  <data name="Updates.Suggestions" xml:space="preserve">
+    <value>Пожалуйста, пришлите нам ваши идеи
+для следующего обновления Amethyst.</value>
+  </data>
+  <data name="Updates.UpToDate" xml:space="preserve">
+    <value>У вас все актуально</value>
   </data>
 </root>
