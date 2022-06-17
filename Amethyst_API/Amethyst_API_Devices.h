@@ -30,7 +30,7 @@ inline std::string WStringToString(const std::wstring& s)
 namespace ktvr
 {
 	// Interface Version
-	static const char* IK2API_Devices_Version = "IK2API_Version_009";
+	static const char* IK2API_Devices_Version = "IK2API_Version_010";
 
 	// Return messaging types
 	enum K2InitErrorType
@@ -131,7 +131,7 @@ namespace ktvr
 
 		Eigen::Vector3f getJointPosition() { return jointPosition; }
 		Eigen::Quaternionf getJointOrientation() { return jointOrientation; }
-		JointTrackingState getTrackingState() { return trackingState; }
+		JointTrackingState getTrackingState() { return trackingState; } // ITrackedJointState
 
 		// For servers!
 		void update(Eigen::Vector3f position,
@@ -720,20 +720,34 @@ namespace ktvr
 		[[nodiscard]] bool isAppOrientationSupported() const { return appOrientationSupported; } // Math-based
 
 		/* Helper functions which may be internally called by the device plugin */
-		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
-		Eigen::Vector3f (*getHMDPositionCalibrated)(); // Get the HMD Position, calibrated
-		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
-		Eigen::Quaternionf (*getHMDOrientationCalibrated)(); // Get the HMD Rotation, calibrated
-		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
-		float (*getHMDOrientationYawCalibrated)(); // Get the HMD Yaw, exclusively & calibrated
+
+		// Get the raw openvr's HMD pose
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPose;
+		// Get the openvr's HMD pose, but un-wrapped aka "calibrated" using the vr room center
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPoseCalibrated;
+
+		// Get the raw openvr's left controller pose
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPose;
+		// Get the openvr's left controller pose, but un-wrapped aka "calibrated" using the vr room center
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPoseCalibrated;
+
+		// Get the raw openvr's right controller pose
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPose;
+		// Get the openvr's right controller pose, but un-wrapped aka "calibrated" using the vr room center
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPoseCalibrated;
+
+		// Get the HMD Yaw (exclusively)
+		std::function<float()> getHMDOrientationYaw;
+		// Get the HMD Yaw (exclusively), but un-wrapped aka "calibrated" using the vr room center
+		std::function<float()> getHMDOrientationYawCalibrated;
 
 		/*
 		 * Helper to get all joints' positions from the app,
 		 * which are sent to the openvr server driver.
-		 * Note: if joint's unused, its trackingState will be 0
+		 * Note: if joint's unused, its trackingState will be ITrackedJointState::State_NotTracked
 		 * Note: Waist,LFoot,RFoot,LElbow,RElbow,LKnee,RKnee
 		 */
-		std::array<K2TrackedJoint, 7> (*getAppJointPoses)();
+		std::function<std::array<K2TrackedJoint, 7>()> getAppJointPoses;
 
 		// To support settings daemon and register the layout root,
 		// the device must properly report it first
@@ -750,31 +764,31 @@ namespace ktvr
 		Interface::LayoutRoot* layoutRoot;
 
 		// Create a text block
-		Interface::TextBlock* (*CreateTextBlock)(const std::wstring& text);
+		std::function<Interface::TextBlock* (const std::wstring& text)> CreateTextBlock;
 
 		// Create a labeled button
-		Interface::Button* (*CreateButton)(const std::wstring& content);
+		std::function<Interface::Button* (const std::wstring& content)> CreateButton;
 
 		// Create a number box
-		Interface::NumberBox* (*CreateNumberBox)(const int& value);
+		std::function<Interface::NumberBox* (const int& value)> CreateNumberBox;
 
 		// Create a combo box
-		Interface::ComboBox* (*CreateComboBox)(const std::vector<std::wstring>& entries);
+		std::function<Interface::ComboBox* (const std::vector<std::wstring>& entries)> CreateComboBox;
 
 		// Create a check box
-		Interface::CheckBox* (*CreateCheckBox)();
+		std::function<Interface::CheckBox* ()> CreateCheckBox;
 
 		// Create a toggle switch
-		Interface::ToggleSwitch* (*CreateToggleSwitch)();
+		std::function<Interface::ToggleSwitch* ()> CreateToggleSwitch;
 
 		// Create a text box
-		Interface::TextBox* (*CreateTextBox)();
+		std::function<Interface::TextBox* ()> CreateTextBox;
 
 		// Create a progress ring
-		Interface::ProgressRing* (*CreateProgressRing)();
+		std::function<Interface::ProgressRing* ()> CreateProgressRing;
 
 		// Create a progress bar
-		Interface::ProgressBar* (*CreateProgressBar)();
+		std::function<Interface::ProgressBar* ()> CreateProgressBar;
 
 	protected:
 		K2DeviceCharacteristics deviceCharacteristics = K2_Character_Unknown;
@@ -918,20 +932,34 @@ namespace ktvr
 		[[nodiscard]] bool isSkeletonTracked() const { return skeletonTracked; }
 
 		/* Helper functions which may be internally called by the device plugin */
-		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
-		Eigen::Vector3f (*getHMDPositionCalibrated)(); // Get the HMD Position, calibrated
-		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
-		Eigen::Quaternionf (*getHMDOrientationCalibrated)(); // Get the HMD Rotation, calibrated
-		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
-		float (*getHMDOrientationYawCalibrated)(); // Get the HMD Yaw, exclusively & calibrated
+
+		// Get the raw openvr's HMD pose
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPose;
+		// Get the openvr's HMD pose, but un-wrapped aka "calibrated" using the vr room center
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPoseCalibrated;
+
+		// Get the raw openvr's left controller pose
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPose;
+		// Get the openvr's left controller pose, but un-wrapped aka "calibrated" using the vr room center
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPoseCalibrated;
+
+		// Get the raw openvr's right controller pose
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPose;
+		// Get the openvr's right controller pose, but un-wrapped aka "calibrated" using the vr room center
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPoseCalibrated;
+
+		// Get the HMD Yaw (exclusively)
+		std::function<float()> getHMDOrientationYaw;
+		// Get the HMD Yaw (exclusively), but un-wrapped aka "calibrated" using the vr room center
+		std::function<float()> getHMDOrientationYawCalibrated;
 
 		/*
 		 * Helper to get all joints' positions from the app,
 		 * which are sent to the openvr server driver.
-		 * Note: if joint's unused, its trackingState will be 0
+		 * Note: if joint's unused, its trackingState will be ITrackedJointState::State_NotTracked
 		 * Note: Waist,LFoot,RFoot,LElbow,RElbow,LKnee,RKnee
 		 */
-		std::array<K2TrackedJoint, 7> (*getAppJointPoses)();
+		std::function<std::array<K2TrackedJoint, 7>()> getAppJointPoses;
 
 		// To support settings daemon and register the layout root,
 		// the device must properly report it first
@@ -948,31 +976,31 @@ namespace ktvr
 		Interface::LayoutRoot* layoutRoot;
 
 		// Create a text block
-		Interface::TextBlock* (*CreateTextBlock)(const std::wstring& text);
+		std::function<Interface::TextBlock* (const std::wstring& text)> CreateTextBlock;
 
 		// Create a labeled button
-		Interface::Button* (*CreateButton)(const std::wstring& content);
+		std::function<Interface::Button* (const std::wstring& content)> CreateButton;
 
 		// Create a number box
-		Interface::NumberBox* (*CreateNumberBox)(const int& value);
+		std::function<Interface::NumberBox* (const int& value)> CreateNumberBox;
 
 		// Create a combo box
-		Interface::ComboBox* (*CreateComboBox)(const std::vector<std::wstring>& entries);
+		std::function<Interface::ComboBox* (const std::vector<std::wstring>& entries)> CreateComboBox;
 
 		// Create a check box
-		Interface::CheckBox* (*CreateCheckBox)();
+		std::function<Interface::CheckBox* ()> CreateCheckBox;
 
 		// Create a toggle switch
-		Interface::ToggleSwitch* (*CreateToggleSwitch)();
+		std::function<Interface::ToggleSwitch* ()> CreateToggleSwitch;
 
 		// Create a text box
-		Interface::TextBox* (*CreateTextBox)();
+		std::function<Interface::TextBox* ()> CreateTextBox;
 
 		// Create a progress ring
-		Interface::ProgressRing* (*CreateProgressRing)();
+		std::function<Interface::ProgressRing* ()> CreateProgressRing;
 
 		// Create a progress bar
-		Interface::ProgressBar* (*CreateProgressBar)();
+		std::function<Interface::ProgressBar* ()> CreateProgressBar;
 
 	protected:
 		K2DeviceType deviceType = K2_Unknown;
@@ -1010,19 +1038,33 @@ namespace ktvr
 		}
 
 		/* Helper functions which may be internally called by the device plugin */
-		Eigen::Vector3f (*getHMDPosition)(); // Get the HMD Position
-		Eigen::Vector3f (*getHMDPositionCalibrated)(); // Get the HMD Position, calibrated
-		Eigen::Quaternionf (*getHMDOrientation)(); // Get the HMD Rotation
-		Eigen::Quaternionf (*getHMDOrientationCalibrated)(); // Get the HMD Rotation, calibrated
-		float (*getHMDOrientationYaw)(); // Get the HMD Yaw, exclusively
-		float (*getHMDOrientationYawCalibrated)(); // Get the HMD Yaw, exclusively & calibrated
+
+		// Get the raw openvr's HMD pose
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPose;
+		// Get the openvr's HMD pose, but un-wrapped aka "calibrated" using the vr room center
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPoseCalibrated;
+
+		// Get the raw openvr's left controller pose
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPose;
+		// Get the openvr's left controller pose, but un-wrapped aka "calibrated" using the vr room center
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPoseCalibrated;
+
+		// Get the raw openvr's right controller pose
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPose;
+		// Get the openvr's right controller pose, but un-wrapped aka "calibrated" using the vr room center
+		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPoseCalibrated;
+
+		// Get the HMD Yaw (exclusively)
+		std::function<float()> getHMDOrientationYaw;
+		// Get the HMD Yaw (exclusively), but un-wrapped aka "calibrated" using the vr room center
+		std::function<float()> getHMDOrientationYawCalibrated;
 
 		/*
 		 * Helper to get all joints' positions from the app,
 		 * which are sent to the openvr server driver.
-		 * Note: if joint's unused, its trackingState will be 0
+		 * Note: if joint's unused, its trackingState will be ITrackedJointState::State_NotTracked
 		 * Note: Waist,LFoot,RFoot,LElbow,RElbow,LKnee,RKnee
 		 */
-		std::array<K2TrackedJoint, 7> (*getAppJointPoses)();
+		std::function<std::array<K2TrackedJoint, 7>()> getAppJointPoses;
 	};
 }

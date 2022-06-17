@@ -650,18 +650,23 @@ namespace winrt::Amethyst::implementation
 													LOG(INFO) << "Overriding device's helper functions...";
 
 													// Push helper functions to the device
-													pDevice->getHMDPosition =
-														k2app::interfacing::plugins::plugins_getHMDPosition;
-													pDevice->getHMDPositionCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDPositionCalibrated;
-													pDevice->getHMDOrientation =
-														k2app::interfacing::plugins::plugins_getHMDOrientation;
-													pDevice->getHMDOrientationCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDOrientationCalibrated;
+													pDevice->getHMDPose =
+														k2app::interfacing::plugins::plugins_getHMDPose;
+													pDevice->getHMDPoseCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDPoseCalibrated;
 													pDevice->getHMDOrientationYaw =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
 													pDevice->getHMDOrientationYawCalibrated =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
+
+													pDevice->getLeftControllerPose =
+														k2app::interfacing::plugins::plugins_getLeftControllerPose;
+													pDevice->getLeftControllerPoseCalibrated =
+														k2app::interfacing::plugins::plugins_getLeftControllerPoseCalibrated;
+													pDevice->getRightControllerPose =
+														k2app::interfacing::plugins::plugins_getRightControllerPose;
+													pDevice->getRightControllerPoseCalibrated =
+														k2app::interfacing::plugins::plugins_getRightControllerPoseCalibrated;
 
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
@@ -771,18 +776,23 @@ namespace winrt::Amethyst::implementation
 													LOG(INFO) << "Overriding device's helper functions...";
 
 													// Push helper functions to the device
-													pDevice->getHMDPosition =
-														k2app::interfacing::plugins::plugins_getHMDPosition;
-													pDevice->getHMDPositionCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDPositionCalibrated;
-													pDevice->getHMDOrientation =
-														k2app::interfacing::plugins::plugins_getHMDOrientation;
-													pDevice->getHMDOrientationCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDOrientationCalibrated;
+													pDevice->getHMDPose =
+														k2app::interfacing::plugins::plugins_getHMDPose;
+													pDevice->getHMDPoseCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDPoseCalibrated;
 													pDevice->getHMDOrientationYaw =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
 													pDevice->getHMDOrientationYawCalibrated =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
+
+													pDevice->getLeftControllerPose =
+														k2app::interfacing::plugins::plugins_getLeftControllerPose;
+													pDevice->getLeftControllerPoseCalibrated =
+														k2app::interfacing::plugins::plugins_getLeftControllerPoseCalibrated;
+													pDevice->getRightControllerPose =
+														k2app::interfacing::plugins::plugins_getRightControllerPose;
+													pDevice->getRightControllerPoseCalibrated =
+														k2app::interfacing::plugins::plugins_getRightControllerPoseCalibrated;
 
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
@@ -890,18 +900,23 @@ namespace winrt::Amethyst::implementation
 													LOG(INFO) << "Interface version OK, now constructing...";
 
 													// Push helper functions to the device
-													pDevice->getHMDPosition =
-														k2app::interfacing::plugins::plugins_getHMDPosition;
-													pDevice->getHMDPositionCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDPositionCalibrated;
-													pDevice->getHMDOrientation =
-														k2app::interfacing::plugins::plugins_getHMDOrientation;
-													pDevice->getHMDOrientationCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDOrientationCalibrated;
+													pDevice->getHMDPose =
+														k2app::interfacing::plugins::plugins_getHMDPose;
+													pDevice->getHMDPoseCalibrated =
+														k2app::interfacing::plugins::plugins_getHMDPoseCalibrated;
 													pDevice->getHMDOrientationYaw =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
 													pDevice->getHMDOrientationYawCalibrated =
 														k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
+
+													pDevice->getLeftControllerPose =
+														k2app::interfacing::plugins::plugins_getLeftControllerPose;
+													pDevice->getLeftControllerPoseCalibrated =
+														k2app::interfacing::plugins::plugins_getLeftControllerPoseCalibrated;
+													pDevice->getRightControllerPose =
+														k2app::interfacing::plugins::plugins_getRightControllerPose;
+													pDevice->getRightControllerPoseCalibrated =
+														k2app::interfacing::plugins::plugins_getRightControllerPoseCalibrated;
 
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
@@ -934,7 +949,7 @@ namespace winrt::Amethyst::implementation
 											case ktvr::K2InitError_BadInterface:
 												{
 													LOG(ERROR) <<
-														"Device's interface is incompatible with current K2API"
+														"Device's interface is incompatible with current Amethyst API "
 														<<
 														ktvr::IK2API_Version <<
 														", it's probably outdated.";
@@ -950,7 +965,7 @@ namespace winrt::Amethyst::implementation
 										}
 										else
 										{
-											LOG(ERROR) << "Device's interface is incompatible with current K2API" <<
+											LOG(ERROR) << "Device's interface is incompatible with current Amethyst API " <<
 												ktvr::IK2API_Version <<
 												", it's probably outdated.";
 										}

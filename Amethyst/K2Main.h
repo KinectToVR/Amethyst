@@ -298,6 +298,13 @@ namespace k2app::main
 						// Update internal status
 						initialized_bak = interfacing::K2AppTrackersInitialized;
 					}
+
+					// Rescan controller ids
+					interfacing::vrControllerIndexes = 
+						std::make_pair(vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+						vr::ETrackedControllerRole::TrackedControllerRole_RightHand),
+							vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+						vr::ETrackedControllerRole::TrackedControllerRole_LeftHand));
 				}).detach();
 
 			// Scan for already-added body trackers from other apps

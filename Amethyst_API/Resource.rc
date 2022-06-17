@@ -52,7 +52,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,0,2,2
- PRODUCTVERSION 8,0,0,0
+ PRODUCTVERSION 10,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -74,7 +74,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2022"
             VALUE "OriginalFilename", "Amethyst_API.dll"
             VALUE "ProductName", "Amethyst"
-            VALUE "ProductVersion", "8.0.0.0"
+            VALUE "ProductVersion", "10.0.0.0"
         END
     END
     BLOCK "VarFileInfo"
