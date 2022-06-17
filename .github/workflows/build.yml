@@ -1,5 +1,5 @@
 name: K2App (Amethyst) Workflow
-on: [push] # Keep it push-only I dare you!
+on: workflow_dispatch # Only manual
 
 jobs:
   build:
