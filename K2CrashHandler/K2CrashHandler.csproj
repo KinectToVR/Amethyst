@@ -22,6 +22,7 @@
 		<RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
 		<Version>1.0.2.2</Version>
 		<NeutralLanguage>en-US</NeutralLanguage>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,13 +36,15 @@
 	<!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
        Tools extension to be activated for this project even if the Windows App SDK Nuget
        package has not yet been restored -->
-	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
+	<ItemGroup
+		Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Helpers\" />
 	</ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy /y /i /e &quot;$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\K2CrashHandler&quot;" />
+		<Exec
+			Command="xcopy /y /i /e &quot;$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\K2CrashHandler&quot;" />
 	</Target>
 </Project>
