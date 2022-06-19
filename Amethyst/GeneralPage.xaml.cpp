@@ -351,12 +351,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 				vrHMDPosition = (k2app::interfacing::plugins::plugins_getHMDPosition() -
 					k2app::interfacing::vrPlayspaceTranslation).cast<double>();
 
-				Eigen::AngleAxisd rollAngle(0.f, Eigen::Vector3d::UnitZ());
-				Eigen::AngleAxisd yawAngle(-k2app::interfacing::vrPlayspaceOrientation, Eigen::Vector3d::UnitY());
-				Eigen::AngleAxisd pitchAngle(0.f, Eigen::Vector3d::UnitX());
-
-				Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
-				vrHMDPosition = q * vrHMDPosition;
+				vrHMDPosition = k2app::interfacing::vrPlayspaceOrientationQuaternion.cast<double>().inverse() *
+					vrHMDPosition;
 
 				vrHMDPositions.push_back(vrHMDPosition);
 				kinectHeadPositions.push_back(
@@ -434,7 +430,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 		*calibrationRotation = return_Rotation;
 		*calibrationTranslation = return_Translation;
-		
+
 		LOG(INFO) << "Retrieved playspace rotation [eulers, radians]: ";
 		LOG(INFO) << return_Rotation.eulerAngles(0, 1, 2);
 
@@ -631,12 +627,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 			_currentCalibrationTranslation_new = _currentCalibrationTranslation_new * _multiplexer;
 
 			// Un-rotate the translation (sometimes broken due to SteamVR playspace)
-			Eigen::AngleAxisd rollAngle(0.f, Eigen::Vector3d::UnitZ());
-			Eigen::AngleAxisd yawAngle(-k2app::interfacing::vrPlayspaceOrientation, Eigen::Vector3d::UnitY());
-			Eigen::AngleAxisd pitchAngle(0.f, Eigen::Vector3d::UnitX());
-
-			Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
-			_currentCalibrationTranslation_new = q * _currentCalibrationTranslation_new;
+			_currentCalibrationTranslation_new =
+				k2app::interfacing::vrPlayspaceOrientationQuaternion.cast<double>().inverse() *
+				_currentCalibrationTranslation_new;
 
 			// Apply to the global base
 			(*calibrationTranslation)(0) += _currentCalibrationTranslation_new(0);
@@ -1408,12 +1401,21 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 		const auto trackingOrigin = vr::VRSystem()->GetRawZeroPoseToStandingAbsoluteTrackingPose();
 
 		k2app::interfacing::vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
+		k2app::interfacing::vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(
+			trackingOrigin);
 
-		double yaw = std::atan2(trackingOrigin.m[0][2], trackingOrigin.m[2][2]);
-		if (yaw < 0.0)
-			yaw = 2 * _PI + yaw;
+		// Get current yaw angle
+		Eigen::Vector3f projected_HMDOrientation_ForwardVector =
+			k2app::interfacing::vrPlayspaceOrientationQuaternion * Eigen::Vector3f(0, 0, 1);
 
-		k2app::interfacing::vrPlayspaceOrientation = yaw;
+		// Nullify [y] to orto-project the vector
+		projected_HMDOrientation_ForwardVector.y() = 0;
+		k2app::interfacing::vrPlayspaceOrientation =
+			EigenUtils::QuatToEulers(
+				Eigen::Quaternionf::FromTwoVectors(
+					Eigen::Vector3f(0, 0, 1), // To-Front
+					projected_HMDOrientation_ForwardVector // To-Base
+				)).y(); // Yaw angle
 	}
 
 	// If no overrides

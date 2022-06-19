@@ -424,25 +424,31 @@ namespace k2app::main
 				 ? radiansToDegrees(K2Settings.externalFlipCalibrationYaw) // Ext
 				 : radiansToDegrees(K2Settings.calibrationYaws.first)); // Default
 
-			const double _current_yaw =
-			(K2Settings.isExternalFlipEnabled
-				 ? radiansToDegrees(EigenUtils::QuatToEulers( // Ext
-					 interfacing::getVRWaistTrackerPose().second).y())
-				 : _yaw); // Default
+			double _current_yaw = _yaw;
+			if (K2Settings.isExternalFlipEnabled)
+				_current_yaw = (K2Settings.K2TrackersVector[0].isRotationOverridden
+					                ? radiansToDegrees(EigenUtils::QuatToEulers( // Overriden tracker
+						                K2Settings.K2TrackersVector[0].pose.orientation).y())
+					                : radiansToDegrees(EigenUtils::QuatToEulers( // External tracker
+						                interfacing::getVRWaistTrackerPose().second).y()));
 
 			// Compose flip
-			const float _facing = (_current_yaw - _neutral_yaw);
+			const double _facing = (_current_yaw - _neutral_yaw);
 
-			if ( //facing <= 25 && facing >= -25 || //if we use -180+180
-				(_facing <= 25 && _facing >= 0 || _facing >= 345 && _facing <= 360)) //if we use 0+360
+			if (_facing <= 25 && _facing >= -25) // we use -180+180
 				base_flip = false;
-			if ( //facing <= -155 && facing >= -205 || //if we use -180+180
-				_facing >= 155 && _facing <= 205) //if we use 0+360
+			if (_facing <= -155 && _facing >= -205) // we use -180+180
 				base_flip = true;
 
 			// Overwrite flip value depending on device & settings
 			// index() check should've already been done by the app tho
 			if (!K2Settings.isFlipEnabled || _device.index() == 1)base_flip = false;
+
+			OutputDebugStringA(
+				(std::to_string(_current_yaw) + "\t\t" +
+					std::to_string(_neutral_yaw) + "\t\t" +
+					std::to_string(_facing) + "\t\t" +
+					std::to_string(base_flip) + '\n').c_str());
 
 			/*
 			 * Trackers orientation - preparations
@@ -776,7 +782,7 @@ namespace k2app::main
 			{
 				// Construct an offset quaternion with the calibration yaw
 				Eigen::Quaternionf yawFlipQuaternion =
-						EigenUtils::EulersToQuat(Eigen::Vector3f(0.f, _PI, 0.f)); // Just turn around the yaw
+					EigenUtils::EulersToQuat(Eigen::Vector3f(0.f, _PI, 0.f)); // Just turn around the yaw
 
 				/*
 				 * Tweak the rotation a bit while we're in flip: mirror y and z
@@ -833,8 +839,8 @@ namespace k2app::main
 			for (auto& tracker : K2Settings.K2TrackersVector)
 				if (tracker.orientationTrackingOption == k2_FollowHMDRotation)
 					// Offset to fit the playspace
-					tracker.pose.orientation = EigenUtils::EulersToQuat(
-						Eigen::Vector3f(0., -interfacing::vrPlayspaceOrientation, 0.)) * tracker.pose.orientation;
+					tracker.pose.orientation =
+						interfacing::vrPlayspaceOrientationQuaternion.inverse() * tracker.pose.orientation;
 
 			/*****************************************************************************************/
 			// Push RAW poses to trackers
@@ -887,14 +893,16 @@ namespace k2app::main
 					 ? radiansToDegrees(K2Settings.externalFlipCalibrationYaw) // Ext
 					 : radiansToDegrees(K2Settings.calibrationYaws.second)); // Default
 
-				const double _current_yaw =
-				(K2Settings.isExternalFlipEnabled
-					 ? radiansToDegrees(EigenUtils::QuatToEulers( // Ext
-						 interfacing::getVRWaistTrackerPose().second).y())
-					 : _yaw); // Default
-
+				double _current_yaw = _yaw;
+				if (K2Settings.isExternalFlipEnabled)
+					_current_yaw = (K2Settings.K2TrackersVector[0].isRotationOverridden
+						? radiansToDegrees(EigenUtils::QuatToEulers( // Overriden tracker
+							K2Settings.K2TrackersVector[0].pose.orientation).y())
+						: radiansToDegrees(EigenUtils::QuatToEulers( // External tracker
+							interfacing::getVRWaistTrackerPose().second).y()));
+				
 				// Compose flip
-				const float _facing = (_current_yaw - _neutral_yaw);
+				const double _facing = (_current_yaw - _neutral_yaw);
 
 				if ( //facing <= 25 && facing >= -25 || //if we use -180+180
 					(_facing <= 25 && _facing >= 0 || _facing >= 345 && _facing <= 360)) //if we use 0+360
@@ -968,7 +976,7 @@ namespace k2app::main
 				{
 					// Construct an offset quaternion with the calibration yaw
 					Eigen::Quaternionf yawFlipQuaternion =
-							EigenUtils::EulersToQuat(Eigen::Vector3f(0.f, _PI, 0.f)); // Just turn around the yaw
+						EigenUtils::EulersToQuat(Eigen::Vector3f(0.f, _PI, 0.f)); // Just turn around the yaw
 
 					/*
 					 * Tweak the rotation a bit while we're in flip: mirror y and z

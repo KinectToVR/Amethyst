@@ -298,20 +298,30 @@ namespace k2app::interfacing
 		const auto trackingOrigin = m_VRSystem->GetRawZeroPoseToStandingAbsoluteTrackingPose();
 
 		vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
-
-		double yaw = std::atan2(trackingOrigin.m[0][2], trackingOrigin.m[2][2]);
-		if (yaw < 0.0)
-			yaw = 2 * _PI + yaw;
-
-		vrPlayspaceOrientation = yaw;
 		vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(trackingOrigin);
 
+		// Get current yaw angle
+		Eigen::Vector3f projected_HMDOrientation_ForwardVector =
+			vrPlayspaceOrientationQuaternion * Eigen::Vector3f(0, 0, 1);
+
+		// Nullify [y] to orto-project the vector
+		projected_HMDOrientation_ForwardVector.y() = 0;
+		vrPlayspaceOrientation = EigenUtils::QuatToEulers(
+			Eigen::Quaternionf::FromTwoVectors(
+				Eigen::Vector3f(0, 0, 1), // To-Front
+				projected_HMDOrientation_ForwardVector // To-Base
+			)).y(); // Yaw angle
+		
 		// Rescan controller ids
 		vrControllerIndexes = std::make_pair(
 			vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
 				vr::ETrackedControllerRole::TrackedControllerRole_RightHand),
 			vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
 				vr::ETrackedControllerRole::TrackedControllerRole_LeftHand));
+
+		LOG(INFO) << "VR Playspace translation: \n" << vrPlayspaceTranslation;
+		LOG(INFO) << "VR Playspace orientation: \n" << EigenUtils::QuatToEulers(vrPlayspaceOrientationQuaternion);
+		LOG(INFO) << "VR Playspace orientation yaw-only: \n" << vrPlayspaceOrientation;
 
 		return true; // OK
 	}
@@ -770,17 +780,15 @@ namespace k2app::interfacing
 	}
 
 	// HMD pose in OpenVR
-	inline std::tuple
+	inline std::pair
 	<
 		Eigen::Vector3f, // Position
-		Eigen::Quaternionf, // Rotation
-		float // Rotation - Yaw
+		Eigen::Quaternionf // Rotation
 	>
 	vrHMDPose
 	{
 		Eigen::Vector3f(0.f, 0.f, 0.f), // Init as zero
-		Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f), // Init as non-empty
-		0.f // Init as facing front
+		Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f) // Init as non-empty
 	};
 
 	// Update HMD pose from OpenVR -> called in K2Main
@@ -803,17 +811,7 @@ namespace k2app::interfacing
 				auto position = EigenUtils::p_cast_type<Eigen::Vector3f>(hmdPose.mDeviceToAbsoluteTracking);
 				auto quaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(hmdPose.mDeviceToAbsoluteTracking);
 
-				// Get the yaw
-				double yaw = std::atan2(hmdPose.mDeviceToAbsoluteTracking.m[0][2],
-				                        hmdPose.mDeviceToAbsoluteTracking.m[2][2]);
-
-				// Fix the yaw
-				if (yaw < 0.0)
-				{
-					yaw = 2 * _PI + yaw;
-				}
-
-				vrHMDPose = std::tie(position, quaternion, yaw);
+				vrHMDPose = std::make_pair(position, quaternion);
 			}
 		}
 	}
@@ -822,22 +820,22 @@ namespace k2app::interfacing
 	{
 		inline Eigen::Vector3f plugins_getHMDPosition()
 		{
-			return std::get<Eigen::Vector3f>(vrHMDPose);
+			return vrHMDPose.first;
 		}
 
 		inline Eigen::Vector3f plugins_getHMDPositionCalibrated()
 		{
-			return std::get<Eigen::Vector3f>(vrHMDPose) - vrPlayspaceTranslation;
+			return vrHMDPose.first - vrPlayspaceTranslation;
 		}
 
 		inline Eigen::Quaternionf plugins_getHMDOrientation()
 		{
-			return std::get<Eigen::Quaternionf>(vrHMDPose);
+			return vrHMDPose.second;
 		}
 
 		inline Eigen::Quaternionf plugins_getHMDOrientationCalibrated()
 		{
-			return vrPlayspaceOrientationQuaternion.inverse() * std::get<Eigen::Quaternionf>(vrHMDPose);
+			return vrPlayspaceOrientationQuaternion.inverse() * vrHMDPose.second;
 		}
 
 		inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> plugins_getHMDPose()
@@ -853,13 +851,24 @@ namespace k2app::interfacing
 		// Note: this is in radians
 		inline float plugins_getHMDOrientationYaw()
 		{
-			return std::get<float>(vrHMDPose);
+			// Get current yaw angle
+			Eigen::Vector3f projected_HMDOrientation_ForwardVector =
+				vrHMDPose.second.cast<float>() * Eigen::Vector3f(0, 0, 1);
+
+			// Nullify [y] to orto-project the vector
+			projected_HMDOrientation_ForwardVector.y() = 0;
+
+			return EigenUtils::QuatToEulers(
+				Eigen::Quaternionf::FromTwoVectors(
+					Eigen::Vector3f(0, 0, 1), // To-Front
+					projected_HMDOrientation_ForwardVector // To-Base
+				)).y(); // Yaw angle
 		}
 
 		// Note: this is in radians
 		inline float plugins_getHMDOrientationYawCalibrated()
 		{
-			return std::get<float>(vrHMDPose) - vrPlayspaceOrientation;
+			return plugins_getHMDOrientationYaw() - vrPlayspaceOrientation;
 		}
 
 		inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> plugins_getLeftControllerPose()
