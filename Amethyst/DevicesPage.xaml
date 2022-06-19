@@ -26,7 +26,8 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Devices" FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Devices" FontSize="25" Margin="40,20,0,0"
+                           Grid.Row="0" />
 
                 <ListView x:Name="TrackingDeviceListView" Grid.Column="1" CornerRadius="5"
                           VerticalAlignment="Top" HorizontalAlignment="Left"
@@ -93,7 +94,8 @@
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch"
                                         MinWidth="290">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/DevicesPage/Titles/DeviceBase" Margin="0,0,5,0" Foreground="LightGray" />
+                                           x:Uid="/DevicesPage/Titles/DeviceBase" Margin="0,0,5,0"
+                                           Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="E_UNKNOWN" x:Name="BaseDeviceName" />
                             </StackPanel>
@@ -101,7 +103,8 @@
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch"
                                         MinWidth="290">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/DevicesPage/Titles/DeviceOverride" Margin="0,0,5,0" Foreground="LightGray" />
+                                           x:Uid="/DevicesPage/Titles/DeviceOverride" Margin="0,0,5,0"
+                                           Foreground="LightGray" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/DevicesPage/Titles/NoOverrides" x:Name="OverrideDeviceName" />
                             </StackPanel>
@@ -162,7 +165,8 @@
                                         <SplitButton.Flyout>
                                             <Flyout Placement="Bottom" x:Name="AlternativeConnectionOptionsFlyout">
                                                 <StackPanel Orientation="Vertical">
-                                                    <Button FontWeight="SemiBold" x:Uid="/DevicesPage/Buttons/Disconnect"
+                                                    <Button FontWeight="SemiBold"
+                                                            x:Uid="/DevicesPage/Buttons/Disconnect"
                                                             CornerRadius="3" Height="35" HorizontalAlignment="Stretch"
                                                             x:Name="DisconnectDeviceButton"
                                                             Click="DisconnectDeviceButton_Click" />
@@ -250,13 +254,13 @@
                                         <Button.Flyout>
                                             <Flyout Placement="Bottom" x:Name="SetDeviceTypeFlyout">
                                                 <StackPanel Orientation="Vertical">
-                                                    <Button FontWeight="SemiBold" 
+                                                    <Button FontWeight="SemiBold"
                                                             x:Uid="/DevicesPage/Buttons/SetAs/Base"
                                                             Style="{StaticResource AccentButtonStyle}"
                                                             HorizontalAlignment="Stretch"
                                                             CornerRadius="3" Height="35" Margin="0,0,0,15"
                                                             x:Name="SetAsBaseButton" Click="SetAsBaseButton_Click" />
-                                                    <Button FontWeight="SemiBold" 
+                                                    <Button FontWeight="SemiBold"
                                                             x:Uid="/DevicesPage/Buttons/SetAs/Override"
                                                             HorizontalAlignment="Stretch"
                                                             CornerRadius="3" Height="35"
@@ -323,11 +327,12 @@
                                         </TransitionCollection>
                                     </StackPanel.Transitions>-->
 
-                                    <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Overrides/Header" x:Name="OverridesLabel"
+                                    <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Overrides/Header"
+                                               x:Name="OverridesLabel"
                                                FontSize="25" Margin="40,20,0,0" Grid.Row="0" Visibility="Collapsed" />
 
-                                    <StackPanel x:Name="OverridesExpanderHostStackPanel" HorizontalAlignment="Stretch" 
-                                                VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0" >
+                                    <StackPanel x:Name="OverridesExpanderHostStackPanel" HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
                                         <StackPanel.Transitions>
                                             <TransitionCollection>
                                                 <EntranceThemeTransition />
@@ -355,11 +360,13 @@
                                         </TransitionCollection>
                                     </StackPanel.Transitions>-->
 
-                                    <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Joints/Assign" x:Name="JointBasisLabel"
+                                    <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Joints/Assign"
+                                               x:Name="JointBasisLabel"
                                                FontSize="25" Margin="40,20,0,0" Grid.Row="0" Visibility="Collapsed" />
 
-                                    <StackPanel x:Name="JointsBasisExpanderHostStackPanel" HorizontalAlignment="Stretch" 
-                                                VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0" >
+                                    <StackPanel x:Name="JointsBasisExpanderHostStackPanel"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
                                         <StackPanel.Transitions>
                                             <TransitionCollection>
                                                 <EntranceThemeTransition />

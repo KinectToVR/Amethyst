@@ -331,7 +331,9 @@ namespace K2CrashHandler
                     DialogView.PrimaryButtonActionPending(false);
                 }
                 else
+                {
                     return;
+                }
             }
 
             /* 3 */

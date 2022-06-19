@@ -263,8 +263,10 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\autocalibration.svg" />
-    <Image Include="Assets\crab.gif" />
     <Image Include="Assets\manualcalibration.svg" />
+    <Image Include="Assets\crab.gif">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">

@@ -285,8 +285,9 @@ namespace k2app::main
 					// Create a dummy update vector
 					std::vector<std::pair<ktvr::ITrackerType, bool>> k2_tracker_statuses;
 					for (const auto& tracker : K2Settings.K2TrackersVector)
-						if (tracker.data.isActive) k2_tracker_statuses.push_back(
-							std::make_pair(tracker.tracker, interfacing::K2AppTrackersInitialized));
+						if (tracker.data.isActive)
+							k2_tracker_statuses.push_back(
+								std::make_pair(tracker.tracker, interfacing::K2AppTrackersInitialized));
 
 					// try 3 times cause why not
 					for (int i = 0; i < 3; i++)
@@ -300,11 +301,11 @@ namespace k2app::main
 					}
 
 					// Rescan controller ids
-					interfacing::vrControllerIndexes = 
+					interfacing::vrControllerIndexes =
 						std::make_pair(vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
-						vr::ETrackedControllerRole::TrackedControllerRole_RightHand),
-							vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
-						vr::ETrackedControllerRole::TrackedControllerRole_LeftHand));
+							               vr::ETrackedControllerRole::TrackedControllerRole_RightHand),
+						               vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+							               vr::ETrackedControllerRole::TrackedControllerRole_LeftHand));
 				}).detach();
 
 			// Scan for already-added body trackers from other apps

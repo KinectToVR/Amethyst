@@ -73,19 +73,19 @@ int K2ServerDriver::init_ServerDriver(
 	}
 
 	// Add 1 tracker for each role
-	for(uint32_t role=0;
-		role<=static_cast<int>(ktvr::ITrackerType::Tracker_Keyboard);role++)
+	for (uint32_t role = 0;
+	     role <= static_cast<int>(ktvr::ITrackerType::Tracker_Keyboard); role++)
 		trackerVector.push_back(
 			K2Tracker(
 				ktvr::K2TrackerBase(
-				ktvr::K2TrackerPose(), // Default pose 
-				ktvr::K2TrackerData(
-					ITrackerType_Role_Serial.at(
-						static_cast<ktvr::ITrackerType>(role)), // Serial
-					static_cast<ktvr::ITrackerType>(role), // Role
-					false // AutoAdd
-				)
-			)));
+					ktvr::K2TrackerPose(), // Default pose 
+					ktvr::K2TrackerData(
+						ITrackerType_Role_Serial.at(
+							static_cast<ktvr::ITrackerType>(role)), // Serial
+						static_cast<ktvr::ITrackerType>(role), // Role
+						false // AutoAdd
+					)
+				)));
 
 	// Log the prepended trackers
 	for (auto& _tracker : trackerVector)
@@ -232,34 +232,33 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 		// Switch based on the message type
 		switch (static_cast<ktvr::K2MessageType>(message.messageType))
 		{
-
 		case ktvr::K2MessageType::K2Message_SetTrackerState:
 			{
 				// Check if desired tracker exists
-					// Set tracker's state to one gathered from argument
-					if (!trackerVector.at(static_cast<int>(message.tracker)).is_added())
-						if (!trackerVector.at(static_cast<int>(message.tracker)).spawn())
-						{
-							// spawn if needed
-							LOG(INFO) << "Tracker autospawn exception! Serial: " + 
-								trackerVector.at(static_cast<int>(message.tracker)).
-								get_serial();
-							_response.result = static_cast<int>(
-								ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
-						}
+				// Set tracker's state to one gathered from argument
+				if (!trackerVector.at(static_cast<int>(message.tracker)).is_added())
+					if (!trackerVector.at(static_cast<int>(message.tracker)).spawn())
+					{
+						// spawn if needed
+						LOG(INFO) << "Tracker autospawn exception! Serial: " +
+							trackerVector.at(static_cast<int>(message.tracker)).
+							              get_serial();
+						_response.result = static_cast<int>(
+							ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
+					}
 
-					// Set the state
-					trackerVector.at(static_cast<int>(message.tracker)).set_state(message.state);
-					LOG(INFO) << "Tracker role: " << static_cast<int>(message.tracker) <<
-						" state has been set to: " + std::to_string(message.state);
+				// Set the state
+				trackerVector.at(static_cast<int>(message.tracker)).set_state(message.state);
+				LOG(INFO) << "Tracker role: " << static_cast<int>(message.tracker) <<
+					" state has been set to: " + std::to_string(message.state);
 
-					// Update the tracker
-					trackerVector.at(static_cast<int>(message.tracker)).update();
+				// Update the tracker
+				trackerVector.at(static_cast<int>(message.tracker)).update();
 
-					// Compose the response
-					_response.success = true;
-					_response.tracker = message.tracker; // ID
-					_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
+				// Compose the response
+				_response.success = true;
+				_response.tracker = message.tracker; // ID
+				_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 			}
 			break;
 
@@ -293,14 +292,14 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 				if (message.tracker_pose.has_value())
 				{
 					// Check if desired tracker exists
-						// Update tracker pose (with time offset)
-						trackerVector.at(static_cast<int>(message.tracker))
-					.set_pose(message.tracker_pose.value());
+					// Update tracker pose (with time offset)
+					trackerVector.at(static_cast<int>(message.tracker))
+					             .set_pose(message.tracker_pose.value());
 
-						// Compose the response
-						_response.success = true;
-						_response.tracker = message.tracker; // ID
-						_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
+					// Compose the response
+					_response.success = true;
+					_response.tracker = message.tracker; // ID
+					_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 				}
 				else
 				{
@@ -310,16 +309,16 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 				}
 			}
 			break;
-			
+
 		case ktvr::K2MessageType::K2Message_RefreshTracker:
 			{
-					// Update the tracker
-					trackerVector.at(static_cast<int>(message.tracker)).update();
+				// Update the tracker
+				trackerVector.at(static_cast<int>(message.tracker)).update();
 
-					// Compose the response
-					_response.success = true;
-					_response.tracker = message.tracker; // ID
-					_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
+				// Compose the response
+				_response.success = true;
+				_response.tracker = message.tracker; // ID
+				_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 			}
 			break;
 
@@ -365,14 +364,13 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 						/* Pose */
 
 						// Check if desired tracker exists
-							// Update tracker pose (with time offset)
-							trackerVector.at(static_cast<int>(_tracker.tracker)).set_pose(_tracker.pose);
+						// Update tracker pose (with time offset)
+						trackerVector.at(static_cast<int>(_tracker.tracker)).set_pose(_tracker.pose);
 
-							// Compose the response
-							_response.success = true;
-							_response.tracker = _tracker.tracker; // ID
-							_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
-
+						// Compose the response
+						_response.success = true;
+						_response.tracker = _tracker.tracker; // ID
+						_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 					}
 				}
 				else
@@ -409,12 +407,11 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 
 						// Update the tracker
 						trackerVector.at(static_cast<int>(_tracker.first)).update();
-						
+
 						// Compose the response
 						_response.success = true;
 						_response.tracker = _tracker.first; // ID
 						_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
-
 					}
 				}
 				else

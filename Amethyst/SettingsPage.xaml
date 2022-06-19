@@ -14,7 +14,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid x:Name="DimGrid" Canvas.ZIndex="1" Opacity="0.0" IsHitTestVisible="False" >
+        <Grid x:Name="DimGrid" Canvas.ZIndex="1" Opacity="0.0" IsHitTestVisible="False">
             <Grid.OpacityTransition>
                 <ScalarTransition />
             </Grid.OpacityTransition>
@@ -22,7 +22,7 @@
 
         <Grid Grid.Column="0" Canvas.ZIndex="1"
               Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-              Opacity="{Binding ElementName=DimGrid, Path=Opacity}" 
+              Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
               IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
             <Grid.OpacityTransition>
                 <ScalarTransition />
@@ -31,7 +31,7 @@
 
         <Grid Grid.Column="1" Canvas.ZIndex="1"
               Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-              Opacity="{Binding ElementName=DimGrid, Path=Opacity}" 
+              Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
               IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
             <Grid.OpacityTransition>
                 <ScalarTransition />
@@ -40,7 +40,7 @@
 
         <Grid Grid.Column="2" Canvas.ZIndex="1"
               Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-              Opacity="{Binding ElementName=DimGrid, Path=Opacity}" 
+              Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
               IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
             <Grid.OpacityTransition>
                 <ScalarTransition />
@@ -52,18 +52,18 @@
 
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
 
-                <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}" 
+                <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
                       CornerRadius="3" Padding="15,15" Visibility="Collapsed"
                       HorizontalAlignment="Stretch" Height="130" Margin="0,20,0,0" x:Name="ForeignLangGrid">
                     <TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords" Margin="0,-3,0,0"
                                HorizontalAlignment="Stretch" VerticalAlignment="Top">
                         We detected that your PC is running in a language that isn't currently localized in Amethyst.
-                        As always, all community contributions are more than welcome. 
+                        As always, all community contributions are more than welcome.
                         The more languages Amethyst is available in, the more people can actually access and use it.
                     </TextBlock>
-                    <HyperlinkButton Content="You can help us with that here." 
+                    <HyperlinkButton Content="You can help us with that here."
                                      NavigateUri="https://github.com/KinectToVR/Amethyst-Releases/wiki/Localizing-Amethyst"
-                                     VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+                                     VerticalAlignment="Bottom" HorizontalAlignment="Right" />
                 </Grid>
 
                 <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/SkeletonFlip" FontSize="25"
@@ -280,8 +280,8 @@
                 </Grid>
 
                 <!--For the waist & pair trackers' expanders-->
-                <StackPanel x:Name="JointExpanderHostStackPanel" HorizontalAlignment="Stretch" 
-                      VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0" >
+                <StackPanel x:Name="JointExpanderHostStackPanel" HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <EntranceThemeTransition />
@@ -304,7 +304,7 @@
                     </Grid.RowDefinitions>
 
                     <AppBarButton x:Name="TrackerConfigButton" VerticalAlignment="Top"
-                                  Icon="Setting" Width="38" Height="46" Click="TrackerConfigButton_Click"/>
+                                  Icon="Setting" Width="38" Height="46" Click="TrackerConfigButton_Click" />
 
                     <Button Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" Height="40"
                             Style="{StaticResource AccentButtonStyle}" x:Name="RestartButton"

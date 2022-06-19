@@ -131,7 +131,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 
 						// Cache the changes
 						BOOST_FOREACH(boost::property_tree::ptree::value_type & v, root.get_child("changes"))
-							changes_strings_vector.push_back(v.second.get_value<std::string>());
+						changes_strings_vector.push_back(v.second.get_value<std::string>());
 
 						// And maybe log it too
 						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
@@ -602,12 +602,12 @@ namespace winrt::Amethyst::implementation
 								{
 									BOOST_FOREACH(boost::property_tree::ptree::value_type & v,
 									              root.get_child("linked_dll_path"))
-										if (!exists(v.second.get_value<std::string>()))
-										{
-											_found = false; // Mark as failed
-											LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
-												std::string>();
-										}
+									if (!exists(v.second.get_value<std::string>()))
+									{
+										_found = false; // Mark as failed
+										LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
+											std::string>();
+									}
 								}
 								// Else continue
 
@@ -968,7 +968,8 @@ namespace winrt::Amethyst::implementation
 										}
 										else
 										{
-											LOG(ERROR) << "Device's interface is incompatible with current Amethyst API " <<
+											LOG(ERROR) <<
+												"Device's interface is incompatible with current Amethyst API " <<
 												ktvr::IK2API_Version <<
 												", it's probably outdated.";
 										}
@@ -1434,7 +1435,7 @@ void k2app::interfacing::handle_app_exit(const uint32_t& p_sleep_millis)
 
 	// Mark trackers as inactive
 	K2AppTrackersInitialized = false;
-	
+
 	// Wait a moment & exit
 	LOG(INFO) << "Shutdown actions completed, " <<
 		"disconnecting devices and exiting in " << p_sleep_millis << "ms...";

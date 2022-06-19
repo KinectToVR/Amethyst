@@ -6,10 +6,12 @@
 
 HRESULT KinectV1Handler::getStatusResult()
 {
-	if (kinectSensor) {
-		const auto res =  kinectSensor->NuiStatus();
+	if (kinectSensor)
+	{
+		const auto res = kinectSensor->NuiStatus();
 
-		if (_loaded) {
+		if (_loaded)
+		{
 			m_main_progress_bar->Progress(100);
 			m_main_progress_bar->ShowPaused(res != S_OK);
 
@@ -18,7 +20,8 @@ HRESULT KinectV1Handler::getStatusResult()
 			m_elevation_spinner->Visibility(res == S_OK);
 		}
 
-		if (res == S_OK) {
+		if (res == S_OK)
+		{
 			NuiCameraElevationGetAngle(reinterpret_cast<long*>(&sensorAngle));
 			save_settings();
 		}
@@ -55,7 +58,8 @@ void KinectV1Handler::initialize()
 		LOG(INFO) << "Initializing: updated Kinect V1 status with: " <<
 			WStringToString(statusResultWString(getStatusResult()));
 
-		if (_loaded) {
+		if (_loaded)
+		{
 			m_main_progress_bar->Progress(100);
 			m_main_progress_bar->ShowPaused(getStatusResult() != S_OK);
 
@@ -64,7 +68,8 @@ void KinectV1Handler::initialize()
 			m_elevation_spinner->Visibility(getStatusResult() == S_OK);
 		}
 
-		if (getStatusResult() == S_OK) {
+		if (getStatusResult() == S_OK)
+		{
 			NuiCameraElevationGetAngle(reinterpret_cast<long*>(&sensorAngle));
 			save_settings();
 		}

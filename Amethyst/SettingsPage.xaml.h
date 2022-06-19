@@ -52,16 +52,16 @@ namespace winrt::Amethyst::implementation
 		                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DismissSetErrorButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void LearnAboutFiltersButton_Click(winrt::Windows::Foundation::IInspectable const& sender,
-		                                   winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void LearnAboutFiltersFlyout_Closed(winrt::Windows::Foundation::IInspectable const& sender,
-		                                    winrt::Windows::Foundation::IInspectable const& e);
-		void TrackerConfigButton_Click(winrt::Windows::Foundation::IInspectable const& sender,
-		                               winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void CheckOverlapsCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender,
-		                                   winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void CheckOverlapsCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender,
-		                                     winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void LearnAboutFiltersButton_Click(const winrt::Windows::Foundation::IInspectable& sender,
+		                                   const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void LearnAboutFiltersFlyout_Closed(const winrt::Windows::Foundation::IInspectable& sender,
+		                                    const winrt::Windows::Foundation::IInspectable& e);
+		void TrackerConfigButton_Click(const winrt::Windows::Foundation::IInspectable& sender,
+		                               const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void CheckOverlapsCheckBox_Checked(const winrt::Windows::Foundation::IInspectable& sender,
+		                                   const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void CheckOverlapsCheckBox_Unchecked(const winrt::Windows::Foundation::IInspectable& sender,
+		                                     const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 	};
 }
 

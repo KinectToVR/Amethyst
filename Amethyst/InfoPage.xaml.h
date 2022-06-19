@@ -11,7 +11,8 @@ namespace winrt::Amethyst::implementation
 		InfoPage();
 		void K2DoubleTapped(const Windows::Foundation::IInspectable& sender,
 		                    const winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs& e);
-		void Grid_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void Grid_Loaded(const winrt::Windows::Foundation::IInspectable& sender,
+		                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 	};
 }
 

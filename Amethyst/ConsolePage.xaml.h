@@ -19,7 +19,10 @@ namespace winrt::Amethyst::implementation
 		                               const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void NullCrashButton_Click(const Windows::Foundation::IInspectable& sender,
 		                           const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void DatePicker_SelectedDateChanged(winrt::Microsoft::UI::Xaml::Controls::DatePicker const& sender, winrt::Microsoft::UI::Xaml::Controls::DatePickerSelectedValueChangedEventArgs const& args);
+		void DatePicker_SelectedDateChanged(const winrt::Microsoft::UI::Xaml::Controls::DatePicker& sender,
+		                                    const
+		                                    winrt::Microsoft::UI::Xaml::Controls::DatePickerSelectedValueChangedEventArgs
+		                                    & args);
 	};
 }
 

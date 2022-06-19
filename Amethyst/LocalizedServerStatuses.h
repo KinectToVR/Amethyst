@@ -131,11 +131,11 @@ inline std::map<std::wstring, std::wstring> status_api_failure_map
 // Get the current use language, e.g. en-US
 inline std::wstring GetUserLocale()
 {
-	wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = { 0 };
+	wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = {0};
 	return GetUserDefaultLocaleName(
-		localeName, sizeof(localeName) / sizeof(*(localeName))) == 0
-		? std::wstring()
-		: localeName;
+		       localeName, sizeof(localeName) / sizeof(*(localeName))) == 0
+		       ? std::wstring()
+		       : localeName;
 }
 
 // Get the current status string (but localized)
@@ -143,8 +143,8 @@ inline std::wstring GetLocalizedStatusWString(
 	std::wstring locale, std::map<std::wstring, std::wstring> status_map)
 {
 	return status_map.contains(locale)
-		? status_map[locale]
-		: status_map[L"en-US"];
+		       ? status_map[locale]
+		       : status_map[L"en-US"];
 }
 
 // Get the current status string (but localized)
@@ -152,6 +152,6 @@ inline std::wstring GetLocalizedStatusWStringAutomatic(
 	std::map<std::wstring, std::wstring> status_map)
 {
 	return status_map.contains(GetUserLocale())
-		? status_map[GetUserLocale()]
-		: status_map[L"en-US"];
+		       ? status_map[GetUserLocale()]
+		       : status_map[L"en-US"];
 }

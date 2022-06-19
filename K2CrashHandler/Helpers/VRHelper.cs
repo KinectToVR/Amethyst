@@ -14,7 +14,7 @@ public class VRHelper
     public string SteamVRPath = "";
     public string SteamVRSettingsPath = "";
     public string VRPathReg = "";
-    
+
     // Returns: <Exists>, <Path> of SteamVR, VRSettings, CopiedDriver
     public
         Tuple<Tuple<bool, bool, bool>,

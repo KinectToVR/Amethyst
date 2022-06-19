@@ -48,12 +48,13 @@ namespace winrt::Amethyst::implementation
 		void AutoCalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		Windows::Foundation::IAsyncAction ManualCalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
-		                                   const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                                                                const
+		                                                                winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		Windows::Foundation::IAsyncAction StartAutoCalibrationButton_Click(
 			const Windows::Foundation::IInspectable& sender,
 			const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DiscardCalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
-		                                        const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                                    const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ToggleTrackersButton_Checked(const Windows::Foundation::IInspectable& sender,
 		                                  const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ToggleTrackersButton_Unchecked(const Windows::Foundation::IInspectable& sender,
@@ -75,15 +76,26 @@ namespace winrt::Amethyst::implementation
 		void OverrideCalibration_Click(const Windows::Foundation::IInspectable& sender,
 		                               const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ReRegisterButton_Click(const Windows::Foundation::IInspectable& sender,
-									const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DismissSetErrorButton_Click(const Windows::Foundation::IInspectable& sender,
-										 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void ToggleTrackingButton_Click(winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args);
-		void FreezeOnlyLowerCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void FreezeOnlyLowerCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void CalibrationSelectView_PaneClosing(winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args);
-		void CalibrationRunningView_PaneClosing(winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender, winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args);
-		void CalibrationPointsNumberBox_ValueChanged(winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender, winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args);
+		                                 const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ToggleTrackingButton_Click(const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
+		                                const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args);
+		void FreezeOnlyLowerCheckBox_Checked(const winrt::Windows::Foundation::IInspectable& sender,
+		                                     const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void FreezeOnlyLowerCheckBox_Unchecked(const winrt::Windows::Foundation::IInspectable& sender,
+		                                       const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void CalibrationSelectView_PaneClosing(const winrt::Microsoft::UI::Xaml::Controls::SplitView& sender,
+		                                       const winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs
+		                                       & args);
+		void CalibrationRunningView_PaneClosing(const winrt::Microsoft::UI::Xaml::Controls::SplitView& sender,
+		                                        const
+		                                        winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs&
+		                                        args);
+		void CalibrationPointsNumberBox_ValueChanged(const winrt::Microsoft::UI::Xaml::Controls::NumberBox& sender,
+		                                             const
+		                                             winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs
+		                                             & args);
 	};
 }
 

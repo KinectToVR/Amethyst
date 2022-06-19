@@ -32,7 +32,7 @@ namespace winrt::Amethyst::implementation
 		                                const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ReconnectDeviceButton_Click(const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
 		                                 const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args);
-		
+
 		void DismissOverrideTipNoJointsButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DevicesPage_Loaded(const Windows::Foundation::IInspectable& sender,

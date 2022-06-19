@@ -335,7 +335,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Border x:Name="LabelFineTuneNormal" Visibility="Visible"
-                                        Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
                                             HorizontalAlignment="Center" VerticalAlignment="Center"
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White">
                                         <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Grips/Left"
@@ -424,7 +424,7 @@
                                     </Border>
 
                                     <Border Visibility="{Binding ElementName=LabelFineTuneVive, Path=Visibility}"
-                                        Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
                                             HorizontalAlignment="Center" VerticalAlignment="Center"
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5" BorderBrush="White">
                                         <TextBlock x:Uid="/GeneralPage/Calibration/Labels/Triggers/Both"
@@ -752,7 +752,8 @@
                             </Grid>
 
                             <!--If this button is visible, set the (upper two)'s height to 40-->
-                            <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="40,10"
+                            <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    Margin="40,10"
                                     x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold"
                                     x:Uid="/SettingsPage/Buttons/ReRegister" FontSize="15" Visibility="Collapsed" />
 

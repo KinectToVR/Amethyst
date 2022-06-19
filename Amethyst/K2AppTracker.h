@@ -148,7 +148,7 @@ namespace k2app
 			// Init the Kalman filter
 			for (auto& filter : kalmanFilter)
 				filter.init();
-			
+
 			// Overwrite the lerp const
 			_lerp_const = m_lerp_const;
 		}
@@ -378,18 +378,18 @@ namespace k2app
 
 		// Internal data offset
 		Eigen::Vector3d positionOffset = Eigen::Vector3d(0, 0, 0),
-			orientationOffset = Eigen::Vector3d(0, 0, 0);
+		                orientationOffset = Eigen::Vector3d(0, 0, 0);
 
 		// If using JointsBasis, the assigned host joint
 		uint32_t selectedTrackedJointID = 0;
 
 		// Is this joint overridden?
 		bool isPositionOverridden = false,
-			isRotationOverridden = false;
+		     isRotationOverridden = false;
 
 		// If the joint is overridden, overrides' ids
 		uint32_t positionOverrideJointID = 0,
-			rotationOverrideJointID = 0;
+		         rotationOverrideJointID = 0;
 
 		template <class Archive>
 		void serialize(Archive& ar, const unsigned int version)

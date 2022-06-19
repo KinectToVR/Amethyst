@@ -22,11 +22,15 @@ void skeleton_visibility_set_ui(const bool& v)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	k2app::shared::general::skeletonToggleButton.get()->IsChecked(v);
-	k2app::shared::general::skeletonToggleButton.get()->Content(box_value(v 
-		? box_value(k2app::interfacing::LocalizedResourceWString(
-		L"GeneralPage", L"Buttons/Skeleton/Hide/Content"))
-		: box_value(k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Buttons/Skeleton/Show/Content"))));
+	k2app::shared::general::skeletonToggleButton.get()->Content(box_value(v
+		                                                                      ? box_value(
+			                                                                      k2app::interfacing::LocalizedResourceWString(
+				                                                                      L"GeneralPage",
+				                                                                      L"Buttons/Skeleton/Hide/Content"))
+		                                                                      : box_value(
+			                                                                      k2app::interfacing::LocalizedResourceWString(
+				                                                                      L"GeneralPage",
+				                                                                      L"Buttons/Skeleton/Show/Content"))));
 
 	k2app::shared::general::forceRenderCheckBox.get()->IsEnabled(v);
 	k2app::shared::general::forceRenderText.get()->Opacity(v ? 1.0 : 0.5);
@@ -38,8 +42,8 @@ void skeleton_force_set_ui(const bool& v)
 	k2app::shared::general::forceRenderCheckBox.get()->IsChecked(v);
 }
 
-std::wstring points_format(std::wstring fmt, 
-	const int32_t& p1, const int32_t& p2)
+std::wstring points_format(std::wstring fmt,
+                           const int32_t& p1, const int32_t& p2)
 {
 	boost::replace_all(fmt, "{1}", std::to_wstring(p1));
 	boost::replace_all(fmt, "{2}", std::to_wstring(p2));
@@ -213,20 +217,20 @@ void Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
 
 	CalibrationRunningView().IsPaneOpen(true);
-	
+
 	CalibrationPointsNumberBox().IsEnabled(true);
 	CalibrationPointsNumberBox().Value(k2app::K2Settings.calibrationPointsNumber);
 
 	CalibrationInstructionsLabel().Text(
 		k2app::interfacing::LocalizedResourceWString(
-		L"GeneralPage", L"Calibration/Captions/Start/Text"));
+			L"GeneralPage", L"Calibration/Captions/Start/Text"));
 	CalibrationCountdownLabel().Text(L"~");
 	DiscardAutoCalibrationButton().Content(box_value(
 		k2app::interfacing::LocalizedResourceWString(
 			L"GeneralPage", L"Buttons/Cancel/Content")));
 
 	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Captions/Preview/NoSkeletonTextCalibrating/Text"));
+		L"GeneralPage", L"Captions/Preview/NoSkeletonTextCalibrating/Text"));
 }
 
 
@@ -245,7 +249,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 	DiscardAutoCalibrationButton().Content(box_value(
 		k2app::interfacing::LocalizedResourceWString(
-		L"GeneralPage", L"Buttons/Abort/Content")));
+			L"GeneralPage", L"Buttons/Abort/Content")));
 
 	// Ref current matrices to helper pointers
 	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
@@ -304,8 +308,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 		// Wait for the user to move
 		CalibrationInstructionsLabel().Text(
 			points_format(k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Calibration/Captions/Move/Text"), 
-				point + 1, k2app::K2Settings.calibrationPointsNumber));
+				              L"GeneralPage", L"Calibration/Captions/Move/Text"),
+			              point + 1, k2app::K2Settings.calibrationPointsNumber));
 
 		for (int i = 3; i >= 0; i--)
 		{
@@ -325,11 +329,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 			}
 			if (!CalibrationPending)break; // Check for exiting
 		}
-		
+
 		CalibrationInstructionsLabel().Text(
 			points_format(k2app::interfacing::LocalizedResourceWString(
-				L"GeneralPage", L"Calibration/Captions/Stand/Text"),
-				point + 1, k2app::K2Settings.calibrationPointsNumber));
+				              L"GeneralPage", L"Calibration/Captions/Stand/Text"),
+			              point + 1, k2app::K2Settings.calibrationPointsNumber));
 
 		for (int i = 3; i >= 0; i--)
 		{
@@ -364,7 +368,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 			else if (i == 0)
 				CalibrationInstructionsLabel().Text(
 					k2app::interfacing::LocalizedResourceWString(
-					L"GeneralPage", L"Calibration/Captions/Captured/Text"));
+						L"GeneralPage", L"Calibration/Captions/Captured/Text"));
 
 			// Wait and eventually break
 			{
@@ -463,11 +467,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 	// Notify that we're finished
 	CalibrationCountdownLabel().Text(L"~");
-	CalibrationInstructionsLabel().Text(CalibrationPending 
-		? k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Calibration/Captions/Done/Text") 
-		: k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Calibration/Captions/Aborted/Text"));
+	CalibrationInstructionsLabel().Text(CalibrationPending
+		                                    ? k2app::interfacing::LocalizedResourceWString(
+			                                    L"GeneralPage", L"Calibration/Captions/Done/Text")
+		                                    : k2app::interfacing::LocalizedResourceWString(
+			                                    L"GeneralPage", L"Calibration/Captions/Aborted/Text"));
 
 	{
 		// Sleep on UI
@@ -519,7 +523,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 	// Swap trigger/grip if we're on index or vive
 	char _controller_model[1024];
 	vr::VRSystem()->GetStringTrackedDeviceProperty(
-		vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
+		vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+			vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
 		vr::ETrackedDeviceProperty::Prop_ModelNumber_String, _controller_model, std::size(_controller_model));
 
 	// Set up as default (just in case)
@@ -546,7 +551,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 
 	// Play a nice sound - starting
 	ElementSoundPlayer::Play(ElementSoundKind::Show);
-	
+
 	// Ref current matrices to helper pointers
 	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
 		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
@@ -627,7 +632,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 			(*calibrationTranslation)(0) += _currentCalibrationTranslation_new(0);
 			(*calibrationTranslation)(1) += _currentCalibrationTranslation_new(1);
 			(*calibrationTranslation)(2) += _currentCalibrationTranslation_new(2);
-			
+
 			// Sleep on UI
 			apartment_context ui_thread;
 			co_await resume_background();
@@ -728,7 +733,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 		Sleep(1000); // Just right
 		co_await ui_thread;
 	}
-	
+
 	// Exit the pane and reset
 	CalibrationSelectView().IsPaneOpen(false);
 	CalibrationRunningView().IsPaneOpen(false);
@@ -865,10 +870,14 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 	// Setup the freeze button
 	k2app::shared::general::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
 	k2app::shared::general::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		? box_value(k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Buttons/Skeleton/Unfreeze/Content"))
-		: box_value(k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Buttons/Skeleton/Freeze/Content")));
+		                                                          ? box_value(
+			                                                          k2app::interfacing::LocalizedResourceWString(
+				                                                          L"GeneralPage",
+				                                                          L"Buttons/Skeleton/Unfreeze/Content"))
+		                                                          : box_value(
+			                                                          k2app::interfacing::LocalizedResourceWString(
+				                                                          L"GeneralPage",
+				                                                          L"Buttons/Skeleton/Freeze/Content")));
 
 	k2app::shared::general::freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
 }
@@ -1481,23 +1490,27 @@ void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 
 
 void winrt::Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
-	winrt::Microsoft::UI::Xaml::Controls::SplitButton const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args)
 {
 	k2app::interfacing::isTrackingFrozen = !k2app::interfacing::isTrackingFrozen;
 
 	k2app::shared::general::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
 	k2app::shared::general::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		? box_value(k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Buttons/Skeleton/Unfreeze/Content"))
-		: box_value(k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Buttons/Skeleton/Freeze/Content")));
+		                                                          ? box_value(
+			                                                          k2app::interfacing::LocalizedResourceWString(
+				                                                          L"GeneralPage",
+				                                                          L"Buttons/Skeleton/Unfreeze/Content"))
+		                                                          : box_value(
+			                                                          k2app::interfacing::LocalizedResourceWString(
+				                                                          L"GeneralPage",
+				                                                          L"Buttons/Skeleton/Freeze/Content")));
 }
 
 
 void winrt::Amethyst::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	k2app::K2Settings.freezeLowerOnly = true;
 	k2app::K2Settings.saveSettings();
@@ -1505,8 +1518,8 @@ void winrt::Amethyst::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Check
 
 
 void winrt::Amethyst::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender,
-	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	k2app::K2Settings.freezeLowerOnly = false;
 	k2app::K2Settings.saveSettings();
@@ -1514,24 +1527,24 @@ void winrt::Amethyst::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Unche
 
 
 void winrt::Amethyst::implementation::GeneralPage::CalibrationSelectView_PaneClosing(
-	winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::SplitView& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs& args)
 {
 	args.Cancel(true);
 }
 
 
 void winrt::Amethyst::implementation::GeneralPage::CalibrationRunningView_PaneClosing(
-	winrt::Microsoft::UI::Xaml::Controls::SplitView const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::SplitView& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs& args)
 {
 	args.Cancel(true);
 }
 
 
 void winrt::Amethyst::implementation::GeneralPage::CalibrationPointsNumberBox_ValueChanged(
-	winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender,
-	winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::NumberBox& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs& args)
 {
 	// Don't react to dummy changes
 	if (!general_tab_setup_finished)return;
@@ -1551,11 +1564,11 @@ void winrt::Amethyst::implementation::GeneralPage::ReRegisterButton_Click(
 	if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
 	{
 		std::thread([]
-			{
-				ShellExecuteA(nullptr, "open",
-					(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
-					.string().c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
-			}).detach();
+		{
+			ShellExecuteA(nullptr, "open",
+			              (boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
+			              .string().c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
+		}).detach();
 	}
 	else
 	{

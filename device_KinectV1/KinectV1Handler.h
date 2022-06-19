@@ -86,7 +86,7 @@ public:
 		// Append the elements : Static Data
 		layoutRoot->AppendElementPair(
 			m_elevation_label, m_elevation_spinner);
-		
+
 		layoutRoot->AppendSingleElement(
 			m_message_text_block,
 			ktvr::Interface::SingleLayoutHorizontalAlignment::Center);

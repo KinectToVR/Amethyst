@@ -85,11 +85,11 @@ namespace TrackingDevices
 				k2app::shared::settings::flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);
 
 				const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
-				(trackingDevice)->isAppOrientationSupported();
+					(trackingDevice)->isAppOrientationSupported();
 
 				for (auto expander : k2app::shared::settings::jointExpanderVector)
 					expander->EnableSoftwareOrientation(_sup);
-				
+
 				k2app::shared::settings::flipToggle.get()->IsEnabled(
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
 				k2app::shared::settings::flipDropDown.get()->IsEnabled(
@@ -380,7 +380,7 @@ namespace TrackingDevices
 			for (auto& tracker : k2app::K2Settings.K2TrackersVector)
 				if (tracker.selectedTrackedJointID >= num_joints)
 					tracker.selectedTrackedJointID = 0;
-			
+
 			// Save it
 			k2app::K2Settings.saveSettings();
 		}

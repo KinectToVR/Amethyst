@@ -139,8 +139,8 @@
                 <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Height="Auto" Width="420"
                          Stretch="Uniform" StretchDirection="DownOnly">
                     <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
-                              x:Name="ThanksScrollViewer" Visibility="Visible"
-                              VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
+                                  x:Name="ThanksScrollViewer" Visibility="Visible"
+                                  VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
@@ -154,34 +154,34 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Text="まあ？ ようこそ！❤️" FontSize="85" Margin="0,0,0,0" Grid.Row="1"
-                                   HorizontalAlignment="Center" FontWeight="Bold" />
+                                       HorizontalAlignment="Center" FontWeight="Bold" />
 
                             <Image Source="ms-appx:///Assets/hug.gif" HorizontalAlignment="Center"
-                               VerticalAlignment="Center" Margin="25" Grid.Row="3" />
+                                   VerticalAlignment="Center" Margin="25" Grid.Row="3" />
 
                             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    Orientation="Vertical" Grid.Row="5">
+                                        Orientation="Vertical" Grid.Row="5">
 
                                 <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29"
-                                       Margin="0,5,0,0">
-                                <Run xml:space="preserve">あなたがここにいることをとても嬉しく思っています、私たちは。</Run>
+                                           Margin="0,5,0,0">
+                                    <Run xml:space="preserve">あなたがここにいることをとても嬉しく思っています、私たちは。</Run>
                                 </TextBlock>
 
                                 <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29"
-                                       Margin="0,5,0,0">
-                                <Run xml:space="preserve">ここで終わってしまうとは、鋭いですねぇ。でも誰？あなただ！</Run>
+                                           Margin="0,5,0,0">
+                                    <Run xml:space="preserve">ここで終わってしまうとは、鋭いですねぇ。でも誰？あなただ！</Run>
                                 </TextBlock>
 
                                 <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29"
-                                       Margin="0,5,0,0">
-                                <Run xml:space="preserve">私たちの会員になりたい？あのねぇ....... 大勢の人を助ける。</Run>
+                                           Margin="0,5,0,0">
+                                    <Run xml:space="preserve">私たちの会員になりたい？あのねぇ....... 大勢の人を助ける。</Run>
                                 </TextBlock>
 
                                 <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" FontSize="29"
-                                       Margin="0,5,0,0">
-                                <Run xml:space="preserve">そうだよ。かもね？そう… </Run>
-                                <Hyperlink NavigateUri="https://discord.gg/YBQCRDG" UnderlineStyle="None">ここで</Hyperlink>
-                                <Run xml:space="preserve">会いましょう！</Run>
+                                           Margin="0,5,0,0">
+                                    <Run xml:space="preserve">そうだよ。かもね？そう… </Run>
+                                    <Hyperlink NavigateUri="https://discord.gg/YBQCRDG" UnderlineStyle="None">ここで</Hyperlink>
+                                    <Run xml:space="preserve">会いましょう！</Run>
                                 </TextBlock>
                             </StackPanel>
 

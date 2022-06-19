@@ -67,7 +67,8 @@ public sealed partial class ContentDialogView
             Environment.SpecialFolder.ApplicationData), "Amethyst\\logs");
 
         Process.Start("explorer.exe", File.Exists(logFileLocation)
-            ? $"/select,\"{logFileLocation}\"" : appData);
+            ? $"/select,\"{logFileLocation}\""
+            : appData);
     }
 
     private void DiscordHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)

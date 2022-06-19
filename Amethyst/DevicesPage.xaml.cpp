@@ -800,14 +800,14 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
 
 		for (auto& expander : overrideSelectorExpanders)
-				{
-					// Select the first (or next, if exists) joint
-					// Set the placeholder text on disabled combos
-					expander.get()->SelectComboItems();
+		{
+			// Select the first (or next, if exists) joint
+			// Set the placeholder text on disabled combos
+			expander.get()->SelectComboItems();
 
-					// Select enabled overrides
-					expander.get()->UpdateOverrideToggles();
-				}
+			// Select enabled overrides
+			expander.get()->UpdateOverrideToggles();
+		}
 
 		// Backup the status
 		device_status = device->statusResultWString(device->getStatusResult());

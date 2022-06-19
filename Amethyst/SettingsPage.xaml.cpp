@@ -501,7 +501,7 @@ void winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersButton_Clic
 
 
 void winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersFlyout_Closed(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 	DimGrid().Opacity(0.0);
 	DimGrid().IsHitTestVisible(false);
@@ -509,7 +509,7 @@ void winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersFlyout_Clos
 
 
 void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	auto trackerConfigFlyout = Controls::MenuFlyout();
 
@@ -909,7 +909,7 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 
 void winrt::Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Checked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;
@@ -920,7 +920,7 @@ void winrt::Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Checke
 
 
 void winrt::Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Unchecked(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;

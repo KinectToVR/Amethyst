@@ -28,8 +28,8 @@ namespace winrt::Amethyst::implementation
 
 
 void winrt::Amethyst::implementation::InfoPage::Grid_Loaded(
-	winrt::Windows::Foundation::IInspectable const& sender, 
-	winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
 	// The info page was loaded
 }

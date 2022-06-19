@@ -7,8 +7,8 @@ inline std::array<std::wstring, 3> split_status(const std::wstring& s)
 	// If there are 3 strings separated by \n
 	return std::array<std::wstring, 3>{
 		s.substr(0, s.find(L"\n")),
-		s.substr(s.find(L"\n") + 1, 
-			s.rfind(L"\n") - (s.find(L"\n") + 1)),
+		s.substr(s.find(L"\n") + 1,
+		         s.rfind(L"\n") - (s.find(L"\n") + 1)),
 		s.substr(s.rfind(L"\n") + 1)
 	};
 }
@@ -43,7 +43,7 @@ namespace k2app::shared
 	{
 		// General Page
 		inline bool general_tab_setup_finished = false,
-			pending_offsets_update = false;
+		            pending_offsets_update = false;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>
 		toggleTrackersButton;
@@ -83,7 +83,7 @@ namespace k2app::shared
 			overrideErrorWhatGrid,
 			serverErrorWhatGrid,
 			serverErrorButtonsGrid;
-		
+
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSplitButton>
 		toggleFreezeButton;
 
@@ -94,7 +94,7 @@ namespace k2app::shared
 	namespace devices
 	{
 		inline bool devices_tab_setup_finished = false,
-			devices_tab_re_setup_finished = false;
+		            devices_tab_re_setup_finished = false;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
 			deviceNameLabel,
@@ -111,7 +111,7 @@ namespace k2app::shared
 			trackingDeviceChangePanel,
 			devicesMainContentGridOuter,
 			devicesMainContentGridInner;
-		
+
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ListView> devicesListView;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Flyout> noJointsFlyout;
@@ -120,7 +120,7 @@ namespace k2app::shared
 			setAsOverrideButton,
 			setAsBaseButton,
 			deselectDeviceButton; // This one's override-only
-		
+
 		inline std::binary_semaphore smphSignalCurrentUpdate{0},
 		                             smphSignalStartMain{0};
 		inline uint32_t selectedTrackingDeviceID = 0;
@@ -149,7 +149,7 @@ namespace k2app::shared
 		inline bool settings_localInitFinished = false;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button> restartButton;
-		
+
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
 			externalFlipCheckBox,
 			autoSpawnCheckbox,
@@ -161,10 +161,10 @@ namespace k2app::shared
 			setErrorFlyoutText;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
-			flipDropDownGrid;
+		flipDropDownGrid;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch> flipToggle;
-		
+
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Slider> soundsVolumeSlider;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander> flipDropDown;
@@ -180,7 +180,8 @@ namespace k2app::interfacing
 	inline std::wstring LocalizedResourceWString(const std::wstring& dictionary, const std::wstring& key)
 	{
 		winrt::Windows::Globalization::Language language{
-			winrt::Windows::System::UserProfile::GlobalizationPreferences::Languages().GetAt(0) };
+			winrt::Windows::System::UserProfile::GlobalizationPreferences::Languages().GetAt(0)
+		};
 
 		k2app::shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language.LanguageTag();
 
