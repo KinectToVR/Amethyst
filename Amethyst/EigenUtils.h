@@ -113,10 +113,10 @@ namespace EigenUtils
 	{
 		using Vector3 = Eigen::Matrix<typename Derived::Scalar, 3, 1>;
 
-		return Eigen::Quaternionf(
-			Eigen::AngleAxisf(eulers(0), Vector3::UnitX())
-			* Eigen::AngleAxisf(eulers(1), Vector3::UnitY())
-			* Eigen::AngleAxisf(eulers(2), Vector3::UnitZ()));
+		return Eigen::Quaternion<typename Derived::Scalar>(
+			Eigen::AngleAxis<typename Derived::Scalar>(eulers(0), Vector3::UnitX())
+			* Eigen::AngleAxis<typename Derived::Scalar>(eulers(1), Vector3::UnitY())
+			* Eigen::AngleAxis<typename Derived::Scalar>(eulers(2), Vector3::UnitZ()));
 	}
 
 	/// @brief Returns Eulers in Vector3 from Quat
@@ -142,7 +142,7 @@ namespace EigenUtils
 	Eigen::Quaternion<typename Derived::Scalar> DirectionQuat(const Derived& from, const Derived& to,
 	                                                          const Derived& base)
 	{
-		return Eigen::Quaternionf::FromTwoVectors(base, to - from);
+		return Eigen::Quaternion<typename Derived::Scalar>::FromTwoVectors(base, to - from);
 	}
 
 	/**

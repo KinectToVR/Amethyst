@@ -434,16 +434,26 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 		*calibrationRotation = return_Rotation;
 		*calibrationTranslation = return_Translation;
+		
+		LOG(INFO) << "Retrieved playspace rotation [eulers, radians]: ";
+		LOG(INFO) << return_Rotation.eulerAngles(0, 1, 2);
 
-		Eigen::Vector3d KinectDirectionEigenMatEuler =
-			return_Rotation.eulerAngles(0, 1, 2);
+		Eigen::Vector3d projected_Rotated_ForwardVector =
+			return_Rotation * Eigen::Vector3d(0, 0, 1);
 
-		LOG(INFO) << "Retrieved playspace Yaw rotation [mat, radians]: ";
-		LOG(INFO) << KinectDirectionEigenMatEuler.x();
-		LOG(INFO) << KinectDirectionEigenMatEuler.y();
-		LOG(INFO) << KinectDirectionEigenMatEuler.z();
+		// Nullify [y] to orto-project the vector
+		projected_Rotated_ForwardVector.y() = 0;
 
-		*calibrationYaw = KinectDirectionEigenMatEuler.y(); // Note: radians
+		Eigen::Quaterniond projected_Rotation =
+			Eigen::Quaterniond::FromTwoVectors(
+				Eigen::Vector3d(0, 0, 1), // To-Front
+				projected_Rotated_ForwardVector // To-Kinect
+			);
+
+		LOG(INFO) << "Retrieved/Projected playspace rotation [eulers, radians]: ";
+		LOG(INFO) << EigenUtils::QuatToEulers(projected_Rotation);
+
+		*calibrationYaw = EigenUtils::QuatToEulers(projected_Rotation).y(); // Note: radians
 		*calibrationPitch = 0.; // 0 in auto
 		*calibrationOrigin = Eigen::Vector3d(0, 0, 0);
 
