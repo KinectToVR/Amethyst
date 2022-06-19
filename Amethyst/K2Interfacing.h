@@ -478,6 +478,8 @@ namespace k2app::interfacing
 			{
 				/* Initialize the port */
 				LOG(INFO) << "Initializing the server IPC...";
+				LOG(INFO) << "K2API version name: " << ktvr::IK2API_Version;
+
 				const auto init_code = ktvr::init_k2api();
 				bool server_connected = false;
 

@@ -76,7 +76,10 @@ void Amethyst::implementation::ConsolePage::DatePicker_SelectedDateChanged(
 	const Controls::DatePicker& sender, const Controls::DatePickerSelectedValueChangedEventArgs& args)
 {
 	if (Windows::Globalization::DateTimeFormatting::DateTimeFormatter(
-		L"{year.full}/{month.integer(2)}/{day.integer(2)}"
-	).Format(DatePicker().Date()) == L"2022/02/21")
+			L"{year.full}/{month.integer(2)}/{day.integer(2)}"
+		).Format(DatePicker().Date()) ==
+		Windows::Globalization::DateTimeFormatting::DateTimeFormatter(
+			L"{year.full}/{month.integer(2)}/{day.integer(2)}"
+		).Format(Windows::Foundation::DateTime(clock::now())))
 		WhaaatFlyout().ShowAt(sender);
 }
