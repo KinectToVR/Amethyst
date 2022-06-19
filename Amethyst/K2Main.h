@@ -585,17 +585,17 @@ namespace k2app::main
 					// Construct a helpful offsetting quaternion from the stuff we got
 					// It's made like Quat->Eulers->Quat because we may need to adjust some things on-to-go
 					Eigen::Quaternionf
-						leftFootYawOffsetQuaternion = EigenUtils::EulersToQuat(footLeftRawOrientation),
+						leftFootPreFilteredQuaternion = EigenUtils::EulersToQuat(footLeftRawOrientation),
 						// There is no X and Z anyway
-						rightFootYawOffsetQuaternion = EigenUtils::EulersToQuat(footRightRawOrientation);
+						rightFootPreFilteredQuaternion = EigenUtils::EulersToQuat(footRightRawOrientation);
 
 					// Smooth a bit with a slerp
-					yawFilteringQuaternion[0] = yawFilteringQuaternion[0].slerp(.25f, leftFootYawOffsetQuaternion);
-					yawFilteringQuaternion[1] = yawFilteringQuaternion[1].slerp(.25f, rightFootYawOffsetQuaternion);
+					yawFilteringQuaternion[0] = yawFilteringQuaternion[0].slerp(.25f, leftFootPreFilteredQuaternion);
+					yawFilteringQuaternion[1] = yawFilteringQuaternion[1].slerp(.25f, rightFootPreFilteredQuaternion);
 
 					// Apply to the base
-					leftFootYawOffsetQuaternion = yawFilteringQuaternion[0];
-					rightFootYawOffsetQuaternion = yawFilteringQuaternion[1];
+					leftFootPreFilteredQuaternion = yawFilteringQuaternion[0];
+					rightFootPreFilteredQuaternion = yawFilteringQuaternion[1];
 
 					// Calculate the knee-ankle orientation, aka "Tibia"
 					// We aren't disabling look-thorough yaw, since it'll be 0
@@ -643,7 +643,7 @@ namespace k2app::main
 
 					if (_joint_states[ktvr::Joint_AnkleLeft] == ktvr::ITrackedJointState::State_Tracked)
 						// All the rotations
-						calculatedLeftFootOrientation = leftFootYawOffsetQuaternion *
+						calculatedLeftFootOrientation = leftFootPreFilteredQuaternion *
 							knee_ankleLeftOrientationQuaternion;
 					else
 						// Without the foot's yaw
@@ -651,7 +651,7 @@ namespace k2app::main
 
 					if (_joint_states[ktvr::Joint_AnkleRight] == ktvr::ITrackedJointState::State_Tracked)
 						// All the rotations
-						calculatedRightFootOrientation = rightFootYawOffsetQuaternion *
+						calculatedRightFootOrientation = rightFootPreFilteredQuaternion *
 							knee_ankleRightOrientationQuaternion;
 					else
 						// Without the foot's yaw
@@ -775,37 +775,17 @@ namespace k2app::main
 			if (_device.index() == 0)
 			{
 				// Construct an offset quaternion with the calibration yaw
-				Eigen::Quaternionf
-					yawOffsetQuaternion =
-						EigenUtils::EulersToQuat(Eigen::Vector3f(0.f, K2Settings.calibrationYaws.first, 0.f)),
-
-					yawFlipQuaternion =
+				Eigen::Quaternionf yawFlipQuaternion =
 						EigenUtils::EulersToQuat(Eigen::Vector3f(0.f, _PI, 0.f)); // Just turn around the yaw
 
 				/*
-				 * Apply additional things here that have to be in eulers
-				 * AND be the last to be applied.
-				 * For example there are: flip yaw, calibration pitch...
-				 * AND are connected with joints' orientations as they are,
-				 * not with the headori ones.
+				 * Tweak the rotation a bit while we're in flip: mirror y and z
+				 * Apply calibration rotation offset: faster+better+more_chad than mere eulers
 				 */
 
 				if (base_flip)
 				{
-					// Optionally disable pitch in flip mode,
-					// if you want not to, just set it to true
-					bool pitchOn = true;
-					float pitchOffOffset = 0.0; // May be applied when pitch is off
-					std::vector pitchShift(K2Settings.K2TrackersVector.size(), 0.f);
-
-					for (uint32_t index = 0; index < K2Settings.K2TrackersVector.size(); index++)
-					{
-						if (K2Settings.K2TrackersVector[index].orientationTrackingOption == k2_DeviceInferredRotation ||
-							K2Settings.K2TrackersVector[index].orientationTrackingOption ==
-							k2_SoftwareCalculatedRotation)
-							pitchShift.at(index) = _PI / 6.f; // Normal offset
-					}
-
+					// Alter rotation a bit in the flip mode (using the calibration matices)
 					for (uint32_t index = 0; index < K2Settings.K2TrackersVector.size(); index++)
 					{
 						if (K2Settings.K2TrackersVector[index].orientationTrackingOption != k2_FollowHMDRotation)
@@ -818,27 +798,30 @@ namespace k2app::main
 							// Remove pitch from eulers and apply to the parent
 							K2Settings.K2TrackersVector[index].pose.orientation = EigenUtils::EulersToQuat(
 								Eigen::Vector3f(
-									pitchOn ? tracker_ori_with_yaw.x() - pitchShift[index] : pitchOffOffset,
-									// Disable the pitch
-									(base_flip ? -1.f : 1.f) * tracker_ori_with_yaw.y(),
+									tracker_ori_with_yaw.x(),
+									-tracker_ori_with_yaw.y(),
 									-tracker_ori_with_yaw.z()));
 
 							// Apply the turn-around flip quaternion
 							K2Settings.K2TrackersVector[index].pose.orientation =
 								yawFlipQuaternion * K2Settings.K2TrackersVector[index].pose.orientation;
 
-							// It'll make the tracker face the kinect
-							K2Settings.K2TrackersVector[index].pose.orientation =
-								yawOffsetQuaternion * K2Settings.K2TrackersVector[index].pose.orientation;
+							// Fix orientations with the R calibration value
+							if (!K2Settings.calibrationRotationMatrices.first.isZero())
+								K2Settings.K2TrackersVector[index].pose.orientation =
+									K2Settings.calibrationRotationMatrices.first.cast<float>() *
+									K2Settings.K2TrackersVector[index].pose.orientation;
 						}
 					}
 				}
 				else
 				{
-					// It'll make the tracker face the kinect
+					// Fix orientations with the R calibration value
 					for (auto& tracker : K2Settings.K2TrackersVector)
-						if (tracker.orientationTrackingOption != k2_FollowHMDRotation)
-							tracker.pose.orientation = yawOffsetQuaternion * tracker.pose.orientation;
+						if (tracker.orientationTrackingOption != k2_FollowHMDRotation && !K2Settings.
+							calibrationRotationMatrices.first.isZero())
+							tracker.pose.orientation = K2Settings.calibrationRotationMatrices.first.cast<float>() *
+								tracker.pose.orientation;
 				}
 			}
 
@@ -984,37 +967,19 @@ namespace k2app::main
 				if (_device.index() == 0)
 				{
 					// Construct an offset quaternion with the calibration yaw
-					Eigen::Quaternionf
-						yawOffsetQuaternion =
-							EigenUtils::EulersToQuat(Eigen::Vector3f(0.f, K2Settings.calibrationYaws.second, 0.f)),
-
-						yawFlipQuaternion =
+					Eigen::Quaternionf yawFlipQuaternion =
 							EigenUtils::EulersToQuat(Eigen::Vector3f(0.f, _PI, 0.f)); // Just turn around the yaw
 
 					/*
-					 * Apply additional things here that have to be in eulers
-					 * AND be the last to be applied.
-					 * For example there are: flip yaw, calibration pitch...
-					 * AND are connected with joints' orientations as they are,
-					 * not with the headori ones.
+					 * Tweak the rotation a bit while we're in flip: mirror y and z
+					 * Apply calibration rotation offset: faster+better+more_chad than mere eulers
 					 */
 
 					if (override_flip)
 					{
-						// Optionally disable pitch in flip mode,
-						// if you want not to, just set it to true
-						bool pitchOn = true;
-						float pitchOffOffset = 0.0, // May be applied when pitch is off
-						      pitchShift_L = 0.f, pitchShift_R = 0.f,
-						      pitchShift_EL = 0.f, pitchShift_ER = 0.f,
-						      pitchShift_KL = 0.f, pitchShift_KR = 0.f;
-
+						// Tweak trackers orientation in flip mode
 						for (auto& tracker : K2Settings.K2TrackersVector)
 						{
-							if (tracker.orientationTrackingOption == k2_DeviceInferredRotation ||
-								tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation)
-								pitchShift_L = _PI / 8.f; // Normal offset
-
 							if (tracker.orientationTrackingOption != k2_FollowHMDRotation
 								&& tracker.isRotationOverridden)
 							{
@@ -1026,16 +991,18 @@ namespace k2app::main
 								// Remove pitch from eulers and apply to the parent
 								tracker.pose.orientation = EigenUtils::EulersToQuat(
 									Eigen::Vector3f(
-										pitchOn ? tracker_ori_with_yaw.x() - pitchShift_L : pitchOffOffset,
-										// Disable the pitch
-										(override_flip ? -1.f : 1.f) * tracker_ori_with_yaw.y(),
+										tracker_ori_with_yaw.x(),
+										-tracker_ori_with_yaw.y(),
 										-tracker_ori_with_yaw.z()));
 
 								// Apply the turn-around flip quaternion
 								tracker.pose.orientation = yawFlipQuaternion * tracker.pose.orientation;
 
-								// It'll make the tracker face the kinect
-								tracker.pose.orientation = yawOffsetQuaternion * tracker.pose.orientation;
+								// Fix orientations with the R calibration value
+								if (!K2Settings.calibrationRotationMatrices.second.isZero())
+									tracker.pose.orientation =
+										K2Settings.calibrationRotationMatrices.second.cast<float>() *
+										tracker.pose.orientation;
 							}
 						}
 					}
@@ -1043,8 +1010,9 @@ namespace k2app::main
 					// It'll make the tracker face the kinect
 						for (auto& tracker : K2Settings.K2TrackersVector)
 							if (tracker.orientationTrackingOption != k2_FollowHMDRotation &&
-								tracker.isRotationOverridden)
-								tracker.pose.orientation = yawOffsetQuaternion * tracker.pose.orientation;
+								tracker.isRotationOverridden && !K2Settings.calibrationRotationMatrices.second.isZero())
+								tracker.pose.orientation = K2Settings.calibrationRotationMatrices.second.cast<float>() *
+									tracker.pose.orientation;
 				}
 
 				/*****************************************************************************************/

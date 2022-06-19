@@ -429,7 +429,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 		err = err.cwiseProduct(err);
 
 		std::cout <<
-			"Orginal points\n" << B <<
+			"Original points\n" << B <<
 			"\nMy result\n" << B2;
 
 		*calibrationRotation = return_Rotation;
