@@ -131,7 +131,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 
 						// Cache the changes
 						BOOST_FOREACH(boost::property_tree::ptree::value_type & v, root.get_child("changes"))
-						changes_strings_vector.push_back(v.second.get_value<std::string>());
+							changes_strings_vector.push_back(v.second.get_value<std::string>());
 
 						// And maybe log it too
 						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
@@ -222,7 +222,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				for (const auto& str : changes_strings_vector)
 					changelog_string += "- " + str + '\n';
 
-				changelog_string.pop_back(); // Remove the last \n
+				if (changelog_string.length() > 0)
+					changelog_string.pop_back(); // Remove the last \n
 				FlyoutContent().Text(StringToWString(changelog_string));
 
 				auto thickness = Thickness();
@@ -602,12 +603,12 @@ namespace winrt::Amethyst::implementation
 								{
 									BOOST_FOREACH(boost::property_tree::ptree::value_type & v,
 									              root.get_child("linked_dll_path"))
-									if (!exists(v.second.get_value<std::string>()))
-									{
-										_found = false; // Mark as failed
-										LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
-											std::string>();
-									}
+										if (!exists(v.second.get_value<std::string>()))
+										{
+											_found = false; // Mark as failed
+											LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
+												std::string>();
+										}
 								}
 								// Else continue
 
