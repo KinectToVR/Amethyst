@@ -33,6 +33,9 @@ namespace TrackingDevices
 
 			device_status = device->statusResultWString(device->getStatusResult());
 			deviceName = device->getDeviceName();
+
+			// Optionally disable flip (used later, saved later)
+			k2app::K2Settings.isFlipEnabled = k2app::K2Settings.isFlipEnabled && device->isFlipSupported();
 		}
 		else if (trackingDevice.index() == 1)
 		{
@@ -41,6 +44,9 @@ namespace TrackingDevices
 
 			device_status = device->statusResultWString(device->getStatusResult());
 			deviceName = device->getDeviceName();
+
+			// Disable flip (used later, saved later)
+			k2app::K2Settings.isFlipEnabled = false;
 		}
 
 		/* Update the device in general tab */
@@ -79,11 +85,13 @@ namespace TrackingDevices
 
 		if (k2app::shared::settings::flipDropDown.get() != nullptr)
 		{
+			// Overwritten a bit earlier
+			k2app::shared::settings::flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);
+
+			// Enable/disable mathbased & flip elements
 			if (trackingDevice.index() == 0)
 			{
 				// Kinect Basis
-				k2app::shared::settings::flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);
-
 				const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
 					(trackingDevice)->isAppOrientationSupported();
 
@@ -102,8 +110,6 @@ namespace TrackingDevices
 			else if (trackingDevice.index() == 1)
 			{
 				// Joints Basis
-				k2app::K2Settings.isFlipEnabled = false;
-
 				for (auto expander : k2app::shared::settings::jointExpanderVector)
 					expander->EnableSoftwareOrientation(false);
 
