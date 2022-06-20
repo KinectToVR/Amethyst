@@ -433,23 +433,14 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 		LOG(INFO) << "Retrieved playspace rotation [eulers, radians]: ";
 		LOG(INFO) << return_Rotation.eulerAngles(0, 1, 2);
-
-		Eigen::Vector3d projected_Rotated_ForwardVector =
-			return_Rotation * Eigen::Vector3d(0, 0, 1);
-
-		// Nullify [y] to orto-project the vector
-		projected_Rotated_ForwardVector.y() = 0;
-
-		Eigen::Quaterniond projected_Rotation =
-			Eigen::Quaterniond::FromTwoVectors(
-				Eigen::Vector3d(0, 0, 1), // To-Front
-				projected_Rotated_ForwardVector // To-Kinect
-			);
+		
+		Eigen::Vector3d projected_Rotation =
+			EigenUtils::RotationProjectedEulerAngles(return_Rotation);
 
 		LOG(INFO) << "Retrieved/Projected playspace rotation [eulers, radians]: ";
-		LOG(INFO) << EigenUtils::QuatToEulers(projected_Rotation);
+		LOG(INFO) << projected_Rotation;
 
-		*calibrationYaw = EigenUtils::QuatToEulers(projected_Rotation).y(); // Note: radians
+		*calibrationYaw = projected_Rotation.y(); // Note: radians
 		*calibrationPitch = 0.; // 0 in auto
 		*calibrationOrigin = Eigen::Vector3d(0, 0, 0);
 
@@ -1405,17 +1396,9 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 			trackingOrigin);
 
 		// Get current yaw angle
-		Eigen::Vector3f projected_HMDOrientation_ForwardVector =
-			k2app::interfacing::vrPlayspaceOrientationQuaternion * Eigen::Vector3f(0, 0, 1);
-
-		// Nullify [y] to orto-project the vector
-		projected_HMDOrientation_ForwardVector.y() = 0;
 		k2app::interfacing::vrPlayspaceOrientation =
-			EigenUtils::QuatToEulers(
-				Eigen::Quaternionf::FromTwoVectors(
-					Eigen::Vector3f(0, 0, 1), // To-Front
-					projected_HMDOrientation_ForwardVector // To-Base
-				)).y(); // Yaw angle
+			EigenUtils::RotationProjectedYaw(
+				k2app::interfacing::vrPlayspaceOrientationQuaternion); // Yaw angle
 	}
 
 	// If no overrides

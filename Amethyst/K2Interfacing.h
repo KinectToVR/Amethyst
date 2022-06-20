@@ -299,18 +299,9 @@ namespace k2app::interfacing
 
 		vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
 		vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(trackingOrigin);
-
-		// Get current yaw angle
-		Eigen::Vector3f projected_HMDOrientation_ForwardVector =
-			vrPlayspaceOrientationQuaternion * Eigen::Vector3f(0, 0, 1);
-
-		// Nullify [y] to orto-project the vector
-		projected_HMDOrientation_ForwardVector.y() = 0;
-		vrPlayspaceOrientation = EigenUtils::QuatToEulers(
-			Eigen::Quaternionf::FromTwoVectors(
-				Eigen::Vector3f(0, 0, 1), // To-Front
-				projected_HMDOrientation_ForwardVector // To-Base
-			)).y(); // Yaw angle
+		
+		vrPlayspaceOrientation = EigenUtils::RotationProjectedYaw(
+			vrPlayspaceOrientationQuaternion); // Yaw angle
 		
 		// Rescan controller ids
 		vrControllerIndexes = std::make_pair(
@@ -852,17 +843,7 @@ namespace k2app::interfacing
 		inline float plugins_getHMDOrientationYaw()
 		{
 			// Get current yaw angle
-			Eigen::Vector3f projected_HMDOrientation_ForwardVector =
-				vrHMDPose.second.cast<float>() * Eigen::Vector3f(0, 0, 1);
-
-			// Nullify [y] to orto-project the vector
-			projected_HMDOrientation_ForwardVector.y() = 0;
-
-			return EigenUtils::QuatToEulers(
-				Eigen::Quaternionf::FromTwoVectors(
-					Eigen::Vector3f(0, 0, 1), // To-Front
-					projected_HMDOrientation_ForwardVector // To-Base
-				)).y(); // Yaw angle
+			return EigenUtils::RotationProjectedYaw(vrHMDPose.second);
 		}
 
 		// Note: this is in radians

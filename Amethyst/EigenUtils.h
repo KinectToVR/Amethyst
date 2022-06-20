@@ -145,6 +145,46 @@ namespace EigenUtils
 		return Eigen::Quaternion<typename Derived::Scalar>::FromTwoVectors(base, to - from);
 	}
 
+	/// <summary>
+	/// Construct a projected euler angles from a 3d full quaternion / rotation matrix
+	/// </summary>
+	/// <typeparam name="Derived">The return type, float/double/...</typeparam>
+	/// <param name="rotation">The rotation we're projecting</param>
+	/// <returns>Projected yaw from the provided rotation object</returns>
+	/// @see https://answers.ros.org/question/31006/how-can-a-vector3-axis-be-used-to-produce-a-quaternion/
+	/// @see https://eigen.tuxfamily.org/dox/classEigen_1_1Quaternion.html
+	template <typename Derived>
+	Eigen::Vector3<typename Derived::Scalar> RotationProjectedEulerAngles(const Derived& rotation)
+	{
+		// Get current yaw angle
+		Eigen::Vector3<typename Derived::Scalar> projected_orientation_forward_vector =
+			rotation * Eigen::Vector3<typename Derived::Scalar>(0, 0, 1);
+
+		// Nullify [y] to orto-project the vector
+		projected_orientation_forward_vector.y() = 0;
+
+		return QuatToEulers(
+			Eigen::Quaternion<typename Derived::Scalar>::FromTwoVectors(
+				Eigen::Vector3<typename Derived::Scalar>(0, 0, 1), // To-Front
+				projected_orientation_forward_vector // To-Base
+			));
+	}
+
+	/// <summary>
+	/// Construct a projected 2d yaw from a 3d full quaternion / rotation matrix
+	/// </summary>
+	/// <typeparam name="Derived">The return type, float/double/...</typeparam>
+	/// <param name="rotation">The rotation we're projecting</param>
+	/// <returns>Projected yaw from the provided rotation object</returns>
+	/// @see https://answers.ros.org/question/31006/how-can-a-vector3-axis-be-used-to-produce-a-quaternion/
+	/// @see https://eigen.tuxfamily.org/dox/classEigen_1_1Quaternion.html
+	template <typename Derived>
+	typename Derived::Scalar RotationProjectedYaw(const Derived& rotation)
+	{
+		// Get current yaw angle
+		return RotationProjectedEulerAngles(rotation).y(); // Yaw angle
+	}
+
 	/**
 	* \brief This template will let us convert between different types
 	* \tparam Ret What type should be returned from function

@@ -345,18 +345,9 @@ void Amethyst::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem
 	const RoutedEventArgs& e)
 {
 	// Get current yaw angle
-	Eigen::Vector3f projected_VRTrackerOrientation_ForwardVector =
-		k2app::K2Settings.K2TrackersVector.at(0).pose.orientation
-		* Eigen::Vector3f(0, 0, 1);
-
-	// Nullify [y] to orto-project the vector
-	projected_VRTrackerOrientation_ForwardVector.y() = 0;
 	k2app::K2Settings.externalFlipCalibrationYaw =
-		EigenUtils::QuatToEulers(
-			Eigen::Quaternionf::FromTwoVectors(
-				Eigen::Vector3f(0, 0, 1), // To-Front
-				projected_VRTrackerOrientation_ForwardVector // To-Base
-			)).y(); // Yaw angle
+		EigenUtils::RotationProjectedYaw(
+			k2app::K2Settings.K2TrackersVector.at(0).pose.orientation); // Yaw angle
 
 	LOG(INFO) << "Captured yaw for external flip: " <<
 		radiansToDegrees(k2app::K2Settings.externalFlipCalibrationYaw) << "deg";

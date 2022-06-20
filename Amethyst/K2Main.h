@@ -407,7 +407,7 @@ namespace k2app::main
 		 */
 
 		// Get current yaw angle
-		const float _yaw = radiansToDegrees(interfacing::plugins::plugins_getHMDOrientationYaw());
+		const float _yaw = radiansToDegrees(interfacing::plugins::plugins_getHMDOrientationYawCalibrated());
 
 		/*
 		 * Calculate ALL poses for the base (first) device here
@@ -480,7 +480,7 @@ namespace k2app::main
 				// Optionally overwrite the rotation with HMD orientation
 				if (tracker.orientationTrackingOption == k2_FollowHMDRotation)
 					tracker.pose.orientation = EigenUtils::EulersToQuat(
-						Eigen::Vector3f(0, interfacing::plugins::plugins_getHMDOrientationYaw(), 0));
+						Eigen::Vector3f(0, interfacing::plugins::plugins_getHMDOrientationYawCalibrated(), 0)); // TODO
 
 				// Optionally overwrite the rotation with NONE
 				if (tracker.orientationTrackingOption == k2_DisableJointRotation)
