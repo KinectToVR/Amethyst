@@ -407,7 +407,7 @@ namespace k2app::main
 		 */
 
 		// Get current yaw angle
-		const double _yaw = 
+		const double _yaw =
 			interfacing::plugins::plugins_getHMDOrientationYawCalibrated();
 
 		/*
@@ -431,7 +431,7 @@ namespace k2app::main
 				// If the extflip is from Amethyst
 				if (K2Settings.K2TrackersVector[0].isRotationOverridden)
 				{
-					_current_yaw = 
+					_current_yaw =
 						EigenUtils::RotationProjectedYaw( // Overriden tracker
 							interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
 							K2Settings.K2TrackersVector[0].pose.orientation); // Raw orientation
@@ -439,7 +439,7 @@ namespace k2app::main
 				// If it's from an external tracker
 				else
 				{
-					_current_yaw = 
+					_current_yaw =
 						EigenUtils::RotationProjectedYaw( // External tracker
 							interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
 							interfacing::getVRWaistTrackerPose().second); // Raw orientation
@@ -452,7 +452,7 @@ namespace k2app::main
 				EigenUtils::QuaternionFromYaw<double>(_current_yaw));
 
 			// Note: we use -180+180 (but in radians)
-			if (_facing <= (25 * _PI / 180.0) && 
+			if (_facing <= (25 * _PI / 180.0) &&
 				_facing >= (-25 * _PI / 180.0))
 				base_flip = false;
 			if (_facing >= (155 * _PI / 180.0) ||
@@ -462,7 +462,7 @@ namespace k2app::main
 			// Overwrite flip value depending on device & settings
 			// index() check should've already been done by the app tho
 			if (!K2Settings.isFlipEnabled || _device.index() == 1)base_flip = false;
-			
+
 			/*
 			 * Trackers orientation - preparations
 			 */
@@ -806,41 +806,42 @@ namespace k2app::main
 				if (base_flip)
 				{
 					// Alter rotation a bit in the flip mode (using the calibration matices)
-					for (uint32_t index = 0; index < K2Settings.K2TrackersVector.size(); index++)
-					{
-						if (K2Settings.K2TrackersVector[index].orientationTrackingOption != k2_FollowHMDRotation)
+					for (auto& tracker : K2Settings.K2TrackersVector)
+						if (tracker.orientationTrackingOption != k2_FollowHMDRotation)
 						{
 							// Remove the pitch angle
 							// Grab original orientations and make them euler angles
 							Eigen::Vector3f tracker_ori_with_yaw =
-								EigenUtils::QuatToEulers(K2Settings.K2TrackersVector[index].pose.orientation);
+								EigenUtils::QuatToEulers(tracker.pose.orientation);
 
 							// Remove pitch from eulers and apply to the parent
-							K2Settings.K2TrackersVector[index].pose.orientation = EigenUtils::EulersToQuat(
+							tracker.pose.orientation = EigenUtils::EulersToQuat(
 								Eigen::Vector3f(
 									tracker_ori_with_yaw.x(),
 									-tracker_ori_with_yaw.y(),
 									-tracker_ori_with_yaw.z()));
 
 							// Apply the turn-around flip quaternion
-							K2Settings.K2TrackersVector[index].pose.orientation =
-								yawFlipQuaternion * K2Settings.K2TrackersVector[index].pose.orientation;
+							tracker.pose.orientation =
+								yawFlipQuaternion * tracker.pose.orientation;
 
 							// Fix orientations with the R calibration value
-							if (!K2Settings.calibrationRotationMatrices.first.isZero())
-								K2Settings.K2TrackersVector[index].pose.orientation =
+							if (tracker.orientationTrackingOption != k2_DisableJointRotation &&
+								!K2Settings.calibrationRotationMatrices.first.isZero())
+								tracker.pose.orientation =
 									K2Settings.calibrationRotationMatrices.first.cast<float>() *
-									K2Settings.K2TrackersVector[index].pose.orientation;
+									tracker.pose.orientation;
 						}
-					}
 				}
 				else
 				{
 					// Fix orientations with the R calibration value
 					for (auto& tracker : K2Settings.K2TrackersVector)
-						if (tracker.orientationTrackingOption != k2_FollowHMDRotation && !K2Settings.
-							calibrationRotationMatrices.first.isZero())
-							tracker.pose.orientation = K2Settings.calibrationRotationMatrices.first.cast<float>() *
+						if (tracker.orientationTrackingOption != k2_DisableJointRotation &&
+							tracker.orientationTrackingOption != k2_FollowHMDRotation &&
+							!K2Settings.calibrationRotationMatrices.first.isZero())
+							tracker.pose.orientation =
+								K2Settings.calibrationRotationMatrices.first.cast<float>() *
 								tracker.pose.orientation;
 				}
 			}
@@ -913,7 +914,7 @@ namespace k2app::main
 					// If the extflip is from Amethyst
 					if (K2Settings.K2TrackersVector[0].isRotationOverridden)
 					{
-						_current_yaw = 
+						_current_yaw =
 							EigenUtils::RotationProjectedYaw( // Overriden tracker
 								interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
 								K2Settings.K2TrackersVector[0].pose.orientation); // Raw orientation
@@ -921,13 +922,13 @@ namespace k2app::main
 					// If it's from an external tracker
 					else
 					{
-						_current_yaw = 
+						_current_yaw =
 							EigenUtils::RotationProjectedYaw( // External tracker
 								interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
 								interfacing::getVRWaistTrackerPose().second); // Raw orientation
 					}
 				}
-				
+
 				// Compose flip
 				const double _facing = EigenUtils::RotationProjectedYaw(
 					EigenUtils::QuaternionFromYaw<double>(_neutral_yaw).inverse() *
@@ -940,7 +941,7 @@ namespace k2app::main
 				if (_facing >= (155 * _PI / 180.0) ||
 					_facing <= (-155 * _PI / 180.0))
 					override_flip = true;
-				
+
 				// Overwrite flip value depending on device & settings
 				// index() check should've already been done by the app tho
 				if (!K2Settings.isFlipEnabled || _device.index() == 1)override_flip = false;
@@ -1017,7 +1018,6 @@ namespace k2app::main
 					{
 						// Tweak trackers orientation in flip mode
 						for (auto& tracker : K2Settings.K2TrackersVector)
-						{
 							if (tracker.orientationTrackingOption != k2_FollowHMDRotation
 								&& tracker.isRotationOverridden)
 							{
@@ -1037,17 +1037,18 @@ namespace k2app::main
 								tracker.pose.orientation = yawFlipQuaternion * tracker.pose.orientation;
 
 								// Fix orientations with the R calibration value
-								if (!K2Settings.calibrationRotationMatrices.second.isZero())
+								if (tracker.orientationTrackingOption != k2_DisableJointRotation &&
+									!K2Settings.calibrationRotationMatrices.second.isZero())
 									tracker.pose.orientation =
 										K2Settings.calibrationRotationMatrices.second.cast<float>() *
 										tracker.pose.orientation;
 							}
-						}
 					}
 					else
 					// It'll make the tracker face the kinect
 						for (auto& tracker : K2Settings.K2TrackersVector)
-							if (tracker.orientationTrackingOption != k2_FollowHMDRotation &&
+							if (tracker.orientationTrackingOption != k2_DisableJointRotation &&
+								tracker.orientationTrackingOption != k2_FollowHMDRotation &&
 								tracker.isRotationOverridden && !K2Settings.calibrationRotationMatrices.second.isZero())
 								tracker.pose.orientation = K2Settings.calibrationRotationMatrices.second.cast<float>() *
 									tracker.pose.orientation;
