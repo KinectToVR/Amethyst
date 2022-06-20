@@ -175,9 +175,17 @@ namespace k2app
 			K2TrackersVector.at(5).tracker = ktvr::ITrackerType::Tracker_LeftKnee;
 			K2TrackersVector.at(6).tracker = ktvr::ITrackerType::Tracker_RightKnee;
 
-			// Force the first 7 trackers to be the default ones : serials
 			for (auto& tracker : K2TrackersVector)
+			{
+				// Force the first 7 trackers to be the default ones : serials
 				tracker.data.serial = ITrackerType_Role_Serial[tracker.tracker];
+
+				// Force disable software orientation if used by a non-foot
+				if (tracker.tracker != ktvr::ITrackerType::Tracker_LeftFoot &&
+					tracker.tracker != ktvr::ITrackerType::Tracker_RightFoot &&
+					tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation)
+					tracker.orientationTrackingOption = k2_DeviceInferredRotation;
+			}
 
 			// If the vector was broken, override waist & feet statuses
 			if (_vector_broken)

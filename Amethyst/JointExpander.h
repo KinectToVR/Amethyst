@@ -270,10 +270,13 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			{
 				_ptr_software_orientation.get()->IsEnabled(enable);
 
+				// Reset if selected and was turned off
 				for (auto tracker_p : _tracker_pointers)
-					tracker_p->orientationTrackingOption = k2app::k2_DeviceInferredRotation;
-
-				_ptr_orientation_combo.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
+					if (!enable && tracker_p->orientationTrackingOption == k2app::k2_SoftwareCalculatedRotation)
+					{
+						tracker_p->orientationTrackingOption = k2app::k2_DeviceInferredRotation;
+						_ptr_orientation_combo.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
+					}
 			}
 		}
 
