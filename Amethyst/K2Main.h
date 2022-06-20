@@ -447,7 +447,9 @@ namespace k2app::main
 			}
 
 			// Compose flip
-			const double _facing = (_current_yaw - _neutral_yaw);
+			const double _facing = EigenUtils::RotationProjectedYaw(
+				EigenUtils::QuaternionFromYaw<double>(_neutral_yaw).inverse() *
+				EigenUtils::QuaternionFromYaw<double>(_current_yaw));
 
 			// Note: we use -180+180 (but in radians)
 			if (_facing <= (25 * _PI / 180.0) && 
@@ -460,15 +462,7 @@ namespace k2app::main
 			// Overwrite flip value depending on device & settings
 			// index() check should've already been done by the app tho
 			if (!K2Settings.isFlipEnabled || _device.index() == 1)base_flip = false;
-
-			// TODO REMOVE THIS
-			OutputDebugStringA(
-				(std::to_string(radiansToDegrees(_current_yaw)) + "\t\t" +
-					std::to_string(radiansToDegrees(_neutral_yaw)) + "\t\t" +
-					std::to_string(radiansToDegrees(_facing)) + "\t\t" +
-					std::to_string(base_flip) + '\n').c_str());
-			// TODO REMOVE THIS
-
+			
 			/*
 			 * Trackers orientation - preparations
 			 */
@@ -935,7 +929,9 @@ namespace k2app::main
 				}
 				
 				// Compose flip
-				const double _facing = (_current_yaw - _neutral_yaw);
+				const double _facing = EigenUtils::RotationProjectedYaw(
+					EigenUtils::QuaternionFromYaw<double>(_neutral_yaw).inverse() *
+					EigenUtils::QuaternionFromYaw<double>(_current_yaw));
 
 				// Note: we use -180+180 (but in radians)
 				if (_facing <= (25 * _PI / 180.0) &&

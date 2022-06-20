@@ -145,6 +145,12 @@ namespace EigenUtils
 		return Eigen::Quaternion<typename Derived::Scalar>::FromTwoVectors(base, to - from);
 	}
 
+	template <typename Scalar>
+	Eigen::Quaternion<Scalar> QuaternionFromYaw(const Scalar& yaw)
+	{
+		return EulersToQuat(Eigen::Vector3<Scalar>(0, yaw, 0));
+	}
+
 	/// <summary>
 	/// Construct a projected euler angles from a 3d full quaternion / rotation matrix
 	/// </summary>
