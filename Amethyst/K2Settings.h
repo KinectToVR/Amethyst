@@ -215,6 +215,27 @@ namespace k2app
 					K2TrackersVector.at(3).data.isActive;
 				K2TrackersVector.at(6).data.isActive =
 					K2TrackersVector.at(5).data.isActive;
+
+				K2TrackersVector.at(2).orientationTrackingOption =
+					K2TrackersVector.at(1).orientationTrackingOption;
+				K2TrackersVector.at(4).orientationTrackingOption =
+					K2TrackersVector.at(3).orientationTrackingOption;
+				K2TrackersVector.at(6).orientationTrackingOption =
+					K2TrackersVector.at(5).orientationTrackingOption;
+
+				K2TrackersVector.at(2).positionTrackingFilterOption =
+					K2TrackersVector.at(1).positionTrackingFilterOption;
+				K2TrackersVector.at(4).positionTrackingFilterOption =
+					K2TrackersVector.at(3).positionTrackingFilterOption;
+				K2TrackersVector.at(6).positionTrackingFilterOption =
+					K2TrackersVector.at(5).positionTrackingFilterOption;
+
+				K2TrackersVector.at(2).orientationTrackingFilterOption =
+					K2TrackersVector.at(1).orientationTrackingFilterOption;
+				K2TrackersVector.at(4).orientationTrackingFilterOption =
+					K2TrackersVector.at(3).orientationTrackingFilterOption;
+				K2TrackersVector.at(6).orientationTrackingFilterOption =
+					K2TrackersVector.at(5).orientationTrackingFilterOption;
 			}
 
 			// Optionally fix volume if too big somehow
