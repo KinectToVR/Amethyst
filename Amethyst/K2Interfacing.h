@@ -849,7 +849,9 @@ namespace k2app::interfacing
 		// Note: this is in radians
 		inline float plugins_getHMDOrientationYawCalibrated()
 		{
-			return plugins_getHMDOrientationYaw() - vrPlayspaceOrientation;
+			// Get current yaw angle (calibrated)
+			return EigenUtils::RotationProjectedYaw(
+				vrPlayspaceOrientationQuaternion.inverse() * vrHMDPose.second);
 		}
 
 		inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> plugins_getLeftControllerPose()

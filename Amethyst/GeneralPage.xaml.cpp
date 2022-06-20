@@ -1123,7 +1123,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 				return; // Nothing more to do anyway
 			}
 
-			// If we're out of focus TODO skip if we're in VROverlay
+			// If we're out of focus (skip if we're gonna do a VROverlay)
 			if (k2app::K2Settings.skeletonPreviewEnabled && !IsCurrentWindowActive())
 			{
 				// Hide the UI, only show that viewing is disabled

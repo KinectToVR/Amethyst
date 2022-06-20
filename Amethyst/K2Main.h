@@ -407,7 +407,8 @@ namespace k2app::main
 		 */
 
 		// Get current yaw angle
-		const float _yaw = radiansToDegrees(interfacing::plugins::plugins_getHMDOrientationYawCalibrated());
+		const double _yaw = 
+			interfacing::plugins::plugins_getHMDOrientationYawCalibrated();
 
 		/*
 		 * Calculate ALL poses for the base (first) device here
@@ -421,34 +422,52 @@ namespace k2app::main
 			// Compose the yaw neutral and current
 			const double _neutral_yaw =
 			(K2Settings.isExternalFlipEnabled
-				 ? radiansToDegrees(K2Settings.externalFlipCalibrationYaw) // Ext
-				 : radiansToDegrees(K2Settings.calibrationYaws.first)); // Default
+				 ? K2Settings.externalFlipCalibrationYaw // Ext
+				 : K2Settings.calibrationYaws.first); // Default
 
-			double _current_yaw = _yaw;
+			double _current_yaw = _yaw; // Default - HMD
 			if (K2Settings.isExternalFlipEnabled)
-				_current_yaw = (K2Settings.K2TrackersVector[0].isRotationOverridden
-					                ? radiansToDegrees(EigenUtils::QuatToEulers( // Overriden tracker
-						                K2Settings.K2TrackersVector[0].pose.orientation).y())
-					                : radiansToDegrees(EigenUtils::QuatToEulers( // External tracker
-						                interfacing::getVRWaistTrackerPose().second).y()));
+			{
+				// If the extflip is from Amethyst
+				if (K2Settings.K2TrackersVector[0].isRotationOverridden)
+				{
+					_current_yaw = 
+						EigenUtils::RotationProjectedYaw( // Overriden tracker
+							interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
+							K2Settings.K2TrackersVector[0].pose.orientation); // Raw orientation
+				}
+				// If it's from an external tracker
+				else
+				{
+					_current_yaw = 
+						EigenUtils::RotationProjectedYaw( // External tracker
+							interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
+							interfacing::getVRWaistTrackerPose().second); // Raw orientation
+				}
+			}
 
 			// Compose flip
 			const double _facing = (_current_yaw - _neutral_yaw);
 
-			if (_facing <= 25 && _facing >= -25) // we use -180+180
+			// Note: we use -180+180 (but in radians)
+			if (_facing <= (25 * _PI / 180.0) && 
+				_facing >= (-25 * _PI / 180.0))
 				base_flip = false;
-			if (_facing <= -155 && _facing >= -205) // we use -180+180
+			if (_facing >= (155 * _PI / 180.0) ||
+				_facing <= (-155 * _PI / 180.0))
 				base_flip = true;
 
 			// Overwrite flip value depending on device & settings
 			// index() check should've already been done by the app tho
 			if (!K2Settings.isFlipEnabled || _device.index() == 1)base_flip = false;
 
+			// TODO REMOVE THIS
 			OutputDebugStringA(
-				(std::to_string(_current_yaw) + "\t\t" +
-					std::to_string(_neutral_yaw) + "\t\t" +
-					std::to_string(_facing) + "\t\t" +
+				(std::to_string(radiansToDegrees(_current_yaw)) + "\t\t" +
+					std::to_string(radiansToDegrees(_neutral_yaw)) + "\t\t" +
+					std::to_string(radiansToDegrees(_facing)) + "\t\t" +
 					std::to_string(base_flip) + '\n').c_str());
+			// TODO REMOVE THIS
 
 			/*
 			 * Trackers orientation - preparations
@@ -478,9 +497,10 @@ namespace k2app::main
 					                           getTrackedJoints()[tracker.selectedTrackedJointID].getJointOrientation();
 
 				// Optionally overwrite the rotation with HMD orientation
+				// Not the "calibrated" variant, as the fix will be applied after everything else
 				if (tracker.orientationTrackingOption == k2_FollowHMDRotation)
 					tracker.pose.orientation = EigenUtils::EulersToQuat(
-						Eigen::Vector3f(0, interfacing::plugins::plugins_getHMDOrientationYawCalibrated(), 0)); // TODO
+						Eigen::Vector3f(0, interfacing::plugins::plugins_getHMDOrientationYaw(), 0));
 
 				// Optionally overwrite the rotation with NONE
 				if (tracker.orientationTrackingOption == k2_DisableJointRotation)
@@ -890,27 +910,41 @@ namespace k2app::main
 				// Compose the yaw neutral and current
 				const double _neutral_yaw =
 				(K2Settings.isExternalFlipEnabled
-					 ? radiansToDegrees(K2Settings.externalFlipCalibrationYaw) // Ext
-					 : radiansToDegrees(K2Settings.calibrationYaws.second)); // Default
+					 ? K2Settings.externalFlipCalibrationYaw // Ext
+					 : K2Settings.calibrationYaws.second); // Default
 
-				double _current_yaw = _yaw;
+				double _current_yaw = _yaw; // Default - HMD
 				if (K2Settings.isExternalFlipEnabled)
-					_current_yaw = (K2Settings.K2TrackersVector[0].isRotationOverridden
-						? radiansToDegrees(EigenUtils::QuatToEulers( // Overriden tracker
-							K2Settings.K2TrackersVector[0].pose.orientation).y())
-						: radiansToDegrees(EigenUtils::QuatToEulers( // External tracker
-							interfacing::getVRWaistTrackerPose().second).y()));
+				{
+					// If the extflip is from Amethyst
+					if (K2Settings.K2TrackersVector[0].isRotationOverridden)
+					{
+						_current_yaw = 
+							EigenUtils::RotationProjectedYaw( // Overriden tracker
+								interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
+								K2Settings.K2TrackersVector[0].pose.orientation); // Raw orientation
+					}
+					// If it's from an external tracker
+					else
+					{
+						_current_yaw = 
+							EigenUtils::RotationProjectedYaw( // External tracker
+								interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
+								interfacing::getVRWaistTrackerPose().second); // Raw orientation
+					}
+				}
 				
 				// Compose flip
 				const double _facing = (_current_yaw - _neutral_yaw);
 
-				if ( //facing <= 25 && facing >= -25 || //if we use -180+180
-					(_facing <= 25 && _facing >= 0 || _facing >= 345 && _facing <= 360)) //if we use 0+360
+				// Note: we use -180+180 (but in radians)
+				if (_facing <= (25 * _PI / 180.0) &&
+					_facing >= (-25 * _PI / 180.0))
 					override_flip = false;
-				if ( //facing <= -155 && facing >= -205 || //if we use -180+180
-					_facing >= 155 && _facing <= 205) //if we use 0+360
+				if (_facing >= (155 * _PI / 180.0) ||
+					_facing <= (-155 * _PI / 180.0))
 					override_flip = true;
-
+				
 				// Overwrite flip value depending on device & settings
 				// index() check should've already been done by the app tho
 				if (!K2Settings.isFlipEnabled || _device.index() == 1)override_flip = false;
