@@ -83,7 +83,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\vendor;$(SolutionDir)external\Kinect;$(SolutionDir)external\openvr\headers;$(SolutionDir)Amethyst_API;$(SolutionDir)external\eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\builds\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\builds;$(SolutionDir)external\vendor;$(SolutionDir)external\Kinect;$(SolutionDir)external\openvr\headers;$(SolutionDir)Amethyst_API;$(SolutionDir)external\eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -91,15 +91,15 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)external\openvr\lib\win64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>$(SolutionDir)external\glog\vcbuild\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags_debug.lib;Amethyst_API.lib;openvr_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)external\glog\builds\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\builds\lib\$(Configuration)\gflags_debug.lib;Amethyst_API.lib;openvr_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(SolutionDir)external\driver_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\boost_serialization*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 
-xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)external\gflags\builds\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)external\glog\builds\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"</Command>
     </PostBuildEvent>
@@ -114,7 +114,7 @@ xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(Sol
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\vendor;$(SolutionDir)external\Kinect;$(SolutionDir)external\openvr\headers;$(SolutionDir)Amethyst_API;$(SolutionDir)external\eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\builds\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\builds;$(SolutionDir)external\vendor;$(SolutionDir)external\Kinect;$(SolutionDir)external\openvr\headers;$(SolutionDir)Amethyst_API;$(SolutionDir)external\eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -125,15 +125,15 @@ xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(Sol
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)external\openvr\lib\win64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags.lib;Amethyst_API.lib;openvr_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)external\glog\builds\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\builds\lib\$(Configuration)\gflags.lib;Amethyst_API.lib;openvr_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(SolutionDir)external\driver_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\boost_serialization*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 
-xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)external\gflags\builds\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)external\glog\builds\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"</Command>
     </PostBuildEvent>

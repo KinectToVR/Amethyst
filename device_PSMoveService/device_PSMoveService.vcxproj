@@ -64,14 +64,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\openvr\headers;$(SolutionDir)Amethyst_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(SolutionDir)external\PSMoveService\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\builds\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\builds;$(SolutionDir)external\openvr\headers;$(SolutionDir)Amethyst_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(SolutionDir)external\PSMoveService\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)external\PSMoveService\lib;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>PSMoveClient_CAPI.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags_debug.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PSMoveClient_CAPI.lib;$(SolutionDir)external\glog\builds\$(Configuration)\glogd.lib;$(SolutionDir)external\gflags\builds\lib\$(Configuration)\gflags_debug.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService"
@@ -81,8 +81,8 @@ xcopy /y /d "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Confi
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
 
 xcopy /y /d "$(SolutionDir)external\PSMoveService\bin\PSMoveClient_CAPI.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
+xcopy /y /d "$(SolutionDir)external\gflags\builds\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
+xcopy /y /d "$(SolutionDir)external\glog\builds\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
 
 xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService" "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\devices\PSMoveService"
 </Command>
@@ -99,7 +99,7 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\vcbuild\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\vcbuild;$(SolutionDir)external\openvr\headers;$(SolutionDir)Amethyst_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(SolutionDir)external\PSMoveService\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\gflags\builds\include;$(SolutionDir)external\glog\src;$(SolutionDir)external\glog\builds;$(SolutionDir)external\openvr\headers;$(SolutionDir)Amethyst_API;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(SolutionDir)external\PSMoveService\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,7 +108,7 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)external\PSMoveService\lib;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>PSMoveClient_CAPI.lib;$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\vcbuild\lib\$(Configuration)\gflags.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PSMoveClient_CAPI.lib;$(SolutionDir)external\glog\builds\$(Configuration)\glog.lib;$(SolutionDir)external\gflags\builds\lib\$(Configuration)\gflags.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService"
@@ -118,8 +118,8 @@ xcopy /y /d "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Confi
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
 
 xcopy /y /d "$(SolutionDir)external\PSMoveService\bin\PSMoveClient_CAPI.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\gflags\vcbuild\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\glog\vcbuild\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
+xcopy /y /d "$(SolutionDir)external\gflags\builds\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
+xcopy /y /d "$(SolutionDir)external\glog\builds\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
 
 xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService" "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\devices\PSMoveService"
 </Command>
