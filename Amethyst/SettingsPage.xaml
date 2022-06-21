@@ -370,19 +370,19 @@
                            Margin="0,40,0,15" />
 
                 <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
-                        x:Name="ResetButton" Width="270" Click="ResetButton_Click"
+                        x:Name="ResetButton" Width="280" Click="ResetButton_Click"
                         x:Uid="/SettingsPage/Buttons/Reset" FontSize="16" />
 
                 <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
-                        x:Name="ReRegisterButton" Width="270" Click="ReRegisterButton_Click"
+                        x:Name="ReRegisterButton" Width="280" Click="ReRegisterButton_Click"
                         x:Uid="/SettingsPage/Buttons/ReRegister" FontSize="16" />
 
                 <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
-                        x:Name="ViewLogsButton" Width="270" Click="ViewLogsButton_Click"
+                        x:Name="ViewLogsButton" Width="280" Click="ViewLogsButton_Click"
                         x:Uid="/SettingsPage/Buttons/ViewLogs" FontSize="16" />
 
                 <SplitButton Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
-                             x:Name="ReManifestButton" Width="305" Click="ReManifestButton_Click"
+                             x:Name="ReManifestButton" Width="315" Click="ReManifestButton_Click"
                              x:Uid="/SettingsPage/Buttons/ReManifest" FontSize="16">
                     <SplitButton.Flyout>
                         <Flyout Placement="RightEdgeAlignedBottom" Opening="AutoStartFlyout_Opening">
