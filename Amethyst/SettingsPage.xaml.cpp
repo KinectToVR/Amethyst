@@ -117,15 +117,8 @@ namespace winrt::Amethyst::implementation
 			// Append the separator (optionally)
 			if (_expander_number >= 2 && jointExpanderVector.back() != expander)
 			{
-				auto separator = Shapes::Rectangle();
-				separator.HorizontalAlignment(HorizontalAlignment::Stretch);
-				separator.Height(1);
-				separator.Margin({0, 10, 0, 0});
-				separator.Stroke(Media::SolidColorBrush(
-					Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
-				separator.Fill(Media::SolidColorBrush(
-					Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
-
+				auto separator = Controls::MenuFlyoutSeparator();
+				separator.Margin({10, 10, 10, 0});
 				jointExpanderHostStackPanel->Children().Append(separator);
 				_expander_number = 1;
 			}
@@ -693,15 +686,8 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					// Append the separator (optionally)
 					if (_expander_number >= 2 && jointExpanderVector.back() != expander)
 					{
-						auto separator = Shapes::Rectangle();
-						separator.HorizontalAlignment(HorizontalAlignment::Stretch);
-						separator.Height(1);
-						separator.Margin({0, 10, 0, 0});
-						separator.Stroke(Media::SolidColorBrush(
-							Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
-						separator.Fill(Media::SolidColorBrush(
-							Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
-
+						auto separator = Controls::MenuFlyoutSeparator();
+						separator.Margin({ 10, 10, 10, 0 });
 						jointExpanderHostStackPanel->Children().Append(separator);
 						_expander_number = 1;
 					}
@@ -843,15 +829,8 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				// Append the separator (optionally)
 				if (_expander_number >= 2 && jointExpanderVector.back() != expander)
 				{
-					auto separator = Shapes::Rectangle();
-					separator.HorizontalAlignment(HorizontalAlignment::Stretch);
-					separator.Height(1);
-					separator.Margin({0, 10, 0, 0});
-					separator.Stroke(Media::SolidColorBrush(
-						Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
-					separator.Fill(Media::SolidColorBrush(
-						Windows::UI::ColorHelper::FromArgb(255, 59, 59, 59)));
-
+					auto separator = Controls::MenuFlyoutSeparator();
+					separator.Margin({ 10, 10, 10, 0 });
 					jointExpanderHostStackPanel->Children().Append(separator);
 					_expander_number = 1;
 				}
