@@ -439,6 +439,15 @@ namespace winrt::Amethyst::implementation
 		this->ExtendsContentIntoTitleBar(true);
 		this->SetTitleBar(DragElement());
 
+		// Set titlebar/taskview icon
+		LOG(INFO) << "Setting the App Window icon...";
+		HWND hWnd{ 0 };
+		this->try_as<IWindowNative>()->get_WindowHandle(&hWnd);
+
+		Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
+			Microsoft::UI::GetWindowIdFromWindow(hWnd)).SetIcon(
+				(boost::dll::program_location().parent_path() / "Assets" / "ktvr.ico").c_str());
+
 		LOG(INFO) << "Making the app window available for children views...";
 		k2app::shared::main::thisAppWindow = std::make_shared<Window>(this->try_as<Window>());
 

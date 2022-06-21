@@ -132,6 +132,9 @@
   <data name="Buttons.RestartSteamVR.Content" xml:space="preserve">
     <value>Restart SteamVR</value>
   </data>
+  <data name="Buttons.ViewLogs.Content" xml:space="preserve">
+    <value>Open Amethyst's logs folder</value>
+  </data>
   <data name="Captions.AutoStart.Text" xml:space="preserve">
     <value>Automatically start with SteamVR</value>
   </data>

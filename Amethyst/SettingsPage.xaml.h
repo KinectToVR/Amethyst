@@ -62,6 +62,7 @@ namespace winrt::Amethyst::implementation
 		                                   const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void CheckOverlapsCheckBox_Unchecked(const winrt::Windows::Foundation::IInspectable& sender,
 		                                     const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ViewLogsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 	};
 }
 

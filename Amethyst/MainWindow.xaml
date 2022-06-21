@@ -11,7 +11,7 @@
 
     <!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
     <Grid MinHeight="600" MinWidth="1000" Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
-          x:Name="XMainGrid">
+          x:Name="XMainGrid" IsTabStop="True">
 
         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent">
             <Grid.ColumnDefinitions>

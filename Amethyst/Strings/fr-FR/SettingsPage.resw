@@ -132,6 +132,9 @@
   <data name="Buttons.RestartSteamVR.Content" xml:space="preserve">
     <value>Relancer SteamVR</value>
   </data>
+  <data name="Buttons.ViewLogs.Content" xml:space="preserve">
+    <value>Ouvrez le dossier des logs d'Amethyst</value>
+  </data>
   <data name="Captions.AutoStart.Text" xml:space="preserve">
     <value>Lancer automatiquement avec SteamVR</value>
   </data>

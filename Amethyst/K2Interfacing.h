@@ -6,6 +6,8 @@
 
 #include "LocalizedServerStatuses.h"
 
+#include <ShlObj.h>
+
 namespace winrt::Microsoft::UI::Xaml::Controls
 {
 	inline void AppendGridStarColumn(Controls::Grid& _grid)
@@ -299,10 +301,10 @@ namespace k2app::interfacing
 
 		vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
 		vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(trackingOrigin);
-		
+
 		vrPlayspaceOrientation = EigenUtils::RotationProjectedYaw(
 			vrPlayspaceOrientationQuaternion); // Yaw angle
-		
+
 		// Rescan controller ids
 		vrControllerIndexes = std::make_pair(
 			vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
@@ -804,6 +806,19 @@ namespace k2app::interfacing
 
 				vrHMDPose = std::make_pair(position, quaternion);
 			}
+		}
+	}
+
+	inline void openFolderAndSelectItem(const std::string& path)
+	{
+		PIDLIST_ABSOLUTE pidl = nullptr;
+
+		if (boost::filesystem::exists(path) &&
+			SHParseDisplayName(StringToWString(path).c_str(), nullptr,
+			                   &pidl, 0, nullptr) == S_OK)
+		{
+			SHOpenFolderAndSelectItems(pidl, 0, nullptr, 0);
+			CoTaskMemFree(pidl);
 		}
 	}
 

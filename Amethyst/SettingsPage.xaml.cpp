@@ -943,3 +943,11 @@ void winrt::Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Unchec
 	k2app::K2Settings.checkForOverlappingTrackers = false;
 	k2app::K2Settings.saveSettings();
 }
+
+
+void winrt::Amethyst::implementation::SettingsPage::ViewLogsButton_Click(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	k2app::interfacing::openFolderAndSelectItem(
+		k2app::interfacing::thisLogDestination + ".log");
+}

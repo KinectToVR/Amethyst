@@ -377,6 +377,10 @@
                         x:Name="ReRegisterButton" Width="270" Click="ReRegisterButton_Click"
                         x:Uid="/SettingsPage/Buttons/ReRegister" FontSize="16" />
 
+                <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
+                        x:Name="ViewLogsButton" Width="270" Click="ViewLogsButton_Click"
+                        x:Uid="/SettingsPage/Buttons/ViewLogs" FontSize="16" />
+
                 <SplitButton Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
                              x:Name="ReManifestButton" Width="305" Click="ReManifestButton_Click"
                              x:Uid="/SettingsPage/Buttons/ReManifest" FontSize="16">
