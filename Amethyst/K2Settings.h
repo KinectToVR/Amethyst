@@ -59,7 +59,6 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(calibrationTranslationVectors)
 				& BOOST_SERIALIZATION_NVP(calibrationOrigins)
 				& BOOST_SERIALIZATION_NVP(calibrationYaws)
-				& BOOST_SERIALIZATION_NVP(calibrationPitches)
 				& BOOST_SERIALIZATION_NVP(calibrationPointsNumber)
 				& BOOST_SERIALIZATION_NVP(autoCalibration)
 				& BOOST_SERIALIZATION_NVP(skeletonPreviewEnabled)
@@ -103,7 +102,6 @@ namespace k2app
 		std::pair<Eigen::Matrix<double, 1, 3>, Eigen::Matrix<double, 1, 3>> calibrationTranslationVectors;
 		std::pair<Eigen::Vector3d, Eigen::Vector3d> calibrationOrigins; // always 0,0,0 for auto
 		std::pair<double, double> calibrationYaws{0., 0.};
-		std::pair<double, double> calibrationPitches{0., 0.};
 
 		// Calibration helpers - points number
 		uint32_t calibrationPointsNumber = 3; // Always 3<=x<=5

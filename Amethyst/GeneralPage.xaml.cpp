@@ -268,10 +268,6 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
 			? &k2app::K2Settings.calibrationYaws.first
 			: &k2app::K2Settings.calibrationYaws.second;
-	double* calibrationPitch = // Pitch
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.calibrationPitches.first
-			: &k2app::K2Settings.calibrationPitches.second;
 	bool* isMatrixCalibrated = // Are we calibrated?
 		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
 			? &k2app::K2Settings.isMatrixCalibrated.first
@@ -433,7 +429,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 		LOG(INFO) << "Retrieved playspace rotation [eulers, radians]: ";
 		LOG(INFO) << return_Rotation.eulerAngles(0, 1, 2);
-		
+
 		Eigen::Vector3d projected_Rotation =
 			EigenUtils::RotationProjectedEulerAngles(return_Rotation);
 
@@ -441,7 +437,6 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 		LOG(INFO) << projected_Rotation;
 
 		*calibrationYaw = projected_Rotation.y(); // Note: radians
-		*calibrationPitch = 0.; // 0 in auto
 		*calibrationOrigin = Eigen::Vector3d(0, 0, 0);
 
 		*isMatrixCalibrated = true;
@@ -566,10 +561,6 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
 			? &k2app::K2Settings.calibrationYaws.first
 			: &k2app::K2Settings.calibrationYaws.second;
-	double* calibrationPitch = // Pitch
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.calibrationPitches.first
-			: &k2app::K2Settings.calibrationPitches.second;
 	bool* isMatrixCalibrated = // Are we calibrated?
 		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
 			? &k2app::K2Settings.isMatrixCalibrated.first
@@ -681,7 +672,6 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 			*calibrationRotation = rotationMatrix;
 
 			*calibrationYaw = temp_yaw; // Note: radians
-			*calibrationPitch = temp_pitch; // Note: radians
 
 			// Sleep on UI
 			apartment_context ui_thread;
@@ -1490,16 +1480,19 @@ void winrt::Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 {
 	k2app::interfacing::isTrackingFrozen = !k2app::interfacing::isTrackingFrozen;
 
-	k2app::shared::general::toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
-	k2app::shared::general::toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
-		                                                          ? box_value(
-			                                                          k2app::interfacing::LocalizedResourceWString(
-				                                                          L"GeneralPage",
-				                                                          L"Buttons/Skeleton/Unfreeze/Content"))
-		                                                          : box_value(
-			                                                          k2app::interfacing::LocalizedResourceWString(
-				                                                          L"GeneralPage",
-				                                                          L"Buttons/Skeleton/Freeze/Content")));
+	toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
+	toggleFreezeButton.get()->Content(
+		k2app::interfacing::isTrackingFrozen
+			? box_value(
+				k2app::interfacing::LocalizedResourceWString(
+					L"GeneralPage",
+					L"Buttons/Skeleton/Unfreeze/Content"))
+			: box_value(
+				k2app::interfacing::LocalizedResourceWString(
+					L"GeneralPage",
+					L"Buttons/Skeleton/Freeze/Content")));
+
+
 }
 
 
