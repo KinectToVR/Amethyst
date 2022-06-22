@@ -1492,7 +1492,57 @@ void winrt::Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 					L"GeneralPage",
 					L"Buttons/Skeleton/Freeze/Content")));
 
+	// Optionally show the binding teaching tip
+	if (!k2app::K2Settings.teachingTipShown_Freeze)
+	{
+		auto _header = 
+			k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage",
+			L"Tips/TrackingFreeze/Header");
 
+		// Change the tip depending on the currently connected controllers
+		char _controller_model[1024];
+		vr::VRSystem()->GetStringTrackedDeviceProperty(
+			vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+				vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
+			vr::ETrackedDeviceProperty::Prop_ModelNumber_String, 
+			_controller_model, std::size(_controller_model));
+
+		if (k2app::interfacing::findStringIC(_controller_model, "knuckles") ||
+			k2app::interfacing::findStringIC(_controller_model, "index"))
+			boost::replace_all(_header, L"{0}",
+				k2app::interfacing::LocalizedResourceWString(
+				L"GeneralPage",
+				L"Tips/TrackingFreeze/Buttons/Index"));
+
+		else if (k2app::interfacing::findStringIC(_controller_model, "vive"))
+			boost::replace_all(_header, L"{0}",
+				k2app::interfacing::LocalizedResourceWString(
+					L"GeneralPage",
+					L"Tips/TrackingFreeze/Buttons/VIVE"));
+
+		else if (k2app::interfacing::findStringIC(_controller_model, "mr"))
+			boost::replace_all(_header, L"{0}",
+				k2app::interfacing::LocalizedResourceWString(
+					L"GeneralPage",
+					L"Tips/TrackingFreeze/Buttons/WMR"));
+
+		else boost::replace_all(_header, L"{0}",
+				k2app::interfacing::LocalizedResourceWString(
+					L"GeneralPage",
+					L"Tips/TrackingFreeze/Buttons/Oculus"));
+
+		FreezeTrackingTeachingTip().Title(_header.c_str());
+		FreezeTrackingTeachingTip().Subtitle(
+			k2app::interfacing::LocalizedResourceWString(
+				L"GeneralPage",
+				L"Tips/TrackingFreeze/Footer").c_str());
+
+		FreezeTrackingTeachingTip().IsOpen(true);
+
+		k2app::K2Settings.teachingTipShown_Freeze = true;
+		k2app::K2Settings.saveSettings();
+	}
 }
 
 

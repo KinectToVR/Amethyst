@@ -346,6 +346,24 @@ tracking to use automatic calibration.</value>
   <data name="Captions.VersionText.Text" xml:space="preserve">
     <value>Amethyst Version:</value>
   </data>
+  <data name="Tips.TrackingFreeze.Buttons.Index" xml:space="preserve">
+    <value>B, Grip and Trigger</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Buttons.Oculus" xml:space="preserve">
+    <value>X, Grip and Trigger</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Buttons.VIVE" xml:space="preserve">
+    <value>the Touchpad, Grip and Trigger</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Buttons.WMR" xml:space="preserve">
+    <value>the Menu Button, Grip and Trigger</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Footer" xml:space="preserve">
+    <value>This binding can be changed within SteamVR settings.</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Header" xml:space="preserve">
+    <value>You can also toggle tracker freeze while in VR by pressing {0} on your left controller.</value>
+  </data>
   <data name="Titles.Device.Text" xml:space="preserve">
     <value>Device</value>
   </data>

@@ -119,6 +119,12 @@ namespace k2app
 		// If we wanna freeze only lower body trackers or all
 		bool freezeLowerOnly = false;
 
+		// If the freeze bindings teaching tip has been shown
+		bool teachingTipShown_Freeze = false;
+
+		// If the flip bindings teaching tip has been shown
+		bool teachingTipShown_Flip= false;
+
 		// Already shown toasts vector
 		std::vector<std::string> shownToastsGuidVector;
 

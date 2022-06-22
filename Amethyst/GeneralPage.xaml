@@ -912,6 +912,17 @@
                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                        x:Uid="/GeneralPage/Buttons/Skeleton/Freeze" FontSize="16">
 
+                        <ToggleSplitButton.Resources>
+                            <TeachingTip x:Name="FreezeTrackingTeachingTip"
+                                         Target="{x:Bind ToggleTrackingButton}"
+                                         Title="[CONTENT NOT SET]"
+                                         Subtitle="[CONTENT NOT SET]">
+                                <TeachingTip.IconSource>
+                                    <FontIconSource Glyph="&#xE946;" />
+                                </TeachingTip.IconSource>
+                            </TeachingTip>
+                        </ToggleSplitButton.Resources>
+
                         <ToggleSplitButton.Flyout>
                             <Flyout Placement="Bottom">
                                 <Grid Margin="0,0,0,0">
