@@ -202,41 +202,21 @@ namespace k2app::interfacing
 
 			// Helper bool array
 			std::vector<bool> spawned;
+			
+			// Create a dummy update vector
+			std::vector<std::pair<ktvr::ITrackerType, bool>> k2_tracker_statuses;
+			for (const auto& tracker : K2Settings.K2TrackersVector)
+				if (tracker.data.isActive)
+					k2_tracker_statuses.push_back(std::make_pair(tracker.tracker, true));
 
-			// Try 3 times
+			// Try 3 times cause why not
 			for (int i = 0; i < 3; i++)
-				for (const auto& tracker : K2Settings.K2TrackersVector)
-					if (tracker.data.isActive)
-					{
-						spawned.push_back(false);
-
-						if (const auto& m_result =
-								set_tracker_state(tracker.tracker, true); // We WANT a reply
-							m_result.tracker == tracker.tracker && m_result.success)
-						{
-							LOG(INFO) << "Tracker with serial " + tracker.data.serial +
-								" and role " +
-								std::to_string(static_cast<int>(tracker.tracker)) +
-								" was successfully updated with status [active]";
-							spawned.back() = true;
-						}
-
-						else if (m_result.tracker != tracker.tracker && m_result.success)
-							LOG(ERROR) << "Tracker with serial " + tracker.data.serial + " and id "
-								+
-								std::to_string(static_cast<int>(tracker.tracker)) +
-								" could not be spawned due to return mismatch.";
-
-						else
-						{
-							LOG(ERROR) << "Tracker with serial " + tracker.data.serial +
-								" and role " +
-								std::to_string(static_cast<int>(tracker.tracker)) +
-								" could not be spawned due to internal server error.";
-							if (!ktvr::GetLastError().empty())
-								LOG(ERROR) << "Last Amethyst API error: " + ktvr::GetLastError();
-						}
-					}
+			{
+				// Update status in server
+				spawned.push_back(
+					ktvr::update_tracker_state_vector<true>(k2_tracker_statuses).success);
+				std::this_thread::sleep_for(std::chrono::milliseconds(15));
+			}
 
 			// If one or more trackers failed to spawn
 			if (!spawned.empty() && std::ranges::find(spawned, false) != spawned.end())
@@ -257,10 +237,10 @@ namespace k2app::interfacing
 		K2AppTrackersInitialized = true;
 
 		/*
-			 * Trackers are stealing input from controllers when first added,
-			 * due to some weird wonky stuff happening and OpenVR not expecting them.
-			 * We're gonna de-spawn them for 8 frames (100ms) and re-spawn after another
-			 */
+		 * Trackers are stealing input from controllers when first added,
+		 * due to some weird wonky stuff happening and OpenVR not expecting them.
+		 * We're gonna de-spawn them for 8 frames (100ms) and re-spawn after another
+		 */
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		K2AppTrackersInitialized = false;

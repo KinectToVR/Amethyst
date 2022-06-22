@@ -388,6 +388,9 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 				{
 					for (const auto& _tracker : message.tracker_statuses_vector.value())
 					{
+						// Assume success
+						_response.success = true;
+
 						/* State */
 
 						if (!trackerVector.at(static_cast<int>(_tracker.first)).is_added())
@@ -398,6 +401,7 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 									trackerVector.at(static_cast<int>(_tracker.first)).get_serial();
 								_response.result = static_cast<int>(
 									ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
+								_response.success = false; // Oof we didn't make it
 							}
 
 						// Set the state
@@ -409,7 +413,6 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 						trackerVector.at(static_cast<int>(_tracker.first)).update();
 
 						// Compose the response
-						_response.success = true;
 						_response.tracker = _tracker.first; // ID
 						_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 					}
