@@ -224,6 +224,24 @@ Vérifiez les logs de SteamVR et considérez rapporter le bug.</value>
     <value>L'éxécutable du Crash Handler pour Amethyst n'a pas été
 trouvé. Il est nécessaire pour ré-inscrire l'extension. Vérifiez qu'il est présent.</value>
   </data>
+  <data name="Tips.FlipToggle.Buttons.Index" xml:space="preserve">
+    <value>B, Grip and Trigger</value>
+  </data>
+  <data name="Tips.FlipToggle.Buttons.Oculus" xml:space="preserve">
+    <value>A, Grip and Trigger</value>
+  </data>
+  <data name="Tips.FlipToggle.Buttons.VIVE" xml:space="preserve">
+    <value>the Touchpad, Grip and Trigger</value>
+  </data>
+  <data name="Tips.FlipToggle.Buttons.WMR" xml:space="preserve">
+    <value>the Menu Button, Grip and Trigger</value>
+  </data>
+  <data name="Tips.FlipToggle.Footer" xml:space="preserve">
+    <value>This binding can be changed within SteamVR input settings.</value>
+  </data>
+  <data name="Tips.FlipToggle.Header" xml:space="preserve">
+    <value>You can also toggle skeleton flip while in VR by pressing {0} on your right controller.</value>
+  </data>
   <data name="Titles.ExtFlip.Text" xml:space="preserve">
     <value>Utiliser le tracking externe au lieu de l'orientation du casque</value>
   </data>

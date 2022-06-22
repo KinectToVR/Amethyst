@@ -617,7 +617,7 @@
                                         Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
-                                <Button FontSize="15" x:Name="OpenDocsButton" Click="ServerOpenDocsButton_Click"
+                                <Button FontSize="15" x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
                                         Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         x:Uid="/GeneralPage/Buttons/Help/Docs"
@@ -682,7 +682,7 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
                                 <Button FontSize="15" x:Name="OverrideOpenDocsButton"
-                                        Click="ServerOpenDocsButton_Click"
+                                        Click="OpenDocsButton_Click"
                                         Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         x:Uid="/GeneralPage/Buttons/Help/Docs"
@@ -742,7 +742,7 @@
                                         Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
-                                <Button FontSize="15" x:Name="ServerOpenDocsButton" Click="OpenDocsButton_Click"
+                                <Button FontSize="15" x:Name="ServerOpenDocsButton" Click="ServerOpenDocsButton_Click"
                                         Height="{Binding ElementName=ServerOpenDiscordButton, Path=Height}"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         x:Uid="/GeneralPage/Buttons/Help/Docs"
@@ -915,6 +915,7 @@
                         <ToggleSplitButton.Resources>
                             <muxc:TeachingTip x:Name="FreezeTrackingTeachingTip"
                                          Target="{Binding ElementName=ToggleTrackingButton}"
+                                         PreferredPlacement="TopRight"
                                          Title="[CONTENT NOT SET]"
                                          Subtitle="[CONTENT NOT SET]">
                                 <TeachingTip.IconSource>

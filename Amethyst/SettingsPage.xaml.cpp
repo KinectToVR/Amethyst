@@ -387,6 +387,57 @@ void Amethyst::implementation::SettingsPage::FlipToggle_Toggled(
 	TrackingDevices::settings_set_external_flip_is_enabled();
 	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
 
+	// Optionally show the binding teaching tip
+	if (!k2app::K2Settings.teachingTipShown_Flip)
+	{
+		auto _header =
+			k2app::interfacing::LocalizedResourceWString(
+				L"SettingsPage", L"Tips/FlipToggle/Header");
+
+		// Change the tip depending on the currently connected controllers
+		char _controller_model[1024];
+		vr::VRSystem()->GetStringTrackedDeviceProperty(
+			vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+				vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
+			vr::ETrackedDeviceProperty::Prop_ModelNumber_String,
+			_controller_model, std::size(_controller_model));
+
+		if (k2app::interfacing::findStringIC(_controller_model, "knuckles") ||
+			k2app::interfacing::findStringIC(_controller_model, "index"))
+			boost::replace_all(_header, L"{0}",
+				k2app::interfacing::LocalizedResourceWString(
+					L"SettingsPage",
+					L"Tips/FlipToggle/Buttons/Index"));
+
+		else if (k2app::interfacing::findStringIC(_controller_model, "vive"))
+			boost::replace_all(_header, L"{0}",
+				k2app::interfacing::LocalizedResourceWString(
+					L"SettingsPage",
+					L"Tips/FlipToggle/Buttons/VIVE"));
+
+		else if (k2app::interfacing::findStringIC(_controller_model, "mr"))
+			boost::replace_all(_header, L"{0}",
+				k2app::interfacing::LocalizedResourceWString(
+					L"SettingsPage",
+					L"Tips/FlipToggle/Buttons/WMR"));
+
+		else boost::replace_all(_header, L"{0}",
+			k2app::interfacing::LocalizedResourceWString(
+				L"SettingsPage",
+				L"Tips/FlipToggle/Buttons/Oculus"));
+
+		ToggleFlipTeachingTip().Title(_header.c_str());
+		ToggleFlipTeachingTip().Subtitle(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SettingsPage",
+				L"Tips/FlipToggle/Footer").c_str());
+
+		ToggleFlipTeachingTip().IsOpen(true);
+
+		k2app::K2Settings.teachingTipShown_Flip = true;
+		k2app::K2Settings.saveSettings();
+	}
+
 	k2app::K2Settings.saveSettings();
 }
 

@@ -224,6 +224,24 @@ Please check SteamVR logs and consider reporting it.</value>
     <value>Amethyst crash handler executable was not found.
 It's needed for the reregistration, please check if it's there.</value>
   </data>
+  <data name="Tips.FlipToggle.Buttons.Index" xml:space="preserve">
+    <value>B, Grip and Trigger</value>
+  </data>
+  <data name="Tips.FlipToggle.Buttons.Oculus" xml:space="preserve">
+    <value>A, Grip and Trigger</value>
+  </data>
+  <data name="Tips.FlipToggle.Buttons.VIVE" xml:space="preserve">
+    <value>the Touchpad, Grip and Trigger</value>
+  </data>
+  <data name="Tips.FlipToggle.Buttons.WMR" xml:space="preserve">
+    <value>the Menu Button, Grip and Trigger</value>
+  </data>
+  <data name="Tips.FlipToggle.Footer" xml:space="preserve">
+    <value>This binding can be changed within SteamVR input settings.</value>
+  </data>
+  <data name="Tips.FlipToggle.Header" xml:space="preserve">
+    <value>You can also toggle skeleton flip while in VR by pressing {0} on your right controller.</value>
+  </data>
   <data name="Titles.ExtFlip.Text" xml:space="preserve">
     <value>Use external waist tracking data instead of the Headset</value>
   </data>
