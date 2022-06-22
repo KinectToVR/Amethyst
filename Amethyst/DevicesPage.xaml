@@ -248,7 +248,7 @@
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                             x:Uid="/DevicesPage/Buttons/SetAs/Header"
                                             Margin="0,0,3,0" CornerRadius="3"
-                                            Height="35" Width="140"
+                                            Height="35" Width="140" x:Name="SetThisDeviceAsButton"
                                             HorizontalAlignment="Right" VerticalAlignment="Top">
 
                                         <Button.Flyout>

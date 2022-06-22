@@ -369,20 +369,33 @@
                 <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Troubleshooting" FontSize="25"
                            Margin="0,40,0,15" />
 
-                <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
-                        x:Name="ResetButton" Width="280" Click="ResetButton_Click"
-                        x:Uid="/SettingsPage/Buttons/Reset" FontSize="16" />
+                <Grid x:Name="TroubleshootingControlsContainerGrid"
+                      HorizontalAlignment="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="35" />
+                    </Grid.ColumnDefinitions>
 
-                <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
-                        x:Name="ReRegisterButton" Width="280" Click="ReRegisterButton_Click"
-                        x:Uid="/SettingsPage/Buttons/ReRegister" FontSize="16" />
+                    <StackPanel HorizontalAlignment="Stretch"
+                                Grid.Column="0" Orientation="Vertical">
 
-                <Button Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,10"
-                        x:Name="ViewLogsButton" Width="280" Click="ViewLogsButton_Click"
-                        x:Uid="/SettingsPage/Buttons/ViewLogs" FontSize="16" />
+                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10"
+                                x:Name="ResetButton" Click="ResetButton_Click"
+                                x:Uid="/SettingsPage/Buttons/Reset" FontSize="16" />
+
+                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10"
+                                x:Name="ReRegisterButton" Click="ReRegisterButton_Click"
+                                x:Uid="/SettingsPage/Buttons/ReRegister" FontSize="16" />
+
+                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10"
+                                x:Name="ViewLogsButton" Click="ViewLogsButton_Click"
+                                x:Uid="/SettingsPage/Buttons/ViewLogs" FontSize="16" />
+                    </StackPanel>
+                </Grid>
 
                 <SplitButton Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
-                             x:Name="ReManifestButton" Width="315" Click="ReManifestButton_Click"
+                             x:Name="ReManifestButton" Click="ReManifestButton_Click"
+                             Width="{Binding ElementName=TroubleshootingControlsContainerGrid, Path=ActualWidth, TargetNullValue=315}"
                              x:Uid="/SettingsPage/Buttons/ReManifest" FontSize="16">
                     <SplitButton.Flyout>
                         <Flyout Placement="RightEdgeAlignedBottom" Opening="AutoStartFlyout_Opening">
