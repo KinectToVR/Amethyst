@@ -1497,8 +1497,7 @@ void winrt::Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 	{
 		auto _header = 
 			k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage",
-			L"Tips/TrackingFreeze/Header");
+			L"GeneralPage", L"Tips/TrackingFreeze/Header");
 
 		// Change the tip depending on the currently connected controllers
 		char _controller_model[1024];

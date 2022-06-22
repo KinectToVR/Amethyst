@@ -359,7 +359,7 @@ tracking to use automatic calibration.</value>
     <value>the Menu Button, Grip and Trigger</value>
   </data>
   <data name="Tips.TrackingFreeze.Footer" xml:space="preserve">
-    <value>This binding can be changed within SteamVR settings.</value>
+    <value>This binding can be changed within SteamVR input settings.</value>
   </data>
   <data name="Tips.TrackingFreeze.Header" xml:space="preserve">
     <value>You can also toggle tracker freeze while in VR by pressing {0} on your left controller.</value>

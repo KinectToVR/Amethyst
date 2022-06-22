@@ -913,14 +913,14 @@
                                        x:Uid="/GeneralPage/Buttons/Skeleton/Freeze" FontSize="16">
 
                         <ToggleSplitButton.Resources>
-                            <TeachingTip x:Name="FreezeTrackingTeachingTip"
-                                         Target="{x:Bind ToggleTrackingButton}"
+                            <muxc:TeachingTip x:Name="FreezeTrackingTeachingTip"
+                                         Target="{Binding ElementName=ToggleTrackingButton}"
                                          Title="[CONTENT NOT SET]"
                                          Subtitle="[CONTENT NOT SET]">
                                 <TeachingTip.IconSource>
                                     <FontIconSource Glyph="&#xE946;" />
                                 </TeachingTip.IconSource>
-                            </TeachingTip>
+                            </muxc:TeachingTip>
                         </ToggleSplitButton.Resources>
 
                         <ToggleSplitButton.Flyout>

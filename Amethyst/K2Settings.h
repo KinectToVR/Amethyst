@@ -64,7 +64,9 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(skeletonPreviewEnabled)
 				& BOOST_SERIALIZATION_NVP(forceSkeletonPreview)
 				& BOOST_SERIALIZATION_NVP(freezeLowerOnly)
-				& BOOST_SERIALIZATION_NVP(shownToastsGuidVector);
+				& BOOST_SERIALIZATION_NVP(shownToastsGuidVector)
+				& BOOST_SERIALIZATION_NVP(teachingTipShown_Freeze)
+				& BOOST_SERIALIZATION_NVP(teachingTipShown_Flip);
 		}
 
 	public:
@@ -123,7 +125,7 @@ namespace k2app
 		bool teachingTipShown_Freeze = false;
 
 		// If the flip bindings teaching tip has been shown
-		bool teachingTipShown_Flip= false;
+		bool teachingTipShown_Flip = false;
 
 		// Already shown toasts vector
 		std::vector<std::string> shownToastsGuidVector;
