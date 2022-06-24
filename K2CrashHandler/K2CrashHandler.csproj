@@ -28,7 +28,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25136-preview" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25140-preview" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta1" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
@@ -36,15 +36,13 @@
 	<!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
        Tools extension to be activated for this project even if the Windows App SDK Nuget
        package has not yet been restored -->
-	<ItemGroup
-		Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
+	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Helpers\" />
 	</ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec
-			Command="xcopy /y /i /e &quot;$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\K2CrashHandler&quot;" />
+		<Exec Command="xcopy /y /i /e &quot;$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\K2CrashHandler&quot;" />
 	</Target>
 </Project>
