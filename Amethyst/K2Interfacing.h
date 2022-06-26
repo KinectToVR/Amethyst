@@ -476,7 +476,7 @@ namespace k2app::interfacing
 				for (int i = 0; i < 3; i++)
 				{
 					LOG(INFO) << "Starting the test no " << i + 1 << "...";
-					server_connected = true; // TestK2ServerConnection();
+					server_connected = TestK2ServerConnection();
 					// Not direct assignment since it's only a one-way check
 					if (server_connected)isServerDriverPresent = true;
 				}
