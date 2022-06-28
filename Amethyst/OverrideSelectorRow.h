@@ -73,7 +73,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls::Helpers
 			                              std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_Chest))),
 		                              L" Tracker").c_str());
 
-		if (all.value_or(false))
+		if (all.value_or(true))
 		{
 			PushComboBox_Safe(cbox,
 			                  eraseSubStr(k2app::interfacing::LocalizedResourceWString(
@@ -94,7 +94,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls::Helpers
 			                              std::to_wstring(static_cast<int>(ktvr::ITrackerType::Tracker_Waist))),
 		                              L" Tracker").c_str());
 
-		if (all.value_or(false))
+		if (all.value_or(true))
 		{
 			PushComboBox_Safe(cbox,
 			                  eraseSubStr(k2app::interfacing::LocalizedResourceWString(
