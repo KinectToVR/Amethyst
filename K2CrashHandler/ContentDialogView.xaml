@@ -119,11 +119,17 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Height="33" d:Content="OK">
+                        VerticalContentAlignment="Center" Height="33">
 
                         <FlyoutBase.AttachedFlyout>
                             <Flyout x:Name="ConfirmationFlyout" Closing="ConfirmationFlyout_Closing">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter">
+                                        <Setter Property="CornerRadius" Value="8" />
+                                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />

@@ -471,14 +471,17 @@ namespace k2app::interfacing
 
 				/* Connection test and display ping */
 				// We may wait
-				LOG(INFO) << "Testing the connection...";
-
-				for (int i = 0; i < 3; i++)
+				if (init_code == 0) 
 				{
-					LOG(INFO) << "Starting the test no " << i + 1 << "...";
-					server_connected = TestK2ServerConnection();
-					// Not direct assignment since it's only a one-way check
-					if (server_connected)isServerDriverPresent = true;
+					LOG(INFO) << "Testing the connection...";
+
+					for (int i = 0; i < 3; i++)
+					{
+						LOG(INFO) << "Starting the test no " << i + 1 << "...";
+						server_connected = TestK2ServerConnection();
+						// Not direct assignment since it's only a one-way check
+						if (server_connected)isServerDriverPresent = true;
+					}
 				}
 
 				return init_code == 0

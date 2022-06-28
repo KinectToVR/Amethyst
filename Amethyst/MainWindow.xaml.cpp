@@ -455,20 +455,20 @@ namespace winrt::Amethyst::implementation
 		k2app::shared::main::thisDispatcherQueue =
 			std::make_shared<Microsoft::UI::Dispatching::DispatcherQueue>(DispatcherQueue());
 
-		LOG(INFO) << "Creating the default notification manager (may fail on WinAppSDK <1.1)...";
+		LOG(INFO) << "Creating the default notification manager...";
 		k2app::shared::main::thisNotificationManager =
 			std::make_shared<Microsoft::Windows::AppNotifications::AppNotificationManager>(
 				Microsoft::Windows::AppNotifications::AppNotificationManager::Default());
 
-		LOG(INFO) << "Registering the notification manager (may fail on WinAppSDK <1.1)...";
+		LOG(INFO) << "Registering the notification manager...";
 		k2app::shared::main::thisNotificationManager.get()->Register();
 
-		LOG(INFO) << "Creating and registering the default resource manager (may fail on WinAppSDK <1.1)...";
+		LOG(INFO) << "Creating and registering the default resource manager...";
 		k2app::shared::main::thisResourceManager =
 			std::make_shared<Microsoft::Windows::ApplicationModel::Resources::ResourceManager>(
 				Microsoft::Windows::ApplicationModel::Resources::ResourceManager(L"resources.pri"));
 
-		LOG(INFO) << "Creating and registering the default resource context (may fail on WinAppSDK <1.1)...";
+		LOG(INFO) << "Creating and registering the default resource context...";
 		k2app::shared::main::thisResourceContext =
 			std::make_shared<Microsoft::Windows::ApplicationModel::Resources::ResourceContext>(
 				k2app::shared::main::thisResourceManager.get()->CreateResourceContext());

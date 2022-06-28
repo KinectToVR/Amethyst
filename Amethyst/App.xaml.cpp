@@ -15,51 +15,6 @@ using namespace implementation;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-#ifdef _DEBUG
-#define DBGPRINT(kwszDebugFormatString, ...) _DBGPRINT(__FUNCTIONW__, __LINE__, kwszDebugFormatString, __VA_ARGS__)
-
-VOID _DBGPRINT(LPCWSTR kwszFunction, INT iLineNumber, LPCWSTR kwszDebugFormatString, ...) \
-{
-    INT cbFormatString = 0;
-    va_list args;
-    PWCHAR wszDebugString = NULL;
-    size_t st_Offset = 0;
-
-    va_start(args, kwszDebugFormatString);
-
-    cbFormatString = _scwprintf(L"[%s:%d] ", kwszFunction, iLineNumber) * sizeof(WCHAR);
-    cbFormatString += _vscwprintf(kwszDebugFormatString, args) * sizeof(WCHAR) + 2;
-
-    /* Depending on the size of the format string, allocate space on the stack or the heap. */
-    wszDebugString = (PWCHAR)_malloca(cbFormatString);
-
-    /* Populate the buffer with the contents of the format string. */
-    StringCbPrintfW(wszDebugString, cbFormatString, L"[%s:%d] ", kwszFunction, iLineNumber);
-    StringCbLengthW(wszDebugString, cbFormatString, &st_Offset);
-    StringCbVPrintfW(&wszDebugString[st_Offset / sizeof(WCHAR)], cbFormatString - st_Offset, kwszDebugFormatString, args);
-
-    OutputDebugStringW(wszDebugString);
-
-    _freea(wszDebugString);
-    va_end(args);
-}
-#else
-#define DBGPRINT( kwszDebugFormatString, ... ) ;;
-#endif
-
-winrt::Microsoft::Windows::AppNotifications::AppNotification CreateToastNotification()
-{
-	hstring payload =
-		LR"(<toast launch="action = viewDownload &amp; downloadId = 9438108">
-        <visual>
-            <binding template = "ToastGeneric">
-                <text>Downloading this week's new music...</text>
-            </binding>
-        </visual>
-    </toast>)";
-	return winrt::Microsoft::Windows::AppNotifications::AppNotification(payload);
-}
-
 /// <summary>
 /// Initializes the singleton application object.  This is the first line of authored code
 /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -67,10 +22,7 @@ winrt::Microsoft::Windows::AppNotifications::AppNotification CreateToastNotifica
 App::App()
 {
 	/* Set up everything before the launch */
-
-	// Request the dark theme to be set
-	this->RequestedTheme(ApplicationTheme::Dark);
-
+    
 	/* Initialize the main app and launch it */
 
 	InitializeComponent();

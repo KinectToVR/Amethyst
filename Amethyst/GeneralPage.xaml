@@ -225,7 +225,7 @@
                                   HorizontalAlignment="Stretch" Grid.Row="5">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Calibration/Captions/Points"
-                                           Margin="0,0,0,0" Foreground="LightGray" TextWrapping="WrapWholeWords" />
+                                           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" TextWrapping="WrapWholeWords" />
                             </Grid>
 
                             <Button x:Name="DiscardAutoCalibrationButton" Grid.Row="7"
@@ -444,7 +444,7 @@
                                   HorizontalAlignment="Stretch" Grid.Row="6">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Calibration/Labels/InputsNotice"
-                                           Margin="0,0,0,0" Foreground="LightGray" TextWrapping="WrapWholeWords" />
+                                           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" TextWrapping="WrapWholeWords" />
                             </Grid>
 
                             <Button x:Name="DiscardCalibrationButton_Click" Grid.Row="8"
@@ -499,6 +499,13 @@
                                 VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}">
                             <FlyoutBase.AttachedFlyout>
                                 <Flyout x:Name="ChooseDeviceFlyout">
+                                    <Flyout.FlyoutPresenterStyle>
+                                        <Style TargetType="FlyoutPresenter">
+                                            <Setter Property="CornerRadius" Value="8" />
+                                            <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                        </Style>
+                                    </Flyout.FlyoutPresenterStyle>
+
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
@@ -573,7 +580,7 @@
                             <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Captions/Device/Name"
-                                           Margin="0,0,0,0" Foreground="LightGray" />
+                                           Margin="0,0,0,0" Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_DEVICE]" Margin="5,0,0,0"
                                            x:Name="SelectedDeviceNameLabel" />
@@ -582,22 +589,25 @@
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Captions/Device/Status" Margin="0,0,0,0"
-                                           Foreground="LightGray" />
+                                           Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
                             </StackPanel>
 
-                            <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
+                            <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+
                                   Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            Text="[DUM_STATUS_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
                                            x:Name="TrackingDeviceErrorLabel"
-                                           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
+                                           Foreground="{StaticResource SystemFillColorAttentionBrush}" />
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                           x:Name="ErrorWhatText"
-                                           Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+                                           x:Name="ErrorWhatText" TextWrapping="WrapWholeWords"
+                                           Margin="10,30,5,0" Foreground="{ThemeResource SystemFillColorNeutralBrush}" >
                                     <TextBlock.Text>
                                         There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
                                     </TextBlock.Text>
@@ -633,7 +643,7 @@
 									Path=Visibility,TargetNullValue=Collapsed}">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Captions/OverrideDevice/Name" Margin="0,0,0,0"
-                                           Foreground="LightGray" />
+                                           Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_DEVICE]" Margin="5,0,0,0"
                                            x:Name="SelectedOverrideDeviceNameLabel" />
@@ -644,23 +654,26 @@
 									Path=Visibility,TargetNullValue=Collapsed}">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Captions/Device/Status" Margin="0,0,0,0"
-                                           Foreground="LightGray" />
+                                           Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="OverrideDeviceStatusLabel" />
                             </StackPanel>
 
-                            <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
+                            <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+
                                   Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3"
                                   x:Name="OverrideErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            Text="[DUM_STATUS_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
                                            x:Name="OverrideTrackingDeviceErrorLabel"
-                                           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
+                                           Foreground="{StaticResource SystemFillColorAttentionBrush}" />
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            x:Name="OverrideErrorWhatText"
-                                           Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+                                           Margin="10,30,5,0" Foreground="{ThemeResource ControlDisplayTextBrush}" TextWrapping="WrapWholeWords">
                                     <TextBlock.Text>
                                         There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
                                     </TextBlock.Text>
@@ -705,24 +718,28 @@
                             <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Captions/DriverStatus/Label"
-                                           Margin="0,0,0,0" Foreground="LightGray" />
+                                           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Captions/DriverStatus/Content"
                                            Margin="5,0,0,0" x:Name="ServerStatusLabel" />
                             </StackPanel>
 
-                            <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
+                            <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+
                                   Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3"
                                   x:Name="ServerErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            Text="[DUM_SERVER_ERROR_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
                                            x:Name="ServerErrorLabel"
-                                           Foreground="{StaticResource AccentAcrylicInAppFillColorDefaultBrush}" />
+                                           Foreground="{StaticResource SystemFillColorAttentionBrush}" />
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            x:Name="ServerErrorWhatText"
-                                           Margin="10,30,5,0" Foreground="LightGray" TextWrapping="WrapWholeWords">
+                                           Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                           Margin="10,30,5,0" TextWrapping="WrapWholeWords">
                                     <TextBlock.Text>
                                         There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
                                     </TextBlock.Text>
@@ -760,7 +777,7 @@
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Captions/VersionText" Margin="0,0,0,0"
-                                           Foreground="LightGray" />
+                                           Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_VERSION_STRING]" Margin="5,0,0,0" x:Name="VersionLabel" />
                             </StackPanel>
@@ -792,14 +809,14 @@
                             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" />
+                        <FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" Foreground="White" />
                         <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoSkeleton"
-                                   FontSize="50" FontWeight="SemiBold" />
+                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
                     </StackPanel>
 
                     <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
                                x:Uid="/GeneralPage/Captions/Preview/NoSkeletonText" x:Name="NoSkeletonTextNotice"
-                               HorizontalTextAlignment="Center" />
+                               HorizontalTextAlignment="Center" Foreground="White" />
                 </StackPanel>
             </Viewbox>
 
@@ -810,12 +827,12 @@
                             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
+                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
                         <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/Disabled"
-                                   FontSize="50" FontWeight="SemiBold" />
+                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
                     </StackPanel>
 
-                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center" Foreground="White"
                                x:Uid="/GeneralPage/Captions/Preview/DisabledText" HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
@@ -827,12 +844,12 @@
                             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
+                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
                         <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoFocus"
-                                   FontSize="50" FontWeight="SemiBold" />
+                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
                     </StackPanel>
 
-                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center" Foreground="White"
                                x:Uid="/GeneralPage/Captions/Preview/NoFocusText" HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
@@ -844,12 +861,12 @@
                             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" />
+                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
                         <TextBlock Margin="10,0,0,7" x:Uid="/GeneralPage/Captions/Preview/NoDashboard"
-                                   FontSize="50" FontWeight="SemiBold" />
+                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
                     </StackPanel>
 
-                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center" Foreground="White"
                                x:Uid="/GeneralPage/Captions/Preview/NoDashboardText" HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
@@ -878,6 +895,13 @@
 
                         <ToggleSplitButton.Flyout>
                             <Flyout Placement="Bottom">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter">
+                                        <Setter Property="CornerRadius" Value="8" />
+                                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+
                                 <Grid Margin="0,0,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="9*" />
@@ -914,10 +938,10 @@
 
                         <ToggleSplitButton.Resources>
                             <muxc:TeachingTip x:Name="FreezeTrackingTeachingTip"
-                                         Target="{Binding ElementName=ToggleTrackingButton}"
-                                         PreferredPlacement="TopRight"
-                                         Title="[CONTENT NOT SET]"
-                                         Subtitle="[CONTENT NOT SET]">
+                                              Target="{Binding ElementName=ToggleTrackingButton}"
+                                              PreferredPlacement="TopRight"
+                                              Title="[CONTENT NOT SET]"
+                                              Subtitle="[CONTENT NOT SET]">
                                 <TeachingTip.IconSource>
                                     <FontIconSource Glyph="&#xE946;" />
                                 </TeachingTip.IconSource>
@@ -926,6 +950,13 @@
 
                         <ToggleSplitButton.Flyout>
                             <Flyout Placement="Bottom">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter">
+                                        <Setter Property="CornerRadius" Value="8" />
+                                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+
                                 <Grid Margin="0,0,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="2*" />
@@ -953,6 +984,13 @@
                 <!--Flyout for manifest and reregister errors-->
                 <FlyoutBase.AttachedFlyout>
                     <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom">
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="CornerRadius" Value="8" />
+                                <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />

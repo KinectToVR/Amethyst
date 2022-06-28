@@ -10,7 +10,6 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
-
     <Grid Background="Transparent" Loaded="Grid_Loaded">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -44,7 +43,7 @@
 
                 <TextBlock FontWeight="SemiBold" x:Uid="/InfoPage/Credits/Header" FontSize="25" Margin="0,60,0,0" />
 
-                <TextBlock FontWeight="SemiBold" Foreground="LightGray" x:Uid="/InfoPage/Credits/MainTeam/Title"
+                <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}" x:Uid="/InfoPage/Credits/MainTeam/Title"
                            Margin="0,20,0,0" />
 
                 <TextBlock FontWeight="SemiBold">
@@ -89,7 +88,7 @@
                     <Run xml:space="preserve">&#x09;&#x09;"Aria"</Run>
                 </TextBlock>
 
-                <TextBlock FontWeight="SemiBold" Foreground="LightGray" x:Uid="/InfoPage/Credits/Helpers/Title"
+                <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}" x:Uid="/InfoPage/Credits/Helpers/Title"
                            Margin="0,20,0,0" />
 
                 <TextBlock FontWeight="SemiBold">

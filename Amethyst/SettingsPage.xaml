@@ -53,7 +53,10 @@
 
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
 
-                <Grid Background="{ThemeResource SystemControlAcrylicElementBrush}"
+                <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+
                       CornerRadius="3" Padding="15,15" Visibility="Collapsed"
                       HorizontalAlignment="Stretch" Height="130" Margin="0,20,0,0" x:Name="ForeignLangGrid">
                     <TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords" Margin="0,-3,0,0"
@@ -158,7 +161,7 @@
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/SettingsPage/Captions/ExtFlip"
-                                           Margin="30,-20,0,7" Foreground="LightGray"
+                                           Margin="30,-20,0,7" Foreground="{ThemeResource ControlDisplayTextBrush}"
                                            Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
 									                    Path=Opacity,TargetNullValue=1.0}" />
                             </StackPanel>
@@ -193,6 +196,7 @@
                                             <Setter Property="MinWidth" Value="720" />
                                             <Setter Property="Margin" Value="30,15,0,0" />
                                             <Setter Property="CornerRadius" Value="8" />
+                                            <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                         </Style>
                                     </Flyout.FlyoutPresenterStyle>
 
@@ -206,35 +210,39 @@
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
                                                    x:Uid="/SettingsLearn/Captions/TrackerConfig" />
 
-                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Foreground="LightGray"
+                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" 
+                                                   Foreground="{ThemeResource ControlDisplayTextBrush}"
                                                    x:Uid="/SettingsLearn/Captions/TrackerConfigNote" />
 
                                         <TextBlock FontSize="20" x:Uid="/SettingsLearn/Titles/FilterSettings"
                                                    FontWeight="SemiBold" Margin="0,20,0,20" />
 
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
-                                                   Foreground="LightGray">
+                                                   Foreground="{ThemeResource ControlDisplayTextBrush}">
 
-                                            <Run Foreground="White" x:Uid="/SettingsLearn/Captions/Filters/Names/LERP" />
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
+                                                 x:Uid="/SettingsLearn/Captions/Filters/Names/LERP" />
                                             <LineBreak />
 
                                             <Run x:Uid="/SettingsLearn/Captions/Filters/Explanations/LERP" />
 
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="White"
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                  x:Uid="/SettingsLearn/Captions/Filters/Names/LowPass" />
                                             <LineBreak />
 
                                             <Run x:Uid="/SettingsLearn/Captions/Filters/Explanations/LowPass" />
 
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="White" x:Uid="/SettingsLearn/Captions/Filters/Names/EKF" />
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
+                                                 x:Uid="/SettingsLearn/Captions/Filters/Names/EKF" />
                                             <LineBreak />
 
                                             <Run x:Uid="/SettingsLearn/Captions/Filters/Explanations/EKF" />
 
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="White" x:Uid="/SettingsLearn/Captions/Filters/Names/None" />
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
+                                                 x:Uid="/SettingsLearn/Captions/Filters/Names/None" />
                                             <LineBreak />
 
                                             <Run x:Uid="/SettingsLearn/Captions/Filters/Explanations/None" />
@@ -244,42 +252,38 @@
                                                    FontWeight="SemiBold" Margin="0,20,0,20" />
 
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
-                                                   Foreground="LightGray">
+                                                   Foreground="{ThemeResource ControlDisplayTextBrush}">
 
-                                            <Run Foreground="White"
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                  x:Uid="/SettingsLearn/Captions/Orientation/Introduction" />
                                             <LineBreak /><LineBreak />
 
-                                            <Run Foreground="White"
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                  x:Uid="/SettingsLearn/Captions/Orientation/Names/Default" />
                                             <LineBreak />
 
-                                            <Run Foreground="White"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/Default" />
+                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Explanations/Default" />
 
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="White"
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                  x:Uid="/SettingsLearn/Captions/Orientation/Names/MathBased" />
                                             <LineBreak />
 
-                                            <Run Foreground="White"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/MathBased" />
+                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Explanations/MathBased" />
 
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="White"
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                  x:Uid="/SettingsLearn/Captions/Orientation/Names/HMD" />
                                             <LineBreak />
 
-                                            <Run Foreground="White"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/HMD" />
+                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Explanations/HMD" />
 
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="White"
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                  x:Uid="/SettingsLearn/Captions/Orientation/Names/None" />
                                             <LineBreak />
 
-                                            <Run Foreground="White"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/None" />
+                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Explanations/None" />
 
                                         </TextBlock>
 
@@ -335,10 +339,10 @@
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    x:Uid="/SettingsPage/Captions/TrackersRestart/Line1"
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    x:Uid="/SettingsPage/Captions/TrackersRestart/Line2"
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                     </StackPanel>
 
                     <Grid Grid.Column="0" Grid.Row="1" Margin="0,20,0,0">
@@ -379,10 +383,10 @@
                 <StackPanel Orientation="Vertical" Margin="0,0,5,0">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                x:Uid="/SettingsPage/Captions/SoundsWhen/Line1"
-                               Margin="0,0,0,0" Foreground="LightGray" />
+                               Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                x:Uid="/SettingsPage/Captions/SoundsWhen/Line2"
-                               Margin="0,0,0,0" Foreground="LightGray" />
+                               Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                 </StackPanel>
 
                 <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Troubleshooting" FontSize="25"
@@ -418,6 +422,13 @@
                              x:Uid="/SettingsPage/Buttons/ReManifest" FontSize="16">
                     <SplitButton.Flyout>
                         <Flyout Placement="RightEdgeAlignedBottom" Opening="AutoStartFlyout_Opening">
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="CornerRadius" Value="8" />
+                                    <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+
                             <Grid>
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
                                            x:Uid="/SettingsPage/Captions/AutoStart" Margin="30,0,0,3" />
@@ -433,6 +444,13 @@
                 <!--Flyout for manifest and reregister errors-->
                 <FlyoutBase.AttachedFlyout>
                     <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom">
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="CornerRadius" Value="8" />
+                                <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />

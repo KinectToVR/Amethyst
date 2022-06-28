@@ -45,10 +45,10 @@
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    Text="OpenVR Setup Failed Crash:"
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    Text="Occurs when OpenVR couldn't be set up on startup."
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                     </StackPanel>
                 </Grid>
 
@@ -65,10 +65,10 @@
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    Text="No Devices (Loaded Plugins) Crash:"
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    Text="Occurs when there were no loaded devices (plugins)."
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                     </StackPanel>
                 </Grid>
 
@@ -85,10 +85,10 @@
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    Text="WinRT TakeOwnership Exception (Unhandled):"
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    Text="Usually occurs when code is fucked up BIG TIME."
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                     </StackPanel>
                 </Grid>
 
@@ -105,10 +105,10 @@
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    Text="WinRT HRESULT Exception (Unhandled):"
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    Text="Occurs when UI's HRESULT check returns false."
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                     </StackPanel>
                 </Grid>
 
@@ -124,10 +124,10 @@
                     <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    Text="Null Pointer Exception (Unhandled):"
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    Text="Usually occurs when code is fucked up."
-                                   Margin="0,0,0,0" Foreground="LightGray" />
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                     </StackPanel>
                 </Grid>
 
@@ -136,6 +136,13 @@
 
         <FlyoutBase.AttachedFlyout>
             <Flyout x:Name="WhaaatFlyout">
+                <Flyout.FlyoutPresenterStyle>
+                    <Style TargetType="FlyoutPresenter">
+                        <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                    </Style>
+                </Flyout.FlyoutPresenterStyle>
+
                 <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Height="Auto" Width="420"
                          Stretch="Uniform" StretchDirection="DownOnly">
                     <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
