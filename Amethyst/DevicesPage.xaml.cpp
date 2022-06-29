@@ -34,6 +34,7 @@ namespace winrt::Amethyst::implementation
 		trackingDeviceChangePanel = std::make_shared<Controls::Grid>(TrackingDeviceChangePanel());
 		devicesMainContentGridOuter = std::make_shared<Controls::Grid>(DevicesMainContentGridOuter());
 		devicesMainContentGridInner = std::make_shared<Controls::Grid>(DevicesMainContentGridInner());
+		selectedDeviceSettingsHostContainer = std::make_shared<Controls::Grid>(SelectedDeviceSettingsHostContainer());
 
 		devicesListView = std::make_shared<Controls::ListView>(TrackingDeviceListView());
 		noJointsFlyout = std::make_shared<Controls::Flyout>(NoJointsFlyout());
@@ -56,10 +57,6 @@ namespace winrt::Amethyst::implementation
 
 		selectedDeviceSettingsRootLayoutPanel = std::make_shared<Controls::StackPanel>(
 			SelectedDeviceSettingsRootLayoutPanel());
-
-		selectedDeviceSettingsButton = std::make_shared<Controls::AppBarButton>(SelectedDeviceSettingsButton());
-
-		selectedDeviceSettingsFlyout = std::make_shared<Controls::Flyout>(SelectedDeviceSettingsFlyout());
 
 		// Create tracking devices' list
 		static auto m_TrackingDevicesViewModels =
@@ -194,7 +191,7 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 		deviceName = device->getDeviceName();
 
 		// Show / Hide device settings button
-		selectedDeviceSettingsButton.get()->Visibility(
+		selectedDeviceSettingsHostContainer.get()->Visibility(
 			device->isSettingsDaemonSupported()
 				? Visibility::Visible
 				: Visibility::Collapsed);
@@ -272,7 +269,7 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 		deviceName = device->getDeviceName();
 
 		// Show / Hide device settings button
-		selectedDeviceSettingsButton.get()->Visibility(
+		selectedDeviceSettingsHostContainer.get()->Visibility(
 			device->isSettingsDaemonSupported()
 				? Visibility::Visible
 				: Visibility::Collapsed);
@@ -506,6 +503,20 @@ void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(
 				}
 			}
 		}
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsHostContainer.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 	}
 	else if (trackingDevice.index() == 1)
 	{
@@ -571,6 +582,20 @@ void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(
 				}
 			}
 		}
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsHostContainer.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 	}
 
 	// Check if we've disabled any joints from spawning and disable they're mods
@@ -625,6 +650,20 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsHostContainer.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 	}
 	else if (trackingDevice.index() == 1)
 	{
@@ -648,6 +687,20 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsHostContainer.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 	}
 
 	/* Update local statuses */
@@ -707,12 +760,40 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 		// Kinect Basis
 		const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
 		device_status = device->statusResultWString(device->getStatusResult());
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsHostContainer.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 	}
 	else if (trackingDevice.index() == 1)
 	{
 		// Joints Basis
 		const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 		device_status = device->statusResultWString(device->getStatusResult());
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsHostContainer.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 	}
 
 	/* Update local statuses */
@@ -817,6 +898,20 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsHostContainer.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 	}
 	else if (trackingDevice.index() == 1)
 	{
@@ -872,6 +967,20 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsHostContainer.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 	}
 
 	// Check if we've disabled any joints from spawning and disable they're mods
@@ -976,6 +1085,20 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsHostContainer.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 	}
 	else if (trackingDevice.index() == 1)
 	{
@@ -1006,6 +1129,20 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 		device_status = device->statusResultWString(device->getStatusResult());
 		jointBasisLabel.get()->Visibility(
 			(device_status.find(L"S_OK") != std::wstring::npos) ? Visibility::Visible : Visibility::Collapsed);
+
+		// Show / Hide device settings button
+		selectedDeviceSettingsHostContainer.get()->Visibility(
+			device->isSettingsDaemonSupported()
+			? Visibility::Visible
+			: Visibility::Collapsed);
+
+		// Append device settings / placeholder layout
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+		selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			device->isSettingsDaemonSupported()
+			? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
+				selectedTrackingDeviceID)->Get()
+			: *k2app::interfacing::emptyLayoutRoot->Get());
 	}
 
 	// Check if we've disabled any joints from spawning and disable they're mods
@@ -1137,7 +1274,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 		deviceName = device->getDeviceName();
 
 		// Show / Hide device settings button
-		selectedDeviceSettingsButton.get()->Visibility(
+		selectedDeviceSettingsHostContainer.get()->Visibility(
 			device->isSettingsDaemonSupported()
 				? Visibility::Visible
 				: Visibility::Collapsed);
@@ -1215,7 +1352,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 		deviceName = device->getDeviceName();
 
 		// Show / Hide device settings button
-		selectedDeviceSettingsButton.get()->Visibility(
+		selectedDeviceSettingsHostContainer.get()->Visibility(
 			device->isSettingsDaemonSupported()
 				? Visibility::Visible
 				: Visibility::Collapsed);
@@ -1362,11 +1499,4 @@ void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/", nullptr, nullptr, SW_SHOW);
-}
-
-
-void Amethyst::implementation::DevicesPage::SelectedDeviceSettingsButton_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	selectedDeviceSettingsFlyout.get()->ShowAt(sender.as<FrameworkElement>());
 }

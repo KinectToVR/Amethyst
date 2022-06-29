@@ -2447,6 +2447,8 @@ namespace k2app::interfacing
 						(*pElement).Get().get()->HorizontalAlignment(
 							horizontalAlignmentConverter(alignment));
 
+						(*pElement).Get().get()->TextWrapping(TextWrapping::WrapWholeWords);
+
 						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
 						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
@@ -2624,6 +2626,8 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->HorizontalAlignment(
 								HorizontalAlignment::Left);
+
+							(*pElement).Get().get()->TextWrapping(TextWrapping::WrapWholeWords);
 
 							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
@@ -2804,6 +2808,8 @@ namespace k2app::interfacing
 							(*pElement).Get().get()->HorizontalAlignment(
 								HorizontalAlignment::Right);
 
+							(*pElement).Get().get()->TextWrapping(TextWrapping::WrapWholeWords);
+
 							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
 							_grid.Children().Append(*(*pElement).Get());
@@ -2970,6 +2976,345 @@ namespace k2app::interfacing
 				_ptr_stack_panel.get()->Children().Append(_grid);
 			}
 
+			// Append a One-Row element pair : */* column space
+			void AppendElementPairStack(const Interface::Element& first_element,
+			                       const Interface::Element& second_element) override
+			{
+				// Set up a placeholder stack panel (horizontal)
+				Controls::StackPanel _stack_panel;
+				_stack_panel.HorizontalAlignment(HorizontalAlignment::Stretch);
+				_stack_panel.Orientation(Controls::Orientation::Horizontal);
+
+				// Parse and append the first pair element
+				{
+					// Switch based on element type: all types
+					switch (first_element.index())
+					{
+					// TextBlock
+					case 0:
+						{
+							const auto& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
+
+							(*pElement).Get().get()->TextWrapping(TextWrapping::WrapWholeWords);
+
+							(*pElement).Get().get()->Margin({3, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// Button
+					case 1:
+						{
+							const auto& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
+
+							(*pElement).Get().get()->Margin({3, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// NumberBox
+					case 2:
+						{
+							const auto& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
+
+							(*pElement).Get().get()->Margin({3, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ComboBox
+					case 3:
+						{
+							const auto& pElement = static_cast<AppComboBox*>(
+								std::get<Interface::ComboBox*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
+
+							(*pElement).Get().get()->Margin({3, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// CheckBox
+					case 4:
+						{
+							const auto& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
+
+							(*pElement).Get().get()->Margin({3, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ToggleSwitch
+					case 5:
+						{
+							const auto& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
+
+							(*pElement).Get().get()->Margin({3, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// TextBox
+					case 6:
+						{
+							const auto& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
+
+							(*pElement).Get().get()->Margin({3, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ProgressRing
+					case 7:
+						{
+							const auto& pElement = static_cast<AppProgressRing*>(
+								std::get<Interface::ProgressRing*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
+
+							(*pElement).Get().get()->Margin({3, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ProgressBar
+					case 8:
+						{
+							const auto& pElement = static_cast<AppProgressBar*>(
+								std::get<Interface::ProgressBar*>(first_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Left);
+
+							(*pElement).Get().get()->Margin({3, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					}
+				}
+
+				// Parse and append the second pair element
+				{
+					// Switch based on element type: all types
+					switch (second_element.index())
+					{
+					// TextBlock
+					case 0:
+						{
+							const auto& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
+
+							(*pElement).Get().get()->TextWrapping(TextWrapping::WrapWholeWords);
+
+							(*pElement).Get().get()->Margin({5, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// Button
+					case 1:
+						{
+							const auto& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
+
+							(*pElement).Get().get()->Margin({5, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// NumberBox
+					case 2:
+						{
+							const auto& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
+
+							(*pElement).Get().get()->Margin({5, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ComboBox
+					case 3:
+						{
+							const auto& pElement = static_cast<AppComboBox*>(
+								std::get<Interface::ComboBox*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
+
+							(*pElement).Get().get()->Margin({5, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// CheckBox
+					case 4:
+						{
+							const auto& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
+
+							(*pElement).Get().get()->Margin({5, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ToggleSwitch
+					case 5:
+						{
+							const auto& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
+
+							(*pElement).Get().get()->Margin({5, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// TextBox
+					case 6:
+						{
+							const auto& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
+
+							(*pElement).Get().get()->Margin({5, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ProgressRing
+					case 7:
+						{
+							const auto& pElement = static_cast<AppProgressRing*>(
+								std::get<Interface::ProgressRing*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
+
+							(*pElement).Get().get()->Margin({5, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ProgressBar
+					case 8:
+						{
+							const auto& pElement = static_cast<AppProgressBar*>(
+								std::get<Interface::ProgressBar*>(second_element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->HorizontalAlignment(
+								HorizontalAlignment::Right);
+
+							(*pElement).Get().get()->Margin({5, 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					}
+				}
+
+				// Append the created grid to the base stack
+				_ptr_stack_panel.get()->Children().Append(_stack_panel);
+			}
+
 			// Append a One-Row element vector : */*/.../* column space
 			void AppendElementVector(const std::vector<Interface::Element>
 				& element_vector) override
@@ -2984,8 +3329,8 @@ namespace k2app::interfacing
 					// Append a column
 					Controls::AppendGridStarColumn(_grid);
 
-					// Parse the alignment : Centered by default
-					auto _alignment = HorizontalAlignment::Center;
+					// Parse the alignment : Left by default
+					auto _alignment = HorizontalAlignment::Left;
 
 					// If there are more than 2 elements,
 					// snap the first one to the left and the last one to the right
@@ -3011,6 +3356,8 @@ namespace k2app::interfacing
 								VerticalAlignment::Center);
 
 							(*pElement).Get().get()->HorizontalAlignment(_alignment);
+
+							(*pElement).Get().get()->TextWrapping(TextWrapping::WrapWholeWords);
 
 							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
@@ -3168,6 +3515,158 @@ namespace k2app::interfacing
 
 				// Append the created grid to the base stack
 				_ptr_stack_panel.get()->Children().Append(_grid);
+			}
+
+
+			// Append a One-Row element vector : */*/.../* column space
+			void AppendElementVectorStack(const std::vector<Interface::Element>
+				& element_vector) override
+			{
+				// Set up a placeholder stack panel (horizontal)
+				Controls::StackPanel _stack_panel;
+				_stack_panel.HorizontalAlignment(HorizontalAlignment::Stretch);
+				_stack_panel.Orientation(Controls::Orientation::Horizontal);
+
+				// Parse and append the elements
+				for (uint32_t i = 0; i < element_vector.size(); i++)
+				{
+					// Switch based on element type: all types
+					switch (const auto& element = element_vector.at(i);
+						element.index())
+					{
+					// TextBlock
+					case 0:
+						{
+							const auto& pElement = static_cast<AppTextBlock*>(
+								std::get<Interface::TextBlock*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+
+							(*pElement).Get().get()->TextWrapping(TextWrapping::WrapWholeWords);
+
+							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// Button
+					case 1:
+						{
+							const auto& pElement = static_cast<AppButton*>(
+								std::get<Interface::Button*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+							
+							(*pElement).Get().get()->Margin({ (i == 0 ? 3. : 5.), 3, 5, 3 });
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// NumberBox
+					case 2:
+						{
+							const auto& pElement = static_cast<AppNumberBox*>(
+								std::get<Interface::NumberBox*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+							
+							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ComboBox
+					case 3:
+						{
+							const auto& pElement = static_cast<AppComboBox*>(
+								std::get<Interface::ComboBox*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+							
+							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// CheckBox
+					case 4:
+						{
+							const auto& pElement = static_cast<AppCheckBox*>(
+								std::get<Interface::CheckBox*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+							
+							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ToggleSwitch
+					case 5:
+						{
+							const auto& pElement = static_cast<AppToggleSwitch*>(
+								std::get<Interface::ToggleSwitch*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+							
+							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// TextBox
+					case 6:
+						{
+							const auto& pElement = static_cast<AppTextBox*>(
+								std::get<Interface::TextBox*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+							
+							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ProgressRing
+					case 7:
+						{
+							const auto& pElement = static_cast<AppProgressRing*>(
+								std::get<Interface::ProgressRing*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+							
+							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					// ProgressBar
+					case 8:
+						{
+							const auto& pElement = static_cast<AppProgressBar*>(
+								std::get<Interface::ProgressBar*>(element));
+
+							(*pElement).Get().get()->VerticalAlignment(
+								VerticalAlignment::Center);
+							
+							(*pElement).Get().get()->Margin({ (i == 0 ? 3. : 5.), 3, 5, 3 });
+
+							_stack_panel.Children().Append(*(*pElement).Get());
+							break;
+						}
+					}
+				}
+
+				// Append the created grid to the base stack
+				_ptr_stack_panel.get()->Children().Append(_stack_panel);
 			}
 
 			// Creation: register a host

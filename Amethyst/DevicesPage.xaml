@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Loaded="DevicesPage_Loaded"
-    NavigationCacheMode="Required"
+    NavigationCacheMode="Required" MinWidth="1100"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals">
 
@@ -120,12 +120,12 @@
                             <TextBlock FontWeight="SemiBold" Text="E_UNKNOWN" VerticalAlignment="Top"
                                        x:Name="SelectedDeviceNameLabel" FontSize="25" Margin="0,4,0,0" />
 
-                            <AppBarButton x:Name="SelectedDeviceSettingsButton" VerticalAlignment="Top"
+                            <!--<AppBarButton x:Name="SelectedDeviceSettingsButton" VerticalAlignment="Top"
                                           Click="SelectedDeviceSettingsButton_Click"
                                           x:Uid="/DevicesPage/Buttons/DeviceSettings"
                                           Icon="Setting" Width="38" Height="46" Margin="7,0,0,0">
 
-                                <!--Settings pane flyout-->
+                                --><!--Settings pane flyout--><!--
                                 <FlyoutBase.AttachedFlyout>
                                     <Flyout x:Name="SelectedDeviceSettingsFlyout" Placement="Bottom">
                                         <Flyout.FlyoutPresenterStyle>
@@ -144,7 +144,7 @@
                                     </Flyout>
                                 </FlyoutBase.AttachedFlyout>
 
-                            </AppBarButton>
+                            </AppBarButton>-->
                         </StackPanel>
 
                         <StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="3" HorizontalAlignment="Stretch">
@@ -345,6 +345,25 @@
 
                                 </Grid>
 
+                            </Grid>
+
+                            <!--Custom device settings part-->
+
+                            <Grid Margin="37,20,0,-5" HorizontalAlignment="Stretch" MinWidth="290"
+                                  x:Name="SelectedDeviceSettingsHostContainer">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="25*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel x:Name="SelectedDeviceSettingsRootLayoutPanel" Grid.Column="0"
+                                            Orientation="Vertical" HorizontalAlignment="Stretch" Margin="0,0,170,0">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </Style>
+                                    </StackPanel.Resources>
+                                </StackPanel>
                             </Grid>
 
                             <!--Overrides Part-->

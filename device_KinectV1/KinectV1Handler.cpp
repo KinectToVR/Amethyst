@@ -12,10 +12,8 @@ HRESULT KinectV1Handler::getStatusResult()
 
 		if (_loaded)
 		{
-			m_main_progress_bar->Progress(100);
-			m_main_progress_bar->ShowPaused(res != S_OK);
+			settingsSupported = (res == S_OK);
 
-			m_message_text_block->Visibility(res != S_OK);
 			m_elevation_label->Visibility(res == S_OK);
 			m_elevation_spinner->Visibility(res == S_OK);
 		}
@@ -60,10 +58,8 @@ void KinectV1Handler::initialize()
 
 		if (_loaded)
 		{
-			m_main_progress_bar->Progress(100);
-			m_main_progress_bar->ShowPaused(getStatusResult() != S_OK);
+			settingsSupported = (getStatusResult() == S_OK);
 
-			m_message_text_block->Visibility(getStatusResult() != S_OK);
 			m_elevation_label->Visibility(getStatusResult() == S_OK);
 			m_elevation_spinner->Visibility(getStatusResult() == S_OK);
 		}
@@ -86,6 +82,7 @@ void KinectV1Handler::shutdown()
 	try
 	{
 		LOG(INFO) << "Shutting down: Kinect V1 streams' termination pending...";
+		settingsSupported = false; // Hide
 
 		// Shut down the sensor (Only NUI API)
 		if (kinectSensor) // Protect from null call
@@ -94,6 +91,9 @@ void KinectV1Handler::shutdown()
 				__try
 				{
 					kinectSensor->NuiShutdown();
+
+					initialized = false;
+					kinectSensor = nullptr;
 				}
 				__except (EXCEPTION_EXECUTE_HANDLER)
 				{

@@ -641,8 +641,21 @@ namespace ktvr
 			{
 			}
 
+			// Append a One-Row element pair : horizontal stack
+			virtual void AppendElementPairStack(
+				const Element& first_element,
+				const Element& second_element)
+			{
+			}
+
 			// Append a One-Row element vector : */* column space
 			virtual void AppendElementVector(
+				const std::vector<Element>& element_vector)
+			{
+			}
+
+			// Append a One-Row element vector : horizontal stack
+			virtual void AppendElementVectorStack(
 				const std::vector<Element>& element_vector)
 			{
 			}
@@ -754,6 +767,8 @@ namespace ktvr
 		// -> will lead to showing an additional 'settings' button
 		// Note: each device has to save its settings independently
 		//       and may use the K2AppData from the Paths' header
+		// Tip: you can hide your device's settings by marking this as 'false',
+		//      and change it back to 'true' when you're ready
 		[[nodiscard]] bool isSettingsDaemonSupported() const { return settingsSupported; }
 
 		/*
@@ -966,6 +981,8 @@ namespace ktvr
 		// -> will lead to showing an additional 'settings' button
 		// Note: each device has to save its settings independently
 		//       and may use the K2AppData from the Paths' header
+		// Tip: you can hide your device's settings by marking this as 'false',
+		//      and change it back to 'true' when you're ready
 		[[nodiscard]] bool isSettingsDaemonSupported() const { return settingsSupported; }
 
 		/*

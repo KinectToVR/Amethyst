@@ -383,8 +383,12 @@ void KinectV2Handler::shutdown()
 			{
 				__try
 				{
+					initialized = false;
+
 					kinectSensor->Close();
 					kinectSensor->Release();
+
+					kinectSensor = nullptr;
 				}
 				__except (EXCEPTION_EXECUTE_HANDLER)
 				{

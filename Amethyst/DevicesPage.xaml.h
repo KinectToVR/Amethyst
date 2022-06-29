@@ -41,8 +41,6 @@ namespace winrt::Amethyst::implementation
 		                             const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void OpenDocsButton_Click(const Windows::Foundation::IInspectable& sender,
 		                          const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void SelectedDeviceSettingsButton_Click(const Windows::Foundation::IInspectable& sender,
-		                                        const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
 	};
 }
 

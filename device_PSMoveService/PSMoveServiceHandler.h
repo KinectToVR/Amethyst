@@ -31,7 +31,7 @@ public:
 
 		deviceType = ktvr::K2_Joints;
 		deviceName = "PSMove Service";
-		settingsSupported = true;
+		settingsSupported = true; // Until the status is OK
 	}
 
 	void initialize() override;
@@ -51,8 +51,7 @@ public:
 
 		layoutRoot->AppendSingleElement(
 			CreateTextBlock(
-				L"If you're using PSMS for rotation tracking only,\n"
-				L"you can dim controller LED lights to save power.\n "));
+				L"If you're using PSMS for rotation tracking only, you can dim controller LED lights to save power."));
 
 		auto lights_toggle = CreateToggleSwitch();
 		lights_toggle->IsChecked(m_lightsOff); // Read from settings
@@ -77,7 +76,7 @@ public:
 			save_settings();
 		};
 
-		layoutRoot->AppendElementPair(
+		layoutRoot->AppendElementPairStack(
 			CreateTextBlock(
 				L"Dim PSMS lights:"),
 			lights_toggle);

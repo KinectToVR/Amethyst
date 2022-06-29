@@ -38,7 +38,7 @@ public:
 		appOrientationSupported = true;
 
 		// Mark that our device supports settings
-		settingsSupported = true;
+		settingsSupported = false; // 'false' until status OK
 		load_settings(); // Load settings
 	}
 
@@ -70,31 +70,16 @@ public:
 		}
 
 		// Create elements
-		m_elevation_label = CreateTextBlock(L"Elevation angle:");
+		m_elevation_label = CreateTextBlock(L"Kinect elevation angle:");
 		m_elevation_spinner = CreateNumberBox(sensorAngle);
-
-		m_message_text_block = CreateTextBlock(L"Please connect the Kinect first!");
-		m_main_progress_bar = CreateProgressBar();
-
+		
 		// Set up elements
-		m_main_progress_bar->Width(270);
-		m_main_progress_bar->Progress(100);
-		m_main_progress_bar->ShowPaused(true);
-
-		m_elevation_spinner->Width(130);
+		m_elevation_spinner->Width(120);
 
 		// Append the elements : Static Data
-		layoutRoot->AppendElementPair(
+		layoutRoot->AppendElementPairStack(
 			m_elevation_label, m_elevation_spinner);
-
-		layoutRoot->AppendSingleElement(
-			m_message_text_block,
-			ktvr::Interface::SingleLayoutHorizontalAlignment::Center);
-
-		layoutRoot->AppendSingleElement(
-			m_main_progress_bar,
-			ktvr::Interface::SingleLayoutHorizontalAlignment::Center);
-
+		
 		// Set up particular handlers
 
 		// "Full Calibration"
@@ -123,9 +108,8 @@ public:
 
 private:
 	/* Device's own stuff */
-	ktvr::Interface::TextBlock *m_elevation_label, *m_message_text_block;
+	ktvr::Interface::TextBlock* m_elevation_label;
 	ktvr::Interface::NumberBox* m_elevation_spinner;
-	ktvr::Interface::ProgressBar* m_main_progress_bar;
 	bool _loaded = false;
 
 	void save_settings()

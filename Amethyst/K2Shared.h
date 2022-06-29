@@ -110,7 +110,8 @@ namespace k2app::shared
 			deviceErrorGrid,
 			trackingDeviceChangePanel,
 			devicesMainContentGridOuter,
-			devicesMainContentGridInner;
+			devicesMainContentGridInner,
+			selectedDeviceSettingsHostContainer;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ListView> devicesListView;
 
@@ -138,10 +139,6 @@ namespace k2app::shared
 
 			jointsBasisExpanderHostStackPanel,
 			overridesExpanderHostStackPanel;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::AppBarButton> selectedDeviceSettingsButton;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Flyout> selectedDeviceSettingsFlyout;
 	}
 
 	namespace settings

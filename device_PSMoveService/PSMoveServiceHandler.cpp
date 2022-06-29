@@ -16,6 +16,7 @@ Eigen::Quaternionf PSMSToEigen(PSMQuatf q)
 
 HRESULT PSMoveServiceHandler::getStatusResult()
 {
+	settingsSupported = initialized; // Just in case
 	return initialized ? S_OK : E_PSMS_NOT_RUNNING;
 }
 
@@ -39,6 +40,8 @@ void PSMoveServiceHandler::initialize()
 		startup(); // Try start up
 
 		initialized = PSM_GetIsConnected();
+		settingsSupported = initialized;
+
 		LOG(INFO) << (initialized ? "PSMoveService init OK." : "PSMoveService is not running.");
 	}
 	catch (std::exception& e)
@@ -83,6 +86,7 @@ void PSMoveServiceHandler::shutdown()
 		// No HMD data streams started
 
 		initialized = false;
+		settingsSupported = initialized;
 
 		LOG(INFO) << "PSMoveService attempted shutdown with PSMResult: " <<
 			PSMResultToString(PSM_Shutdown());

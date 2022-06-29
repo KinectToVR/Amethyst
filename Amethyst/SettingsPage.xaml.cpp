@@ -567,10 +567,13 @@ void winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersFlyout_Clos
 }
 
 
+// Global scope to spare creating new ones each click
+std::optional<Controls::MenuFlyout> settings_trackerConfigFlyout = std::nullopt;
+
 void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	auto trackerConfigFlyout = Controls::MenuFlyout();
+	settings_trackerConfigFlyout = Controls::MenuFlyout();
 
 	enum i_tracker_list
 	{
@@ -804,7 +807,7 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 			});
 
 		// Append the item
-		trackerConfigFlyout.Items().Append(menuTrackerToggleItem);
+		settings_trackerConfigFlyout.value().Items().Append(menuTrackerToggleItem);
 	}
 
 	auto menuPairsToggleItem = Controls::ToggleMenuFlyoutItem();
@@ -944,12 +947,12 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 		});
 
 	// Append the item
-	trackerConfigFlyout.Items().Append(Controls::MenuFlyoutSeparator());
-	trackerConfigFlyout.Items().Append(menuPairsToggleItem);
+	settings_trackerConfigFlyout.value().Items().Append(Controls::MenuFlyoutSeparator());
+	settings_trackerConfigFlyout.value().Items().Append(menuPairsToggleItem);
 
-	trackerConfigFlyout.Placement(Controls::Primitives::FlyoutPlacementMode::LeftEdgeAlignedBottom);
-	trackerConfigFlyout.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
-	trackerConfigFlyout.ShowAt(TrackerConfigButton());
+	settings_trackerConfigFlyout.value().Placement(Controls::Primitives::FlyoutPlacementMode::LeftEdgeAlignedBottom);
+	settings_trackerConfigFlyout.value().ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+	settings_trackerConfigFlyout.value().ShowAt(TrackerConfigButton());
 }
 
 
