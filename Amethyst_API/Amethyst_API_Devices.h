@@ -30,7 +30,7 @@ inline std::string WStringToString(const std::wstring& s)
 namespace ktvr
 {
 	// Interface Version
-	static const char* IK2API_Devices_Version = "IK2API_Version_010";
+	static const char* IK2API_Devices_Version = "IK2API_Version_011";
 
 	// Return messaging types
 	enum K2InitErrorType
