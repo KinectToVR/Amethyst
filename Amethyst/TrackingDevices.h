@@ -1,9 +1,12 @@
 #pragma once
 #include "pch.h"
 
-#include "JointExpander.h"
 #include "K2Interfacing.h"
 #include "K2Shared.h"
+
+#include "JointExpander.h"
+#include "JointSelectorExpander.h"
+#include "OverrideSelectorExpander.h"
 
 namespace TrackingDevices
 {
@@ -326,72 +329,6 @@ namespace TrackingDevices
 		return -1; // Return invalid
 	}
 
-	inline void devices_check_override_ids(const uint32_t& id)
-	{
-		// Take down IDs if they're too big
-		if (const auto& device_pair = getCurrentOverrideDevice_Safe(id); device_pair.first)
-		{
-			if (device_pair.second.index() == 1) // If Joints
-			{
-				// Note: num_joints should never be 0
-				const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
-					(device_pair.second)->getTrackedJoints().size();
-
-				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
-					if (tracker.positionOverrideJointID >= num_joints)
-						tracker.positionOverrideJointID = 0;
-
-				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
-					if (tracker.rotationOverrideJointID >= num_joints)
-						tracker.rotationOverrideJointID = 0;
-			}
-			else if (device_pair.second.index() == 0) // If Kinect
-			{
-				// Note: switch based on device characteristics
-				const auto characteristics = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
-					(device_pair.second)->getDeviceCharacteristics();
-				uint32_t num_joints = -1; // To set later
-
-				if (characteristics == ktvr::K2_Character_Full)
-					num_joints = 8;
-				else if (characteristics == ktvr::K2_Character_Simple)
-					num_joints = 8;
-				else if (characteristics == ktvr::K2_Character_Basic)
-					num_joints = 3;
-
-				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
-					if (tracker.positionOverrideJointID >= num_joints)
-						tracker.positionOverrideJointID = 0;
-
-				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
-					if (tracker.rotationOverrideJointID >= num_joints)
-						tracker.rotationOverrideJointID = 0;
-			}
-
-			// Save it
-			k2app::K2Settings.saveSettings();
-		}
-	}
-
-	inline void devices_check_base_ids(const uint32_t& id)
-	{
-		// Take down IDs if they're too big
-		if (const auto& device_pair = getCurrentDevice(id);
-			device_pair.index() == 1) // If Joints
-		{
-			// Note: num_joints should never be 0
-			const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
-				(device_pair)->getTrackedJoints().size();
-
-			for (auto& tracker : k2app::K2Settings.K2TrackersVector)
-				if (tracker.selectedTrackedJointID >= num_joints)
-					tracker.selectedTrackedJointID = 0;
-
-			// Save it
-			k2app::K2Settings.saveSettings();
-		}
-	}
-
 	inline void devices_update_current()
 	{
 		{
@@ -439,5 +376,199 @@ namespace TrackingDevices
 			/* Update local statuses */
 			k2app::shared::devices::overrideDeviceName.get()->Text(StringToWString(deviceName));
 		}
+	}
+
+	inline void devices_handle_refresh(const bool& reconnect)
+	{
+		using namespace k2app::shared::devices;
+		using namespace winrt::Microsoft::UI::Xaml;
+
+		// Just give up if not set up yet
+		if (jointBasisLabel.get() == nullptr)return;
+
+		auto& trackingDevice = TrackingDevicesVector.at(
+			devicesListView.get()->SelectedIndex());
+
+		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
+		LOG(INFO) << "Now reconnecting the tracking device...";
+
+		if (trackingDevice.index() == 0)
+		{
+			// Kinect Basis
+			const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+
+			if (reconnect) device->initialize();
+			device_status = device->statusResultWString(device->getStatusResult());
+
+			// We've selected a kinectbasis device, so this should be hidden
+			for (auto& expander : jointSelectorExpanders)
+				expander.get()->SetVisibility(Visibility::Collapsed);
+
+			jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+
+			// Set up combos if the device's OK
+			if (device_status.find(L"S_OK") != std::wstring::npos)
+			{
+				// If we're reconnecting an override device, also refresh joints
+				if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+				{
+					// Clear items
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->ReAppendTrackers();
+
+					// Append all joints to all combos, depend on characteristics
+					switch (device->getDeviceCharacteristics())
+					{
+					case ktvr::K2_Character_Basic:
+						{
+							for (auto& expander : overrideSelectorExpanders)
+								expander.get()->PushOverrideJoints(false);
+						}
+						break;
+					case ktvr::K2_Character_Simple:
+						{
+							for (auto& expander : overrideSelectorExpanders)
+								expander.get()->PushOverrideJoints();
+						}
+						break;
+					case ktvr::K2_Character_Full:
+						{
+							for (auto& expander : overrideSelectorExpanders)
+								expander.get()->PushOverrideJoints();
+						}
+						break;
+					}
+
+					// Try fix override IDs if wrong
+					devices_check_override_ids(selectedTrackingDeviceID);
+
+					for (auto& expander : overrideSelectorExpanders)
+					{
+						// Select the first (or next, if exists) joint
+						// Set the placeholder text on disabled combos
+						expander.get()->SelectComboItems();
+
+						// Select enabled overrides
+						expander.get()->UpdateOverrideToggles();
+					}
+				}
+			}
+
+			// Show / Hide device settings button
+			selectedDeviceSettingsHostContainer.get()->Visibility(
+				device->isSettingsDaemonSupported()
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
+			// Append device settings / placeholder layout
+			selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+			selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+				device->isSettingsDaemonSupported()
+					? *TrackingDevicesLayoutRootsVector.at(
+						selectedTrackingDeviceID)->Get()
+					: *k2app::interfacing::emptyLayoutRoot->Get());
+		}
+		else if (trackingDevice.index() == 1)
+		{
+			// Joints Basis
+			const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+
+			if (reconnect)device->initialize();
+			device_status = device->statusResultWString(device->getStatusResult());
+
+			// We've selected a jointsbasis device, so this should be visible
+			//	at least when the device is online
+			for (auto& expander : jointSelectorExpanders)
+				expander.get()->SetVisibility(
+					(device_status.find(L"S_OK") != std::wstring::npos &&
+						selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+						? Visibility::Visible
+						: Visibility::Collapsed);
+
+			jointBasisLabel.get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
+			// Set up combos if the device's OK
+			if (device_status.find(L"S_OK") != std::wstring::npos)
+			{
+				// If we're reconnecting a base device, also refresh joints
+				if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+				{
+					for (auto& expander : jointSelectorExpanders)
+						expander.get()->ReAppendTrackers();
+				}
+				// If we're reconnecting an override device, also refresh joints
+				else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+				{
+					// Clear items
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->ReAppendTrackers();
+
+					// Append all joints to all combos
+					for (auto& _joint : device->getTrackedJoints())
+					{
+						// Get the name into string
+						auto _jointname = _joint.getJointName();
+
+						// Push the name to all combos
+						for (auto& expander : overrideSelectorExpanders)
+							expander.get()->PushOverrideJoint(StringToWString(_jointname));
+					}
+
+					// Try fix override IDs if wrong
+					devices_check_override_ids(selectedTrackingDeviceID);
+
+					for (auto& expander : overrideSelectorExpanders)
+					{
+						// Select the first (or next, if exists) joint
+						// Set the placeholder text on disabled combos
+						expander.get()->SelectComboItems();
+
+						// Select enabled overrides
+						expander.get()->UpdateOverrideToggles();
+					}
+				}
+			}
+
+			// Show / Hide device settings button
+			selectedDeviceSettingsHostContainer.get()->Visibility(
+				device->isSettingsDaemonSupported()
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
+			// Append device settings / placeholder layout
+			selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
+			selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+				device->isSettingsDaemonSupported()
+					? *TrackingDevicesLayoutRootsVector.at(
+						selectedTrackingDeviceID)->Get()
+					: *k2app::interfacing::emptyLayoutRoot->Get());
+		}
+
+		// Check if we've disabled any joints from spawning and disable they're mods
+		k2app::interfacing::devices_check_disabled_joints();
+
+		/* Update local statuses */
+
+		// Update the status here
+		const bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
+
+		errorWhatText.get()->Visibility(
+			status_ok ? Visibility::Collapsed : Visibility::Visible);
+		deviceErrorGrid.get()->Visibility(
+			status_ok ? Visibility::Collapsed : Visibility::Visible);
+		trackingDeviceErrorLabel.get()->Visibility(
+			status_ok ? Visibility::Collapsed : Visibility::Visible);
+
+		trackingDeviceChangePanel.get()->Visibility(
+			status_ok ? Visibility::Visible : Visibility::Collapsed);
+
+		// Split status and message by \n
+		deviceStatusLabel.get()->Text(split_status(device_status)[0]);
+		trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
+		errorWhatText.get()->Text(split_status(device_status)[2]);
 	}
 }

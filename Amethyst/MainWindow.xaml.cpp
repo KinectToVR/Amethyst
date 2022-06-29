@@ -1158,21 +1158,7 @@ namespace winrt::Amethyst::implementation
 							TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
 							TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
 						});
-
-						std::thread([&]
-						{
-							// Second check and try after 5 seconds
-							std::this_thread::sleep_for(std::chrono::seconds(5));
-
-							// Update the UI
-							k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue([&, this]
-							{
-								TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-								TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
-							});
-						}).detach();
-						// Auto-handles if none
-
+						
 						// Update the backend extflip value
 						if (!TrackingDevices::isExternalFlipSupportable())
 						{

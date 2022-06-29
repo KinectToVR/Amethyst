@@ -207,6 +207,72 @@ namespace TrackingDevices
 		// Save settings
 		k2app::K2Settings.saveSettings();
 	}
+
+	inline void devices_check_override_ids(const uint32_t& id)
+	{
+		// Take down IDs if they're too big
+		if (const auto& device_pair = getCurrentOverrideDevice_Safe(id); device_pair.first)
+		{
+			if (device_pair.second.index() == 1) // If Joints
+			{
+				// Note: num_joints should never be 0
+				const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
+					(device_pair.second)->getTrackedJoints().size();
+
+				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+					if (tracker.positionOverrideJointID >= num_joints)
+						tracker.positionOverrideJointID = 0;
+
+				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+					if (tracker.rotationOverrideJointID >= num_joints)
+						tracker.rotationOverrideJointID = 0;
+			}
+			else if (device_pair.second.index() == 0) // If Kinect
+			{
+				// Note: switch based on device characteristics
+				const auto characteristics = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
+					(device_pair.second)->getDeviceCharacteristics();
+				uint32_t num_joints = -1; // To set later
+
+				if (characteristics == ktvr::K2_Character_Full)
+					num_joints = 8;
+				else if (characteristics == ktvr::K2_Character_Simple)
+					num_joints = 8;
+				else if (characteristics == ktvr::K2_Character_Basic)
+					num_joints = 3;
+
+				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+					if (tracker.positionOverrideJointID >= num_joints)
+						tracker.positionOverrideJointID = 0;
+
+				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+					if (tracker.rotationOverrideJointID >= num_joints)
+						tracker.rotationOverrideJointID = 0;
+			}
+
+			// Save it
+			k2app::K2Settings.saveSettings();
+		}
+	}
+
+	inline void devices_check_base_ids(const uint32_t& id)
+	{
+		// Take down IDs if they're too big
+		if (const auto& device_pair = getCurrentDevice(id);
+			device_pair.index() == 1) // If Joints
+		{
+			// Note: num_joints should never be 0
+			const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
+				(device_pair)->getTrackedJoints().size();
+
+			for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+				if (tracker.selectedTrackedJointID >= num_joints)
+					tracker.selectedTrackedJointID = 0;
+
+			// Save it
+			k2app::K2Settings.saveSettings();
+		}
+	}
 }
 
 namespace winrt::Microsoft::UI::Xaml::Controls
