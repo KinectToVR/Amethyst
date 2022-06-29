@@ -173,6 +173,13 @@ namespace K2CrashHandler
                 Win32Interop.GetWindowIdFromWindow(
                     WindowNative.GetWindowHandle(this)));
 
+            // Fix no icon in titlebar/task view
+            appWindow.SetIcon(Path.Combine(
+                Directory.GetParent(
+                    Assembly.GetExecutingAssembly().Location).ToString(),
+                "Assets", "crashhandler.ico"));
+
+            // Custom titlebar
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
                 // Chad Windows 11
