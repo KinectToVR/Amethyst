@@ -441,12 +441,12 @@ namespace winrt::Amethyst::implementation
 
 		// Set titlebar/taskview icon
 		LOG(INFO) << "Setting the App Window icon...";
-		HWND hWnd{ 0 };
+		HWND hWnd{0};
 		this->try_as<IWindowNative>()->get_WindowHandle(&hWnd);
 
 		Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
 			Microsoft::UI::GetWindowIdFromWindow(hWnd)).SetIcon(
-				(boost::dll::program_location().parent_path() / "Assets" / "ktvr.ico").c_str());
+			(boost::dll::program_location().parent_path() / "Assets" / "ktvr.ico").c_str());
 
 		LOG(INFO) << "Making the app window available for children views...";
 		k2app::shared::main::thisAppWindow = std::make_shared<Window>(this->try_as<Window>());
@@ -512,8 +512,10 @@ namespace winrt::Amethyst::implementation
 		}
 
 		// Priority: Register the app exit handler
-		LOG(INFO) << "Registering an atexit handler for the app...";
-		atexit(k2app::interfacing::handle_app_exit_n);
+		LOG(INFO) << "Registering an exit handler for the app window...";
+		Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
+			Microsoft::UI::GetWindowIdFromWindow(hWnd)).Closing(
+			[&](auto, auto) { k2app::interfacing::handle_app_exit_n; });
 
 		// Priority: Launch the crash handler
 		LOG(INFO) << "Starting the crash handler passing the app PID...";
@@ -1158,7 +1160,7 @@ namespace winrt::Amethyst::implementation
 							TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
 							TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
 						});
-						
+
 						// Update the backend extflip value
 						if (!TrackingDevices::isExternalFlipSupportable())
 						{
@@ -1427,7 +1429,7 @@ void k2app::interfacing::handle_app_exit(const uint32_t& p_sleep_millis)
 {
 	// Mark exiting as true
 	isExitingNow = true;
-	LOG(INFO) << "AtExit handler called, starting the shutdown routine...";
+	LOG(INFO) << "AppWindow.Closing handler called, starting the shutdown routine...";
 
 	// Mark trackers as inactive
 	K2AppTrackersInitialized = false;
