@@ -12,6 +12,9 @@
 #include "Amethyst_API_Devices.h"
 #include "Amethyst_API_Paths.h"
 
+#include "LocalizedStatuses.h"
+#include "LocalizedSettings.h"
+
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/archives/xml.hpp>
@@ -70,16 +73,17 @@ public:
 		}
 
 		// Create elements
-		m_elevation_label = CreateTextBlock(L"Kinect elevation angle:");
 		m_elevation_spinner = CreateNumberBox(sensorAngle);
-		
+
 		// Set up elements
 		m_elevation_spinner->Width(120);
 
 		// Append the elements : Static Data
 		layoutRoot->AppendElementPairStack(
-			m_elevation_label, m_elevation_spinner);
-		
+			CreateTextBlock(
+				GetLocalizedStatusWStringAutomatic(elevation_angle_label_map)),
+			m_elevation_spinner);
+
 		// Set up particular handlers
 
 		// "Full Calibration"
@@ -100,15 +104,11 @@ public:
 					}).detach();
 			};
 
-		// Hide post-init ui elements
-		m_elevation_label->Visibility(false);
-		m_elevation_spinner->Visibility(false);
 		_loaded = true;
 	}
 
 private:
 	/* Device's own stuff */
-	ktvr::Interface::TextBlock* m_elevation_label;
 	ktvr::Interface::NumberBox* m_elevation_spinner;
 	bool _loaded = false;
 

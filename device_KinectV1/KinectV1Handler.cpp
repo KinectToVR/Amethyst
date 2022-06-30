@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
 #include "KinectV1Handler.h"
-#include "LocalizedStatuses.h"
 
 #define _PI 3.14159265358979323846
 
@@ -9,14 +8,7 @@ HRESULT KinectV1Handler::getStatusResult()
 	if (kinectSensor)
 	{
 		const auto res = kinectSensor->NuiStatus();
-
-		if (_loaded)
-		{
-			settingsSupported = (res == S_OK);
-
-			m_elevation_label->Visibility(res == S_OK);
-			m_elevation_spinner->Visibility(res == S_OK);
-		}
+		settingsSupported = (res == S_OK);
 
 		if (res == S_OK)
 		{
@@ -56,13 +48,7 @@ void KinectV1Handler::initialize()
 		LOG(INFO) << "Initializing: updated Kinect V1 status with: " <<
 			WStringToString(statusResultWString(getStatusResult()));
 
-		if (_loaded)
-		{
-			settingsSupported = (getStatusResult() == S_OK);
-
-			m_elevation_label->Visibility(getStatusResult() == S_OK);
-			m_elevation_spinner->Visibility(getStatusResult() == S_OK);
-		}
+		settingsSupported = (getStatusResult() == S_OK);
 
 		if (getStatusResult() == S_OK)
 		{
