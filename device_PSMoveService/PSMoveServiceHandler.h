@@ -8,6 +8,9 @@
 #include "Amethyst_API_Devices.h"
 #include "Amethyst_API_Paths.h"
 
+#include "LocalizedStatuses.h"
+#include "LocalizedSettings.h"
+
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/archives/xml.hpp>
@@ -51,7 +54,7 @@ public:
 
 		layoutRoot->AppendSingleElement(
 			CreateTextBlock(
-				L"If you're using PSMS for rotation tracking only, you can dim controller LED lights to save power."));
+				GetLocalizedStatusWStringAutomatic(dim_lights_label_map)));
 
 		auto lights_toggle = CreateToggleSwitch();
 		lights_toggle->IsChecked(m_lightsOff); // Read from settings

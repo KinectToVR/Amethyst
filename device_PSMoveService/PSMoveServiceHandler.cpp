@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
 #include "PSMoveServiceHandler.h"
-#include "LocalizedStatuses.h"
 
 #define M_PI_2 1.57079632679
 
