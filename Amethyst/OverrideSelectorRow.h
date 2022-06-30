@@ -363,7 +363,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 					// If we're using a joints device then also signal the joint
 					const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-					if (trackingDevicePair.first)
+					if (trackingDevicePair.first && k2app::shared::devices::devices_signal_joints)
 						if (trackingDevicePair.second.index() == 1 &&
 							k2app::shared::devices::devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
@@ -386,7 +386,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 					// If we're using a joints device then also signal the joint
 					const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
-					if (trackingDevicePair.first)
+					if (trackingDevicePair.first && k2app::shared::devices::devices_signal_joints)
 						if (trackingDevicePair.second.index() == 1 &&
 							k2app::shared::devices::devices_tab_re_setup_finished) // if JointsBasis & Setup Finished
 							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->

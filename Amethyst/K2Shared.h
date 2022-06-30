@@ -94,7 +94,8 @@ namespace k2app::shared
 	namespace devices
 	{
 		inline bool devices_tab_setup_finished = false,
-		            devices_tab_re_setup_finished = false;
+		            devices_tab_re_setup_finished = false,
+					devices_signal_joints = true;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
 			deviceNameLabel,

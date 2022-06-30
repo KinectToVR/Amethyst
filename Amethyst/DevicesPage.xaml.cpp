@@ -160,6 +160,7 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 	const Controls::SelectionChangedEventArgs& e)
 {
 	if (!devices_tab_setup_finished)co_return; // Block dummy selects
+	devices_signal_joints = false; // Don't signal on device selection
 
 	selectedTrackingDeviceID = sender.as<Controls::ListView>().SelectedIndex();
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
@@ -420,6 +421,7 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 		                            Append(*devicesMainContentGridInner);
 	}
 
+	devices_signal_joints = true; // Change back
 	LOG(INFO) << "Changed the currently selected device to " << deviceName;
 
 	// Remove the transition

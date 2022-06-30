@@ -170,7 +170,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 					// If we're using a joints device then also signal the joint
 					const auto& trackingDevice = TrackingDevices::getCurrentDevice();
-					if (trackingDevice.index() == 1 && k2app::shared::devices::devices_tab_re_setup_finished)
+					if (trackingDevice.index() == 1 && 
+						k2app::shared::devices::devices_tab_re_setup_finished &&
+						k2app::shared::devices::devices_signal_joints)
 						// if JointsBasis & Setup Finished
 						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->
 							signalJoint(_tracker_pointer->selectedTrackedJointID);
