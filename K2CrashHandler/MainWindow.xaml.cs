@@ -6,13 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using K2CrashHandler.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.ApplicationModel.Resources;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WinRT.Interop;
@@ -27,21 +27,15 @@ namespace K2CrashHandler
         public static int ProcessExitCode;
         public static ContentDialogView DialogView;
 
-        private static Microsoft.Windows.ApplicationModel.Resources.ResourceManager ResourceManager;
-        private static Microsoft.Windows.ApplicationModel.Resources.ResourceContext ResourceContext;
-
-        private static string LangResString(string key)
-        {
-            ResourceContext.QualifierValues["Language"] = CultureInfo.InstalledUICulture.IetfLanguageTag;
-            return ResourceManager.MainResourceMap.GetValue($"Resources/{key}", ResourceContext).ValueAsString;
-        }
+        private static ResourceManager ResourceManager;
+        private static ResourceContext ResourceContext;
 
         public MainWindow()
         {
             InitializeComponent();
 
             // Load strings
-            ResourceManager = new Microsoft.Windows.ApplicationModel.Resources.ResourceManager("resources.pri");
+            ResourceManager = new ResourceManager("resources.pri");
             ResourceContext = ResourceManager.CreateResourceContext();
 
             // Prepare placeholder strings (recovery mode)
@@ -126,6 +120,26 @@ namespace K2CrashHandler
                             case 0:
                             {
                                 // We're OK
+                                Close();
+                            }
+                                break;
+                            case -1073741189:
+                            {
+                                // owoTrack broke our dispatcher,
+                                // just don't give a shit
+                                Close();
+                            }
+                                break;
+                            case -1:
+                            {
+                                // Force closed from the debugger
+                                // (Or by the crash handler)
+                                Close();
+                            }
+                                break;
+                            case 1:
+                            {
+                                // Killed by system task manger
                                 Close();
                             }
                                 break;
@@ -227,6 +241,12 @@ namespace K2CrashHandler
 
             // And push it into the main grid
             RGrid.Children.Add(DialogView);
+        }
+
+        private static string LangResString(string key)
+        {
+            ResourceContext.QualifierValues["Language"] = CultureInfo.InstalledUICulture.IetfLanguageTag;
+            return ResourceManager.MainResourceMap.GetValue($"Resources/{key}", ResourceContext).ValueAsString;
         }
 
         private async void Action_ReRegister(object sender, RoutedEventArgs e)
