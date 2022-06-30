@@ -16,7 +16,9 @@ namespace winrt::Amethyst::implementation
 	struct GeneralPage : GeneralPageT<GeneralPage>
 	{
 		// Helper defines
-		bool CalibrationPending = false;
+		bool CalibrationPending = false; // If we're running a calibration
+		bool AutoCalibration_StillPending = false; // If calibration panes are still opened
+
 		void sk_line(Microsoft::UI::Xaml::Shapes::Line& line, const std::array<Eigen::Vector3f, 25>& joints,
 		             const std::array<ktvr::JointTrackingState, 25>& states,
 		             const ktvr::ITrackedJointType& from, const ktvr::ITrackedJointType& to);

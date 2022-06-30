@@ -239,6 +239,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 {
 	// Set the [calibration pending] bool
 	CalibrationPending = true;
+	AutoCalibration_StillPending = true;
 
 	// Play a nice sound - starting
 	ElementSoundPlayer::Play(ElementSoundKind::Show);
@@ -481,6 +482,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 		L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
 
 	CalibrationPending = false; // We're finished
+	AutoCalibration_StillPending = false;
+
 	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 }
@@ -1142,7 +1145,8 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 				const auto joints = device->getJointPositions();
 				const auto states = device->getTrackingStates();
 
-				StartAutoCalibrationButton().IsEnabled(device->isSkeletonTracked() && !CalibrationPending);
+				StartAutoCalibrationButton().IsEnabled(
+					device->isSkeletonTracked() && !CalibrationPending && !AutoCalibration_StillPending);
 
 				if (device->isSkeletonTracked())
 				{
@@ -1332,7 +1336,8 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 				const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 				auto joints = device->getTrackedJoints();
 
-				StartAutoCalibrationButton().IsEnabled(device->isSkeletonTracked() && !CalibrationPending);
+				StartAutoCalibrationButton().IsEnabled(
+					device->isSkeletonTracked() && !CalibrationPending && !AutoCalibration_StillPending);
 
 				if (device->isSkeletonTracked() && !joints.empty())
 				{
