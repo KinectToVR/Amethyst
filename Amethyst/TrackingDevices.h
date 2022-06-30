@@ -388,6 +388,8 @@ namespace TrackingDevices
 		// Just give up if not set up yet
 		if (jointBasisLabel.get() == nullptr)return;
 
+		devices_signal_joints = false; // Don't signal on status refresh
+
 		auto& trackingDevice = TrackingDevicesVector.at(
 			devicesListView.get()->SelectedIndex());
 
@@ -572,5 +574,7 @@ namespace TrackingDevices
 		deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 		trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 		errorWhatText.get()->Text(split_status(device_status)[2]);
+
+		devices_signal_joints = true; // Change back
 	}
 }
