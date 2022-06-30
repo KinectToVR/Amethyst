@@ -28,6 +28,7 @@ namespace TrackingDevices
 
 		std::string deviceName = "[UNKNOWN]"; // Dummy name
 		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?"; // Dummy status
+		bool _flip_enabled_backup = k2app::K2Settings.isFlipEnabled;
 
 		if (trackingDevice.index() == 0)
 		{
@@ -51,6 +52,10 @@ namespace TrackingDevices
 			// Disable flip (used later, saved later)
 			k2app::K2Settings.isFlipEnabled = false;
 		}
+
+		// Save settings if changed
+		if (_flip_enabled_backup != k2app::K2Settings.isFlipEnabled)
+			k2app::K2Settings.saveSettings();
 
 		/* Update the device in general tab */
 
@@ -123,9 +128,6 @@ namespace TrackingDevices
 				settings_set_external_flip_is_enabled(false);
 			}
 		}
-
-		// Save settings
-		k2app::K2Settings.saveSettings();
 	}
 
 	// Select proper tracking device in the UI

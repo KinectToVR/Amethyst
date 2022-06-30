@@ -9,13 +9,6 @@ HRESULT KinectV1Handler::getStatusResult()
 	{
 		const auto res = kinectSensor->NuiStatus();
 		settingsSupported = (res == S_OK);
-
-		if (res == S_OK)
-		{
-			NuiCameraElevationGetAngle(reinterpret_cast<long*>(&sensorAngle));
-			save_settings();
-		}
-
 		return res;
 	}
 	return E_NUI_NOTCONNECTED;

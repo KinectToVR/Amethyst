@@ -104,13 +104,28 @@ namespace k2app::main
 		calibration_joystick_positions[1][1] = evr_input.rightJoystickActionData().y;
 	}
 
-	inline std::pair<bool, bool> device_refresh_pending{false, false};
-
+	inline int p_devices_update_loops = 0; // K2UpdateTrackingDevices() call counter
+	inline bool p_status_update_running = false; // Request a status check
 	inline void K2UpdateTrackingDevices()
 	{
+		// Update statuses every ~15 seconds
+		if (p_devices_update_loops > 900 && !p_status_update_running)
+		{
+			p_status_update_running = true; // soonTM
+			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
+				{
+					TrackingDevices::devices_handle_refresh(false);
+					TrackingDevices::updateTrackingDeviceUI(K2Settings.trackingDeviceID);
+					if (K2Settings.overrideDeviceID >= 0)
+						TrackingDevices::updateTrackingDeviceUI(K2Settings.overrideDeviceID);
+
+					p_devices_update_loops = 0; // Reset the counter
+					p_status_update_running = false; // We're done
+				});
+		}
+
 		/* Update the base device here */
-		switch (const auto& device = TrackingDevices::
-			getCurrentDevice(); device.index())
+		switch (const auto& device = TrackingDevices::getCurrentDevice(); device.index())
 		{
 		case 0:
 			{
@@ -118,24 +133,6 @@ namespace k2app::main
 				pDevice->update(); // Update the device
 				interfacing::kinectHeadPosition.first = pDevice->getJointPositions()[ktvr::Joint_Head];
 				interfacing::kinectWaistPosition.first = pDevice->getJointPositions()[ktvr::Joint_SpineWaist];
-
-				if (!device_refresh_pending.first &&
-					pDevice->getStatusResult() != S_OK)
-					std::thread([&]
-					{
-						device_refresh_pending.first = true;
-
-						// Second check and try after 5 seconds
-						std::this_thread::sleep_for(std::chrono::seconds(5));
-
-						// Update the UI
-						shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
-						{
-							TrackingDevices::devices_handle_refresh(false);
-							TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-							device_refresh_pending.first = false;
-						});
-					}).detach();
 			}
 			break;
 		case 1:
@@ -145,24 +142,6 @@ namespace k2app::main
 				if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
 					interfacing::kinectWaistPosition.first = pDevice->getTrackedJoints().at(
 						K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
-
-				if (!device_refresh_pending.first &&
-					pDevice->getStatusResult() != S_OK)
-					std::thread([&]
-					{
-						device_refresh_pending.first = true;
-
-						// Second check and try after 5 seconds
-						std::this_thread::sleep_for(std::chrono::seconds(5));
-
-						// Update the UI
-						shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
-						{
-							TrackingDevices::devices_handle_refresh(false);
-							TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-							device_refresh_pending.first = false;
-						});
-					}).detach();
 			}
 			break;
 		}
@@ -178,24 +157,6 @@ namespace k2app::main
 					pDevice->update(); // Update the device
 					interfacing::kinectHeadPosition.second = pDevice->getJointPositions()[ktvr::Joint_Head];
 					interfacing::kinectWaistPosition.second = pDevice->getJointPositions()[ktvr::Joint_SpineWaist];
-
-					if (!device_refresh_pending.second &&
-						pDevice->getStatusResult() != S_OK)
-						std::thread([&]
-						{
-							device_refresh_pending.second = true;
-
-							// Second check and try after 5 seconds
-							std::this_thread::sleep_for(std::chrono::seconds(5));
-
-							// Update the UI
-							shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
-							{
-								TrackingDevices::devices_handle_refresh(false);
-								TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
-								device_refresh_pending.second = false;
-							});
-						}).detach();
 				}
 				break;
 			case 1:
@@ -205,27 +166,12 @@ namespace k2app::main
 					if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
 						interfacing::kinectWaistPosition.second = pDevice->getTrackedJoints().at(
 							K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
-
-					if (!device_refresh_pending.second &&
-						pDevice->getStatusResult() != S_OK)
-						std::thread([&]
-						{
-							device_refresh_pending.second = true;
-
-							// Second check and try after 5 seconds
-							std::this_thread::sleep_for(std::chrono::seconds(5));
-
-							// Update the UI
-							shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
-							{
-								TrackingDevices::devices_handle_refresh(false);
-								TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
-								device_refresh_pending.second = false;
-							});
-						}).detach();
 				}
 				break;
 			}
+
+		// Increment the update loop counter
+		p_devices_update_loops++;
 	}
 
 	inline int p_frozen_loops = 0; // Loops passed since last frozen update
