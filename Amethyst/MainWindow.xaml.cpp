@@ -513,9 +513,17 @@ namespace winrt::Amethyst::implementation
 
 		// Priority: Register the app exit handler
 		LOG(INFO) << "Registering an exit handler for the app window...";
-		Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
-			Microsoft::UI::GetWindowIdFromWindow(hWnd)).Closing(
-			[&](auto, auto) { k2app::interfacing::handle_app_exit_n; });
+		this->Closed([&](const IInspectable& window, const WindowEventArgs& e)
+		{
+			// Handled(true) means Cancel()
+			// and Handled(false) means Continue()
+			// -> Block exiting until we're done
+			e.Handled(true);
+
+			// Handle all the exit actions
+			k2app::interfacing::handle_app_exit_n();
+			e.Handled(false); // Finally exit
+		});
 
 		// Priority: Launch the crash handler
 		LOG(INFO) << "Starting the crash handler passing the app PID...";
