@@ -177,6 +177,13 @@ namespace ktvr
 			{
 			}
 
+			// IsPrimary (White/Gray) Get and Set
+			virtual bool IsPrimary() { return true; }
+
+			virtual void IsPrimary(const bool& primary)
+			{
+			}
+
 			// Width Get and Set
 			virtual uint32_t Width() { return 0; }
 

@@ -1063,6 +1063,32 @@ namespace k2app::interfacing
 					});
 			}
 
+			// IsPrimary (White/Gray) Get and Set
+			bool IsPrimary() override
+			{
+				if (_ptr_text_block.get())
+					return (_ptr_text_block.get()->Foreground()
+						== Media::SolidColorBrush(winrt::Windows::UI::Colors::White()));
+				return true;
+			}
+
+			void IsPrimary(const bool& primary) override
+			{
+				if (!isExitingNow)
+					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
+					{
+						if (isExitingNow)return;
+						if (_ptr_text_block.get()) 
+						{
+							_ptr_text_block.get()->Foreground(
+								primary
+								? Media::SolidColorBrush(winrt::Windows::UI::Colors::White())
+								: Application::Current().Resources().TryLookup(
+									winrt::box_value(L"ControlDisplayTextBrush")).as<Media::SolidColorBrush>());
+						}
+					});
+			}
+
 			// Width Get and Set
 			uint32_t Width() override
 			{
