@@ -352,6 +352,12 @@ xcopy /y /d /s /i "$(SolutionDir)external\app_resources\*" "$(OutDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PRIResource Include="Strings\de_DE\DevicesPage.resw" />
+    <PRIResource Include="Strings\de_DE\GeneralPage.resw" />
+    <PRIResource Include="Strings\de_DE\InfoPage.resw" />
+    <PRIResource Include="Strings\de_DE\SettingsLearn.resw" />
+    <PRIResource Include="Strings\de_DE\SettingsPage.resw" />
+    <PRIResource Include="Strings\de_DE\SharedStrings.resw" />
     <PRIResource Include="Strings\en-US\DevicesPage.resw" />
     <PRIResource Include="Strings\en-US\GeneralPage.resw" />
     <PRIResource Include="Strings\en-US\InfoPage.resw" />

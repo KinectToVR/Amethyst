@@ -117,112 +117,92 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Content.AlreadyRunning" xml:space="preserve">
-    <value>Anscheinend läuft die App bereits
-und du hast versucht, eine zweite Instanz von Amethyst zu starten.
-Diese Aktion wird derzeit nicht unterstützt.
-
-Überprüfe, dass die App nicht geöffnet ist.
-Sollte das Problem weiterhin bestehen bleiben, klicke auf 'Beenden erzwingen'.</value>
+  <data name="Captions.Filters.Explanations.EKF.Text" xml:space="preserve">
+    <value>Höchste Latenz, aber sehr flüssig. Es entfernt jeglichen Jitter (Flackern) und reagiert auf schnelle
+Bewegungen flink, da es Vorhersagefähig (prädiktiv) ist.</value>
   </data>
-  <data name="Content.Crash.NoDevices" xml:space="preserve">
-    <value>Es sind keine geeigneten Geräte (Plugins) zum Laden und Verwenden für das Körper-Tracking verfügbar.
-
-Stelle sicher das alle Abhängigkeiten (dependencies) installiert sind (z.B. die richtigen Kinect SDK / Runtime und andere Abhängigkeitsbibliotheken, die von Ihren Geräten benötigt werden.</value>
+  <data name="Captions.Filters.Explanations.LERP.Text" xml:space="preserve">
+    <value>Minimale Latenz, lässt alle Bewegungen schneller erscheinen als das, wozu der Sensor in der Lage ist. 
+Jitter (Flackern) ist bemerkbar.</value>
   </data>
-  <data name="Content.Crash.OpenVR" xml:space="preserve">
-    <value>Die App konnte OpenVR (SteamVR) nicht erfolgreich initialisieren und beschloss, aufzugeben.
-
-Überprüfe ob SteamVR läuft und ob dein HMD vorhanden ist und funktioniert. Außerdem kannst du SteamVR neu starten und die Logs überprüfen.</value>
+  <data name="Captions.Filters.Explanations.LowPass.Text" xml:space="preserve">
+    <value>Latenz ist leicht bemerkbar, entfernt jedoch Jitter (Flackern) und sieht insgesamt flüssiger aus als kein Filter.</value>
   </data>
-  <data name="Content.Crash.Panic" xml:space="preserve">
-    <value>Die Hauptprogrammschleife ist folglich mehr als 7 Mal abgestürzt, sodass Amethyst heruntergefahren wurde.
-
-Überprüfe, ob alle Geräte und Plugins funktionieren und überprüfe die Logs. Optional kannst du die App-Konfiguration löschen und dann erneut versuchen, sie auszuführen.</value>
+  <data name="Captions.Filters.Explanations.None.Text" xml:space="preserve">
+    <value>Rohe 30hz-Ausgabe vom Sensor.</value>
   </data>
-  <data name="Content.Crash.Unknown" xml:space="preserve">
-    <value>Sieht so aus, als wäre etwas Seltsames mit der App passiert.
-
-Keine Panik, es ist (wahrscheinlich) nicht einmal deine Schuld.
-
-Versuche die App erneut auszuführen.
-Kontaktiere uns auf Discord mit den Logs, sollte das Problem weiterhin bestehen.</value>
+  <data name="Captions.Filters.Names.EKF.Text" xml:space="preserve">
+    <value>- Erweiterter Kalman-Filter</value>
   </data>
-  <data name="Content.Recovery" xml:space="preserve">
-    <value>Sieht so aus, als hättest du den Crash Handler manuell ausgeführt. Was würdest du gern tun?
-
-Sollte der Amethyst-Treiber für SteamVR nicht richtig erkannt werden, kannst du den SteamVR-Treiber erneut registrieren und es dann erneut versuchen.</value>
+  <data name="Captions.Filters.Names.LERP.Text" xml:space="preserve">
+    <value>- Lineare Interpolation (standardmäßig eingestellt)</value>
   </data>
-  <data name="PrimaryButton.AlreadyRunning" xml:space="preserve">
-    <value>Beenden erzwingen</value>
+  <data name="Captions.Filters.Names.LowPass.Text" xml:space="preserve">
+    <value>- Low Pass (Tiefpass) Filter</value>
   </data>
-  <data name="PrimaryButton.Crash.Default" xml:space="preserve">
-    <value>Docs anschauen</value>
+  <data name="Captions.Filters.Names.None.Text" xml:space="preserve">
+    <value>- Filter ausschalten</value>
   </data>
-  <data name="PrimaryButton.Crash.Panic" xml:space="preserve">
-    <value>Konfiguration zurücksetzen</value>
+  <data name="Captions.ManageTrackers.Text" xml:space="preserve">
+    <value>Wenn eine Reihe von Trackern aktiviert oder deaktiviert wird, werden sie sofort gespawnt oder despawned.
+Sie werden aber weiterhin in der Liste der Geräten in SteamVR aufgelistet.
+Tracker, die gerade deaktiviert wurden, werden bis SteamVR neu gestartet wird als deaktiviert angezeigt.
+Sollten Probleme mit der Tracking-Erkennung in Apps auftreten, sollte SteamVR zuerst neu gestartet werden.</value>
   </data>
-  <data name="PrimaryButton.Crash.Unknown" xml:space="preserve">
-    <value>Discord beitreten</value>
+  <data name="Captions.Orientation.Explanations.Default.Text" xml:space="preserve">
+    <value>Diese Einstellung kann für einige Benutzer auf Xbox One Kinect instabil sein.
+In diesem Falle, versuche es noch einmal mit der Softwareberechneten Rotation.
+Dies ist die Gelenkausrichtung, die vom Kinect SDK basierend auf der Position jedes Gelenks in der Kette approximiert wird.
+Stellen dir das soweit vor, dass man auf jedes Glied des Körpers Pfeile anknüpft, die auf die Extremitäten zeigen.
+Bei Fußtrackern unterscheidet sich das Verhalten zwischen Kinect-Modellen.
+Auf Xbox One basiert sich die Drehung auf der Fußspitze, was bedeutet, dass sich Ihre Füße drehen können.
+Auf der Xbox 360 basiert die Drehung allein auf dem Knöchel, was bedeutet, dass es keine Fußdrehung gibt.</value>
   </data>
-  <data name="PrimaryButton.Recovery" xml:space="preserve">
-    <value>Treiber neu registrieren</value>
+  <data name="Captions.Orientation.Explanations.HMD.Text" xml:space="preserve">
+    <value>Die Tracker folgen der Richtung, in die das Headset auf der Y-Achse zeigt. Die Tracker drehen sich aber nicht auf den anderen beiden Achsen.</value>
   </data>
-  <data name="ReRegister.DriverNotFound" xml:space="preserve">
-    <value>Der Amethyst-Treiberordner wurde nicht gefunden.
-Ist es irgendwo in der Nähe des Crash Handlers?</value>
+  <data name="Captions.Orientation.Explanations.MathBased.Text" xml:space="preserve">
+    <value>Diese Option ist nur für Fußtracker verfügbar.
+Die Richtung der Füße wird aus dem Winkel zwischen Knöchel und Fußspitze berechnet.
+Die Reichweite wird auf 50% reduziert um Jitter (Flimmern) zu vermeiden. Dies ermöglicht die Drehung der Füße auf der Xbox 360 Kinect.</value>
   </data>
-  <data name="ReRegister.ExistingDrivers.Content" xml:space="preserve">
-    <value>Ein oder mehrere Treiber mit dem Namen „Amethyst“
-bereits vorhanden, jetzt entfernen?</value>
+  <data name="Captions.Orientation.Explanations.None.Text" xml:space="preserve">
+    <value>Die Tracker drehen sich nur, wenn die Tracker-Spiegelung (Flip) durch Wegschauen aktiviert wird.</value>
   </data>
-  <data name="ReRegister.ExistingDrivers.PrimaryButton" xml:space="preserve">
-    <value>Entfernen</value>
+  <data name="Captions.Orientation.Introduction.Text" xml:space="preserve">
+    <value>Alle Rotationseinstellungen werden weiterhin von der Tracker-Spiegelung (Skelett-Flip) beeinflusst, wenn es aktiviert ist.</value>
   </data>
-  <data name="ReRegister.ExistingDrivers.SecondaryButton" xml:space="preserve">
-    <value>Abbrechen</value>
+  <data name="Captions.Orientation.Names.Default.Text" xml:space="preserve">
+    <value>- Vom Gerät abgeleitete Rotation</value>
   </data>
-  <data name="ReRegister.FatalRegisterException" xml:space="preserve">
-    <value>Der Amethyst-Treiber konnte nicht registriert werden, da eine schwerwiegende Ausnahme aufgetreten ist.</value>
+  <data name="Captions.Orientation.Names.HMD.Text" xml:space="preserve">
+    <value>- Headset folgen</value>
   </data>
-  <data name="ReRegister.FatalRemoveException" xml:space="preserve">
-    <value>Der Amethyst-Treiber konnte nicht entfernt werden, eine schwerwiegende Ausnahme ist aufgetreten.</value>
+  <data name="Captions.Orientation.Names.MathBased.Text" xml:space="preserve">
+    <value>- Softwareberechnete Rotation</value>
   </data>
-  <data name="ReRegister.Finished" xml:space="preserve">
-    <value>Du bist startklar!</value>
+  <data name="Captions.Orientation.Names.None.Text" xml:space="preserve">
+    <value>- Rotation deaktivieren</value>
   </data>
-  <data name="ReRegister.KillSteamVR.Content" xml:space="preserve">
-    <value>SteamVR muss geschlossen werden
-um die Registrierung fertigzustellen. Sollte SteamVR geschlossen werden?</value>
+  <data name="Captions.TrackerConfig.Text" xml:space="preserve">
+    <value> Amethyst unterstützt bis zu 7 Basistracker. Zusätzliche können über das Zahnradsymbol umgeschaltet werden.
+Jeder Tracker oder Reihe von Trackern enthält Einstellungen zum Anpassen der Rotation und Filterung für einzelne Tracker.
+Auf diese Weise kann man beispielsweise einen starken Filter für Füße und Taille einstellen, wenn man beabsichtigt, viel zu sitzen und
+gleichzeitig eine schnellere Einstellung für die Ellbogen verwenden, damit die Tracker die Hände besser folgen können.</value>
   </data>
-  <data name="ReRegister.KillSteamVR.PrimaryButton" xml:space="preserve">
-    <value>SteamVR Schließen</value>
+  <data name="Captions.TrackerConfigNote.Text" xml:space="preserve">
+    <value>Notiz: Einige dieser Einstellungen sind nur bei Verwendung von Kinect relevant.</value>
   </data>
-  <data name="ReRegister.KillSteamVR.SecondaryButton" xml:space="preserve">
-    <value>Abbrechen</value>
+  <data name="Titles.FilterSettings.Text" xml:space="preserve">
+    <value>Filtereinstellungen:</value>
   </data>
-  <data name="ReRegister.OpenVRPathsError" xml:space="preserve">
-    <value> OpenVRPaths konnte nicht gelesen werden.
-Stelle sicher, dass es nicht beschädigt ist
-und führe SteamVR mindestens einmal aus.</value>
+  <data name="Titles.ManageTrackers.Text" xml:space="preserve">
+    <value>Tracker aktivieren und deaktivieren:</value>
   </data>
-  <data name="ReRegister.OpenVRPathsWriteError" xml:space="preserve">
-    <value>Amethyst-Treiber konnte nicht registriert werden, openvrpaths-Schreibfehler.</value>
+  <data name="Titles.RotationSettings.Text" xml:space="preserve">
+    <value>Rotationseinstellungen:</value>
   </data>
-  <data name="ReRegister.SteamVRNotFound" xml:space="preserve">
-    <value>SteamVR konnte nicht gefunden werden,
-stellen sicher, dass es installiert ist.</value>
-  </data>
-  <data name="SecondaryButton.Recovery" xml:space="preserve">
-    <value>Schließen</value>
-  </data>
-  <data name="Title.AlreadyRunning" xml:space="preserve">
-    <value>Amethyst läuft bereits!</value>
-  </data>
-  <data name="Title.Crash" xml:space="preserve">
-    <value>Amethyst hat es aufgegeben!</value>
-  </data>
-  <data name="Title.Recovery" xml:space="preserve">
-    <value>Amethyst-Wiederherstellung</value>
+  <data name="Titles.TrackerConfig.Text" xml:space="preserve">
+    <value>Über die Tracker-Konfiguration</value>
   </data>
 </root>

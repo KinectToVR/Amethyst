@@ -23,6 +23,10 @@ inline std::map<std::wstring, std::wstring> status_ok_map
 	{
 		L"ru-RU",
 		L"Успешно! (Код 1)\nI_OK\nВсе работает!"
+	},
+	{
+		L"de-DE",
+		L"Erfolg! (Code 1)\nI_OK\nAlles ist gut!"
 	}
 };
 
@@ -33,16 +37,16 @@ inline std::map<std::wstring, std::wstring> status_wtf_map
 		L"COULD NOT CHECK STATUS (Code -12)\nE_WTF\nSomething's fucked a really big time."
 	},
 	{
-		L"lc-LC",
-		L"CULD NO CHECK AAAAA (Code -12)\nE_WTF\nShomethinwsh fucksed wucksewd a big big pawwt"
-	},
-	{
 		L"fr-FR",
 		L"STATUT INACCESSIBLE (Code -12)\nE_WTF\nQuelque chose de grave s'est produit."
 	},
 	{
 		L"ru-RU",
 		L"НЕВОЗМОЖНО ПРОВЕРИТЬ СТАТУС (Код -12)\nE_WTF\nЧто-то пошло очень не так на этот раз."
+	},
+	{
+		L"de-DE",
+		L"STATUS KONNTE NICHT ÜBERPRÜFT WERDEN (Code -12)\nE_WTF\nEtwas ist komplett schief gelaufen."
 	}
 };
 
@@ -63,6 +67,10 @@ inline std::map<std::wstring, std::wstring> status_exception_map
 	{
 		L"ru-RU",
 		L"ИСКЛЮЧЕНИЕ ПРИ ПРОВЕРКЕ (Код -10)\nE_EXCEPTION_WHILE_CHECKING\nПроверьте модули (не оверлеи) SteamVR и включите Amethyst."
+	},
+	{
+		L"de-DE",
+		L"AUSNAHME WÄHREND DER ÜBERPRÜFUNG (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nÜberprüfe die SteamVR-Add-Ons (NICHT die Overlays) und aktiviere Amethyst."
 	}
 };
 
@@ -83,6 +91,10 @@ inline std::map<std::wstring, std::wstring> status_connection_error_map
 	{
 		L"ru-RU",
 		L"ОШИБКА ПОДКЛЮЧЕНИЯ К СЕРВЕРУ (Код -1)\nE_CONNECTION_ERROR\nВозможно ваша версия драйвера Amethyst для SteamVR устарела или повреждена."
+	},
+	{
+		L"de-DE",
+		L"SERVERVERBINDUNGSFEHLER (Code -1)\nE_CONNECTION_ERROR\nDein Amethyst SteamVR treiber ist möglicherweise defekt oder veraltet."
 	}
 };
 
@@ -103,6 +115,10 @@ inline std::map<std::wstring, std::wstring> status_server_failure_map
 	{
 		L"ru-RU",
 		L"КРИТИЧЕСКАЯ ОШИБКА СЕРВЕРА (Код 10)\nE_FATAL_SERVER_FAILURE\nПожалуйста перезагрузите Amethyst, проверьте журнал событий и напишите нам в Discord."
+	},
+	{
+		L"de-DE",
+		L"FATALER SERVERFEHLER (Code 10)\nE_FATAL_SERVER_FAILURE\nStarte Amethyst bitte neu, überprüfe die Logs und schreibe uns auf Discord."
 	}
 };
 
@@ -123,6 +139,10 @@ inline std::map<std::wstring, std::wstring> status_api_failure_map
 	{
 		L"ru-RU",
 		L"НЕВОЗМОЖНО ПОДКЛЮЧИТЬСЯ К K2API (Код -11)\nE_K2API_FAILURE\nЭтой ошибки вообще не должно быть. Что-то совсем все плохо."
+	},
+	{
+		L"de-DE",
+		L"KONNTE NICHT MIT K2API VERBINDEN (Code -11)\nE_K2API_FAILURE\nDieser Fehler sollte eigentlich nicht auftreten. Irgendetwas stimmt gar nicht."
 	}
 };
 
@@ -131,11 +151,11 @@ inline std::map<std::wstring, std::wstring> status_api_failure_map
 // Get the current use language, e.g. en-US
 inline std::wstring GetUserLocale()
 {
-	wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = {0};
+	wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = { 0 };
 	return GetUserDefaultLocaleName(
-		       localeName, sizeof(localeName) / sizeof(*(localeName))) == 0
-		       ? std::wstring()
-		       : localeName;
+		localeName, sizeof(localeName) / sizeof(*(localeName))) == 0
+		? std::wstring()
+		: localeName;
 }
 
 // Get the current status string (but localized)
@@ -143,8 +163,8 @@ inline std::wstring GetLocalizedStatusWString(
 	std::wstring locale, std::map<std::wstring, std::wstring> status_map)
 {
 	return status_map.contains(locale)
-		       ? status_map[locale]
-		       : status_map[L"en-US"];
+		? status_map[locale]
+		: status_map[L"en-US"];
 }
 
 // Get the current status string (but localized)
@@ -152,6 +172,6 @@ inline std::wstring GetLocalizedStatusWStringAutomatic(
 	std::map<std::wstring, std::wstring> status_map)
 {
 	return status_map.contains(GetUserLocale())
-		       ? status_map[GetUserLocale()]
-		       : status_map[L"en-US"];
+		? status_map[GetUserLocale()]
+		: status_map[L"en-US"];
 }

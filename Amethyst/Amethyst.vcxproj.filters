@@ -299,6 +299,9 @@
     <Filter Include="Strings\ru-RU">
       <UniqueIdentifier>{a1ae387e-80bf-4ae9-8017-a0b39cd43898}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Strings\de-DE">
+      <UniqueIdentifier>{bffeb799-b6cd-426a-b2a2-b755de131cc3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
@@ -366,6 +369,24 @@
     </PRIResource>
     <PRIResource Include="Strings\ru-RU\SharedStrings.resw">
       <Filter>Strings\ru-RU</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\de_DE\DevicesPage.resw">
+      <Filter>Strings\de-DE</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\de_DE\GeneralPage.resw">
+      <Filter>Strings\de-DE</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\de_DE\InfoPage.resw">
+      <Filter>Strings\de-DE</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\de_DE\SettingsLearn.resw">
+      <Filter>Strings\de-DE</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\de_DE\SettingsPage.resw">
+      <Filter>Strings\de-DE</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\de_DE\SharedStrings.resw">
+      <Filter>Strings\de-DE</Filter>
     </PRIResource>
   </ItemGroup>
 </Project>

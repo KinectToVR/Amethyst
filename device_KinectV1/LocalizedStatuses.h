@@ -22,6 +22,10 @@ inline std::map<std::wstring, std::wstring> status_ok_map
 	{
 		L"ru-RU",
 		L"Успешно!\nS_OK\nВсе работает!"
+	},
+	{
+		L"de-DE",
+		L"Erfolg!\nS_OK\nAlles ist gut!"
 	}
 };
 
@@ -42,6 +46,10 @@ inline std::map<std::wstring, std::wstring> status_initializing_map
 	{
 		L"ru-RU",
 		L"INITIALIZING\nS_NUI_INITIALIZING\nУстройство подключено, но все еще идет инициализация."
+	},
+	{
+		L"de-DE",
+		L"INITIALIZING\nS_NUI_INITIALIZING\nDas Gerät ist verbunden, wird aber noch initialisiert."
 	}
 };
 
@@ -62,6 +70,10 @@ inline std::map<std::wstring, std::wstring> status_not_connected_map
 	{
 		L"ru-RU",
 		L"NOTCONNECTED\nE_NUI_NOTCONNECTED\nУстройство не подключено."
+	},
+	{
+		L"de-DE",
+		L"NOTCONNECTED\nE_NUI_NOTCONNECTED\nDas Gerät ist nicht verbunden."
 	}
 };
 
@@ -82,6 +94,10 @@ inline std::map<std::wstring, std::wstring> status_not_genuine_map
 	{
 		L"ru-RU",
 		L"NOTGENUINE\nE_NUI_NOTGENUINE\nSDK сообщил, что Kinect недоступен."
+	},
+	{
+		L"de-DE",
+		L"NOTGENUINE\nE_NUI_NOTGENUINE\nDas SDK meldet Kinect als ungültig."
 	}
 };
 
@@ -102,6 +118,10 @@ inline std::map<std::wstring, std::wstring> status_not_supported_map
 	{
 		L"ru-RU",
 		L"NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nУстройство не поддерживается. (Xbox Kinect требует SDK)"
+	},
+	{
+		L"de-DE",
+		L"NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nDas Gerät wird nicht unterstützt. (Xbox Kinect benötigt das SDK)"
 	}
 };
 
@@ -122,6 +142,10 @@ inline std::map<std::wstring, std::wstring> status_insufficient_bandwidth_map
 	{
 		L"ru-RU",
 		L"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nУстройство подключено к хабу у которого не хватает достаточной пропускной способности."
+	},
+	{
+		L"de-DE",
+		L"INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nDas Gerät ist ohne die erforderlichen Bandbreitenanforderungen an einen Hub angeschlossen."
 	}
 };
 
@@ -142,6 +166,10 @@ inline std::map<std::wstring, std::wstring> status_not_powered_map
 	{
 		L"ru-RU",
 		L"NOTPOWERED\nE_NUI_NOTPOWERED\nВозможна проблема с адаптером/проводом или регистрацией драйвера Kinect в Windows."
+	},
+	{
+		L"de-DE",
+		L"NOTPOWERED\nE_NUI_NOTPOWERED\nEs liegt entweder ein Problem mit den Adaptern/Kabeln oder mit der Kinect-Gerätetreiberregistrierung in Windows vor."
 	}
 };
 
@@ -162,6 +190,10 @@ inline std::map<std::wstring, std::wstring> status_not_ready_map
 	{
 		L"ru-RU",
 		L"NOTREADY\nE_NUI_NOTREADY\nВозникла неопределенная ошибка."
+	},
+	{
+		L"de-DE",
+		L"NOTREADY\nE_NUI_NOTREADY\nEin unbekannter Fehler ist aufgetreten."
 	}
 };
 
@@ -170,11 +202,11 @@ inline std::map<std::wstring, std::wstring> status_not_ready_map
 // Get the current use language, e.g. en-US
 inline std::wstring GetUserLocale()
 {
-	wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = {0};
+	wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = { 0 };
 	return GetUserDefaultLocaleName(
-		       localeName, sizeof(localeName) / sizeof(*(localeName))) == 0
-		       ? std::wstring()
-		       : localeName;
+		localeName, sizeof(localeName) / sizeof(*(localeName))) == 0
+		? std::wstring()
+		: localeName;
 }
 
 // Get the current status string (but localized)
@@ -182,8 +214,8 @@ inline std::wstring GetLocalizedStatusWString(
 	std::wstring locale, std::map<std::wstring, std::wstring> status_map)
 {
 	return status_map.contains(locale)
-		       ? status_map[locale]
-		       : status_map[L"en-US"];
+		? status_map[locale]
+		: status_map[L"en-US"];
 }
 
 // Get the current status string (but localized)
@@ -191,6 +223,6 @@ inline std::wstring GetLocalizedStatusWStringAutomatic(
 	std::map<std::wstring, std::wstring> status_map)
 {
 	return status_map.contains(GetUserLocale())
-		       ? status_map[GetUserLocale()]
-		       : status_map[L"en-US"];
+		? status_map[GetUserLocale()]
+		: status_map[L"en-US"];
 }

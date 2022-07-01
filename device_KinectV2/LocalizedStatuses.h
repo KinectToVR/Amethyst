@@ -22,6 +22,10 @@ inline std::map<std::wstring, std::wstring> status_ok_map
 	{
 		L"ru-RU",
 		L"Успешно!\nS_OK\nВсе работает!"
+	},
+	{
+		L"de-DE",
+		L"Erfolg!\nS_OK\nAlles ist gut!"
 	}
 };
 
@@ -42,6 +46,10 @@ inline std::map<std::wstring, std::wstring> status_unavailable_map
 	{
 		L"ru-RU",
 		L"Сенсор недоступен!\nE_NOTAVAILABLE\nУбедитесь, что Kinect подключен к блоку питания и USB-порту компьютера."
+	},
+	{
+		L"de-DE",
+		L"Sensor nicht verfügbar!\nE_NOTAVAILABLE\nÜberprüfe, ob Kinect an die USB- und Netzstecker des PCs angeschlossen ist."
 	}
 };
 
@@ -50,11 +58,11 @@ inline std::map<std::wstring, std::wstring> status_unavailable_map
 // Get the current use language, e.g. en-US
 inline std::wstring GetUserLocale()
 {
-	wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = {0};
+	wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = { 0 };
 	return GetUserDefaultLocaleName(
-		       localeName, sizeof(localeName) / sizeof(*(localeName))) == 0
-		       ? std::wstring()
-		       : localeName;
+		localeName, sizeof(localeName) / sizeof(*(localeName))) == 0
+		? std::wstring()
+		: localeName;
 }
 
 // Get the current status string (but localized)

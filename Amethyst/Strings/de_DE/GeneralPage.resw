@@ -1,0 +1,374 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Buttons.Abort.Content" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="Buttons.Calibration.Base.Content" xml:space="preserve">
+    <value>Basis</value>
+  </data>
+  <data name="Buttons.Calibration.Begin.Content" xml:space="preserve">
+    <value>Kalibrierung starten</value>
+  </data>
+  <data name="Buttons.Calibration.Override.Content" xml:space="preserve">
+    <value>Überschreiben</value>
+  </data>
+  <data name="Buttons.Cancel.Content" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="Buttons.Discard.Content" xml:space="preserve">
+    <value>Verwerfen</value>
+  </data>
+  <data name="Buttons.Help.Discord.Content" xml:space="preserve">
+    <value>Hilfe über Discord bekommen</value>
+  </data>
+  <data name="Buttons.Help.Docs.Content" xml:space="preserve">
+    <value>Online Docs anschauen</value>
+  </data>
+  <data name="Buttons.Offsets.Content" xml:space="preserve">
+    <value>Offsets anpassen</value>
+  </data>
+  <data name="Buttons.Save.Content" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="Buttons.Skeleton.Freeze.Content" xml:space="preserve">
+    <value>Einfrieren</value>
+  </data>
+  <data name="Buttons.Skeleton.Hide.Content" xml:space="preserve">
+    <value>Skelett verstecken</value>
+  </data>
+  <data name="Buttons.Skeleton.Show.Content" xml:space="preserve">
+    <value>Skelett anzeigen</value>
+  </data>
+  <data name="Buttons.Skeleton.Unfreeze.Content" xml:space="preserve">
+    <value>Einfierung aufheben</value>
+  </data>
+  <data name="Buttons.TrackersToggle.Connect.Content" xml:space="preserve">
+    <value>Tracker verbinden</value>
+  </data>
+  <data name="Buttons.TrackersToggle.Disconnect" xml:space="preserve">
+    <value>Tracker trennen</value>
+  </data>
+  <data name="Buttons.TrackersToggle.Reconnect" xml:space="preserve">
+    <value>Tracker neu verbinden</value>
+  </data>
+  <data name="Calibration.Captions.Aborted.Text" xml:space="preserve">
+    <value>Kalibrierung abgebrochen!</value>
+  </data>
+  <data name="Calibration.Captions.Automatic.Text" xml:space="preserve">
+    <value>Stehe auf drei verschiedenen Positionen auf deiner Play-Area.</value>
+  </data>
+  <data name="Calibration.Captions.Captured.Text" xml:space="preserve">
+    <value>Position gespeichert!</value>
+  </data>
+  <data name="Calibration.Captions.Done.Text" xml:space="preserve">
+    <value>Kalibrierung erfolgreich!</value>
+  </data>
+  <data name="Calibration.Captions.Manual.Text" xml:space="preserve">
+    <value>Bewege deine Tracker mithilfe deiner VR-Controller.</value>
+  </data>
+  <data name="Calibration.Captions.Move.Text" xml:space="preserve">
+    <value>Position {1} von {2}
+Bewege dich woanders</value>
+  </data>
+  <data name="Calibration.Captions.Points.Text" xml:space="preserve">
+    <value>Versuche die Erfassungspunkte zu erhöhen, falls sich deine Tracker auf der falschen Stelle befinden.</value>
+  </data>
+  <data name="Calibration.Captions.Recommended.Text" xml:space="preserve">
+    <value>Empfohlen</value>
+  </data>
+  <data name="Calibration.Captions.Stand.Text" xml:space="preserve">
+    <value>Position {1} of {2}
+Bleibe bitte stehen!</value>
+  </data>
+  <data name="Calibration.Captions.Start.Text" xml:space="preserve">
+    <value>Start des Kalibrationsprozesses</value>
+  </data>
+  <data name="Calibration.Headers.Automatic.Text" xml:space="preserve">
+    <value>Automatische Kalibrierung</value>
+  </data>
+  <data name="Calibration.Headers.Manual.Text" xml:space="preserve">
+    <value>Manuelle Kalibrierung</value>
+  </data>
+  <data name="Calibration.Labels.Brief.Left.Text" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Calibration.Labels.Brief.Right.Text" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Calibration.Labels.Grips.Both.Text" xml:space="preserve">
+    <value>L+R Grip</value>
+  </data>
+  <data name="Calibration.Labels.Grips.Left.Text" xml:space="preserve">
+    <value>L Grip</value>
+  </data>
+  <data name="Calibration.Labels.Grips.Right.Text" xml:space="preserve">
+    <value>R Grip</value>
+  </data>
+  <data name="Calibration.Labels.InputsNotice.Text" xml:space="preserve">
+    <value>Bei Verwendung benutzerdefinierten Binds können sich die Eingaben unterscheiden. Beziehe dich in diesem Fall auf die Eingabeeinstellungen auf Steam-VR für Amethyst.</value>
+  </data>
+  <data name="Calibration.Labels.Triggers.Both.Text" xml:space="preserve">
+    <value>L+R Trigger</value>
+  </data>
+  <data name="Calibration.Labels.Triggers.Left.Text" xml:space="preserve">
+    <value>L Triggers</value>
+  </data>
+  <data name="Calibration.Labels.Triggers.Right.Text" xml:space="preserve">
+    <value>R Triggers</value>
+  </data>
+  <data name="Calibration.LabelsWhat.Brief.Left.Text" xml:space="preserve">
+    <value>Bewege links/rechts/vor/zurück
+Auf der Y-Achse drehen</value>
+  </data>
+  <data name="Calibration.LabelsWhat.Brief.Right.Text" xml:space="preserve">
+    <value>Hoch/runter bewegen
+Auf der X-Achse drehen</value>
+  </data>
+  <data name="Calibration.LabelsWhat.Grips.Left.Text" xml:space="preserve">
+    <value>Feinabstimmung</value>
+  </data>
+  <data name="Calibration.LabelsWhat.Grips.Right.Text" xml:space="preserve">
+    <value>Bewegung/Drehung wechseln</value>
+  </data>
+  <data name="Calibration.LabelsWhat.Triggers.Text" xml:space="preserve">
+    <value>Bestätigen</value>
+  </data>
+  <data name="Calibration.Titles.Automatic.Text" xml:space="preserve">
+    <value>Automatisch</value>
+  </data>
+  <data name="Calibration.Titles.Choose.Text" xml:space="preserve">
+    <value>Wähle eine Kalibrierungsmethode</value>
+  </data>
+  <data name="Calibration.Titles.Manual.Text" xml:space="preserve">
+    <value>Manuell</value>
+  </data>
+  <data name="Calibration.Titles.Points.Text" xml:space="preserve">
+    <value>Erfassungspunkte:</value>
+  </data>
+  <data name="Captions.CalibrateOverrides.Text" xml:space="preserve">
+    <value>Tracking-Overrides wurden gefunden.
+Welches Gerät sollte kalibriert werden?</value>
+  </data>
+  <data name="Captions.Device.Name.Text" xml:space="preserve">
+    <value>Aktuelles Gerät:</value>
+  </data>
+  <data name="Captions.Device.Status.Text" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="Captions.DriverStatus.Content.Text" xml:space="preserve">
+    <value>Erfolgreich! (Code 1)</value>
+  </data>
+  <data name="Captions.DriverStatus.Label.Text" xml:space="preserve">
+    <value>SteamVR Treiber:</value>
+  </data>
+  <data name="Captions.FreezeLowerOnly.Text" xml:space="preserve">
+    <value>Nur Unterkörper</value>
+  </data>
+  <data name="Captions.Offsets.Orientation.X" xml:space="preserve">
+    <value>Nick (X):</value>
+  </data>
+  <data name="Captions.Offsets.Orientation.Y" xml:space="preserve">
+    <value>Gier (Y):</value>
+  </data>
+  <data name="Captions.Offsets.Orientation.Z" xml:space="preserve">
+    <value>Roll (Z):</value>
+  </data>
+  <data name="Captions.Offsets.Position.X" xml:space="preserve">
+    <value>X (Links):</value>
+  </data>
+  <data name="Captions.Offsets.Position.Y" xml:space="preserve">
+    <value>Y (Oben):</value>
+  </data>
+  <data name="Captions.Offsets.Position.Z" xml:space="preserve">
+    <value>Z (Vorne):</value>
+  </data>
+  <data name="Captions.OverrideDevice.Name.Text" xml:space="preserve">
+    <value>Override-Gerät:</value>
+  </data>
+  <data name="Captions.Preview.Disabled.Text" xml:space="preserve">
+    <value>Skelett-Vorschau deaktiviert</value>
+  </data>
+  <data name="Captions.Preview.DisabledText.Text" xml:space="preserve">
+    <value>Clicke auf "Zeige Skelett" um die Skelett-Vorschau wieder zu aktivieren.</value>
+  </data>
+  <data name="Captions.Preview.Force.Text" xml:space="preserve">
+    <value>Vorschau Erzwingen</value>
+  </data>
+  <data name="Captions.Preview.NoDashboard.Text" xml:space="preserve">
+    <value>Das Dashboard ist geschlossen</value>
+  </data>
+  <data name="Captions.Preview.NoDashboardText.Text" xml:space="preserve">
+    <value>Die Vorschau wurde angehalten, um Ressourcen für dein PC zu sparen.
+Es wird wieder laufen, wenn du zurück bist.</value>
+  </data>
+  <data name="Captions.Preview.NoFocus.Text" xml:space="preserve">
+    <value>Fenster ist nicht im Vordergrund</value>
+  </data>
+  <data name="Captions.Preview.NoFocusText.Text" xml:space="preserve">
+    <value>Die Vorschau wurde angehalten, um Ressourcen für dein PC zu sparen.
+Es wird wieder laufen, wenn du zurück bist.</value>
+  </data>
+  <data name="Captions.Preview.NoSkeleton.Text" xml:space="preserve">
+    <value>Kein Skelett gefunden</value>
+  </data>
+  <data name="Captions.Preview.NoSkeletonText.Text" xml:space="preserve">
+    <value>Stelle sicher, dass das gewählte Gerät ordnungsgemäß
+funktioniert und deinen Körper für das Tracking sehen kann.</value>
+  </data>
+  <data name="Captions.Preview.NoSkeletonTextCalibrating.Text" xml:space="preserve">
+    <value>Um die automatische Kalibrierung zu nutzen, musst ein funktionierendes Skelett zu sehen sein.</value>
+  </data>
+  <data name="Captions.Tooltips.Orientation" xml:space="preserve">
+    <value>Rotation ist in Grad.</value>
+  </data>
+  <data name="Captions.Tooltips.Position" xml:space="preserve">
+    <value>Position ist in Zentimetern.</value>
+  </data>
+  <data name="Captions.VersionText.Text" xml:space="preserve">
+    <value>Amethyst Version:</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Buttons.Index" xml:space="preserve">
+    <value>B, Grip and Trigger</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Buttons.Oculus" xml:space="preserve">
+    <value>X, Grip and Trigger</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Buttons.VIVE" xml:space="preserve">
+    <value>das Touchpad, Grip und Trigger</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Buttons.WMR" xml:space="preserve">
+    <value>die Menütaste, Grip und Trigger</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Footer" xml:space="preserve">
+    <value>Die Tastenbelegung kann in den SteamVR-Eingabeeinstellungen geändert werden.</value>
+  </data>
+  <data name="Tips.TrackingFreeze.Header" xml:space="preserve">
+    <value>Man kann das Einfrieren der Tracker in VR umschalten, indem man {0} auf dem linken Controller drückt.</value>
+  </data>
+  <data name="Titles.Device.Text" xml:space="preserve">
+    <value>Gerät</value>
+  </data>
+  <data name="Titles.Status.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Titles.Trackers.Text" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+</root>
