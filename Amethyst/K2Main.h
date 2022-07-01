@@ -113,15 +113,15 @@ namespace k2app::main
 		{
 			p_status_update_running = true; // soonTM
 			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
-				{
-					TrackingDevices::devices_handle_refresh(false);
-					TrackingDevices::updateTrackingDeviceUI(K2Settings.trackingDeviceID);
-					if (K2Settings.overrideDeviceID >= 0)
-						TrackingDevices::updateTrackingDeviceUI(K2Settings.overrideDeviceID);
+			{
+				TrackingDevices::devices_handle_refresh(false);
+				TrackingDevices::updateTrackingDeviceUI(K2Settings.trackingDeviceID);
+				if (K2Settings.overrideDeviceID >= 0)
+					TrackingDevices::updateTrackingDeviceUI(K2Settings.overrideDeviceID);
 
-					p_devices_update_loops = 0; // Reset the counter
-					p_status_update_running = false; // We're done
-				});
+				p_devices_update_loops = 0; // Reset the counter
+				p_status_update_running = false; // We're done
+			});
 		}
 
 		/* Update the base device here */

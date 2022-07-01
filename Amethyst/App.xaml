@@ -22,29 +22,33 @@
                 <SolidColorBrush x:Key="WindowCaptionForeground">White</SolidColorBrush>
             </ResourceDictionary>
             <ResourceDictionary x:Key="HighContrast">
-                <SolidColorBrush x:Key="WindowCaptionForeground" Color="{ThemeResource SystemColorWindowTextColor}"/>
+                <SolidColorBrush x:Key="WindowCaptionForeground" Color="{ThemeResource SystemColorWindowTextColor}" />
             </ResourceDictionary>
 
             <!--From WinUI-Gallery-->
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="Transparent"/>
-                    <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="Black"/>
-                    <StaticResource x:Key="ControlDisplayBackgroundBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+                    <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="Black" />
+                    <StaticResource x:Key="ControlDisplayBackgroundBrush"
+                                    ResourceKey="SolidBackgroundFillColorBaseBrush" />
                     <StaticResource x:Key="ControlDisplayTextBrush" ResourceKey="SystemFillColorNeutralBrush" />
                     <Thickness x:Key="ControlExampleDisplayBorderThickness">1</Thickness>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="Transparent"/>
-                    <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="White"/>
-                    <StaticResource x:Key="ControlDisplayBackgroundBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+                    <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="White" />
+                    <StaticResource x:Key="ControlDisplayBackgroundBrush"
+                                    ResourceKey="SolidBackgroundFillColorBaseBrush" />
                     <StaticResource x:Key="ControlDisplayTextBrush" ResourceKey="SystemFillColorNeutralBrush" />
                     <Thickness x:Key="ControlExampleDisplayBorderThickness">1</Thickness>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
                     <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
-                    <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{ThemeResource SystemColorWindowTextColor}"/>
-                    <SolidColorBrush x:Key="ControlDisplayBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                    <SolidColorBrush x:Key="PageHeaderForegroundBrush"
+                                     Color="{ThemeResource SystemColorWindowTextColor}" />
+                    <SolidColorBrush x:Key="ControlDisplayBackgroundBrush"
+                                     Color="{ThemeResource SystemColorWindowColor}" />
                     <SolidColorBrush x:Key="ControlDisplayTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
                     <Thickness x:Key="ControlExampleDisplayBorderThickness">1</Thickness>
                 </ResourceDictionary>

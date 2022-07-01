@@ -106,7 +106,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			// Create and append the titles
 			TextBlock _orientation_label, _position_label;
 
-			_orientation_label.FontWeight(winrt::Windows::UI::Text::FontWeights::Medium());
+			_orientation_label.FontWeight(Windows::UI::Text::FontWeights::Medium());
 			_orientation_label.Text(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Titles/Set/Orientation/Text"));
 
@@ -115,7 +115,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			                           box_value(k2app::interfacing::LocalizedResourceWString(
 				                           L"GeneralPage", L"Captions/Tooltips/Orientation")));
 
-			_position_label.FontWeight(winrt::Windows::UI::Text::FontWeights::Medium());
+			_position_label.FontWeight(Windows::UI::Text::FontWeights::Medium());
 			_position_label.Text(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Titles/Set/Position/Text"));
 
@@ -181,7 +181,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				_orientation_control_labels[index].Margin({20, 0, 0, 0});
 
 				_orientation_control_labels[index].FontSize(17);
-				_orientation_control_labels[index].FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+				_orientation_control_labels[index].FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 
 				_orientation_control_labels[index].Text(_orientation_labels_map[index]);
 
@@ -189,7 +189,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				_orientation_control_grids[index].SetColumn(_orientation_control_labels[index], 0);
 
 				_orientation_control_boxes[index].FontSize(26);
-				_orientation_control_boxes[index].FontWeight(winrt::Windows::UI::Text::FontWeights::Normal());
+				_orientation_control_boxes[index].FontWeight(Windows::UI::Text::FontWeights::Normal());
 
 				_orientation_control_boxes[index].Minimum(0);
 				_orientation_control_boxes[index].Maximum(360);
@@ -223,7 +223,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				_position_control_labels[index].Margin({20, 0, 0, 0});
 
 				_position_control_labels[index].FontSize(17);
-				_position_control_labels[index].FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+				_position_control_labels[index].FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 
 				_position_control_labels[index].Text(_position_labels_map[index]);
 
@@ -231,7 +231,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				_position_control_grids[index].SetColumn(_position_control_labels[index], 0);
 
 				_position_control_boxes[index].FontSize(26);
-				_position_control_boxes[index].FontWeight(winrt::Windows::UI::Text::FontWeights::Normal());
+				_position_control_boxes[index].FontWeight(Windows::UI::Text::FontWeights::Normal());
 
 				_position_control_boxes[index].Minimum(-1000);
 				_position_control_boxes[index].Maximum(1000);
@@ -279,8 +279,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			{
 				// ZYX
 				_ptr_orientation_control_boxes[index].get()->ValueChanged(
-					[index, this](const winrt::Windows::Foundation::IInspectable& sender,
-					              const Controls::NumberBoxValueChangedEventArgs& e) -> void
+					[index, this](const Windows::Foundation::IInspectable& sender,
+					              const NumberBoxValueChangedEventArgs& e) -> void
 					{
 						// Don't react to dummy changes
 						if (!k2app::shared::general::general_tab_setup_finished ||
@@ -310,8 +310,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			{
 				// XYZ
 				_ptr_position_control_boxes[index].get()->ValueChanged(
-					[index, this](const winrt::Windows::Foundation::IInspectable& sender,
-					              const Controls::NumberBoxValueChangedEventArgs& e) -> void
+					[index, this](const Windows::Foundation::IInspectable& sender,
+					              const NumberBoxValueChangedEventArgs& e) -> void
 					{
 						// Don't react to dummy changes
 						if (!k2app::shared::general::general_tab_setup_finished ||

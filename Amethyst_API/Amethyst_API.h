@@ -412,9 +412,9 @@ namespace ktvr
 		}
 
 		// Set multiple trackers' state
-		K2Message(std::vector<std::pair<ktvr::ITrackerType, bool>> m_tracker_statuses) :
+		K2Message(std::vector<std::pair<ITrackerType, bool>> m_tracker_statuses) :
 			messageType{static_cast<int>(K2MessageType::K2Message_SetTrackerStateVector)},
-			tracker_statuses_vector{ std::move(m_tracker_statuses) }
+			tracker_statuses_vector{std::move(m_tracker_statuses)}
 		{
 		}
 	};
@@ -755,7 +755,7 @@ namespace ktvr
 	 */
 	template <bool want_reply = false>
 	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
-		update_tracker_state_vector(const std::vector<std::pair<ITrackerType, bool>>& status_pairs) noexcept
+	update_tracker_state_vector(const std::vector<std::pair<ITrackerType, bool>>& status_pairs) noexcept
 	{
 		try
 		{
@@ -826,7 +826,7 @@ namespace ktvr
 			else return std::monostate();
 		}
 	}
-	
+
 	/**
 	 * \brief Test connection with the server
 	 * \return Returns send_time / total_time / success?

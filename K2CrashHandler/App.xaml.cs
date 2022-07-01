@@ -18,8 +18,6 @@ public partial class App : Application
     /// </summary>
     public App()
     {
-        RequestedTheme = ApplicationTheme.Dark;
-
         InitializeComponent();
     }
 

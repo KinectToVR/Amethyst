@@ -88,7 +88,7 @@
                         <Grid Grid.Column="1" Margin="0,0,-11,0"
                               Width="40" Height="22" x:Name="FlipToggleDummyGrid"
                               VerticalAlignment="Center" IsHitTestVisible="False"
-                              HorizontalAlignment="Right"/>
+                              HorizontalAlignment="Right" />
 
                         <ToggleSwitch IsOn="True" x:Name="FlipToggle"
                                       Toggled="FlipToggle_Toggled"
@@ -196,7 +196,8 @@
                                             <Setter Property="MinWidth" Value="720" />
                                             <Setter Property="Margin" Value="30,15,0,0" />
                                             <Setter Property="CornerRadius" Value="8" />
-                                            <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                            <Setter Property="Background"
+                                                    Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                         </Style>
                                     </Flyout.FlyoutPresenterStyle>
 
@@ -210,7 +211,7 @@
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
                                                    x:Uid="/SettingsLearn/Captions/TrackerConfig" />
 
-                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" 
+                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15"
                                                    Foreground="{ThemeResource ControlDisplayTextBrush}"
                                                    x:Uid="/SettingsLearn/Captions/TrackerConfigNote" />
 
@@ -220,7 +221,7 @@
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
                                                    Foreground="{ThemeResource ControlDisplayTextBrush}">
 
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                  x:Uid="/SettingsLearn/Captions/Filters/Names/LERP" />
                                             <LineBreak />
 
@@ -234,14 +235,14 @@
                                             <Run x:Uid="/SettingsLearn/Captions/Filters/Explanations/LowPass" />
 
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                  x:Uid="/SettingsLearn/Captions/Filters/Names/EKF" />
                                             <LineBreak />
 
                                             <Run x:Uid="/SettingsLearn/Captions/Filters/Explanations/EKF" />
 
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
+                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                  x:Uid="/SettingsLearn/Captions/Filters/Names/None" />
                                             <LineBreak />
 
@@ -425,7 +426,8 @@
                             <Flyout.FlyoutPresenterStyle>
                                 <Style TargetType="FlyoutPresenter">
                                     <Setter Property="CornerRadius" Value="8" />
-                                    <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                    <Setter Property="Background"
+                                            Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                 </Style>
                             </Flyout.FlyoutPresenterStyle>
 

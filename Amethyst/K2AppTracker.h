@@ -336,7 +336,7 @@ namespace k2app
 							rotationMatrix, translationVector, calibration_origin, pos_filter)
 				),
 				ktvr::K2TrackerData(
-					data.serial, static_cast<ktvr::ITrackerType>(data.role), data.isActive
+					data.serial, data.role, data.isActive
 				)
 			);
 
@@ -360,7 +360,7 @@ namespace k2app
 					getFullPosition(pos_filter)
 				),
 				ktvr::K2TrackerData(
-					data.serial, static_cast<ktvr::ITrackerType>(data.role), data.isActive
+					data.serial, data.role, data.isActive
 				)
 			);
 

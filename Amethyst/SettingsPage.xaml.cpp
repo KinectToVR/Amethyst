@@ -66,30 +66,28 @@ namespace winrt::Amethyst::implementation
 		LOG(INFO) << "Rebuilding joint expanders... this may take a while...";
 
 		jointExpanderVector.clear();
-		jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-			new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[0]}))));
+		jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+			&k2app::K2Settings.K2TrackersVector[0]
+		})));
 
 		if (k2app::K2Settings.useTrackerPairs)
 		{
 			LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
 
-			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-				new Controls::JointExpander(
-					{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
-					k2app::interfacing::LocalizedResourceWString(
-						L"SharedStrings", L"Joints/Pairs/Feet")))));
+			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+				{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
+				k2app::interfacing::LocalizedResourceWString(
+					L"SharedStrings", L"Joints/Pairs/Feet"))));
 
-			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-				new Controls::JointExpander(
-					{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
-					k2app::interfacing::LocalizedResourceWString(
-						L"SharedStrings", L"Joints/Pairs/Elbows")))));
+			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+				{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
+				k2app::interfacing::LocalizedResourceWString(
+					L"SharedStrings", L"Joints/Pairs/Elbows"))));
 
-			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-				new Controls::JointExpander(
-					{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
-					k2app::interfacing::LocalizedResourceWString(
-						L"SharedStrings", L"Joints/Pairs/Knees")))));
+			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+				{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
+				k2app::interfacing::LocalizedResourceWString(
+					L"SharedStrings", L"Joints/Pairs/Knees"))));
 		}
 
 		LOG(INFO) << "Appending additional expanders (if they exist)...";
@@ -100,8 +98,9 @@ namespace winrt::Amethyst::implementation
 
 		for (uint32_t index = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
 		     index < k2app::K2Settings.K2TrackersVector.size(); index++)
-			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-				new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[index]}))));
+			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+				&k2app::K2Settings.K2TrackersVector[index]
+			})));
 
 		LOG(INFO) << "Clearing the appended expanders (UI Node)";
 		settings_safe_clear(jointExpanderHostStackPanel);
@@ -158,7 +157,7 @@ void Amethyst::implementation::SettingsPage::RestartButton_Click(
 	ktvr::request_vr_restart<false>("SteamVR needs to be restarted to enable/disable trackers properly.");
 }
 
-winrt::Windows::Foundation::IAsyncAction
+Windows::Foundation::IAsyncAction
 Amethyst::implementation::SettingsPage::ResetButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
@@ -206,7 +205,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 	using namespace k2app::shared::settings;
 
 	// Notify of the setup end
-	k2app::shared::settings::settings_localInitFinished = false;
+	settings_localInitFinished = false;
 	CheckOverlapsCheckBox().IsChecked(k2app::K2Settings.checkForOverlappingTrackers);
 
 	// Optionally show the foreign language grid
@@ -259,7 +258,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
 
 	// Notify of the setup end
-	k2app::shared::settings::settings_localInitFinished = true;
+	settings_localInitFinished = true;
 }
 
 void Amethyst::implementation::SettingsPage::AutoSpawn_Checked(
@@ -342,7 +341,7 @@ void Amethyst::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem
 	// If the extflip is from Amethyst
 	if (k2app::K2Settings.K2TrackersVector[0].isRotationOverridden)
 	{
-		k2app::K2Settings.externalFlipCalibrationYaw = 
+		k2app::K2Settings.externalFlipCalibrationYaw =
 			EigenUtils::RotationProjectedYaw( // Overriden tracker
 				k2app::interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
 				k2app::K2Settings.K2TrackersVector[0].pose.orientation); // Raw orientation
@@ -350,12 +349,12 @@ void Amethyst::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem
 	// If it's from an external tracker
 	else
 	{
-		k2app::K2Settings.externalFlipCalibrationYaw = 
+		k2app::K2Settings.externalFlipCalibrationYaw =
 			EigenUtils::RotationProjectedYaw( // External tracker
 				k2app::interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
 				k2app::interfacing::getVRWaistTrackerPose().second); // Raw orientation
 	}
-	
+
 	LOG(INFO) << "Captured yaw for external flip: " <<
 		radiansToDegrees(k2app::K2Settings.externalFlipCalibrationYaw) << "rad";
 	k2app::K2Settings.saveSettings();
@@ -363,8 +362,8 @@ void Amethyst::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem
 
 
 void Amethyst::implementation::SettingsPage::FlipDropDown_Expanding(
-	const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs& args)
+	const Controls::Expander& sender,
+	const Controls::ExpanderExpandingEventArgs& args)
 {
 	if (!k2app::shared::settings::settings_localInitFinished)return; // Don't even try if we're not set up yet
 
@@ -375,7 +374,7 @@ void Amethyst::implementation::SettingsPage::FlipDropDown_Expanding(
 
 
 void Amethyst::implementation::SettingsPage::FlipToggle_Toggled(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;
@@ -405,26 +404,27 @@ void Amethyst::implementation::SettingsPage::FlipToggle_Toggled(
 		if (k2app::interfacing::findStringIC(_controller_model, "knuckles") ||
 			k2app::interfacing::findStringIC(_controller_model, "index"))
 			boost::replace_all(_header, L"{0}",
-				k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage",
-					L"Tips/FlipToggle/Buttons/Index"));
+			                   k2app::interfacing::LocalizedResourceWString(
+				                   L"SettingsPage",
+				                   L"Tips/FlipToggle/Buttons/Index"));
 
 		else if (k2app::interfacing::findStringIC(_controller_model, "vive"))
 			boost::replace_all(_header, L"{0}",
-				k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage",
-					L"Tips/FlipToggle/Buttons/VIVE"));
+			                   k2app::interfacing::LocalizedResourceWString(
+				                   L"SettingsPage",
+				                   L"Tips/FlipToggle/Buttons/VIVE"));
 
 		else if (k2app::interfacing::findStringIC(_controller_model, "mr"))
 			boost::replace_all(_header, L"{0}",
-				k2app::interfacing::LocalizedResourceWString(
-					L"SettingsPage",
-					L"Tips/FlipToggle/Buttons/WMR"));
+			                   k2app::interfacing::LocalizedResourceWString(
+				                   L"SettingsPage",
+				                   L"Tips/FlipToggle/Buttons/WMR"));
 
-		else boost::replace_all(_header, L"{0}",
-			k2app::interfacing::LocalizedResourceWString(
-				L"SettingsPage",
-				L"Tips/FlipToggle/Buttons/Oculus"));
+		else
+			boost::replace_all(_header, L"{0}",
+			                   k2app::interfacing::LocalizedResourceWString(
+				                   L"SettingsPage",
+				                   L"Tips/FlipToggle/Buttons/Oculus"));
 
 		ToggleFlipTeachingTip().Title(_header.c_str());
 		ToggleFlipTeachingTip().Subtitle(
@@ -451,7 +451,7 @@ void Amethyst::implementation::SettingsPage::AutoStartFlyout_Opening(
 
 
 void Amethyst::implementation::SettingsPage::AutoStartCheckBox_Checked(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	k2app::interfacing::installApplicationManifest(); // Just in case
 
@@ -465,7 +465,7 @@ void Amethyst::implementation::SettingsPage::AutoStartCheckBox_Checked(
 
 
 void Amethyst::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	k2app::interfacing::installApplicationManifest(); // Just in case
 
@@ -479,8 +479,8 @@ void Amethyst::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
 
 
 void Amethyst::implementation::SettingsPage::ReManifestButton_Click(
-	const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args)
+	const Controls::SplitButton& sender,
+	const Controls::SplitButtonClickEventArgs& args)
 {
 	switch (k2app::interfacing::installApplicationManifest())
 	{
@@ -514,7 +514,7 @@ void Amethyst::implementation::SettingsPage::ReManifestButton_Click(
 
 
 void Amethyst::implementation::SettingsPage::ReRegisterButton_Click(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
 	{
@@ -540,14 +540,14 @@ void Amethyst::implementation::SettingsPage::ReRegisterButton_Click(
 
 
 void Amethyst::implementation::SettingsPage::DismissSetErrorButton_Click(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	SetErrorFlyout().Hide();
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void Amethyst::implementation::SettingsPage::LearnAboutFiltersButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	Controls::Primitives::FlyoutShowOptions options;
 	options.Placement(Controls::Primitives::FlyoutPlacementMode::Full);
@@ -559,8 +559,8 @@ void winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersButton_Clic
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersFlyout_Closed(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void Amethyst::implementation::SettingsPage::LearnAboutFiltersFlyout_Closed(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	DimGrid().Opacity(0.0);
 	DimGrid().IsHitTestVisible(false);
@@ -570,8 +570,8 @@ void winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersFlyout_Clos
 // Global scope to spare creating new ones each click
 std::optional<Controls::MenuFlyout> settings_trackerConfigFlyout = std::nullopt;
 
-void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	settings_trackerConfigFlyout = Controls::MenuFlyout();
 
@@ -595,23 +595,23 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 	std::map<i_tracker_list, ktvr::ITrackerType> tracker_map
 	{
-		{i_tracker_list::Tracker_Handed, ktvr::ITrackerType::Tracker_Handed},
-		{i_tracker_list::Tracker_LeftFoot, ktvr::ITrackerType::Tracker_LeftFoot},
-		{i_tracker_list::Tracker_RightFoot, ktvr::ITrackerType::Tracker_RightFoot},
-		{i_tracker_list::Tracker_LeftShoulder, ktvr::ITrackerType::Tracker_LeftShoulder},
-		{i_tracker_list::Tracker_RightShoulder, ktvr::ITrackerType::Tracker_RightShoulder},
-		{i_tracker_list::Tracker_LeftElbow, ktvr::ITrackerType::Tracker_LeftElbow},
-		{i_tracker_list::Tracker_RightElbow, ktvr::ITrackerType::Tracker_RightElbow},
-		{i_tracker_list::Tracker_LeftKnee, ktvr::ITrackerType::Tracker_LeftKnee},
-		{i_tracker_list::Tracker_RightKnee, ktvr::ITrackerType::Tracker_RightKnee},
-		{i_tracker_list::Tracker_Waist, ktvr::ITrackerType::Tracker_Waist},
-		{i_tracker_list::Tracker_Chest, ktvr::ITrackerType::Tracker_Chest},
-		{i_tracker_list::Tracker_Camera, ktvr::ITrackerType::Tracker_Camera},
-		{i_tracker_list::Tracker_Keyboard, ktvr::ITrackerType::Tracker_Keyboard}
+		{Tracker_Handed, ktvr::ITrackerType::Tracker_Handed},
+		{Tracker_LeftFoot, ktvr::ITrackerType::Tracker_LeftFoot},
+		{Tracker_RightFoot, ktvr::ITrackerType::Tracker_RightFoot},
+		{Tracker_LeftShoulder, ktvr::ITrackerType::Tracker_LeftShoulder},
+		{Tracker_RightShoulder, ktvr::ITrackerType::Tracker_RightShoulder},
+		{Tracker_LeftElbow, ktvr::ITrackerType::Tracker_LeftElbow},
+		{Tracker_RightElbow, ktvr::ITrackerType::Tracker_RightElbow},
+		{Tracker_LeftKnee, ktvr::ITrackerType::Tracker_LeftKnee},
+		{Tracker_RightKnee, ktvr::ITrackerType::Tracker_RightKnee},
+		{Tracker_Waist, ktvr::ITrackerType::Tracker_Waist},
+		{Tracker_Chest, ktvr::ITrackerType::Tracker_Chest},
+		{Tracker_Camera, ktvr::ITrackerType::Tracker_Camera},
+		{Tracker_Keyboard, ktvr::ITrackerType::Tracker_Keyboard}
 	};
 
-	for (uint32_t index = i_tracker_list::Tracker_Chest;
-	     index <= static_cast<int>(i_tracker_list::Tracker_Keyboard); index++)
+	for (uint32_t index = Tracker_Chest;
+	     index <= static_cast<int>(Tracker_Keyboard); index++)
 	{
 		// Back the current tracker's role up
 		ktvr::ITrackerType current_tracker =
@@ -625,9 +625,9 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				std::to_wstring(static_cast<int>(current_tracker))));
 
 		bool isEnabled = (index >= static_cast<int>(
-			     i_tracker_list::Tracker_Chest)),
+			     Tracker_Chest)),
 		     isChecked = (index < static_cast<int>(
-			     i_tracker_list::Tracker_Chest));
+			     Tracker_Chest));
 
 		for (const auto& tracker : k2app::K2Settings.K2TrackersVector)
 			if (tracker.tracker == tracker_map[static_cast<i_tracker_list>(index)])
@@ -638,8 +638,8 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 		menuTrackerToggleItem.Click(
 			[&, index, tracker_map, current_tracker, this]
-		(const winrt::Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-		-> winrt::Windows::Foundation::IAsyncAction
+		(const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+		-> Windows::Foundation::IAsyncAction
 			{
 				// Notify of the setup end
 				k2app::shared::settings::settings_localInitFinished = false;
@@ -689,30 +689,28 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				jointExpanderHostStackPanel->Transitions().Append(Media::Animation::ContentThemeTransition());
 
 				jointExpanderVector.clear();
-				jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-					new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[0]}))));
+				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+					&k2app::K2Settings.K2TrackersVector[0]
+				})));
 
 				if (k2app::K2Settings.useTrackerPairs)
 				{
 					LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
 
-					jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-						new Controls::JointExpander(
-							{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
-							k2app::interfacing::LocalizedResourceWString(
-								L"SharedStrings", L"Joints/Pairs/Feet")))));
+					jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+						{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
+						k2app::interfacing::LocalizedResourceWString(
+							L"SharedStrings", L"Joints/Pairs/Feet"))));
 
-					jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-						new Controls::JointExpander(
-							{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
-							k2app::interfacing::LocalizedResourceWString(
-								L"SharedStrings", L"Joints/Pairs/Elbows")))));
+					jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+						{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
+						k2app::interfacing::LocalizedResourceWString(
+							L"SharedStrings", L"Joints/Pairs/Elbows"))));
 
-					jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-						new Controls::JointExpander(
-							{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
-							k2app::interfacing::LocalizedResourceWString(
-								L"SharedStrings", L"Joints/Pairs/Knees")))));
+					jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+						{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
+						k2app::interfacing::LocalizedResourceWString(
+							L"SharedStrings", L"Joints/Pairs/Knees"))));
 				}
 
 				LOG(INFO) << "Appending additional expanders (if they exist)...";
@@ -723,8 +721,9 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 				for (uint32_t ind = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
 				     ind < k2app::K2Settings.K2TrackersVector.size(); ind++)
-					jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-						new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[ind]}))));
+					jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+						&k2app::K2Settings.K2TrackersVector[ind]
+					})));
 
 				LOG(INFO) << "Clearing the appended expanders (UI Node)";
 				settings_safe_clear(jointExpanderHostStackPanel);
@@ -741,7 +740,7 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					if (_expander_number >= 2 && jointExpanderVector.back() != expander)
 					{
 						auto separator = Controls::MenuFlyoutSeparator();
-						separator.Margin({ 10, 10, 10, 0 });
+						separator.Margin({10, 10, 10, 0});
 						jointExpanderHostStackPanel->Children().Append(separator);
 						_expander_number = 1;
 					}
@@ -788,7 +787,7 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				TrackingDevices::settings_set_external_flip_is_enabled();
 
 				// Notify of the setup end
-				k2app::shared::settings::settings_localInitFinished = true;
+				settings_localInitFinished = true;
 				k2app::K2Settings.saveSettings();
 
 				{
@@ -817,7 +816,7 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 	menuPairsToggleItem.IsChecked(k2app::K2Settings.useTrackerPairs);
 	menuPairsToggleItem.Click(
-		[&, this](const winrt::Windows::Foundation::IInspectable& sender,
+		[&, this](const Windows::Foundation::IInspectable& sender,
 		          const RoutedEventArgs& e) -> Windows::Foundation::IAsyncAction
 		{
 			// Notify of the setup end
@@ -832,30 +831,28 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 			jointExpanderHostStackPanel->Transitions().Append(Media::Animation::ContentThemeTransition());
 
 			jointExpanderVector.clear();
-			jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-				new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[0]}))));
+			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+				&k2app::K2Settings.K2TrackersVector[0]
+			})));
 
 			if (k2app::K2Settings.useTrackerPairs)
 			{
 				LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
 
-				jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-					new Controls::JointExpander(
-						{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
-						k2app::interfacing::LocalizedResourceWString(
-							L"SharedStrings", L"Joints/Pairs/Feet")))));
+				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+					{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
+					k2app::interfacing::LocalizedResourceWString(
+						L"SharedStrings", L"Joints/Pairs/Feet"))));
 
-				jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-					new Controls::JointExpander(
-						{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
-						k2app::interfacing::LocalizedResourceWString(
-							L"SharedStrings", L"Joints/Pairs/Elbows")))));
+				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+					{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
+					k2app::interfacing::LocalizedResourceWString(
+						L"SharedStrings", L"Joints/Pairs/Elbows"))));
 
-				jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-					new Controls::JointExpander(
-						{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
-						k2app::interfacing::LocalizedResourceWString(
-							L"SharedStrings", L"Joints/Pairs/Knees")))));
+				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+					{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
+					k2app::interfacing::LocalizedResourceWString(
+						L"SharedStrings", L"Joints/Pairs/Knees"))));
 			}
 
 			LOG(INFO) << "Appending additional expanders (if they exist)...";
@@ -866,8 +863,9 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 			for (uint32_t ind = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
 			     ind < k2app::K2Settings.K2TrackersVector.size(); ind++)
-				jointExpanderVector.push_back(std::move(std::shared_ptr<Controls::JointExpander>(
-					new Controls::JointExpander({&k2app::K2Settings.K2TrackersVector[ind]}))));
+				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+					&k2app::K2Settings.K2TrackersVector[ind]
+				})));
 
 			LOG(INFO) << "Clearing the appended expanders (UI Node)";
 			settings_safe_clear(jointExpanderHostStackPanel);
@@ -884,7 +882,7 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				if (_expander_number >= 2 && jointExpanderVector.back() != expander)
 				{
 					auto separator = Controls::MenuFlyoutSeparator();
-					separator.Margin({ 10, 10, 10, 0 });
+					separator.Margin({10, 10, 10, 0});
 					jointExpanderHostStackPanel->Children().Append(separator);
 					_expander_number = 1;
 				}
@@ -931,7 +929,7 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 			TrackingDevices::settings_set_external_flip_is_enabled();
 
 			// Notify of the setup end
-			k2app::shared::settings::settings_localInitFinished = true;
+			settings_localInitFinished = true;
 			k2app::K2Settings.saveSettings();
 			k2app::K2Settings.readSettings(); // Calls config check
 
@@ -956,8 +954,8 @@ void winrt::Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Checked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Checked(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;
@@ -967,8 +965,8 @@ void winrt::Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Checke
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Unchecked(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Unchecked(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;
@@ -978,8 +976,8 @@ void winrt::Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Unchec
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::ViewLogsButton_Click(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void Amethyst::implementation::SettingsPage::ViewLogsButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	k2app::interfacing::openFolderAndSelectItem(
 		k2app::interfacing::thisLogDestination + ".log");

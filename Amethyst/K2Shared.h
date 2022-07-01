@@ -95,7 +95,7 @@ namespace k2app::shared
 	{
 		inline bool devices_tab_setup_finished = false,
 		            devices_tab_re_setup_finished = false,
-					devices_signal_joints = true;
+		            devices_signal_joints = true;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
 			deviceNameLabel,
@@ -181,9 +181,9 @@ namespace k2app::interfacing
 			winrt::Windows::System::UserProfile::GlobalizationPreferences::Languages().GetAt(0)
 		};
 
-		k2app::shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language.LanguageTag();
+		shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language.LanguageTag();
 
-		return k2app::shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
+		return shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
 			(dictionary + L"/" + key).c_str()).ValueAsString().c_str();
 	}
 }

@@ -39,14 +39,14 @@ namespace winrt::Amethyst::implementation
 		MainWindow();
 
 		void NavView_Loaded(const Windows::Foundation::IInspectable& sender,
-		                    const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void NavView_ItemInvoked(const winrt::Microsoft::UI::Xaml::Controls::NavigationView& sender,
-		                         const winrt::Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs& args);
-		void NavView_BackRequested(const winrt::Microsoft::UI::Xaml::Controls::NavigationView& sender,
-		                           const winrt::Microsoft::UI::Xaml::Controls::NavigationViewBackRequestedEventArgs&
+		                    const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void NavView_ItemInvoked(const Microsoft::UI::Xaml::Controls::NavigationView& sender,
+		                         const Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs& args);
+		void NavView_BackRequested(const Microsoft::UI::Xaml::Controls::NavigationView& sender,
+		                           const Microsoft::UI::Xaml::Controls::NavigationViewBackRequestedEventArgs&
 		                           args);
 		void ContentFrame_NavigationFailed(const Windows::Foundation::IInspectable& sender,
-		                                   const winrt::Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs& e);
+		                                   const Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs& e);
 
 		void NavView_Navigate(
 			std::wstring navItemTag,
@@ -71,21 +71,21 @@ namespace winrt::Amethyst::implementation
 		std::vector<std::pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>> m_pages;
 
 	public:
-		Windows::Foundation::IAsyncAction checkUpdates(const winrt::Microsoft::UI::Xaml::UIElement& show_el,
+		Windows::Foundation::IAsyncAction checkUpdates(const Microsoft::UI::Xaml::UIElement& show_el,
 		                                               bool show = false, DWORD delay_ms = 0);
 		void InstallLaterButton_Click(
-			const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+			const Windows::Foundation::IInspectable& sender, const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void InstallNowButton_Click(const Windows::Foundation::IInspectable& sender,
-		                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                            const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ExitButton_Click(const Windows::Foundation::IInspectable& sender,
-		                      const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                      const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void MinimizeButton_Click(const Windows::Foundation::IInspectable& sender,
-		                          const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                          const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		Windows::Foundation::IAsyncAction UpdateButton_Loaded(const Windows::Foundation::IInspectable& sender,
-		                                                      const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                                                      const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		Windows::Foundation::IAsyncAction UpdateButton_Tapped(const Windows::Foundation::IInspectable& sender,
 		                                                      const
-		                                                      winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs&
+		                                                      Microsoft::UI::Xaml::Input::TappedRoutedEventArgs&
 		                                                      e);
 	};
 }

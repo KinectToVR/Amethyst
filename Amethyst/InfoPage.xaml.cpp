@@ -19,7 +19,7 @@ namespace winrt::Amethyst::implementation
 
 	void InfoPage::K2DoubleTapped(
 		const Windows::Foundation::IInspectable& sender,
-		const winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs& e)
+		const Input::DoubleTappedRoutedEventArgs& e)
 	{
 		// Also show a notification when we get to winui 1.1
 		k2app::shared::main::consoleItem.get()->Visibility(Visibility::Visible);
@@ -27,9 +27,9 @@ namespace winrt::Amethyst::implementation
 }
 
 
-void winrt::Amethyst::implementation::InfoPage::Grid_Loaded(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void Amethyst::implementation::InfoPage::Grid_Loaded(
+	const Windows::Foundation::IInspectable& sender,
+	const RoutedEventArgs& e)
 {
 	// The info page was loaded
 }

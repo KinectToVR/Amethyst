@@ -7,8 +7,8 @@
 using namespace winrt;
 using namespace Windows::Foundation;
 using namespace winrt::Microsoft::UI::Xaml;
-using namespace winrt::Microsoft::UI::Xaml::Controls;
-using namespace winrt::Microsoft::UI::Xaml::Navigation;
+using namespace Controls;
+using namespace Navigation;
 using namespace Amethyst;
 using namespace implementation;
 
@@ -22,7 +22,7 @@ using namespace implementation;
 App::App()
 {
 	/* Set up everything before the launch */
-    
+
 	/* Initialize the main app and launch it */
 
 	InitializeComponent();

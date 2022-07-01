@@ -11,6 +11,6 @@ namespace winrt::Amethyst::implementation
 		void OnLaunched(const Microsoft::UI::Xaml::LaunchActivatedEventArgs&);
 
 	private:
-		winrt::Microsoft::UI::Xaml::Window window{nullptr};
+		Microsoft::UI::Xaml::Window window{nullptr};
 	};
 }

@@ -117,16 +117,13 @@ namespace winrt::Amethyst::implementation
 		// Set joint expanders up
 
 		// Type 0: WF
-		jointSelectorExpanders[0] = std::move(std::shared_ptr<Controls::JointSelectorExpander>(
-			new Controls::JointSelectorExpander(0)));
+		jointSelectorExpanders[0] = std::move(std::make_shared<Controls::JointSelectorExpander>(0));
 
 		// Type 1: EK
-		jointSelectorExpanders[1] = std::move(std::shared_ptr<Controls::JointSelectorExpander>(
-			new Controls::JointSelectorExpander(1)));
+		jointSelectorExpanders[1] = std::move(std::make_shared<Controls::JointSelectorExpander>(1));
 
 		// Type 2: OTHER
-		jointSelectorExpanders[2] = std::move(std::shared_ptr<Controls::JointSelectorExpander>(
-			new Controls::JointSelectorExpander(2)));
+		jointSelectorExpanders[2] = std::move(std::make_shared<Controls::JointSelectorExpander>(2));
 
 		for (auto& expander : jointSelectorExpanders)
 			jointsBasisExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
@@ -134,16 +131,13 @@ namespace winrt::Amethyst::implementation
 		// Set override expanders up
 
 		// Type 0: WF
-		overrideSelectorExpanders[0] = std::move(std::shared_ptr<Controls::OverrideSelectorExpander>(
-			new Controls::OverrideSelectorExpander(0)));
+		overrideSelectorExpanders[0] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(0));
 
 		// Type 1: EK
-		overrideSelectorExpanders[1] = std::move(std::shared_ptr<Controls::OverrideSelectorExpander>(
-			new Controls::OverrideSelectorExpander(1)));
+		overrideSelectorExpanders[1] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(1));
 
 		// Type 2: OTHER
-		overrideSelectorExpanders[2] = std::move(std::shared_ptr<Controls::OverrideSelectorExpander>(
-			new Controls::OverrideSelectorExpander(2)));
+		overrideSelectorExpanders[2] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(2));
 
 		for (auto& expander : overrideSelectorExpanders)
 			overridesExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
@@ -432,7 +426,6 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 
 	devicesMainContentGridInner.get()->Transitions().Clear();
 }
-
 
 
 void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(

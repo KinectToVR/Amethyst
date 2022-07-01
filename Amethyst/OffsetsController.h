@@ -69,8 +69,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			}();
 
 			for (auto& _tracker : k2app::K2Settings.K2TrackersVector)
-				_offsetsPivotItems.push_back(std::shared_ptr<OffsetsPivotItem>(
-					new OffsetsPivotItem(&_tracker)));
+				_offsetsPivotItems.push_back(std::make_shared<OffsetsPivotItem>(&_tracker));
 
 			// Append selectors to the UI Node
 			// (this weird shit is an unwrapper for __try)

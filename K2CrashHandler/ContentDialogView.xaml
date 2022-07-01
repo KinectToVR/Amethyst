@@ -126,7 +126,8 @@
                                 <Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="FlyoutPresenter">
                                         <Setter Property="CornerRadius" Value="8" />
-                                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                        <Setter Property="Background"
+                                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                     </Style>
                                 </Flyout.FlyoutPresenterStyle>
 

@@ -91,8 +91,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			for (const auto& _tracker : _tracker_pointers)
 				_jointSelectorRows.push_back(
-					std::shared_ptr<JointSelectorRow>(
-						new JointSelectorRow(_tracker)));
+					std::make_shared<JointSelectorRow>(_tracker));
 
 			// Append selectors to the UI Node
 			// (this weird shit is an unwrapper for __try)
@@ -210,7 +209,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			};
 
 			TextBlock _e_header;
-			_e_header.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_e_header.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 			_e_header.Text(_type_title[type]);
 
 			_container_expander.Header(_e_header);
@@ -249,7 +248,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracker.HorizontalAlignment(HorizontalAlignment::Center);
 			_tracker.VerticalAlignment(VerticalAlignment::Center);
 
-			_tracker.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_tracker.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 			_tracker.Text(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Titles/Set/Tracker/Text"));
 
@@ -260,7 +259,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracked_joint.HorizontalAlignment(HorizontalAlignment::Center);
 			_tracked_joint.VerticalAlignment(VerticalAlignment::Center);
 
-			_tracked_joint.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_tracked_joint.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 			_tracked_joint.Text(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Titles/Set/TrackedJoint/Text"));
 
@@ -287,8 +286,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Set up some signals
 			_ptr_container_expander.get()->Expanding(
-				[this](const Controls::Expander& sender,
-				       const Controls::ExpanderExpandingEventArgs& e) -> void
+				[this](const Expander& sender,
+				       const ExpanderExpandingEventArgs& e) -> void
 				{
 					for (auto& expander : k2app::shared::devices::jointSelectorExpanders)
 						if (expander->ContainerExpander().get() != nullptr &&

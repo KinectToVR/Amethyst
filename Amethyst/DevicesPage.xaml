@@ -46,7 +46,7 @@
                         <DataTemplate x:DataType="local:TrackingDevicesView">
                             <Grid Height="70" Name="DevicesViewGrid"
                                   Margin="-13,1,-9,1" CornerRadius="5"
-                                  
+
                                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                   BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}">
                                 <Grid.ColumnDefinitions>
@@ -177,7 +177,8 @@
                                                 <Flyout.FlyoutPresenterStyle>
                                                     <Style TargetType="FlyoutPresenter">
                                                         <Setter Property="CornerRadius" Value="8" />
-                                                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                                        <Setter Property="Background"
+                                                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                                     </Style>
                                                 </Flyout.FlyoutPresenterStyle>
 
@@ -224,7 +225,8 @@
 
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                                x:Name="ErrorWhatText"
-                                               Margin="10,30,5,0" Foreground="{ThemeResource ControlDisplayTextBrush}" TextWrapping="WrapWholeWords">
+                                               Margin="10,30,5,0" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                               TextWrapping="WrapWholeWords">
                                         <TextBlock.Text>
                                             There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
                                         </TextBlock.Text>
@@ -276,7 +278,8 @@
                                                 <Flyout.FlyoutPresenterStyle>
                                                     <Style TargetType="FlyoutPresenter">
                                                         <Setter Property="CornerRadius" Value="8" />
-                                                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                                        <Setter Property="Background"
+                                                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                                     </Style>
                                                 </Flyout.FlyoutPresenterStyle>
 
@@ -304,7 +307,8 @@
                                             <Flyout.FlyoutPresenterStyle>
                                                 <Style TargetType="FlyoutPresenter">
                                                     <Setter Property="CornerRadius" Value="8" />
-                                                    <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                                    <Setter Property="Background"
+                                                            Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                                 </Style>
                                             </Flyout.FlyoutPresenterStyle>
 
@@ -360,7 +364,7 @@
                                             Orientation="Vertical" HorizontalAlignment="Stretch" Margin="0,0,170,0">
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
-                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="FontWeight" Value="SemiBold" />
                                         </Style>
                                     </StackPanel.Resources>
                                 </StackPanel>

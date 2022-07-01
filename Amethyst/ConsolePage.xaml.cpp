@@ -26,42 +26,42 @@ namespace winrt::Amethyst::implementation
 
 
 void Amethyst::implementation::ConsolePage::ConsolePage_Loaded(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	LOG(INFO) << "Ohhhhh, How Sweeet!";
 }
 
 
 void Amethyst::implementation::ConsolePage::DevicesCrashButton_Click(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	exit(-12);
 }
 
 
 void Amethyst::implementation::ConsolePage::OpenVRCrashButton_Click(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	exit(-11);
 }
 
 
 void Amethyst::implementation::ConsolePage::HRESULTCrashButton_Click(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	check_hresult(FALSE);
 }
 
 
 void Amethyst::implementation::ConsolePage::DelegateCrashButton_Click(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	throw hresult_illegal_delegate_assignment();
 }
 
 
 void Amethyst::implementation::ConsolePage::NullCrashButton_Click(
-	const Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// This is only a sample, null pointer exceptions
 	//      actually happen sometimes, e.g. if an element

@@ -129,7 +129,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			// Create the title text
 			TextBlock _title;
 			_title.Width(130);
-			_title.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_title.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 
 			_title.Text(eraseSubStr(k2app::interfacing::LocalizedResourceWString(
 				                        L"SharedStrings", L"Joints/Enum/" +
@@ -149,7 +149,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracker_combo.Height(45);
 			_tracker_combo.Width(150);
 			_tracker_combo.FontSize(15);
-			_tracker_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_tracker_combo.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 			_tracker_combo.PlaceholderText(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
 
@@ -160,8 +160,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Set up some signals
 			_ptr_tracker_combo->SelectionChanged(
-				[this](const winrt::Windows::Foundation::IInspectable& sender,
-				       const Controls::SelectionChangedEventArgs& e) -> void
+				[this](const Windows::Foundation::IInspectable& sender,
+				       const SelectionChangedEventArgs& e) -> void
 				{
 					if (!k2app::shared::devices::devices_tab_setup_finished)return;
 					// Don't even try if we're not set up yet
@@ -170,7 +170,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 					// If we're using a joints device then also signal the joint
 					const auto& trackingDevice = TrackingDevices::getCurrentDevice();
-					if (trackingDevice.index() == 1 && 
+					if (trackingDevice.index() == 1 &&
 						k2app::shared::devices::devices_tab_re_setup_finished &&
 						k2app::shared::devices::devices_signal_joints)
 						// if JointsBasis & Setup Finished

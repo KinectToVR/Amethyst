@@ -441,7 +441,7 @@ namespace winrt::Amethyst::implementation
 
 		// Set titlebar/taskview icon
 		LOG(INFO) << "Setting the App Window icon...";
-		HWND hWnd{0};
+		HWND hWnd{nullptr};
 		this->try_as<IWindowNative>()->get_WindowHandle(&hWnd);
 
 		Microsoft::UI::Windowing::AppWindow::GetFromWindowId(

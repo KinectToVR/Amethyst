@@ -13,14 +13,14 @@ namespace K2CrashHandler;
 
 public sealed partial class ContentDialogView
 {
-    private SemaphoreSlim semaphoreObject = new(0);
+    private bool confirmationFlyoutResult,
+        confirmationFlyoutRunning;
 
-    private bool confirmationFlyoutResult = false,
-        confirmationFlyoutRunning = false;
+    private readonly string logFileLocation = "0";
 
-    private string primaryButtonText = "[NOT SET]";
-    private string secondaryButtonText = "[NOT SET]";
-    private string logFileLocation = "0";
+    private readonly string primaryButtonText = "[NOT SET]";
+    private readonly string secondaryButtonText = "[NOT SET]";
+    private readonly SemaphoreSlim semaphoreObject = new(0);
 
     public ContentDialogView()
     {

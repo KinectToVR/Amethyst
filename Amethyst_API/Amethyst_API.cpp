@@ -265,7 +265,7 @@ namespace ktvr
 
 		return ret.str();
 	}
-	
+
 	std::string K2Message::serializeToString()
 	{
 		std::ostringstream o;
@@ -290,7 +290,7 @@ namespace ktvr
 			return K2Message();
 		}
 	}
-	
+
 	std::string K2ResponseMessage::serializeToString()
 	{
 		std::ostringstream o;

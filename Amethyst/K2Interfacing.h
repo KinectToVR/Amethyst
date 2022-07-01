@@ -10,59 +10,59 @@
 
 namespace winrt::Microsoft::UI::Xaml::Controls
 {
-	inline void AppendGridStarColumn(Controls::Grid& _grid)
+	inline void AppendGridStarColumn(Grid& _grid)
 	{
-		Controls::ColumnDefinition _col;
+		ColumnDefinition _col;
 		_col.Width(GridLengthHelper::FromValueAndType(1, GridUnitType::Star));
 
 		_grid.ColumnDefinitions().Append(_col);
 	}
 
-	inline void AppendGridStarsColumn(Controls::Grid& _grid, uint32_t stars)
+	inline void AppendGridStarsColumn(Grid& _grid, uint32_t stars)
 	{
-		Controls::ColumnDefinition _col;
+		ColumnDefinition _col;
 		_col.Width(GridLengthHelper::FromValueAndType(stars, GridUnitType::Star));
 
 		_grid.ColumnDefinitions().Append(_col);
 	}
 
 	inline void AppendGridStarsColumnMinWidthPixels(
-		Controls::Grid& _grid, uint32_t stars, uint32_t pixels)
+		Grid& _grid, uint32_t stars, uint32_t pixels)
 	{
-		Controls::ColumnDefinition _col;
+		ColumnDefinition _col;
 		_col.Width(GridLengthHelper::FromValueAndType(stars, GridUnitType::Star));
 		_col.MinWidth(pixels);
 
 		_grid.ColumnDefinitions().Append(_col);
 	}
 
-	inline void AppendGridPixelsColumn(Controls::Grid& _grid, uint32_t pixels)
+	inline void AppendGridPixelsColumn(Grid& _grid, uint32_t pixels)
 	{
-		Controls::ColumnDefinition _col;
+		ColumnDefinition _col;
 		_col.Width(GridLengthHelper::FromValueAndType(pixels, GridUnitType::Pixel));
 
 		_grid.ColumnDefinitions().Append(_col);
 	}
 
-	inline void AppendGridStarRow(Controls::Grid& _grid)
+	inline void AppendGridStarRow(Grid& _grid)
 	{
-		Controls::RowDefinition _col;
+		RowDefinition _col;
 		_col.Height(GridLengthHelper::FromValueAndType(1, GridUnitType::Star));
 
 		_grid.RowDefinitions().Append(_col);
 	}
 
-	inline void AppendGridStarsRow(Controls::Grid& _grid, uint32_t stars)
+	inline void AppendGridStarsRow(Grid& _grid, uint32_t stars)
 	{
-		Controls::RowDefinition _col;
+		RowDefinition _col;
 		_col.Height(GridLengthHelper::FromValueAndType(stars, GridUnitType::Star));
 
 		_grid.RowDefinitions().Append(_col);
 	}
 
-	inline void AppendGridPixelsRow(Controls::Grid& _grid, uint32_t pixels)
+	inline void AppendGridPixelsRow(Grid& _grid, uint32_t pixels)
 	{
-		Controls::RowDefinition _col;
+		RowDefinition _col;
 		_col.Height(GridLengthHelper::FromValueAndType(pixels, GridUnitType::Pixel));
 
 		_grid.RowDefinitions().Append(_col);
@@ -117,8 +117,8 @@ namespace k2app::interfacing
 	inline std::string GetLogTimestamp()
 	{
 		// From glog/logging.cc
-		struct ::tm tm_time;
-		const auto tm_now = time(NULL);
+		struct tm tm_time;
+		const auto tm_now = time(nullptr);
 		localtime_s(&tm_time, &tm_now);
 
 		std::ostringstream time_pid_stream;
@@ -202,7 +202,7 @@ namespace k2app::interfacing
 
 			// Helper bool array
 			std::vector<bool> spawned;
-			
+
 			// Create a dummy update vector
 			std::vector<std::pair<ktvr::ITrackerType, bool>> k2_tracker_statuses;
 			for (const auto& tracker : K2Settings.K2TrackersVector)
@@ -471,7 +471,7 @@ namespace k2app::interfacing
 
 				/* Connection test and display ping */
 				// We may wait
-				if (init_code == 0) 
+				if (init_code == 0)
 				{
 					LOG(INFO) << "Testing the connection...";
 
@@ -608,7 +608,7 @@ namespace k2app::interfacing
 				bool _can_return = true;
 
 				if (!_can_be_ame)
-					for (const auto& _tracker : k2app::K2Settings.K2TrackersVector)
+					for (const auto& _tracker : K2Settings.K2TrackersVector)
 						if (std::string(buf_p) == _tracker.data.serial)
 						{
 							LOG_IF(INFO, _log) <<
@@ -1078,13 +1078,13 @@ namespace k2app::interfacing
 					shared::main::thisDispatcherQueue->TryEnqueue([=, this]
 					{
 						if (isExitingNow)return;
-						if (_ptr_text_block.get()) 
+						if (_ptr_text_block.get())
 						{
 							_ptr_text_block.get()->Foreground(
 								primary
-								? Media::SolidColorBrush(winrt::Windows::UI::Colors::White())
-								: Application::Current().Resources().TryLookup(
-									winrt::box_value(L"ControlDisplayTextBrush")).as<Media::SolidColorBrush>());
+									? Media::SolidColorBrush(winrt::Windows::UI::Colors::White())
+									: Application::Current().Resources().TryLookup(
+										winrt::box_value(L"ControlDisplayTextBrush")).as<Media::SolidColorBrush>());
 						}
 					});
 			}
@@ -2633,8 +2633,8 @@ namespace k2app::interfacing
 				Controls::Grid _grid;
 				_grid.HorizontalAlignment(HorizontalAlignment::Stretch);
 
-				Controls::AppendGridStarColumn(_grid);
-				Controls::AppendGridStarColumn(_grid);
+				AppendGridStarColumn(_grid);
+				AppendGridStarColumn(_grid);
 
 				// Parse and append the first pair element
 				{
@@ -3004,7 +3004,7 @@ namespace k2app::interfacing
 
 			// Append a One-Row element pair : */* column space
 			void AppendElementPairStack(const Interface::Element& first_element,
-			                       const Interface::Element& second_element) override
+			                            const Interface::Element& second_element) override
 			{
 				// Set up a placeholder stack panel (horizontal)
 				Controls::StackPanel _stack_panel;
@@ -3353,7 +3353,7 @@ namespace k2app::interfacing
 				for (uint32_t i = 0; i < element_vector.size(); i++)
 				{
 					// Append a column
-					Controls::AppendGridStarColumn(_grid);
+					AppendGridStarColumn(_grid);
 
 					// Parse the alignment : Left by default
 					auto _alignment = HorizontalAlignment::Left;
@@ -3584,8 +3584,8 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->VerticalAlignment(
 								VerticalAlignment::Center);
-							
-							(*pElement).Get().get()->Margin({ (i == 0 ? 3. : 5.), 3, 5, 3 });
+
+							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
 
 							_stack_panel.Children().Append(*(*pElement).Get());
 							break;
@@ -3598,7 +3598,7 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->VerticalAlignment(
 								VerticalAlignment::Center);
-							
+
 							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
 
 							_stack_panel.Children().Append(*(*pElement).Get());
@@ -3612,7 +3612,7 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->VerticalAlignment(
 								VerticalAlignment::Center);
-							
+
 							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
 
 							_stack_panel.Children().Append(*(*pElement).Get());
@@ -3626,7 +3626,7 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->VerticalAlignment(
 								VerticalAlignment::Center);
-							
+
 							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
 
 							_stack_panel.Children().Append(*(*pElement).Get());
@@ -3640,7 +3640,7 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->VerticalAlignment(
 								VerticalAlignment::Center);
-							
+
 							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
 
 							_stack_panel.Children().Append(*(*pElement).Get());
@@ -3654,7 +3654,7 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->VerticalAlignment(
 								VerticalAlignment::Center);
-							
+
 							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
 
 							_stack_panel.Children().Append(*(*pElement).Get());
@@ -3668,7 +3668,7 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->VerticalAlignment(
 								VerticalAlignment::Center);
-							
+
 							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
 
 							_stack_panel.Children().Append(*(*pElement).Get());
@@ -3682,8 +3682,8 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->VerticalAlignment(
 								VerticalAlignment::Center);
-							
-							(*pElement).Get().get()->Margin({ (i == 0 ? 3. : 5.), 3, 5, 3 });
+
+							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
 
 							_stack_panel.Children().Append(*(*pElement).Get());
 							break;

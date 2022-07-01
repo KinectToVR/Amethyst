@@ -199,10 +199,10 @@ namespace TrackingDevices
 		}
 
 		// Enable/Disable combos
-		TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
+		settings_trackersConfig_UpdateIsEnabled();
 
 		// Enable/Disable ExtFlip
-		TrackingDevices::settings_set_external_flip_is_enabled();
+		settings_set_external_flip_is_enabled();
 
 		// Save settings
 		k2app::K2Settings.saveSettings();
@@ -378,7 +378,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Create the title text
 			TextBlock _title;
-			_title.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_title.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 
 			_title.Text(title.value_or(k2app::interfacing::LocalizedResourceWString(
 				L"SharedStrings", L"Joints/Enum/" +
@@ -420,7 +420,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Set up content caption / pos
 			TextBlock _position;
-			_position.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_position.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 			_position.Text(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Captions/Filters/Position"));
 			_position.HorizontalAlignment(HorizontalAlignment::Left);
@@ -433,7 +433,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Set up content caption / rot
 			TextBlock _orientation;
-			_orientation.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_orientation.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 			_orientation.Text(
 				k2app::interfacing::LocalizedResourceWString(
 					L"SettingsPage", L"Captions/Filters/Orientation"));
@@ -452,7 +452,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_position_combo.Height(65);
 			_position_combo.MinWidth(350);
 			_position_combo.FontSize(15);
-			_position_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_position_combo.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 
 			// Set up (content caption / pos)'s items
 			ComboBoxItem _lerp, _low_pass, _kalman, _pos_off;
@@ -483,7 +483,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_orientation_combo.Height(65);
 			_orientation_combo.MinWidth(350);
 			_orientation_combo.FontSize(15);
-			_orientation_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_orientation_combo.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
 
 			// Set up (content caption / pos)'s items
 			ComboBoxItem _device, _software, _hmd, _off;
@@ -545,8 +545,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_orientation_combo.SelectedIndex(_tracker_pointers[0]->orientationTrackingOption);
 
 			_main_expander.Expanding(
-				[this](const Controls::Expander& sender,
-				       const Controls::ExpanderExpandingEventArgs& e) -> void
+				[this](const Expander& sender,
+				       const ExpanderExpandingEventArgs& e) -> void
 				{
 					for (auto& expander : k2app::shared::settings::jointExpanderVector)
 						if (expander->MainExpander().get() != nullptr &&
@@ -566,8 +566,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				});
 
 			_joint_switch.Toggled(
-				[this](const winrt::Windows::Foundation::IInspectable& sender,
-				       const RoutedEventArgs& e) -> winrt::Windows::Foundation::IAsyncAction
+				[this](const Windows::Foundation::IInspectable& sender,
+				       const RoutedEventArgs& e) -> Windows::Foundation::IAsyncAction
 				{
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)co_return;
@@ -617,8 +617,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				});
 
 			_ptr_position_combo->SelectionChanged(
-				[this](const winrt::Windows::Foundation::IInspectable& sender,
-				       const Controls::SelectionChangedEventArgs& e) -> void
+				[this](const Windows::Foundation::IInspectable& sender,
+				       const SelectionChangedEventArgs& e) -> void
 				{
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)return;
@@ -632,8 +632,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				});
 
 			_ptr_orientation_combo->SelectionChanged(
-				[this](const winrt::Windows::Foundation::IInspectable& sender,
-				       const Controls::SelectionChangedEventArgs& e) -> void
+				[this](const Windows::Foundation::IInspectable& sender,
+				       const SelectionChangedEventArgs& e) -> void
 				{
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)return;

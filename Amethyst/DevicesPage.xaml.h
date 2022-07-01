@@ -19,28 +19,28 @@ namespace winrt::Amethyst::implementation
 
 		Windows::Foundation::IAsyncAction TrackingDeviceListView_SelectionChanged(
 			const Windows::Foundation::IInspectable& sender,
-			const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
+			const Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
 			& e);
 		Windows::Foundation::IAsyncAction SetAsOverrideButton_Click(const Windows::Foundation::IInspectable& sender,
-		                                                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs&
+		                                                            const Microsoft::UI::Xaml::RoutedEventArgs&
 		                                                            e);
 		Windows::Foundation::IAsyncAction SetAsBaseButton_Click(const Windows::Foundation::IInspectable& sender,
-		                                                        const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                                                        const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DisconnectDeviceButton_Click(const Windows::Foundation::IInspectable& sender,
-		                                  const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                                  const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DeselectDeviceButton_Click(const Windows::Foundation::IInspectable& sender,
-		                                const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void ReconnectDeviceButton_Click(const winrt::Microsoft::UI::Xaml::Controls::SplitButton& sender,
-		                                 const winrt::Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args);
+		                                const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ReconnectDeviceButton_Click(const Microsoft::UI::Xaml::Controls::SplitButton& sender,
+		                                 const Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args);
 
 		void DismissOverrideTipNoJointsButton_Click(const Windows::Foundation::IInspectable& sender,
-		                                            const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                                            const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DevicesPage_Loaded(const Windows::Foundation::IInspectable& sender,
-		                        const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                        const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void OpenDiscordButton_Click(const Windows::Foundation::IInspectable& sender,
-		                             const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                             const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void OpenDocsButton_Click(const Windows::Foundation::IInspectable& sender,
-		                          const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                          const Microsoft::UI::Xaml::RoutedEventArgs& e);
 	};
 }
 

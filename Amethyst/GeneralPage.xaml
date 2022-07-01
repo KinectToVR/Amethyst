@@ -225,7 +225,8 @@
                                   HorizontalAlignment="Stretch" Grid.Row="5">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Calibration/Captions/Points"
-                                           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" TextWrapping="WrapWholeWords" />
+                                           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                           TextWrapping="WrapWholeWords" />
                             </Grid>
 
                             <Button x:Name="DiscardAutoCalibrationButton" Grid.Row="7"
@@ -444,7 +445,8 @@
                                   HorizontalAlignment="Stretch" Grid.Row="6">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            x:Uid="/GeneralPage/Calibration/Labels/InputsNotice"
-                                           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" TextWrapping="WrapWholeWords" />
+                                           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                           TextWrapping="WrapWholeWords" />
                             </Grid>
 
                             <Button x:Name="DiscardCalibrationButton_Click" Grid.Row="8"
@@ -502,7 +504,8 @@
                                     <Flyout.FlyoutPresenterStyle>
                                         <Style TargetType="FlyoutPresenter">
                                             <Setter Property="CornerRadius" Value="8" />
-                                            <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                            <Setter Property="Background"
+                                                    Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                         </Style>
                                     </Flyout.FlyoutPresenterStyle>
 
@@ -607,7 +610,7 @@
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            x:Name="ErrorWhatText" TextWrapping="WrapWholeWords"
-                                           Margin="10,30,5,0" Foreground="{ThemeResource SystemFillColorNeutralBrush}" >
+                                           Margin="10,30,5,0" Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                     <TextBlock.Text>
                                         There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
                                     </TextBlock.Text>
@@ -673,7 +676,8 @@
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            x:Name="OverrideErrorWhatText"
-                                           Margin="10,30,5,0" Foreground="{ThemeResource ControlDisplayTextBrush}" TextWrapping="WrapWholeWords">
+                                           Margin="10,30,5,0" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                           TextWrapping="WrapWholeWords">
                                     <TextBlock.Text>
                                         There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
                                     </TextBlock.Text>
@@ -832,7 +836,8 @@
                                    FontSize="50" FontWeight="SemiBold" Foreground="White" />
                     </StackPanel>
 
-                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center" Foreground="White"
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               Foreground="White"
                                x:Uid="/GeneralPage/Captions/Preview/DisabledText" HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
@@ -849,7 +854,8 @@
                                    FontSize="50" FontWeight="SemiBold" Foreground="White" />
                     </StackPanel>
 
-                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center" Foreground="White"
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               Foreground="White"
                                x:Uid="/GeneralPage/Captions/Preview/NoFocusText" HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
@@ -866,7 +872,8 @@
                                    FontSize="50" FontWeight="SemiBold" Foreground="White" />
                     </StackPanel>
 
-                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center" Foreground="White"
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               Foreground="White"
                                x:Uid="/GeneralPage/Captions/Preview/NoDashboardText" HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
@@ -898,7 +905,8 @@
                                 <Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="FlyoutPresenter">
                                         <Setter Property="CornerRadius" Value="8" />
-                                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                        <Setter Property="Background"
+                                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                     </Style>
                                 </Flyout.FlyoutPresenterStyle>
 
@@ -953,7 +961,8 @@
                                 <Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="FlyoutPresenter">
                                         <Setter Property="CornerRadius" Value="8" />
-                                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                        <Setter Property="Background"
+                                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                     </Style>
                                 </Flyout.FlyoutPresenterStyle>
 
