@@ -14,5 +14,9 @@ inline std::map<std::wstring, std::wstring> dim_lights_label_map
 	{
 		L"lc-LC",
 		L"Iw uww ushin PSMS fow wotatiown twackwing onwy, u cn dmm contwolew WED wighwts 2 sav powaa."
+	},
+	{
+		L"de-DE",
+		L"Sollte PSMS nur für die Rotationsverfolgung verwendet werden, kann man die LED-Leuchten des Controllers dimmen, um Strom zu sparen."
 	}
 };

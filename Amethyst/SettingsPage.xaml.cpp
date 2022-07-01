@@ -66,7 +66,7 @@ namespace winrt::Amethyst::implementation
 		LOG(INFO) << "Rebuilding joint expanders... this may take a while...";
 
 		jointExpanderVector.clear();
-		jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+		jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(std::vector{
 			&k2app::K2Settings.K2TrackersVector[0]
 		})));
 
@@ -75,17 +75,17 @@ namespace winrt::Amethyst::implementation
 			LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
 
 			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-				{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
+				std::vector{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
 				k2app::interfacing::LocalizedResourceWString(
 					L"SharedStrings", L"Joints/Pairs/Feet"))));
 
 			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-				{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
+				std::vector{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
 				k2app::interfacing::LocalizedResourceWString(
 					L"SharedStrings", L"Joints/Pairs/Elbows"))));
 
 			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-				{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
+				std::vector{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
 				k2app::interfacing::LocalizedResourceWString(
 					L"SharedStrings", L"Joints/Pairs/Knees"))));
 		}
@@ -98,7 +98,7 @@ namespace winrt::Amethyst::implementation
 
 		for (uint32_t index = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
 		     index < k2app::K2Settings.K2TrackersVector.size(); index++)
-			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(std::vector{
 				&k2app::K2Settings.K2TrackersVector[index]
 			})));
 
@@ -689,7 +689,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				jointExpanderHostStackPanel->Transitions().Append(Media::Animation::ContentThemeTransition());
 
 				jointExpanderVector.clear();
-				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(std::vector{
 					&k2app::K2Settings.K2TrackersVector[0]
 				})));
 
@@ -698,17 +698,17 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
 
 					jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-						{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
+						std::vector{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
 						k2app::interfacing::LocalizedResourceWString(
 							L"SharedStrings", L"Joints/Pairs/Feet"))));
 
 					jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-						{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
+						std::vector{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
 						k2app::interfacing::LocalizedResourceWString(
 							L"SharedStrings", L"Joints/Pairs/Elbows"))));
 
 					jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-						{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
+						std::vector{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
 						k2app::interfacing::LocalizedResourceWString(
 							L"SharedStrings", L"Joints/Pairs/Knees"))));
 				}
@@ -721,7 +721,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 				for (uint32_t ind = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
 				     ind < k2app::K2Settings.K2TrackersVector.size(); ind++)
-					jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+					jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(std::vector{
 						&k2app::K2Settings.K2TrackersVector[ind]
 					})));
 
@@ -831,7 +831,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 			jointExpanderHostStackPanel->Transitions().Append(Media::Animation::ContentThemeTransition());
 
 			jointExpanderVector.clear();
-			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+			jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(std::vector{
 				&k2app::K2Settings.K2TrackersVector[0]
 			})));
 
@@ -840,17 +840,17 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
 
 				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-					{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
+					std::vector{&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]},
 					k2app::interfacing::LocalizedResourceWString(
 						L"SharedStrings", L"Joints/Pairs/Feet"))));
 
 				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-					{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
+					std::vector{&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]},
 					k2app::interfacing::LocalizedResourceWString(
 						L"SharedStrings", L"Joints/Pairs/Elbows"))));
 
 				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-					{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
+					std::vector{&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]},
 					k2app::interfacing::LocalizedResourceWString(
 						L"SharedStrings", L"Joints/Pairs/Knees"))));
 			}
@@ -863,7 +863,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 			for (uint32_t ind = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
 			     ind < k2app::K2Settings.K2TrackersVector.size(); ind++)
-				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>({
+				jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(std::vector{
 					&k2app::K2Settings.K2TrackersVector[ind]
 				})));
 

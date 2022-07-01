@@ -886,18 +886,17 @@
                     <RowDefinition Height="35" />
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="175" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="400" />
-                    </Grid.ColumnDefinitions>
-
+                <Grid Grid.Row="1" Grid.Column="0">
                     <ToggleSplitButton x:Name="SkeletonToggleButton" Click="SkeletonToggleButton_Click"
                                        IsChecked="True" VerticalContentAlignment="Center" FontWeight="SemiBold"
                                        x:Uid="/GeneralPage/Buttons/Skeleton/Hide"
-                                       Margin="20,0,0,0" CornerRadius="3" Grid.Column="0"
+                                       Margin="20,0,0,0" CornerRadius="3" Padding="12,0"
                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                         <ToggleSplitButton.Flyout>
@@ -932,14 +931,8 @@
                     </ToggleSplitButton>
                 </Grid>
 
-                <Grid Grid.Row="3">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="175" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="400" />
-                    </Grid.ColumnDefinitions>
-
-                    <ToggleSplitButton Grid.Column="0" Margin="20,0,0,0" x:Name="ToggleTrackingButton"
+                <Grid Grid.Row="3" Grid.Column="0">
+                    <ToggleSplitButton Margin="20,0,0,0" x:Name="ToggleTrackingButton" Padding="12,0"
                                        Click="ToggleTrackingButton_Click" FontWeight="SemiBold"
                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                        x:Uid="/GeneralPage/Buttons/Skeleton/Freeze" FontSize="16">

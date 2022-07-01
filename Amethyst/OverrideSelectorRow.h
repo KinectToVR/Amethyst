@@ -254,7 +254,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Create the title text & toggle
 			TextBlock _title;
-			_title.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
+			_title.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 
 			_title.Text(eraseSubStr(k2app::interfacing::LocalizedResourceWString(
 				                        L"SharedStrings", L"Joints/Enum/" +
@@ -311,7 +311,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracker_position_combo.Height(45);
 			_tracker_position_combo.Width(140);
 			_tracker_position_combo.FontSize(15);
-			_tracker_position_combo.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
+			_tracker_position_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 			_tracker_position_combo.PlaceholderText(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"));
 
@@ -320,7 +320,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracker_orientation_combo.Height(45);
 			_tracker_orientation_combo.Width(140);
 			_tracker_orientation_combo.FontSize(15);
-			_tracker_orientation_combo.FontWeight(Windows::UI::Text::FontWeights::SemiBold());
+			_tracker_orientation_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 			_tracker_orientation_combo.PlaceholderText(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"));
 
@@ -352,7 +352,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Set up some signals
 			_ptr_tracker_position_combo->SelectionChanged(
-				[this](const Windows::Foundation::IInspectable& sender,
+				[this](const winrt::Windows::Foundation::IInspectable& sender,
 				       const SelectionChangedEventArgs& e) -> void
 				{
 					if (!k2app::shared::devices::devices_tab_setup_finished)return;
@@ -374,7 +374,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				});
 
 			_ptr_tracker_orientation_combo->SelectionChanged(
-				[this](const Windows::Foundation::IInspectable& sender,
+				[this](const winrt::Windows::Foundation::IInspectable& sender,
 				       const SelectionChangedEventArgs& e) -> void
 				{
 					if (!k2app::shared::devices::devices_tab_setup_finished)return;
@@ -397,7 +397,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				});
 
 			_ptr_override_position->Click(
-				[this](const Windows::Foundation::IInspectable& sender,
+				[this](const winrt::Windows::Foundation::IInspectable& sender,
 				       const RoutedEventArgs& e) -> void
 				{
 					if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
@@ -427,7 +427,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				});
 
 			_ptr_override_orientation->Click(
-				[this](const Windows::Foundation::IInspectable& sender,
+				[this](const winrt::Windows::Foundation::IInspectable& sender,
 				       const RoutedEventArgs& e) -> void
 				{
 					if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&

@@ -166,7 +166,7 @@ Sollte der Amethyst-Treiber für SteamVR nicht richtig erkannt werden, kannst du
     <value>Discord beitreten</value>
   </data>
   <data name="PrimaryButton.Recovery" xml:space="preserve">
-    <value>Treiber neu registrieren</value>
+    <value>Neu registrieren</value>
   </data>
   <data name="ReRegister.DriverNotFound" xml:space="preserve">
     <value>Der Amethyst-Treiberordner wurde nicht gefunden.

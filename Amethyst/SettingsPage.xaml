@@ -317,8 +317,8 @@
 
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="9*" />
-                        <ColumnDefinition Width="2.8*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
@@ -327,17 +327,17 @@
                         <RowDefinition Height="40" />
                     </Grid.RowDefinitions>
 
-                    <AppBarButton x:Name="TrackerConfigButton" VerticalAlignment="Top"
+                    <AppBarButton Grid.Column="0" x:Name="TrackerConfigButton" VerticalAlignment="Top"
                                   Icon="Setting" Width="38" Height="46" Click="TrackerConfigButton_Click" />
 
-                    <Button Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" Height="40"
+                    <Button Grid.Column="1" Grid.Row="0" Padding="15,0" Height="40"
                             Style="{StaticResource AccentButtonStyle}" x:Name="RestartButton"
                             Click="RestartButton_Click" FontWeight="SemiBold"
                             HorizontalAlignment="Stretch" VerticalAlignment="Center"
                             x:Uid="/SettingsPage/Buttons/RestartSteamVR"
                             FontSize="16" IsEnabled="False" />
 
-                    <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
+                    <StackPanel Grid.Column="0" Orientation="Vertical" Margin="0,2,15,0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
                                    x:Uid="/SettingsPage/Captions/TrackersRestart/Line1"
                                    Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
@@ -404,21 +404,21 @@
                                 Grid.Column="0" Orientation="Vertical">
 
                         <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10"
-                                x:Name="ResetButton" Click="ResetButton_Click"
+                                x:Name="ResetButton" Click="ResetButton_Click" FontWeight="SemiBold"
                                 x:Uid="/SettingsPage/Buttons/Reset" FontSize="16" />
 
                         <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10"
-                                x:Name="ReRegisterButton" Click="ReRegisterButton_Click"
+                                x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold"
                                 x:Uid="/SettingsPage/Buttons/ReRegister" FontSize="16" />
 
                         <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10"
-                                x:Name="ViewLogsButton" Click="ViewLogsButton_Click"
+                                x:Name="ViewLogsButton" Click="ViewLogsButton_Click" FontWeight="SemiBold"
                                 x:Uid="/SettingsPage/Buttons/ViewLogs" FontSize="16" />
                     </StackPanel>
                 </Grid>
 
                 <SplitButton Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
-                             x:Name="ReManifestButton" Click="ReManifestButton_Click"
+                             x:Name="ReManifestButton" Click="ReManifestButton_Click" FontWeight="SemiBold"
                              Width="{Binding ElementName=TroubleshootingControlsContainerGrid, Path=ActualWidth, TargetNullValue=315}"
                              x:Uid="/SettingsPage/Buttons/ReManifest" FontSize="16">
                     <SplitButton.Flyout>

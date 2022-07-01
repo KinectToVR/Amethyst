@@ -14,5 +14,9 @@ inline std::map<std::wstring, std::wstring> elevation_angle_label_map
 	{
 		L"lc-LC",
 		L"K'nect ewevatiown angww:"
+	},
+	{
+		L"de-DE",
+		L"Kinect-Elevationswinkel:"
 	}
 };

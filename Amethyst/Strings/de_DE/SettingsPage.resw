@@ -161,10 +161,10 @@ indem es den derzeit aktiven Taillen-Tracker in SteamVR überprüft</value>
     <value>App-Sound aktivieren</value>
   </data>
   <data name="Captions.SoundsWhen.Line1.Text" xml:space="preserve">
-    <value>Sounds treten beim Start, bei der Kalibrierung, bei Fehlern oder beim Umschalten des Tracker-Freezes auf</value>
+    <value>Sounds treten beim Start, bei der Kalibrierung, bei Fehlern, </value>
   </data>
   <data name="Captions.SoundsWhen.Line2.Text" xml:space="preserve">
-    <value>oder bei Skelettspiegelung.</value>
+    <value>Skelettspiegelung oder beim Umschalten des Tracker-Freezes auf.</value>
   </data>
   <data name="Captions.TrackerPairs" xml:space="preserve">
     <value>Tracker-Paare verwenden</value>
@@ -176,10 +176,10 @@ indem es den derzeit aktiven Taillen-Tracker in SteamVR überprüft</value>
     <value>Aktivierte Tracker beim Start automatisch verbinden</value>
   </data>
   <data name="Captions.TrackersRestart.Line1.Text" xml:space="preserve">
-    <value>Ein- oder Ausschalten von einem Tracker benötigt einen Neustart von SteamVR</value>
+    <value>Ein- oder Ausschalten von einem Tracker</value>
   </data>
   <data name="Captions.TrackersRestart.Line2.Text" xml:space="preserve">
-    <value>und Amethyst, damit die Änderungen wirksam werden.</value>
+    <value>benötigt einen Neustart von SteamVR und Amethyst.</value>
   </data>
   <data name="Elements.ExtFlipCalibration.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Kalibrierung</value>
