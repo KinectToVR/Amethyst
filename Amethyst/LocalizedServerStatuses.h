@@ -46,7 +46,7 @@ inline std::map<std::wstring, std::wstring> status_wtf_map
 	},
 	{
 		L"de-DE",
-		L"STATUS KONNTE NICHT ÜBERPRÜFT WERDEN (Code -12)\nE_WTF\nEtwas ist komplett schief gelaufen."
+		L"KONNTE NICHT ÜBERPRÜFEN (Code -12)\nE_WTF\nEtwas ist komplett schief gelaufen."
 	}
 };
 
@@ -70,7 +70,7 @@ inline std::map<std::wstring, std::wstring> status_exception_map
 	},
 	{
 		L"de-DE",
-		L"AUSNAHME WÄHREND DER ÜBERPRÜFUNG (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nÜberprüfe die SteamVR-Add-Ons (NICHT die Overlays) und aktiviere Amethyst."
+		L"FEHLER BEIM ÜBERPRÜFEN (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nÜberprüfe die SteamVR-Add-Ons (NICHT die Overlays) und aktiviere Amethyst."
 	}
 };
 
@@ -142,7 +142,7 @@ inline std::map<std::wstring, std::wstring> status_api_failure_map
 	},
 	{
 		L"de-DE",
-		L"KONNTE NICHT MIT K2API VERBINDEN (Code -11)\nE_K2API_FAILURE\nDieser Fehler sollte eigentlich nicht auftreten. Irgendetwas stimmt gar nicht."
+		L"AUSFALL DER K2API VERBINDUNG (Code -11)\nE_K2API_FAILURE\nDieser Fehler sollte eigentlich nicht auftreten. Irgendetwas stimmt gar nicht."
 	}
 };
 
