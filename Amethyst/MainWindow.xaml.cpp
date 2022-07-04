@@ -515,14 +515,19 @@ namespace winrt::Amethyst::implementation
 		LOG(INFO) << "Registering an exit handler for the app window...";
 		this->Closed([&](const IInspectable& window, const WindowEventArgs& e)
 		{
-			// Handled(true) means Cancel()
-			// and Handled(false) means Continue()
-			// -> Block exiting until we're done
-			e.Handled(true);
+			// Handle all the exit actions (if needed)
+			if (!k2app::interfacing::isExitHandled)
+			{
+				// Handled(true) means Cancel()
+				// and Handled(false) means Continue()
+				// -> Block exiting until we're done
+				e.Handled(true);
 
-			// Handle all the exit actions
-			k2app::interfacing::handle_app_exit_n();
-			e.Handled(false); // Finally exit
+				// Handle the exit actions
+				k2app::interfacing::handle_app_exit_n();
+
+				e.Handled(false); // Finally exit
+			}
 		});
 
 		// Priority: Launch the crash handler
@@ -1465,6 +1470,9 @@ void k2app::interfacing::handle_app_exit(const uint32_t& p_sleep_millis)
 			}();
 		}
 	}();
+
+	// We've (mostly) done what we had to
+	isExitHandled = true;
 
 	// Disconnect all tracking devices and don't care about any errors
 	[&]

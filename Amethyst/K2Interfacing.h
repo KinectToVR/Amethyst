@@ -76,7 +76,8 @@ namespace k2app::interfacing
 	inline const std::string K2InternalVersion = "1.0.2.4"; // KTVR[ver:X.X.X.X]
 
 	// App closing check
-	inline bool isExitingNow = false;
+	inline bool isExitingNow = false,
+	            isExitHandled = false; // If actions have been done
 
 	inline std::pair<Eigen::Vector3f, Eigen::Vector3f> // Position helpers for k2 devices -> Base, Override
 		kinectHeadPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}, // But this one's kinect-only
