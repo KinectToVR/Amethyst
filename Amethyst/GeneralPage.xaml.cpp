@@ -1497,7 +1497,8 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 					L"Buttons/Skeleton/Freeze/Content")));
 
 	// Optionally show the binding teaching tip
-	if (!k2app::K2Settings.teachingTipShown_Freeze)
+	if (!k2app::K2Settings.teachingTipShown_Freeze &&
+		k2app::interfacing::currentPageTag == L"general")
 	{
 		auto _header =
 			k2app::interfacing::LocalizedResourceWString(

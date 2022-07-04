@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
@@ -1255,6 +1255,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 	// Navigate only if the selected page isn't currently loaded.
 	if (pageTypeName.Name != L"" && preNavPageType.Name != pageTypeName.Name)
 	{
+		k2app::interfacing::currentPageTag = navItemTag; // Cache the current page tag
 		ContentFrame().Navigate(pageTypeName, nullptr, transitionInfo);
 	}
 }

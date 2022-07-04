@@ -84,9 +84,13 @@ namespace k2app::interfacing
 
 	// OpenVR playspace position
 	inline Eigen::Vector3f vrPlayspaceTranslation = Eigen::Vector3f(0, 0, 0);
+
 	// OpenVR playspace rotation
 	inline float vrPlayspaceOrientation = 0.f; // Note: radians
 	inline Eigen::Quaternionf vrPlayspaceOrientationQuaternion{1, 0, 0, 0};
+
+	// Current page string
+	inline std::wstring currentPageTag = L"general";
 
 	// Show an app toast / notification
 	inline void ShowToast(const std::wstring& header,

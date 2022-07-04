@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "SettingsPage.xaml.h"
 
 #if __has_include("SettingsPage.g.cpp")
@@ -387,7 +387,8 @@ void Amethyst::implementation::SettingsPage::FlipToggle_Toggled(
 	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
 
 	// Optionally show the binding teaching tip
-	if (!k2app::K2Settings.teachingTipShown_Flip)
+	if (!k2app::K2Settings.teachingTipShown_Flip &&
+		k2app::interfacing::currentPageTag == L"settings")
 	{
 		auto _header =
 			k2app::interfacing::LocalizedResourceWString(
