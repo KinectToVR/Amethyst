@@ -2499,6 +2499,10 @@ namespace k2app::interfacing
 
 						(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
+						(*pElement).Get().get()->Padding({10, 7, 10, 7});
+
+						(*pElement).Get().get()->FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+
 						_ptr_stack_panel.get()->Children().Append(*(*pElement).Get());
 
 						return;
@@ -2681,6 +2685,10 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
+							(*pElement).Get().get()->Padding({10, 7, 10, 7});
+
+							(*pElement).Get().get()->FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+
 							_grid.Children().Append(*(*pElement).Get());
 							_grid.SetColumn(*(*pElement).Get(), 0);
 
@@ -2861,6 +2869,10 @@ namespace k2app::interfacing
 								HorizontalAlignment::Right);
 
 							(*pElement).Get().get()->Margin({3, 3, 3, 3});
+
+							(*pElement).Get().get()->Padding({10, 7, 10, 7});
+
+							(*pElement).Get().get()->FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 
 							_grid.Children().Append(*(*pElement).Get());
 							_grid.SetColumn(*(*pElement).Get(), 1);
@@ -3054,6 +3066,10 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->Margin({3, 3, 5, 3});
 
+							(*pElement).Get().get()->Padding({10, 7, 10, 7});
+
+							(*pElement).Get().get()->FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+
 							_stack_panel.Children().Append(*(*pElement).Get());
 							break;
 						}
@@ -3216,6 +3232,10 @@ namespace k2app::interfacing
 								HorizontalAlignment::Right);
 
 							(*pElement).Get().get()->Margin({5, 3, 5, 3});
+
+							(*pElement).Get().get()->Padding({10, 7, 10, 7});
+
+							(*pElement).Get().get()->FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 
 							_stack_panel.Children().Append(*(*pElement).Get());
 							break;
@@ -3410,6 +3430,10 @@ namespace k2app::interfacing
 
 							(*pElement).Get().get()->Margin({3, 3, 3, 3});
 
+							(*pElement).Get().get()->Padding({10, 7, 10, 7});
+
+							(*pElement).Get().get()->FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+
 							_grid.Children().Append(*(*pElement).Get());
 							_grid.SetColumn(*(*pElement).Get(), i);
 
@@ -3591,6 +3615,10 @@ namespace k2app::interfacing
 								VerticalAlignment::Center);
 
 							(*pElement).Get().get()->Margin({(i == 0 ? 3. : 5.), 3, 5, 3});
+
+							(*pElement).Get().get()->Padding({10, 7, 10, 7});
+
+							(*pElement).Get().get()->FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 
 							_stack_panel.Children().Append(*(*pElement).Get());
 							break;
