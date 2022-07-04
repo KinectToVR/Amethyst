@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SettingsPage.xaml.h"
 
 #if __has_include("SettingsPage.g.cpp")
@@ -173,29 +173,47 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 
 	/* Restart app */
 
-	// Handle a typical app exit
-	apartment_context ui_thread;
-	co_await resume_background();
-	k2app::interfacing::handle_app_exit(500);
-	co_await ui_thread;
+	// Literals
+	using namespace std::string_literals;
 
-	// Request a restart from the WASDK Restart API
-	switch (Microsoft::Windows::AppLifecycle::AppInstance::GetCurrent().Restart(L""))
+	// Get current caller path
+	const auto fileName = new CHAR[MAX_PATH + 1];
+	const DWORD charsWritten = GetModuleFileNameA(nullptr, fileName, MAX_PATH + 1);
+
+	// If we've found who asked
+	if (charsWritten != 0)
 	{
-	case Windows::ApplicationModel::Core::AppRestartFailureReason::RestartPending:
-		LOG(ERROR) << "Couldn't restart Amethyst! Another restart is currently pending.";
-		break;
-	case Windows::ApplicationModel::Core::AppRestartFailureReason::InvalidUser:
-		LOG(ERROR) << "Couldn't restart Amethyst! Another restart is currently pending.";
-		break;
-	case Windows::ApplicationModel::Core::AppRestartFailureReason::Other:
-		LOG(ERROR) << "Couldn't restart Amethyst! Some other error has occurred.";
-		break;
-	}
+		// Log the caller
+		LOG(INFO) << "The current caller process is: "s + fileName;
 
-	k2app::interfacing::ShowToast(
-		k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
-		k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content"));
+		// Mark exiting as true
+		k2app::interfacing::isExitingNow = true;
+
+		// Exit the app
+		LOG(INFO) << "Configuration has been reset, exiting in 500ms...";
+
+		// Don't execute the exit routine
+		k2app::interfacing::isExitHandled = true;
+
+		// Handle a typical app exit
+		apartment_context ui_thread;
+		co_await resume_background();
+		k2app::interfacing::handle_app_exit(500);
+		co_await ui_thread;
+
+		// Restart and exit with code 0
+		CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		ShellExecuteA(nullptr, nullptr, fileName, nullptr, nullptr, SW_SHOWDEFAULT);
+
+		exit(0);
+	}
+	else
+	{
+		LOG(ERROR) << "App will not be restarted due to caller process identification error.";
+		k2app::interfacing::ShowToast(
+			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
+			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content"));
+	}
 }
 
 
