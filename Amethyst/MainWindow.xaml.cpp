@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
@@ -341,6 +341,9 @@ namespace winrt::Amethyst::implementation
 		// Log everything >=INFO to same file
 		google::SetLogDestination(google::GLOG_INFO, k2app::interfacing::thisLogDestination.c_str());
 		google::SetLogFilenameExtension(".log");
+
+		// Log the current Amethyst version
+		LOG(INFO) << "Amethyst version: " << k2app::interfacing::K2InternalVersion;
 
 		// Set up mica controllers
 		if (Microsoft::UI::Composition::SystemBackdrops::MicaController::IsSupported())
