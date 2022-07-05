@@ -246,7 +246,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 
 		flipToggle.get()->IsEnabled(
 			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
-		flipDropDown.get()->IsEnabled(
+		flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
 			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
 		flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
 		TrackingDevices::settings_set_external_flip_is_enabled();
@@ -271,6 +271,9 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 	autoSpawnCheckbox->IsChecked(k2app::K2Settings.autoSpawnEnabledJoints);
 	enableSoundsCheckbox->IsChecked(k2app::K2Settings.enableAppSounds);
 	soundsVolumeSlider.get()->Value(k2app::K2Settings.appSoundsVolume);
+
+	// Enable/Disable Ext/Flip
+	TrackingDevices::settings_set_external_flip_is_enabled();
 
 	// Load tracker settings/enabled
 	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
@@ -778,7 +781,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 					flipToggle.get()->IsEnabled(
 						std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
-					flipDropDown.get()->IsEnabled(
+					flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
 						std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
 					flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
 					TrackingDevices::settings_set_external_flip_is_enabled();
@@ -920,7 +923,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 				flipToggle.get()->IsEnabled(
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
-				flipDropDown.get()->IsEnabled(
+				flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
 				flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
 				TrackingDevices::settings_set_external_flip_is_enabled();

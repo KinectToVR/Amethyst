@@ -834,8 +834,8 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 
 	// Update things
 	k2app::interfacing::UpdateServerStatusUI();
-	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
+	TrackingDevices::updateTrackingDeviceUI();
+	TrackingDevices::updateOverrideDeviceUI();
 
 	// Notice that we're gonna change some values
 	pending_offsets_update = true;

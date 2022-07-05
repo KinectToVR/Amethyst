@@ -435,8 +435,8 @@ void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(
 	TrackingDevices::devices_handle_refresh(true);
 
 	// Update the GeneralPage status
-	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
+	TrackingDevices::updateTrackingDeviceUI();
+	TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
 }
 
 // *Nearly* the same as reconnect
@@ -537,8 +537,8 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	errorWhatText.get()->Text(split_status(device_status)[2]);
 
 	// Update the GeneralPage status
-	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
+	TrackingDevices::updateTrackingDeviceUI();
+	TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
 
 	AlternativeConnectionOptionsFlyout().Hide();
 }
@@ -631,7 +631,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 
 	// Deselect the device
 	k2app::K2Settings.overrideDeviceID = -1; // Only acceptable for an Override
-	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
+	TrackingDevices::updateOverrideDeviceUI();
 
 	// Also update in the UI
 	overrideDeviceName.get()->Text(
@@ -835,7 +835,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
 
-	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
+	TrackingDevices::updateOverrideDeviceUI();
 
 	{
 		// Remove the only one child of our outer main content grid
@@ -1000,10 +1000,10 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
 
-	TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
+	TrackingDevices::updateTrackingDeviceUI();
 
 	// This is here too cause an override might've became a base... -_-
-	TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID); // Auto-handles if none
+	TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
 
 	// If controls are set to be visible
 	if (jointSelectorExpanders[0].get()->ContainerExpander().get()->Visibility() == Visibility::Visible)

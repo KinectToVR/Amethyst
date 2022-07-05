@@ -19,12 +19,12 @@ namespace TrackingDevices
 	using TrackingDeviceBaseFactory = void* (*)(const char* pVersionName, int* pReturnCode);
 
 	// Select proper tracking device in the UI
-	inline void updateTrackingDeviceUI(const uint32_t& index)
+	inline void updateTrackingDeviceUI()
 	{
 		if (TrackingDevicesVector.size() < 1) return; // Just give up
 
 		// Get the current tracking device
-		auto& trackingDevice = TrackingDevicesVector.at(index);
+		auto& trackingDevice = TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
 
 		std::string deviceName = "[UNKNOWN]"; // Dummy name
 		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?"; // Dummy status
@@ -108,7 +108,7 @@ namespace TrackingDevices
 
 				k2app::shared::settings::flipToggle.get()->IsEnabled(
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
-				k2app::shared::settings::flipDropDown.get()->IsEnabled(
+				k2app::shared::settings::flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
 				k2app::shared::settings::flipDropDownGrid.get()->Opacity(
 					k2app::shared::settings::flipToggle.get()->IsEnabled() ? 1 : 0.5);
@@ -131,7 +131,7 @@ namespace TrackingDevices
 	}
 
 	// Select proper tracking device in the UI
-	inline void updateOverrideDeviceUI(const uint32_t& index)
+	inline void updateOverrideDeviceUI()
 	{
 		if (TrackingDevicesVector.size() < 1) return; // Just give up
 
@@ -145,7 +145,7 @@ namespace TrackingDevices
 		if (_show)
 		{
 			// Get the current tracking device
-			auto& overrideDevice = TrackingDevicesVector.at(index);
+			auto& overrideDevice = TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
 
 			if (overrideDevice.index() == 0)
 			{

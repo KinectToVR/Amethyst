@@ -1173,8 +1173,8 @@ namespace winrt::Amethyst::implementation
 						// Update the UI
 						k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue([&, this]
 						{
-							TrackingDevices::updateTrackingDeviceUI(k2app::K2Settings.trackingDeviceID);
-							TrackingDevices::updateOverrideDeviceUI(k2app::K2Settings.overrideDeviceID);
+							TrackingDevices::updateTrackingDeviceUI();
+							TrackingDevices::updateOverrideDeviceUI();
 						});
 
 						// Update the backend extflip value
