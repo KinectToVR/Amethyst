@@ -218,73 +218,70 @@
                                         <TextBlock FontSize="20" x:Uid="/SettingsLearn/Titles/FilterSettings"
                                                    FontWeight="SemiBold" Margin="0,20,0,20" />
 
-                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
-                                                   Foreground="{ThemeResource ControlDisplayTextBrush}">
+                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10">
 
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Filters/Names/LERP" />
+                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Names/LERP" />
                                             <LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Explanations/LERP" />
-
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Uid="/SettingsLearn/Captions/Filters/Explanations/LERP" />
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Filters/Names/LowPass" />
+
+                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Names/LowPass" />
                                             <LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Explanations/LowPass" />
-
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Uid="/SettingsLearn/Captions/Filters/Explanations/LowPass" />
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Filters/Names/EKF" />
+
+                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Names/EKF" />
                                             <LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Explanations/EKF" />
-
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Uid="/SettingsLearn/Captions/Filters/Explanations/EKF" />
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Filters/Names/None" />
+
+                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Names/None" />
                                             <LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Explanations/None" />
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Uid="/SettingsLearn/Captions/Filters/Explanations/None" />
 
                                         </TextBlock>
                                         <TextBlock x:Uid="/SettingsLearn/Titles/RotationSettings" FontSize="20"
                                                    FontWeight="SemiBold" Margin="0,20,0,20" />
 
-                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
-                                                   Foreground="{ThemeResource ControlDisplayTextBrush}">
+                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10">
 
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Introduction" />
+                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Introduction" />
                                             <LineBreak /><LineBreak />
 
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Names/Default" />
+                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Names/Default" />
                                             <LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Explanations/Default" />
-
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/Default" />
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Names/MathBased" />
+
+                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Names/MathBased" />
                                             <LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Explanations/MathBased" />
-
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/MathBased" />
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Names/HMD" />
+
+                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Names/HMD" />
                                             <LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Explanations/HMD" />
-
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/HMD" />
                                             <LineBreak /><LineBreak />
-                                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Names/None" />
+
+                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Names/None" />
                                             <LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Explanations/None" />
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/None" />
 
                                         </TextBlock>
 
