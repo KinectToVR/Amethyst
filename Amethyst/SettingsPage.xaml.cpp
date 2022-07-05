@@ -161,10 +161,25 @@ Windows::Foundation::IAsyncAction
 Amethyst::implementation::SettingsPage::ResetButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	LOG(INFO) << "Reset has been invoked: turning trackers off...";
+
 	// Mark trackers as inactive
 	k2app::interfacing::K2AppTrackersInitialized = false;
 	if (k2app::shared::general::toggleTrackersButton.get() != nullptr)
 		k2app::shared::general::toggleTrackersButton->IsChecked(false);
+
+	LOG(INFO) << "Reset has been invoked: clearing app settings...";
+
+	// Mark exiting as true
+	k2app::interfacing::isExitingNow = true;
+
+	{
+		// Sleep a bit
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(50);
+		co_await ui_thread;
+	}
 
 	// Read settings after reset
 	k2app::K2Settings = k2app::K2AppSettings(); // Reset settings
@@ -180,14 +195,13 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 	const auto fileName = new CHAR[MAX_PATH + 1];
 	const DWORD charsWritten = GetModuleFileNameA(nullptr, fileName, MAX_PATH + 1);
 
+	LOG(INFO) << "Reset invoked: trying to restart the app...";
+
 	// If we've found who asked
 	if (charsWritten != 0)
 	{
 		// Log the caller
 		LOG(INFO) << "The current caller process is: "s + fileName;
-
-		// Mark exiting as true
-		k2app::interfacing::isExitingNow = true;
 
 		// Exit the app
 		LOG(INFO) << "Configuration has been reset, exiting in 500ms...";
@@ -682,6 +696,9 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					for (uint32_t _t = 0; _t < k2app::K2Settings.K2TrackersVector.size(); _t++)
 						if (k2app::K2Settings.K2TrackersVector[_t].tracker == current_tracker)
 						{
+							// Cache the tracker's state
+							const bool trackerState = k2app::K2Settings.K2TrackersVector.at(_t).data.isActive;
+
 							// Make actual changes
 							if (k2app::interfacing::K2AppTrackersInitialized)
 								ktvr::set_tracker_state<false>(
@@ -698,7 +715,19 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 							// Check if we've disabled any joints from spawning and disable their mods
 							k2app::interfacing::devices_check_disabled_joints();
-							TrackingDevices::settings_trackersConfigChanged();
+
+							// If the tracker was on and then removed
+							if (trackerState)
+							{
+								// Boiler
+								k2app::shared::settings::settings_localInitFinished = true;
+
+								// Show the notifications and rebuild
+								TrackingDevices::settings_trackersConfigChanged();
+
+								// Boiler end
+								k2app::shared::settings::settings_localInitFinished = false;
+							}
 
 							// Save settings
 							k2app::K2Settings.saveSettings();
