@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -109,7 +109,7 @@ namespace k2app::main
 			else if (trackingDevice.index() == 1)
 			{
 				// Joints Basis
-				K2Settings.isFlipEnabled = !false;
+				K2Settings.isFlipEnabled = false;
 			}
 
 			// Save settings
