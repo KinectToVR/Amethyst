@@ -174,13 +174,13 @@ namespace TrackingDevices
 			k2app::shared::settings::flipDropDown.get()->IsEnabled(true);
 	}
 
-	inline void settings_trackersConfigChanged(const bool showToasts = true)
+	inline void settings_trackersConfigChanged(const bool& showToasts = true)
 	{
 		// Don't react to pre-init signals
 		if (!k2app::shared::settings::settings_localInitFinished)return;
 
 		LOG(INFO) << "Trackers configuration has been changed!";
-		LOG_IF(INFO, showToasts) << "Any toast won't be shown this time: force-disabled";
+		LOG_IF(INFO, !showToasts) << "Any toast won't be shown this time: force-disabled";
 
 		// If this is the first time and happened runtime, also show the notification
 		if (k2app::interfacing::K2AppTrackersSpawned)
