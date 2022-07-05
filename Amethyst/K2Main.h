@@ -87,7 +87,7 @@ namespace k2app::main
 					L"also toggle tracker freeze while in VR", L"toggle it");
 
 				ShowVRToast(std::wstring(L"Tracking Freeze ") + 
-					(isTrackingFrozen ? L"on!" : L"off!"), _header);
+					(isTrackingFrozen ? L"enabled!" : L"disabled!"), _header);
 			}
 		}
 
@@ -163,7 +163,7 @@ namespace k2app::main
 					L"also toggle skeleton flip while in VR", L"toggle it");
 				
 				ShowVRToast(std::wstring(L"Skeleton Flip ") +
-					(K2Settings.isFlipEnabled ? L"on!" : L"off!"), _header);
+					(K2Settings.isFlipEnabled ? L"enabled!" : L"disabled!"), _header);
 			}
 
 			if (shared::settings::flipToggle.get() != nullptr)

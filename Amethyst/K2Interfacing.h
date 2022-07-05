@@ -95,20 +95,24 @@ namespace k2app::interfacing
 
 	// VR Overlay handle
 	inline vr::VROverlayHandle_t vrOverlayHandle = vr::k_ulOverlayHandleInvalid;
+	inline vr::VRNotificationId vrNotificationID = 0;
 
 	// Show SteamVR toast / notification
 	inline void ShowVRToast(const std::wstring& header,
 	                        const std::wstring& text)
 	{
 		if (header.empty() || text.empty() ||
-			vrOverlayHandle == vr::k_ulOverlayHandleInvalid)return;
+			vrOverlayHandle == vr::k_ulOverlayHandleInvalid) return;
+
+		// Hide the current notification (if being shown)
+		if (vrNotificationID != 0) // If valid
+			vr::VRNotifications()->RemoveNotification(vrNotificationID);
 
 		// nullptr is the icon/image texture
-		vr::VRNotificationId id = 0;
 		vr::VRNotifications()->CreateNotification(
 			vrOverlayHandle, 0, vr::EVRNotificationType_Transient,
 			WStringToString(header + L'\n' + text).c_str(),
-			vr::EVRNotificationStyle_Application, nullptr, &id);
+			vr::EVRNotificationStyle_Application, nullptr, &vrNotificationID);
 	}
 
 	// Show an app toast / notification
@@ -300,7 +304,7 @@ namespace k2app::interfacing
 		}
 
 		// Initialize the overlay
-		vr::VROverlay()->CreateOverlay("k2vr.amethyst.app", "Amethyst (Desktop)", &vrOverlayHandle);
+		vr::VROverlay()->CreateOverlay("k2vr.amethyst.desktop", "Amethyst", &vrOverlayHandle);
 
 		// Since we're ok, capture playspace details
 		const auto trackingOrigin = m_VRSystem->GetRawZeroPoseToStandingAbsoluteTrackingPose();
