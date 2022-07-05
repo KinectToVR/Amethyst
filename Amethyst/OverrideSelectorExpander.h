@@ -399,11 +399,15 @@ namespace k2app::interfacing
 
 		// Optionally fix combos for disabled trackers -> joint selectors for base
 		for (auto& expander : jointSelectorExpanders)
-			for (std::shared_ptr<JointSelectorRow>& row : *expander->JointSelectorRows())
+			for (std::shared_ptr<JointSelectorRow>& row : *expander.get()->JointSelectorRows())
 			{
-				row.get()->TrackerCombo()->IsEnabled(row.get()->Tracker()->data.isActive);
+				Helpers::SetComboBoxIsEnabled_Safe(
+					row.get()->TrackerCombo(), 
+					row.get()->Tracker()->data.isActive);
+
 				if (!row.get()->Tracker()->data.isActive)
-					row.get()->TrackerCombo()->SelectedIndex(-1); // Placeholder
+					Helpers::SelectComboBoxItem_Safe(
+						row.get()->TrackerCombo(), -1); // Placeholder
 			}
 
 		// Optionally fix combos for disabled trackers -> joint selectors for override

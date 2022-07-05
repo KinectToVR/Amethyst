@@ -290,9 +290,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				       const ExpanderExpandingEventArgs& e) -> void
 				{
 					for (auto& expander : k2app::shared::devices::jointSelectorExpanders)
-						if (expander->ContainerExpander().get() != nullptr &&
-							expander->ContainerExpander().get() != _ptr_container_expander.get())
-							expander->ContainerExpander().get()->IsExpanded(false);
+						if (expander.get()->ContainerExpander().get() != nullptr &&
+							expander.get()->ContainerExpander().get() != _ptr_container_expander.get())
+							expander.get()->ContainerExpander().get()->IsExpanded(false);
 				});
 
 			// Push all the trackers

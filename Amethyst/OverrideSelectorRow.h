@@ -140,6 +140,26 @@ namespace winrt::Microsoft::UI::Xaml::Controls::Helpers
 			}
 		}();
 	}
+
+	inline void SetComboBoxIsEnabled_Safe(
+		const std::shared_ptr<ComboBox>& cbox,
+		const bool& enabled)
+	{
+		[&]
+		{
+			__try
+			{
+				cbox.get()->IsEnabled(enabled);
+			}
+			__except (EXCEPTION_EXECUTE_HANDLER)
+			{
+				[&]
+				{
+					LOG(WARNING) << "Couldn't enable/disable a ComboBox. You better call an exorcist.";
+				}();
+			}
+		}();
+	}
 }
 
 namespace winrt::Microsoft::UI::Xaml::Controls
@@ -400,6 +420,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
 				       const RoutedEventArgs& e) -> void
 				{
+					if (!k2app::shared::devices::devices_tab_setup_finished)return;
+
 					if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
 							TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
@@ -409,7 +431,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						return; // Don't set up any overrides (yet)
 					}
 
-					if (!k2app::shared::devices::devices_tab_setup_finished)return;
 					// Don't even try if we're not set up yet
 					_tracker_pointer->isPositionOverridden = _ptr_override_position.get()->IsChecked();
 
@@ -430,6 +451,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
 				       const RoutedEventArgs& e) -> void
 				{
+					if (!k2app::shared::devices::devices_tab_setup_finished)return;
+
 					if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
 						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
 							TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
@@ -439,7 +462,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						return; // Don't set up any overrides (yet)
 					}
 
-					if (!k2app::shared::devices::devices_tab_setup_finished)return;
 					// Don't even try if we're not set up yet
 					_tracker_pointer->isRotationOverridden = _ptr_override_orientation.get()->IsChecked();
 
