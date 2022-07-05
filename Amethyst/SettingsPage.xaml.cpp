@@ -227,6 +227,10 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 		k2app::interfacing::ShowToast(
 			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
 			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content"));
+
+		k2app::interfacing::ShowVRToast(
+			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title", L"en-US"),
+			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content", L"en-US"));
 	}
 }
 

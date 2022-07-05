@@ -187,6 +187,10 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 										StringToWString(itr.title),
 										StringToWString(itr.message));
 
+									k2app::interfacing::ShowVRToast(
+										StringToWString(itr.title),
+										StringToWString(itr.message));
+
 									// If the toast isn't meant to be shown always, cache it
 									if (!itr.show_always)
 										k2app::K2Settings.shownToastsGuidVector.push_back(itr.guid);

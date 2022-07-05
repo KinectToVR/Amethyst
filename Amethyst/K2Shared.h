@@ -174,7 +174,7 @@ namespace k2app::shared
 
 namespace k2app::interfacing
 {
-	// Get a string from resources (crash handler's LAngResString)
+	// Get a string from resources (crash handler's LangResString)
 	inline std::wstring LocalizedResourceWString(const std::wstring& dictionary, const std::wstring& key)
 	{
 		winrt::Windows::Globalization::Language language{
@@ -182,6 +182,16 @@ namespace k2app::interfacing
 		};
 
 		shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language.LanguageTag();
+
+		return shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
+			(dictionary + L"/" + key).c_str()).ValueAsString().c_str();
+	}
+
+	// Get a string from resources (crash handler's LangResString)
+	inline std::wstring LocalizedResourceWString(
+		const std::wstring& dictionary, const std::wstring& key, const std::wstring& language)
+	{
+		shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language;
 
 		return shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
 			(dictionary + L"/" + key).c_str()).ValueAsString().c_str();

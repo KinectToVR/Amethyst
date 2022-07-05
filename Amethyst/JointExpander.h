@@ -186,12 +186,20 @@ namespace TrackingDevices
 		if (k2app::interfacing::K2AppTrackersSpawned)
 		{
 			if (k2app::shared::settings::restartButton.get() != nullptr && showToasts)
-				if (!k2app::shared::settings::restartButton.get()->IsEnabled())
+				if (!k2app::shared::settings::restartButton.get()->IsEnabled()) 
+				{
 					k2app::interfacing::ShowToast(
-						k2app::interfacing::LocalizedResourceWString(L"SharedStrings",
-						                                             L"Toasts/TrackersConfigChanged/Title"),
-						k2app::interfacing::LocalizedResourceWString(L"SharedStrings",
-						                                             L"Toasts/TrackersConfigChanged/Content"));
+						k2app::interfacing::LocalizedResourceWString(
+							L"SharedStrings", L"Toasts/TrackersConfigChanged/Title"),
+						k2app::interfacing::LocalizedResourceWString(
+							L"SharedStrings", L"Toasts/TrackersConfigChanged/Content"));
+
+					k2app::interfacing::ShowVRToast(
+						k2app::interfacing::LocalizedResourceWString(
+							L"SharedStrings", L"Toasts/TrackersConfigChanged/Title", L"en-US"),
+						k2app::interfacing::LocalizedResourceWString(
+							L"SharedStrings", L"Toasts/TrackersConfigChanged/Content", L"en-US"));
+				}
 
 			// Compare with saved settings and unlock the restart
 			if (k2app::shared::settings::restartButton.get() != nullptr)

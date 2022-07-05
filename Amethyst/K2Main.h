@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -46,6 +46,49 @@ namespace k2app::main
 						                                                   : winrt::box_value(L"Freeze"));
 				}
 			});
+
+			{
+				auto _header = LocalizedResourceWString(
+					L"GeneralPage", L"Tips/TrackingFreeze/Header", L"en-US");
+
+				// Change the tip depending on the currently connected controllers
+				char _controller_model[1024];
+				vr::VRSystem()->GetStringTrackedDeviceProperty(
+					vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+						vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
+					vr::ETrackedDeviceProperty::Prop_ModelNumber_String,
+					_controller_model, std::size(_controller_model));
+
+				if (findStringIC(_controller_model, "knuckles") ||
+					findStringIC(_controller_model, "index"))
+					boost::replace_all(_header, L"{0}",
+						LocalizedResourceWString(
+							L"GeneralPage",
+							L"Tips/TrackingFreeze/Buttons/Index"));
+
+				else if (findStringIC(_controller_model, "vive"))
+					boost::replace_all(_header, L"{0}",
+						LocalizedResourceWString(
+							L"GeneralPage",
+							L"Tips/TrackingFreeze/Buttons/VIVE"));
+
+				else if (findStringIC(_controller_model, "mr"))
+					boost::replace_all(_header, L"{0}",
+						LocalizedResourceWString(
+							L"GeneralPage",
+							L"Tips/TrackingFreeze/Buttons/WMR"));
+
+				else boost::replace_all(_header, L"{0}",
+					LocalizedResourceWString(
+						L"GeneralPage",
+						L"Tips/TrackingFreeze/Buttons/Oculus"));
+
+				boost::replace_all(_header,
+					L"also toggle tracker freeze while in VR", L"toggle it");
+
+				ShowVRToast(std::wstring(L"Tracking Freeze ") + 
+					(isTrackingFrozen ? L"on!" : L"off!"), _header);
+			}
 		}
 
 		// Update the Flip Toggle : toggle
@@ -78,6 +121,50 @@ namespace k2app::main
 				winrt::Microsoft::UI::Xaml::ElementSoundPlayer::Play(
 					winrt::Microsoft::UI::Xaml::ElementSoundKind::Invoke);
 			});
+
+			{
+				auto _header = LocalizedResourceWString(
+						L"SettingsPage", L"Tips/FlipToggle/Header", L"en-US");
+
+				// Change the tip depending on the currently connected controllers
+				char _controller_model[1024];
+				vr::VRSystem()->GetStringTrackedDeviceProperty(
+					vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+						vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
+					vr::ETrackedDeviceProperty::Prop_ModelNumber_String,
+					_controller_model, std::size(_controller_model));
+
+				if (findStringIC(_controller_model, "knuckles") ||
+					findStringIC(_controller_model, "index"))
+					boost::replace_all(_header, L"{0}",
+						LocalizedResourceWString(
+							L"SettingsPage",
+							L"Tips/FlipToggle/Buttons/Index"));
+
+				else if (findStringIC(_controller_model, "vive"))
+					boost::replace_all(_header, L"{0}",
+						LocalizedResourceWString(
+							L"SettingsPage",
+							L"Tips/FlipToggle/Buttons/VIVE"));
+
+				else if (findStringIC(_controller_model, "mr"))
+					boost::replace_all(_header, L"{0}",
+						LocalizedResourceWString(
+							L"SettingsPage",
+							L"Tips/FlipToggle/Buttons/WMR"));
+
+				else
+					boost::replace_all(_header, L"{0}",
+						LocalizedResourceWString(
+							L"SettingsPage",
+							L"Tips/FlipToggle/Buttons/Oculus"));
+
+				boost::replace_all(_header, 
+					L"also toggle skeleton flip while in VR", L"toggle it");
+				
+				ShowVRToast(std::wstring(L"Skeleton Flip ") +
+					(K2Settings.isFlipEnabled ? L"on!" : L"off!"), _header);
+			}
 
 			if (shared::settings::flipToggle.get() != nullptr)
 				shared::settings::flipToggle.get()->IsOn(K2Settings.isFlipEnabled);
@@ -391,13 +478,21 @@ namespace k2app::main
 
 							// Check if anything's changed
 							interfacing::isAlreadyAddedTrackersScanRunning = false;
-							if (wereChangesMade)
+							if (wereChangesMade) 
+							{
 								interfacing::ShowToast(
 									interfacing::LocalizedResourceWString(
 										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Title"),
 									interfacing::LocalizedResourceWString(
 										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Content"),
 									true); // This one's gonna be a high-priority one
+
+								interfacing::ShowVRToast(
+									interfacing::LocalizedResourceWString(
+										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Title", L"en-US"),
+									interfacing::LocalizedResourceWString(
+										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Content", L"en-US"));
+							}
 						});
 			}
 		}
