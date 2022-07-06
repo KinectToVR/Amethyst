@@ -706,6 +706,9 @@ namespace winrt::Amethyst::implementation
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
 
+													pDevice->requestStatusUIRefresh =
+														k2app::interfacing::plugins::plugins_requestStatusUIRefresh;
+
 													pDevice->CreateTextBlock =
 														k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced;
 													pDevice->CreateButton =
@@ -831,6 +834,9 @@ namespace winrt::Amethyst::implementation
 
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
+
+													pDevice->requestStatusUIRefresh =
+														k2app::interfacing::plugins::plugins_requestStatusUIRefresh;
 
 													pDevice->CreateTextBlock =
 														k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced;

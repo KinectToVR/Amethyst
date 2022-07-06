@@ -214,6 +214,9 @@ namespace k2app::interfacing
 		vr::k_unTrackedDeviceIndexInvalid // Right
 	};
 
+	// Devices may request an explicit status refresh
+	inline bool statusUIRefreshRequested = false;
+
 	// Function to spawn default' enabled trackers
 	inline bool SpawnEnabledTrackers()
 	{
@@ -1001,6 +1004,12 @@ namespace k2app::interfacing
 				K2Settings.K2TrackersVector.at(6).getK2TrackedJoint(
 					K2Settings.K2TrackersVector[6].data.isActive, "Right Knee"),
 			};
+		}
+
+		inline void plugins_requestStatusUIRefresh()
+		{
+			// Request an explicit status UI refresh
+			statusUIRefreshRequested = true;
 		}
 	}
 
