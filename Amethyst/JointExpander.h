@@ -151,8 +151,13 @@ namespace TrackingDevices
 		if (!k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled())
 		{
 			k2app::shared::settings::externalFlipCheckBox.get()->IsChecked(false);
-			k2app::K2Settings.isExternalFlipEnabled = false;
-			k2app::K2Settings.saveSettings();
+
+			// Also change & save settings if needed
+			if (k2app::K2Settings.isExternalFlipEnabled)
+			{
+				k2app::K2Settings.isExternalFlipEnabled = false;
+				k2app::K2Settings.saveSettings();
+			}
 		}
 	}
 
@@ -211,9 +216,6 @@ namespace TrackingDevices
 
 		// Enable/Disable ExtFlip
 		settings_set_external_flip_is_enabled();
-
-		// Save settings
-		k2app::K2Settings.saveSettings();
 	}
 
 	inline void devices_check_override_ids(const uint32_t& id)

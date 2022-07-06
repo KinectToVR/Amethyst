@@ -158,6 +158,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_ptr_title = std::make_shared<TextBlock>(_title);
 			_ptr_tracker_combo = std::make_shared<ComboBox>(_tracker_combo);
 
+			// Append tracked joints
+			ReAppendJoints();
+
 			// Set up some signals
 			_ptr_tracker_combo->SelectionChanged(
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
@@ -180,9 +183,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Save settings
 					k2app::K2Settings.saveSettings();
 				});
-
-			// Append tracked joints
-			ReAppendJoints();
 
 			// Append all elements to the container
 			_container.Children().Append(_title);
