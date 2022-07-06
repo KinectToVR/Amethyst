@@ -62,32 +62,33 @@ namespace k2app::main
 				if (findStringIC(_controller_model, "knuckles") ||
 					findStringIC(_controller_model, "index"))
 					boost::replace_all(_header, L"{0}",
-						LocalizedResourceWString(
-							L"GeneralPage",
-							L"Tips/TrackingFreeze/Buttons/Index"));
+					                   LocalizedResourceWString(
+						                   L"GeneralPage",
+						                   L"Tips/TrackingFreeze/Buttons/Index"));
 
 				else if (findStringIC(_controller_model, "vive"))
 					boost::replace_all(_header, L"{0}",
-						LocalizedResourceWString(
-							L"GeneralPage",
-							L"Tips/TrackingFreeze/Buttons/VIVE"));
+					                   LocalizedResourceWString(
+						                   L"GeneralPage",
+						                   L"Tips/TrackingFreeze/Buttons/VIVE"));
 
 				else if (findStringIC(_controller_model, "mr"))
 					boost::replace_all(_header, L"{0}",
-						LocalizedResourceWString(
-							L"GeneralPage",
-							L"Tips/TrackingFreeze/Buttons/WMR"));
+					                   LocalizedResourceWString(
+						                   L"GeneralPage",
+						                   L"Tips/TrackingFreeze/Buttons/WMR"));
 
-				else boost::replace_all(_header, L"{0}",
-					LocalizedResourceWString(
-						L"GeneralPage",
-						L"Tips/TrackingFreeze/Buttons/Oculus"));
+				else
+					boost::replace_all(_header, L"{0}",
+					                   LocalizedResourceWString(
+						                   L"GeneralPage",
+						                   L"Tips/TrackingFreeze/Buttons/Oculus"));
 
 				boost::replace_all(_header,
-					L"also toggle tracker freeze while in VR", L"toggle it");
+				                   L"also toggle tracker freeze while in VR", L"toggle it");
 
-				ShowVRToast(std::wstring(L"Tracking Freeze ") + 
-					(isTrackingFrozen ? L"enabled!" : L"disabled!"), _header);
+				ShowVRToast(std::wstring(L"Tracking Freeze ") +
+				            (isTrackingFrozen ? L"enabled!" : L"disabled!"), _header);
 			}
 		}
 
@@ -124,7 +125,7 @@ namespace k2app::main
 
 			{
 				auto _header = LocalizedResourceWString(
-						L"SettingsPage", L"Tips/FlipToggle/Header", L"en-US");
+					L"SettingsPage", L"Tips/FlipToggle/Header", L"en-US");
 
 				// Change the tip depending on the currently connected controllers
 				char _controller_model[1024];
@@ -137,33 +138,33 @@ namespace k2app::main
 				if (findStringIC(_controller_model, "knuckles") ||
 					findStringIC(_controller_model, "index"))
 					boost::replace_all(_header, L"{0}",
-						LocalizedResourceWString(
-							L"SettingsPage",
-							L"Tips/FlipToggle/Buttons/Index"));
+					                   LocalizedResourceWString(
+						                   L"SettingsPage",
+						                   L"Tips/FlipToggle/Buttons/Index"));
 
 				else if (findStringIC(_controller_model, "vive"))
 					boost::replace_all(_header, L"{0}",
-						LocalizedResourceWString(
-							L"SettingsPage",
-							L"Tips/FlipToggle/Buttons/VIVE"));
+					                   LocalizedResourceWString(
+						                   L"SettingsPage",
+						                   L"Tips/FlipToggle/Buttons/VIVE"));
 
 				else if (findStringIC(_controller_model, "mr"))
 					boost::replace_all(_header, L"{0}",
-						LocalizedResourceWString(
-							L"SettingsPage",
-							L"Tips/FlipToggle/Buttons/WMR"));
+					                   LocalizedResourceWString(
+						                   L"SettingsPage",
+						                   L"Tips/FlipToggle/Buttons/WMR"));
 
 				else
 					boost::replace_all(_header, L"{0}",
-						LocalizedResourceWString(
-							L"SettingsPage",
-							L"Tips/FlipToggle/Buttons/Oculus"));
+					                   LocalizedResourceWString(
+						                   L"SettingsPage",
+						                   L"Tips/FlipToggle/Buttons/Oculus"));
 
-				boost::replace_all(_header, 
-					L"also toggle skeleton flip while in VR", L"toggle it");
-				
+				boost::replace_all(_header,
+				                   L"also toggle skeleton flip while in VR", L"toggle it");
+
 				ShowVRToast(std::wstring(L"Skeleton Flip ") +
-					(K2Settings.isFlipEnabled ? L"enabled!" : L"disabled!"), _header);
+				            (K2Settings.isFlipEnabled ? L"enabled!" : L"disabled!"), _header);
 			}
 
 			if (shared::settings::flipToggle.get() != nullptr)
@@ -195,17 +196,27 @@ namespace k2app::main
 	inline bool p_status_update_running = false; // Request a status check
 	inline void K2UpdateTrackingDevices()
 	{
-		// Update statuses every ~15 seconds
-		if (p_devices_update_loops > 900 && !p_status_update_running)
+		// Update statuses every ~20 seconds (or sooner)
+		if (p_devices_update_loops > 1500 && !p_status_update_running)
 		{
 			p_status_update_running = true; // soonTM
 			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
 			{
-				TrackingDevices::devices_handle_refresh(false);
-				TrackingDevices::updateTrackingDeviceUI();
-				TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
+				// Auto-Update only the current needed one
+				if (interfacing::currentPageTag == L"devices")
+					TrackingDevices::devices_handle_refresh(false);
+				else
+				{
+					TrackingDevices::updateTrackingDeviceUI();
+					TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
+				}
 
-				p_devices_update_loops = 0; // Reset the counter
+				if (shared::devices::devices_tab_setup_finished &&
+					shared::devices::errorWhatText.get()->Visibility() ==
+					winrt::Microsoft::UI::Xaml::Visibility::Visible)
+					p_devices_update_loops = 1200; // ~5 seconds
+				else p_devices_update_loops = 0; // ~20 seconds
+
 				p_status_update_running = false; // We're done
 			});
 		}
@@ -478,7 +489,7 @@ namespace k2app::main
 
 							// Check if anything's changed
 							interfacing::isAlreadyAddedTrackersScanRunning = false;
-							if (wereChangesMade) 
+							if (wereChangesMade)
 							{
 								interfacing::ShowToast(
 									interfacing::LocalizedResourceWString(
