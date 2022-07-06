@@ -186,7 +186,7 @@ namespace TrackingDevices
 		if (k2app::interfacing::K2AppTrackersSpawned)
 		{
 			if (k2app::shared::settings::restartButton.get() != nullptr && showToasts)
-				if (!k2app::shared::settings::restartButton.get()->IsEnabled()) 
+				if (!k2app::shared::settings::restartButton.get()->IsEnabled())
 				{
 					k2app::interfacing::ShowToast(
 						k2app::interfacing::LocalizedResourceWString(
@@ -221,6 +221,10 @@ namespace TrackingDevices
 		// Take down IDs if they're too big
 		if (const auto& device_pair = getCurrentOverrideDevice_Safe(id); device_pair.first)
 		{
+			// Do we need to save?
+			bool _settingsChangesMade = false;
+
+			// Check if all joints have valid IDs
 			if (device_pair.second.index() == 1) // If Joints
 			{
 				// Note: num_joints should never be 0
@@ -229,11 +233,17 @@ namespace TrackingDevices
 
 				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
 					if (tracker.positionOverrideJointID >= num_joints)
+					{
 						tracker.positionOverrideJointID = 0;
+						_settingsChangesMade = true;
+					}
 
 				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
 					if (tracker.rotationOverrideJointID >= num_joints)
+					{
 						tracker.rotationOverrideJointID = 0;
+						_settingsChangesMade = true;
+					}
 			}
 			else if (device_pair.second.index() == 0) // If Kinect
 			{
@@ -251,15 +261,22 @@ namespace TrackingDevices
 
 				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
 					if (tracker.positionOverrideJointID >= num_joints)
+					{
 						tracker.positionOverrideJointID = 0;
+						_settingsChangesMade = true;
+					}
 
 				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
 					if (tracker.rotationOverrideJointID >= num_joints)
+					{
 						tracker.rotationOverrideJointID = 0;
+						_settingsChangesMade = true;
+					}
 			}
 
-			// Save it
-			k2app::K2Settings.saveSettings();
+			// Save it (if needed)
+			if (_settingsChangesMade)
+				k2app::K2Settings.saveSettings();
 		}
 	}
 
@@ -273,12 +290,20 @@ namespace TrackingDevices
 			const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
 				(device_pair)->getTrackedJoints().size();
 
+			// Do we need to save?
+			bool _settingsChangesMade = false;
+
+			// Check if all joints have valid IDs
 			for (auto& tracker : k2app::K2Settings.K2TrackersVector)
 				if (tracker.selectedTrackedJointID >= num_joints)
+				{
 					tracker.selectedTrackedJointID = 0;
+					_settingsChangesMade = true;
+				}
 
-			// Save it
-			k2app::K2Settings.saveSettings();
+			// Save it (if needed)
+			if (_settingsChangesMade)
+				k2app::K2Settings.saveSettings();
 		}
 	}
 }
