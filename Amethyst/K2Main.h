@@ -196,13 +196,15 @@ namespace k2app::main
 	inline bool p_status_update_running = false; // Request a status check
 	inline void K2UpdateTrackingDevices()
 	{
-		// Update statuses every ~20 seconds (or sooner)
-		if (p_devices_update_loops > 1500 && !p_status_update_running)
+		// Update statuses in the UI
+		if (interfacing::statusUIRefreshRequested && // If requested
+			!p_status_update_running && // If not running yet
+			p_devices_update_loops > 300) // If min 5s elapsed
 		{
 			p_status_update_running = true; // soonTM
 			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
 			{
-				// Auto-Update only the current needed one
+				// Update only the currently needed one
 				if (interfacing::currentPageTag == L"devices")
 					TrackingDevices::devices_handle_refresh(false);
 				else
@@ -211,13 +213,9 @@ namespace k2app::main
 					TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
 				}
 
-				if (shared::devices::devices_tab_setup_finished &&
-					shared::devices::errorWhatText.get()->Visibility() ==
-					winrt::Microsoft::UI::Xaml::Visibility::Visible)
-					p_devices_update_loops = 1200; // ~5 seconds
-				else p_devices_update_loops = 0; // ~20 seconds
-
+				p_devices_update_loops = 0; // Reset the counter
 				p_status_update_running = false; // We're done
+				interfacing::statusUIRefreshRequested = false;
 			});
 		}
 
