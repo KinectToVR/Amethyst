@@ -21,6 +21,8 @@ namespace winrt::Amethyst::implementation
 	ConsolePage::ConsolePage()
 	{
 		InitializeComponent();
+
+		LOG(INFO) << "Constructing page with tag: \"console\"...";
 	}
 }
 

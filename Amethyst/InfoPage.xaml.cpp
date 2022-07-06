@@ -15,6 +15,8 @@ namespace winrt::Amethyst::implementation
 	InfoPage::InfoPage()
 	{
 		InitializeComponent();
+
+		LOG(INFO) << "Constructing page with tag: \"info\"...";
 	}
 
 	void InfoPage::K2DoubleTapped(
@@ -32,4 +34,5 @@ void Amethyst::implementation::InfoPage::Grid_Loaded(
 	const RoutedEventArgs& e)
 {
 	// The info page was loaded
+	LOG(INFO) << "Re/Loading page with tag: \"info\"... (Child)";
 }

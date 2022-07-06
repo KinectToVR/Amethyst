@@ -56,6 +56,8 @@ namespace winrt::Amethyst::implementation
 	{
 		InitializeComponent();
 
+		LOG(INFO) << "Constructing page with tag: \"general\"...";
+
 		// Cache needed UI elements
 		using namespace k2app::shared::general;
 
@@ -808,6 +810,8 @@ void Amethyst::implementation::GeneralPage::ServerOpenDocsButton_Click(
 void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	LOG(INFO) << "Re/Loading page with tag: \"general\"...";
+
 	// Start the main loop since we're done with basic setup
 	k2app::shared::devices::smphSignalStartMain.release();
 

@@ -17,6 +17,8 @@ namespace winrt::Amethyst::implementation
 	{
 		InitializeComponent();
 
+		LOG(INFO) << "Constructing page with tag: \"devices\"...";
+
 		// Cache needed UI elements
 		jointsBasisExpanderHostStackPanel = std::make_shared<Controls::StackPanel>(JointsBasisExpanderHostStackPanel());
 		overridesExpanderHostStackPanel = std::make_shared<Controls::StackPanel>(OverridesExpanderHostStackPanel());
@@ -1053,6 +1055,8 @@ void Amethyst::implementation::DevicesPage::DismissOverrideTipNoJointsButton_Cli
 void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	LOG(INFO) << "Re/Loading page with tag: \"devices\"...";
+
 	// Reset
 	devices_tab_re_setup_finished = false;
 

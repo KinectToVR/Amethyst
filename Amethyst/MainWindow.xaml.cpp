@@ -1254,8 +1254,9 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 	std::wstring navItemTag,
 	const Media::Animation::NavigationTransitionInfo& transitionInfo)
 {
-	Windows::UI::Xaml::Interop::TypeName pageTypeName;
+	LOG(INFO) << "Navigation requested! Page tag: " << WStringToString(navItemTag);
 
+	Windows::UI::Xaml::Interop::TypeName pageTypeName;
 	for (auto&& eachPage : m_pages)
 	{
 		if (eachPage.first == navItemTag)

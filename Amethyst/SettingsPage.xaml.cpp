@@ -38,6 +38,8 @@ namespace winrt::Amethyst::implementation
 	{
 		InitializeComponent();
 
+		LOG(INFO) << "Constructing page with tag: \"settings\"...";
+
 		// Cache needed UI elements
 		using namespace k2app::shared::settings;
 
@@ -238,6 +240,8 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	LOG(INFO) << "Re/Loading page with tag: \"settings\"...";
+
 	using namespace k2app::shared::settings;
 
 	// Notify of the setup end
