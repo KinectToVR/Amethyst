@@ -192,33 +192,8 @@ namespace k2app::main
 		calibration_joystick_positions[1][1] = evr_input.rightJoystickActionData().y;
 	}
 
-	inline int p_devices_update_loops = 0; // K2UpdateTrackingDevices() call counter
-	inline bool p_status_update_running = false; // Request a status check
 	inline void K2UpdateTrackingDevices()
 	{
-		// Update statuses in the UI
-		if (interfacing::statusUIRefreshRequested && // If requested
-			!p_status_update_running && // If not running yet
-			p_devices_update_loops > 300) // If min 5s elapsed
-		{
-			p_status_update_running = true; // soonTM
-			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
-			{
-				// Update only the currently needed one
-				if (interfacing::currentPageTag == L"devices")
-					TrackingDevices::devices_handle_refresh(false);
-				else
-				{
-					TrackingDevices::updateTrackingDeviceUI();
-					TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
-				}
-
-				p_devices_update_loops = 0; // Reset the counter
-				p_status_update_running = false; // We're done
-				interfacing::statusUIRefreshRequested = false;
-			});
-		}
-
 		/* Update the base device here */
 		switch (const auto& device = TrackingDevices::getCurrentDevice(); device.index())
 		{
@@ -264,9 +239,6 @@ namespace k2app::main
 				}
 				break;
 			}
-
-		// Increment the update loop counter
-		p_devices_update_loops++;
 	}
 
 	inline int p_frozen_loops = 0; // Loops passed since last frozen update
@@ -1214,6 +1186,54 @@ namespace k2app::main
 		// Warning: this is meant to work as fire-and-forget
 		LOG(INFO) << "[K2Main] Waiting for the start sem to open..";
 		shared::devices::smphSignalStartMain.acquire();
+
+		LOG(INFO) << "[K2Main] Starting the status updater loop now...";
+
+		std::thread([&]
+		{
+			bool _refresh_running = false;
+			while (true)
+			{
+				if (!_refresh_running && !interfacing::isExitingNow)
+					shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
+					{
+						_refresh_running = true;
+						interfacing::statusUIRefreshRequested = false;
+
+						// Update only the currently needed one
+						// (Will run only if anything has changed)
+						if (interfacing::currentPageTag == L"devices")
+						{
+							TrackingDevices::devices_handle_refresh(false);
+
+							if (shared::devices::deviceErrorGrid.get()->Visibility() ==
+								winrt::Microsoft::UI::Xaml::Visibility::Visible)
+								interfacing::statusUIRefreshRequested = true; // Redo
+						}
+						else
+						{
+							TrackingDevices::updateTrackingDeviceUI();
+							TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
+
+							if (shared::general::errorWhatGrid.get()->Visibility() ==
+								winrt::Microsoft::UI::Xaml::Visibility::Visible ||
+								shared::general::overrideErrorWhatGrid.get()->Visibility() ==
+								winrt::Microsoft::UI::Xaml::Visibility::Visible)
+								interfacing::statusUIRefreshRequested = true; // Redo
+						}
+
+						// We're done now
+						_refresh_running = false;
+					});
+				else
+					// Wait 15s until the next refresh (or until a request)
+					for (uint32_t i = 0; i < 15; i++)
+					{
+						std::this_thread::sleep_for(std::chrono::seconds(1));
+						if (interfacing::statusUIRefreshRequested)break;
+					}
+			}
+		}).detach();
 
 		LOG(INFO) << "[K2Main] Starting the main app loop now...";
 

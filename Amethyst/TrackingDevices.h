@@ -394,9 +394,8 @@ namespace TrackingDevices
 			devicesListView.get()->SelectedIndex());
 
 		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
-		LOG(INFO) << std::format("Now {} the tracking device at index {}...",
-		                         reconnect ? "reconnecting and refreshing" : "refreshing",
-		                         devicesListView.get()->SelectedIndex());
+		LOG(INFO) << "Now " << (reconnect ? "reconnecting and refreshing" : "refreshing") << 
+			" the tracking device at index " << devicesListView.get()->SelectedIndex() << "...";
 
 		if (trackingDevice.index() == 0)
 		{
