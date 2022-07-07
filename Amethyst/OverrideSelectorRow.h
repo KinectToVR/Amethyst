@@ -266,9 +266,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			AppendGridStarsColumnMinWidthPixels(_container, 3, 80);
 			AppendGridStarColumn(_container);
-			AppendGridStarsColumnMinWidthPixels(_container, 3, 140);
+			AppendGridStarsColumnMinWidthPixels(_container, 3, 150);
 			AppendGridStarColumn(_container);
-			AppendGridStarsColumnMinWidthPixels(_container, 3, 140);
+			AppendGridStarsColumnMinWidthPixels(_container, 3, 150);
 
 			AppendGridPixelsRow(_container, 50);
 
@@ -329,7 +329,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracker_position_combo.HorizontalAlignment(HorizontalAlignment::Center);
 			_tracker_position_combo.VerticalAlignment(VerticalAlignment::Center);
 			_tracker_position_combo.Height(45);
-			_tracker_position_combo.Width(140);
+			_tracker_position_combo.Width(150);
 			_tracker_position_combo.FontSize(15);
 			_tracker_position_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 			_tracker_position_combo.PlaceholderText(k2app::interfacing::LocalizedResourceWString(
@@ -338,7 +338,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracker_orientation_combo.HorizontalAlignment(HorizontalAlignment::Center);
 			_tracker_orientation_combo.VerticalAlignment(VerticalAlignment::Center);
 			_tracker_orientation_combo.Height(45);
-			_tracker_orientation_combo.Width(140);
+			_tracker_orientation_combo.Width(150);
 			_tracker_orientation_combo.FontSize(15);
 			_tracker_orientation_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 			_tracker_orientation_combo.PlaceholderText(k2app::interfacing::LocalizedResourceWString(

@@ -93,13 +93,28 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				_row.get()->OverridePosition().get()->IsEnabled(_row.get()->Tracker()->data.isActive);
 				_row.get()->OverrideOrientation().get()->IsEnabled(_row.get()->Tracker()->data.isActive);
 
+				// Change the placeholder to 'No Override' or 'Joint Disabled'
+				_row.get()->TrackerPositionCombo().get()->PlaceholderText(
+					_row.get()->Tracker()->data.isActive
+						? k2app::interfacing::LocalizedResourceWString(
+							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText")
+						: k2app::interfacing::LocalizedResourceWString(
+							L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
+				_row.get()->TrackerOrientationCombo().get()->PlaceholderText(
+					_row.get()->Tracker()->data.isActive
+						? k2app::interfacing::LocalizedResourceWString(
+							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText")
+						: k2app::interfacing::LocalizedResourceWString(
+							L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
+
 				if (!_row.get()->Tracker()->data.isActive)
 				{
 					_row.get()->OverridePosition().get()->IsChecked(false);
 					_row.get()->OverrideOrientation().get()->IsChecked(false);
 
-					_row.get()->TrackerPositionCombo().get()->SelectedIndex(-1); // Show the placeholder
-					_row.get()->TrackerOrientationCombo().get()->SelectedIndex(-1); // Show the placeholder
+					// Show the placeholder
+					_row.get()->TrackerPositionCombo().get()->SelectedIndex(-1);
+					_row.get()->TrackerOrientationCombo().get()->SelectedIndex(-1);
 				}
 			}
 
@@ -402,7 +417,7 @@ namespace k2app::interfacing
 			for (std::shared_ptr<JointSelectorRow>& row : *expander.get()->JointSelectorRows())
 			{
 				Helpers::SetComboBoxIsEnabled_Safe(
-					row.get()->TrackerCombo(), 
+					row.get()->TrackerCombo(),
 					row.get()->Tracker()->data.isActive);
 
 				if (!row.get()->Tracker()->data.isActive)
