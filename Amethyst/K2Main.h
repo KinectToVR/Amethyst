@@ -1195,9 +1195,13 @@ namespace k2app::main
 			while (true)
 			{
 				if (!_refresh_running && !interfacing::isExitingNow)
+				{
+					// Mark the update as pending
+					_refresh_running = true;
+
+					// Parse the request - update
 					shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
 					{
-						_refresh_running = true;
 						interfacing::statusUIRefreshRequested = false;
 
 						// Update only the currently needed one
@@ -1225,8 +1229,9 @@ namespace k2app::main
 						// We're done now
 						_refresh_running = false;
 					});
+				}
 				else
-					// Wait 15s until the next refresh (or until a request)
+				// Wait 15s until the next refresh (or until a request)
 					for (uint32_t i = 0; i < 15; i++)
 					{
 						std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -1238,10 +1243,9 @@ namespace k2app::main
 		LOG(INFO) << "[K2Main] Starting the main app loop now...";
 
 		// Errors' case
-		bool server_giveUp = false;
 		int server_tries = 0, server_loops = 0;
 
-		while (!server_giveUp)
+		while (true)
 		{
 			try
 			{
