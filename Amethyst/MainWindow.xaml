@@ -104,13 +104,18 @@
                                            Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
                                 <TextBlock x:Name="FlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
                                 <TextBlock x:Name="FlyoutContent" Margin="0,0,0,12" />
-                                <StackPanel Orientation="Horizontal">
-                                    <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click"
-                                            x:Uid="/SharedStrings/Buttons/Updates/Skip" Margin="0,0,5,0" />
-                                    <Button x:Name="InstallNowButton" Click="InstallNowButton_Click"
+
+                                <Grid HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click" Grid.Column="0"
+                                            x:Uid="/SharedStrings/Buttons/Updates/Skip" Margin="0,0,5,0" HorizontalAlignment="Stretch" />
+                                    <Button x:Name="InstallNowButton" Click="InstallNowButton_Click" Grid.Column="1"
                                             x:Uid="/SharedStrings/Buttons/Updates/Install" Margin="5,0,0,0"
-                                            Style="{StaticResource AccentButtonStyle}" />
-                                </StackPanel>
+                                            Style="{StaticResource AccentButtonStyle}" HorizontalAlignment="Stretch" />
+                                </Grid>
                             </StackPanel>
                         </Flyout>
                     </FlyoutBase.AttachedFlyout>
