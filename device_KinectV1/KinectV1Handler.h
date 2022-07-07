@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <Windows.h>
 #include <Ole2.h>
 #include <NuiApi.h>
@@ -76,7 +76,7 @@ public:
 		m_elevation_spinner = CreateNumberBox(sensorAngle);
 
 		// Set up elements
-		m_elevation_spinner->Width(120);
+		// m_elevation_spinner->Width(160);
 
 		// Append the elements : Static Data
 		layoutRoot->AppendElementPairStack(
