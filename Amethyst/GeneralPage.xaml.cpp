@@ -346,12 +346,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 			if (i == 1)
 			{
 				// Capture positions
-				vrHMDPosition = (k2app::interfacing::plugins::plugins_getHMDPosition() -
-					k2app::interfacing::vrPlayspaceTranslation).cast<double>();
-
-				vrHMDPosition = k2app::interfacing::vrPlayspaceOrientationQuaternion.cast<double>().inverse() *
-					vrHMDPosition;
-
+				vrHMDPosition = k2app::interfacing::plugins::plugins_getHMDPositionCalibrated().cast<double>();
+				
 				vrHMDPositions.push_back(vrHMDPosition);
 				kinectHeadPositions.push_back(
 					(general_current_calibrating_device == general_calibrating_device::K2_BaseDevice

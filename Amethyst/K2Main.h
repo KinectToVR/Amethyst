@@ -536,8 +536,7 @@ namespace k2app::main
 				{
 					_current_yaw =
 						EigenUtils::RotationProjectedYaw( // External tracker
-							interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
-							interfacing::getVRWaistTrackerPose().second); // Raw orientation
+							interfacing::getVRTrackerPoseCalibrated("waist").second);
 				}
 			}
 
@@ -1017,10 +1016,8 @@ namespace k2app::main
 					// If it's from an external tracker
 					else
 					{
-						_current_yaw =
-							EigenUtils::RotationProjectedYaw( // External tracker
-								interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
-								interfacing::getVRWaistTrackerPose().second); // Raw orientation
+						_current_yaw = EigenUtils::RotationProjectedYaw( // External tracker
+							interfacing::getVRTrackerPoseCalibrated("waist").second);
 					}
 				}
 

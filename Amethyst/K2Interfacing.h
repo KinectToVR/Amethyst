@@ -102,7 +102,8 @@ namespace k2app::interfacing
 	                        const std::wstring& text)
 	{
 		if (header.empty() || text.empty() ||
-			vrOverlayHandle == vr::k_ulOverlayHandleInvalid) return;
+			vrOverlayHandle == vr::k_ulOverlayHandleInvalid)
+			return;
 
 		// Hide the current notification (if being shown)
 		if (vrNotificationID != 0) // If valid
@@ -282,9 +283,9 @@ namespace k2app::interfacing
 	}
 
 	/**
-		 * \brief This will init OpenVR
-		 * \return Success?
-		 */
+	 * \brief This will init OpenVR
+	 * \return Success?
+	 */
 	inline bool OpenVRStartup()
 	{
 		LOG(INFO) << "Attempting connection to VRSystem... ";
@@ -333,9 +334,9 @@ namespace k2app::interfacing
 	}
 
 	/**
-		 * \brief This will init VR Input Actions
-		 * \return Success?
-		 */
+	 * \brief This will init VR Input Actions
+	 * \return Success?
+	 */
 	inline bool EVRActionsStartup()
 	{
 		LOG(INFO) << "Attempting to set up EVR Input Actions...";
@@ -343,12 +344,8 @@ namespace k2app::interfacing
 		if (!evr_input.InitInputActions())
 		{
 			LOG(ERROR) << "Could not set up Input Actions. Please check the upper log for further information.";
-			/*MessageBoxA(nullptr,
-							std::string(
-								"Couldn't set up Input Actions.\n\nPlease check the log file for further information."
-							).c_str(),
-							"EVR Input Actions Init Failure!",
-							MB_OK);*/
+			ShowVRToast(L"EVR Input Actions Init Failure!",
+				L"Couldn't set up Input Actions. Please check the log file for further information.");
 
 			return false;
 		}
@@ -358,9 +355,9 @@ namespace k2app::interfacing
 	}
 
 	/**
-		 * \brief This will install Ame's vr manifest
-		 * \return Fail:0 Success:1 Other:2
-		 */
+	 * \brief This will install Ame's vr manifest
+	 * \return Fail:0 Success:1 Other:2
+	 */
 	inline uint32_t installApplicationManifest()
 	{
 		if (vr::VRApplications()->IsApplicationInstalled("KinectToVR.Amethyst"))
@@ -388,8 +385,8 @@ namespace k2app::interfacing
 	}
 
 	/**
-		 * \brief This will uninstall Ame's vr manifest
-		 */
+	 * \brief This will uninstall Ame's vr manifest
+	 */
 	inline void uninstallApplicationManifest()
 	{
 		if (vr::VRApplications()->IsApplicationInstalled("KinectToVR.Amethyst"))
@@ -407,9 +404,9 @@ namespace k2app::interfacing
 	}
 
 	/**
-		 * \brief This will init K2API and server driver
-		 * \return Success?
-		 */
+	 * \brief This will init K2API and server driver
+	 * \return Success?
+	 */
 	inline bool TestK2ServerConnection()
 	{
 		// Do not spawn 1000 voids, check how many do we have
@@ -483,9 +480,9 @@ namespace k2app::interfacing
 	}
 
 	/**
-		 * \brief This will check K2API and server driver
-		 * \return Success?
-		 */
+	 * \brief This will check K2API and server driver
+	 * \return Success?
+	 */
 	inline int CheckK2ServerStatus()
 	{
 		if (!isServerDriverPresent)
@@ -525,20 +522,20 @@ namespace k2app::interfacing
 		}
 
 		/*
-			 * codes:
-			 codes:
-				-10: driver is disabled
-				-1: driver is workin but outdated or doomed
-				10: ur pc brokey, cry about it
-				1: ok
-			 */
+		 * codes:
+		 codes:
+			-10: driver is disabled
+			-1: driver is workin but outdated or doomed
+			10: ur pc brokey, cry about it
+			1: ok
+		 */
 		return 1; //don't check if it was already working
 	}
 
 	/**
-		 * \brief This will init K2API and server driver
-		 * \return Success?
-		 */
+	 * \brief This will init K2API and server driver
+	 * \return Success?
+	 */
 	inline void K2ServerDriverSetup()
 	{
 		if (!serverDriverFailure)
@@ -586,9 +583,9 @@ namespace k2app::interfacing
 	}
 
 	/**
-		 * \brief This will check if there's any tracker with waist role in steamvr
-		 * \return Success?
-		 */
+	 * \brief This will check if there's any tracker with waist role in steamvr
+	 * \return Success?
+	 */
 	inline bool findStringIC(const std::string& strHaystack, const std::string& strNeedle)
 	{
 		auto it = std::ranges::search(
@@ -600,10 +597,10 @@ namespace k2app::interfacing
 	}
 
 	/**
-		 * \brief This will check if there's any tracker with waist role in steamvr
-		 * \_log Should we print logs?
-		 * \return <Success?, id>
-		 */
+	 * \brief This will check if there's any tracker with waist role in steamvr
+	 * \_log Should we print logs?
+	 * \return <Success?, id>
+	 */
 	inline std::pair<bool, uint32_t> findVRTracker(
 		const std::string& _role,
 		const bool _can_be_ame = true,
@@ -662,18 +659,18 @@ namespace k2app::interfacing
 	}
 
 	/**
-		 * \brief Pull pose data from SteamVR's waist tracker (if any)
-		 * \_log Should we print logs? Default: no
-		 * \return <Position, Rotation>
-		 */
-	inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> getVRWaistTrackerPose(const bool _log = false)
+	 * \brief Pull pose data from SteamVR's waist tracker (if any)
+	 * \_log Should we print logs? Default: no
+	 * \return <Position, Rotation>
+	 */
+	inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> getVRTrackerPoseCalibrated(
+		const std::string& _name_contains, const bool _log = false)
 	{
 		vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
 		vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(vr::ETrackingUniverseOrigin::TrackingUniverseStanding, 0,
-		                                                devicePose,
-		                                                vr::k_unMaxTrackedDeviceCount);
+		                                                devicePose, vr::k_unMaxTrackedDeviceCount);
 
-		const auto waistPair = findVRTracker("waist", true, _log);
+		const auto waistPair = findVRTracker(_name_contains, true, _log);
 
 		if (waistPair.first)
 		{
@@ -682,7 +679,10 @@ namespace k2app::interfacing
 			const auto waistPose = devicePose[waistPair.second];
 
 			// Get pos & rot -> EigenUtils' gonna do this stuff for us
-			return std::make_pair(EigenUtils::p_cast_type<Eigen::Vector3f>(waistPose.mDeviceToAbsoluteTracking),
+			return std::make_pair((vrPlayspaceOrientationQuaternion.inverse() *
+				                      EigenUtils::p_cast_type<Eigen::Vector3f>(waistPose.mDeviceToAbsoluteTracking)) -
+			                      vrPlayspaceTranslation,
+			                      vrPlayspaceOrientationQuaternion.inverse() *
 			                      EigenUtils::p_cast_type<Eigen::Quaternionf>(waistPose.mDeviceToAbsoluteTracking));
 		}
 
@@ -847,7 +847,7 @@ namespace k2app::interfacing
 
 		inline Eigen::Vector3f plugins_getHMDPositionCalibrated()
 		{
-			return vrHMDPose.first - vrPlayspaceTranslation;
+			return (vrPlayspaceOrientationQuaternion.inverse() * vrHMDPose.first) - vrPlayspaceTranslation;
 		}
 
 		inline Eigen::Quaternionf plugins_getHMDOrientation()
@@ -925,8 +925,8 @@ namespace k2app::interfacing
 
 					// Get pos & rot -> EigenUtils' gonna do this stuff for us
 					return std::make_pair(
-						EigenUtils::p_cast_type<Eigen::Vector3f>(device_pose.mDeviceToAbsoluteTracking) -
-						vrPlayspaceTranslation,
+						(vrPlayspaceOrientationQuaternion.inverse() * EigenUtils::p_cast_type<Eigen::Vector3f>(
+							device_pose.mDeviceToAbsoluteTracking)) - vrPlayspaceTranslation,
 						vrPlayspaceOrientationQuaternion.inverse() * EigenUtils::p_cast_type<Eigen::Quaternionf>(
 							device_pose.mDeviceToAbsoluteTracking));
 				}
@@ -975,8 +975,8 @@ namespace k2app::interfacing
 
 					// Get pos & rot -> EigenUtils' gonna do this stuff for us
 					return std::make_pair(
-						EigenUtils::p_cast_type<Eigen::Vector3f>(device_pose.mDeviceToAbsoluteTracking) -
-						vrPlayspaceTranslation,
+						(vrPlayspaceOrientationQuaternion.inverse() * EigenUtils::p_cast_type<Eigen::Vector3f>(
+							device_pose.mDeviceToAbsoluteTracking)) - vrPlayspaceTranslation,
 						vrPlayspaceOrientationQuaternion.inverse() * EigenUtils::p_cast_type<Eigen::Quaternionf>(
 							device_pose.mDeviceToAbsoluteTracking));
 				}

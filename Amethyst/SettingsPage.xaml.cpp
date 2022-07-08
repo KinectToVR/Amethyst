@@ -394,8 +394,7 @@ void Amethyst::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem
 	{
 		k2app::K2Settings.externalFlipCalibrationYaw =
 			EigenUtils::RotationProjectedYaw( // External tracker
-				k2app::interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
-				k2app::interfacing::getVRWaistTrackerPose().second); // Raw orientation
+				k2app::interfacing::getVRTrackerPoseCalibrated("waist").second);
 	}
 
 	LOG(INFO) << "Captured yaw for external flip: " <<
