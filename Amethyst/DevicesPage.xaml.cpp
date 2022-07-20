@@ -206,6 +206,22 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+		
+		// For all override devices
+		{
+			for (auto& expander : overrideSelectorExpanders)
+				expander.get()->SetVisibility(
+					(device_status.find(L"S_OK") != std::wstring::npos &&
+						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
+			overridesLabel.get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+				? Visibility::Visible
+				: Visibility::Collapsed);
+		}
 
 		// Set up combos if the device's OK
 		if (device_status.find(L"S_OK") != std::wstring::npos)
@@ -281,18 +297,38 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
-		for (auto& expander : jointSelectorExpanders)
-			expander.get()->SetVisibility(
-				(device_status.find(L"S_OK") != std::wstring::npos &&
-					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+
+		// For base joints devices
+		{
+			for (auto& expander : jointSelectorExpanders)
+				expander.get()->SetVisibility(
+					(device_status.find(L"S_OK") != std::wstring::npos &&
+						selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 					? Visibility::Visible
 					: Visibility::Collapsed);
 
-		jointBasisLabel.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+			jointBasisLabel.get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
+		}
+
+		// For all override devices
+		{
+			for (auto& expander : overrideSelectorExpanders)
+				expander.get()->SetVisibility(
+					(device_status.find(L"S_OK") != std::wstring::npos &&
+						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
+			overridesLabel.get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+				? Visibility::Visible
+				: Visibility::Collapsed);
+		}
 
 		// Set up combos if the device's OK
 		if (device_status.find(L"S_OK") != std::wstring::npos)
@@ -363,36 +399,24 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 		LOG(INFO) << "Selected a base";
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(false);
-
-		overridesLabel.get()->Visibility(Visibility::Collapsed);
+		
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
-
-		for (auto& expander : overrideSelectorExpanders)
-			expander.get()->SetVisibility(Visibility::Collapsed);
 	}
 	else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 	{
 		LOG(INFO) << "Selected an override";
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(true);
-
-		overridesLabel.get()->Visibility(Visibility::Visible);
+		
 		deselectDeviceButton.get()->Visibility(Visibility::Visible);
-
-		for (auto& expander : overrideSelectorExpanders)
-			expander.get()->SetVisibility(Visibility::Visible);
 	}
 	else
 	{
 		LOG(INFO) << "Selected a [none]";
 		setAsOverrideButton.get()->IsEnabled(true);
 		setAsBaseButton.get()->IsEnabled(true);
-
-		overridesLabel.get()->Visibility(Visibility::Collapsed);
+		
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
-
-		for (auto& expander : overrideSelectorExpanders)
-			expander.get()->SetVisibility(Visibility::Collapsed);
 	}
 
 	{
@@ -466,6 +490,22 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
+		// For all override devices
+		{
+			for (auto& expander : overrideSelectorExpanders)
+				expander.get()->SetVisibility(
+					(device_status.find(L"S_OK") != std::wstring::npos &&
+						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
+			overridesLabel.get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+				? Visibility::Visible
+				: Visibility::Collapsed);
+		}
+
 		// Show / Hide device settings button
 		selectedDeviceSettingsHostContainer.get()->Visibility(
 			device->isSettingsDaemonSupported()
@@ -502,6 +542,22 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
+
+		// For all override devices
+		{
+			for (auto& expander : overrideSelectorExpanders)
+				expander.get()->SetVisibility(
+					(device_status.find(L"S_OK") != std::wstring::npos &&
+						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
+			overridesLabel.get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+				? Visibility::Visible
+				: Visibility::Collapsed);
+		}
 
 		// Show / Hide device settings button
 		selectedDeviceSettingsHostContainer.get()->Visibility(
@@ -1110,6 +1166,22 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
+		// For all override devices
+		{
+			for (auto& expander : overrideSelectorExpanders)
+				expander.get()->SetVisibility(
+					(device_status.find(L"S_OK") != std::wstring::npos &&
+						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
+			overridesLabel.get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+				? Visibility::Visible
+				: Visibility::Collapsed);
+		}
+
 		// Set up combos if the device's OK
 		if (device_status.find(L"S_OK") != std::wstring::npos)
 		{
@@ -1184,18 +1256,38 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
-		for (auto& expander : jointSelectorExpanders)
-			expander.get()->SetVisibility(
-				(device_status.find(L"S_OK") != std::wstring::npos &&
-					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+		
+		// For base joints devices
+		{
+			for (auto& expander : jointSelectorExpanders)
+				expander.get()->SetVisibility(
+					(device_status.find(L"S_OK") != std::wstring::npos &&
+						selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 					? Visibility::Visible
 					: Visibility::Collapsed);
 
-		jointBasisLabel.get()->Visibility(
-			(device_status.find(L"S_OK") != std::wstring::npos &&
-				selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
+			jointBasisLabel.get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 				? Visibility::Visible
 				: Visibility::Collapsed);
+		}
+
+		// For all override devices
+		{
+			for (auto& expander : overrideSelectorExpanders)
+				expander.get()->SetVisibility(
+					(device_status.find(L"S_OK") != std::wstring::npos &&
+						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
+			overridesLabel.get()->Visibility(
+				(device_status.find(L"S_OK") != std::wstring::npos &&
+					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
+				? Visibility::Visible
+				: Visibility::Collapsed);
+		}
 
 		// Set up combos if the device's OK
 		if (device_status.find(L"S_OK") != std::wstring::npos)
@@ -1266,36 +1358,24 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 		LOG(INFO) << "Selected a base";
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(false);
-
-		overridesLabel.get()->Visibility(Visibility::Collapsed);
+		
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
-
-		for (auto& expander : overrideSelectorExpanders)
-			expander.get()->SetVisibility(Visibility::Collapsed);
 	}
 	else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
 	{
 		LOG(INFO) << "Selected an override";
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(true);
-
-		overridesLabel.get()->Visibility(Visibility::Visible);
+		
 		deselectDeviceButton.get()->Visibility(Visibility::Visible);
-
-		for (auto& expander : overrideSelectorExpanders)
-			expander.get()->SetVisibility(Visibility::Visible);
 	}
 	else
 	{
 		LOG(INFO) << "Selected a [none]";
 		setAsOverrideButton.get()->IsEnabled(true);
 		setAsBaseButton.get()->IsEnabled(true);
-
-		overridesLabel.get()->Visibility(Visibility::Collapsed);
+		
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
-
-		for (auto& expander : overrideSelectorExpanders)
-			expander.get()->SetVisibility(Visibility::Collapsed);
 	}
 
 	LOG(INFO) << "Changed the currently selected device to " << deviceName;
