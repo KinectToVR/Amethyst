@@ -27,7 +27,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.2" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25140-preview" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta1" />
 		<Manifest Include="$(ApplicationManifest)" />
