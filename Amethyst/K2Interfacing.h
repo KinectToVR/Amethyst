@@ -803,25 +803,40 @@ namespace k2app::interfacing
 	// Update HMD pose from OpenVR -> called in K2Main
 	inline void updateHMDPosAndRot()
 	{
-		vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
-		vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(vr::ETrackingUniverseOrigin::TrackingUniverseStanding, 0,
-		                                                devicePose,
-		                                                vr::k_unMaxTrackedDeviceCount);
-
-		if (constexpr int HMD_INDEX = 0;
-			devicePose[HMD_INDEX].bPoseIsValid)
+		// Capture RAW HMD pose
 		{
-			if (vr::VRSystem()->GetTrackedDeviceClass(HMD_INDEX) == vr::TrackedDeviceClass_HMD)
+			vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
+			vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(vr::ETrackingUniverseOrigin::TrackingUniverseStanding, 0,
+				devicePose,
+				vr::k_unMaxTrackedDeviceCount);
+
+			if (constexpr int HMD_INDEX = 0;
+				devicePose[HMD_INDEX].bPoseIsValid)
 			{
-				// Extract pose from the returns
-				const auto hmdPose = devicePose[HMD_INDEX];
+				if (vr::VRSystem()->GetTrackedDeviceClass(HMD_INDEX) == vr::TrackedDeviceClass_HMD)
+				{
+					// Extract pose from the returns
+					const auto hmdPose = devicePose[HMD_INDEX];
 
-				// Get pos & rot -> EigenUtils' gonna do this stuff for us
-				auto position = EigenUtils::p_cast_type<Eigen::Vector3f>(hmdPose.mDeviceToAbsoluteTracking);
-				auto quaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(hmdPose.mDeviceToAbsoluteTracking);
+					// Get pos & rot -> EigenUtils' gonna do this stuff for us
+					auto position = EigenUtils::p_cast_type<Eigen::Vector3f>(hmdPose.mDeviceToAbsoluteTracking);
+					auto quaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(hmdPose.mDeviceToAbsoluteTracking);
 
-				vrHMDPose = std::make_pair(position, quaternion);
+					vrHMDPose = std::make_pair(position, quaternion);
+				}
 			}
+		}
+
+		// Capture playspace details
+		{
+			const auto trackingOrigin = vr::VRSystem()->GetRawZeroPoseToStandingAbsoluteTrackingPose();
+
+			vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
+			vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(trackingOrigin);
+
+			// Get current yaw angle
+			vrPlayspaceOrientation =
+				EigenUtils::RotationProjectedYaw(vrPlayspaceOrientationQuaternion); // Yaw angle
 		}
 	}
 
