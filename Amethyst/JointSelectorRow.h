@@ -147,7 +147,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracker_combo.HorizontalAlignment(HorizontalAlignment::Center);
 			_tracker_combo.VerticalAlignment(VerticalAlignment::Center);
 			_tracker_combo.Height(45);
-			_tracker_combo.Width(150);
+			_tracker_combo.MinWidth(150);
 			_tracker_combo.FontSize(15);
 			_tracker_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 			_tracker_combo.PlaceholderText(k2app::interfacing::LocalizedResourceWString(
