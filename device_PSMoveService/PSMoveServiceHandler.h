@@ -19,6 +19,7 @@
 /* Errors */
 #define FACILITY_PSMS 0x301
 #define E_PSMS_NOT_RUNNING			MAKE_HRESULT(SEVERITY_ERROR, FACILITY_PSMS, 2)
+#define E_PSMS_NO_JOINTS			MAKE_HRESULT(SEVERITY_ERROR, FACILITY_PSMS, 3)
 
 /* Not exported */
 
@@ -167,7 +168,10 @@ private:
 	bool m_keepRunning = true;
 	bool m_lightsOff = false;
 
-	//Constants
+	bool m_deviceUsable = false;
+	bool m_needsRefresh = true;
+
+	// Constants
 	double finalPSMoveScale = 1.0;
 	const std::string k_trackingSystemName = "psmove";
 };

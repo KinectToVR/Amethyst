@@ -15,8 +15,13 @@ Eigen::Quaternionf PSMSToEigen(PSMQuatf q)
 
 HRESULT PSMoveServiceHandler::getStatusResult()
 {
-	settingsSupported = initialized; // Just in case
-	return initialized ? S_OK : E_PSMS_NOT_RUNNING;
+	settingsSupported = initialized && m_deviceUsable; // Just in case
+
+	if (initialized)
+		return m_deviceUsable ? S_OK : E_PSMS_NO_JOINTS;
+
+	// If failed
+	return E_PSMS_NOT_RUNNING;
 }
 
 std::wstring PSMoveServiceHandler::statusResultWString(HRESULT stat)
@@ -26,6 +31,7 @@ std::wstring PSMoveServiceHandler::statusResultWString(HRESULT stat)
 	{
 	case S_OK: return GetLocalizedStatusWStringAutomatic(status_ok_map);
 	case E_PSMS_NOT_RUNNING: return GetLocalizedStatusWStringAutomatic(status_not_running_map);
+	case E_PSMS_NO_JOINTS: return GetLocalizedStatusWStringAutomatic(status_no_joints_map);
 	default: return L"Undefined: " + std::to_wstring(stat) +
 			L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 	}
@@ -39,7 +45,8 @@ void PSMoveServiceHandler::initialize()
 		startup(); // Try start up
 
 		initialized = PSM_GetIsConnected();
-		settingsSupported = initialized;
+		settingsSupported = initialized && m_deviceUsable;
+		m_needsRefresh = true; // Refresh joints
 
 		LOG(INFO) << (initialized ? "PSMoveService init OK." : "PSMoveService is not running.");
 	}
@@ -85,7 +92,7 @@ void PSMoveServiceHandler::shutdown()
 		// No HMD data streams started
 
 		initialized = false;
-		settingsSupported = initialized;
+		settingsSupported = initialized && m_deviceUsable;
 
 		LOG(INFO) << "PSMoveService attempted shutdown with PSMResult: " <<
 			PSMResultToString(PSM_Shutdown());
@@ -246,8 +253,10 @@ void PSMoveServiceHandler::rebuildPSMoveLists()
 	}
 
 	// See if we need to rebuild the controller list
-	if (m_keepRunning && PSM_HasControllerListChanged())
+	if (m_keepRunning && (PSM_HasControllerListChanged() || m_needsRefresh))
 	{
+		m_needsRefresh = false; // Uncheck
+
 		unsigned int data_stream_flags =
 			PSMStreamFlags_includePositionData |
 			PSMStreamFlags_includePhysicsData |
@@ -325,10 +334,16 @@ void PSMoveServiceHandler::rebuildControllerList()
 			controller_type + " "s + std::to_string(controllerList.controller_id[cntlr_ix])));
 	}
 
-	// If there are no real joints, at least push a placeholder one
+	// If there are no real joints, push PSMS_MAX_JOINTS placeholders
+	// AND mark the device as unusable (so users won't see the placeholders)
 	// This should spare us at least one crash condition （￣︶￣）↗　
 	if (trackedJoints.empty())
-		trackedJoints.push_back(ktvr::K2TrackedJoint("INVALID!"));
+	{
+		m_deviceUsable = false;
+		for (size_t i = 0; i < PSMOVESERVICE_MAX_CONTROLLER_COUNT; i++)
+			trackedJoints.push_back(ktvr::K2TrackedJoint("INVALID " + std::to_string(i)));
+	}
+	else m_deviceUsable = true;
 }
 
 void PSMoveServiceHandler::processKeyInputs()

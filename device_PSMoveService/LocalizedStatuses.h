@@ -53,6 +53,30 @@ inline std::map<std::wstring, std::wstring> status_not_running_map
 	}
 };
 
+inline std::map<std::wstring, std::wstring> status_no_joints_map
+{
+	{
+		L"en-US",
+		L"No controllers found!\nE_PSMS_NO_JOINTS\nCheck if any controllers are connected, and if PSMoveService is working properly."
+	},
+	{
+		L"lc-LC",
+		L"Noww kontwowewws!\nE_PSMS_NO_JOINTS\nChsechk f anw contwowewws aw konnewtewd, n f PShMoveShervish ish wowkinwg."
+	},
+	{
+		L"fr-FR",
+		L"Aucun contrôleur trouvé!\nE_PSMS_NO_JOINTS\nVérifiez si des contrôleurs sont connectés et si PSMoveService fonctionne."
+	},
+	{
+		L"ru-RU",
+		L"Контроллеры не найдены!\nE_PSMS_NO_JOINTS\nПроверьте, подключены ли какие-либо контроллеры, и работает ли PSMoveService."
+	},
+	{
+		L"de-DE",
+		L"Keine Controller gefunden!\nE_PSMS_NO_JOINTS\nÜberprüfe, ob Controller angeschlossen sind, und ob PSMoveService funktioniert."
+	}
+};
+
 /* Helper functions */
 
 // Get the current use language, e.g. en-US
