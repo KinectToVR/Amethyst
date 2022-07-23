@@ -94,9 +94,6 @@ namespace TrackingDevices
 			trackingDevice)->isFlipSupported())
 			return false;
 
-		bool isExternalFlipSupported = false, // inapp - overridden/disabled
-		     isExternalFlipSupported_Global = false; // global - steamvr
-
 		/* Now check if either waist tracker is overridden or disabled
 		 * And then search in OpenVR for a one with waist role */
 
@@ -113,8 +110,8 @@ namespace TrackingDevices
 				return !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
 					overrideDevice.second)->isFlipSupported();
 
-				// If the override device is a joints then it's always ok
-			else if (overrideDevice.second.index() == 1)
+			// If the override device is a joints then it's always ok
+			if (overrideDevice.second.index() == 1)
 				return true; // We're good good
 		}
 

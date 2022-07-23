@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -524,7 +524,8 @@ namespace k2app::main
 			if (K2Settings.isExternalFlipEnabled)
 			{
 				// If the extflip is from Amethyst
-				if (K2Settings.K2TrackersVector[0].isRotationOverridden)
+				if (K2Settings.K2TrackersVector[0].data.isActive &&
+					K2Settings.K2TrackersVector[0].isRotationOverridden)
 				{
 					_current_yaw =
 						EigenUtils::RotationProjectedYaw( // Overriden tracker
@@ -1006,7 +1007,8 @@ namespace k2app::main
 				if (K2Settings.isExternalFlipEnabled)
 				{
 					// If the extflip is from Amethyst
-					if (K2Settings.K2TrackersVector[0].isRotationOverridden)
+					if (K2Settings.K2TrackersVector[0].data.isActive &&
+						K2Settings.K2TrackersVector[0].isRotationOverridden)
 					{
 						_current_yaw = _neutral_yaw; // Never flip overrides if so
 					}
