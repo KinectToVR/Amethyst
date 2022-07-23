@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,2,6
- PRODUCTVERSION 1,0,2,6
+ FILEVERSION 1,0,2,7
+ PRODUCTVERSION 1,0,2,7
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "K2VR Team"
             VALUE "FileDescription", "Amethyst OpenVR Driver"
-            VALUE "FileVersion", "1.0.2.6"
+            VALUE "FileVersion", "1.0.2.7"
             VALUE "InternalName", "driver_Amethyst.dll"
             VALUE "LegalCopyright", "Copyright (C) 2022"
             VALUE "OriginalFilename", "driver_Amethyst.dll"
             VALUE "ProductName", "Amethyst OpenVR Driver"
-            VALUE "ProductVersion", "1.0.2.6"
+            VALUE "ProductVersion", "1.0.2.7"
         END
     END
     BLOCK "VarFileInfo"
