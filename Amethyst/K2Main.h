@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "K2Interfacing.h"
 #include "TrackingDevices.h"
 
@@ -1008,10 +1008,7 @@ namespace k2app::main
 					// If the extflip is from Amethyst
 					if (K2Settings.K2TrackersVector[0].isRotationOverridden)
 					{
-						_current_yaw =
-							EigenUtils::RotationProjectedYaw( // Overriden tracker
-								interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
-								K2Settings.K2TrackersVector[0].pose.orientation); // Raw orientation
+						_current_yaw = _neutral_yaw; // Never flip overrides if so
 					}
 					// If it's from an external tracker
 					else
