@@ -36,6 +36,10 @@ public:
 		deviceType = ktvr::K2_Joints;
 		deviceName = "PSMove Service";
 		settingsSupported = true; // Until the status is OK
+
+		// Push the placeholders in
+		for (size_t i = 0; i < PSMOVESERVICE_MAX_CONTROLLER_COUNT; i++)
+			trackedJoints.push_back(ktvr::K2TrackedJoint("INVALID " + std::to_string(i)));
 	}
 
 	void initialize() override;
