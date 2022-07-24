@@ -139,68 +139,68 @@
     <value>Später Installieren</value>
   </data>
   <data name="Joints.Enum.0" xml:space="preserve">
-    <value>Hand-Tracker</value>
+    <value>Hand</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.1" xml:space="preserve">
-    <value>Linker Fuß-Tracker</value>
+    <value>Linker Fuß</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.10" xml:space="preserve">
-    <value>Brust-Tracker</value>
+    <value>Brust</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.11" xml:space="preserve">
-    <value>Kamera-Tracker</value>
+    <value>Kamera</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.12" xml:space="preserve">
-    <value>Tastatur-Tracker</value>
+    <value>Tastatur</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.2" xml:space="preserve">
-    <value>Rechter Fuß-Tracker</value>
+    <value>Rechter Fuß</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.3" xml:space="preserve">
-    <value>Linker Schulter-Tracker</value>
+    <value>Linke Schulter</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.4" xml:space="preserve">
-    <value>Rechter Schulter-Tracker</value>
+    <value>Rechte Schulter</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.5" xml:space="preserve">
-    <value>Linker Ellbogen-Tracker</value>
+    <value>Linker Ellbogen</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.6" xml:space="preserve">
-    <value>Rechter Ellbogen-Tracker</value>
+    <value>Rechter Ellbogen</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.7" xml:space="preserve">
-    <value>Linker Knie-Tracker</value>
+    <value>Linker Knie</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.8" xml:space="preserve">
-    <value>Rechter Knie-Tracker</value>
+    <value>Rechter Knie</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Enum.9" xml:space="preserve">
-    <value>Taillen-Tracker</value>
+    <value>Taille</value>
     <comment>From the ktvr::ITrackerType enum</comment>
   </data>
   <data name="Joints.Pairs.Elbows" xml:space="preserve">
-    <value>Ellbogen-Tracker</value>
+    <value>Ellbogen</value>
   </data>
   <data name="Joints.Pairs.Feet" xml:space="preserve">
-    <value>Fuß-Tracker</value>
+    <value>Fuß</value>
   </data>
   <data name="Joints.Pairs.Knees" xml:space="preserve">
-    <value>Knie-Tracker</value>
+    <value>Knie</value>
   </data>
   <data name="Toasts.AutoSpawnFailed.Content" xml:space="preserve">
-    <value>Es ist ein Serverfehler aufgetreten und Körpertracker konnten nicht gespawnt werden</value>
+    <value>Ein Fehler ist aufgetreten. Die Tracker konnten nicht gespawnt werden.</value>
   </data>
   <data name="Toasts.AutoSpawnFailed.Title" xml:space="preserve">
     <value>Wir konnten Tracker nicht automatisch spawnen!</value>
