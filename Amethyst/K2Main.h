@@ -192,6 +192,35 @@ namespace k2app::main
 		calibration_joystick_positions[1][1] = evr_input.rightJoystickActionData().y;
 	}
 
+	inline void K2ParseVREvents()
+	{
+		// Poll and parse all needed VR (overlay) events
+		if (!vr::VRSystem())
+			return;
+
+		vr::VREvent_t vrEvent{};
+		while (vr::VROverlay()->PollNextOverlayEvent(interfacing::vrOverlayHandle, &vrEvent, sizeof(vrEvent)))
+		{
+			switch (vrEvent.eventType)
+			{
+			case vr::VREvent_Quit:
+				// Handle exit
+				{
+					LOG(INFO) << "VREvent_Quit has been called, requesting more time for handling the exit...";
+					vr::VRSystem()->AcknowledgeQuit_Exiting();
+
+					// Handle all the exit actions (if needed)
+					if (!interfacing::isExitHandled)
+						interfacing::handle_app_exit_n();
+
+					// Finally exit with code 0
+					exit(0);
+				}
+			default: break;
+			}
+		}
+	}
+
 	inline void K2UpdateTrackingDevices()
 	{
 		/* Update the base device here */
@@ -1254,6 +1283,7 @@ namespace k2app::main
 
 					K2UpdateVRPositions(); // Update HMD poses
 					K2UpdateInputBindings(); // Update input
+					K2ParseVREvents(); // Parse VR events
 
 					// Skip some things if we're getting ready to exit
 					if (!interfacing::isExitingNow)
