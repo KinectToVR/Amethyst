@@ -120,8 +120,8 @@ namespace TrackingDevices
 			/* Here check if there's a proper waist tracker in steamvr to pull data from */
 			return k2app::interfacing::findVRTracker("waist").first; // .first is [Success?]
 
-			// If the setup is fked up, just block it
-		else return false;
+		// If the setup is fked up, just block it
+		return false;
 	}
 
 	// autoCheck->true will force the function to check and false will assume unsupported

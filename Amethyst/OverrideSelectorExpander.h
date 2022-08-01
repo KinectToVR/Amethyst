@@ -304,6 +304,10 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_container_expander.HorizontalContentAlignment(HorizontalAlignment::Stretch);
 			_container_expander.HorizontalAlignment(HorizontalAlignment::Stretch);
 
+			Media::Animation::TransitionCollection c_transition_collection;
+			c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
+			_container_expander.Transitions(c_transition_collection);
+
 			// Create the title grid
 			Grid _header;
 

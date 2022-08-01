@@ -209,7 +209,7 @@
                                     <ColumnDefinition Width="270" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" IsTabStop="True"
                                            Margin="0,0,0,3" Grid.Column="0" HorizontalTextAlignment="Center"
                                            x:Uid="/GeneralPage/Calibration/Titles/Points" FontWeight="SemiBold" />
 
