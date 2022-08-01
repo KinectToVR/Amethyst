@@ -1098,12 +1098,13 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 		if (!k2app::K2Settings.skeletonPreviewEnabled)
 		{
 			// Hide the UI, only show that viewing is disabled
-			SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
-			NotTrackedNotice().Visibility(Visibility::Collapsed);
-			NotInFocusNotice().Visibility(Visibility::Collapsed);
-			DashboardClosedNotice().Visibility(Visibility::Collapsed);
+			SkeletonDrawingCanvas().Opacity(0.0);
 
-			SkeletonHiddenNotice().Visibility(Visibility::Visible);
+			NotTrackedNotice().Opacity(0.0);
+			NotInFocusNotice().Opacity(0.0);
+			DashboardClosedNotice().Opacity(0.0);
+			SkeletonHiddenNotice().Opacity(1.0);
+
 			return; // Nothing more to do anyway
 		}
 
@@ -1114,12 +1115,13 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 			if (k2app::K2Settings.skeletonPreviewEnabled && !IsDashboardOpen())
 			{
 				// Hide the UI, only show that viewing is disabled
-				SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
-				NotTrackedNotice().Visibility(Visibility::Collapsed);
-				SkeletonHiddenNotice().Visibility(Visibility::Collapsed);
-				NotInFocusNotice().Visibility(Visibility::Collapsed);
+				SkeletonDrawingCanvas().Opacity(0.0);
 
-				DashboardClosedNotice().Visibility(Visibility::Visible);
+				NotTrackedNotice().Opacity(0.0);
+				SkeletonHiddenNotice().Opacity(0.0);
+				NotInFocusNotice().Opacity(0.0);
+				DashboardClosedNotice().Opacity(1.0);
+
 				return; // Nothing more to do anyway
 			}
 
@@ -1127,19 +1129,20 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 			if (k2app::K2Settings.skeletonPreviewEnabled && !IsCurrentWindowActive())
 			{
 				// Hide the UI, only show that viewing is disabled
-				SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
-				NotTrackedNotice().Visibility(Visibility::Collapsed);
-				SkeletonHiddenNotice().Visibility(Visibility::Collapsed);
-				DashboardClosedNotice().Visibility(Visibility::Collapsed);
+				SkeletonDrawingCanvas().Opacity(0.0);
 
-				NotInFocusNotice().Visibility(Visibility::Visible);
+				NotTrackedNotice().Opacity(0.0);
+				SkeletonHiddenNotice().Opacity(0.0);
+				DashboardClosedNotice().Opacity(0.0);
+				NotInFocusNotice().Opacity(1.0);
+
 				return; // Nothing more to do anyway
 			}
 		}
 
-		SkeletonHiddenNotice().Visibility(Visibility::Collapsed); // Else hide
-		NotInFocusNotice().Visibility(Visibility::Collapsed); // Else hide
-		DashboardClosedNotice().Visibility(Visibility::Collapsed); // Else hide
+		SkeletonHiddenNotice().Opacity(0.0); // Else hide
+		NotInFocusNotice().Opacity(0.0); // Else hide
+		DashboardClosedNotice().Opacity(0.0); // Else hide
 
 		const auto& trackingDevice = TrackingDevices::getCurrentDevice();
 
@@ -1160,8 +1163,8 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 					// Don't waste cpu & ram, ok?
 
 					// Show the UI
-					SkeletonDrawingCanvas().Visibility(Visibility::Visible);
-					NotTrackedNotice().Visibility(Visibility::Collapsed);
+					SkeletonDrawingCanvas().Opacity(1.0);
+					NotTrackedNotice().Opacity(0.0);
 
 					if (device->getDeviceCharacteristics() == ktvr::K2_Character_Full)
 					{
@@ -1333,8 +1336,8 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 				}
 				else
 				{
-					SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
-					NotTrackedNotice().Visibility(Visibility::Visible);
+					SkeletonDrawingCanvas().Opacity(0.0);
+					NotTrackedNotice().Opacity(1.0);
 				}
 			}
 			break;
@@ -1351,8 +1354,8 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 					// Don't waste cpu & ram, ok?
 
 					// Show the UI
-					SkeletonDrawingCanvas().Visibility(Visibility::Visible);
-					NotTrackedNotice().Visibility(Visibility::Collapsed);
+					SkeletonDrawingCanvas().Opacity(1.0);
+					NotTrackedNotice().Opacity(0.0);
 
 					{
 						// Clear bones
@@ -1374,8 +1377,8 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 				}
 				else
 				{
-					SkeletonDrawingCanvas().Visibility(Visibility::Collapsed);
-					NotTrackedNotice().Visibility(Visibility::Visible);
+					SkeletonDrawingCanvas().Opacity(0.0);
+					NotTrackedNotice().Opacity(1.0);
 				}
 			}
 			break;

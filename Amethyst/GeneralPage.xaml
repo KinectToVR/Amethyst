@@ -797,6 +797,10 @@
             <!--Skeleton canvas-->
             <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Canvas.ZIndex="-1"
                     x:Name="SkeletonDrawingCanvas" Loaded="SkeletonDrawingCanvas_Loaded">
+                <Canvas.OpacityTransition>
+                    <ScalarTransition />
+                </Canvas.OpacityTransition>
+
                 <Canvas.Clip>
                     <RectangleGeometry Rect="0,0,10000000,10000000" />
                 </Canvas.Clip>
@@ -809,8 +813,11 @@
             <!--No Skeleton-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Grid.Column="1" x:Name="NotTrackedNotice"
+                <StackPanel Grid.Column="1" x:Name="NotTrackedNotice" Opacity="1.0"
                             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                    <StackPanel.OpacityTransition>
+                        <ScalarTransition />
+                    </StackPanel.OpacityTransition>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" Foreground="White" />
@@ -827,8 +834,11 @@
             <!--Skeleton Disabled-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Grid.Column="1" x:Name="SkeletonHiddenNotice" Visibility="Collapsed"
+                <StackPanel Grid.Column="1" x:Name="SkeletonHiddenNotice" Opacity="0.0"
                             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                    <StackPanel.OpacityTransition>
+                        <ScalarTransition />
+                    </StackPanel.OpacityTransition>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
@@ -845,8 +855,11 @@
             <!--Outta focus-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Grid.Column="1" x:Name="NotInFocusNotice" Visibility="Collapsed"
+                <StackPanel Grid.Column="1" x:Name="NotInFocusNotice" Opacity="0.0"
                             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                    <StackPanel.OpacityTransition>
+                        <ScalarTransition />
+                    </StackPanel.OpacityTransition>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
@@ -863,8 +876,11 @@
             <!--Dashboard is closed-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Grid.Column="1" x:Name="DashboardClosedNotice" Visibility="Collapsed"
+                <StackPanel Grid.Column="1" x:Name="DashboardClosedNotice" Opacity="0.0"
                             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                    <StackPanel.OpacityTransition>
+                        <ScalarTransition />
+                    </StackPanel.OpacityTransition>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
