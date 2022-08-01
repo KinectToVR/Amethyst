@@ -8,12 +8,12 @@
 
   <Identity
     Name="1cb715ac-5d11-488e-85be-aef7e0daa605"
-    Publisher="CN=akaya"
-    Version="1.0.2.8" />
+    Publisher="CN=K2VRTeam"
+    Version="1.0.2.9" />
 
   <Properties>
     <DisplayName>Amethyst</DisplayName>
-    <PublisherDisplayName>akaya</PublisherDisplayName>
+    <PublisherDisplayName>K2VR Team</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
