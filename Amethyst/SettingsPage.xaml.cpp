@@ -718,7 +718,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 							const bool trackerState = k2app::K2Settings.K2TrackersVector.at(_t).data.isActive;
 
 							// Make actual changes
-							if (k2app::interfacing::K2AppTrackersInitialized)
+							if (trackerState && k2app::interfacing::K2AppTrackersInitialized)
 								ktvr::set_tracker_state<false>(
 									k2app::K2Settings.K2TrackersVector.at(_t).tracker, false);
 
