@@ -145,6 +145,15 @@
     <value>Lorsqu'actif: Amethyst décidera si vous êtes retourné
 en se basant sur le tracker actif dans SteamVR avec le rôle de taille.</value>
   </data>
+  <data name="Captions.ExtFlipStatus.Active" xml:space="preserve">
+    <value>Détecté et en cours d'exécution!</value>
+  </data>
+  <data name="Captions.ExtFlipStatus.Disabled" xml:space="preserve">
+    <value>Désactivé!</value>
+  </data>
+  <data name="Captions.ExtFlipStatus.NoTracker" xml:space="preserve">
+    <value>Pas de traceur de taille externe ou d'annulation détectée!</value>
+  </data>
   <data name="Captions.FaceTheKinect.Text" xml:space="preserve">
     <value>Faites face à la Kinect!</value>
   </data>

@@ -55,11 +55,13 @@ namespace winrt::Amethyst::implementation
 		flipDropDownGrid = std::make_shared<Controls::Grid>(FlipDropDownGrid());
 
 		jointExpanderHostStackPanel = std::make_shared<Controls::StackPanel>(JointExpanderHostStackPanel());
+		externalFlipStatusStackPanel = std::make_shared<Controls::StackPanel>(ExtFlipStatusStackPanel());
 
 		flipToggle = std::make_shared<Controls::ToggleSwitch>(FlipToggle());
 
 		externalFlipCheckBoxLabel = std::make_shared<Controls::TextBlock>(ExternalFlipCheckBoxLabel());
 		setErrorFlyoutText = std::make_shared<Controls::TextBlock>(SetErrorFlyoutText());
+		externalFlipStatusLabel = std::make_shared<Controls::TextBlock>(ExtFlipStatusLabel());
 
 		flipDropDown = std::make_shared<Controls::Expander>(FlipDropDown());
 		soundsVolumeSlider = std::make_shared<Controls::Slider>(SoundsVolumeSlider());
@@ -110,7 +112,7 @@ namespace winrt::Amethyst::implementation
 		LOG(INFO) << "Appending the new expanders to the UI Node";
 
 		int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
-		for (auto expander : jointExpanderVector)
+		for (auto& expander : jointExpanderVector)
 		{
 			// Append the expander
 			jointExpanderHostStackPanel->Children().Append(*expander->Container());
@@ -120,6 +122,11 @@ namespace winrt::Amethyst::implementation
 			{
 				auto separator = Controls::MenuFlyoutSeparator();
 				separator.Margin({10, 10, 10, 0});
+
+				Media::Animation::TransitionCollection c_transition_collection;
+				c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
+				separator.Transitions(c_transition_collection);
+
 				jointExpanderHostStackPanel->Children().Append(separator);
 				_expander_number = 1;
 			}
@@ -137,6 +144,8 @@ void Amethyst::implementation::SettingsPage::ExternalFlipCheckBox_Checked(
 
 	// Cache flip to settings and save
 	k2app::K2Settings.isExternalFlipEnabled = true; // Checked
+	TrackingDevices::settings_set_external_flip_is_enabled(); // Parse
+
 	k2app::K2Settings.saveSettings();
 }
 
@@ -149,6 +158,8 @@ void Amethyst::implementation::SettingsPage::ExternalFlipCheckBox_Unchecked(
 
 	// Cache flip to settings and save
 	k2app::K2Settings.isExternalFlipEnabled = false; // Unchecked
+	TrackingDevices::settings_set_external_flip_is_enabled(); // Parse
+
 	k2app::K2Settings.saveSettings();
 }
 
@@ -282,7 +293,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 		flipToggle.get()->IsEnabled(false);
 		flipDropDown.get()->IsEnabled(false);
 		flipDropDownGrid.get()->Opacity(0.5);
-		TrackingDevices::settings_set_external_flip_is_enabled(false);
+		TrackingDevices::settings_set_external_flip_is_enabled();
 	}
 
 	// Load the tracker configuration
@@ -799,6 +810,11 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					{
 						auto separator = Controls::MenuFlyoutSeparator();
 						separator.Margin({10, 10, 10, 0});
+
+						Media::Animation::TransitionCollection c_transition_collection;
+						c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
+						separator.Transitions(c_transition_collection);
+
 						jointExpanderHostStackPanel->Children().Append(separator);
 						_expander_number = 1;
 					}
@@ -831,7 +847,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					flipToggle.get()->IsEnabled(false);
 					flipDropDown.get()->IsEnabled(false);
 					flipDropDownGrid.get()->Opacity(0.5);
-					TrackingDevices::settings_set_external_flip_is_enabled(false);
+					TrackingDevices::settings_set_external_flip_is_enabled();
 				}
 
 				// Load the tracker configuration
@@ -941,6 +957,11 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				{
 					auto separator = Controls::MenuFlyoutSeparator();
 					separator.Margin({10, 10, 10, 0});
+
+					Media::Animation::TransitionCollection c_transition_collection;
+					c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
+					separator.Transitions(c_transition_collection);
+
 					jointExpanderHostStackPanel->Children().Append(separator);
 					_expander_number = 1;
 				}
@@ -973,7 +994,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				flipToggle.get()->IsEnabled(false);
 				flipDropDown.get()->IsEnabled(false);
 				flipDropDownGrid.get()->Opacity(0.5);
-				TrackingDevices::settings_set_external_flip_is_enabled(false);
+				TrackingDevices::settings_set_external_flip_is_enabled();
 			}
 
 			// Load the tracker configuration

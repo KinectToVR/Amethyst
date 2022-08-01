@@ -90,8 +90,8 @@ namespace TrackingDevices
 		const auto& trackingDevice =
 			getCurrentDevice();
 
-		if (trackingDevice.index() == 0 && !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
-			trackingDevice)->isFlipSupported())
+		if ((trackingDevice.index() == 0 && !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+			trackingDevice)->isFlipSupported()) || trackingDevice.index() == 1)
 			return false;
 
 		/* Now check if either waist tracker is overridden or disabled
@@ -119,35 +119,46 @@ namespace TrackingDevices
 		else if (!k2app::K2Settings.K2TrackersVector.at(0).data.isActive)
 			/* Here check if there's a proper waist tracker in steamvr to pull data from */
 			return k2app::interfacing::findVRTracker("waist").first; // .first is [Success?]
+
+			// If the setup is fked up, just block it
+		else return false;
 	}
 
 	// autoCheck->true will force the function to check and false will assume unsupported
-	inline void settings_set_external_flip_is_enabled(bool autoCheck = true)
+	inline void settings_set_external_flip_is_enabled()
 	{
 		if (k2app::shared::settings::externalFlipCheckBox.get() == nullptr)return;
 
-		if (autoCheck)
+		// Everything's fine
+		if (isExternalFlipSupportable() && k2app::K2Settings.isFlipEnabled &&
+			k2app::K2Settings.isExternalFlipEnabled)
 		{
-			k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(
-				isExternalFlipSupportable() &&
-				k2app::K2Settings.isFlipEnabled);
+			k2app::shared::settings::externalFlipStatusLabel.get()->Text(
+				k2app::interfacing::LocalizedResourceWString(
+					L"SettingsPage", L"Captions/ExtFlipStatus/Active"));
+
+			k2app::shared::settings::externalFlipStatusStackPanel.get()->Visibility(
+				winrt::Microsoft::UI::Xaml::Visibility::Visible);
 		}
-		else
-			k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled(false);
-
-		k2app::shared::settings::externalFlipCheckBoxLabel.get()->Opacity(
-			k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled() ? 1 : 0.5);
-
-		if (!k2app::shared::settings::externalFlipCheckBox.get()->IsEnabled())
+		// No tracker detected
+		else if (k2app::K2Settings.isExternalFlipEnabled)
 		{
-			k2app::shared::settings::externalFlipCheckBox.get()->IsChecked(false);
+			k2app::shared::settings::externalFlipStatusLabel.get()->Text(
+				k2app::interfacing::LocalizedResourceWString(
+					L"SettingsPage", L"Captions/ExtFlipStatus/NoTracker"));
 
-			// Also change & save settings if needed
-			if (k2app::K2Settings.isExternalFlipEnabled)
-			{
-				k2app::K2Settings.isExternalFlipEnabled = false;
-				k2app::K2Settings.saveSettings();
-			}
+			k2app::shared::settings::externalFlipStatusStackPanel.get()->Visibility(
+				winrt::Microsoft::UI::Xaml::Visibility::Visible);
+		}
+		// Disabled by the user
+		else
+		{
+			k2app::shared::settings::externalFlipStatusLabel.get()->Text(
+				k2app::interfacing::LocalizedResourceWString(
+					L"SettingsPage", L"Captions/ExtFlipStatus/Disabled"));
+
+			k2app::shared::settings::externalFlipStatusStackPanel.get()->Visibility(
+				winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
 		}
 	}
 
@@ -543,6 +554,10 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_main_expander.Content(_content);
 			_container.Children().Append(_main_expander);
+
+			Media::Animation::TransitionCollection c_transition_collection;
+			c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
+			_container.Transitions(c_transition_collection);
 
 			// Back everything up
 			_ptr_container = std::make_shared<Grid>(_container);

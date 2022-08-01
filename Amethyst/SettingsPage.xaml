@@ -118,7 +118,7 @@
                         <Expander.Content>
                             <StackPanel Orientation="Vertical" Padding="0,-5">
 
-                                <StackPanel Orientation="Horizontal" x:Name="ExternalFlipStackPanel" Margin="0,-25,0,0">
+                                <StackPanel Orientation="Horizontal" x:Name="ExternalFlipStackPanel" Margin="0,-25,0,-20">
 
                                     <Grid Margin="0,5,0,0">
                                         <Grid.ColumnDefinitions>
@@ -128,12 +128,11 @@
 
                                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
                                                    FontWeight="Medium"
-                                                   Opacity="0.5"
                                                    x:Name="ExternalFlipCheckBoxLabel"
                                                    x:Uid="/SettingsPage/Titles/ExtFlip"
                                                    Margin="30,0,0,10"
                                                    Grid.Column="0" />
-                                        <CheckBox x:Name="ExternalFlipCheckBox" IsEnabled="False"
+                                        <CheckBox x:Name="ExternalFlipCheckBox"
                                                   Checked="ExternalFlipCheckBox_Checked"
                                                   Unchecked="ExternalFlipCheckBox_Unchecked"
                                                   HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -159,11 +158,31 @@
 
                                 </StackPanel>
 
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/SettingsPage/Captions/ExtFlip"
-                                           Margin="30,-20,0,7" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                <StackPanel Orientation="Horizontal" Margin="30,0,0,5" x:Name="ExtFlipStatusStackPanel">
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                               x:Uid="/GeneralPage/Captions/Device/Status"
+                                               Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                               Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
+									                    Path=Opacity,TargetNullValue=1.0}" />
+
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           x:Name="ExtFlipStatusLabel" Text="[NOT_DEFINED]" Margin="5,0,0,0"
                                            Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
 									                    Path=Opacity,TargetNullValue=1.0}" />
+                                </StackPanel>
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           x:Uid="/SettingsPage/Captions/ExtFlip"
+                                           Margin="30,0,0,7" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                           Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
+									                    Path=Opacity,TargetNullValue=1.0}">
+                                    <TextBlock.Transitions>
+                                        <TransitionCollection>
+                                            <RepositionThemeTransition />
+                                        </TransitionCollection>
+                                    </TextBlock.Transitions>
+                                </TextBlock>
+
                             </StackPanel>
                         </Expander.Content>
                     </Expander>
@@ -172,6 +191,12 @@
 
 
                 <Grid>
+                    <Grid.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </Grid.Transitions>
+
                     <Grid Margin="0,30,0,0" Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -306,6 +331,7 @@
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <EntranceThemeTransition />
+                            <RepositionThemeTransition />
                             <!--<AddDeleteThemeTransition />-->
                             <!--<ContentThemeTransition />-->
                         </TransitionCollection>
@@ -323,6 +349,12 @@
                         <RowDefinition Height="50" />
                         <RowDefinition Height="40" />
                     </Grid.RowDefinitions>
+
+                    <Grid.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </Grid.Transitions>
 
                     <AppBarButton Grid.Column="0" x:Name="TrackerConfigButton" VerticalAlignment="Top"
                                   Icon="Setting" Width="38" Height="46" Click="TrackerConfigButton_Click" />
@@ -363,9 +395,22 @@
 
                 </Grid>
 
-                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Sounds" FontSize="25" Margin="0,30,0,0" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Sounds" 
+                           FontSize="25" Margin="0,30,0,0">
+                    <TextBlock.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </TextBlock.Transitions>
+                </TextBlock>
 
                 <Grid Grid.Column="0" Grid.Row="1" Margin="0,15,0,0">
+                    <Grid.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </Grid.Transitions>
+
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
                                x:Uid="/SettingsPage/Captions/Sounds" Margin="30,0,0,10" />
                     <CheckBox x:Name="SoundsEnabledCheckBox"
@@ -376,9 +421,21 @@
 
                 <Slider Grid.Row="1" HorizontalAlignment="Left" Width="400" Value="69"
                         IsEnabled="{Binding ElementName=SoundsEnabledCheckBox, Path=IsChecked,TargetNullValue=False}"
-                        x:Name="SoundsVolumeSlider" ValueChanged="SoundsVolumeSlider_ValueChanged" />
+                        x:Name="SoundsVolumeSlider" ValueChanged="SoundsVolumeSlider_ValueChanged">
+                    <Slider.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </Slider.Transitions>
+                </Slider>
 
                 <StackPanel Orientation="Vertical" Margin="0,0,5,0">
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                x:Uid="/SettingsPage/Captions/SoundsWhen/Line1"
                                Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
@@ -387,8 +444,14 @@
                                Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                 </StackPanel>
 
-                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Troubleshooting" FontSize="25"
-                           Margin="0,40,0,15" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Troubleshooting" 
+                           FontSize="25" Margin="0,40,0,15">
+                    <TextBlock.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </TextBlock.Transitions>
+                </TextBlock>
 
                 <Grid x:Name="TroubleshootingControlsContainerGrid"
                       HorizontalAlignment="Left">
@@ -396,6 +459,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="35" />
                     </Grid.ColumnDefinitions>
+
+                    <Grid.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </Grid.Transitions>
 
                     <StackPanel HorizontalAlignment="Stretch"
                                 Grid.Column="0" Orientation="Vertical">
@@ -438,6 +507,12 @@
                             </Grid>
                         </Flyout>
                     </SplitButton.Flyout>
+
+                    <SplitButton.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </SplitButton.Transitions>
                 </SplitButton>
 
                 <!--Flyout for manifest and reregister errors-->

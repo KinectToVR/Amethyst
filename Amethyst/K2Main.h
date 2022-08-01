@@ -545,12 +545,12 @@ namespace k2app::main
 
 			// Compose the yaw neutral and current
 			const double _neutral_yaw =
-			(K2Settings.isExternalFlipEnabled
+			((K2Settings.isFlipEnabled && K2Settings.isExternalFlipEnabled)
 				 ? K2Settings.externalFlipCalibrationYaw // Ext
 				 : K2Settings.calibrationYaws.first); // Default
 
 			double _current_yaw = _yaw; // Default - HMD
-			if (K2Settings.isExternalFlipEnabled)
+			if (K2Settings.isFlipEnabled && K2Settings.isExternalFlipEnabled)
 			{
 				// If the extflip is from Amethyst
 				if (K2Settings.K2TrackersVector[0].data.isActive &&
@@ -1028,12 +1028,12 @@ namespace k2app::main
 
 				// Compose the yaw neutral and current
 				const double _neutral_yaw =
-				(K2Settings.isExternalFlipEnabled
+				((K2Settings.isFlipEnabled && K2Settings.isExternalFlipEnabled)
 					 ? K2Settings.externalFlipCalibrationYaw // Ext
 					 : K2Settings.calibrationYaws.second); // Default
 
 				double _current_yaw = _yaw; // Default - HMD
-				if (K2Settings.isExternalFlipEnabled)
+				if (K2Settings.isFlipEnabled && K2Settings.isExternalFlipEnabled)
 				{
 					// If the extflip is from Amethyst
 					if (K2Settings.K2TrackersVector[0].data.isActive &&

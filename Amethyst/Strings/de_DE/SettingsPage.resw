@@ -145,6 +145,15 @@
     <value>Wenn eingeschaltet: Amethyst entscheidet ob man sich umgedreht hat, 
 indem es den derzeit aktiven Taillen-Tracker in SteamVR überprüft</value>
   </data>
+  <data name="Captions.ExtFlipStatus.Active" xml:space="preserve">
+    <value>Erkannt und gestartet!</value>
+  </data>
+  <data name="Captions.ExtFlipStatus.Disabled" xml:space="preserve">
+    <value>Untauglich!</value>
+  </data>
+  <data name="Captions.ExtFlipStatus.NoTracker" xml:space="preserve">
+    <value>Kein externer Hüfttracker oder Override erkannt!</value>
+  </data>
   <data name="Captions.FaceTheKinect.Text" xml:space="preserve">
     <value>Schaue auf die Richtung der Kinect!</value>
   </data>

@@ -149,7 +149,7 @@
     <comment>Notice the space at the end!</comment>
   </data>
   <data name="Credits.MainTeam.Roles.Hekky.Text" xml:space="preserve">
-    <value>Développement additionel: </value>
+    <value>Développement de l'installateur: </value>
     <comment>Notice the space at the end!</comment>
   </data>
   <data name="Credits.MainTeam.Roles.Himbeer.Text" xml:space="preserve">
@@ -162,5 +162,8 @@
   </data>
   <data name="Credits.MainTeam.Title.Text" xml:space="preserve">
     <value>Équipe principale:</value>
+  </data>
+  <data name="Credits.Translators.Title.Text" xml:space="preserve">
+    <value>Traducteurs:</value>
   </data>
 </root>

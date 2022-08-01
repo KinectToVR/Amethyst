@@ -17,10 +17,10 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
-                      VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
+        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                      Grid.Column="1" Padding="20,-20" Margin="-20,20,-20,20">
 
-            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
+            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,0,0,20">
 
                 <Grid Background="Transparent" Height="75" />
 
@@ -44,8 +44,7 @@
                 <TextBlock FontWeight="SemiBold" x:Uid="/InfoPage/Credits/Header" FontSize="25" Margin="0,60,0,0" />
 
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
-                           x:Uid="/InfoPage/Credits/MainTeam/Title"
-                           Margin="0,20,0,0" />
+                           x:Uid="/InfoPage/Credits/MainTeam/Title" Margin="0,17,0,0" />
 
                 <TextBlock FontWeight="SemiBold">
                     <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Akaya" />
@@ -60,15 +59,15 @@
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Himbeer" />
-                    <Hyperlink NavigateUri="https://github.com/HimbeersaftLP" UnderlineStyle="None">himbeersaft</Hyperlink>
-                    <Run xml:space="preserve">&#x09;"Himbeer"</Run>
-                </TextBlock>
-
-                <TextBlock FontWeight="SemiBold">
                     <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Hekky" />
                     <Hyperlink NavigateUri="https://github.com/hyblocker" UnderlineStyle="None">hyblocker</Hyperlink>
                     <Run xml:space="preserve">&#x09;&#x09;"Hekky"</Run>
+                </TextBlock>
+
+                <TextBlock FontWeight="SemiBold">
+                    <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Himbeer" />
+                    <Hyperlink NavigateUri="https://github.com/HimbeersaftLP" UnderlineStyle="None">himbeersaft</Hyperlink>
+                    <Run xml:space="preserve">&#x09;"Himbeer"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold">
@@ -86,15 +85,23 @@
                 <TextBlock FontWeight="SemiBold">
                     <Run x:Uid="/InfoPage/Credits/MainTeam/Roles/Aria" />
                     <Hyperlink NavigateUri="https://github.com/conatsera" UnderlineStyle="None">conatsera</Hyperlink>
-                    <Run xml:space="preserve">&#x09;&#x09;"Aria"</Run>
+                    <Run xml:space="preserve">&#x09;&#x09;"Ene"</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
-                           x:Uid="/InfoPage/Credits/Helpers/Title"
-                           Margin="0,20,0,0" />
+                           x:Uid="/InfoPage/Credits/Translators/Title" Margin="0,17,0,0" />
 
                 <TextBlock FontWeight="SemiBold">
-                    <Run xml:space="preserve">Alex (nakog)    </Run>
+                    <Run xml:space="preserve">Ella (AuroraNemoia)    </Run>
+                    <Run xml:space="preserve">Skye (DergnNamedSkye)    </Run>
+                    <Run xml:space="preserve">Sara the Maid    </Run>
+                </TextBlock>
+
+                <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                           x:Uid="/InfoPage/Credits/Helpers/Title" Margin="0,17,0,0" />
+
+                <TextBlock FontWeight="SemiBold">
+                    <Run xml:space="preserve">Alex (lexd0g)    </Run>
                     <Run xml:space="preserve">Allen    </Run>
                     <Run xml:space="preserve">Aze    </Run>
                     <Run xml:space="preserve">Fiery (fierybattlehawk)    </Run>
@@ -104,10 +111,11 @@
                 <TextBlock FontWeight="SemiBold">
                     <Run xml:space="preserve">Sky (P. S.)    </Run>
                     <Run xml:space="preserve">Sylva    </Run>
-                    <Run xml:space="preserve">Vexa (vexatag)</Run>
+                    <Run xml:space="preserve">TeH_Venom    </Run>
+                    <Run xml:space="preserve">vexa (vexatag)</Run>
                 </TextBlock>
 
-                <TextBlock FontWeight="SemiBold" x:Uid="/InfoPage/Credits/Community" Margin="0,20,0,20" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/InfoPage/Credits/Community" Margin="0,17,0,0" />
 
             </StackPanel>
 

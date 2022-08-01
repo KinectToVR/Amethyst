@@ -143,7 +143,16 @@
   </data>
   <data name="Captions.ExtFlip.Text" xml:space="preserve">
     <value>When turned on: Amethyst will decide if you are turned back,
-checking the currently active Waist Tracker in SteamVR</value>
+checking the currently active Waist Tracker in SteamVR (if present)</value>
+  </data>
+  <data name="Captions.ExtFlipStatus.Active" xml:space="preserve">
+    <value>Detected and running!</value>
+  </data>
+  <data name="Captions.ExtFlipStatus.Disabled" xml:space="preserve">
+    <value>Disabled!</value>
+  </data>
+  <data name="Captions.ExtFlipStatus.NoTracker" xml:space="preserve">
+    <value>No external waist tracker or override detected!</value>
   </data>
   <data name="Captions.FaceTheKinect.Text" xml:space="preserve">
     <value>Face the Kinect!</value>
@@ -243,7 +252,7 @@ It's needed for the reregistration, please check if it's there.</value>
     <value>You can also toggle skeleton flip while in VR by pressing {0} on your right controller.</value>
   </data>
   <data name="Titles.ExtFlip.Text" xml:space="preserve">
-    <value>Use external waist tracking data instead of the Headset</value>
+    <value>Use external waist tracking data instead of the Headset when detected</value>
   </data>
   <data name="Titles.SkeletonFlip.Text" xml:space="preserve">
     <value>Skeleton Flip</value>

@@ -125,7 +125,7 @@ namespace TrackingDevices
 				k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
 				k2app::shared::settings::flipDropDownGrid.get()->Opacity(0.5);
 
-				settings_set_external_flip_is_enabled(false);
+				settings_set_external_flip_is_enabled();
 			}
 		}
 	}

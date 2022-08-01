@@ -145,6 +145,15 @@
     <value>Когда включено: Amethyst будет решать, если вы повернуты назад,
 проверяя текущий активный трекер пояса в SteamVR</value>
   </data>
+  <data name="Captions.ExtFlipStatus.Active" xml:space="preserve">
+    <value>Обнаружено и работает!</value>
+  </data>
+  <data name="Captions.ExtFlipStatus.Disabled" xml:space="preserve">
+    <value>Инвалид!</value>
+  </data>
+  <data name="Captions.ExtFlipStatus.NoTracker" xml:space="preserve">
+    <value>Внешний поясной трекер или управление не обнаружены!</value>
+  </data>
   <data name="Captions.FaceTheKinect.Text" xml:space="preserve">
     <value>Повернитесь лицом к Kinect!</value>
   </data>
