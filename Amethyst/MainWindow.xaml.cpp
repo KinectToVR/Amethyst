@@ -17,9 +17,6 @@ using namespace winrt::Microsoft::UI::Xaml;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-// Imma just cache object before the fancy UWP delegation reownership
-std::shared_ptr<Controls::FontIcon> updateIconDot;
-
 // Helper local variables
 HANDLE hNamedMutex = nullptr;
 bool updateFound = false,
@@ -59,6 +56,15 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 		// Don't check if found
 		if (!updateFound)
 		{
+			// Mark the update footer as active
+			{
+				UpdateIconGrid().Translation({ 0,0,0 });
+				UpdateIconText().Opacity(0.0);
+
+				UpdateIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+			}
+
 			// Here check for updates (via external bool)
 			IconRotation().Begin();
 
@@ -216,6 +222,15 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 			co_await ui_thread;
 			IconRotation().Stop();
 
+			// Mark the update footer as inactive
+			{
+				UpdateIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+
+				UpdateIconGrid().Translation({ 0,-8,0 });
+				UpdateIconText().Opacity(1.0);
+			}
+
 			if (updateFound)
 			{
 				FlyoutHeader().Text(k2app::interfacing::LocalizedResourceWString(
@@ -240,7 +255,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				InstallLaterButton().Visibility(Visibility::Visible);
 				InstallNowButton().Visibility(Visibility::Visible);
 
-				updateIconDot.get()->Visibility(Visibility::Visible);
+				UpdateIconDot().Opacity(1.0);
 			}
 			else
 			{
@@ -260,7 +275,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				InstallLaterButton().Visibility(Visibility::Collapsed);
 				InstallNowButton().Visibility(Visibility::Collapsed);
 
-				updateIconDot.get()->Visibility(Visibility::Collapsed);
+				UpdateIconDot().Opacity(0.0);
 			}
 		}
 
@@ -431,7 +446,7 @@ namespace winrt::Amethyst::implementation
 		});
 
 		// Cache needed UI elements
-		updateIconDot = std::make_shared<Controls::FontIcon>(UpdateIconDot());
+		k2app::shared::main::appTitleLabel = std::make_shared<Controls::TextBlock>(AppTitleLabel());
 
 		k2app::shared::main::generalItem = std::make_shared<Controls::NavigationViewItem>(GeneralItem());
 		k2app::shared::main::settingsItem = std::make_shared<Controls::NavigationViewItem>(SettingsItem());
@@ -1261,12 +1276,112 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 
 	// Get the page type before navigation so you can prevent duplicate
 	// entries in the backstack.
-	Windows::UI::Xaml::Interop::TypeName preNavPageType =
+	Windows::UI::Xaml::Interop::TypeName prevNavPageType =
 		ContentFrame().CurrentSourcePageType();
 
 	// Navigate only if the selected page isn't currently loaded.
-	if (pageTypeName.Name != L"" && preNavPageType.Name != pageTypeName.Name)
+	if (pageTypeName.Name != L"" && prevNavPageType.Name != pageTypeName.Name)
 	{
+		// Switch bring back the current navview item to the base state
+		if (!prevNavPageType.Name.empty())
+		{
+			if (prevNavPageType.Name == L"Amethyst.GeneralPage")
+			{
+				NavViewGeneralButtonIcon().Translation({ 0,-8,0 });
+				NavViewGeneralButtonLabel().Opacity(1.0);
+
+				NavViewGeneralButtonIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				NavViewGeneralButtonIcon().Glyph(L"\uE80F");
+			}
+			else if (prevNavPageType.Name == L"Amethyst.SettingsPage")
+			{
+				NavViewSettingsButtonIcon().Translation({ 0,-8,0 });
+				NavViewSettingsButtonLabel().Opacity(1.0);
+
+				NavViewSettingsButtonIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				NavViewSettingsButtonIcon().Glyph(L"\uE713");
+			}
+			else if (prevNavPageType.Name == L"Amethyst.DevicesPage")
+			{
+				NavViewDevicesButtonIcon().Translation({ 0,-8,0 });
+				NavViewDevicesButtonLabel().Opacity(1.0);
+
+				NavViewDevicesButtonIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				NavViewDevicesButtonIcon().Glyph(L"\uF5ED");
+			}
+			else if (prevNavPageType.Name == L"Amethyst.InfoPage")
+			{
+				NavViewInfoButtonIcon().Translation({ 0,-8,0 });
+				NavViewInfoButtonLabel().Opacity(1.0);
+
+				NavViewInfoButtonIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				NavViewInfoButtonIcon().Glyph(L"\uE946");
+			}
+			else if (prevNavPageType.Name == L"Amethyst.ConsolePage")
+			{
+				NavViewOkashiButtonIcon().Translation({ 0,-8,0 });
+				NavViewOkashiButtonLabel().Opacity(1.0);
+
+				NavViewOkashiButtonIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				NavViewOkashiButtonIcon().Glyph(L"\uEB51");
+			}
+		}
+
+		// Switch the next navview item to the active state
+		if (!pageTypeName.Name.empty())
+		{
+			if (pageTypeName.Name == L"Amethyst.GeneralPage")
+			{
+				NavViewGeneralButtonIcon().Glyph(L"\uEA8A");
+				NavViewGeneralButtonIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+				NavViewGeneralButtonLabel().Opacity(0.0);
+				NavViewGeneralButtonIcon().Translation({ 0,0,0 });
+			}
+			else if (pageTypeName.Name == L"Amethyst.SettingsPage")
+			{
+				NavViewSettingsButtonIcon().Glyph(L"\uF8B0");
+				NavViewSettingsButtonIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+				NavViewSettingsButtonLabel().Opacity(0.0);
+				NavViewSettingsButtonIcon().Translation({ 0,0,0 });
+			}
+			else if (pageTypeName.Name == L"Amethyst.DevicesPage")
+			{
+				NavViewDevicesButtonIcon().Glyph(L"\uF5EE");
+				NavViewDevicesButtonIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+				NavViewDevicesButtonLabel().Opacity(0.0);
+				NavViewDevicesButtonIcon().Translation({ 0,0,0 });
+			}
+			else if (pageTypeName.Name == L"Amethyst.InfoPage")
+			{
+				NavViewInfoButtonIcon().Glyph(L"\uF167");
+				NavViewInfoButtonIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+				NavViewInfoButtonLabel().Opacity(0.0);
+				NavViewInfoButtonIcon().Translation({ 0,0,0 });
+			}
+			else if (pageTypeName.Name == L"Amethyst.ConsolePage")
+			{
+				NavViewOkashiButtonIcon().Glyph(L"\uEB52");
+				NavViewOkashiButtonIcon().Foreground(Application::Current().Resources().TryLookup(
+					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+				NavViewOkashiButtonLabel().Opacity(0.0);
+				NavViewOkashiButtonIcon().Translation({ 0,0,0 });
+			}
+		}
+
 		k2app::interfacing::currentPageTag = navItemTag; // Cache the current page tag
 		ContentFrame().Navigate(pageTypeName, nullptr, transitionInfo);
 	}

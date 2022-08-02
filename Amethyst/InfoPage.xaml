@@ -22,7 +22,7 @@
 
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,0,0,20">
 
-                <Grid Background="Transparent" Height="75" />
+                <Grid Background="Transparent" Height="65" />
 
                 <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal">
                     <Image Source="ms-appx:///Assets/ktvr.png" Height="200" Width="200" HorizontalAlignment="Left"
@@ -41,7 +41,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock FontWeight="SemiBold" x:Uid="/InfoPage/Credits/Header" FontSize="25" Margin="0,60,0,0" />
+                <TextBlock FontWeight="SemiBold" x:Uid="/InfoPage/Credits/Header" FontSize="25" Margin="0,50,0,0" />
 
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
                            x:Uid="/InfoPage/Credits/MainTeam/Title" Margin="0,17,0,0" />

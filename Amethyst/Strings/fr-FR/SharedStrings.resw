@@ -117,16 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Buttons.Devices.Content" xml:space="preserve">
+  <data name="Buttons.Devices.Text" xml:space="preserve">
     <value>Appareils</value>
   </data>
-  <data name="Buttons.General.Content" xml:space="preserve">
+  <data name="Buttons.General.Text" xml:space="preserve">
     <value>Général</value>
   </data>
-  <data name="Buttons.Info.Content" xml:space="preserve">
+  <data name="Buttons.Info.Text" xml:space="preserve">
     <value>Info</value>
   </data>
-  <data name="Buttons.Settings.Content" xml:space="preserve">
+  <data name="Buttons.Settings.Text" xml:space="preserve">
     <value>Paramètres</value>
   </data>
   <data name="Buttons.Updates.Header.Text" xml:space="preserve">

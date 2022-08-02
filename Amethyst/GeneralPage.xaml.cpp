@@ -347,7 +347,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 			{
 				// Capture positions
 				vrHMDPosition = k2app::interfacing::plugins::plugins_getHMDPositionCalibrated().cast<double>();
-				
+
 				vrHMDPositions.push_back(vrHMDPosition);
 				kinectHeadPositions.push_back(
 					(general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
@@ -750,8 +750,10 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Checked(
 				true); // High priority - it's probably a server failure
 
 			k2app::interfacing::ShowVRToast(
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title", L"en-US"),
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content", L"en-US"));
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title",
+				                                             L"en-US"),
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content",
+				                                             L"en-US"));
 		}
 
 		// Update things
@@ -835,8 +837,10 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 				true); // High priority - it's probably a server failure
 
 			k2app::interfacing::ShowVRToast(
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title", L"en-US"),
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content", L"en-US"));
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title",
+				                                             L"en-US"),
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content",
+				                                             L"en-US"));
 		}
 	}
 
@@ -900,16 +904,13 @@ void Amethyst::implementation::GeneralPage::sk_line(
 	// Compose perspective constants, make it 70%
 	const double s_from_multiply = .7 * (s_normal_distance / (joints[from].z() > 0. ? joints[from].z() : 3.)),
 	             s_to_multiply = .7 * (s_normal_distance / (joints[to].z() > 0. ? joints[to].z() : 3.));
-
-	auto a = Media::AcrylicBrush();
-	auto ui = Windows::UI::ViewManagement::UISettings();
-
+	
 	line.StrokeThickness(5);
-	a.TintColor(ui.GetColorValue(Windows::UI::ViewManagement::UIColorType::Accent));
 
 	if (states[from] != ktvr::State_Tracked ||
 		states[to] != ktvr::State_Tracked)
-		line.Stroke(a);
+		line.Stroke(Application::Current().Resources().TryLookup(
+			box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
 	else
 		line.Stroke(Media::SolidColorBrush(Windows::UI::Colors::White()));
 
@@ -1071,6 +1072,8 @@ std::pair<bool, bool> IsJointOverriden(const uint32_t& joint)
 }
 
 
+bool isCurrentWindowActive_backup = false;
+
 void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
@@ -1094,6 +1097,15 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 	timer.Tick([&, this](const IInspectable& sender, const IInspectable& e)
 	{
+		const bool isCurrentWindowActive = IsCurrentWindowActive();
+
+		if (isCurrentWindowActive_backup != isCurrentWindowActive &&
+			k2app::shared::main::appTitleLabel.get() != nullptr)
+		{
+			k2app::shared::main::appTitleLabel.get()->Opacity(isCurrentWindowActive ? 1.0 : 0.5);
+			isCurrentWindowActive_backup = isCurrentWindowActive;
+		}
+
 		// If we've disabled the preview
 		if (!k2app::K2Settings.skeletonPreviewEnabled)
 		{
@@ -1126,7 +1138,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 			}
 
 			// If we're out of focus (skip if we're gonna do a VROverlay)
-			if (k2app::K2Settings.skeletonPreviewEnabled && !IsCurrentWindowActive())
+			if (k2app::K2Settings.skeletonPreviewEnabled && !isCurrentWindowActive)
 			{
 				// Hide the UI, only show that viewing is disabled
 				SkeletonDrawingCanvas().Opacity(0.0);

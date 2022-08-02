@@ -13,6 +13,30 @@
     <Grid Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
           MinHeight="650" MinWidth="1000" x:Name="XMainGrid" IsTabStop="True">
 
+        <Grid VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Image Source="ms-appx:///Assets/ktvr.png"
+                   HorizontalAlignment="Left"
+                   Width="18" Height="18"
+                   Margin="16,12,0,0" />
+
+            <TextBlock Text="Amethyst" TextWrapping="NoWrap" Margin="50,12,0,0"
+                       Opacity="1.0" x:Name="AppTitleLabel"
+                       FontSize="12" FontWeight="SemiBold" Foreground="White">
+                <TextBlock.OpacityTransition>
+                    <ScalarTransition />
+                </TextBlock.OpacityTransition>
+            </TextBlock>
+
+            <TextBlock Text="PREVIEW" TextWrapping="NoWrap" Margin="110,14,0,0"
+                       Opacity="{Binding ElementName=AppTitleLabel, Path=Opacity, TargetNullValue=1.0}"
+                       FontSize="10" FontWeight="SemiLight"
+                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                <TextBlock.OpacityTransition>
+                    <ScalarTransition />
+                </TextBlock.OpacityTransition>
+            </TextBlock>
+        </Grid>
+
         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="62" />
@@ -20,37 +44,37 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="28" />
+                <RowDefinition Height="40" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1"
-                  x:Name="DragElement" Canvas.ZIndex="1" />
+            <Grid Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                  Grid.Column="1" x:Name="DragElement" Canvas.ZIndex="1" />
         </Grid>
 
         <muxc:NavigationView x:Name="NavView"
                              IsTabStop="False"
-                             Margin="0,27,0,0"
+                             Margin="0,40,0,0"
                              IsTitleBarAutoPaddingEnabled="False"
                              Loaded="NavView_Loaded"
                              ItemInvoked="NavView_ItemInvoked"
                              BackRequested="NavView_BackRequested"
-                             Grid.Row="1" CompactPaneLength="60"
-                             OpenPaneLength="197"
-                             FontSize="16"
-                             PaneDisplayMode="Left"
-                             IsPaneOpen="False"
-                             SelectionFollowsFocus="Disabled"
-                             IsBackButtonVisible="Collapsed"
-                             IsSettingsVisible="False"
-                             SelectedItem="general"
-                             FontWeight="Bold">
 
-            <muxc:NavigationView.PaneHeader>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,10,0">
-                    Amethyst
-                </TextBlock>
-            </muxc:NavigationView.PaneHeader>
+                             Grid.Row="1"
+                             FontSize="16"
+                             IsPaneOpen="False"
+                             SelectedItem="general"
+
+                             IsSettingsVisible="False"
+                             IsBackButtonVisible="Collapsed"
+                             IsBackEnabled="False"
+                             AlwaysShowHeader="False"
+                             SelectionFollowsFocus="Disabled"
+                             IsPaneToggleButtonVisible="False"
+
+                             PaneDisplayMode="Left"
+                             CompactPaneLength="70"
+                             OpenPaneLength="70">
 
             <!--Note: Disable/Delete this if using LeftCompat instead of Left pane mode-->
             <NavigationView.Resources>
@@ -59,35 +83,124 @@
             </NavigationView.Resources>
 
             <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Icon="Home" Margin="0,10,0,5"
-                                         x:Uid="/SharedStrings/Buttons/General" Tag="general" x:Name="GeneralItem" />
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Icon="Setting" Margin="0,5,0,5"
-                                         x:Uid="/SharedStrings/Buttons/Settings" Tag="settings" x:Name="SettingsItem" />
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"
-                                         x:Uid="/SharedStrings/Buttons/Devices" Tag="devices" x:Name="DevicesItem">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE88E;" />
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"
-                                         x:Uid="/SharedStrings/Buttons/Info" Tag="info" x:Name="InfoItem">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE946;" />
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"
-                                         Content="お菓子！" Tag="console" x:Name="ConsoleItem"
-                                         Visibility="Collapsed">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEB51;" />
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
+
+                <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                    Tag="general" x:Name="GeneralItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <FontIcon Glyph="&#xEA8A;" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                  x:Name="NavViewGeneralButtonIcon" FontSize="22" Translation="0,-8,0">
+                            <FontIcon.TranslationTransition>
+                                <Vector3Transition />
+                            </FontIcon.TranslationTransition>
+                        </FontIcon>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock x:Uid="/SharedStrings/Buttons/General" HorizontalAlignment="Center"
+                                       x:Name="NavViewGeneralButtonLabel" Opacity="0.0"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
+                    </Grid>
+                </NavigationViewItem>
+
+                <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                    Tag="settings" x:Name="SettingsItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <FontIcon Glyph="&#xE713;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                  x:Name="NavViewSettingsButtonIcon" FontSize="22" Translation="0,-8,0">
+                            <FontIcon.TranslationTransition>
+                                <Vector3Transition />
+                            </FontIcon.TranslationTransition>
+                        </FontIcon>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock x:Uid="/SharedStrings/Buttons/Settings" HorizontalAlignment="Center"
+                                       x:Name="NavViewSettingsButtonLabel"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
+                    </Grid>
+                </NavigationViewItem>
+
+                <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                    Tag="devices" x:Name="DevicesItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <FontIcon Glyph="&#xF5ED;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                  x:Name="NavViewDevicesButtonIcon" FontSize="22" Translation="0,-8,0">
+                            <FontIcon.TranslationTransition>
+                                <Vector3Transition />
+                            </FontIcon.TranslationTransition>
+                        </FontIcon>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock x:Uid="/SharedStrings/Buttons/Devices" HorizontalAlignment="Center"
+                                       x:Name="NavViewDevicesButtonLabel"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
+                    </Grid>
+                </NavigationViewItem>
+
+                <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                    Tag="info" x:Name="InfoItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <FontIcon Glyph="&#xE946;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                  x:Name="NavViewInfoButtonIcon" FontSize="22" Translation="0,-8,0">
+                            <FontIcon.TranslationTransition>
+                                <Vector3Transition />
+                            </FontIcon.TranslationTransition>
+                        </FontIcon>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock x:Uid="/SharedStrings/Buttons/Info" HorizontalAlignment="Center"
+                                       x:Name="NavViewInfoButtonLabel"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
+                    </Grid>
+                </NavigationViewItem>
+
+                <NavigationViewItem FontSize="10" FontWeight="Medium" Visibility="Collapsed"
+                                    Tag="console" x:Name="ConsoleItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <FontIcon Glyph="&#xEB51;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                  x:Name="NavViewOkashiButtonIcon" FontSize="22" Translation="0,-8,0">
+                            <FontIcon.TranslationTransition>
+                                <Vector3Transition />
+                            </FontIcon.TranslationTransition>
+                        </FontIcon>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock Text="お菓子❢" HorizontalAlignment="Center"
+                                       x:Name="NavViewOkashiButtonLabel"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
+                    </Grid>
+                </NavigationViewItem>
             </muxc:NavigationView.MenuItems>
 
             <muxc:NavigationView.PaneFooter>
-                <muxc:NavigationViewItem x:Name="UpdateButton"
-                                         Tapped="UpdateButton_Tapped"
-                                         Loaded="UpdateButton_Loaded">
+                <NavigationViewItem x:Name="UpdateButton" Height="63"
+                                    FontSize="10" FontWeight="Medium"
+                                    BackgroundSizing="OuterBorderEdge"
+                                    Tapped="UpdateButton_Tapped"
+                                    Loaded="UpdateButton_Loaded">
 
                     <FlyoutBase.AttachedFlyout>
                         <Flyout x:Name="UpdateFlyout">
@@ -110,8 +223,10 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click" Grid.Column="0"
-                                            x:Uid="/SharedStrings/Buttons/Updates/Skip" Margin="0,0,5,0" HorizontalAlignment="Stretch" />
+                                    <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click"
+                                            Grid.Column="0"
+                                            x:Uid="/SharedStrings/Buttons/Updates/Skip" Margin="0,0,5,0"
+                                            HorizontalAlignment="Stretch" />
                                     <Button x:Name="InstallNowButton" Click="InstallNowButton_Click" Grid.Column="1"
                                             x:Uid="/SharedStrings/Buttons/Updates/Install" Margin="5,0,0,0"
                                             Style="{StaticResource AccentButtonStyle}" HorizontalAlignment="Stretch" />
@@ -120,27 +235,48 @@
                         </Flyout>
                     </FlyoutBase.AttachedFlyout>
 
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;"
-                                  Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5">
-                            <FontIcon.RenderTransform>
-                                <CompositeTransform />
-                            </FontIcon.RenderTransform>
-                        </FontIcon>
-                    </muxc:NavigationViewItem.Icon>
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <Grid Translation="0,-8,0" x:Name="UpdateIconGrid">
+                            <Grid.TranslationTransition>
+                                <Vector3Transition />
+                            </Grid.TranslationTransition>
 
-                    <Grid>
-                        <TextBlock x:Uid="/SharedStrings/Buttons/Updates/Header" FontSize="16" FontWeight="SemiBold" />
+                            <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" FontSize="20"
+                                      Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                      Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5124">
+                                <FontIcon.RenderTransform>
+                                    <CompositeTransform />
+                                </FontIcon.RenderTransform>
 
-                        <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="15" IsHitTestVisible="False"
-                                  HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                                  RenderTransformOrigin="0.5,0.5" Visibility="Collapsed" Margin="-34,0,0,1">
-                            <FontIcon.RenderTransform>
-                                <CompositeTransform />
-                            </FontIcon.RenderTransform>
-                        </FontIcon>
+                                <FontIcon.Transitions>
+                                    <TransitionCollection>
+                                        <RepositionThemeTransition />
+                                    </TransitionCollection>
+                                </FontIcon.Transitions>
+                            </FontIcon>
+
+                            <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="16" IsHitTestVisible="False"
+                                      HorizontalAlignment="Left" VerticalAlignment="Bottom" Canvas.ZIndex="1"
+                                      Foreground="{ThemeResource SystemFillColorAttentionBrush}" Translation="0,-9,0"
+                                      Opacity="0.0" Margin="16,0,0,0">
+                                <FontIcon.OpacityTransition>
+                                    <ScalarTransition />
+                                </FontIcon.OpacityTransition>
+                            </FontIcon>
+                        </Grid>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock x:Uid="/SharedStrings/Buttons/Updates/Header"
+                                       x:Name="UpdateIconText" Opacity="1.0"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
                     </Grid>
-                </muxc:NavigationViewItem>
+                </NavigationViewItem>
             </muxc:NavigationView.PaneFooter>
 
             <Frame x:Name="ContentFrame" NavigationFailed="ContentFrame_NavigationFailed" />

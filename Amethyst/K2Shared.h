@@ -37,6 +37,8 @@ namespace k2app::shared
 
 		inline std::shared_ptr<winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceContext>
 		thisResourceContext;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock> appTitleLabel;
 	}
 
 	namespace general
