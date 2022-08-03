@@ -1305,12 +1305,11 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 			}
 			else if (prevNavPageType.Name == L"Amethyst.DevicesPage")
 			{
-				NavViewDevicesButtonIcon().Translation({ 0,-8,0 });
+				NavViewDevicesButtonIconCanvas().Translation({ 0,-8,0 });
 				NavViewDevicesButtonLabel().Opacity(1.0);
 
-				NavViewDevicesButtonIcon().Foreground(Application::Current().Resources().TryLookup(
-					box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
-				NavViewDevicesButtonIcon().Glyph(L"\uF5ED");
+				NavViewDevicesButtonIcon_Empty().Visibility(Visibility::Visible);
+				NavViewDevicesButtonIcon_Solid().Visibility(Visibility::Collapsed);
 			}
 			else if (prevNavPageType.Name == L"Amethyst.InfoPage")
 			{
@@ -1355,12 +1354,11 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 			}
 			else if (pageTypeName.Name == L"Amethyst.DevicesPage")
 			{
-				NavViewDevicesButtonIcon().Glyph(L"\uF5EE");
-				NavViewDevicesButtonIcon().Foreground(Application::Current().Resources().TryLookup(
-					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+				NavViewDevicesButtonIcon_Solid().Visibility(Visibility::Visible);
+				NavViewDevicesButtonIcon_Empty().Visibility(Visibility::Collapsed);
 
 				NavViewDevicesButtonLabel().Opacity(0.0);
-				NavViewDevicesButtonIcon().Translation({ 0,0,0 });
+				NavViewDevicesButtonIconCanvas().Translation({ 0,0,0 });
 			}
 			else if (pageTypeName.Name == L"Amethyst.InfoPage")
 			{

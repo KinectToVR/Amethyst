@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg width="auto" height="auto" viewBox="0 0 104.00098 50.250977" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+<svg width="auto" height="auto" viewBox="0 0 104.00098 50.250977" version="1.1"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns="http://www.w3.org/2000/svg">
   <g id="Group-23">
     <path d="M94.2945 40.544L94.2945 2.36035L90.5967 2.36035L90.5967 40.544L94.2945 40.544L94.2945 40.544Z" id="Vector" fill="#FFFFFF" fill-rule="evenodd" stroke="none" />
     <path d="M26.3479 40.5435L26.3479 36.8457L36.9795 36.8457L36.9795 40.5435L26.3479 40.5435ZM67.0241 40.5435L77.6553 40.5435L77.6553 36.8457L67.0241 36.8457L67.0241 40.5435Z" id="Vector-Difference" fill="#FFFFFF" fill-rule="evenodd" stroke="none" />
