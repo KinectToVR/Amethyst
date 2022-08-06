@@ -133,7 +133,7 @@
   <data name="Content.Crash.OpenVR" xml:space="preserve">
     <value>Программа не смогла инициализировать OpenVR (SteamVR).
     
-Убедитесь, что SteamVR запущен и ваш HMD подключен и работает. Вы также можете перезапустить SteamVR и проверить журнал событий.</value>
+Убедитесь, что SteamVR запущен и ваша гарнитура VR подключена к нему. Вы также можете перезапустить SteamVR и проверить журнал событий.</value>
   </data>
   <data name="Content.Crash.Panic" xml:space="preserve">
     <value>Произошел сбой программы более чем 7 раз поэтому Amethyst был принудительно закрыт.
@@ -149,9 +149,6 @@
 Если проблема не устранена, то свяжитесь с нами через Discord и приложите журнал событий.</value>
   </data>
   <data name="Content.Recovery" xml:space="preserve">
-    <value>Looks like you've manually ran the Crash Handler. What would you like to do?
-
-If the Amethyst driver for SteamVR is not being detected properly, you can re-register the SteamVR driver (button below) and then try again.</value>
     <value>Похоже вы вручную запустили Crash Handler (обработчик ошибок). Что вы хотите сделать?
     
 Если драйвер Amethyst для SteamVR не обнаруживается должным образом, вы можете перерегистрировать драйвер SteamVR (кнопка ниже) и попробовать снова.</value>
@@ -212,8 +209,6 @@ If the Amethyst driver for SteamVR is not being detected properly, you can re-re
 и запустите SteamVR хотя бы один раз.</value>
   </data>
   <data name="ReRegister.OpenVRPathsWriteError" xml:space="preserve">
-    <value>Couldn't register Amethyst Driver,
-openvrpaths write error.</value>
     <value>Не удалось зарегистрировать драйвер Amethyst,
 ошибка записи в openvrpaths.</value>
   </data>

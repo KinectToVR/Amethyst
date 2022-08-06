@@ -133,7 +133,7 @@ Stelle sicher das alle Abhängigkeiten (dependencies) installiert sind (z.B. die
   <data name="Content.Crash.OpenVR" xml:space="preserve">
     <value>Die App konnte OpenVR (SteamVR) nicht erfolgreich initialisieren und beschloss, aufzugeben.
 
-Überprüfe ob SteamVR läuft und ob dein HMD vorhanden ist und funktioniert. Außerdem kannst du SteamVR neu starten und die Logs überprüfen.</value>
+Überprüfe ob SteamVR läuft und ob dein VR-Headset richtig angeschlossen ist. Außerdem kannst du SteamVR neu starten und die Logs überprüfen.</value>
   </data>
   <data name="Content.Crash.Panic" xml:space="preserve">
     <value>Die Hauptprogrammschleife ist folglich mehr als 7 Mal abgestürzt, sodass Amethyst heruntergefahren wurde.

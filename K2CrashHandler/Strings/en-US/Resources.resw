@@ -133,7 +133,7 @@ Please check if you have all dependencies installed, like proper Kinect SDK / Ru
   <data name="Content.Crash.OpenVR" xml:space="preserve">
     <value>The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.
 
-Please check if SteamVR is running and if your HMD's present and working. Additionally, you can restart SteamVR and additionally check its logs.</value>
+Please check if SteamVR is running, and your VR headset is connected properly to it. Additionally, you can restart SteamVR and additionally check its logs.</value>
   </data>
   <data name="Content.Crash.Panic" xml:space="preserve">
     <value>The main program loop has crashed consequently more than 7 times so Amethyst was shut down.
