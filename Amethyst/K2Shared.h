@@ -171,7 +171,8 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander> flipDropDown;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel>
-			externalFlipStackPanel, jointExpanderHostStackPanel, externalFlipStatusStackPanel;
+			externalFlipStackPanel, jointExpanderHostStackPanel,
+			externalFlipStatusStackPanel, flipDropDownContainer;
 	}
 }
 

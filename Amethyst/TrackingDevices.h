@@ -113,6 +113,12 @@ namespace TrackingDevices
 				k2app::shared::settings::flipDropDownGrid.get()->Opacity(
 					k2app::shared::settings::flipToggle.get()->IsEnabled() ? 1 : 0.5);
 
+				// Hide/Show the flip controls container
+				k2app::shared::settings::flipDropDownContainer.get()->Visibility(
+					k2app::shared::settings::flipToggle.get()->IsEnabled()
+						? Visibility::Visible
+						: Visibility::Collapsed);
+
 				settings_set_external_flip_is_enabled();
 			}
 			else if (trackingDevice.index() == 1)
@@ -124,6 +130,9 @@ namespace TrackingDevices
 				k2app::shared::settings::flipToggle.get()->IsEnabled(false);
 				k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
 				k2app::shared::settings::flipDropDownGrid.get()->Opacity(0.5);
+
+				// Hide the flip controls container
+				k2app::shared::settings::flipDropDownContainer.get()->Visibility(Visibility::Collapsed);
 
 				settings_set_external_flip_is_enabled();
 			}
@@ -394,7 +403,7 @@ namespace TrackingDevices
 			devicesListView.get()->SelectedIndex());
 
 		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
-		LOG(INFO) << "Now " << (reconnect ? "reconnecting and refreshing" : "refreshing") << 
+		LOG(INFO) << "Now " << (reconnect ? "reconnecting and refreshing" : "refreshing") <<
 			" the tracking device at index " << devicesListView.get()->SelectedIndex() << "...";
 
 		if (trackingDevice.index() == 0)

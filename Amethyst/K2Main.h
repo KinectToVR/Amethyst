@@ -1049,22 +1049,25 @@ namespace k2app::main
 					}
 				}
 
-				// Compose flip
-				const double _facing = EigenUtils::RotationProjectedYaw(
-					EigenUtils::QuaternionFromYaw<double>(_neutral_yaw).inverse() *
-					EigenUtils::QuaternionFromYaw<double>(_current_yaw));
+				//// Compose flip
+				//const double _facing = EigenUtils::RotationProjectedYaw(
+				//	EigenUtils::QuaternionFromYaw<double>(_neutral_yaw).inverse() *
+				//	EigenUtils::QuaternionFromYaw<double>(_current_yaw));
 
-				// Note: we use -180+180 (but in radians)
-				if (_facing <= (25 * _PI / 180.0) &&
-					_facing >= (-25 * _PI / 180.0))
-					override_flip = false;
-				if (_facing >= (155 * _PI / 180.0) ||
-					_facing <= (-155 * _PI / 180.0))
-					override_flip = true;
+				//// Note: we use -180+180 (but in radians)
+				//if (_facing <= (25 * _PI / 180.0) &&
+				//	_facing >= (-25 * _PI / 180.0))
+				//	override_flip = false;
+				//if (_facing >= (155 * _PI / 180.0) ||
+				//	_facing <= (-155 * _PI / 180.0))
+				//	override_flip = true;
 
-				// Overwrite flip value depending on device & settings
-				// index() check should've already been done by the app tho
-				if (!K2Settings.isFlipEnabled || _device.index() == 1)override_flip = false;
+				//// Overwrite flip value depending on device & settings
+				//// index() check should've already been done by the app tho
+				//if (!K2Settings.isFlipEnabled || _device.index() == 1)override_flip = false;
+
+				// Currently, flipping overrides IS NOT supported
+				override_flip = false;
 
 				/*
 				 * Trackers orientation - preparations
