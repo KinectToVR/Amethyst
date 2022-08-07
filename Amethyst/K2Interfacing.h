@@ -241,13 +241,14 @@ namespace k2app::interfacing
 					k2_tracker_statuses.push_back(std::make_pair(tracker.tracker, true));
 
 			// Try 3 times cause why not
-			for (int i = 0; i < 3; i++)
-			{
-				// Update status in server
-				spawned.push_back(
-					ktvr::update_tracker_state_vector<true>(k2_tracker_statuses).success);
-				std::this_thread::sleep_for(std::chrono::milliseconds(15));
-			}
+			if (!k2_tracker_statuses.empty())
+				for (int i = 0; i < 3; i++)
+				{
+					// Update status in server
+					spawned.push_back(
+						ktvr::update_tracker_state_vector<true>(k2_tracker_statuses).success);
+					std::this_thread::sleep_for(std::chrono::milliseconds(15));
+				}
 
 			// If one or more trackers failed to spawn
 			if (!spawned.empty() && std::ranges::find(spawned, false) != spawned.end())
