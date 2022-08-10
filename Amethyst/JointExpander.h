@@ -651,6 +651,24 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Save settings
 					k2app::K2Settings.saveSettings();
 
+					// Check if any trackers are enabled
+					// No std::ranges today...
+					bool _find_result = false;
+					for (const auto& tracker : k2app::K2Settings.K2TrackersVector)
+						if (tracker.data.isActive)_find_result = true;
+
+					// No trackers are enabled, force-enable the waist tracker
+					if (!_find_result)
+					{
+						LOG(WARNING) << "All trackers have been disabled, force-enabling the waist tracker!";
+
+						// Enable the wiast tracker (no need to worry about the dispatcher, we're already inside)
+						k2app::shared::settings::jointExpanderVector.front()->JointSwitch().get()->IsOn(true);
+
+						// Save settings
+						k2app::K2Settings.saveSettings();
+					}
+
 					// Request a check for already-added trackers
 					LOG(INFO) << "Requesting a check for already-added trackers...";
 					k2app::interfacing::alreadyAddedTrackersScanRequested = true;

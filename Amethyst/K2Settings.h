@@ -212,6 +212,21 @@ namespace k2app
 					}
 					else _thisK2TrackerTypes.push_back(K2TrackersVector[_tracker_index].tracker);
 
+			// Check if any trackers are enabled
+			// No std::ranges today...
+			bool _find_result = false;
+			for (const auto& tracker : K2TrackersVector)
+				if (tracker.data.isActive)_find_result = true;
+
+			// No trackers are enabled, force-enable the waist tracker
+			if (!_find_result)
+			{
+				LOG(WARNING) << "All trackers have been disabled, force-enabling the waist tracker!";
+
+				// Enable the waist tracker
+				K2TrackersVector[0].data.isActive = true;
+			}
+
 			// Fix statuses (optional)
 			if (useTrackerPairs)
 			{

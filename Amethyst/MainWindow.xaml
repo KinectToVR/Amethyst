@@ -52,6 +52,9 @@
                   Grid.Column="1" x:Name="DragElement" Canvas.ZIndex="1" />
         </Grid>
 
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+              Canvas.ZIndex="1" Background="Transparent" IsHitTestVisible="False" />
+
         <muxc:NavigationView x:Name="NavView"
                              IsTabStop="False"
                              Margin="0,40,0,0"
