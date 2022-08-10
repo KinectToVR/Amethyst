@@ -620,7 +620,7 @@ void Amethyst::implementation::SettingsPage::LearnAboutFiltersButton_Click(
 	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
 	LearnAboutFiltersFlyout().ShowAt(LearnAboutFiltersButton(), options);
-	DimGrid().Opacity(0.5);
+	DimGrid().Opacity(0.35);
 	DimGrid().IsHitTestVisible(true);
 }
 

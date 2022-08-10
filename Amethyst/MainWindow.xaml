@@ -53,7 +53,26 @@
         </Grid>
 
         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-              Canvas.ZIndex="1" Background="Transparent" IsHitTestVisible="False" />
+              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+              x:Name="InterfaceBlockerGrid" Opacity="0.0"
+              Canvas.ZIndex="1" IsHitTestVisible="False">
+
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+
+            <Grid.Resources>
+                <TeachingTip x:Name="InitializerTeachingTip"
+                             Title="Amethyst quick tour"
+                             Subtitle="Get to know Amethyst and its components. Explore setting pages, most used controls and features."
+                             PreferredPlacement="Auto"
+                             PlacementMargin="20"
+                             IsLightDismissEnabled="False"
+                             ActionButtonContent="Let's go!"
+                             ActionButtonClick="InitializerTeachingTip_ActionButtonClick"
+                             CloseButtonClick="InitializerTeachingTip_CloseButtonClick" />
+            </Grid.Resources>
+        </Grid>
 
         <muxc:NavigationView x:Name="NavView"
                              IsTabStop="False"

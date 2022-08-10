@@ -97,6 +97,9 @@ namespace winrt::Amethyst::implementation
 		toggleFreezeButton = std::make_shared<Controls::ToggleSplitButton>(ToggleTrackingButton());
 		freezeOnlyLowerCheckBox = std::make_shared<Controls::CheckBox>(FreezeOnlyLowerCheckBox());
 
+		k2app::shared::teaching_tips::general::toggleTrackersTeachingTip = 
+			std::make_shared<Controls::TeachingTip>(ToggleTrackersTeachingTip());
+
 		// Create and push the offsets controller
 		offsetsController = std::move(std::make_shared<Controls::OffsetsController>());
 
@@ -1654,4 +1657,25 @@ void Amethyst::implementation::GeneralPage::DismissSetErrorButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	SetErrorFlyout().Hide();
+}
+
+
+void winrt::Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+	CalibrationTeachingTip().IsOpen(true);
+}
+
+
+void winrt::Amethyst::implementation::GeneralPage::CalibrationTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+	StatusTeachingTip().IsOpen(true);
+}
+
+
+void winrt::Amethyst::implementation::GeneralPage::StatusTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+
 }

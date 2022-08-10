@@ -87,6 +87,8 @@ namespace winrt::Amethyst::implementation
 		                                                      const
 		                                                      Microsoft::UI::Xaml::Input::TappedRoutedEventArgs&
 		                                                      e);
+		void InitializerTeachingTip_ActionButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
+		void InitializerTeachingTip_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
 	};
 }
 

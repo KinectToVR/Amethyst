@@ -103,6 +103,7 @@
                                     <muxc:TeachingTip x:Name="ToggleFlipTeachingTip"
                                                       Target="{Binding ElementName=FlipToggleDummyGrid}"
                                                       PreferredPlacement="BottomRight"
+                                                      IsLightDismissEnabled="True"
                                                       Title="[CONTENT NOT SET]"
                                                       Subtitle="[CONTENT NOT SET]">
                                         <TeachingTip.IconSource>

@@ -499,6 +499,18 @@
                                 VerticalContentAlignment="Center" FontWeight="SemiBold"
                                 Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}">
+
+                            <Button.Resources>
+                                <TeachingTip x:Name="CalibrationTeachingTip"
+                                             Target="{Binding ElementName=CalibrationButton}"
+                                             Title="Calibrate Amethyst tracking"
+                                             Subtitle="Calibrate your body tracking in Amethyst to match your playspace. You can always go back if something goes wrong."
+                                             PreferredPlacement="Auto"
+                                             IsLightDismissEnabled="False"
+                                             CloseButtonContent="Show the next tip"
+                                             Closed="CalibrationTeachingTip_Closed" />
+                            </Button.Resources>
+
                             <FlyoutBase.AttachedFlyout>
                                 <Flyout x:Name="ChooseDeviceFlyout">
                                     <Flyout.FlyoutPresenterStyle>
@@ -565,7 +577,19 @@
                                   Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center"
                                   FontWeight="SemiBold" x:Uid="/GeneralPage/Buttons/TrackersToggle/Connect"
                                   Margin="40,10" CornerRadius="3"
-                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0">
+
+                        <ToggleButton.Resources>
+                            <TeachingTip x:Name="ToggleTrackersTeachingTip"
+                                         Target="{Binding ElementName=ToggleTrackersButton}"
+                                         Title="Connect/Disconnect VR trackers"
+                                         Subtitle="Press this button to add enabled trackers to SteamVR. Later, you can quickly toggle connect/disconnect all of them from here."
+                                         PreferredPlacement="Auto"
+                                         IsLightDismissEnabled="False"
+                                         CloseButtonContent="Show the next tip"
+                                         Closed="ToggleTrackersTeachingTip_Closed" />
+                        </ToggleButton.Resources>
+                    </ToggleButton>
 
                 </Grid>
 
@@ -576,7 +600,7 @@
 
                         <StackPanel Orientation="Vertical" Margin="0,0,5,0" VerticalAlignment="Bottom">
                             <TextBlock FontWeight="SemiBold" x:Uid="/GeneralPage/Titles/Device" FontSize="25"
-                                       Margin="40,20,0,10" Grid.Row="3" />
+                                       Margin="40,20,0,10" Grid.Row="3"/>
 
                             <!--Base Status-->
 
@@ -594,7 +618,19 @@
                                            x:Uid="/GeneralPage/Captions/Device/Status" Margin="0,0,0,0"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
+                                           Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel">
+
+                                    <TextBlock.Resources>
+                                        <TeachingTip x:Name="StatusTeachingTip"
+                                                     Target="{Binding ElementName=TrackingDeviceStatusLabel}"
+                                                     Title="Device statuses at a glance"
+                                                     Subtitle="You can check statuses of the currently used tracking devices here. If something's wrong, you'll see an explanation and links to the documentation."
+                                                     PreferredPlacement="Auto"
+                                                     IsLightDismissEnabled="False"
+                                                     CloseButtonContent="Show the next tip"
+                                                     Closed="StatusTeachingTip_Closed" />
+                                    </TextBlock.Resources>
+                                </TextBlock>
                             </StackPanel>
 
                             <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
@@ -956,7 +992,8 @@
                         <ToggleSplitButton.Resources>
                             <muxc:TeachingTip x:Name="FreezeTrackingTeachingTip"
                                               Target="{Binding ElementName=ToggleTrackingButton}"
-                                              PreferredPlacement="TopRight"
+                                              PreferredPlacement="TopRight"	
+                                              IsLightDismissEnabled="True"
                                               Title="[CONTENT NOT SET]"
                                               Subtitle="[CONTENT NOT SET]">
                                 <TeachingTip.IconSource>

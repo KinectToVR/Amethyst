@@ -39,6 +39,8 @@ namespace k2app::shared
 		thisResourceContext;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock> appTitleLabel;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid> interfaceBlockerGrid;
 	}
 
 	namespace general
@@ -93,6 +95,37 @@ namespace k2app::shared
 		freezeOnlyLowerCheckBox;
 	}
 
+	namespace settings
+	{
+		inline bool settings_localInitFinished = false;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button> restartButton;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
+			externalFlipCheckBox,
+			autoSpawnCheckbox,
+			enableSoundsCheckbox,
+			autoStartCheckBox;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
+			externalFlipCheckBoxLabel,
+			setErrorFlyoutText,
+			externalFlipStatusLabel;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
+		flipDropDownGrid;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch> flipToggle;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Slider> soundsVolumeSlider;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander> flipDropDown;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel>
+			externalFlipStackPanel, jointExpanderHostStackPanel,
+			externalFlipStatusStackPanel, flipDropDownContainer;
+	}
+
 	namespace devices
 	{
 		inline bool devices_tab_setup_finished = false,
@@ -144,35 +177,44 @@ namespace k2app::shared
 			overridesExpanderHostStackPanel;
 	}
 
-	namespace settings
+	// (Only the first ones are needed)
+	namespace teaching_tips
 	{
-		inline bool settings_localInitFinished = false;
+		namespace main
+		{
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
+				initializerTeachingTip;
+		}
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button> restartButton;
+		namespace general
+		{
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
+				toggleTrackersTeachingTip;
+		}
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
-			externalFlipCheckBox,
-			autoSpawnCheckbox,
-			enableSoundsCheckbox,
-			autoStartCheckBox;
+		namespace settings
+		{
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
+				manageTrackersTeachingTip,
+				addTrackersTeachingTip,
+				learnAboutFiltersTeachingTip,
+				startupTeachingTip;
+		}
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
-			externalFlipCheckBoxLabel,
-			setErrorFlyoutText,
-			externalFlipStatusLabel;
+		namespace devices
+		{
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
+				devicesListTeachingTip,
+				deviceStatusTeachingTip,
+				//setDeviceAsTeachingTip, // Links to k2docs
+				reconnectDeviceTeachingTip;
+		}
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
-		flipDropDownGrid;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch> flipToggle;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Slider> soundsVolumeSlider;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Expander> flipDropDown;
-
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::StackPanel>
-			externalFlipStackPanel, jointExpanderHostStackPanel,
-			externalFlipStatusStackPanel, flipDropDownContainer;
+		namespace info
+		{
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
+				endingTeachingTip;
+		}
 	}
 }
 

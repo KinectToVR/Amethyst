@@ -58,7 +58,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 		{
 			// Mark the update footer as active
 			{
-				UpdateIconGrid().Translation({ 0,0,0 });
+				UpdateIconGrid().Translation({0, 0, 0});
 				UpdateIconText().Opacity(0.0);
 
 				UpdateIcon().Foreground(Application::Current().Resources().TryLookup(
@@ -227,7 +227,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				UpdateIcon().Foreground(Application::Current().Resources().TryLookup(
 					box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
 
-				UpdateIconGrid().Translation({ 0,-8,0 });
+				UpdateIconGrid().Translation({0, -8, 0});
 				UpdateIconText().Opacity(1.0);
 			}
 
@@ -446,7 +446,11 @@ namespace winrt::Amethyst::implementation
 		});
 
 		// Cache needed UI elements
+		k2app::shared::teaching_tips::main::initializerTeachingTip = 
+			std::make_shared<Controls::TeachingTip>(InitializerTeachingTip());
+
 		k2app::shared::main::appTitleLabel = std::make_shared<Controls::TextBlock>(AppTitleLabel());
+		k2app::shared::main::interfaceBlockerGrid = std::make_shared<Controls::Grid>(InterfaceBlockerGrid());
 
 		k2app::shared::main::generalItem = std::make_shared<Controls::NavigationViewItem>(GeneralItem());
 		k2app::shared::main::settingsItem = std::make_shared<Controls::NavigationViewItem>(SettingsItem());
@@ -1232,7 +1236,7 @@ void Amethyst::implementation::MainWindow::NavView_Loaded(
 	// here to load the home page.
 	NavView_Navigate(L"general",
 	                 Media::Animation::EntranceNavigationTransitionInfo());
-
+	
 	// Append placeholder text to the dummy layout root
 	k2app::interfacing::emptyLayoutRoot =
 		new k2app::interfacing::AppInterface::AppLayoutRoot();
@@ -1287,7 +1291,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 		{
 			if (prevNavPageType.Name == L"Amethyst.GeneralPage")
 			{
-				NavViewGeneralButtonIcon().Translation({ 0,-8,0 });
+				NavViewGeneralButtonIcon().Translation({0, -8, 0});
 				NavViewGeneralButtonLabel().Opacity(1.0);
 
 				NavViewGeneralButtonIcon().Foreground(Application::Current().Resources().TryLookup(
@@ -1296,7 +1300,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 			}
 			else if (prevNavPageType.Name == L"Amethyst.SettingsPage")
 			{
-				NavViewSettingsButtonIcon().Translation({ 0,-8,0 });
+				NavViewSettingsButtonIcon().Translation({0, -8, 0});
 				NavViewSettingsButtonLabel().Opacity(1.0);
 
 				NavViewSettingsButtonIcon().Foreground(Application::Current().Resources().TryLookup(
@@ -1305,7 +1309,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 			}
 			else if (prevNavPageType.Name == L"Amethyst.DevicesPage")
 			{
-				NavViewDevicesButtonIconCanvas().Translation({ 0,-8,0 });
+				NavViewDevicesButtonIconCanvas().Translation({0, -8, 0});
 				NavViewDevicesButtonLabel().Opacity(1.0);
 
 				NavViewDevicesButtonIcon_Empty().Visibility(Visibility::Visible);
@@ -1313,7 +1317,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 			}
 			else if (prevNavPageType.Name == L"Amethyst.InfoPage")
 			{
-				NavViewInfoButtonIcon().Translation({ 0,-8,0 });
+				NavViewInfoButtonIcon().Translation({0, -8, 0});
 				NavViewInfoButtonLabel().Opacity(1.0);
 
 				NavViewInfoButtonIcon().Foreground(Application::Current().Resources().TryLookup(
@@ -1322,7 +1326,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 			}
 			else if (prevNavPageType.Name == L"Amethyst.ConsolePage")
 			{
-				NavViewOkashiButtonIcon().Translation({ 0,-8,0 });
+				NavViewOkashiButtonIcon().Translation({0, -8, 0});
 				NavViewOkashiButtonLabel().Opacity(1.0);
 
 				NavViewOkashiButtonIcon().Foreground(Application::Current().Resources().TryLookup(
@@ -1341,7 +1345,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
 
 				NavViewGeneralButtonLabel().Opacity(0.0);
-				NavViewGeneralButtonIcon().Translation({ 0,0,0 });
+				NavViewGeneralButtonIcon().Translation({0, 0, 0});
 			}
 			else if (pageTypeName.Name == L"Amethyst.SettingsPage")
 			{
@@ -1350,7 +1354,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
 
 				NavViewSettingsButtonLabel().Opacity(0.0);
-				NavViewSettingsButtonIcon().Translation({ 0,0,0 });
+				NavViewSettingsButtonIcon().Translation({0, 0, 0});
 			}
 			else if (pageTypeName.Name == L"Amethyst.DevicesPage")
 			{
@@ -1358,7 +1362,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 				NavViewDevicesButtonIcon_Empty().Visibility(Visibility::Collapsed);
 
 				NavViewDevicesButtonLabel().Opacity(0.0);
-				NavViewDevicesButtonIconCanvas().Translation({ 0,0,0 });
+				NavViewDevicesButtonIconCanvas().Translation({0, 0, 0});
 			}
 			else if (pageTypeName.Name == L"Amethyst.InfoPage")
 			{
@@ -1367,7 +1371,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
 
 				NavViewInfoButtonLabel().Opacity(0.0);
-				NavViewInfoButtonIcon().Translation({ 0,0,0 });
+				NavViewInfoButtonIcon().Translation({0, 0, 0});
 			}
 			else if (pageTypeName.Name == L"Amethyst.ConsolePage")
 			{
@@ -1376,7 +1380,7 @@ void Amethyst::implementation::MainWindow::NavView_Navigate(
 					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
 
 				NavViewOkashiButtonLabel().Opacity(0.0);
-				NavViewOkashiButtonIcon().Translation({ 0,0,0 });
+				NavViewOkashiButtonIcon().Translation({0, 0, 0});
 			}
 		}
 
@@ -1543,6 +1547,15 @@ void Amethyst::implementation::MainWindow::MinimizeButton_Click(
 Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateButton_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Show the startup tour teachingtip
+	// TODO UNTIL SET IN SETTINGS (PROBABLY ONLY ONCE)
+	{
+		k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
+		k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
+
+		k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(true);
+	}
+	
 	// Check for updates (and show)
 	co_await checkUpdates(sender.as<UIElement>(), false, 2000);
 }
@@ -1621,4 +1634,27 @@ void k2app::interfacing::handle_app_exit(const uint32_t& p_sleep_millis)
 		{
 		}
 	}();
+}
+
+
+void winrt::Amethyst::implementation::MainWindow::InitializerTeachingTip_ActionButtonClick(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args)
+{
+	// Dismiss the current tip
+	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(false);
+
+	// Navigate to the general page
+	NavView_Navigate(L"general", Media::Animation::EntranceNavigationTransitionInfo());
+
+	// Show the next tip (general page)
+	k2app::shared::teaching_tips::general::toggleTrackersTeachingTip->IsOpen(true);
+}
+
+
+void winrt::Amethyst::implementation::MainWindow::InitializerTeachingTip_CloseButtonClick(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args)
+{
+	// Just dismiss the tip
+	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
 }
