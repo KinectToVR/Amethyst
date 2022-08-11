@@ -43,7 +43,7 @@ namespace k2app
 		template <class Archive>
 		void serialize(Archive& archive, unsigned int version)
 		{
-			archive & BOOST_SERIALIZATION_NVP(K2TrackersVector)
+			archive& BOOST_SERIALIZATION_NVP(K2TrackersVector)
 				& BOOST_SERIALIZATION_NVP(useTrackerPairs)
 				& BOOST_SERIALIZATION_NVP(checkForOverlappingTrackers)
 				& BOOST_SERIALIZATION_NVP(trackingDeviceID)
@@ -66,7 +66,9 @@ namespace k2app
 				& BOOST_SERIALIZATION_NVP(freezeLowerOnly)
 				& BOOST_SERIALIZATION_NVP(shownToastsGuidVector)
 				& BOOST_SERIALIZATION_NVP(teachingTipShown_Freeze)
-				& BOOST_SERIALIZATION_NVP(teachingTipShown_Flip);
+				& BOOST_SERIALIZATION_NVP(teachingTipShown_Flip)
+				& BOOST_SERIALIZATION_NVP(firstTimeTourShown)
+				& BOOST_SERIALIZATION_NVP(firstShutdownTipShown);
 		}
 
 	public:
@@ -129,6 +131,12 @@ namespace k2app
 
 		// Already shown toasts vector
 		std::vector<std::string> shownToastsGuidVector;
+
+		// If the first-launch guide's been shown
+		bool firstTimeTourShown = false;
+
+		// If the shutdown warning has been shown
+		bool firstShutdownTipShown = false;
 
 		/* Saving and loading part */
 

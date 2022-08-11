@@ -71,6 +71,13 @@
                              ActionButtonContent="Let's go!"
                              ActionButtonClick="InitializerTeachingTip_ActionButtonClick"
                              CloseButtonClick="InitializerTeachingTip_CloseButtonClick" />
+
+                <TeachingTip x:Name="ShutdownTeachingTip"
+                             Title="Are you sure?"
+                             Subtitle="Amethyst must be running for tracking to work. Click again to exit.&#x0a;&#x0a;This message will only show once."
+                             PreferredPlacement="TopRight"
+                             PlacementMargin="0,29,-8,0"
+                             IsLightDismissEnabled="True" />
             </Grid.Resources>
         </Grid>
 

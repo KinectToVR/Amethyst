@@ -428,23 +428,7 @@ namespace winrt::Amethyst::implementation
 			// No Mica support.
 			LOG(INFO) << "You're using Windows 10, bruh... Amethyst won't have cool Mica effects";
 		}
-
-		// Handle app exits (mica & dispatcher shutdown)
-		m_closedRevoker = this->Closed(auto_revoke, [&](auto&&, auto&&)
-		{
-			if (nullptr != m_micaController)
-			{
-				m_micaController.Close();
-				m_micaController = nullptr;
-			}
-
-			if (nullptr != m_dispatcherQueueController)
-			{
-				m_dispatcherQueueController.ShutdownQueueAsync();
-				m_dispatcherQueueController = nullptr;
-			}
-		});
-
+		
 		// Cache needed UI elements
 		k2app::shared::teaching_tips::main::initializerTeachingTip = 
 			std::make_shared<Controls::TeachingTip>(InitializerTeachingTip());
@@ -548,6 +532,31 @@ namespace winrt::Amethyst::implementation
 				// and Handled(false) means Continue()
 				// -> Block exiting until we're done
 				e.Handled(true);
+
+				// Show the close tip (if not shown yet)
+				if(!k2app::K2Settings.firstShutdownTipShown)
+				{
+					ShutdownTeachingTip().IsOpen(true);
+
+					k2app::K2Settings.firstShutdownTipShown = true;
+					k2app::K2Settings.saveSettings(); // Save settings
+
+					return;
+				}
+
+				// Shut down the mica controller
+				if (nullptr != m_micaController)
+				{
+					m_micaController.Close();
+					m_micaController = nullptr;
+				}
+
+				// Shut down the dispatcher
+				if (nullptr != m_dispatcherQueueController)
+				{
+					m_dispatcherQueueController.ShutdownQueueAsync();
+					m_dispatcherQueueController = nullptr;
+				}
 
 				// Handle the exit actions
 				k2app::interfacing::handle_app_exit_n();
