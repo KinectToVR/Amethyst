@@ -48,7 +48,8 @@
             </Grid.OpacityTransition>
         </Grid>
 
-        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
+        <ScrollViewer x:Name="PageMainScrollViewer"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
                       VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
 
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
@@ -70,7 +71,7 @@
                                      VerticalAlignment="Bottom" HorizontalAlignment="Right" />
                 </Grid>
 
-                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" 
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
                             x:Name="FlipDropDownContainer" Margin="0,20,0,10" Grid.Row="0">
 
                     <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/SkeletonFlip" FontSize="25" />
@@ -220,6 +221,17 @@
                                          FontSize="16" Grid.Column="1" HorizontalAlignment="Right"
                                          x:Name="LearnAboutFiltersButton" Click="LearnAboutFiltersButton_Click">
 
+                            <HyperlinkButton.Resources>
+                                <TeachingTip x:Name="LearnAboutFiltersTeachingTip"
+                                             Target="{Binding ElementName=LearnAboutFiltersButton}"
+                                             Title="If you wanna learn more"
+                                             Subtitle="To learn more about the applicable filters and tracking settings, please click this button."
+                                             PreferredPlacement="Auto"
+                                             IsLightDismissEnabled="False"
+                                             CloseButtonContent="Show the next tip"
+                                             Closed="LearnAboutFiltersTeachingTip_Closed" />
+                            </HyperlinkButton.Resources>
+
                             <FlyoutBase.AttachedFlyout>
                                 <Flyout Placement="Full" x:Name="LearnAboutFiltersFlyout"
                                         Closed="LearnAboutFiltersFlyout_Closed">
@@ -338,6 +350,7 @@
                 <!--For the waist & pair trackers' expanders-->
                 <StackPanel x:Name="JointExpanderHostStackPanel" HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
+
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <EntranceThemeTransition />
@@ -346,6 +359,17 @@
                             <!--<ContentThemeTransition />-->
                         </TransitionCollection>
                     </StackPanel.Transitions>
+
+                    <StackPanel.Resources>
+                        <TeachingTip x:Name="ManageTrackersTeachingTip"
+                                     Target="{Binding ElementName=JointExpanderHostStackPanel}"
+                                     Title="Manage VR trackers"
+                                     Subtitle="Use the controls below to enable/disable your VR trackers, and manage their tracking and filtering settings."
+                                     PreferredPlacement="Top"
+                                     IsLightDismissEnabled="False"
+                                     CloseButtonContent="Show the next tip"
+                                     Closed="ManageTrackersTeachingTip_Closed" />
+                    </StackPanel.Resources>
                 </StackPanel>
 
                 <Grid Margin="0,10,0,0">
@@ -367,7 +391,19 @@
                     </Grid.Transitions>
 
                     <AppBarButton Grid.Column="0" x:Name="TrackerConfigButton" VerticalAlignment="Top"
-                                  Icon="Setting" Width="38" Height="46" Click="TrackerConfigButton_Click" />
+                                  Icon="Setting" Width="38" Height="46" Click="TrackerConfigButton_Click">
+
+                        <AppBarButton.Resources>
+                            <TeachingTip x:Name="AddTrackersTeachingTip"
+                                         Target="{Binding ElementName=TrackerConfigButton}"
+                                         Title="Even more trackers!"
+                                         Subtitle="Using this menu, you can add more trackers and toggle grouping the existing ones into pairs."
+                                         PreferredPlacement="Auto"
+                                         IsLightDismissEnabled="False"
+                                         CloseButtonContent="Show the next tip"
+                                         Closed="AddTrackersTeachingTip_Closed" />
+                        </AppBarButton.Resources>
+                    </AppBarButton>
 
                     <Button Grid.Column="1" Grid.Row="0" Padding="15,0" Height="40"
                             Style="{StaticResource AccentButtonStyle}" x:Name="RestartButton"
@@ -523,6 +559,17 @@
                             <RepositionThemeTransition />
                         </TransitionCollection>
                     </SplitButton.Transitions>
+
+                    <SplitButton.Resources>
+                        <TeachingTip x:Name="AutoStartTeachingTip"
+                                     Target="{Binding ElementName=ReManifestButton}"
+                                     Title="Start Amethyst with SteamVR"
+                                     Subtitle="To skip searching for Amethyst every time, you can enable it to start automatically. The check is hidden inside this dropdown."
+                                     PreferredPlacement="RightTop"
+                                     IsLightDismissEnabled="False"
+                                     CloseButtonContent="Show the next tip"
+                                     Closed="AutoStartTeachingTip_Closed" />
+                    </SplitButton.Resources>
                 </SplitButton>
 
                 <!--Flyout for manifest and reregister errors-->

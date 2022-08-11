@@ -13,6 +13,9 @@ namespace winrt::Amethyst::implementation
 		                    const Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs& e);
 		void Grid_Loaded(const Windows::Foundation::IInspectable& sender,
 		                 const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		Windows::Foundation::IAsyncAction EndingTeachingTip_CloseButtonClick(
+			const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+			const winrt::Windows::Foundation::IInspectable& args);
 	};
 }
 

@@ -17,6 +17,17 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+        <Grid.Resources>
+            <TeachingTip x:Name="EndingTeachingTip"
+                         Title="That's all for now!"
+                         Subtitle="Thank you for reading, or something. It's not like I wanted you to read or anything 𝘣𝘭𝘶𝘴𝘩𝘦𝘴 &#x0a;&#x0a;Anyway, here are the credits. Better show your love and attention, or we're gonna cut you off!"
+                         PreferredPlacement="RightBottom"
+                         PlacementMargin="20"
+                         IsLightDismissEnabled="False"
+                         CloseButtonContent="Finish tour"
+                         CloseButtonClick="EndingTeachingTip_CloseButtonClick" />
+        </Grid.Resources>
+
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                       Grid.Column="1" Padding="20,-20" Margin="-20,20,-20,20">
 

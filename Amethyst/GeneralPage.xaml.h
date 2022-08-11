@@ -99,7 +99,7 @@ namespace winrt::Amethyst::implementation
 		                                             Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs
 		                                             & args);
 		void ToggleTrackersTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
-		void StatusTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
+		Windows::Foundation::IAsyncAction StatusTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
 		void CalibrationTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
 	};
 }

@@ -1585,6 +1585,7 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 				L"GeneralPage",
 				L"Tips/TrackingFreeze/Footer").c_str());
 
+		FreezeTrackingTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 		FreezeTrackingTeachingTip().IsOpen(true);
 
 		k2app::K2Settings.teachingTipShown_Freeze = true;
@@ -1679,6 +1680,7 @@ void Amethyst::implementation::GeneralPage::DismissSetErrorButton_Click(
 void winrt::Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Closed(
 	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
 {
+	CalibrationTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	CalibrationTeachingTip().IsOpen(true);
 }
 
@@ -1686,12 +1688,36 @@ void winrt::Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Clo
 void winrt::Amethyst::implementation::GeneralPage::CalibrationTeachingTip_Closed(
 	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
 {
+	StatusTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	StatusTeachingTip().IsOpen(true);
 }
 
 
-void winrt::Amethyst::implementation::GeneralPage::StatusTeachingTip_Closed(
+Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::GeneralPage::StatusTeachingTip_Closed(
 	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
 {
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(200);
+		co_await ui_thread;
+	}
 
+	// Navigate to the settings page
+	k2app::shared::main::mainNavigationView->SelectedItem(
+		k2app::shared::main::mainNavigationView->MenuItems().GetAt(1));
+	k2app::shared::main::NavView_Navigate(L"settings", Media::Animation::EntranceNavigationTransitionInfo());
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
+
+	// Show the next tip
+	k2app::shared::teaching_tips::settings::manageTrackersTeachingTip->TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+	k2app::shared::teaching_tips::settings::manageTrackersTeachingTip->IsOpen(true);
 }

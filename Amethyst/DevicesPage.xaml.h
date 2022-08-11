@@ -41,6 +41,9 @@ namespace winrt::Amethyst::implementation
 		                             const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void OpenDocsButton_Click(const Windows::Foundation::IInspectable& sender,
 		                          const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void DevicesListTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
+		void DeviceStatusTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
+		Windows::Foundation::IAsyncAction DeviceControlsTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
 	};
 }
 

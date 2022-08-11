@@ -17,6 +17,13 @@ namespace k2app::shared
 {
 	namespace main
 	{
+		// Navigate the main view (w/ animations)
+		void NavView_Navigate(std::wstring navItemTag,
+			const winrt::Microsoft::UI::Xaml::Media::Animation::NavigationTransitionInfo& transitionInfo);
+
+		// Vector of std::pair holding the Navigation Tag and the relative Navigation Page.
+		inline std::vector<std::pair<std::wstring, winrt::Windows::UI::Xaml::Interop::TypeName>> m_pages;
+
 		// Main Window
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem>
 			generalItem,
@@ -41,6 +48,34 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock> appTitleLabel;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid> interfaceBlockerGrid;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::NavigationView> mainNavigationView;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Frame> mainContentFrame;
+
+		namespace navigation_items
+		{
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Canvas>
+				navViewDevicesButtonIconCanvas;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Shapes::Path>
+				navViewDevicesButtonIcon_Empty,
+				navViewDevicesButtonIcon_Solid;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::FontIcon>
+				navViewGeneralButtonIcon,
+				navViewSettingsButtonIcon,
+				navViewInfoButtonIcon,
+				navViewOkashiButtonIcon;
+
+			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
+				navViewGeneralButtonLabel,
+				navViewSettingsButtonLabel,
+				navViewDevicesButtonLabel,
+				navViewInfoButtonLabel,
+				navViewOkashiButtonLabel;
+
+		}
 	}
 
 	namespace general
@@ -195,19 +230,13 @@ namespace k2app::shared
 		namespace settings
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-				manageTrackersTeachingTip,
-				addTrackersTeachingTip,
-				learnAboutFiltersTeachingTip,
-				startupTeachingTip;
+				manageTrackersTeachingTip;
 		}
 
 		namespace devices
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-				devicesListTeachingTip,
-				deviceStatusTeachingTip,
-				//setDeviceAsTeachingTip, // Links to k2docs
-				reconnectDeviceTeachingTip;
+				devicesListTeachingTip;
 		}
 
 		namespace info

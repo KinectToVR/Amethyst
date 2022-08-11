@@ -25,12 +25,12 @@
 namespace muxc
 {
 	using namespace winrt::Microsoft::UI::Xaml::Controls;
-};
+}
 
 namespace wuxc
 {
 	using namespace winrt::Windows::UI::Xaml::Controls;
-};
+}
 
 namespace winrt::Amethyst::implementation
 {
@@ -48,10 +48,6 @@ namespace winrt::Amethyst::implementation
 		void ContentFrame_NavigationFailed(const Windows::Foundation::IInspectable& sender,
 		                                   const Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs& e);
 
-		void NavView_Navigate(
-			std::wstring navItemTag,
-			const Microsoft::UI::Xaml::Media::Animation::NavigationTransitionInfo& transitionInfo);
-
 		void On_Navigated(
 			const Windows::Foundation::IInspectable& /* sender */,
 			const Windows::UI::Xaml::Navigation::NavigationEventArgs& args);
@@ -65,12 +61,7 @@ namespace winrt::Amethyst::implementation
 			const Windows::Foundation::IInspectable& /* sender */,
 			const Windows::UI::Core::BackRequestedEventArgs& args);
 		bool TryGoBack();
-
-	private:
-		// Vector of std::pair holding the Navigation Tag and the relative Navigation Page.
-		std::vector<std::pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>> m_pages;
-
-	public:
+		
 		Windows::Foundation::IAsyncAction checkUpdates(const Microsoft::UI::Xaml::UIElement& show_el,
 		                                               bool show = false, DWORD delay_ms = 0);
 		void InstallLaterButton_Click(

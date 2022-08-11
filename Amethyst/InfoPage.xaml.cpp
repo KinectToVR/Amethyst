@@ -16,6 +16,9 @@ namespace winrt::Amethyst::implementation
 	{
 		InitializeComponent();
 
+		k2app::shared::teaching_tips::info::endingTeachingTip =
+			std::make_shared<Controls::TeachingTip>(EndingTeachingTip());
+
 		LOG(INFO) << "Constructing page with tag: \"info\"...";
 	}
 
@@ -35,4 +38,30 @@ void Amethyst::implementation::InfoPage::Grid_Loaded(
 {
 	// The info page was loaded
 	LOG(INFO) << "Re/Loading page with tag: \"info\"... (Child)";
+}
+
+
+Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::InfoPage::EndingTeachingTip_CloseButtonClick(
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Windows::Foundation::IInspectable& args)
+{
+	// Dismiss the current tip
+	EndingTeachingTip().IsOpen(false);
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(200);
+		co_await ui_thread;
+	}
+
+	// Unblock the interface
+	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
+
+	// Navigate to the general page
+	k2app::shared::main::mainNavigationView->SelectedItem(
+		k2app::shared::main::mainNavigationView->MenuItems().GetAt(0));
+	k2app::shared::main::NavView_Navigate(L"general", Media::Animation::EntranceNavigationTransitionInfo());
 }

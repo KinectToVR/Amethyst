@@ -41,6 +41,9 @@ namespace winrt::Amethyst::implementation
 		devicesListView = std::make_shared<Controls::ListView>(TrackingDeviceListView());
 		noJointsFlyout = std::make_shared<Controls::Flyout>(NoJointsFlyout());
 
+		k2app::shared::teaching_tips::devices::devicesListTeachingTip = 
+			std::make_shared<Controls::TeachingTip>(DevicesListTeachingTip());
+
 		setAsOverrideButton = std::make_shared<Controls::Button>(SetAsOverrideButton());
 		setAsBaseButton = std::make_shared<Controls::Button>(SetAsBaseButton());
 		deselectDeviceButton = std::make_shared<Controls::Button>(DeselectDeviceButton());
@@ -1396,4 +1399,49 @@ void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/", nullptr, nullptr, SW_SHOW);
+}
+
+
+void winrt::Amethyst::implementation::DevicesPage::DevicesListTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+	DeviceStatusTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+	DeviceStatusTeachingTip().IsOpen(true);
+}
+
+
+void winrt::Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+	DeviceControlsTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+	DeviceControlsTeachingTip().IsOpen(true);
+}
+
+
+Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::DevicesPage::DeviceControlsTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(200);
+		co_await ui_thread;
+	}
+
+	// Navigate to the settings page
+	k2app::shared::main::mainNavigationView->SelectedItem(
+		k2app::shared::main::mainNavigationView->MenuItems().GetAt(3));
+	k2app::shared::main::NavView_Navigate(L"info", Media::Animation::EntranceNavigationTransitionInfo());
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
+
+	// Show the next tip
+	k2app::shared::teaching_tips::info::endingTeachingTip->IsOpen(true);
 }

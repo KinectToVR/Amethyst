@@ -45,6 +45,9 @@ namespace winrt::Amethyst::implementation
 
 		LOG(INFO) << "Appending settings' page elements to the shared context";
 
+		k2app::shared::teaching_tips::settings::manageTrackersTeachingTip = 
+			std::make_shared<Controls::TeachingTip>(ManageTrackersTeachingTip());
+
 		restartButton = std::make_shared<Controls::Button>(RestartButton());
 
 		externalFlipCheckBox = std::make_shared<Controls::CheckBox>(ExternalFlipCheckBox());
@@ -186,7 +189,7 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 
 	// Mark exiting as true
 	k2app::interfacing::isExitingNow = true;
-
+	
 	{
 		// Sleep a bit
 		apartment_context ui_thread;
@@ -498,6 +501,7 @@ void Amethyst::implementation::SettingsPage::FlipToggle_Toggled(
 				L"SettingsPage",
 				L"Tips/FlipToggle/Footer").c_str());
 
+		ToggleFlipTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 		ToggleFlipTeachingTip().IsOpen(true);
 
 		k2app::K2Settings.teachingTipShown_Flip = true;
@@ -1112,4 +1116,67 @@ void Amethyst::implementation::SettingsPage::ViewLogsButton_Click(
 {
 	k2app::interfacing::openFolderAndSelectItem(
 		k2app::interfacing::thisLogDestination + ".log");
+}
+
+
+void winrt::Amethyst::implementation::SettingsPage::ManageTrackersTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+	AddTrackersTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+	AddTrackersTeachingTip().IsOpen(true);
+}
+
+
+void winrt::Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+	LearnAboutFiltersTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+	LearnAboutFiltersTeachingTip().IsOpen(true);
+}
+
+
+Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+	PageMainScrollViewer().UpdateLayout();
+	PageMainScrollViewer().ChangeView(nullptr,
+		PageMainScrollViewer().ExtentHeight(), nullptr);
+
+	apartment_context ui_thread;
+	co_await resume_background();
+	Sleep(500);
+	co_await ui_thread;
+
+	AutoStartTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+	AutoStartTeachingTip().IsOpen(true);
+}
+
+
+Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage::AutoStartTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(200);
+		co_await ui_thread;
+	}
+
+	// Navigate to the settings page
+	k2app::shared::main::mainNavigationView->SelectedItem(
+		k2app::shared::main::mainNavigationView->MenuItems().GetAt(2));
+	k2app::shared::main::NavView_Navigate(L"devices", Media::Animation::EntranceNavigationTransitionInfo());
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
+
+	// Show the next tip
+	k2app::shared::teaching_tips::devices::devicesListTeachingTip->TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+	k2app::shared::teaching_tips::devices::devicesListTeachingTip->IsOpen(true);
 }

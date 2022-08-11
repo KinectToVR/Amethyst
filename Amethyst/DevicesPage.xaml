@@ -40,6 +40,15 @@
                             <Setter Property="Margin" Value="0,0,0,20" />
                             <Setter Property="Background" Value="{ThemeResource ControlDisplayBackgroundBrush}" />
                         </Style>
+
+                        <TeachingTip x:Name="DevicesListTeachingTip"
+                                     Target="{Binding ElementName=TrackingDeviceListView}"
+                                     Title="Find your tracking devices here"
+                                     Subtitle="This list contains all devices currently supported on your machine. You can easily manage them from here."
+                                     PreferredPlacement="BottomLeft"
+                                     IsLightDismissEnabled="False"
+                                     CloseButtonContent="Show the next tip"
+                                     Closed="DevicesListTeachingTip_Closed" />
                     </ListView.Resources>
 
                     <ListView.ItemTemplate>
@@ -118,7 +127,19 @@
 
                         <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="40,20,0,0">
                             <TextBlock FontWeight="SemiBold" Text="E_UNKNOWN" VerticalAlignment="Top"
-                                       x:Name="SelectedDeviceNameLabel" FontSize="25" Margin="0,4,0,0" />
+                                       x:Name="SelectedDeviceNameLabel" FontSize="25" Margin="0,4,0,0">
+
+                                <TextBlock.Resources>
+                                    <TeachingTip x:Name="DeviceStatusTeachingTip"
+                                                 Target="{Binding ElementName=SelectedDeviceNameLabel}"
+                                                 Title="Currently selected device"
+                                                 Subtitle="You can inspect the device you selected on the lest pane here. For certain devices/states, some extra control may appear."
+                                                 PreferredPlacement="Top"
+                                                 IsLightDismissEnabled="False"
+                                                 CloseButtonContent="Show the next tip"
+                                                 Closed="DeviceStatusTeachingTip_Closed" />
+                                </TextBlock.Resources>
+                            </TextBlock>
 
                             <!--<AppBarButton x:Name="SelectedDeviceSettingsButton" VerticalAlignment="Top"
                                           Click="SelectedDeviceSettingsButton_Click"
@@ -171,6 +192,17 @@
                                                  Margin="0,0,3,0" CornerRadius="3" Height="35" Width="140"
                                                  HorizontalAlignment="Right" VerticalAlignment="Top"
                                                  x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click">
+
+                                        <SplitButton.Resources>
+                                            <TeachingTip x:Name="DeviceControlsTeachingTip"
+                                                         Target="{Binding ElementName=ReconnectDeviceButton}"
+                                                         Title="Basic device controls"
+                                                         Subtitle="Here, you can turn the selected device on/off and make it the one used for tracking as a base/override."
+                                                         PreferredPlacement="Auto"
+                                                         IsLightDismissEnabled="False"
+                                                         CloseButtonContent="Show the next tip"
+                                                         Closed="DeviceControlsTeachingTip_Closed" />
+                                        </SplitButton.Resources>
 
                                         <SplitButton.Flyout>
                                             <Flyout Placement="Bottom" x:Name="AlternativeConnectionOptionsFlyout">
