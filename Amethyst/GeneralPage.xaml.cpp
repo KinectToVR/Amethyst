@@ -763,11 +763,18 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Checked(
 		k2app::interfacing::UpdateServerStatusUI();
 	}
 
+	// Give up if failed
+	if (k2app::interfacing::serverDriverFailure)return;
+
 	// Mark trackers as active
 	k2app::interfacing::K2AppTrackersInitialized = true;
 
 	// Request a check for already-added trackers
 	k2app::interfacing::alreadyAddedTrackersScanRequested = true;
+
+	// Show additional controls
+	CalibrationButton().IsEnabled(true);
+	OffsetsButton().IsEnabled(true);
 }
 
 
@@ -784,6 +791,10 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
 
 	// Request a check for already-added trackers
 	k2app::interfacing::alreadyAddedTrackersScanRequested = true;
+
+	// Hide additional controls
+	CalibrationButton().IsEnabled(false);
+	OffsetsButton().IsEnabled(false);
 }
 
 
@@ -826,8 +837,13 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 		k2app::interfacing::isServerDriverPresent && // If the driver's ok
 		k2app::K2Settings.autoSpawnEnabledJoints) // If autospawn
 	{
-		if (k2app::interfacing::SpawnEnabledTrackers()) // Mark as spawned
+		if (k2app::interfacing::SpawnEnabledTrackers())
+		{
+			// Mark as spawned
 			toggleTrackersButton->IsChecked(true);
+			CalibrationButton().IsEnabled(true);
+			OffsetsButton().IsEnabled(true);
+		}
 
 		// Cry about it
 		else
