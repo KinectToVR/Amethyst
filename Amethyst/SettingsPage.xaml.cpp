@@ -1176,6 +1176,9 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage:
 		co_await ui_thread;
 	}
 
+	// Reset the previous page layout
+	PageMainScrollViewer().ScrollToVerticalOffset(0);
+
 	// Show the next tip
 	k2app::shared::teaching_tips::devices::devicesListTeachingTip->TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	k2app::shared::teaching_tips::devices::devicesListTeachingTip->IsOpen(true);
