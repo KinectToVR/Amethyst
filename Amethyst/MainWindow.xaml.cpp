@@ -1597,7 +1597,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateBu
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Show the startup tour teachingtip
-	// TODO UNTIL SET IN SETTINGS (PROBABLY ONLY ONCE)
+	if (!k2app::K2Settings.firstTimeTourShown)
 	{
 		k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
 		k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);

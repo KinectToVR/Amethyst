@@ -64,4 +64,8 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::InfoPage::End
 	k2app::shared::main::mainNavigationView->SelectedItem(
 		k2app::shared::main::mainNavigationView->MenuItems().GetAt(0));
 	k2app::shared::main::NavView_Navigate(L"general", Media::Animation::EntranceNavigationTransitionInfo());
+
+	// We're done
+	k2app::K2Settings.firstTimeTourShown = true;
+	k2app::K2Settings.saveSettings();
 }
