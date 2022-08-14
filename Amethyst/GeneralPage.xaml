@@ -992,7 +992,7 @@
                         <ToggleSplitButton.Resources>
                             <muxc:TeachingTip x:Name="FreezeTrackingTeachingTip"
                                               Target="{Binding ElementName=ToggleTrackingButton}"
-                                              PreferredPlacement="TopRight"	
+                                              PreferredPlacement="Top"	
                                               IsLightDismissEnabled="True"
                                               Title="[CONTENT NOT SET]"
                                               Subtitle="[CONTENT NOT SET]">
