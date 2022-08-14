@@ -130,6 +130,13 @@ namespace K2CrashHandler
                                 Close();
                             }
                                 break;
+                            case -532265403:
+                            {
+                                // MS no package identity something,
+                                // just don't give a shit
+                                Close();
+                            }
+                                break;
                             case -1:
                             {
                                 // Force closed from the debugger
