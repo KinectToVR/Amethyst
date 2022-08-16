@@ -1717,8 +1717,95 @@ void winrt::Amethyst::implementation::MainWindow::InitializerTeachingTip_CloseBu
 
 
 void winrt::Amethyst::implementation::MainWindow::HelpButton_Tapped(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs& e)
 {
+	// Change the docs button's text & action
+
+	HelpFlyoutDocsButton().Click({
+		[&](auto, auto)
+		{
+			ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/", nullptr, nullptr, SW_SHOW);
+		}
+	});
+
+	// General Page
+	if (k2app::interfacing::currentAppState == L"general")
+	{
+		HelpFlyoutDocsButton().Text(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SharedStrings",
+				L"Buttons/Help/Docs/GeneralPage/Overview"));
+	}
+	else if (k2app::interfacing::currentAppState == L"calibration")
+	{
+		HelpFlyoutDocsButton().Text(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SharedStrings",
+				L"Buttons/Help/Docs/GeneralPage/Calibration/Main"));
+	}
+	else if (k2app::interfacing::currentAppState == L"calibration_automatic")
+	{
+		HelpFlyoutDocsButton().Text(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SharedStrings",
+				L"Buttons/Help/Docs/GeneralPage/Calibration/Automatic"));
+	}
+	else if (k2app::interfacing::currentAppState == L"calibration_manual")
+	{
+		HelpFlyoutDocsButton().Text(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SharedStrings",
+				L"Buttons/Help/Docs/GeneralPage/Calibration/Manual"));
+	}
+	else if (k2app::interfacing::currentAppState == L"offsets")
+	{
+		HelpFlyoutDocsButton().Text(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SharedStrings",
+				L"Buttons/Help/Docs/GeneralPage/Offsets"));
+	}
+
+	// Settings Page
+	else if (k2app::interfacing::currentAppState == L"settings")
+	{
+		HelpFlyoutDocsButton().Text(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SharedStrings",
+				L"Buttons/Help/Docs/SettingsPage/Overview"));
+	}
+
+	// Devices Page
+	else if (k2app::interfacing::currentAppState == L"devices")
+	{
+		HelpFlyoutDocsButton().Text(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SharedStrings",
+				L"Buttons/Help/Docs/DevicesPage/Overview"));
+	}
+	else if (k2app::interfacing::currentAppState == L"overrides")
+	{
+		HelpFlyoutDocsButton().Text(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SharedStrings",
+				L"Buttons/Help/Docs/DevicesPage/Overrides"));
+	}
+
+	// Info Page
+	else if (k2app::interfacing::currentAppState == L"info")
+	{
+		HelpFlyoutDocsButton().Text(
+			k2app::interfacing::LocalizedResourceWString(
+				L"SharedStrings",
+				L"Buttons/Help/Docs/InfoPage/OpenCollective"));
+	}
+
+	// Okashi Page
+	else if (k2app::interfacing::currentAppState == L"okashi")
+	{
+		HelpFlyoutDocsButton().Text(L"？？？？？");
+	}
+
 	// Show the help flyout
 	Controls::Primitives::FlyoutShowOptions options;
 	options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);

@@ -41,7 +41,7 @@ namespace winrt::Amethyst::implementation
 		devicesListView = std::make_shared<Controls::ListView>(TrackingDeviceListView());
 		noJointsFlyout = std::make_shared<Controls::Flyout>(NoJointsFlyout());
 
-		k2app::shared::teaching_tips::devices::devicesListTeachingTip = 
+		k2app::shared::teaching_tips::devices::devicesListTeachingTip =
 			std::make_shared<Controls::TeachingTip>(DevicesListTeachingTip());
 
 		setAsOverrideButton = std::make_shared<Controls::Button>(SetAsOverrideButton());
@@ -209,21 +209,21 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
-		
+
 		// For all override devices
 		{
 			for (auto& expander : overrideSelectorExpanders)
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			overridesLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 		}
 
 		// Set up combos if the device's OK
@@ -307,14 +307,14 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			jointBasisLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 		}
 
 		// For all override devices
@@ -323,14 +323,14 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			overridesLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 		}
 
 		// Set up combos if the device's OK
@@ -402,7 +402,7 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 		LOG(INFO) << "Selected a base";
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(false);
-		
+
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -410,15 +410,18 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 		LOG(INFO) << "Selected an override";
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(true);
-		
+
 		deselectDeviceButton.get()->Visibility(Visibility::Visible);
+
+		if (status_ok)
+			k2app::interfacing::currentAppState = L"overrides";
 	}
 	else
 	{
 		LOG(INFO) << "Selected a [none]";
 		setAsOverrideButton.get()->IsEnabled(true);
 		setAsBaseButton.get()->IsEnabled(true);
-		
+
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 	}
 
@@ -499,14 +502,14 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			overridesLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 		}
 
 		// Show / Hide device settings button
@@ -552,14 +555,14 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			overridesLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 		}
 
 		// Show / Hide device settings button
@@ -1115,6 +1118,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	LOG(INFO) << "Re/Loading page with tag: \"devices\"...";
+	k2app::interfacing::currentAppState = L"devices";
 
 	// Reset
 	devices_tab_re_setup_finished = false;
@@ -1175,14 +1179,14 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			overridesLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 		}
 
 		// Set up combos if the device's OK
@@ -1259,21 +1263,21 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
-		
+
 		// For base joints devices
 		{
 			for (auto& expander : jointSelectorExpanders)
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			jointBasisLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 		}
 
 		// For all override devices
@@ -1282,14 +1286,14 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			overridesLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 		}
 
 		// Set up combos if the device's OK
@@ -1361,7 +1365,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 		LOG(INFO) << "Selected a base";
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(false);
-		
+
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 	}
 	else if (selectedTrackingDeviceID == k2app::K2Settings.overrideDeviceID)
@@ -1369,7 +1373,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 		LOG(INFO) << "Selected an override";
 		setAsOverrideButton.get()->IsEnabled(false);
 		setAsBaseButton.get()->IsEnabled(true);
-		
+
 		deselectDeviceButton.get()->Visibility(Visibility::Visible);
 	}
 	else
@@ -1377,7 +1381,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 		LOG(INFO) << "Selected a [none]";
 		setAsOverrideButton.get()->IsEnabled(true);
 		setAsBaseButton.get()->IsEnabled(true);
-		
+
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 	}
 
@@ -1403,7 +1407,8 @@ void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 
 
 void winrt::Amethyst::implementation::DevicesPage::DevicesListTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	DeviceStatusTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	DeviceStatusTeachingTip().IsOpen(true);
@@ -1411,7 +1416,8 @@ void winrt::Amethyst::implementation::DevicesPage::DevicesListTeachingTip_Closed
 
 
 void winrt::Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	DeviceControlsTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	DeviceControlsTeachingTip().IsOpen(true);
@@ -1419,7 +1425,8 @@ void winrt::Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_Close
 
 
 Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::DevicesPage::DeviceControlsTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	// Wait a bit
 	{

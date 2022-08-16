@@ -31,6 +31,7 @@ void Amethyst::implementation::ConsolePage::ConsolePage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	LOG(INFO) << "Ohhhhh, How Sweeet!";
+	k2app::interfacing::currentAppState = L"okashi";
 }
 
 

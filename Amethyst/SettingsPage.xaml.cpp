@@ -256,6 +256,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	LOG(INFO) << "Re/Loading page with tag: \"settings\"...";
+	k2app::interfacing::currentAppState = L"settings";
 
 	using namespace k2app::shared::settings;
 

@@ -141,6 +141,7 @@ void Amethyst::implementation::GeneralPage::OffsetsButton_Click(
 	OffsetsView().IsPaneOpen(true);
 	
 	AllowNavigation(false);
+	k2app::interfacing::currentAppState = L"offsets";
 }
 
 
@@ -191,6 +192,7 @@ void Amethyst::implementation::GeneralPage::SaveOffsetsButton_Click(
 	OffsetsView().IsPaneOpen(false);
 
 	AllowNavigation(true);
+	k2app::interfacing::currentAppState = L"general";
 
 	// Save backend offsets' values to settings/file
 	// (they are already captured by OffsetsFrontendValueChanged(...))
@@ -216,6 +218,7 @@ void Amethyst::implementation::GeneralPage::DiscardOffsetsButton_Click(
 	OffsetsView().IsPaneOpen(false);
 
 	AllowNavigation(true);
+	k2app::interfacing::currentAppState = L"general";
 }
 
 
@@ -243,6 +246,8 @@ void Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
 
 	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	CalibrationRunningView().IsPaneOpen(true);
+
+	k2app::interfacing::currentAppState = L"calibration_auto";
 
 	CalibrationPointsNumberBox().IsEnabled(true);
 	CalibrationPointsNumberBox().Value(k2app::K2Settings.calibrationPointsNumber);
@@ -504,6 +509,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 	CalibrationRunningView().IsPaneOpen(false);
 
 	AllowNavigation(true);
+	k2app::interfacing::currentAppState = L"general";
 
 	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
 		L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
@@ -529,6 +535,7 @@ void Amethyst::implementation::GeneralPage::DiscardCalibrationButton_Click(
 		CalibrationRunningView().IsPaneOpen(false);
 
 		AllowNavigation(true);
+		k2app::interfacing::currentAppState = L"general";
 
 		NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
 			L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
@@ -573,6 +580,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 
 	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	CalibrationRunningView().IsPaneOpen(true);
+
+	k2app::interfacing::currentAppState = L"calibration_manual";
 
 	// Set the [calibration pending] bool
 	CalibrationPending = true;
@@ -762,6 +771,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 	CalibrationRunningView().IsPaneOpen(false);
 
 	AllowNavigation(true);
+	k2app::interfacing::currentAppState = L"general";
 
 	k2app::interfacing::calibration_confirm = false;
 
@@ -862,6 +872,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	LOG(INFO) << "Re/Loading page with tag: \"general\"...";
+	k2app::interfacing::currentAppState = L"general";
 
 	// Start the main loop since we're done with basic setup
 	k2app::shared::devices::smphSignalStartMain.release();
@@ -1489,6 +1500,7 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 		CalibrationRunningView().IsPaneOpen(false);
 
 		AllowNavigation(false);
+		k2app::interfacing::currentAppState = L"calibration";
 
 		show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
 		k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
@@ -1521,6 +1533,7 @@ void Amethyst::implementation::GeneralPage::BaseCalibration_Click(
 	CalibrationRunningView().IsPaneOpen(false);
 
 	AllowNavigation(false);
+	k2app::interfacing::currentAppState = L"calibration";
 
 	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
 	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
@@ -1556,6 +1569,7 @@ void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 	CalibrationRunningView().IsPaneOpen(false);
 
 	AllowNavigation(false);
+	k2app::interfacing::currentAppState = L"calibration";
 
 	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
 	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
