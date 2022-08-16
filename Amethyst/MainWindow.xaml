@@ -419,21 +419,27 @@
                 </MenuFlyout.MenuFlyoutPresenterStyle>
 
                 <!--Docs-->
-                <MenuFlyoutItem x:Name="HelpFlyoutDocsButton" Text="[NOT_SET_DOCS]">
+                <MenuFlyoutItem x:Name="HelpFlyoutDocsButton" 
+                                Click="HelpFlyoutDocsButton_Click"
+                                Text="[NOT_SET_DOCS]">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE897;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
 
                 <!--Discord-->
-                <MenuFlyoutItem x:Uid="/SharedStrings/Buttons/Help/Discord">
+                <MenuFlyoutItem x:Name="HelpFlyoutDiscordButton" 
+                                Click="HelpFlyoutDiscordButton_Click"
+                                x:Uid="/SharedStrings/Buttons/Help/Discord">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE8F2;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
 
                 <!--GitHub / Dev Docs-->
-                <MenuFlyoutItem x:Uid="/SharedStrings/Buttons/Help/Developers">
+                <MenuFlyoutItem x:Name="HelpFlyoutDevButton" 
+                                Click="HelpFlyoutDevButton_Click"
+                                x:Uid="/SharedStrings/Buttons/Help/Developers">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE943;" />
                     </MenuFlyoutItem.Icon>

@@ -213,6 +213,16 @@ namespace TrackingDevices
 			k2app::shared::general::overrideDeviceStatusLabel.get()->Text(split_status(device_status)[0]);
 			k2app::shared::general::overrideDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 			k2app::shared::general::overrideErrorWhatText.get()->Text(split_status(device_status)[2]);
+
+			if (k2app::interfacing::currentPageTag == L"devices")
+			{
+				if (k2app::shared::devices::devicesListView.get() != nullptr &&
+					k2app::shared::devices::devicesListView.get()->SelectedIndex() == 
+					k2app::K2Settings.overrideDeviceID && status_ok)
+					k2app::interfacing::currentAppState = L"overrides";
+				else
+					k2app::interfacing::currentAppState = L"devices";
+			}
 		}
 	}
 

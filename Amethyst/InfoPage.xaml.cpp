@@ -26,7 +26,9 @@ namespace winrt::Amethyst::implementation
 		const Windows::Foundation::IInspectable& sender,
 		const Input::DoubleTappedRoutedEventArgs& e)
 	{
-		// Also show a notification when we get to winui 1.1
+		k2app::interfacing::ShowToast(
+			L"お可愛いこと❢", L"(P.S. Congratulations!)");
+
 		k2app::shared::main::consoleItem.get()->Visibility(Visibility::Visible);
 	}
 }
@@ -38,6 +40,7 @@ void Amethyst::implementation::InfoPage::Grid_Loaded(
 {
 	// The info page was loaded
 	LOG(INFO) << "Re/Loading page with tag: \"info\"... (Child)";
+	k2app::interfacing::currentAppState = L"info";
 }
 
 

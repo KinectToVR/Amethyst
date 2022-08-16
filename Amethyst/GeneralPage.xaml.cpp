@@ -1512,6 +1512,7 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 
 		// Assume no head position providers
 		AutoCalibrationButton().IsEnabled(false);
+		AutoCalibrationButtonDecorations().Opacity(.5);
 
 		AllowNavigation(true);
 	}
@@ -1544,9 +1545,12 @@ void Amethyst::implementation::GeneralPage::BaseCalibration_Click(
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceCharacteristics() ==
-			ktvr::K2_Character_Full)
+		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+			getDeviceCharacteristics() ==ktvr::K2_Character_Full) 
+		{
 			AutoCalibrationButton().IsEnabled(true);
+			AutoCalibrationButtonDecorations().Opacity(1.0);
+		}
 	}
 
 	// Set the current device for scripts
@@ -1580,9 +1584,12 @@ void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceCharacteristics() ==
-			ktvr::K2_Character_Full)
+		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+			getDeviceCharacteristics() == ktvr::K2_Character_Full) 
+		{
 			AutoCalibrationButton().IsEnabled(true);
+			AutoCalibrationButtonDecorations().Opacity(1.0);
+		}
 	}
 
 	// Set the current device for scripts

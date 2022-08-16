@@ -1720,14 +1720,7 @@ void winrt::Amethyst::implementation::MainWindow::HelpButton_Tapped(
 	const winrt::Windows::Foundation::IInspectable& sender,
 	const winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs& e)
 {
-	// Change the docs button's text & action
-
-	HelpFlyoutDocsButton().Click({
-		[&](auto, auto)
-		{
-			ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/", nullptr, nullptr, SW_SHOW);
-		}
-	});
+	// Change the docs button's text
 
 	// General Page
 	if (k2app::interfacing::currentAppState == L"general")
@@ -1744,7 +1737,7 @@ void winrt::Amethyst::implementation::MainWindow::HelpButton_Tapped(
 				L"SharedStrings",
 				L"Buttons/Help/Docs/GeneralPage/Calibration/Main"));
 	}
-	else if (k2app::interfacing::currentAppState == L"calibration_automatic")
+	else if (k2app::interfacing::currentAppState == L"calibration_auto")
 	{
 		HelpFlyoutDocsButton().Text(
 			k2app::interfacing::LocalizedResourceWString(
@@ -1803,7 +1796,7 @@ void winrt::Amethyst::implementation::MainWindow::HelpButton_Tapped(
 	// Okashi Page
 	else if (k2app::interfacing::currentAppState == L"okashi")
 	{
-		HelpFlyoutDocsButton().Text(L"？？？？？");
+		HelpFlyoutDocsButton().Text(L"？？？？？？？");
 	}
 
 	// Show the help flyout
@@ -1812,4 +1805,101 @@ void winrt::Amethyst::implementation::MainWindow::HelpButton_Tapped(
 	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
 	HelpFlyout().ShowAt(HelpButton(), options);
+}
+
+
+void winrt::Amethyst::implementation::MainWindow::HelpFlyoutDocsButton_Click(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	// General Page
+	if (k2app::interfacing::currentAppState == L"general")
+	{
+		ShellExecuteA(nullptr, nullptr,
+		              "https://k2vr.tech/docs/",
+		              nullptr, nullptr, SW_SHOW);
+	}
+	else if (k2app::interfacing::currentAppState == L"calibration")
+	{
+		ShellExecuteA(nullptr, nullptr,
+		              "https://k2vr.tech/docs/",
+		              nullptr, nullptr, SW_SHOW);
+	}
+	else if (k2app::interfacing::currentAppState == L"calibration_auto")
+	{
+		ShellExecuteA(nullptr, nullptr,
+		              "https://k2vr.tech/docs/",
+		              nullptr, nullptr, SW_SHOW);
+	}
+	else if (k2app::interfacing::currentAppState == L"calibration_manual")
+	{
+		ShellExecuteA(nullptr, nullptr,
+		              "https://k2vr.tech/docs/",
+		              nullptr, nullptr, SW_SHOW);
+	}
+	else if (k2app::interfacing::currentAppState == L"offsets")
+	{
+		ShellExecuteA(nullptr, nullptr,
+		              "https://k2vr.tech/docs/",
+		              nullptr, nullptr, SW_SHOW);
+	}
+
+	// Settings Page
+	else if (k2app::interfacing::currentAppState == L"settings")
+	{
+		ShellExecuteA(nullptr, nullptr,
+		              "https://k2vr.tech/docs/",
+		              nullptr, nullptr, SW_SHOW);
+	}
+
+	// Devices Page
+	else if (k2app::interfacing::currentAppState == L"devices")
+	{
+		ShellExecuteA(nullptr, nullptr,
+		              "https://k2vr.tech/docs/",
+		              nullptr, nullptr, SW_SHOW);
+	}
+	else if (k2app::interfacing::currentAppState == L"overrides")
+	{
+		ShellExecuteA(nullptr, nullptr,
+		              "https://k2vr.tech/docs/",
+		              nullptr, nullptr, SW_SHOW);
+	}
+
+	// Info Page
+	else if (k2app::interfacing::currentAppState == L"info")
+	{
+		ShellExecuteA(nullptr, nullptr,
+		              "https://opencollective.com/k2vr",
+		              nullptr, nullptr, SW_SHOW);
+	}
+
+	// Okashi Page
+	else if (k2app::interfacing::currentAppState == L"okashi")
+	{
+		// Navigate to the general page
+		k2app::shared::main::mainNavigationView->
+			SelectedItem(k2app::shared::main::mainNavigationView->MenuItems().GetAt(0));
+		k2app::shared::main::NavView_Navigate(L"general", Media::Animation::EntranceNavigationTransitionInfo());
+
+		// Hide the okashi tab
+		k2app::shared::main::consoleItem.get()->Visibility(Visibility::Collapsed);
+	}
+}
+
+
+void winrt::Amethyst::implementation::MainWindow::HelpFlyoutDiscordButton_Click(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	ShellExecuteA(nullptr, nullptr,
+	              "https://discord.gg/YBQCRDG",
+	              nullptr, nullptr, SW_SHOW);
+}
+
+
+void winrt::Amethyst::implementation::MainWindow::HelpFlyoutDevButton_Click(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	ShellExecuteA(nullptr, nullptr,
+	              "https://github.com/KinectToVR/K2TrackingDevice-Samples/blob/main/DEVICES.md",
+	              nullptr, nullptr, SW_SHOW);
 }

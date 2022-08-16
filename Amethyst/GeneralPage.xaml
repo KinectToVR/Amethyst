@@ -71,7 +71,7 @@
                             <Button x:Name="AutoCalibrationButton" Grid.Row="0" Margin="20,20,20,10" Width="460"
                                     Click="AutoCalibrationButton_Click" HorizontalAlignment="Stretch">
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="260"
-                                      Width="435">
+                                      Width="435" Opacity="1.0" x:Name="AutoCalibrationButtonDecorations">
                                     <Border Height="20" CornerRadius="3" Padding="5,0"
                                             BorderBrush="{StaticResource SystemAccentColorLight2}"
                                             Background="{StaticResource SystemAccentColorLight2}"
