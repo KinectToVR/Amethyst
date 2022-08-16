@@ -1597,13 +1597,13 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateBu
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Show the startup tour teachingtip
-	if (!k2app::K2Settings.firstTimeTourShown)
-	{
-		k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
-		k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
+	//if (!k2app::K2Settings.firstTimeTourShown) // TODO ENABLE SOMEDAY
+	//{
+	//	k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
+	//	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
 
-		k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(true);
-	}
+	//	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(true);
+	//}
 
 	// Check for updates (and show)
 	co_await checkUpdates(sender.as<UIElement>(), false, 2000);

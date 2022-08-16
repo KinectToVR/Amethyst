@@ -19,6 +19,8 @@ namespace winrt::Amethyst::implementation
 		                               const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void NullCrashButton_Click(const Windows::Foundation::IInspectable& sender,
 		                           const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void GuideButton_Click(const Windows::Foundation::IInspectable& sender,
+		                           const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DatePicker_SelectedDateChanged(const Microsoft::UI::Xaml::Controls::DatePicker& sender,
 		                                    const
 		                                    Microsoft::UI::Xaml::Controls::DatePickerSelectedValueChangedEventArgs

@@ -30,8 +30,30 @@
                 <DatePicker HorizontalAlignment="Stretch" x:Name="DatePicker"
                             SelectedDateChanged="DatePicker_SelectedDateChanged" />
 
+                <TextBlock FontWeight="SemiBold" Text="Hidden Functionality"
+                           FontSize="25" Margin="0,30,0,0" Grid.Row="0" />
+
+                <Grid Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="9*" />
+                        <ColumnDefinition Width="2.8*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="1" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                            Content="Start Trip" FontSize="16" Click="GuideButton_Click" FontWeight="SemiBold" />
+
+                    <StackPanel Orientation="Vertical" Margin="0,2,15,0" Grid.Column="0" Grid.Row="0">
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
+                                   Text="Onboarding Tour Guide:"
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
+                                   Text="Will show on the first app launch, basically NUX."
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
+                    </StackPanel>
+                </Grid>
+
                 <TextBlock FontWeight="SemiBold" Text="In-App Crashes"
-                           FontSize="25" Margin="0,50,0,0" Grid.Row="0" />
+                           FontSize="25" Margin="0,30,0,0" Grid.Row="0" />
 
                 <Grid Margin="0,20,0,0">
                     <Grid.ColumnDefinitions>

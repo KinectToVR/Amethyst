@@ -74,6 +74,16 @@ void Amethyst::implementation::ConsolePage::NullCrashButton_Click(
 }
 
 
+void Amethyst::implementation::ConsolePage::GuideButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+{
+	k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
+
+	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(true);
+}
+
+
 void Amethyst::implementation::ConsolePage::DatePicker_SelectedDateChanged(
 	const Controls::DatePicker& sender, const Controls::DatePickerSelectedValueChangedEventArgs& args)
 {
