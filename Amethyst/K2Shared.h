@@ -47,7 +47,8 @@ namespace k2app::shared
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock> appTitleLabel;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid> interfaceBlockerGrid;
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
+			interfaceBlockerGrid, navigationBlockerGrid;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::NavigationView> mainNavigationView;
 

@@ -50,6 +50,18 @@ std::wstring points_format(std::wstring fmt,
 	return fmt;
 }
 
+void Amethyst::implementation::GeneralPage::AllowNavigation(const bool& allow)
+{
+	k2app::shared::main::navigationBlockerGrid->IsHitTestVisible(!allow);
+	InterfaceBlockerGrid().IsHitTestVisible(!allow);
+
+	k2app::shared::main::generalItem->SelectsOnInvoked(allow);
+	k2app::shared::main::settingsItem->SelectsOnInvoked(allow);
+	k2app::shared::main::devicesItem->SelectsOnInvoked(allow);
+	k2app::shared::main::infoItem->SelectsOnInvoked(allow);
+	k2app::shared::main::consoleItem->SelectsOnInvoked(allow);
+}
+
 namespace winrt::Amethyst::implementation
 {
 	GeneralPage::GeneralPage()
@@ -127,6 +139,8 @@ void Amethyst::implementation::GeneralPage::OffsetsButton_Click(
 	// Open the pane now
 	OffsetsView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	OffsetsView().IsPaneOpen(true);
+	
+	AllowNavigation(false);
 }
 
 
@@ -176,6 +190,8 @@ void Amethyst::implementation::GeneralPage::SaveOffsetsButton_Click(
 	OffsetsView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	OffsetsView().IsPaneOpen(false);
 
+	AllowNavigation(true);
+
 	// Save backend offsets' values to settings/file
 	// (they are already captured by OffsetsFrontendValueChanged(...))
 	k2app::K2Settings.saveSettings();
@@ -198,6 +214,8 @@ void Amethyst::implementation::GeneralPage::DiscardOffsetsButton_Click(
 	// Close the pane now
 	OffsetsView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	OffsetsView().IsPaneOpen(false);
+
+	AllowNavigation(true);
 }
 
 
@@ -485,6 +503,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationRunningView().IsPaneOpen(false);
 
+	AllowNavigation(true);
+
 	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
 		L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
 
@@ -507,6 +527,8 @@ void Amethyst::implementation::GeneralPage::DiscardCalibrationButton_Click(
 
 		CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 		CalibrationRunningView().IsPaneOpen(false);
+
+		AllowNavigation(true);
 
 		NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
 			L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
@@ -738,6 +760,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 
 	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationRunningView().IsPaneOpen(false);
+
+	AllowNavigation(true);
+
 	k2app::interfacing::calibration_confirm = false;
 
 	CalibrationPending = false; // We're finished
@@ -1463,6 +1488,8 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 		CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 		CalibrationRunningView().IsPaneOpen(false);
 
+		AllowNavigation(false);
+
 		show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
 		k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
 		skeleton_visibility_set_ui(true); // Change to show
@@ -1473,6 +1500,8 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 
 		// Assume no head position providers
 		AutoCalibrationButton().IsEnabled(false);
+
+		AllowNavigation(true);
 	}
 }
 
@@ -1490,6 +1519,8 @@ void Amethyst::implementation::GeneralPage::BaseCalibration_Click(
 
 	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationRunningView().IsPaneOpen(false);
+
+	AllowNavigation(false);
 
 	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
 	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
@@ -1523,6 +1554,8 @@ void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 
 	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationRunningView().IsPaneOpen(false);
+
+	AllowNavigation(false);
 
 	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
 	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show

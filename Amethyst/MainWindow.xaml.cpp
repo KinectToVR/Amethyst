@@ -437,6 +437,7 @@ namespace winrt::Amethyst::implementation
 
 		k2app::shared::main::appTitleLabel = std::make_shared<Controls::TextBlock>(AppTitleLabel());
 		k2app::shared::main::interfaceBlockerGrid = std::make_shared<Controls::Grid>(InterfaceBlockerGrid());
+		k2app::shared::main::navigationBlockerGrid = std::make_shared<Controls::Grid>(NavigationBlockerGrid());
 		k2app::shared::main::mainContentFrame = std::make_shared<Controls::Frame>(ContentFrame());
 
 		k2app::shared::main::generalItem = std::make_shared<Controls::NavigationViewItem>(GeneralItem());

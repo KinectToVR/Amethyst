@@ -52,6 +52,11 @@
                   Grid.Column="1" x:Name="DragElement" Canvas.ZIndex="1" />
         </Grid>
 
+        <Grid VerticalAlignment="Top" HorizontalAlignment="Left"
+              Width="70" Height="560" Margin="0,40,0,0"
+              x:Name="NavigationBlockerGrid" Background="Transparent"
+              Canvas.ZIndex="1" IsHitTestVisible="False" />
+
         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
               Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
               x:Name="InterfaceBlockerGrid" Opacity="0.0"
@@ -412,7 +417,7 @@
                                 Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                     </Style>
                 </MenuFlyout.MenuFlyoutPresenterStyle>
-                
+
                 <!--Docs-->
                 <MenuFlyoutItem x:Name="HelpFlyoutDocsButton" Text="[NOT_SET_DOCS]">
                     <MenuFlyoutItem.Icon>

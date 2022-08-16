@@ -30,6 +30,8 @@ namespace winrt::Amethyst::implementation
 		// WinUI things
 		GeneralPage();
 
+		void AllowNavigation(const bool& allow);
+
 		void OffsetsButton_Click(const Windows::Foundation::IInspectable& sender,
 		                         const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void SkeletonToggleButton_Click(const Windows::Foundation::IInspectable& sender,
