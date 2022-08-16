@@ -370,6 +370,58 @@ namespace K2CrashHandler
                 }
             }
 
+            /* 2.5 */
+
+            // Search for all K2EX instances and either unregister or delete them
+
+
+            var isDriverK2Present = resultPaths.Item1.Item3; // is ame copied?
+            var driverK2PathsList = new List<string>(); // ame external list
+
+            foreach (var externalDriver in openVRPaths.external_drivers.Where(
+                         externalDriver => externalDriver.Contains("KinectToVR")))
+            {
+                isDriverK2Present = true;
+                driverK2PathsList.Add(externalDriver);
+            }
+
+            // Remove (or delete) the existing K2EX Drivers
+            if (isDriverK2Present)
+                if (!await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                        LangResString("ReRegister/ExistingDrivers/Content_K2EX"),
+                        LangResString("ReRegister/ExistingDrivers/PrimaryButton_K2EX"),
+                        LangResString("ReRegister/ExistingDrivers/SecondaryButton_K2EX")))
+                    return;
+
+            // Try-Catch it
+            try
+            {
+                if (isDriverK2Present || resultPaths.Item1.Item3)
+                {
+                    // Delete the copied K2EX Driver (if exists)
+                    if (resultPaths.Item1.Item3)
+                        Directory.Delete(resultPaths.Item2.Item3, true); // Delete
+
+                    // Un-register any remaining K2EX Drivers (if exist)
+                    if (driverK2PathsList.Any())
+                    {
+                        foreach (var driverK2Path in driverK2PathsList)
+                            openVRPaths.external_drivers.Remove(driverK2Path);
+
+                        // Save it
+                        openVRPaths.Write();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // Critical, cry about it
+                await DialogView.HandlePrimaryButtonConfirmationFlyout(
+                    LangResString("ReRegister/FatalRemoveException_K2EX"),
+                    "", "");
+                return;
+            }
+
             /* 3 */
 
             // Search for all remaining (registered or copied) Amethyst Driver instances
@@ -379,19 +431,19 @@ namespace K2CrashHandler
 
             var isLocalAmethystDriverRegistered = false; // is our local ame registered?
 
-            foreach (var externalDriver in openVRPaths.external_drivers)
-                if (externalDriver.Contains("Amethyst"))
+            foreach (var externalDriver in openVRPaths.external_drivers.Where(
+                         externalDriver => externalDriver.Contains("Amethyst")))
+            {
+                // Don't un-register the already-existent one
+                if (externalDriver == localAmethystDriverPath)
                 {
-                    // Don't un-register the already-existent one
-                    if (externalDriver == localAmethystDriverPath)
-                    {
-                        isLocalAmethystDriverRegistered = true;
-                        continue; // Don't report it
-                    }
-
-                    isAmethystDriverPresent = true;
-                    amethystDriverPathsList.Add(externalDriver);
+                    isLocalAmethystDriverRegistered = true;
+                    continue; // Don't report it
                 }
+
+                isAmethystDriverPresent = true;
+                amethystDriverPathsList.Add(externalDriver);
+            }
 
             // Remove (or delete) the existing Amethyst Drivers
             if (isAmethystDriverPresent)

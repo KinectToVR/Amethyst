@@ -176,10 +176,20 @@
     <value>Один или несколько драйверов "Amethyst"
 уже существуют, удалить их?</value>
   </data>
+  <data name="ReRegister.ExistingDrivers.Content_K2EX" xml:space="preserve">
+    <value>Один или несколько драйверов "KinectToVR"
+существуют, удалить их?</value>
+  </data>
   <data name="ReRegister.ExistingDrivers.PrimaryButton" xml:space="preserve">
     <value>Удалить</value>
   </data>
+  <data name="ReRegister.ExistingDrivers.PrimaryButton_K2EX" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
   <data name="ReRegister.ExistingDrivers.SecondaryButton" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="ReRegister.ExistingDrivers.SecondaryButton_K2EX" xml:space="preserve">
     <value>Отмена</value>
   </data>
   <data name="ReRegister.FatalRegisterException" xml:space="preserve">
@@ -188,6 +198,10 @@
   </data>
   <data name="ReRegister.FatalRemoveException" xml:space="preserve">
     <value>Невозможно удалить драйвер Amethyst,
+возникла непредвиденная ошибка.</value>
+  </data>
+  <data name="ReRegister.FatalRemoveException_K2EX" xml:space="preserve">
+    <value>Невозможно удалить драйвер KinectToVR,
 возникла непредвиденная ошибка.</value>
   </data>
   <data name="ReRegister.Finished" xml:space="preserve">

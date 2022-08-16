@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Content.AlreadyRunning" xml:space="preserve">
-<value>Il semble que l'application est déjà
+    <value>Il semble que l'application est déjà
 lancée. Une seule instance d'Amethyst peut être
 ouverte à la fois.
 
@@ -126,7 +126,7 @@ Assurez vous d'avoir quitté l'application correctement.
 Si le problème persiste, cliquez sur "Quitter de force".</value>
   </data>
   <data name="Content.Crash.NoDevices" xml:space="preserve">
-<value>Aucun plug-in ou appareil est disponible à charger et utiliser pour le full-body tracking.
+    <value>Aucun plug-in ou appareil est disponible à charger et utiliser pour le full-body tracking.
 
 Assurez vous que tous les pré-requis pour l'appareil de votre choix sont bien installés. (Par example: SDK et pilotes pour Kinect)</value>
   </data>
@@ -176,10 +176,20 @@ Est-elle présente dans le même dossier que le Crash Handler?</value>
     <value>Une ou plusieurs extensions nommées `Amethyst` sont déjà inscrites dans la liste.
 Voulez-vous les enlever?</value>
   </data>
+  <data name="ReRegister.ExistingDrivers.Content_K2EX" xml:space="preserve">
+    <value>Une ou plusieurs extensions nommées `KinectToVR` sont inscrites dans la liste.
+Voulez-vous les enlever?</value>
+  </data>
   <data name="ReRegister.ExistingDrivers.PrimaryButton" xml:space="preserve">
     <value>Enlever</value>
   </data>
+  <data name="ReRegister.ExistingDrivers.PrimaryButton_K2EX" xml:space="preserve">
+    <value>Enlever</value>
+  </data>
   <data name="ReRegister.ExistingDrivers.SecondaryButton" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="ReRegister.ExistingDrivers.SecondaryButton_K2EX" xml:space="preserve">
     <value>Annuler</value>
   </data>
   <data name="ReRegister.FatalRegisterException" xml:space="preserve">
@@ -188,6 +198,10 @@ Un problème est survenu.</value>
   </data>
   <data name="ReRegister.FatalRemoveException" xml:space="preserve">
     <value>L'extension pour Amethyst n'a pu être enlevée.
+Un problème est survenu.</value>
+  </data>
+  <data name="ReRegister.FatalRemoveException_K2EX" xml:space="preserve">
+    <value>L'extension pour KinectToVR n'a pu être enlevée.
 Un problème est survenu.</value>
   </data>
   <data name="ReRegister.Finished" xml:space="preserve">

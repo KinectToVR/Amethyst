@@ -176,10 +176,20 @@ Is it somewhere around the Crash Handler?</value>
     <value>One or more drivers named 'Amethyst'
 already exist, remove them now?</value>
   </data>
+  <data name="ReRegister.ExistingDrivers.Content_K2EX" xml:space="preserve">
+    <value>One or more drivers named 'KinectToVR'
+exist, remove them now?</value>
+  </data>
   <data name="ReRegister.ExistingDrivers.PrimaryButton" xml:space="preserve">
     <value>Remove</value>
   </data>
+  <data name="ReRegister.ExistingDrivers.PrimaryButton_K2EX" xml:space="preserve">
+    <value>Remove</value>
+  </data>
   <data name="ReRegister.ExistingDrivers.SecondaryButton" xml:space="preserve">
+    <value>Abort</value>
+  </data>
+  <data name="ReRegister.ExistingDrivers.SecondaryButton_K2EX" xml:space="preserve">
     <value>Abort</value>
   </data>
   <data name="ReRegister.FatalRegisterException" xml:space="preserve">
@@ -188,6 +198,10 @@ a fatal exception occurred.</value>
   </data>
   <data name="ReRegister.FatalRemoveException" xml:space="preserve">
     <value>Couldn't remove Amethyst Driver,
+a fatal exception occurred.</value>
+  </data>
+  <data name="ReRegister.FatalRemoveException_K2EX" xml:space="preserve">
+    <value>Couldn't remove KinectToVR Driver,
 a fatal exception occurred.</value>
   </data>
   <data name="ReRegister.Finished" xml:space="preserve">

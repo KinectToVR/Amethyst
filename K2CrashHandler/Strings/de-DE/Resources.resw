@@ -176,17 +176,33 @@ Ist es irgendwo in der Nähe des Crash Handlers?</value>
     <value>Ein oder mehrere Treiber mit dem Namen „Amethyst“
 bereits vorhanden, jetzt entfernen?</value>
   </data>
+  <data name="ReRegister.ExistingDrivers.Content_K2EX" xml:space="preserve">
+    <value>Ein oder mehrere Treiber mit dem Namen „KinectToVR“
+vorhanden, jetzt entfernen?</value>
+  </data>
   <data name="ReRegister.ExistingDrivers.PrimaryButton" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="ReRegister.ExistingDrivers.PrimaryButton_K2EX" xml:space="preserve">
     <value>Entfernen</value>
   </data>
   <data name="ReRegister.ExistingDrivers.SecondaryButton" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
+  <data name="ReRegister.ExistingDrivers.SecondaryButton_K2EX" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
   <data name="ReRegister.FatalRegisterException" xml:space="preserve">
-    <value>Der Amethyst-Treiber konnte nicht registriert werden, da eine schwerwiegende Ausnahme aufgetreten ist.</value>
+    <value>Der Amethyst-Treiber konnte nicht registriert werden, 
+da eine schwerwiegende Ausnahme aufgetreten ist.</value>
   </data>
   <data name="ReRegister.FatalRemoveException" xml:space="preserve">
-    <value>Der Amethyst-Treiber konnte nicht entfernt werden, eine schwerwiegende Ausnahme ist aufgetreten.</value>
+    <value>Der Amethyst-Treiber konnte nicht entfernt werden, 
+eine schwerwiegende Ausnahme ist aufgetreten.</value>
+  </data>
+  <data name="ReRegister.FatalRemoveException_K2EX" xml:space="preserve">
+    <value>Der KinectToVR-Treiber konnte nicht entfernt werden, 
+eine schwerwiegende Ausnahme ist aufgetreten.</value>
   </data>
   <data name="ReRegister.Finished" xml:space="preserve">
     <value>Du bist startklar!</value>
@@ -207,7 +223,8 @@ Stelle sicher, dass es nicht beschädigt ist
 und führe SteamVR mindestens einmal aus.</value>
   </data>
   <data name="ReRegister.OpenVRPathsWriteError" xml:space="preserve">
-    <value>Amethyst-Treiber konnte nicht registriert werden, openvrpaths-Schreibfehler.</value>
+    <value>Amethyst-Treiber konnte nicht registriert werden, 
+openvrpaths-Schreibfehler.</value>
   </data>
   <data name="ReRegister.SteamVRNotFound" xml:space="preserve">
     <value>SteamVR konnte nicht gefunden werden,
