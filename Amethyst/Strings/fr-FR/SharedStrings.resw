@@ -123,6 +123,42 @@
   <data name="Buttons.General.Text" xml:space="preserve">
     <value>Général</value>
   </data>
+  <data name="Buttons.Help.Developers.Text" xml:space="preserve">
+    <value>Pour les développeurs</value>
+  </data>
+  <data name="Buttons.Help.Discord.Text" xml:space="preserve">
+    <value>Communauté K2VR</value>
+  </data>
+  <data name="Buttons.Help.Docs.DevicesPage.Overrides" xml:space="preserve">
+    <value>Substitut Docs</value>
+  </data>
+  <data name="Buttons.Help.Docs.DevicesPage.Overview" xml:space="preserve">
+    <value>Page Appareils Docs</value>
+  </data>
+  <data name="Buttons.Help.Docs.GeneralPage.Calibration.Automatic" xml:space="preserve">
+    <value>Calibration automatique</value>
+  </data>
+  <data name="Buttons.Help.Docs.GeneralPage.Calibration.Main" xml:space="preserve">
+    <value>Docs d'étalonnage</value>
+  </data>
+  <data name="Buttons.Help.Docs.GeneralPage.Calibration.Manual" xml:space="preserve">
+    <value>Calibration manuelle</value>
+  </data>
+  <data name="Buttons.Help.Docs.GeneralPage.Offsets" xml:space="preserve">
+    <value>Docs Offsets</value>
+  </data>
+  <data name="Buttons.Help.Docs.GeneralPage.Overview" xml:space="preserve">
+    <value>Page générale Docs</value>
+  </data>
+  <data name="Buttons.Help.Docs.InfoPage.OpenCollective" xml:space="preserve">
+    <value>Our OpenCollective</value>
+  </data>
+  <data name="Buttons.Help.Docs.SettingsPage.Overview" xml:space="preserve">
+    <value>Page des paramètres Docs</value>
+  </data>
+  <data name="Buttons.Help.Header.Text" xml:space="preserve">
+    <value>Aide</value>
+  </data>
   <data name="Buttons.Info.Text" xml:space="preserve">
     <value>Info</value>
   </data>

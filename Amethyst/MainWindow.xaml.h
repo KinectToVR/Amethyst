@@ -62,8 +62,7 @@ namespace winrt::Amethyst::implementation
 			const Windows::UI::Core::BackRequestedEventArgs& args);
 		bool TryGoBack();
 		
-		Windows::Foundation::IAsyncAction checkUpdates(const Microsoft::UI::Xaml::UIElement& show_el,
-		                                               bool show = false, DWORD delay_ms = 0);
+		Windows::Foundation::IAsyncAction checkUpdates(bool show = false, DWORD delay_ms = 0);
 		void InstallLaterButton_Click(
 			const Windows::Foundation::IInspectable& sender, const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void InstallNowButton_Click(const Windows::Foundation::IInspectable& sender,
@@ -80,6 +79,7 @@ namespace winrt::Amethyst::implementation
 		                                                      e);
 		void InitializerTeachingTip_ActionButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void InitializerTeachingTip_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
+		void HelpButton_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
 	};
 }
 

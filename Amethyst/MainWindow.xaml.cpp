@@ -37,7 +37,7 @@ struct toast
 
 // Updates checking function
 Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpdates(
-	const UIElement& show_el, const bool show, const DWORD delay_ms)
+	const bool show, const DWORD delay_ms)
 {
 	// Attempt only after init
 	if (main_localInitFinished)
@@ -286,7 +286,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 		// If an update was found, show it
 		// (or if the cheack was manual)
 		if (updateFound || show)
-			UpdateFlyout().ShowAt(show_el, options);
+			UpdateFlyout().ShowAt(HelpButton(), options);
 
 		// Uncheck
 		checkingUpdatesNow = false;
@@ -1606,7 +1606,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateBu
 	//}
 
 	// Check for updates (and show)
-	co_await checkUpdates(sender.as<UIElement>(), false, 2000);
+	co_await checkUpdates(false, 2000);
 }
 
 
@@ -1616,7 +1616,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateBu
 {
 	// Check for updates (and show)
 	if (!checkingUpdatesNow)
-		co_await checkUpdates(sender.as<UIElement>(), true);
+		co_await checkUpdates(true);
 	else co_return;
 }
 
@@ -1712,4 +1712,16 @@ void winrt::Amethyst::implementation::MainWindow::InitializerTeachingTip_CloseBu
 	// Just dismiss the tip
 	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
 	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
+}
+
+
+void winrt::Amethyst::implementation::MainWindow::HelpButton_Tapped(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+{
+	// Show the help flyout
+	Controls::Primitives::FlyoutShowOptions options;
+	options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
+	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+
+	HelpFlyout().ShowAt(HelpButton(), options);
 }

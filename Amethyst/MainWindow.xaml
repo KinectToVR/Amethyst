@@ -242,87 +242,109 @@
             </muxc:NavigationView.MenuItems>
 
             <muxc:NavigationView.PaneFooter>
-                <NavigationViewItem x:Name="UpdateButton" Height="63"
-                                    FontSize="10" FontWeight="Medium"
-                                    BackgroundSizing="OuterBorderEdge"
-                                    Tapped="UpdateButton_Tapped"
-                                    Loaded="UpdateButton_Loaded">
+                <StackPanel Orientation="Vertical">
+                    <NavigationViewItem x:Name="UpdateButton" Height="63"
+                                        FontSize="10" FontWeight="Medium"
+                                        BackgroundSizing="OuterBorderEdge"
+                                        Tapped="UpdateButton_Tapped"
+                                        Loaded="UpdateButton_Loaded">
 
-                    <FlyoutBase.AttachedFlyout>
-                        <Flyout x:Name="UpdateFlyout">
-                            <Flyout.FlyoutPresenterStyle>
-                                <Style TargetType="FlyoutPresenter">
-                                    <Setter Property="CornerRadius" Value="8" />
-                                    <Setter Property="Background"
-                                            Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                                </Style>
-                            </Flyout.FlyoutPresenterStyle>
+                        <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                            <Grid Translation="0,-8,0" x:Name="UpdateIconGrid">
+                                <Grid.TranslationTransition>
+                                    <Vector3Transition />
+                                </Grid.TranslationTransition>
 
-                            <StackPanel>
-                                <TextBlock x:Name="FlyoutHeader" FontSize="17"
-                                           Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
-                                <TextBlock x:Name="FlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
-                                <TextBlock x:Name="FlyoutContent" Margin="0,0,0,12" />
+                                <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" FontSize="20"
+                                          Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                          Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5124">
+                                    <FontIcon.RenderTransform>
+                                        <CompositeTransform />
+                                    </FontIcon.RenderTransform>
 
-                                <Grid HorizontalAlignment="Stretch">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click"
-                                            Grid.Column="0"
-                                            x:Uid="/SharedStrings/Buttons/Updates/Skip" Margin="0,0,5,0"
-                                            HorizontalAlignment="Stretch" />
-                                    <Button x:Name="InstallNowButton" Click="InstallNowButton_Click" Grid.Column="1"
-                                            x:Uid="/SharedStrings/Buttons/Updates/Install" Margin="5,0,0,0"
-                                            Style="{StaticResource AccentButtonStyle}" HorizontalAlignment="Stretch" />
-                                </Grid>
-                            </StackPanel>
-                        </Flyout>
-                    </FlyoutBase.AttachedFlyout>
+                                    <FontIcon.Transitions>
+                                        <TransitionCollection>
+                                            <RepositionThemeTransition />
+                                        </TransitionCollection>
+                                    </FontIcon.Transitions>
+                                </FontIcon>
 
-                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                        <Grid Translation="0,-8,0" x:Name="UpdateIconGrid">
-                            <Grid.TranslationTransition>
-                                <Vector3Transition />
-                            </Grid.TranslationTransition>
+                                <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="16"
+                                          IsHitTestVisible="False"
+                                          HorizontalAlignment="Left" VerticalAlignment="Bottom" Canvas.ZIndex="1"
+                                          Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                          Translation="0,-9,0"
+                                          Opacity="0.0" Margin="16,0,0,0">
+                                    <FontIcon.OpacityTransition>
+                                        <ScalarTransition />
+                                    </FontIcon.OpacityTransition>
+                                </FontIcon>
+                            </Grid>
 
-                            <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" FontSize="20"
-                                      Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                      Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5124">
-                                <FontIcon.RenderTransform>
-                                    <CompositeTransform />
-                                </FontIcon.RenderTransform>
-
-                                <FontIcon.Transitions>
-                                    <TransitionCollection>
-                                        <RepositionThemeTransition />
-                                    </TransitionCollection>
-                                </FontIcon.Transitions>
-                            </FontIcon>
-
-                            <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="16" IsHitTestVisible="False"
-                                      HorizontalAlignment="Left" VerticalAlignment="Bottom" Canvas.ZIndex="1"
-                                      Foreground="{ThemeResource SystemFillColorAttentionBrush}" Translation="0,-9,0"
-                                      Opacity="0.0" Margin="16,0,0,0">
-                                <FontIcon.OpacityTransition>
-                                    <ScalarTransition />
-                                </FontIcon.OpacityTransition>
-                            </FontIcon>
+                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                                <TextBlock x:Uid="/SharedStrings/Buttons/Updates/Header"
+                                           x:Name="UpdateIconText" Opacity="1.0"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                    <TextBlock.OpacityTransition>
+                                        <ScalarTransition />
+                                    </TextBlock.OpacityTransition>
+                                </TextBlock>
+                            </Viewbox>
                         </Grid>
+                    </NavigationViewItem>
 
-                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock x:Uid="/SharedStrings/Buttons/Updates/Header"
-                                       x:Name="UpdateIconText" Opacity="1.0"
-                                       HorizontalAlignment="Center"
-                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
-                                <TextBlock.OpacityTransition>
-                                    <ScalarTransition />
-                                </TextBlock.OpacityTransition>
-                            </TextBlock>
-                        </Viewbox>
-                    </Grid>
-                </NavigationViewItem>
+                    <NavigationViewItem x:Name="HelpButton" Height="63"
+                                        FontSize="10" FontWeight="Medium"
+                                        BackgroundSizing="OuterBorderEdge"
+                                        Tapped="HelpButton_Tapped">
+
+                        <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                            <Grid Translation="0,-8,0">
+                                <Grid.TranslationTransition>
+                                    <Vector3Transition />
+                                </Grid.TranslationTransition>
+
+                                <FontIcon x:Name="HelpIcon" Glyph="&#xEA3A;" FontSize="20"
+                                          Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                    <FontIcon.RenderTransform>
+                                        <CompositeTransform />
+                                    </FontIcon.RenderTransform>
+
+                                    <FontIcon.Transitions>
+                                        <TransitionCollection>
+                                            <RepositionThemeTransition />
+                                        </TransitionCollection>
+                                    </FontIcon.Transitions>
+                                </FontIcon>
+
+                                <FontIcon Glyph="&#xE897;" FontSize="12"
+                                          Foreground="{Binding ElementName=HelpIcon, Path=Foreground}">
+                                    <FontIcon.RenderTransform>
+                                        <CompositeTransform />
+                                    </FontIcon.RenderTransform>
+
+                                    <FontIcon.Transitions>
+                                        <TransitionCollection>
+                                            <RepositionThemeTransition />
+                                        </TransitionCollection>
+                                    </FontIcon.Transitions>
+                                </FontIcon>
+                            </Grid>
+
+                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                                <TextBlock x:Uid="/SharedStrings/Buttons/Help/Header"
+                                           x:Name="HelpIconText" Opacity="1.0"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                    <TextBlock.OpacityTransition>
+                                        <ScalarTransition />
+                                    </TextBlock.OpacityTransition>
+                                </TextBlock>
+                            </Viewbox>
+                        </Grid>
+                    </NavigationViewItem>
+                </StackPanel>
             </muxc:NavigationView.PaneFooter>
 
             <Frame x:Name="ContentFrame" NavigationFailed="ContentFrame_NavigationFailed" />
@@ -348,6 +370,70 @@
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)"
                                  Storyboard.TargetName="UpdateIcon" />
             </Storyboard>
+
+            <Flyout x:Name="UpdateFlyout">
+                <Flyout.FlyoutPresenterStyle>
+                    <Style TargetType="FlyoutPresenter">
+                        <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="Background"
+                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                    </Style>
+                </Flyout.FlyoutPresenterStyle>
+
+                <StackPanel>
+                    <TextBlock x:Name="FlyoutHeader" FontSize="17"
+                               Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
+                    <TextBlock x:Name="FlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
+                    <TextBlock x:Name="FlyoutContent" Margin="0,0,0,12" />
+
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click"
+                                Grid.Column="0"
+                                x:Uid="/SharedStrings/Buttons/Updates/Skip" Margin="0,0,5,0"
+                                HorizontalAlignment="Stretch" />
+                        <Button x:Name="InstallNowButton" Click="InstallNowButton_Click"
+                                Grid.Column="1"
+                                x:Uid="/SharedStrings/Buttons/Updates/Install" Margin="5,0,0,0"
+                                Style="{StaticResource AccentButtonStyle}"
+                                HorizontalAlignment="Stretch" />
+                    </Grid>
+                </StackPanel>
+            </Flyout>
+
+            <MenuFlyout x:Name="HelpFlyout">
+                <MenuFlyout.MenuFlyoutPresenterStyle>
+                    <Style TargetType="MenuFlyoutPresenter">
+                        <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="Background"
+                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                    </Style>
+                </MenuFlyout.MenuFlyoutPresenterStyle>
+                
+                <!--Docs-->
+                <MenuFlyoutItem x:Name="HelpFlyoutDocsButton" Text="[NOT_SET_DOCS]">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE897;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+
+                <!--Discord-->
+                <MenuFlyoutItem x:Uid="/SharedStrings/Buttons/Help/Discord">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE8F2;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+
+                <!--GitHub / Dev Docs-->
+                <MenuFlyoutItem x:Uid="/SharedStrings/Buttons/Help/Developers">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE943;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+            </MenuFlyout>
         </Grid.Resources>
 
     </Grid>

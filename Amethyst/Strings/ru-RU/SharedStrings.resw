@@ -123,6 +123,42 @@
   <data name="Buttons.General.Text" xml:space="preserve">
     <value>Общие</value>
   </data>
+  <data name="Buttons.Help.Developers.Text" xml:space="preserve">
+    <value>Для разработчиков</value>
+  </data>
+  <data name="Buttons.Help.Discord.Text" xml:space="preserve">
+    <value>Сообщество K2VR</value>
+  </data>
+  <data name="Buttons.Help.Docs.DevicesPage.Overrides" xml:space="preserve">
+    <value>Переназначения Docs</value>
+  </data>
+  <data name="Buttons.Help.Docs.DevicesPage.Overview" xml:space="preserve">
+    <value>Устройства Страница Документы</value>
+  </data>
+  <data name="Buttons.Help.Docs.GeneralPage.Calibration.Automatic" xml:space="preserve">
+    <value>Автоматическая калибровка</value>
+  </data>
+  <data name="Buttons.Help.Docs.GeneralPage.Calibration.Main" xml:space="preserve">
+    <value>Документы по калибровке</value>
+  </data>
+  <data name="Buttons.Help.Docs.GeneralPage.Calibration.Manual" xml:space="preserve">
+    <value>Ручная калибровка</value>
+  </data>
+  <data name="Buttons.Help.Docs.GeneralPage.Offsets" xml:space="preserve">
+    <value>Документы по зачетам</value>
+  </data>
+  <data name="Buttons.Help.Docs.GeneralPage.Overview" xml:space="preserve">
+    <value>Общие документы страницы</value>
+  </data>
+  <data name="Buttons.Help.Docs.InfoPage.OpenCollective" xml:space="preserve">
+    <value>Наш OpenCollective</value>
+  </data>
+  <data name="Buttons.Help.Docs.SettingsPage.Overview" xml:space="preserve">
+    <value>Страница настроек Документы</value>
+  </data>
+  <data name="Buttons.Help.Header.Text" xml:space="preserve">
+    <value>Помощь</value>
+  </data>
   <data name="Buttons.Info.Text" xml:space="preserve">
     <value>Информация</value>
   </data>

@@ -125,6 +125,7 @@ void Amethyst::implementation::GeneralPage::OffsetsButton_Click(
 	pending_offsets_update = false;
 
 	// Open the pane now
+	OffsetsView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	OffsetsView().IsPaneOpen(true);
 }
 
@@ -172,6 +173,7 @@ void Amethyst::implementation::GeneralPage::ForceRenderCheckBox_Unchecked(
 void Amethyst::implementation::GeneralPage::SaveOffsetsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	OffsetsView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	OffsetsView().IsPaneOpen(false);
 
 	// Save backend offsets' values to settings/file
@@ -194,6 +196,7 @@ void Amethyst::implementation::GeneralPage::DiscardOffsetsButton_Click(
 	pending_offsets_update = false;
 
 	// Close the pane now
+	OffsetsView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	OffsetsView().IsPaneOpen(false);
 }
 
@@ -220,6 +223,7 @@ void Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
 	AutoCalibrationPane().Visibility(Visibility::Visible);
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
 
+	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	CalibrationRunningView().IsPaneOpen(true);
 
 	CalibrationPointsNumberBox().IsEnabled(true);
@@ -475,7 +479,10 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 	}
 
 	// Exit the pane
+	CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationSelectView().IsPaneOpen(false);
+
+	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationRunningView().IsPaneOpen(false);
 
 	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
@@ -495,7 +502,10 @@ void Amethyst::implementation::GeneralPage::DiscardCalibrationButton_Click(
 	// Just exit
 	if (!CalibrationPending)
 	{
+		CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 		CalibrationSelectView().IsPaneOpen(false);
+
+		CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 		CalibrationRunningView().IsPaneOpen(false);
 
 		NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
@@ -539,6 +549,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 	AutoCalibrationPane().Visibility(Visibility::Collapsed);
 	ManualCalibrationPane().Visibility(Visibility::Visible);
 
+	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	CalibrationRunningView().IsPaneOpen(true);
 
 	// Set the [calibration pending] bool
@@ -722,7 +733,10 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 	}
 
 	// Exit the pane and reset
+	CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationSelectView().IsPaneOpen(false);
+
+	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationRunningView().IsPaneOpen(false);
 	k2app::interfacing::calibration_confirm = false;
 
@@ -1443,7 +1457,10 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 		AutoCalibrationPane().Visibility(Visibility::Collapsed);
 		ManualCalibrationPane().Visibility(Visibility::Collapsed);
 
+		CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 		CalibrationSelectView().IsPaneOpen(true);
+
+		CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 		CalibrationRunningView().IsPaneOpen(false);
 
 		show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
@@ -1468,7 +1485,10 @@ void Amethyst::implementation::GeneralPage::BaseCalibration_Click(
 	AutoCalibrationPane().Visibility(Visibility::Collapsed);
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
 
+	CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	CalibrationSelectView().IsPaneOpen(true);
+
+	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationRunningView().IsPaneOpen(false);
 
 	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
@@ -1498,7 +1518,10 @@ void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 	AutoCalibrationPane().Visibility(Visibility::Collapsed);
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
 
+	CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	CalibrationSelectView().IsPaneOpen(true);
+
+	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationRunningView().IsPaneOpen(false);
 
 	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up

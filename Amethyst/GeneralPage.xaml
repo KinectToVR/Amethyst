@@ -12,8 +12,8 @@
     <Grid Background="Transparent">
         <SplitView Canvas.ZIndex="1" x:Name="OffsetsView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-                   PaneClosing="OffsetsView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520" CompactPaneLength="48"
-                   DisplayMode="Overlay" CornerRadius="10">
+                   PaneClosing="OffsetsView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520" 
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
             <SplitView.Pane>
 
                 <Grid Margin="40,10" x:Name="OffsetsControlHostGrid">
@@ -47,8 +47,7 @@
         <SplitView Canvas.ZIndex="1" x:Name="CalibrationSelectView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                    PaneClosing="CalibrationSelectView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
-                   CompactPaneLength="48"
-                   DisplayMode="Overlay" CornerRadius="10">
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
             <SplitView.Pane>
                 <Grid>
                     <Grid x:Name="CalibrationSelectionPane">
@@ -125,8 +124,7 @@
         <SplitView Canvas.ZIndex="2" x:Name="CalibrationRunningView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                    PaneClosing="CalibrationRunningView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
-                   CompactPaneLength="48"
-                   DisplayMode="Overlay" CornerRadius="10">
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
             <SplitView.Pane>
                 <Grid>
                     <Grid x:Name="AutoCalibrationPane">
