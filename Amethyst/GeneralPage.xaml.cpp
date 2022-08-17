@@ -894,6 +894,9 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
 void Amethyst::implementation::GeneralPage::OpenDiscordButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	ShellExecuteA(nullptr, nullptr, "https://discord.gg/YBQCRDG", nullptr, nullptr, SW_SHOW);
 }
 
@@ -901,6 +904,9 @@ void Amethyst::implementation::GeneralPage::OpenDiscordButton_Click(
 void Amethyst::implementation::GeneralPage::OpenDocsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/", nullptr, nullptr, SW_SHOW);
 }
 
@@ -908,6 +914,9 @@ void Amethyst::implementation::GeneralPage::OpenDocsButton_Click(
 void Amethyst::implementation::GeneralPage::ServerOpenDocsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/minus10", nullptr, nullptr, SW_SHOW);
 }
 

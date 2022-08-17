@@ -184,6 +184,18 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					k2app::K2Settings.saveSettings();
 				});
 
+			_ptr_tracker_combo->DropDownOpened([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+			});
+
+			_ptr_tracker_combo->DropDownClosed([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+			});
+
 			// Append all elements to the container
 			_container.Children().Append(_title);
 			_container.Children().Append(_tracker_combo);

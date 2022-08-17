@@ -1452,6 +1452,9 @@ namespace k2app::interfacing
 					{
 						if (OnClick) // Check if not null
 							OnClick(this);
+
+						// Play a sound
+						playAppSound(sounds::AppSounds::Invoke);
 					};
 
 				// Set up the click handler to point to the base's one
@@ -1608,6 +1611,9 @@ namespace k2app::interfacing
 					{
 						if (OnValueChanged) // Check if not null
 							OnValueChanged(this, static_cast<int>(e.NewValue()));
+
+						// Play a sound
+						playAppSound(sounds::AppSounds::Invoke);
 					};
 
 				// Set up the click handler to point to the base's one
@@ -1810,6 +1816,18 @@ namespace k2app::interfacing
 
 				// Set up the click handler to point to the base's one
 				_combo_box.SelectionChanged(_n_callback);
+
+				_combo_box.DropDownOpened([&](auto, auto)
+				{
+					// Play a sound
+					playAppSound(sounds::AppSounds::Show);
+				});
+
+				_combo_box.DropDownClosed([&](auto, auto)
+				{
+					// Play a sound
+					playAppSound(sounds::AppSounds::Hide);
+				});
 			}
 		};
 
@@ -1951,6 +1969,9 @@ namespace k2app::interfacing
 					{
 						if (OnChecked) // Check if not null
 							OnChecked(this);
+
+						// Play a sound
+						playAppSound(sounds::AppSounds::ToggleOn);
 					};
 
 				// Create a dummy callback
@@ -1963,6 +1984,9 @@ namespace k2app::interfacing
 					{
 						if (OnUnchecked) // Check if not null
 							OnUnchecked(this);
+
+						// Play a sound
+						playAppSound(sounds::AppSounds::ToggleOff);
 					};
 
 				// Set up the click handler to point to the base's one
@@ -2114,11 +2138,17 @@ namespace k2app::interfacing
 						{
 							if (OnChecked) // Check if not null
 								OnChecked(this);
+
+							// Play a sound
+							playAppSound(sounds::AppSounds::ToggleOn);
 						}
 						else
 						{
 							if (OnUnchecked) // Check if not null
 								OnUnchecked(this);
+
+							// Play a sound
+							playAppSound(sounds::AppSounds::ToggleOff);
 						}
 					};
 
@@ -2246,6 +2276,9 @@ namespace k2app::interfacing
 					{
 						if (e.Key() == winrt::Windows::System::VirtualKey::Enter)
 							OnEnterKeyDown(this);
+
+						// Play a sound
+						playAppSound(sounds::AppSounds::Invoke);
 					};
 
 				// Set up the click handler to point to the base's one

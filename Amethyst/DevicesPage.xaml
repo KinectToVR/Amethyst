@@ -140,32 +140,6 @@
                                                  Closed="DeviceStatusTeachingTip_Closed" />
                                 </TextBlock.Resources>
                             </TextBlock>
-
-                            <!--<AppBarButton x:Name="SelectedDeviceSettingsButton" VerticalAlignment="Top"
-                                          Click="SelectedDeviceSettingsButton_Click"
-                                          x:Uid="/DevicesPage/Buttons/DeviceSettings"
-                                          Icon="Setting" Width="38" Height="46" Margin="7,0,0,0">
-
-                                --><!--Settings pane flyout--><!--
-                                <FlyoutBase.AttachedFlyout>
-                                    <Flyout x:Name="SelectedDeviceSettingsFlyout" Placement="Bottom">
-                                        <Flyout.FlyoutPresenterStyle>
-                                            <Style TargetType="FlyoutPresenter">
-                                                <Setter Property="CornerRadius" Value="8" />
-                                                <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                                            </Style>
-                                        </Flyout.FlyoutPresenterStyle>
-
-                                        <StackPanel>
-                                            <TextBlock x:Uid="/DevicesPage/Titles/DeviceSettings" FontSize="17"
-                                                       Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
-                                            <StackPanel x:Name="SelectedDeviceSettingsRootLayoutPanel"
-                                                        Orientation="Vertical" HorizontalAlignment="Stretch" />
-                                        </StackPanel>
-                                    </Flyout>
-                                </FlyoutBase.AttachedFlyout>
-
-                            </AppBarButton>-->
                         </StackPanel>
 
                         <StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="3" HorizontalAlignment="Stretch">
@@ -205,7 +179,8 @@
                                         </SplitButton.Resources>
 
                                         <SplitButton.Flyout>
-                                            <Flyout Placement="Bottom" x:Name="AlternativeConnectionOptionsFlyout">
+                                            <Flyout Placement="Bottom" x:Name="AlternativeConnectionOptionsFlyout"
+                                                    Opening="ButtonFlyout_Opening" Closing="ButtonFlyout_Closing">
                                                 <Flyout.FlyoutPresenterStyle>
                                                     <Style TargetType="FlyoutPresenter">
                                                         <Setter Property="CornerRadius" Value="8" />
@@ -306,7 +281,8 @@
                                             HorizontalAlignment="Right" VerticalAlignment="Top">
 
                                         <Button.Flyout>
-                                            <Flyout Placement="Bottom" x:Name="SetDeviceTypeFlyout">
+                                            <Flyout Placement="Bottom" x:Name="SetDeviceTypeFlyout"
+                                                    Opening="ButtonFlyout_Opening" Closing="ButtonFlyout_Closing">
                                                 <Flyout.FlyoutPresenterStyle>
                                                     <Style TargetType="FlyoutPresenter">
                                                         <Setter Property="CornerRadius" Value="8" />
@@ -331,11 +307,12 @@
                                                 </StackPanel>
                                             </Flyout>
                                         </Button.Flyout>
-
                                     </Button>
 
                                     <FlyoutBase.AttachedFlyout>
-                                        <Flyout x:Name="NoJointsFlyout">
+                                        <Flyout x:Name="NoJointsFlyout"
+                                                Opening="ButtonFlyout_Opening"
+                                                Closing="ButtonFlyout_Closing">
                                             <Flyout.FlyoutPresenterStyle>
                                                 <Style TargetType="FlyoutPresenter">
                                                     <Setter Property="CornerRadius" Value="8" />

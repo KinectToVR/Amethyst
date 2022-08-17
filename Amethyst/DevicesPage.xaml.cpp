@@ -161,6 +161,9 @@ Amethyst::implementation::DevicesPage::TrackingDeviceListView_SelectionChanged(
 	if (!devices_tab_setup_finished)co_return; // Block dummy selects
 	devices_signal_joints = false; // Don't signal on device selection
 
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	selectedTrackingDeviceID = sender.as<Controls::ListView>().SelectedIndex();
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
@@ -466,6 +469,9 @@ void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(
 {
 	TrackingDevices::devices_handle_refresh(true);
 
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Update the GeneralPage status
 	TrackingDevices::updateTrackingDeviceUI();
 	TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
@@ -477,7 +483,7 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	const RoutedEventArgs& e)
 {
 	auto _index = devicesListView.get()->SelectedIndex();
-
+	
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	LOG(INFO) << "Now disconnecting the tracking device...";
@@ -613,7 +619,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	const RoutedEventArgs& e)
 {
 	auto _index = devicesListView.get()->SelectedIndex();
-
+	
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	LOG(INFO) << "Now deselecting the tracking device...";
@@ -715,7 +721,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	std::string deviceName = "[UNKNOWN]";
-
+	
 	if (trackingDevice.index() == 0)
 	{
 		k2app::K2Settings.overrideDeviceID = selectedTrackingDeviceID;
@@ -943,7 +949,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	std::string deviceName = "[UNKNOWN]";
-
+	
 	if (trackingDevice.index() == 0)
 	{
 		k2app::K2Settings.trackingDeviceID = selectedTrackingDeviceID;
@@ -1395,6 +1401,9 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 void Amethyst::implementation::DevicesPage::OpenDiscordButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	ShellExecuteA(nullptr, nullptr, "https://discord.gg/YBQCRDG", nullptr, nullptr, SW_SHOW);
 }
 
@@ -1402,6 +1411,9 @@ void Amethyst::implementation::DevicesPage::OpenDiscordButton_Click(
 void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/", nullptr, nullptr, SW_SHOW);
 }
 
@@ -1451,4 +1463,21 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::DevicesPage::
 
 	// Show the next tip
 	k2app::shared::teaching_tips::info::endingTeachingTip->IsOpen(true);
+}
+
+
+void winrt::Amethyst::implementation::DevicesPage::ButtonFlyout_Opening(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+{
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+}
+
+
+void winrt::Amethyst::implementation::DevicesPage::ButtonFlyout_Closing(
+	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs& args)
+{
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 }

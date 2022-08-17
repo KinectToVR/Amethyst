@@ -1253,6 +1253,7 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage:
 	k2app::shared::teaching_tips::devices::devicesListTeachingTip->IsOpen(true);
 }
 
+
 void winrt::Amethyst::implementation::SettingsPage::ButtonFlyout_Opening(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {

@@ -299,6 +299,24 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 							expander.get()->ContainerExpander().get()->IsExpanded(false);
 				});
 
+			_ptr_container_expander.get()->Expanding([&](const auto&, const auto&)
+			{
+				// Don't react to pre-init signals
+				if (!k2app::shared::settings::settings_localInitFinished)return;
+
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+			});
+
+			_ptr_container_expander.get()->Collapsed([&](const auto&, const auto&)
+			{
+				// Don't react to pre-init signals
+				if (!k2app::shared::settings::settings_localInitFinished)return;
+
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+			});
+
 			// Push all the trackers
 			ReAppendTrackers();
 			_container_expander.Content(box_value(_container_panel));

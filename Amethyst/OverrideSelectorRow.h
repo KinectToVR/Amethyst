@@ -370,6 +370,18 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_ptr_tracker_position_combo = std::make_shared<ComboBox>(_tracker_position_combo);
 			_ptr_tracker_orientation_combo = std::make_shared<ComboBox>(_tracker_orientation_combo);
 
+			_ptr_selector_flyout->Opening([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+			});
+
+			_ptr_selector_flyout->Closing([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+			});
+
 			// Set up some signals
 			_ptr_tracker_position_combo->SelectionChanged(
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
@@ -393,6 +405,18 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					k2app::K2Settings.saveSettings();
 				});
 
+			_ptr_tracker_position_combo->DropDownOpened([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+			});
+
+			_ptr_tracker_position_combo->DropDownClosed([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+			});
+
 			_ptr_tracker_orientation_combo->SelectionChanged(
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
 				       const SelectionChangedEventArgs& e) -> void
@@ -415,6 +439,18 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Save settings
 					k2app::K2Settings.saveSettings();
 				});
+
+			_ptr_tracker_orientation_combo->DropDownOpened([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+			});
+
+			_ptr_tracker_orientation_combo->DropDownClosed([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+			});
 
 			_ptr_override_position->Click(
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
