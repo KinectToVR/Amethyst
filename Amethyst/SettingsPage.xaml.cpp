@@ -363,7 +363,6 @@ void Amethyst::implementation::SettingsPage::EnableSounds_Checked(
 
 	// Turn sounds on
 	k2app::K2Settings.enableAppSounds = true;
-	ElementSoundPlayer::State(ElementSoundPlayerState::On);
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -378,7 +377,6 @@ void Amethyst::implementation::SettingsPage::EnableSounds_Unchecked(
 
 	// Turn sounds on
 	k2app::K2Settings.enableAppSounds = false;
-	ElementSoundPlayer::State(ElementSoundPlayerState::Off);
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -393,9 +391,8 @@ void Amethyst::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
 	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	// Change sounds level
-	k2app::K2Settings.appSoundsVolume = k2app::shared::settings::soundsVolumeSlider.get()->Value();
-	ElementSoundPlayer::Volume(std::clamp(
-		static_cast<double>(k2app::K2Settings.appSoundsVolume) / 100.0, 0.0, 100.0));
+	k2app::K2Settings.appSoundsVolume = 
+		k2app::shared::settings::soundsVolumeSlider.get()->Value();
 
 	// Save settings
 	k2app::K2Settings.saveSettings();

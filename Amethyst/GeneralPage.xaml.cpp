@@ -273,7 +273,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 	AutoCalibration_StillPending = true;
 
 	// Play a nice sound - starting
-	ElementSoundPlayer::Play(ElementSoundKind::Show);
+	playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationStart);
 
 	// Disable the start button and change [cancel]'s text
 	StartAutoCalibrationButton().IsEnabled(false);
@@ -341,12 +341,17 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 		for (int i = 3; i >= 0; i--)
 		{
-			CalibrationCountdownLabel().Text(std::to_wstring(i));
 			if (!CalibrationPending)break; // Check for exiting
+
+			// Update the countdown label
+			CalibrationCountdownLabel().Text(std::to_wstring(i));
+
+			// Exit if aborted
+			if (!CalibrationPending)break;
 
 			// Play a nice sound - tick / move
 			if (i > 0) // Don't play the last one!
-				ElementSoundPlayer::Play(ElementSoundKind::Focus);
+				playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationTick);
 
 			{
 				// Sleep on UI
@@ -370,7 +375,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 			// Play a nice sound - tick / stand
 			if (i > 0) // Don't play the last one!
-				ElementSoundPlayer::Play(ElementSoundKind::Focus);
+				playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationTick);
 
 			// Capture user's position at t_end-1
 			if (i == 1)
@@ -401,8 +406,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 			if (!CalibrationPending)break; // Check for exiting
 		}
 
+		// Exit if aborted
+		if (!CalibrationPending)break;
+
 		// Play a nice sound - tick / captured
-		ElementSoundPlayer::Play(ElementSoundKind::Invoke);
+		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationPointCaptured);
 
 		// Sleep on UI
 		apartment_context ui_thread;
@@ -477,12 +485,15 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 	{
 		*isMatrixCalibrated = false;
 		k2app::K2Settings.readSettings();
+		
+		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationAborted);
+
 	}
 	// Else save I guess
 	else
 	{
 		k2app::K2Settings.saveSettings();
-		ElementSoundPlayer::Play(ElementSoundKind::Show);
+		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationComplete);
 	}
 
 	// Notify that we're finished
@@ -540,9 +551,6 @@ void Amethyst::implementation::GeneralPage::DiscardCalibrationButton_Click(
 		NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
 			L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
 
-		// Play a nice sound - exiting
-		ElementSoundPlayer::Play(ElementSoundKind::GoBack);
-
 		k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 		skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 	}
@@ -587,7 +595,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 	CalibrationPending = true;
 
 	// Play a nice sound - starting
-	ElementSoundPlayer::Play(ElementSoundKind::Show);
+	playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationStart);
 
 	// Ref current matrices to helper pointers
 	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
@@ -675,7 +683,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 
 		// Play mode swap sound
 		if (CalibrationPending && !k2app::interfacing::calibration_confirm)
-			ElementSoundPlayer::Play(ElementSoundKind::Invoke);
+			playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationPointCaptured);
 
 		// Set up the calibration origin
 		if (calibration_first_time)
@@ -738,7 +746,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 
 		// Play mode swap sound
 		if (CalibrationPending && !k2app::interfacing::calibration_confirm)
-			ElementSoundPlayer::Play(ElementSoundKind::Invoke);
+			playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationPointCaptured);
 
 		// Exit if aborted
 		if (!CalibrationPending)break;
@@ -749,12 +757,14 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualC
 	{
 		*isMatrixCalibrated = false;
 		k2app::K2Settings.readSettings();
+
+		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationAborted);
 	}
 	// Else save I guess
 	else
 	{
 		k2app::K2Settings.saveSettings();
-		ElementSoundPlayer::Play(ElementSoundKind::Show);
+		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationComplete);
 
 		// Sleep on UI
 		apartment_context ui_thread;

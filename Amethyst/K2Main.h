@@ -33,11 +33,10 @@ namespace k2app::main
 			isTrackingFrozen = !isTrackingFrozen;
 
 			// Play a Sound and Update UI
+			playAppSound(isTrackingFrozen ? sounds::AppSounds::ToggleOn : sounds::AppSounds::ToggleOff);
+
 			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
 			{
-				winrt::Microsoft::UI::Xaml::ElementSoundPlayer::Play(
-					winrt::Microsoft::UI::Xaml::ElementSoundKind::Invoke);
-
 				if (shared::general::toggleFreezeButton.get() != nullptr)
 				{
 					shared::general::toggleFreezeButton.get()->IsChecked(isTrackingFrozen);
@@ -117,10 +116,14 @@ namespace k2app::main
 			K2Settings.saveSettings();
 
 			// Play a Sound and Update UI
+			playAppSound(K2Settings.isFlipEnabled
+				             ? sounds::AppSounds::ToggleOn
+				             : sounds::AppSounds::ToggleOff);
+
 			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
 			{
-				winrt::Microsoft::UI::Xaml::ElementSoundPlayer::Play(
-					winrt::Microsoft::UI::Xaml::ElementSoundKind::Invoke);
+				if (shared::settings::flipToggle.get() != nullptr)
+					shared::settings::flipToggle.get()->IsOn(K2Settings.isFlipEnabled);
 			});
 
 			{
@@ -166,9 +169,6 @@ namespace k2app::main
 				ShowVRToast(std::wstring(L"Skeleton Flip ") +
 				            (K2Settings.isFlipEnabled ? L"enabled!" : L"disabled!"), _header);
 			}
-
-			if (shared::settings::flipToggle.get() != nullptr)
-				shared::settings::flipToggle.get()->IsOn(K2Settings.isFlipEnabled);
 		}
 
 		// Update the Calibration:Confirm : one-time switch

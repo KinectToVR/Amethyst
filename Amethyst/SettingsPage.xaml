@@ -465,7 +465,7 @@
                               MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="True" />
                 </Grid>
 
-                <Slider Grid.Row="1" HorizontalAlignment="Left" Width="400" Value="69"
+                <Slider Grid.Row="1" HorizontalAlignment="Left" Width="400" Value="69" Minimum="0" Maximum="100"
                         IsEnabled="{Binding ElementName=SoundsEnabledCheckBox, Path=IsChecked,TargetNullValue=False}"
                         x:Name="SoundsVolumeSlider" ValueChanged="SoundsVolumeSlider_ValueChanged">
                     <Slider.Transitions>
