@@ -116,9 +116,10 @@
                         </Grid>
 
                         <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="FlipDropDown"
-                                  Expanding="FlipDropDown_Expanding" IsEnabled="False"
+                                  Expanding="FlipDropDown_Expanding" 
+                                  Collapsed="FlipDropDown_Collapsed"
                                   ExpandDirection="Down" HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Stretch">
+                                  HorizontalContentAlignment="Stretch" IsEnabled="False">
 
                             <Expander.Content>
                                 <StackPanel Orientation="Vertical" Padding="0,-5">
@@ -151,7 +152,8 @@
                                                       IsEnabled="{Binding ElementName=ExternalFlipCheckBox, 
 									                    Path=IsChecked,TargetNullValue=False}">
                                             <AppBarButton.Flyout>
-                                                <MenuFlyout>
+                                                <MenuFlyout Opening="ButtonFlyout_Opening"
+                                                            Closing="ButtonFlyout_Closing">
                                                     <MenuFlyoutItem x:Uid="/SettingsPage/Captions/FaceTheKinect"
                                                                     FontWeight="Medium"
                                                                     IsHitTestVisible="False" />
@@ -234,7 +236,8 @@
 
                             <FlyoutBase.AttachedFlyout>
                                 <Flyout Placement="Full" x:Name="LearnAboutFiltersFlyout"
-                                        Closed="LearnAboutFiltersFlyout_Closed">
+                                        Closed="LearnAboutFiltersFlyout_Closed"
+                                        Opening="ButtonFlyout_Opening" Closing="ButtonFlyout_Closing">
 
                                     <Flyout.FlyoutPresenterStyle>
                                         <Style TargetType="FlyoutPresenter">
@@ -534,7 +537,9 @@
                              Width="{Binding ElementName=TroubleshootingControlsContainerGrid, Path=ActualWidth, TargetNullValue=315}"
                              x:Uid="/SettingsPage/Buttons/ReManifest" FontSize="16">
                     <SplitButton.Flyout>
-                        <Flyout Placement="RightEdgeAlignedBottom" Opening="AutoStartFlyout_Opening">
+                        <Flyout Placement="RightEdgeAlignedBottom" 
+                                Opening="AutoStartFlyout_Opening"
+                                Closing="ButtonFlyout_Closing">
                             <Flyout.FlyoutPresenterStyle>
                                 <Style TargetType="FlyoutPresenter">
                                     <Setter Property="CornerRadius" Value="8" />
@@ -574,7 +579,8 @@
 
                 <!--Flyout for manifest and reregister errors-->
                 <FlyoutBase.AttachedFlyout>
-                    <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom">
+                    <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom"
+                            Opening="ButtonFlyout_Opening" Closing="ButtonFlyout_Closing">
                         <Flyout.FlyoutPresenterStyle>
                             <Style TargetType="FlyoutPresenter">
                                 <Setter Property="CornerRadius" Value="8" />

@@ -651,6 +651,11 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Save settings
 					k2app::K2Settings.saveSettings();
 
+					// Play a sound
+					playAppSound(_ptr_joint_switch.get()->IsOn()
+						             ? k2app::interfacing::sounds::AppSounds::ToggleOn
+						             : k2app::interfacing::sounds::AppSounds::ToggleOff);
+
 					// Check if any trackers are enabled
 					// No std::ranges today...
 					bool _find_result = false;
@@ -689,6 +694,18 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					k2app::K2Settings.saveSettings();
 				});
 
+			_ptr_position_combo->DropDownOpened([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+			});
+
+			_ptr_position_combo->DropDownClosed([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+			});
+
 			_ptr_orientation_combo->SelectionChanged(
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
 				       const SelectionChangedEventArgs& e) -> void
@@ -705,9 +722,39 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					k2app::K2Settings.saveSettings();
 				});
 
+			_ptr_orientation_combo->DropDownOpened([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+			});
+
+			_ptr_orientation_combo->DropDownClosed([&](auto, auto)
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+			});
+
 			if (_tracker_pointers[0]->tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
 				_tracker_pointers[0]->tracker == ktvr::ITrackerType::Tracker_RightFoot)
 				_ptr_software_orientation.get()->Visibility(Visibility::Visible);
+
+			_ptr_main_expander->Expanding([&](const auto&, const auto&)
+			{
+				// Don't react to pre-init signals
+				if (!k2app::shared::settings::settings_localInitFinished)return;
+
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+			});
+
+			_ptr_main_expander->Collapsed([&](const auto&, const auto&)
+			{
+				// Don't react to pre-init signals
+				if (!k2app::shared::settings::settings_localInitFinished)return;
+
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+			});
 		}
 	};
 }

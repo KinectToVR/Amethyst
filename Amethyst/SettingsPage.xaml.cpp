@@ -45,7 +45,7 @@ namespace winrt::Amethyst::implementation
 
 		LOG(INFO) << "Appending settings' page elements to the shared context";
 
-		k2app::shared::teaching_tips::settings::manageTrackersTeachingTip = 
+		k2app::shared::teaching_tips::settings::manageTrackersTeachingTip =
 			std::make_shared<Controls::TeachingTip>(ManageTrackersTeachingTip());
 
 		restartButton = std::make_shared<Controls::Button>(RestartButton());
@@ -151,6 +151,9 @@ void Amethyst::implementation::SettingsPage::ExternalFlipCheckBox_Checked(
 	TrackingDevices::settings_set_external_flip_is_enabled(); // Parse
 
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOn);
 }
 
 
@@ -165,6 +168,9 @@ void Amethyst::implementation::SettingsPage::ExternalFlipCheckBox_Unchecked(
 	TrackingDevices::settings_set_external_flip_is_enabled(); // Parse
 
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOff);
 }
 
 
@@ -172,6 +178,9 @@ void Amethyst::implementation::SettingsPage::RestartButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ktvr::request_vr_restart<false>("SteamVR needs to be restarted to enable/disable trackers properly.");
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 }
 
 Windows::Foundation::IAsyncAction
@@ -179,6 +188,9 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	LOG(INFO) << "Reset has been invoked: turning trackers off...";
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 
 	// Mark trackers as inactive
 	k2app::interfacing::K2AppTrackersInitialized = false;
@@ -189,7 +201,7 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 
 	// Mark exiting as true
 	k2app::interfacing::isExitingNow = true;
-	
+
 	{
 		// Sleep a bit
 		apartment_context ui_thread;
@@ -291,8 +303,8 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 		// Hide/Show the flip controls container
 		flipDropDownContainer.get()->Visibility(
 			flipToggle.get()->IsEnabled()
-			? Visibility::Visible
-			: Visibility::Collapsed);
+				? Visibility::Visible
+				: Visibility::Collapsed);
 
 		TrackingDevices::settings_set_external_flip_is_enabled();
 	}
@@ -338,8 +350,12 @@ void Amethyst::implementation::SettingsPage::AutoSpawn_Checked(
 	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	k2app::K2Settings.autoSpawnEnabledJoints = true;
+
 	// Save settings
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOn);
 }
 
 
@@ -352,6 +368,9 @@ void Amethyst::implementation::SettingsPage::AutoSpawn_Unchecked(
 	k2app::K2Settings.autoSpawnEnabledJoints = false;
 	// Save settings
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOff);
 }
 
 
@@ -366,6 +385,9 @@ void Amethyst::implementation::SettingsPage::EnableSounds_Checked(
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOn);
 }
 
 
@@ -374,6 +396,9 @@ void Amethyst::implementation::SettingsPage::EnableSounds_Unchecked(
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOff);
 
 	// Turn sounds on
 	k2app::K2Settings.enableAppSounds = false;
@@ -391,7 +416,7 @@ void Amethyst::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
 	if (!k2app::shared::settings::settings_localInitFinished)return;
 
 	// Change sounds level
-	k2app::K2Settings.appSoundsVolume = 
+	k2app::K2Settings.appSoundsVolume =
 		k2app::shared::settings::soundsVolumeSlider.get()->Value();
 
 	// Save settings
@@ -436,6 +461,9 @@ void Amethyst::implementation::SettingsPage::FlipDropDown_Expanding(
 	// Enable/Disable ExtFlip
 	TrackingDevices::settings_set_external_flip_is_enabled();
 	TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 }
 
 
@@ -507,6 +535,11 @@ void Amethyst::implementation::SettingsPage::FlipToggle_Toggled(
 	}
 
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::K2Settings.isFlipEnabled
+		             ? k2app::interfacing::sounds::AppSounds::ToggleOn
+		             : k2app::interfacing::sounds::AppSounds::ToggleOff);
 }
 
 
@@ -515,6 +548,9 @@ void Amethyst::implementation::SettingsPage::AutoStartFlyout_Opening(
 {
 	k2app::shared::settings::autoStartCheckBox->IsChecked(
 		vr::VRApplications()->GetApplicationAutoLaunch("KinectToVR.Amethyst"));
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 }
 
 
@@ -529,6 +565,9 @@ void Amethyst::implementation::SettingsPage::AutoStartCheckBox_Checked(
 	if (app_error != vr::VRApplicationError_None)
 		LOG(WARNING) << "Amethyst manifest not installed! Error:  " <<
 			vr::VRApplications()->GetApplicationsErrorNameFromEnum(app_error);
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOn);
 }
 
 
@@ -543,6 +582,9 @@ void Amethyst::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
 	if (app_error != vr::VRApplicationError_None)
 		LOG(WARNING) << "Amethyst manifest not installed! Error:  " <<
 			vr::VRApplications()->GetApplicationsErrorNameFromEnum(app_error);
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOff);
 }
 
 
@@ -578,6 +620,9 @@ void Amethyst::implementation::SettingsPage::ReManifestButton_Click(
 			break;
 		}
 	}
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 }
 
 
@@ -604,6 +649,9 @@ void Amethyst::implementation::SettingsPage::ReRegisterButton_Click(
 		_opt.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
 		SetErrorFlyout().ShowAt(ReRegisterButton(), _opt);
 	}
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 }
 
 
@@ -711,7 +759,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 			{
 				// Notify of the setup end
 				k2app::shared::settings::settings_localInitFinished = false;
-
+				
 				// Create a new tracker / Remove the unchecked one
 				if (sender.as<Controls::ToggleMenuFlyoutItem>().IsChecked())
 				{
@@ -854,8 +902,8 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					// Hide/Show the flip controls container
 					flipDropDownContainer.get()->Visibility(
 						flipToggle.get()->IsEnabled()
-						? Visibility::Visible
-						: Visibility::Collapsed);
+							? Visibility::Visible
+							: Visibility::Collapsed);
 
 					TrackingDevices::settings_set_external_flip_is_enabled();
 				}
@@ -911,7 +959,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 					// Enable the wiast tracker (no need to worry about the dispatcher, we're already inside)
 					jointExpanderVector.front()->JointSwitch().get()->IsOn(true);
-					
+
 					// Save settings
 					k2app::K2Settings.saveSettings();
 				}
@@ -938,7 +986,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 		{
 			// Notify of the setup end
 			k2app::shared::settings::settings_localInitFinished = false;
-
+			
 			k2app::K2Settings.useTrackerPairs = sender.as<Controls::ToggleMenuFlyoutItem>().IsChecked();
 
 			// Rebuild joint the expander stack
@@ -1030,8 +1078,8 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				// Hide/Show the flip controls container
 				flipDropDownContainer.get()->Visibility(
 					flipToggle.get()->IsEnabled()
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 				TrackingDevices::settings_set_external_flip_is_enabled();
 			}
@@ -1084,6 +1132,15 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 	settings_trackerConfigFlyout.value().Placement(Controls::Primitives::FlyoutPlacementMode::LeftEdgeAlignedBottom);
 	settings_trackerConfigFlyout.value().ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 	settings_trackerConfigFlyout.value().ShowAt(TrackerConfigButton());
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+
+	settings_trackerConfigFlyout.value().Closing([&](auto, auto)
+	{
+		// Play a sound
+		playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+	});
 }
 
 
@@ -1095,6 +1152,9 @@ void Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Checked(
 
 	k2app::K2Settings.checkForOverlappingTrackers = true;
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOn);
 }
 
 
@@ -1106,6 +1166,9 @@ void Amethyst::implementation::SettingsPage::CheckOverlapsCheckBox_Unchecked(
 
 	k2app::K2Settings.checkForOverlappingTrackers = false;
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOff);
 }
 
 
@@ -1114,11 +1177,15 @@ void Amethyst::implementation::SettingsPage::ViewLogsButton_Click(
 {
 	k2app::interfacing::openFolderAndSelectItem(
 		k2app::interfacing::thisLogDestination + ".log");
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 }
 
 
 void winrt::Amethyst::implementation::SettingsPage::ManageTrackersTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	AddTrackersTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	AddTrackersTeachingTip().IsOpen(true);
@@ -1126,7 +1193,8 @@ void winrt::Amethyst::implementation::SettingsPage::ManageTrackersTeachingTip_Cl
 
 
 void winrt::Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	LearnAboutFiltersTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	LearnAboutFiltersTeachingTip().IsOpen(true);
@@ -1134,11 +1202,12 @@ void winrt::Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_Close
 
 
 Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	PageMainScrollViewer().UpdateLayout();
 	PageMainScrollViewer().ChangeView(nullptr,
-		PageMainScrollViewer().ExtentHeight(), nullptr);
+	                                  PageMainScrollViewer().ExtentHeight(), nullptr);
 
 	apartment_context ui_thread;
 	co_await resume_background();
@@ -1151,7 +1220,8 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage:
 
 
 Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage::AutoStartTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	// Wait a bit
 	{
@@ -1178,6 +1248,35 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage:
 	PageMainScrollViewer().ScrollToVerticalOffset(0);
 
 	// Show the next tip
-	k2app::shared::teaching_tips::devices::devicesListTeachingTip->TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+	k2app::shared::teaching_tips::devices::devicesListTeachingTip->TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
 	k2app::shared::teaching_tips::devices::devicesListTeachingTip->IsOpen(true);
+}
+
+void winrt::Amethyst::implementation::SettingsPage::ButtonFlyout_Opening(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+{
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+}
+
+
+void winrt::Amethyst::implementation::SettingsPage::ButtonFlyout_Closing(
+	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs& args)
+{
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+}
+
+
+void winrt::Amethyst::implementation::SettingsPage::FlipDropDown_Collapsed
+(const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
+ const winrt::Microsoft::UI::Xaml::Controls::ExpanderCollapsedEventArgs& args)
+{
+	// Don't react to pre-init signals
+	if (!k2app::shared::settings::settings_localInitFinished)return;
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 }
