@@ -450,9 +450,9 @@ namespace winrt::Amethyst::implementation
 			NavViewDevicesButtonIconCanvas());
 
 		k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Empty = std::make_shared<
-			Microsoft::UI::Xaml::Shapes::Path>(NavViewDevicesButtonIcon_Empty());
+			Shapes::Path>(NavViewDevicesButtonIcon_Empty());
 		k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Solid = std::make_shared<
-			Microsoft::UI::Xaml::Shapes::Path>(NavViewDevicesButtonIcon_Solid());
+			Shapes::Path>(NavViewDevicesButtonIcon_Solid());
 
 		k2app::shared::main::navigation_items::navViewGeneralButtonIcon = std::make_shared<Controls::FontIcon>(
 			NavViewGeneralButtonIcon());
@@ -1305,7 +1305,7 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 	LOG(INFO) << "Navigation requested! Page tag: " << WStringToString(navItemTag);
 
 	Windows::UI::Xaml::Interop::TypeName pageTypeName;
-	for (auto&& eachPage : k2app::shared::main::m_pages)
+	for (auto&& eachPage : m_pages)
 	{
 		if (eachPage.first == navItemTag)
 		{
@@ -1317,62 +1317,64 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 	// Get the page type before navigation so you can prevent duplicate
 	// entries in the backstack.
 	Windows::UI::Xaml::Interop::TypeName prevNavPageType =
-		k2app::shared::main::mainContentFrame->CurrentSourcePageType();
-
+		mainContentFrame->CurrentSourcePageType();
+	
 	// Navigate only if the selected page isn't currently loaded.
 	if (pageTypeName.Name != L"" && prevNavPageType.Name != pageTypeName.Name)
 	{
+		playAppSound(interfacing::sounds::AppSounds::Invoke);
+
 		// Switch bring back the current navview item to the base state
 		if (!prevNavPageType.Name.empty())
 		{
 			if (prevNavPageType.Name == L"Amethyst.GeneralPage")
 			{
-				k2app::shared::main::navigation_items::navViewGeneralButtonIcon->Translation({0, -8, 0});
-				k2app::shared::main::navigation_items::navViewGeneralButtonLabel->Opacity(1.0);
+				navigation_items::navViewGeneralButtonIcon->Translation({0, -8, 0});
+				navigation_items::navViewGeneralButtonLabel->Opacity(1.0);
 
-				k2app::shared::main::navigation_items::navViewGeneralButtonIcon->Foreground(
+				navigation_items::navViewGeneralButtonIcon->Foreground(
 					Application::Current().Resources().TryLookup(
 						box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
-				k2app::shared::main::navigation_items::navViewGeneralButtonIcon->Glyph(L"\uE80F");
+				navigation_items::navViewGeneralButtonIcon->Glyph(L"\uE80F");
 			}
 			else if (prevNavPageType.Name == L"Amethyst.SettingsPage")
 			{
-				k2app::shared::main::navigation_items::navViewSettingsButtonIcon->Translation({0, -8, 0});
-				k2app::shared::main::navigation_items::navViewSettingsButtonLabel->Opacity(1.0);
+				navigation_items::navViewSettingsButtonIcon->Translation({0, -8, 0});
+				navigation_items::navViewSettingsButtonLabel->Opacity(1.0);
 
-				k2app::shared::main::navigation_items::navViewSettingsButtonIcon->Foreground(
+				navigation_items::navViewSettingsButtonIcon->Foreground(
 					Application::Current().Resources().TryLookup(
 						box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
-				k2app::shared::main::navigation_items::navViewSettingsButtonIcon->Glyph(L"\uE713");
+				navigation_items::navViewSettingsButtonIcon->Glyph(L"\uE713");
 			}
 			else if (prevNavPageType.Name == L"Amethyst.DevicesPage")
 			{
-				k2app::shared::main::navigation_items::navViewDevicesButtonIconCanvas->Translation({0, -8, 0});
-				k2app::shared::main::navigation_items::navViewDevicesButtonLabel->Opacity(1.0);
+				navigation_items::navViewDevicesButtonIconCanvas->Translation({0, -8, 0});
+				navigation_items::navViewDevicesButtonLabel->Opacity(1.0);
 
-				k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Empty->Visibility(Visibility::Visible);
-				k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Solid->
+				navigation_items::navViewDevicesButtonIcon_Empty->Visibility(Visibility::Visible);
+				navigation_items::navViewDevicesButtonIcon_Solid->
 					Visibility(Visibility::Collapsed);
 			}
 			else if (prevNavPageType.Name == L"Amethyst.InfoPage")
 			{
-				k2app::shared::main::navigation_items::navViewInfoButtonIcon->Translation({0, -8, 0});
-				k2app::shared::main::navigation_items::navViewInfoButtonLabel->Opacity(1.0);
+				navigation_items::navViewInfoButtonIcon->Translation({0, -8, 0});
+				navigation_items::navViewInfoButtonLabel->Opacity(1.0);
 
-				k2app::shared::main::navigation_items::navViewInfoButtonIcon->Foreground(
+				navigation_items::navViewInfoButtonIcon->Foreground(
 					Application::Current().Resources().TryLookup(
 						box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
-				k2app::shared::main::navigation_items::navViewInfoButtonIcon->Glyph(L"\uE946");
+				navigation_items::navViewInfoButtonIcon->Glyph(L"\uE946");
 			}
 			else if (prevNavPageType.Name == L"Amethyst.ConsolePage")
 			{
-				k2app::shared::main::navigation_items::navViewOkashiButtonIcon->Translation({0, -8, 0});
-				k2app::shared::main::navigation_items::navViewOkashiButtonLabel->Opacity(1.0);
+				navigation_items::navViewOkashiButtonIcon->Translation({0, -8, 0});
+				navigation_items::navViewOkashiButtonLabel->Opacity(1.0);
 
-				k2app::shared::main::navigation_items::navViewOkashiButtonIcon->Foreground(
+				navigation_items::navViewOkashiButtonIcon->Foreground(
 					Application::Current().Resources().TryLookup(
 						box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
-				k2app::shared::main::navigation_items::navViewOkashiButtonIcon->Glyph(L"\uEB51");
+				navigation_items::navViewOkashiButtonIcon->Glyph(L"\uEB51");
 			}
 		}
 
@@ -1381,57 +1383,57 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 		{
 			if (pageTypeName.Name == L"Amethyst.GeneralPage")
 			{
-				k2app::shared::main::navigation_items::navViewGeneralButtonIcon->Glyph(L"\uEA8A");
-				k2app::shared::main::navigation_items::navViewGeneralButtonIcon->Foreground(
+				navigation_items::navViewGeneralButtonIcon->Glyph(L"\uEA8A");
+				navigation_items::navViewGeneralButtonIcon->Foreground(
 					Application::Current().Resources().TryLookup(
 						box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
 
-				k2app::shared::main::navigation_items::navViewGeneralButtonLabel->Opacity(0.0);
-				k2app::shared::main::navigation_items::navViewGeneralButtonIcon->Translation({0, 0, 0});
+				navigation_items::navViewGeneralButtonLabel->Opacity(0.0);
+				navigation_items::navViewGeneralButtonIcon->Translation({0, 0, 0});
 			}
 			else if (pageTypeName.Name == L"Amethyst.SettingsPage")
 			{
-				k2app::shared::main::navigation_items::navViewSettingsButtonIcon->Glyph(L"\uF8B0");
-				k2app::shared::main::navigation_items::navViewSettingsButtonIcon->Foreground(
+				navigation_items::navViewSettingsButtonIcon->Glyph(L"\uF8B0");
+				navigation_items::navViewSettingsButtonIcon->Foreground(
 					Application::Current().Resources().TryLookup(
 						box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
 
-				k2app::shared::main::navigation_items::navViewSettingsButtonLabel->Opacity(0.0);
-				k2app::shared::main::navigation_items::navViewSettingsButtonIcon->Translation({0, 0, 0});
+				navigation_items::navViewSettingsButtonLabel->Opacity(0.0);
+				navigation_items::navViewSettingsButtonIcon->Translation({0, 0, 0});
 			}
 			else if (pageTypeName.Name == L"Amethyst.DevicesPage")
 			{
-				k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Solid->Visibility(Visibility::Visible);
-				k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Empty->
+				navigation_items::navViewDevicesButtonIcon_Solid->Visibility(Visibility::Visible);
+				navigation_items::navViewDevicesButtonIcon_Empty->
 					Visibility(Visibility::Collapsed);
 
-				k2app::shared::main::navigation_items::navViewDevicesButtonLabel->Opacity(0.0);
-				k2app::shared::main::navigation_items::navViewDevicesButtonIconCanvas->Translation({0, 0, 0});
+				navigation_items::navViewDevicesButtonLabel->Opacity(0.0);
+				navigation_items::navViewDevicesButtonIconCanvas->Translation({0, 0, 0});
 			}
 			else if (pageTypeName.Name == L"Amethyst.InfoPage")
 			{
-				k2app::shared::main::navigation_items::navViewInfoButtonIcon->Glyph(L"\uF167");
-				k2app::shared::main::navigation_items::navViewInfoButtonIcon->Foreground(
+				navigation_items::navViewInfoButtonIcon->Glyph(L"\uF167");
+				navigation_items::navViewInfoButtonIcon->Foreground(
 					Application::Current().Resources().TryLookup(
 						box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
 
-				k2app::shared::main::navigation_items::navViewInfoButtonLabel->Opacity(0.0);
-				k2app::shared::main::navigation_items::navViewInfoButtonIcon->Translation({0, 0, 0});
+				navigation_items::navViewInfoButtonLabel->Opacity(0.0);
+				navigation_items::navViewInfoButtonIcon->Translation({0, 0, 0});
 			}
 			else if (pageTypeName.Name == L"Amethyst.ConsolePage")
 			{
-				k2app::shared::main::navigation_items::navViewOkashiButtonIcon->Glyph(L"\uEB52");
-				k2app::shared::main::navigation_items::navViewOkashiButtonIcon->Foreground(
+				navigation_items::navViewOkashiButtonIcon->Glyph(L"\uEB52");
+				navigation_items::navViewOkashiButtonIcon->Foreground(
 					Application::Current().Resources().TryLookup(
 						box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
 
-				k2app::shared::main::navigation_items::navViewOkashiButtonLabel->Opacity(0.0);
-				k2app::shared::main::navigation_items::navViewOkashiButtonIcon->Translation({0, 0, 0});
+				navigation_items::navViewOkashiButtonLabel->Opacity(0.0);
+				navigation_items::navViewOkashiButtonIcon->Translation({0, 0, 0});
 			}
 		}
 
-		k2app::interfacing::currentPageTag = navItemTag; // Cache the current page tag
-		k2app::shared::main::mainContentFrame->Navigate(pageTypeName, nullptr, transitionInfo);
+		interfacing::currentPageTag = navItemTag; // Cache the current page tag
+		mainContentFrame->Navigate(pageTypeName, nullptr, transitionInfo);
 	}
 }
 
@@ -1612,8 +1614,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateBu
 	const Input::TappedRoutedEventArgs& e)
 {
 	// Check for updates (and show)
-	if (!checkingUpdatesNow)
+	if (!checkingUpdatesNow) 
+	{
+		playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 		co_await checkUpdates(true);
+	}
 	else co_return;
 }
 
@@ -1683,9 +1688,9 @@ void k2app::interfacing::handle_app_exit(const uint32_t& p_sleep_millis)
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::InitializerTeachingTip_ActionButtonClick(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Windows::Foundation::IInspectable& args)
+void Amethyst::implementation::MainWindow::InitializerTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender,
+	const Windows::Foundation::IInspectable& args)
 {
 	// Dismiss the current tip
 	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(false);
@@ -1702,9 +1707,9 @@ void winrt::Amethyst::implementation::MainWindow::InitializerTeachingTip_ActionB
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::InitializerTeachingTip_CloseButtonClick(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Windows::Foundation::IInspectable& args)
+void Amethyst::implementation::MainWindow::InitializerTeachingTip_CloseButtonClick(
+	const Controls::TeachingTip& sender,
+	const Windows::Foundation::IInspectable& args)
 {
 	// Just dismiss the tip
 	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
@@ -1712,9 +1717,9 @@ void winrt::Amethyst::implementation::MainWindow::InitializerTeachingTip_CloseBu
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::HelpButton_Tapped(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs& e)
+void Amethyst::implementation::MainWindow::HelpButton_Tapped(
+	const Windows::Foundation::IInspectable& sender,
+	const Input::TappedRoutedEventArgs& e)
 {
 	// Change the docs button's text
 
@@ -1804,8 +1809,8 @@ void winrt::Amethyst::implementation::MainWindow::HelpButton_Tapped(
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::HelpFlyoutDocsButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void Amethyst::implementation::MainWindow::HelpFlyoutDocsButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// General Page
 	if (k2app::interfacing::currentAppState == L"general")
@@ -1883,8 +1888,8 @@ void winrt::Amethyst::implementation::MainWindow::HelpFlyoutDocsButton_Click(
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::HelpFlyoutDiscordButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void Amethyst::implementation::MainWindow::HelpFlyoutDiscordButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ShellExecuteA(nullptr, nullptr,
 	              "https://discord.gg/YBQCRDG",
@@ -1892,10 +1897,27 @@ void winrt::Amethyst::implementation::MainWindow::HelpFlyoutDiscordButton_Click(
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::HelpFlyoutDevButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void Amethyst::implementation::MainWindow::HelpFlyoutDevButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	ShellExecuteA(nullptr, nullptr,
 	              "https://github.com/KinectToVR/K2TrackingDevice-Samples/blob/main/DEVICES.md",
 	              nullptr, nullptr, SW_SHOW);
+}
+
+
+void Amethyst::implementation::MainWindow::ButtonFlyout_Opening(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
+{
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+}
+
+
+void Amethyst::implementation::MainWindow::ButtonFlyout_Closing(
+	const Controls::Primitives::FlyoutBase& sender,
+	const Controls::Primitives::FlyoutBaseClosingEventArgs& args)
+{
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 }

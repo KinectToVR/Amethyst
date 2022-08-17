@@ -19,7 +19,7 @@
                    Width="18" Height="18"
                    Margin="16,12,0,0" />
 
-            <TextBlock Text="Amethyst" TextWrapping="NoWrap" Opacity="1.0" 
+            <TextBlock Text="Amethyst" TextWrapping="NoWrap" Opacity="1.0"
                        Margin="50,12,0,0" x:Name="AppTitleLabel"
                        FontSize="12" FontWeight="SemiBold">
                 <TextBlock.OpacityTransition>
@@ -376,7 +376,9 @@
                                  Storyboard.TargetName="UpdateIcon" />
             </Storyboard>
 
-            <Flyout x:Name="UpdateFlyout">
+            <Flyout x:Name="UpdateFlyout"
+                    Opening="ButtonFlyout_Opening"
+                    Closing="ButtonFlyout_Closing">
                 <Flyout.FlyoutPresenterStyle>
                     <Style TargetType="FlyoutPresenter">
                         <Setter Property="CornerRadius" Value="8" />
@@ -409,7 +411,9 @@
                 </StackPanel>
             </Flyout>
 
-            <MenuFlyout x:Name="HelpFlyout">
+            <MenuFlyout x:Name="HelpFlyout"
+                        Opening="ButtonFlyout_Opening"
+                        Closing="ButtonFlyout_Closing">
                 <MenuFlyout.MenuFlyoutPresenterStyle>
                     <Style TargetType="MenuFlyoutPresenter">
                         <Setter Property="CornerRadius" Value="8" />
@@ -419,7 +423,7 @@
                 </MenuFlyout.MenuFlyoutPresenterStyle>
 
                 <!--Docs-->
-                <MenuFlyoutItem x:Name="HelpFlyoutDocsButton" 
+                <MenuFlyoutItem x:Name="HelpFlyoutDocsButton"
                                 Click="HelpFlyoutDocsButton_Click"
                                 Text="[NOT_SET_DOCS]">
                     <MenuFlyoutItem.Icon>
@@ -428,7 +432,7 @@
                 </MenuFlyoutItem>
 
                 <!--Discord-->
-                <MenuFlyoutItem x:Name="HelpFlyoutDiscordButton" 
+                <MenuFlyoutItem x:Name="HelpFlyoutDiscordButton"
                                 Click="HelpFlyoutDiscordButton_Click"
                                 x:Uid="/SharedStrings/Buttons/Help/Discord">
                     <MenuFlyoutItem.Icon>
@@ -437,7 +441,7 @@
                 </MenuFlyoutItem>
 
                 <!--GitHub / Dev Docs-->
-                <MenuFlyoutItem x:Name="HelpFlyoutDevButton" 
+                <MenuFlyoutItem x:Name="HelpFlyoutDevButton"
                                 Click="HelpFlyoutDevButton_Click"
                                 x:Uid="/SharedStrings/Buttons/Help/Developers">
                     <MenuFlyoutItem.Icon>
