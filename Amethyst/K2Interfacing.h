@@ -144,6 +144,96 @@ namespace k2app::interfacing
 		shared::main::thisNotificationManager.get()->Show(toast);
 	}
 
+	namespace sounds
+	{
+		// Sound types
+		enum AppSounds
+		{
+			CalibrationAborted,
+			CalibrationComplete,
+			CalibrationPointCaptured,
+			CalibrationStart,
+			CalibrationTick,
+			Error,
+			Focus,
+			GoBack,
+			Hide,
+			Invoke,
+			MoveNext,
+			MovePrevious,
+			Show,
+			ToggleOff,
+			ToggleOn,
+			TrackersConnected,
+			TrackersDisconnected
+		};
+
+		// File names for sounds
+		inline std::map<AppSounds, std::string> AppSoundsNamesMap =
+		{
+			{CalibrationAborted, "CalibrationAborted"},
+			{CalibrationComplete, "CalibrationComplete"},
+			{CalibrationPointCaptured, "CalibrationPointCaptured"},
+			{CalibrationStart, "CalibrationStart"},
+			{CalibrationTick, "CalibrationTick"},
+			{Error, "Error"},
+			{Focus, "Focus"},
+			{GoBack, "GoBack"},
+			{Hide, "Hide"},
+			{Invoke, "Invoke"},
+			{MoveNext, "MoveNext"},
+			{MovePrevious, "MovePrevious"},
+			{Show, "Show"},
+			{ToggleOff, "ToggleOff"},
+			{ToggleOn, "ToggleOn"},
+			{TrackersConnected, "TrackersConnected"},
+			{TrackersDisconnected, "TrackersDisconnected"}
+		};
+
+		// Play a desired sound
+		inline void playAppSound(AppSounds sound)
+		{
+			std::thread([&, sound]
+			{
+				try
+				{
+					// Check if the sound file even exists & if sounds are on
+					if (K2Settings.enableAppSounds &&
+						exists(boost::dll::program_location().parent_path() /
+							"Assets" / "Sounds" / (AppSoundsNamesMap.at(sound) + ".wav")))
+					{
+						// Load the sound file into a player
+						const auto soundPlayer = winrt::Windows::Media::Playback::MediaPlayer();
+						soundPlayer.Source(winrt::Windows::Media::Core::MediaSource::CreateFromUri(
+							winrt::Windows::Foundation::Uri((boost::dll::program_location().parent_path() /
+								"Assets" / "Sounds" / (AppSoundsNamesMap.at(sound) + ".wav")).wstring())));
+
+						// Set the desired volume
+						soundPlayer.Volume(std::clamp(
+							static_cast<double>(K2Settings.appSoundsVolume) / 100.0, 0.0, 1.0));
+
+						// Play the sound
+						soundPlayer.Play();
+
+						// Wait for the sound to complete
+						Sleep(2000);
+					}
+					else
+					{
+						LOG(WARNING) << "Sound file " << boost::dll::program_location().parent_path() /
+							"Assets" / "Sounds" / (AppSoundsNamesMap.at(sound) + ".wav") <<
+							"could not be played because it does not exist, please check if it's there.";
+					}
+				}
+				catch (...)
+				{
+					LOG(WARNING) << "A sound file with type: " << sound <<
+						" could not be played because it due to an unexpected error.";
+				}
+			}).detach();
+		}
+	}
+
 	// Get log timestamp
 	inline std::string GetLogTimestamp()
 	{
@@ -581,6 +671,28 @@ namespace k2app::interfacing
 		//L"COULD NOT CONNECT TO K2API (Code -11)\nE_K2API_FAILURE\nThis error shouldn't occur, actually. Something's wrong a big part.";
 			break;
 		}
+
+		// Play an error sound if smth's wrong
+		if (serverDriverStatusCode != 1)
+			playAppSound(sounds::AppSounds::Error);
+
+		else
+			shared::main::thisDispatcherQueue->TryEnqueue([&]()
+			-> winrt::Windows::Foundation::IAsyncAction
+				{
+					// Sleep a bit before checking
+					winrt::apartment_context ui_thread;
+					co_await winrt::resume_background();
+					Sleep(1000);
+					co_await ui_thread;
+
+					if (shared::general::errorWhatText.get() != nullptr &&
+						shared::general::errorWhatText.get()->Visibility() ==
+						winrt::Microsoft::UI::Xaml::Visibility::Visible ||
+						shared::general::overrideErrorWhatText.get()->Visibility() ==
+						winrt::Microsoft::UI::Xaml::Visibility::Visible)
+						playAppSound(sounds::AppSounds::Error);
+				});
 
 		// LOG the status
 		LOG(INFO) << "Current K2 Server status: " << WStringToString(serverStatusString);
@@ -1078,96 +1190,6 @@ namespace k2app::interfacing
 
 			case ktvr::Joint_Total: return ktvr::Joint_Total;
 			}
-		}
-	}
-
-	namespace sounds
-	{
-		// Sound types
-		enum AppSounds
-		{
-			CalibrationAborted,
-			CalibrationComplete,
-			CalibrationPointCaptured,
-			CalibrationStart,
-			CalibrationTick,
-			Error,
-			Focus,
-			GoBack,
-			Hide,
-			Invoke,
-			MoveNext,
-			MovePrevious,
-			Show,
-			ToggleOff,
-			ToggleOn,
-			TrackersConnected,
-			TrackersDisconnected
-		};
-
-		// File names for sounds
-		inline std::map<AppSounds, std::string> AppSoundsNamesMap =
-		{
-			{CalibrationAborted, "CalibrationAborted"},
-			{CalibrationComplete, "CalibrationComplete"},
-			{CalibrationPointCaptured, "CalibrationPointCaptured"},
-			{CalibrationStart, "CalibrationStart"},
-			{CalibrationTick, "CalibrationTick"},
-			{Error, "Error"},
-			{Focus, "Focus"},
-			{GoBack, "GoBack"},
-			{Hide, "Hide"},
-			{Invoke, "Invoke"},
-			{MoveNext, "MoveNext"},
-			{MovePrevious, "MovePrevious"},
-			{Show, "Show"},
-			{ToggleOff, "ToggleOff"},
-			{ToggleOn, "ToggleOn"},
-			{TrackersConnected, "TrackersConnected"},
-			{TrackersDisconnected, "TrackersDisconnected"}
-		};
-
-		// Play a desired sound
-		inline void playAppSound(AppSounds sound)
-		{
-			std::thread([&, sound]
-			{
-				try
-				{
-					// Check if the sound file even exists & if sounds are on
-					if (K2Settings.enableAppSounds &&
-						exists(boost::dll::program_location().parent_path() /
-							"Assets" / "Sounds" / (AppSoundsNamesMap.at(sound) + ".wav")))
-					{
-						// Load the sound file into a player
-						const auto soundPlayer = winrt::Windows::Media::Playback::MediaPlayer();
-						soundPlayer.Source(winrt::Windows::Media::Core::MediaSource::CreateFromUri(
-							winrt::Windows::Foundation::Uri((boost::dll::program_location().parent_path() /
-								"Assets" / "Sounds" / (AppSoundsNamesMap.at(sound) + ".wav")).wstring())));
-
-						// Set the desired volume
-						soundPlayer.Volume(std::clamp(
-							static_cast<double>(K2Settings.appSoundsVolume) / 100.0, 0.0, 1.0));
-
-						// Play the sound
-						soundPlayer.Play();
-
-						// Wait for the sound to complete
-						Sleep(2000);
-					}
-					else
-					{
-						LOG(WARNING) << "Sound file " << boost::dll::program_location().parent_path() /
-							"Assets" / "Sounds" / (AppSoundsNamesMap.at(sound) + ".wav") <<
-							"could not be played because it does not exist, please check if it's there.";
-					}
-				}
-				catch (...)
-				{
-					LOG(WARNING) << "A sound file with type: " << sound <<
-						" could not be played because it due to an unexpected error.";
-				}
-			}).detach();
 		}
 	}
 }
