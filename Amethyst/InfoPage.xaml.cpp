@@ -29,6 +29,9 @@ namespace winrt::Amethyst::implementation
 		k2app::interfacing::ShowToast(
 			L"お可愛いこと❢", L"(P.S. Congratulations!)");
 
+		// Play a sound
+		playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+
 		k2app::shared::main::consoleItem.get()->Visibility(Visibility::Visible);
 	}
 }
