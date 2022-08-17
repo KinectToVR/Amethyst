@@ -302,6 +302,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						// Update backend offsets with new values DO NOT SAVE
 						_tracker_pointer->orientationOffset(_xyz_zyx_map[index]) =
 							degreesToRadians(sender.as<NumberBox>().Value());
+
+						// Play a sound
+						playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 					});
 			}
 
@@ -330,6 +333,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						// Update backend offsets with new values DO NOT SAVE
 						_tracker_pointer->positionOffset[index] =
 							sender.as<NumberBox>().Value() / 100.0;
+
+						// Play a sound
+						playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 					});
 			}
 		}

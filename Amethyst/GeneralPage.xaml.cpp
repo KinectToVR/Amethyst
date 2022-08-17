@@ -109,7 +109,7 @@ namespace winrt::Amethyst::implementation
 		toggleFreezeButton = std::make_shared<Controls::ToggleSplitButton>(ToggleTrackingButton());
 		freezeOnlyLowerCheckBox = std::make_shared<Controls::CheckBox>(FreezeOnlyLowerCheckBox());
 
-		k2app::shared::teaching_tips::general::toggleTrackersTeachingTip = 
+		k2app::shared::teaching_tips::general::toggleTrackersTeachingTip =
 			std::make_shared<Controls::TeachingTip>(ToggleTrackersTeachingTip());
 
 		// Create and push the offsets controller
@@ -139,8 +139,12 @@ void Amethyst::implementation::GeneralPage::OffsetsButton_Click(
 	// Open the pane now
 	OffsetsView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	OffsetsView().IsPaneOpen(true);
-	
+
 	AllowNavigation(false);
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+
 	k2app::interfacing::currentAppState = L"offsets";
 }
 
@@ -159,6 +163,11 @@ void Amethyst::implementation::GeneralPage::SkeletonToggleButton_Click(
 			: box_value(k2app::interfacing::LocalizedResourceWString(
 				L"GeneralPage", L"Buttons/Skeleton/Show/Content")));
 
+	// Play a sound
+	playAppSound(k2app::K2Settings.skeletonPreviewEnabled
+		             ? k2app::interfacing::sounds::AppSounds::ToggleOn
+		             : k2app::interfacing::sounds::AppSounds::ToggleOff);
+
 	forceRenderCheckBox.get()->IsEnabled(
 		skeletonToggleButton.get()->IsChecked());
 	forceRenderText.get()->Opacity(
@@ -174,6 +183,9 @@ void Amethyst::implementation::GeneralPage::ForceRenderCheckBox_Checked(
 	k2app::K2Settings.forceSkeletonPreview = true;
 	skeleton_force_set_ui(k2app::K2Settings.forceSkeletonPreview);
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOn);
 }
 
 void Amethyst::implementation::GeneralPage::ForceRenderCheckBox_Unchecked(
@@ -183,6 +195,9 @@ void Amethyst::implementation::GeneralPage::ForceRenderCheckBox_Unchecked(
 	k2app::K2Settings.forceSkeletonPreview = false;
 	skeleton_force_set_ui(k2app::K2Settings.forceSkeletonPreview);
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOff);
 }
 
 void Amethyst::implementation::GeneralPage::SaveOffsetsButton_Click(
@@ -192,6 +207,10 @@ void Amethyst::implementation::GeneralPage::SaveOffsetsButton_Click(
 	OffsetsView().IsPaneOpen(false);
 
 	AllowNavigation(true);
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+
 	k2app::interfacing::currentAppState = L"general";
 
 	// Save backend offsets' values to settings/file
@@ -216,6 +235,9 @@ void Amethyst::implementation::GeneralPage::DiscardOffsetsButton_Click(
 	// Close the pane now
 	OffsetsView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	OffsetsView().IsPaneOpen(false);
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::GoBack);
 
 	AllowNavigation(true);
 	k2app::interfacing::currentAppState = L"general";
@@ -246,6 +268,9 @@ void Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
 
 	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	CalibrationRunningView().IsPaneOpen(true);
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 
 	k2app::interfacing::currentAppState = L"calibration_auto";
 
@@ -485,9 +510,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 	{
 		*isMatrixCalibrated = false;
 		k2app::K2Settings.readSettings();
-		
-		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationAborted);
 
+		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationAborted);
 	}
 	// Else save I guess
 	else
@@ -537,7 +561,7 @@ void Amethyst::implementation::GeneralPage::DiscardCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Just exit
-	if (!CalibrationPending)
+	if (!CalibrationPending && !AutoCalibration_StillPending)
 	{
 		CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 		CalibrationSelectView().IsPaneOpen(false);
@@ -546,6 +570,10 @@ void Amethyst::implementation::GeneralPage::DiscardCalibrationButton_Click(
 		CalibrationRunningView().IsPaneOpen(false);
 
 		AllowNavigation(true);
+
+		// Play a sound
+		playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+
 		k2app::interfacing::currentAppState = L"general";
 
 		NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
@@ -831,6 +859,9 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Checked(
 	// Request a check for already-added trackers
 	k2app::interfacing::alreadyAddedTrackersScanRequested = true;
 
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::TrackersConnected);
+
 	// Show additional controls
 	CalibrationButton().IsEnabled(true);
 	OffsetsButton().IsEnabled(true);
@@ -850,6 +881,9 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
 
 	// Request a check for already-added trackers
 	k2app::interfacing::alreadyAddedTrackersScanRequested = true;
+	
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::TrackersDisconnected);
 
 	// Hide additional controls
 	CalibrationButton().IsEnabled(false);
@@ -983,7 +1017,7 @@ void Amethyst::implementation::GeneralPage::sk_line(
 	// Compose perspective constants, make it 70%
 	const double s_from_multiply = .7 * (s_normal_distance / (joints[from].z() > 0. ? joints[from].z() : 3.)),
 	             s_to_multiply = .7 * (s_normal_distance / (joints[to].z() > 0. ? joints[to].z() : 3.));
-	
+
 	line.StrokeThickness(5);
 
 	if (states[from] != ktvr::State_Tracked ||
@@ -1515,6 +1549,9 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 		show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
 		k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
 		skeleton_visibility_set_ui(true); // Change to show
+
+		// Play a sound
+		playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 	}
 	else
 	{
@@ -1550,13 +1587,16 @@ void Amethyst::implementation::GeneralPage::BaseCalibration_Click(
 	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
 	skeleton_visibility_set_ui(true); // Change to show
 
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+
 	// Eventually enable the auto calibration
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
 		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
-			getDeviceCharacteristics() ==ktvr::K2_Character_Full) 
+			getDeviceCharacteristics() == ktvr::K2_Character_Full)
 		{
 			AutoCalibrationButton().IsEnabled(true);
 			AutoCalibrationButtonDecorations().Opacity(1.0);
@@ -1589,13 +1629,16 @@ void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
 	skeleton_visibility_set_ui(true); // Change to show
 
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+
 	// Eventually enable the auto calibration
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
 		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
-			getDeviceCharacteristics() == ktvr::K2_Character_Full) 
+			getDeviceCharacteristics() == ktvr::K2_Character_Full)
 		{
 			AutoCalibrationButton().IsEnabled(true);
 			AutoCalibrationButtonDecorations().Opacity(1.0);
@@ -1624,6 +1667,11 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 				k2app::interfacing::LocalizedResourceWString(
 					L"GeneralPage",
 					L"Buttons/Skeleton/Freeze/Content")));
+
+	// Play a sound
+	playAppSound(k2app::interfacing::isTrackingFrozen
+		? k2app::interfacing::sounds::AppSounds::ToggleOn
+		: k2app::interfacing::sounds::AppSounds::ToggleOff);
 
 	// Optionally show the binding teaching tip
 	if (!k2app::K2Settings.teachingTipShown_Freeze &&
@@ -1687,6 +1735,9 @@ void Amethyst::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Checked(
 {
 	k2app::K2Settings.freezeLowerOnly = true;
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOn);
 }
 
 
@@ -1696,6 +1747,9 @@ void Amethyst::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Unchecked(
 {
 	k2app::K2Settings.freezeLowerOnly = false;
 	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOff);
 }
 
 
@@ -1729,6 +1783,9 @@ void Amethyst::implementation::GeneralPage::CalibrationPointsNumberBox_ValueChan
 	k2app::K2Settings.calibrationPointsNumber =
 		static_cast<int>(sender.as<Controls::NumberBox>().Value());
 	k2app::K2Settings.saveSettings(); // Save it
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 }
 
 void Amethyst::implementation::GeneralPage::ReRegisterButton_Click(
@@ -1765,7 +1822,8 @@ void Amethyst::implementation::GeneralPage::DismissSetErrorButton_Click(
 
 
 void winrt::Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	CalibrationTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	CalibrationTeachingTip().IsOpen(true);
@@ -1773,7 +1831,8 @@ void winrt::Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Clo
 
 
 void winrt::Amethyst::implementation::GeneralPage::CalibrationTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	StatusTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	StatusTeachingTip().IsOpen(true);
@@ -1781,7 +1840,8 @@ void winrt::Amethyst::implementation::GeneralPage::CalibrationTeachingTip_Closed
 
 
 Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::GeneralPage::StatusTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	// Wait a bit
 	{
@@ -1805,6 +1865,24 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::GeneralPage::
 	}
 
 	// Show the next tip
-	k2app::shared::teaching_tips::settings::manageTrackersTeachingTip->TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+	k2app::shared::teaching_tips::settings::manageTrackersTeachingTip->TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
 	k2app::shared::teaching_tips::settings::manageTrackersTeachingTip->IsOpen(true);
+}
+
+
+void winrt::Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Opening(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+}
+
+
+void winrt::Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Closing(
+	winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase const& sender, 
+	winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs const& args)
+{
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 }

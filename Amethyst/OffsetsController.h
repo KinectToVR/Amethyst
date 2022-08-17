@@ -101,6 +101,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 	protected:
 		std::vector<std::shared_ptr<OffsetsPivotItem>> _offsetsPivotItems;
+		uint32_t previous_item_index = 0;
 
 		// Underlying object shared pointer
 		std::shared_ptr<Pivot> _ptr_container;
@@ -113,6 +114,31 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Cache elements
 			_ptr_container = std::make_shared<Pivot>(_container);
+
+			_ptr_container->SelectionChanged(
+				[&, this](const auto&, const auto&) -> void
+				{
+					// The last item
+					if (_ptr_container->SelectedIndex() == _ptr_container->Items().Size() - 1)
+					{
+						playAppSound(previous_item_index == 0
+							? k2app::interfacing::sounds::AppSounds::MovePrevious
+							: k2app::interfacing::sounds::AppSounds::MoveNext);
+					}
+					// The first item
+					else if (_ptr_container->SelectedIndex() == 0)
+					{
+						playAppSound(previous_item_index == _ptr_container->Items().Size() - 1
+							? k2app::interfacing::sounds::AppSounds::MoveNext
+							: k2app::interfacing::sounds::AppSounds::MovePrevious);
+					}
+					// Default
+					else playAppSound(_ptr_container->SelectedIndex() > previous_item_index
+						? k2app::interfacing::sounds::AppSounds::MoveNext
+						: k2app::interfacing::sounds::AppSounds::MovePrevious);
+						
+					previous_item_index = _ptr_container->SelectedIndex();
+				});
 
 			// Push all the trackers & read values
 			ReAppendTrackerPivots();

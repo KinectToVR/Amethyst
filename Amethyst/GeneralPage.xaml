@@ -12,7 +12,7 @@
     <Grid Background="Transparent">
         <SplitView Canvas.ZIndex="1" x:Name="OffsetsView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-                   PaneClosing="OffsetsView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520" 
+                   PaneClosing="OffsetsView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
                    CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
             <SplitView.Pane>
 
@@ -510,7 +510,9 @@
                             </Button.Resources>
 
                             <FlyoutBase.AttachedFlyout>
-                                <Flyout x:Name="ChooseDeviceFlyout">
+                                <Flyout x:Name="ChooseDeviceFlyout"
+                                        Opening="ToggleButtonFlyout_Opening"
+                                        Closing="ToggleButtonFlyout_Closing">
                                     <Flyout.FlyoutPresenterStyle>
                                         <Style TargetType="FlyoutPresenter">
                                             <Setter Property="CornerRadius" Value="8" />
@@ -598,7 +600,7 @@
 
                         <StackPanel Orientation="Vertical" Margin="0,0,5,0" VerticalAlignment="Bottom">
                             <TextBlock FontWeight="SemiBold" x:Uid="/GeneralPage/Titles/Device" FontSize="25"
-                                       Margin="40,20,0,10" Grid.Row="3"/>
+                                       Margin="40,20,0,10" Grid.Row="3" />
 
                             <!--Base Status-->
 
@@ -842,7 +844,7 @@
 
             <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                   Grid.Column="1" Canvas.ZIndex="1" IsHitTestVisible="False"
-                  x:Name="InterfaceBlockerGrid" Background="Transparent"/>
+                  x:Name="InterfaceBlockerGrid" Background="Transparent" />
 
             <!--Background-->
             <Grid Background="Black" Grid.Column="1" Canvas.ZIndex="-2"
@@ -940,9 +942,9 @@
                     <RowDefinition Height="35" />
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
-                
+
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" MinWidth="175" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -954,7 +956,9 @@
                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                         <ToggleSplitButton.Flyout>
-                            <Flyout Placement="Bottom">
+                            <Flyout Placement="Bottom"
+                                    Opening="ToggleButtonFlyout_Opening"
+                                    Closing="ToggleButtonFlyout_Closing">
                                 <Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="FlyoutPresenter">
                                         <Setter Property="CornerRadius" Value="8" />
@@ -994,7 +998,7 @@
                         <ToggleSplitButton.Resources>
                             <muxc:TeachingTip x:Name="FreezeTrackingTeachingTip"
                                               Target="{Binding ElementName=ToggleTrackingButton}"
-                                              PreferredPlacement="Top"	
+                                              PreferredPlacement="Top"
                                               IsLightDismissEnabled="True"
                                               Title="[CONTENT NOT SET]"
                                               Subtitle="[CONTENT NOT SET]">
@@ -1005,7 +1009,9 @@
                         </ToggleSplitButton.Resources>
 
                         <ToggleSplitButton.Flyout>
-                            <Flyout Placement="Bottom">
+                            <Flyout Placement="Bottom"
+                                    Opening="ToggleButtonFlyout_Opening"
+                                    Closing="ToggleButtonFlyout_Closing">
                                 <Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="FlyoutPresenter">
                                         <Setter Property="CornerRadius" Value="8" />
@@ -1040,7 +1046,9 @@
 
                 <!--Flyout for manifest and reregister errors-->
                 <FlyoutBase.AttachedFlyout>
-                    <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom">
+                    <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom"
+                            Opening="ToggleButtonFlyout_Opening"
+                            Closing="ToggleButtonFlyout_Closing">
                         <Flyout.FlyoutPresenterStyle>
                             <Style TargetType="FlyoutPresenter">
                                 <Setter Property="CornerRadius" Value="8" />

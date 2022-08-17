@@ -39,10 +39,12 @@ namespace k2app::main
 			{
 				if (shared::general::toggleFreezeButton.get() != nullptr)
 				{
+					shared::general::general_tab_setup_finished = false; // Boiler
 					shared::general::toggleFreezeButton.get()->IsChecked(isTrackingFrozen);
 					shared::general::toggleFreezeButton.get()->Content(isTrackingFrozen
 						                                                   ? winrt::box_value(L"Unfreeze")
 						                                                   : winrt::box_value(L"Freeze"));
+					shared::general::general_tab_setup_finished = true; // Boiler end
 				}
 			});
 
@@ -123,7 +125,11 @@ namespace k2app::main
 			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
 			{
 				if (shared::settings::flipToggle.get() != nullptr)
+				{
+					shared::settings::settings_localInitFinished = false; // Boiler
 					shared::settings::flipToggle.get()->IsOn(K2Settings.isFlipEnabled);
+					shared::settings::settings_localInitFinished = true; // Boiler end
+				}
 			});
 
 			{
