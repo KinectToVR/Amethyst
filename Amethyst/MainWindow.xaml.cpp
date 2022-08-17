@@ -642,12 +642,8 @@ namespace winrt::Amethyst::implementation
 		// Start the main loop
 		std::thread(k2app::main::K2MainLoop).detach();
 
-		// Load sounds config into main
-		ElementSoundPlayer::State(k2app::K2Settings.enableAppSounds
-			                          ? ElementSoundPlayerState::On
-			                          : ElementSoundPlayerState::Off);
-		ElementSoundPlayer::Volume(std::clamp(
-			static_cast<double>(k2app::K2Settings.appSoundsVolume) / 100.0, 0.0, 100.0));
+		// Disable internal sounds
+		ElementSoundPlayer::State(ElementSoundPlayerState::Off);
 
 		// Scan for tracking devices
 		std::thread([&]
