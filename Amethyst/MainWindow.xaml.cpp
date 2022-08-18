@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 
+#include <codecvt>
 #include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
 #include <winrt/Windows.System.h>
 #include <dispatcherqueue.h>
@@ -1965,15 +1966,20 @@ void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Opening(
 	if (exists(boost::dll::program_location().parent_path() / "Assets" / "Licenses.txt") &&
 		is_regular_file(boost::dll::program_location().parent_path() / "Assets" / "Licenses.txt"))
 	{
-		boost::filesystem::wifstream fileHandler(
-			boost::dll::program_location().parent_path() / "Assets" / "Licenses.txt");
+		std::wifstream fileHandler(
+			(boost::dll::program_location().parent_path() / "Assets" / "Licenses.txt").wstring());
 
+		// Change the reader's locale
+		fileHandler.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+
+		// If the file handler's OK, proceed
 		if (fileHandler.is_open())
-			LicensesText().Text(
-				std::wstring{
-					std::istreambuf_iterator(fileHandler),
-					std::istreambuf_iterator<wchar_t>()
-				}.substr(3));
+		{
+			std::wstringstream wss; // Read the licenses file into shared buffer
+			wss << fileHandler.rdbuf(); // And populate the buffer now
+
+			LicensesText().Text(wss.str()); // Replace the placeholder text
+		}
 	}
 
 	// Play a sound
