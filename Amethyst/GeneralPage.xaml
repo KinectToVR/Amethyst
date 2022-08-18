@@ -934,6 +934,25 @@
                 </StackPanel>
             </Viewbox>
 
+            <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,0,20,20"
+                        Opacity="{Binding ElementName=SkeletonDrawingCanvas, Path=Opacity, TargetNullValue=0.0}"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                <StackPanel.OpacityTransition>
+                    <ScalarTransition />
+                </StackPanel.OpacityTransition>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="Tracking" FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"/>
+                    <Border Height="16" Width="16" Background="White" CornerRadius="10"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
+                    <TextBlock Text="Inferred" FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"/>
+                    <Border Height="16" Width="16" Background="{ThemeResource SystemFillColorAttentionBrush}" CornerRadius="10"/>
+                </StackPanel>
+            </StackPanel>
+
+
             <Grid Background="Transparent" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="20" />
