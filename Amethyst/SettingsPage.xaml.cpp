@@ -665,13 +665,14 @@ void Amethyst::implementation::SettingsPage::DismissSetErrorButton_Click(
 void Amethyst::implementation::SettingsPage::LearnAboutFiltersButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	DimGrid().Opacity(0.35);
+	DimGrid().IsHitTestVisible(true);
+
 	Controls::Primitives::FlyoutShowOptions options;
 	options.Placement(Controls::Primitives::FlyoutPlacementMode::Full);
 	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
 	LearnAboutFiltersFlyout().ShowAt(LearnAboutFiltersButton(), options);
-	DimGrid().Opacity(0.35);
-	DimGrid().IsHitTestVisible(true);
 }
 
 

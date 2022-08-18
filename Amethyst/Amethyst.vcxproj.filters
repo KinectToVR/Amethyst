@@ -302,6 +302,9 @@
     <Filter Include="Strings\de-DE">
       <UniqueIdentifier>{bffeb799-b6cd-426a-b2a2-b755de131cc3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Sounds">
+      <UniqueIdentifier>{81879332-1ac8-4f09-8d51-61731b39b77c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
@@ -393,22 +396,56 @@
     </PRIResource>
   </ItemGroup>
   <ItemGroup>
-    <Media Include="Assets\Sounds\CalibrationAborted.wav" />
-    <Media Include="Assets\Sounds\CalibrationComplete.wav" />
-    <Media Include="Assets\Sounds\CalibrationPointCaptured.wav" />
-    <Media Include="Assets\Sounds\CalibrationStart.wav" />
-    <Media Include="Assets\Sounds\CalibrationTick.wav" />
-    <Media Include="Assets\Sounds\Error.wav" />
-    <Media Include="Assets\Sounds\Focus.wav" />
-    <Media Include="Assets\Sounds\GoBack.wav" />
-    <Media Include="Assets\Sounds\Hide.wav" />
-    <Media Include="Assets\Sounds\Invoke.wav" />
-    <Media Include="Assets\Sounds\MoveNext.wav" />
-    <Media Include="Assets\Sounds\MovePrevious.wav" />
-    <Media Include="Assets\Sounds\Show.wav" />
-    <Media Include="Assets\Sounds\ToggleOff.wav" />
-    <Media Include="Assets\Sounds\ToggleOn.wav" />
-    <Media Include="Assets\Sounds\TrackersConnected.wav" />
-    <Media Include="Assets\Sounds\TrackersDisconnected.wav" />
+    <Media Include="Assets\Sounds\TrackersDisconnected.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\Show.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\ToggleOff.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\ToggleOn.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\TrackersConnected.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\MovePrevious.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\MoveNext.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\Invoke.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\CalibrationAborted.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\CalibrationComplete.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\CalibrationPointCaptured.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\CalibrationStart.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\CalibrationTick.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\Error.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\Focus.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\GoBack.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\Sounds\Hide.wav">
+      <Filter>Assets\Sounds</Filter>
+    </Media>
   </ItemGroup>
 </Project>

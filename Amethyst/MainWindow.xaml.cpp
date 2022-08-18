@@ -1927,13 +1927,19 @@ void Amethyst::implementation::MainWindow::ButtonFlyout_Closing(
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::HelpFlyoutLicensesButton_Click(
+winrt::Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::MainWindow::HelpFlyoutLicensesButton_Click(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
-	k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
-	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
+	apartment_context ui_thread;
+	co_await resume_background();
+	Sleep(500);
+	co_await ui_thread;
 
-	k2app::interfacing::isNUXPending = true;
+	Controls::Primitives::FlyoutShowOptions options;
+	options.Placement(Controls::Primitives::FlyoutPlacementMode::Full);
+	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+
+	LicensesFlyout().ShowAt(XMainGrid());
 }
 
 
@@ -1944,4 +1950,32 @@ void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Closed(
 	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
 
 	k2app::interfacing::isNUXPending = false;
+}
+
+
+void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Opening(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+{
+	k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
+
+	k2app::interfacing::isNUXPending = true;
+
+	// Load the license text
+	if (exists(boost::dll::program_location().parent_path() / "Assets" / "Licenses.txt") &&
+		is_regular_file(boost::dll::program_location().parent_path() / "Assets" / "Licenses.txt"))
+	{
+		boost::filesystem::wifstream fileHandler(
+			boost::dll::program_location().parent_path() / "Assets" / "Licenses.txt");
+
+		if (fileHandler.is_open())
+			LicensesText().Text(
+				std::wstring{
+					std::istreambuf_iterator(fileHandler),
+					std::istreambuf_iterator<wchar_t>()
+				}.substr(3));
+	}
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 }

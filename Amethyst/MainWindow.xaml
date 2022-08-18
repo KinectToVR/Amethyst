@@ -459,7 +459,7 @@
 
                     <MenuFlyoutItem.Resources>
                         <Flyout Placement="Full" x:Name="LicensesFlyout"
-                                Opening="ButtonFlyout_Opening" 
+                                Opening="LicensesFlyout_Opening"
                                 Closing="ButtonFlyout_Closing"
                                 Closed="LicensesFlyout_Closed">
 
@@ -475,7 +475,14 @@
                                 </Style>
                             </Flyout.FlyoutPresenterStyle>
 
-                            <TextBlock />
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+                                <TextBlock Text="LICENSES" Style="{ThemeResource TitleLargeTextBlockStyle}"
+                                           Margin="10,0,0,0" />
+
+                                <TextBlock x:Name="LicensesText" Text="Uh-Oh! Where are the licenses?"
+                                           HorizontalAlignment="Center"
+                                           TextWrapping="Wrap" Width="675" Margin="0,20,0,0" />
+                            </StackPanel>
 
                         </Flyout>
                     </MenuFlyoutItem.Resources>
