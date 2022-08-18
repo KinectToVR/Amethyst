@@ -17,10 +17,10 @@
 		<PackageProjectUrl>k2vr.tech</PackageProjectUrl>
 		<Copyright>(c) K2VR Team</Copyright>
 		<BaseOutputPath>$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\</BaseOutputPath>
-		<FileVersion>1.0.2.10</FileVersion>
-		<AssemblyVersion>1.0.2.10</AssemblyVersion>
+		<FileVersion>1.0.2.11</FileVersion>
+		<AssemblyVersion>1.0.2.11</AssemblyVersion>
 		<RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
-		<Version>1.0.2.10</Version>
+		<Version>1.0.2.11</Version>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	</PropertyGroup>
