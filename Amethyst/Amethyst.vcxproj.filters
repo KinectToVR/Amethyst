@@ -305,6 +305,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
+    <Text Include="Assets\Licenses.txt">
+      <Filter>Assets</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="app.manifest" />
@@ -388,5 +391,24 @@
     <PRIResource Include="Strings\de_DE\SharedStrings.resw">
       <Filter>Strings\de-DE</Filter>
     </PRIResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Assets\Sounds\CalibrationAborted.wav" />
+    <Media Include="Assets\Sounds\CalibrationComplete.wav" />
+    <Media Include="Assets\Sounds\CalibrationPointCaptured.wav" />
+    <Media Include="Assets\Sounds\CalibrationStart.wav" />
+    <Media Include="Assets\Sounds\CalibrationTick.wav" />
+    <Media Include="Assets\Sounds\Error.wav" />
+    <Media Include="Assets\Sounds\Focus.wav" />
+    <Media Include="Assets\Sounds\GoBack.wav" />
+    <Media Include="Assets\Sounds\Hide.wav" />
+    <Media Include="Assets\Sounds\Invoke.wav" />
+    <Media Include="Assets\Sounds\MoveNext.wav" />
+    <Media Include="Assets\Sounds\MovePrevious.wav" />
+    <Media Include="Assets\Sounds\Show.wav" />
+    <Media Include="Assets\Sounds\ToggleOff.wav" />
+    <Media Include="Assets\Sounds\ToggleOn.wav" />
+    <Media Include="Assets\Sounds\TrackersConnected.wav" />
+    <Media Include="Assets\Sounds\TrackersDisconnected.wav" />
   </ItemGroup>
 </Project>

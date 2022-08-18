@@ -942,12 +942,12 @@
                 </StackPanel.OpacityTransition>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock Text="Tracking" FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"/>
+                    <TextBlock x:Uid="/GeneralPage/Labels/Tracking" FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"/>
                     <Border Height="16" Width="16" Background="White" CornerRadius="10"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
-                    <TextBlock Text="Inferred" FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"/>
+                    <TextBlock x:Uid="/GeneralPage/Labels/Inferred" FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"/>
                     <Border Height="16" Width="16" Background="{ThemeResource SystemFillColorAttentionBrush}" CornerRadius="10"/>
                 </StackPanel>
             </StackPanel>

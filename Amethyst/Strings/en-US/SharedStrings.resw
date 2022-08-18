@@ -159,6 +159,9 @@
   <data name="Buttons.Help.Header.Text" xml:space="preserve">
     <value>Help</value>
   </data>
+  <data name="Buttons.Help.Licenses.Text" xml:space="preserve">
+    <value>Open-Source Licenses</value>
+  </data>
   <data name="Buttons.Info.Text" xml:space="preserve">
     <value>Info</value>
   </data>

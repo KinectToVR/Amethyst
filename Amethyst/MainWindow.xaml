@@ -448,6 +448,38 @@
                         <FontIcon Glyph="&#xE943;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
+
+                <!--Licenses-->
+                <MenuFlyoutItem x:Name="HelpFlyoutLicensesButton"
+                                Click="HelpFlyoutLicensesButton_Click"
+                                x:Uid="/SharedStrings/Buttons/Help/Licenses">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xF000;" />
+                    </MenuFlyoutItem.Icon>
+
+                    <MenuFlyoutItem.Resources>
+                        <Flyout Placement="Full" x:Name="LicensesFlyout"
+                                Opening="ButtonFlyout_Opening" 
+                                Closing="ButtonFlyout_Closing"
+                                Closed="LicensesFlyout_Closed">
+
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="MaxHeight" Value="615" />
+                                    <Setter Property="MaxWidth" Value="720" />
+                                    <Setter Property="MinWidth" Value="720" />
+                                    <Setter Property="Margin" Value="30,15,0,0" />
+                                    <Setter Property="CornerRadius" Value="8" />
+                                    <Setter Property="Background"
+                                            Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+
+                            <TextBlock />
+
+                        </Flyout>
+                    </MenuFlyoutItem.Resources>
+                </MenuFlyoutItem>
             </MenuFlyout>
         </Grid.Resources>
 

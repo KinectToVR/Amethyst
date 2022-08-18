@@ -270,6 +270,7 @@ xcopy /y /d /s /i "$(SolutionDir)external\app_resources\*" "$(OutDir)"</Command>
     <Midl Include="TrackingDevicesView.idl" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Assets\Licenses.txt" />
     <Text Include="readme.txt">
       <DeploymentContent>false</DeploymentContent>
     </Text>

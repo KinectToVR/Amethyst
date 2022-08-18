@@ -66,6 +66,8 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::InfoPage::End
 	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
 	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
 
+	k2app::interfacing::isNUXPending = false;
+
 	// Navigate to the general page
 	k2app::shared::main::mainNavigationView->SelectedItem(
 		k2app::shared::main::mainNavigationView->MenuItems().GetAt(0));

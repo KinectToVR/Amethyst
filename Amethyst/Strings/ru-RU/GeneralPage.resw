@@ -346,6 +346,12 @@
   <data name="Captions.VersionText.Text" xml:space="preserve">
     <value>Версия Amethyst:</value>
   </data>
+  <data name="Labels.Inferred.Text" xml:space="preserve">
+    <value>предположительно</value>
+  </data>
+  <data name="Labels.Tracking.Text" xml:space="preserve">
+    <value>трекинг</value>
+  </data>
   <data name="Tips.TrackingFreeze.Buttons.Index" xml:space="preserve">
     <value>B, Grip and Trigger</value>
   </data>

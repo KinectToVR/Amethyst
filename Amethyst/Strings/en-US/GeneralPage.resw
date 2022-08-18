@@ -346,6 +346,12 @@ tracking to use automatic calibration.</value>
   <data name="Captions.VersionText.Text" xml:space="preserve">
     <value>Amethyst Version:</value>
   </data>
+  <data name="Labels.Inferred.Text" xml:space="preserve">
+    <value>Inferred</value>
+  </data>
+  <data name="Labels.Tracking.Text" xml:space="preserve">
+    <value>Tracking</value>
+  </data>
   <data name="Tips.TrackingFreeze.Buttons.Index" xml:space="preserve">
     <value>B, Grip and Trigger</value>
   </data>

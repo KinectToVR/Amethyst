@@ -285,7 +285,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 
 		// If an update was found, show it
 		// (or if the cheack was manual)
-		if (updateFound || show)
+		if ((updateFound || show) && !k2app::interfacing::isNUXPending)
 			UpdateFlyout().ShowAt(HelpButton(), options);
 
 		// Uncheck
@@ -1318,7 +1318,7 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 	// entries in the backstack.
 	Windows::UI::Xaml::Interop::TypeName prevNavPageType =
 		mainContentFrame->CurrentSourcePageType();
-	
+
 	// Navigate only if the selected page isn't currently loaded.
 	if (pageTypeName.Name != L"" && prevNavPageType.Name != pageTypeName.Name)
 	{
@@ -1602,6 +1602,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateBu
 	//	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
 
 	//	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(true);
+
+	//  k2app::interfacing::isNUXPending = true;
 	//}
 
 	// Check for updates (and show)
@@ -1614,7 +1616,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateBu
 	const Input::TappedRoutedEventArgs& e)
 {
 	// Check for updates (and show)
-	if (!checkingUpdatesNow) 
+	if (!checkingUpdatesNow)
 	{
 		playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 		co_await checkUpdates(true);
@@ -1714,6 +1716,8 @@ void Amethyst::implementation::MainWindow::InitializerTeachingTip_CloseButtonCli
 	// Just dismiss the tip
 	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
 	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
+
+	k2app::interfacing::isNUXPending = false;
 }
 
 
@@ -1920,4 +1924,24 @@ void Amethyst::implementation::MainWindow::ButtonFlyout_Closing(
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+}
+
+
+void winrt::Amethyst::implementation::MainWindow::HelpFlyoutLicensesButton_Click(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
+
+	k2app::interfacing::isNUXPending = true;
+}
+
+
+void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Closed(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+{
+	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
+
+	k2app::interfacing::isNUXPending = false;
 }

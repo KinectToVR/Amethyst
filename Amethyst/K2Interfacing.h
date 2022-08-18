@@ -311,6 +311,9 @@ namespace k2app::interfacing
 	// Devices may request an explicit status refresh
 	inline bool statusUIRefreshRequested = false;
 
+	// Is NUX currently opened?
+	inline bool isNUXPending = false;
+
 	// Function to spawn default' enabled trackers
 	inline bool SpawnEnabledTrackers()
 	{
