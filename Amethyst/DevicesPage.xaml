@@ -26,8 +26,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Devices" FontSize="25" Margin="40,20,0,0"
-                           Grid.Row="0" />
+                <TextBlock FontWeight="SemiBold" x:Name="Titles_Devices" FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
 
                 <ListView x:Name="TrackingDeviceListView" Grid.Column="1" CornerRadius="5"
                           VerticalAlignment="Top" HorizontalAlignment="Left"
@@ -98,7 +97,7 @@
 
                         <!--Header Part-->
 
-                        <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/CurrentDevice"
+                        <TextBlock FontWeight="SemiBold" x:Name="Titles_CurrentDevice"
                                    FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
 
                         <StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="1" HorizontalAlignment="Stretch">
@@ -106,7 +105,7 @@
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch"
                                         MinWidth="290">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/DevicesPage/Titles/DeviceBase" Margin="0,0,5,0"
+                                           x:Name="Titles_DeviceBase" Margin="0,0,5,0"
                                            Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="E_UNKNOWN" x:Name="BaseDeviceName" />
@@ -115,10 +114,10 @@
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0" HorizontalAlignment="Stretch"
                                         MinWidth="290">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/DevicesPage/Titles/DeviceOverride" Margin="0,0,5,0"
+                                           x:Name="Titles_DeviceOverride" Margin="0,0,5,0"
                                            Foreground="{ThemeResource ControlDisplayTextBrush}" />
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Uid="/DevicesPage/Titles/NoOverrides" x:Name="OverrideDeviceName" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                           FontWeight="SemiBold" x:Name="OverrideDeviceName" />
                             </StackPanel>
 
                         </StackPanel>
@@ -154,7 +153,7 @@
 
                                 <Grid Grid.Column="0">
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/DeviceStatus"
+                                               FontWeight="SemiBold" x:Name="Titles_DeviceStatus"
                                                Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
                                                FontWeight="SemiBold"
@@ -162,7 +161,6 @@
                                                x:Name="TrackingDeviceStatusLabel" />
 
                                     <SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                 x:Uid="/DevicesPage/Buttons/Reconnect"
                                                  Margin="0,0,3,0" CornerRadius="3" Height="35" Width="140"
                                                  HorizontalAlignment="Right" VerticalAlignment="Top"
                                                  x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click">
@@ -190,13 +188,10 @@
                                                 </Flyout.FlyoutPresenterStyle>
 
                                                 <StackPanel Orientation="Vertical">
-                                                    <Button FontWeight="SemiBold"
-                                                            x:Uid="/DevicesPage/Buttons/Disconnect"
-                                                            CornerRadius="3" Height="35" HorizontalAlignment="Stretch"
-                                                            x:Name="DisconnectDeviceButton"
+                                                    <Button CornerRadius="3" Height="35" HorizontalAlignment="Stretch"
+                                                            x:Name="DisconnectDeviceButton" FontWeight="SemiBold"
                                                             Click="DisconnectDeviceButton_Click" />
-                                                    <Button FontWeight="SemiBold" x:Uid="/DevicesPage/Buttons/Deselect"
-                                                            CornerRadius="3" Height="35"
+                                                    <Button FontWeight="SemiBold" CornerRadius="3" Height="35"
                                                             Margin="0,15,0,0" HorizontalAlignment="Stretch"
                                                             x:Name="DeselectDeviceButton"
                                                             Click="DeselectDeviceButton_Click" />
@@ -243,14 +238,12 @@
                                 <StackPanel Grid.Column="0" Margin="0,0,0,0" Orientation="Vertical">
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                            x:Uid="/DevicesPage/Buttons/ViewDocs"
                                             Margin="0,0,3,5" CornerRadius="3"
                                             x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
                                             Height="55" Width="140" Style="{StaticResource AccentButtonStyle}"
                                             HorizontalAlignment="Right" VerticalAlignment="Top" />
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                            x:Uid="/DevicesPage/Buttons/JoinDiscord"
                                             Margin="0,0,3,0" CornerRadius="3"
                                             Height="55" Width="140" x:Name="OpenDiscordButton"
                                             Click="OpenDiscordButton_Click"
@@ -271,11 +264,10 @@
 
                                 <Grid Grid.Column="0">
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/SetAsDevice"
+                                               FontWeight="SemiBold" x:Name="Titles_SetAsDevice"
                                                Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                            x:Uid="/DevicesPage/Buttons/SetAs/Header"
                                             Margin="0,0,3,0" CornerRadius="3"
                                             Height="35" Width="140" x:Name="SetThisDeviceAsButton"
                                             HorizontalAlignment="Right" VerticalAlignment="Top">
@@ -293,13 +285,11 @@
 
                                                 <StackPanel Orientation="Vertical">
                                                     <Button FontWeight="SemiBold"
-                                                            x:Uid="/DevicesPage/Buttons/SetAs/Base"
                                                             Style="{StaticResource AccentButtonStyle}"
                                                             HorizontalAlignment="Stretch"
                                                             CornerRadius="3" Height="35" Margin="0,0,0,15"
                                                             x:Name="SetAsBaseButton" Click="SetAsBaseButton_Click" />
                                                     <Button FontWeight="SemiBold"
-                                                            x:Uid="/DevicesPage/Buttons/SetAs/Override"
                                                             HorizontalAlignment="Stretch"
                                                             CornerRadius="3" Height="35"
                                                             x:Name="SetAsOverrideButton"
@@ -339,7 +329,6 @@
                                                     <Button FontSize="15" x:Name="DismissOverrideTipNoJointsButton"
                                                             Click="DismissOverrideTipNoJointsButton_Click"
                                                             VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                            x:Uid="/DevicesPage/Buttons/NoJoints/Dismiss"
                                                             Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
                                                             HorizontalAlignment="Stretch"
                                                             VerticalAlignment="Stretch" />
@@ -350,7 +339,7 @@
                                                            VerticalAlignment="Stretch"
                                                            Grid.Row="0" FontWeight="SemiBold"
                                                            Style="{ThemeResource BaseTextBlockStyle}"
-                                                           x:Uid="/DevicesPage/Titles/DeviceHasNoJoints" />
+                                                           x:Name="Titles_DeviceHasNoJoints" />
 
                                             </Grid>
                                         </Flyout>
@@ -393,8 +382,7 @@
                                         </TransitionCollection>
                                     </StackPanel.Transitions>-->
 
-                                    <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Overrides/Header"
-                                               x:Name="OverridesLabel"
+                                    <TextBlock FontWeight="SemiBold" x:Name="OverridesLabel"
                                                FontSize="25" Margin="40,20,0,0" Grid.Row="0" Visibility="Collapsed" />
 
                                     <StackPanel x:Name="OverridesExpanderHostStackPanel" HorizontalAlignment="Stretch"
@@ -426,8 +414,7 @@
                                         </TransitionCollection>
                                     </StackPanel.Transitions>-->
 
-                                    <TextBlock FontWeight="SemiBold" x:Uid="/DevicesPage/Titles/Joints/Assign"
-                                               x:Name="JointBasisLabel"
+                                    <TextBlock FontWeight="SemiBold" x:Name="JointBasisLabel"
                                                FontSize="25" Margin="40,20,0,0" Grid.Row="0" Visibility="Collapsed" />
 
                                     <StackPanel x:Name="JointsBasisExpanderHostStackPanel"

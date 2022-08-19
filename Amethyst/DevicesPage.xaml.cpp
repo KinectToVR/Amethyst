@@ -1126,6 +1126,65 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 	LOG(INFO) << "Re/Loading page with tag: \"devices\"...";
 	k2app::interfacing::currentAppState = L"devices";
 
+	// Load strings (must be the first thing we're doing)
+	
+	Titles_Devices().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/Devices"));
+
+	Titles_CurrentDevice().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/CurrentDevice"));
+
+	Titles_DeviceBase().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/DeviceBase"));
+
+	Titles_DeviceOverride().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/DeviceOverride"));
+
+	OverrideDeviceName().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/NoOverrides"));
+
+	Titles_DeviceStatus().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/DeviceStatus"));
+
+	ReconnectDeviceButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/Reconnect")));
+
+	DisconnectDeviceButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/Disconnect")));
+
+	DeselectDeviceButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/Deselect")));
+
+	OpenDocsButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/ViewDocs")));
+
+	OpenDiscordButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/JoinDiscord")));
+
+	Titles_SetAsDevice().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/SetAsDevice"));
+
+	SetThisDeviceAsButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/SetAs/Header")));
+
+	SetAsBaseButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/SetAs/Base")));
+
+	SetAsOverrideButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/SetAs/Override")));
+
+	DismissOverrideTipNoJointsButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/NoJoints/Dismiss")));
+
+	Titles_DeviceHasNoJoints().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/DeviceHasNoJoints"));
+
+	OverridesLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/Overrides/Header"));
+
+	JointBasisLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/Joints/Assign"));
+	
 	// Reset
 	devices_tab_re_setup_finished = false;
 
