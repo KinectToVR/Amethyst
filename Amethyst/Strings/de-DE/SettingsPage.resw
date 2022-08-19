@@ -263,7 +263,7 @@ Sie wird für die Registrierung benötigt. Überprüfe, ob sie vorhanden ist.</v
     <value>Trackerkonfiguration</value>
   </data>
   <data name="Titles.TrackerConfig.Learn.Content" xml:space="preserve">
-    <value>Lerne mehr über diese Einstellungen</value>
+    <value>Erfahre mehr über diese Einstellungen</value>
   </data>
   <data name="Titles.Troubleshooting.Text" xml:space="preserve">
     <value>Fehlerbehebung</value>

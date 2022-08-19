@@ -172,10 +172,10 @@
     <value>Updates</value>
   </data>
   <data name="Buttons.Updates.Install.Content" xml:space="preserve">
-    <value>Jetzt Installieren</value>
+    <value>Jetzt installieren</value>
   </data>
   <data name="Buttons.Updates.Skip.Content" xml:space="preserve">
-    <value>Später Installieren</value>
+    <value>Später installieren</value>
   </data>
   <data name="Joints.Enum.0" xml:space="preserve">
     <value>Hand</value>

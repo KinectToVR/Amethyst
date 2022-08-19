@@ -172,7 +172,7 @@
     <value>Kalibrierung abgebrochen!</value>
   </data>
   <data name="Calibration.Captions.Automatic.Text" xml:space="preserve">
-    <value>Stehe auf drei verschiedenen Positionen auf deiner Play-Area.</value>
+    <value>Stehe auf drei verschiedenen Positionen in deinem Spielbereich.</value>
   </data>
   <data name="Calibration.Captions.Captured.Text" xml:space="preserve">
     <value>Position gespeichert!</value>
@@ -222,7 +222,7 @@ Bleibe bitte stehen!</value>
     <value>R Grip</value>
   </data>
   <data name="Calibration.Labels.InputsNotice.Text" xml:space="preserve">
-    <value>Bei Verwendung benutzerdefinierten Binds können sich die Eingaben unterscheiden. Beziehe dich in diesem Fall auf die Eingabeeinstellungen auf Steam-VR für Amethyst.</value>
+    <value>Bei Verwendung benutzerdefinierten Binds können sich die Eingaben unterscheiden. Beziehe dich in diesem Fall auf die Eingabeeinstellungen auf SteamVR für Amethyst.</value>
   </data>
   <data name="Calibration.Labels.Triggers.Both.Text" xml:space="preserve">
     <value>L+R Trigger</value>
@@ -306,23 +306,23 @@ Welches Gerät sollte kalibriert werden?</value>
     <value>Skelett-Vorschau deaktiviert</value>
   </data>
   <data name="Captions.Preview.DisabledText.Text" xml:space="preserve">
-    <value>Clicke auf "Zeige Skelett" um die Skelett-Vorschau wieder zu aktivieren.</value>
+    <value>Klicke auf "Zeige Skelett" um die Skelett-Vorschau wieder zu aktivieren.</value>
   </data>
   <data name="Captions.Preview.Force.Text" xml:space="preserve">
-    <value>Vorschau Erzwingen</value>
+    <value>Vorschau erzwingen</value>
   </data>
   <data name="Captions.Preview.NoDashboard.Text" xml:space="preserve">
     <value>Das Dashboard ist geschlossen</value>
   </data>
   <data name="Captions.Preview.NoDashboardText.Text" xml:space="preserve">
-    <value>Die Vorschau wurde angehalten, um Ressourcen für dein PC zu sparen.
+    <value>Die Vorschau wurde angehalten, um Ressourcen für deinen PC zu sparen.
 Es wird wieder laufen, wenn du zurück bist.</value>
   </data>
   <data name="Captions.Preview.NoFocus.Text" xml:space="preserve">
     <value>Fenster ist nicht im Vordergrund</value>
   </data>
   <data name="Captions.Preview.NoFocusText.Text" xml:space="preserve">
-    <value>Die Vorschau wurde angehalten, um Ressourcen für dein PC zu sparen.
+    <value>Die Vorschau wurde angehalten, um Ressourcen für deinen PC zu sparen.
 Es wird wieder laufen, wenn du zurück bist.</value>
   </data>
   <data name="Captions.Preview.NoSkeleton.Text" xml:space="preserve">
@@ -351,10 +351,10 @@ funktioniert und deinen Körper für das Tracking sehen kann.</value>
     <value>Tracking</value>
   </data>
   <data name="Tips.TrackingFreeze.Buttons.Index" xml:space="preserve">
-    <value>B, Grip and Trigger</value>
+    <value>B, Grip und Trigger</value>
   </data>
   <data name="Tips.TrackingFreeze.Buttons.Oculus" xml:space="preserve">
-    <value>X, Grip and Trigger</value>
+    <value>X, Grip und Trigger</value>
   </data>
   <data name="Tips.TrackingFreeze.Buttons.VIVE" xml:space="preserve">
     <value>das Touchpad, Grip und Trigger</value>

@@ -376,22 +376,22 @@
     <PRIResource Include="Strings\ru-RU\SharedStrings.resw">
       <Filter>Strings\ru-RU</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\de_DE\DevicesPage.resw">
+    <PRIResource Include="Strings\de-DE\DevicesPage.resw">
       <Filter>Strings\de-DE</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\de_DE\GeneralPage.resw">
+    <PRIResource Include="Strings\de-DE\GeneralPage.resw">
       <Filter>Strings\de-DE</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\de_DE\InfoPage.resw">
+    <PRIResource Include="Strings\de-DE\InfoPage.resw">
       <Filter>Strings\de-DE</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\de_DE\SettingsLearn.resw">
+    <PRIResource Include="Strings\de-DE\SettingsLearn.resw">
       <Filter>Strings\de-DE</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\de_DE\SettingsPage.resw">
+    <PRIResource Include="Strings\de-DE\SettingsPage.resw">
       <Filter>Strings\de-DE</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\de_DE\SharedStrings.resw">
+    <PRIResource Include="Strings\de-DE\SharedStrings.resw">
       <Filter>Strings\de-DE</Filter>
     </PRIResource>
   </ItemGroup>

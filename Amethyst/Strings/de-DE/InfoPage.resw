@@ -117,123 +117,53 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Buttons.Deselect.Content" xml:space="preserve">
-    <value>Abwählen</value>
+  <data name="AppCaption.Text" xml:space="preserve">
+    <value>by K2VR Team</value>
   </data>
-  <data name="Buttons.Deselect.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Wenn das Gerät abgewählt wird, wird es aus der Override-Rolle entfernt.</value>
+  <data name="AppTitle.Text" xml:space="preserve">
+    <value>Amethyst</value>
   </data>
-  <data name="Buttons.DeviceSettings.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Klicke hier für erweiterten (gerätebedingten) Einstellungen.</value>
+  <data name="Credits.Community.Text" xml:space="preserve">
+    <value>Und allen anderen, die uns auf unserem Weg geholfen haben.</value>
   </data>
-  <data name="Buttons.Disconnect.Content" xml:space="preserve">
-    <value>Verbindung trennen</value>
+  <data name="Credits.Header.Text" xml:space="preserve">
+    <value>Mitwirkende</value>
   </data>
-  <data name="Buttons.JoinDiscord.Content" xml:space="preserve">
-    <value>Discord-Server beitreten</value>
+  <data name="Credits.Helpers.Title.Text" xml:space="preserve">
+    <value>Helfer:</value>
   </data>
-  <data name="Buttons.NoJoints.Dismiss.Content" xml:space="preserve">
-    <value>Verwerfen</value>
+  <data name="Credits.MainTeam.Roles.Akaya.Text" xml:space="preserve">
+    <value>Leitender Entwickler: </value>
+    <comment>Notice the space at the end!</comment>
   </data>
-  <data name="Buttons.OverrideSelector.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Overrides</value>
-    <comment>This is separate from Titles-Overrides-Header cause it is a tooltip</comment>
+  <data name="Credits.MainTeam.Roles.Aria.Text" xml:space="preserve">
+    <value>Support (inaktiv): </value>
+    <comment>Notice the space at the end!</comment>
   </data>
-  <data name="Buttons.Reconnect.Content" xml:space="preserve">
-    <value>Aktualisieren</value>
+  <data name="Credits.MainTeam.Roles.Artemis.Text" xml:space="preserve">
+    <value>Support: </value>
+    <comment>Notice the space at the end!</comment>
   </data>
-  <data name="Buttons.SetAs.Base.Content" xml:space="preserve">
-    <value>Als Basis zuweisen</value>
+  <data name="Credits.MainTeam.Roles.Ella.Text" xml:space="preserve">
+    <value>Projekt-Management: </value>
+    <comment>Notice the space at the end!</comment>
   </data>
-  <data name="Buttons.SetAs.Base.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Das Gerät stellt die primäre Position und Rotation der virtuellen Tracker bereit.</value>
+  <data name="Credits.MainTeam.Roles.Hekky.Text" xml:space="preserve">
+    <value>Installer-Entwicklung: </value>
+    <comment>Notice the space at the end!</comment>
   </data>
-  <data name="Buttons.SetAs.Header.Content" xml:space="preserve">
-    <value>Als Gerät zuweisen...</value>
+  <data name="Credits.MainTeam.Roles.Himbeer.Text" xml:space="preserve">
+    <value>Installer-Entwicklung: </value>
+    <comment>Notice the space at the end!</comment>
   </data>
-  <data name="Buttons.SetAs.Header.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Als Override festlegen</value>
+  <data name="Credits.MainTeam.Roles.Ollie.Text" xml:space="preserve">
+    <value>Support: </value>
+    <comment>Notice the space at the end!</comment>
   </data>
-  <data name="Buttons.SetAs.Override.Content" xml:space="preserve">
-    <value>Set as Override</value>
+  <data name="Credits.MainTeam.Title.Text" xml:space="preserve">
+    <value>Hauptteam:</value>
   </data>
-  <data name="Buttons.SetAs.Override.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Statt der Basisstation wird das Gerät für die gewählten Positionen/Drehungen eines oder mehrerer virtueller Tracker priorisiert.
-Wird owotrack beispielsweise für die Taille als Override benutzt, wird das Tracking des Basisgeräts für die Taille ignoriert.</value>
-  </data>
-  <data name="Buttons.ViewDocs.Content" xml:space="preserve">
-    <value>Docs anschauen</value>
-  </data>
-  <data name="Placeholders.Joints.Disabled.PlaceholderText" xml:space="preserve">
-    <value>Gelenk Deaktiviert</value>
-    <comment>Displays when no joint override is set</comment>
-  </data>
-  <data name="Placeholders.Overrides.NoOverride.PlaceholderText" xml:space="preserve">
-    <value>Kein Override</value>
-    <comment>Displays when no joint override is set</comment>
-  </data>
-  <data name="Titles.Check.Orientation.Text" xml:space="preserve">
-    <value>Rotation</value>
-  </data>
-  <data name="Titles.Check.Position.Text" xml:space="preserve">
-    <value>Position</value>
-  </data>
-  <data name="Titles.CurrentDevice.Text" xml:space="preserve">
-    <value>Tracking aktiv</value>
-  </data>
-  <data name="Titles.DeviceBase.Text" xml:space="preserve">
-    <value>Gerät:</value>
-  </data>
-  <data name="Titles.DeviceHasNoJoints.Text" xml:space="preserve">
-    <value>Das Gerät stellt keine Gelenke bereit.
-Es kann als Override nicht benutzt werden.</value>
-  </data>
-  <data name="Titles.DeviceOverride.Text" xml:space="preserve">
-    <value>Override:</value>
-  </data>
-  <data name="Titles.Devices.Text" xml:space="preserve">
-    <value>Geräte</value>
-  </data>
-  <data name="Titles.DeviceSettings.Text" xml:space="preserve">
-    <value>Vom Gerät bereitgestellte Einstellungen</value>
-  </data>
-  <data name="Titles.DeviceStatus.Text" xml:space="preserve">
-    <value>Status:</value>
-    <comment>The real status string is polled from the device, this is a label</comment>
-  </data>
-  <data name="Titles.Joints.Assign.Text" xml:space="preserve">
-    <value>Gelenke zuweisen</value>
-  </data>
-  <data name="Titles.Joints.ElbowsAndKnees.Text" xml:space="preserve">
-    <value>Tracker für Ellbogen und Knie</value>
-  </data>
-  <data name="Titles.Joints.Other.Text" xml:space="preserve">
-    <value>Andere Tracker</value>
-  </data>
-  <data name="Titles.Joints.WaistAndFeet.Text" xml:space="preserve">
-    <value>Tracker für Taille und Füße</value>
-  </data>
-  <data name="Titles.NoOverrides.Text" xml:space="preserve">
-    <value>Keine Overrides</value>
-    <comment>Only a placeholder, will use the device's name when an override is set</comment>
-  </data>
-  <data name="Titles.Overrides.Header.Text" xml:space="preserve">
-    <value>Overrides</value>
-    <comment>Only a placeholder, will use the device's name when an override is set</comment>
-  </data>
-  <data name="Titles.Set.Orientation.Text" xml:space="preserve">
-    <value>Rotation:</value>
-  </data>
-  <data name="Titles.Set.Position.Text" xml:space="preserve">
-    <value>Position:</value>
-  </data>
-  <data name="Titles.Set.TrackedJoint.Text" xml:space="preserve">
-    <value>Getrackte Gelenke:</value>
-  </data>
-  <data name="Titles.Set.Tracker.Text" xml:space="preserve">
-    <value>Tracker:</value>
-  </data>
-  <data name="Titles.SetAsDevice.Text" xml:space="preserve">
-    <value>Als Tracking-Gerät festlegen:</value>
+  <data name="Credits.Translators.Title.Text" xml:space="preserve">
+    <value>Übersetzer:</value>
   </data>
 </root>

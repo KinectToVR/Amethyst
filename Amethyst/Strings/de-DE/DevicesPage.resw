@@ -117,92 +117,123 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Captions.Filters.Explanations.EKF.Text" xml:space="preserve">
-    <value>Höchste Latenz, aber sehr flüssig. Es entfernt jeglichen Jitter (Flackern) und reagiert auf schnelle
-Bewegungen flink, da es Vorhersagefähig (prädiktiv) ist.</value>
+  <data name="Buttons.Deselect.Content" xml:space="preserve">
+    <value>Abwählen</value>
   </data>
-  <data name="Captions.Filters.Explanations.LERP.Text" xml:space="preserve">
-    <value>Minimale Latenz, lässt alle Bewegungen schneller erscheinen als das, wozu der Sensor in der Lage ist. 
-Jitter (Flackern) ist bemerkbar.</value>
+  <data name="Buttons.Deselect.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Wenn das Gerät abgewählt wird, wird es aus der Override-Rolle entfernt.</value>
   </data>
-  <data name="Captions.Filters.Explanations.LowPass.Text" xml:space="preserve">
-    <value>Latenz ist leicht bemerkbar, entfernt jedoch Jitter (Flackern) und sieht insgesamt flüssiger aus als kein Filter.</value>
+  <data name="Buttons.DeviceSettings.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Klicke hier für erweiterte (gerätebedingte) Einstellungen.</value>
   </data>
-  <data name="Captions.Filters.Explanations.None.Text" xml:space="preserve">
-    <value>Rohe 30hz-Ausgabe vom Sensor.</value>
+  <data name="Buttons.Disconnect.Content" xml:space="preserve">
+    <value>Verbindung trennen</value>
   </data>
-  <data name="Captions.Filters.Names.EKF.Text" xml:space="preserve">
-    <value>- Erweiterter Kalman-Filter</value>
+  <data name="Buttons.JoinDiscord.Content" xml:space="preserve">
+    <value>Discord-Server beitreten</value>
   </data>
-  <data name="Captions.Filters.Names.LERP.Text" xml:space="preserve">
-    <value>- Lineare Interpolation (standardmäßig eingestellt)</value>
+  <data name="Buttons.NoJoints.Dismiss.Content" xml:space="preserve">
+    <value>Verwerfen</value>
   </data>
-  <data name="Captions.Filters.Names.LowPass.Text" xml:space="preserve">
-    <value>- Low Pass (Tiefpass) Filter</value>
+  <data name="Buttons.OverrideSelector.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Overrides</value>
+    <comment>This is separate from Titles-Overrides-Header cause it is a tooltip</comment>
   </data>
-  <data name="Captions.Filters.Names.None.Text" xml:space="preserve">
-    <value>- Filter ausschalten</value>
+  <data name="Buttons.Reconnect.Content" xml:space="preserve">
+    <value>Aktualisieren</value>
   </data>
-  <data name="Captions.ManageTrackers.Text" xml:space="preserve">
-    <value>Wenn eine Reihe von Trackern aktiviert oder deaktiviert wird, werden sie sofort gespawnt oder despawned.
-Sie werden aber weiterhin in der Liste der Geräten in SteamVR aufgelistet.
-Tracker, die gerade deaktiviert wurden, werden bis SteamVR neu gestartet wird als deaktiviert angezeigt.
-Sollten Probleme mit der Tracking-Erkennung in Apps auftreten, sollte SteamVR zuerst neu gestartet werden.</value>
+  <data name="Buttons.SetAs.Base.Content" xml:space="preserve">
+    <value>Als Basis zuweisen</value>
   </data>
-  <data name="Captions.Orientation.Explanations.Default.Text" xml:space="preserve">
-    <value>Diese Einstellung kann für einige Benutzer auf Xbox One Kinect instabil sein.
-In diesem Falle, versuche es noch einmal mit der Softwareberechneten Rotation.
-Dies ist die Gelenkausrichtung, die vom Kinect SDK basierend auf der Position jedes Gelenks in der Kette approximiert wird.
-Stellen dir das soweit vor, dass man auf jedes Glied des Körpers Pfeile anknüpft, die auf die Extremitäten zeigen.
-Bei Fußtrackern unterscheidet sich das Verhalten zwischen Kinect-Modellen.
-Auf Xbox One basiert sich die Drehung auf der Fußspitze, was bedeutet, dass sich Ihre Füße drehen können.
-Auf der Xbox 360 basiert die Drehung allein auf dem Knöchel, was bedeutet, dass es keine Fußdrehung gibt.</value>
+  <data name="Buttons.SetAs.Base.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Das Gerät stellt die primäre Position und Rotation der virtuellen Tracker bereit.</value>
   </data>
-  <data name="Captions.Orientation.Explanations.HMD.Text" xml:space="preserve">
-    <value>Die Tracker folgen der Richtung, in die das Headset auf der Y-Achse zeigt. Die Tracker drehen sich aber nicht auf den anderen beiden Achsen.</value>
+  <data name="Buttons.SetAs.Header.Content" xml:space="preserve">
+    <value>Als Gerät zuweisen...</value>
   </data>
-  <data name="Captions.Orientation.Explanations.MathBased.Text" xml:space="preserve">
-    <value>Diese Option ist nur für Fußtracker verfügbar.
-Die Richtung der Füße wird aus dem Winkel zwischen Knöchel und Fußspitze berechnet.
-Die Reichweite wird auf 50% reduziert um Jitter (Flimmern) zu vermeiden. Dies ermöglicht die Drehung der Füße auf der Xbox 360 Kinect.</value>
+  <data name="Buttons.SetAs.Header.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Als Override festlegen</value>
   </data>
-  <data name="Captions.Orientation.Explanations.None.Text" xml:space="preserve">
-    <value>Die Tracker drehen sich nur, wenn die Tracker-Spiegelung (Flip) durch Wegschauen aktiviert wird.</value>
+  <data name="Buttons.SetAs.Override.Content" xml:space="preserve">
+    <value>Set as Override</value>
   </data>
-  <data name="Captions.Orientation.Introduction.Text" xml:space="preserve">
-    <value>Alle Rotationseinstellungen werden weiterhin von der Tracker-Spiegelung (Skelett-Flip) beeinflusst, wenn es aktiviert ist.</value>
+  <data name="Buttons.SetAs.Override.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Statt der Basisstation wird das Gerät für die gewählten Positionen/Drehungen eines oder mehrerer virtueller Tracker priorisiert.
+Wird owotrack beispielsweise für die Taille als Override benutzt, wird das Tracking des Basisgeräts für die Taille ignoriert.</value>
   </data>
-  <data name="Captions.Orientation.Names.Default.Text" xml:space="preserve">
-    <value>- Vom Gerät abgeleitete Rotation</value>
+  <data name="Buttons.ViewDocs.Content" xml:space="preserve">
+    <value>Docs anschauen</value>
   </data>
-  <data name="Captions.Orientation.Names.HMD.Text" xml:space="preserve">
-    <value>- Headset folgen</value>
+  <data name="Placeholders.Joints.Disabled.PlaceholderText" xml:space="preserve">
+    <value>Gelenk Deaktiviert</value>
+    <comment>Displays when no joint override is set</comment>
   </data>
-  <data name="Captions.Orientation.Names.MathBased.Text" xml:space="preserve">
-    <value>- Softwareberechnete Rotation</value>
+  <data name="Placeholders.Overrides.NoOverride.PlaceholderText" xml:space="preserve">
+    <value>Kein Override</value>
+    <comment>Displays when no joint override is set</comment>
   </data>
-  <data name="Captions.Orientation.Names.None.Text" xml:space="preserve">
-    <value>- Rotation deaktivieren</value>
+  <data name="Titles.Check.Orientation.Text" xml:space="preserve">
+    <value>Rotation</value>
   </data>
-  <data name="Captions.TrackerConfig.Text" xml:space="preserve">
-    <value> Amethyst unterstützt bis zu 7 Basistracker. Zusätzliche können über das Zahnradsymbol umgeschaltet werden.
-Jeder Tracker oder Reihe von Trackern enthält Einstellungen zum Anpassen der Rotation und Filterung für einzelne Tracker.
-Auf diese Weise kann man beispielsweise einen starken Filter für Füße und Taille einstellen, wenn man beabsichtigt, viel zu sitzen und
-gleichzeitig eine schnellere Einstellung für die Ellbogen verwenden, damit die Tracker die Hände besser folgen können.</value>
+  <data name="Titles.Check.Position.Text" xml:space="preserve">
+    <value>Position</value>
   </data>
-  <data name="Captions.TrackerConfigNote.Text" xml:space="preserve">
-    <value>Notiz: Einige dieser Einstellungen sind nur bei Verwendung von Kinect relevant.</value>
+  <data name="Titles.CurrentDevice.Text" xml:space="preserve">
+    <value>Tracking aktiv</value>
   </data>
-  <data name="Titles.FilterSettings.Text" xml:space="preserve">
-    <value>Filtereinstellungen:</value>
+  <data name="Titles.DeviceBase.Text" xml:space="preserve">
+    <value>Gerät:</value>
   </data>
-  <data name="Titles.ManageTrackers.Text" xml:space="preserve">
-    <value>Tracker aktivieren und deaktivieren:</value>
+  <data name="Titles.DeviceHasNoJoints.Text" xml:space="preserve">
+    <value>Das Gerät stellt keine Gelenke bereit.
+Es kann als Override nicht benutzt werden.</value>
   </data>
-  <data name="Titles.RotationSettings.Text" xml:space="preserve">
-    <value>Rotationseinstellungen:</value>
+  <data name="Titles.DeviceOverride.Text" xml:space="preserve">
+    <value>Override:</value>
   </data>
-  <data name="Titles.TrackerConfig.Text" xml:space="preserve">
-    <value>Über die Tracker-Konfiguration</value>
+  <data name="Titles.Devices.Text" xml:space="preserve">
+    <value>Geräte</value>
+  </data>
+  <data name="Titles.DeviceSettings.Text" xml:space="preserve">
+    <value>Vom Gerät bereitgestellte Einstellungen</value>
+  </data>
+  <data name="Titles.DeviceStatus.Text" xml:space="preserve">
+    <value>Status:</value>
+    <comment>The real status string is polled from the device, this is a label</comment>
+  </data>
+  <data name="Titles.Joints.Assign.Text" xml:space="preserve">
+    <value>Gelenke zuweisen</value>
+  </data>
+  <data name="Titles.Joints.ElbowsAndKnees.Text" xml:space="preserve">
+    <value>Tracker für Ellbogen und Knie</value>
+  </data>
+  <data name="Titles.Joints.Other.Text" xml:space="preserve">
+    <value>Andere Tracker</value>
+  </data>
+  <data name="Titles.Joints.WaistAndFeet.Text" xml:space="preserve">
+    <value>Tracker für Taille und Füße</value>
+  </data>
+  <data name="Titles.NoOverrides.Text" xml:space="preserve">
+    <value>Keine Overrides</value>
+    <comment>Only a placeholder, will use the device's name when an override is set</comment>
+  </data>
+  <data name="Titles.Overrides.Header.Text" xml:space="preserve">
+    <value>Overrides</value>
+    <comment>Only a placeholder, will use the device's name when an override is set</comment>
+  </data>
+  <data name="Titles.Set.Orientation.Text" xml:space="preserve">
+    <value>Rotation:</value>
+  </data>
+  <data name="Titles.Set.Position.Text" xml:space="preserve">
+    <value>Position:</value>
+  </data>
+  <data name="Titles.Set.TrackedJoint.Text" xml:space="preserve">
+    <value>Getrackte Gelenke:</value>
+  </data>
+  <data name="Titles.Set.Tracker.Text" xml:space="preserve">
+    <value>Tracker:</value>
+  </data>
+  <data name="Titles.SetAsDevice.Text" xml:space="preserve">
+    <value>Als Tracking-Gerät festlegen:</value>
   </data>
 </root>

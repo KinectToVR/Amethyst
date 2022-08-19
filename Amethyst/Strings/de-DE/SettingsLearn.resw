@@ -117,53 +117,92 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppCaption.Text" xml:space="preserve">
-    <value>by K2VR Team</value>
+  <data name="Captions.Filters.Explanations.EKF.Text" xml:space="preserve">
+    <value>Höchste Latenz, aber sehr flüssig. Es entfernt jeglichen Jitter (Flackern) und reagiert auf schnelle
+Bewegungen flink, da es vorhersagefähig (prädiktiv) ist.</value>
   </data>
-  <data name="AppTitle.Text" xml:space="preserve">
-    <value>Amethyst</value>
+  <data name="Captions.Filters.Explanations.LERP.Text" xml:space="preserve">
+    <value>Minimale Latenz, lässt alle Bewegungen schneller erscheinen als das, wozu der Sensor in der Lage ist. 
+Jitter (Flackern) ist bemerkbar.</value>
   </data>
-  <data name="Credits.Community.Text" xml:space="preserve">
-    <value>Und allen anderen, die uns auf unserem Weg geholfen haben.</value>
+  <data name="Captions.Filters.Explanations.LowPass.Text" xml:space="preserve">
+    <value>Latenz ist leicht bemerkbar, entfernt jedoch Jitter (Flackern) und sieht insgesamt flüssiger aus als kein Filter.</value>
   </data>
-  <data name="Credits.Header.Text" xml:space="preserve">
-    <value>Credits</value>
+  <data name="Captions.Filters.Explanations.None.Text" xml:space="preserve">
+    <value>Rohe 30hz-Ausgabe vom Sensor.</value>
   </data>
-  <data name="Credits.Helpers.Title.Text" xml:space="preserve">
-    <value>Helfer:</value>
+  <data name="Captions.Filters.Names.EKF.Text" xml:space="preserve">
+    <value>- Erweiterter Kalman-Filter</value>
   </data>
-  <data name="Credits.MainTeam.Roles.Akaya.Text" xml:space="preserve">
-    <value>Lead Developer: </value>
-    <comment>Notice the space at the end!</comment>
+  <data name="Captions.Filters.Names.LERP.Text" xml:space="preserve">
+    <value>- Lineare Interpolation (standardmäßig eingestellt)</value>
   </data>
-  <data name="Credits.MainTeam.Roles.Aria.Text" xml:space="preserve">
-    <value>Support (inaktiv): </value>
-    <comment>Notice the space at the end!</comment>
+  <data name="Captions.Filters.Names.LowPass.Text" xml:space="preserve">
+    <value>- Low Pass (Tiefpass) Filter</value>
   </data>
-  <data name="Credits.MainTeam.Roles.Artemis.Text" xml:space="preserve">
-    <value>Support: </value>
-    <comment>Notice the space at the end!</comment>
+  <data name="Captions.Filters.Names.None.Text" xml:space="preserve">
+    <value>- Filter ausschalten</value>
   </data>
-  <data name="Credits.MainTeam.Roles.Ella.Text" xml:space="preserve">
-    <value>Projekt-Management: </value>
-    <comment>Notice the space at the end!</comment>
+  <data name="Captions.ManageTrackers.Text" xml:space="preserve">
+    <value>Wenn eine Reihe von Trackern aktiviert oder deaktiviert wird, werden sie sofort gespawnt oder despawnt.
+Sie werden aber weiterhin in der Liste der Geräten in SteamVR aufgelistet.
+Tracker, die gerade deaktiviert wurden, werden bis SteamVR neu gestartet wird als deaktiviert angezeigt.
+Sollten Probleme mit der Tracking-Erkennung in Apps auftreten, sollte SteamVR zuerst neu gestartet werden.</value>
   </data>
-  <data name="Credits.MainTeam.Roles.Hekky.Text" xml:space="preserve">
-    <value>Installer Development: </value>
-    <comment>Notice the space at the end!</comment>
+  <data name="Captions.Orientation.Explanations.Default.Text" xml:space="preserve">
+    <value>Diese Einstellung kann für einige Benutzer auf Xbox One Kinect instabil sein.
+In diesem Falle, versuche es noch einmal mit der Softwareberechneten Rotation.
+Dies ist die Gelenkausrichtung, die vom Kinect SDK basierend auf der Position jedes Gelenks in der Kette approximiert wird.
+Stell dir das soweit vor, dass man auf jedes Glied des Körpers Pfeile anknüpft, die auf die Extremitäten zeigen.
+Bei Fußtrackern unterscheidet sich das Verhalten zwischen Kinect-Modellen.
+Auf Xbox One basiert sich die Drehung auf der Fußspitze, was bedeutet, dass sich Ihre Füße drehen können.
+Auf der Xbox 360 basiert die Drehung allein auf dem Knöchel, was bedeutet, dass es keine Fußdrehung gibt.</value>
   </data>
-  <data name="Credits.MainTeam.Roles.Himbeer.Text" xml:space="preserve">
-    <value>Installer Development: </value>
-    <comment>Notice the space at the end!</comment>
+  <data name="Captions.Orientation.Explanations.HMD.Text" xml:space="preserve">
+    <value>Die Tracker folgen der Richtung, in die das Headset auf der Y-Achse zeigt. Die Tracker drehen sich aber nicht auf den anderen beiden Achsen.</value>
   </data>
-  <data name="Credits.MainTeam.Roles.Ollie.Text" xml:space="preserve">
-    <value>Support: </value>
-    <comment>Notice the space at the end!</comment>
+  <data name="Captions.Orientation.Explanations.MathBased.Text" xml:space="preserve">
+    <value>Diese Option ist nur für Fußtracker verfügbar.
+Die Richtung der Füße wird aus dem Winkel zwischen Knöchel und Fußspitze berechnet.
+Die Reichweite wird auf 50% reduziert um Jitter (Flimmern) zu vermeiden. Dies ermöglicht die Drehung der Füße auf der Xbox 360 Kinect.</value>
   </data>
-  <data name="Credits.MainTeam.Title.Text" xml:space="preserve">
-    <value>Hauptteam:</value>
+  <data name="Captions.Orientation.Explanations.None.Text" xml:space="preserve">
+    <value>Die Tracker drehen sich nur, wenn die Tracker-Spiegelung (Flip) durch Wegschauen aktiviert wird.</value>
   </data>
-  <data name="Credits.Translators.Title.Text" xml:space="preserve">
-    <value>Übersetzer:</value>
+  <data name="Captions.Orientation.Introduction.Text" xml:space="preserve">
+    <value>Alle Rotationseinstellungen werden weiterhin von der Tracker-Spiegelung (Skelett-Flip) beeinflusst, wenn es aktiviert ist.</value>
+  </data>
+  <data name="Captions.Orientation.Names.Default.Text" xml:space="preserve">
+    <value>- Vom Gerät abgeleitete Rotation</value>
+  </data>
+  <data name="Captions.Orientation.Names.HMD.Text" xml:space="preserve">
+    <value>- Headset folgen</value>
+  </data>
+  <data name="Captions.Orientation.Names.MathBased.Text" xml:space="preserve">
+    <value>- Softwareberechnete Rotation</value>
+  </data>
+  <data name="Captions.Orientation.Names.None.Text" xml:space="preserve">
+    <value>- Rotation deaktivieren</value>
+  </data>
+  <data name="Captions.TrackerConfig.Text" xml:space="preserve">
+    <value> Amethyst unterstützt bis zu 7 Basistracker. Zusätzliche können über das Zahnradsymbol umgeschaltet werden.
+Jeder Tracker oder Reihe von Trackern enthält Einstellungen zum Anpassen der Rotation und Filterung für einzelne Tracker.
+Auf diese Weise kann man beispielsweise einen starken Filter für Füße und Taille einstellen, wenn man beabsichtigt, viel zu sitzen und
+gleichzeitig eine schnellere Einstellung für die Ellbogen verwenden, damit die Tracker die Hände besser folgen können.</value>
+  </data>
+  <data name="Captions.TrackerConfigNote.Text" xml:space="preserve">
+    <value>Notiz: Einige dieser Einstellungen sind nur bei Verwendung von Kinect relevant.</value>
+  </data>
+  <data name="Titles.FilterSettings.Text" xml:space="preserve">
+    <value>Filtereinstellungen:</value>
+  </data>
+  <data name="Titles.ManageTrackers.Text" xml:space="preserve">
+    <value>Tracker aktivieren und deaktivieren:</value>
+  </data>
+  <data name="Titles.RotationSettings.Text" xml:space="preserve">
+    <value>Rotationseinstellungen:</value>
+  </data>
+  <data name="Titles.TrackerConfig.Text" xml:space="preserve">
+    <value>Über die Tracker-Konfiguration</value>
   </data>
 </root>
