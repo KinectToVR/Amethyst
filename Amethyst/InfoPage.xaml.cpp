@@ -82,5 +82,45 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::InfoPage::End
 void winrt::Amethyst::implementation::InfoPage::Page_Loaded(
 	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	AppTitle().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/AppTitle"));
 
+	AppCaption().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/AppCaption"));
+
+	Credits_Header().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/Header"));
+
+	Credits_MainTeam_Title().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/MainTeam/Title"));
+
+	Credits_MainTeam_Roles_Akaya().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/MainTeam/Roles/Akaya"));
+
+	Credits_MainTeam_Roles_Ella().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/MainTeam/Roles/Ella"));
+
+	Credits_MainTeam_Roles_Hekky().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/MainTeam/Roles/Hekky"));
+
+	Credits_MainTeam_Roles_Himbeer().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/MainTeam/Roles/Himbeer"));
+
+	Credits_MainTeam_Roles_Artemis().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/MainTeam/Roles/Artemis"));
+
+	Credits_MainTeam_Roles_Ollie().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/MainTeam/Roles/Ollie"));
+
+	Credits_MainTeam_Roles_Aria().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/MainTeam/Roles/Aria"));
+
+	Credits_Translators_Title().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/Translators/Title"));
+
+	Credits_Helpers_Title().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/Helpers/Title"));
+
+	Credits_Community().Text(
+		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/Community"));
 }
