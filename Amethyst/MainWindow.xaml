@@ -11,6 +11,7 @@
 
     <!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
     <Grid Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
+          Loaded="XMainGrid_Loaded"
           MinHeight="650" MinWidth="1000" x:Name="XMainGrid" IsTabStop="True">
 
         <Grid VerticalAlignment="Top" HorizontalAlignment="Left">
@@ -129,7 +130,7 @@
                         </FontIcon>
 
                         <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock x:Uid="/SharedStrings/Buttons/General" HorizontalAlignment="Center"
+                            <TextBlock HorizontalAlignment="Center"
                                        x:Name="NavViewGeneralButtonLabel" Opacity="0.0"
                                        Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                 <TextBlock.OpacityTransition>
@@ -151,7 +152,7 @@
                         </FontIcon>
 
                         <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock x:Uid="/SharedStrings/Buttons/Settings" HorizontalAlignment="Center"
+                            <TextBlock HorizontalAlignment="Center"
                                        x:Name="NavViewSettingsButtonLabel"
                                        Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                 <TextBlock.OpacityTransition>
@@ -190,7 +191,7 @@
                         </Canvas>
 
                         <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock x:Uid="/SharedStrings/Buttons/Devices" HorizontalAlignment="Center"
+                            <TextBlock HorizontalAlignment="Center"
                                        x:Name="NavViewDevicesButtonLabel"
                                        Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                 <TextBlock.OpacityTransition>
@@ -212,7 +213,7 @@
                         </FontIcon>
 
                         <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock x:Uid="/SharedStrings/Buttons/Info" HorizontalAlignment="Center"
+                            <TextBlock HorizontalAlignment="Center"
                                        x:Name="NavViewInfoButtonLabel"
                                        Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                 <TextBlock.OpacityTransition>
@@ -287,8 +288,7 @@
                             </Grid>
 
                             <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                                <TextBlock x:Uid="/SharedStrings/Buttons/Updates/Header"
-                                           x:Name="UpdateIconText" Opacity="1.0"
+                                <TextBlock x:Name="UpdateIconText" Opacity="1.0"
                                            HorizontalAlignment="Center"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                     <TextBlock.OpacityTransition>
@@ -338,8 +338,7 @@
                             </Grid>
 
                             <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                                <TextBlock x:Uid="/SharedStrings/Buttons/Help/Header"
-                                           x:Name="HelpIconText" Opacity="1.0"
+                                <TextBlock x:Name="HelpIconText" Opacity="1.0"
                                            HorizontalAlignment="Center"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                     <TextBlock.OpacityTransition>
@@ -399,12 +398,10 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click"
-                                Grid.Column="0"
-                                x:Uid="/SharedStrings/Buttons/Updates/Skip" Margin="0,0,5,0"
+                                Grid.Column="0" Margin="0,0,5,0"
                                 HorizontalAlignment="Stretch" />
                         <Button x:Name="InstallNowButton" Click="InstallNowButton_Click"
-                                Grid.Column="1"
-                                x:Uid="/SharedStrings/Buttons/Updates/Install" Margin="5,0,0,0"
+                                Grid.Column="1" Margin="5,0,0,0"
                                 Style="{StaticResource AccentButtonStyle}"
                                 HorizontalAlignment="Stretch" />
                     </Grid>
@@ -433,8 +430,7 @@
 
                 <!--Discord-->
                 <MenuFlyoutItem x:Name="HelpFlyoutDiscordButton"
-                                Click="HelpFlyoutDiscordButton_Click"
-                                x:Uid="/SharedStrings/Buttons/Help/Discord">
+                                Click="HelpFlyoutDiscordButton_Click">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE8F2;" />
                     </MenuFlyoutItem.Icon>
@@ -442,8 +438,7 @@
 
                 <!--GitHub / Dev Docs-->
                 <MenuFlyoutItem x:Name="HelpFlyoutDevButton"
-                                Click="HelpFlyoutDevButton_Click"
-                                x:Uid="/SharedStrings/Buttons/Help/Developers">
+                                Click="HelpFlyoutDevButton_Click">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE943;" />
                     </MenuFlyoutItem.Icon>
@@ -451,8 +446,7 @@
 
                 <!--Licenses-->
                 <MenuFlyoutItem x:Name="HelpFlyoutLicensesButton"
-                                Click="HelpFlyoutLicensesButton_Click"
-                                x:Uid="/SharedStrings/Buttons/Help/Licenses">
+                                Click="HelpFlyoutLicensesButton_Click">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xF000;" />
                     </MenuFlyoutItem.Icon>

@@ -927,6 +927,197 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 	LOG(INFO) << "Re/Loading page with tag: \"general\"...";
 	k2app::interfacing::currentAppState = L"general";
 
+	// Load strings (must be the first thing we're doing)
+
+	SaveOffsetsButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Save")));
+
+	DiscardOffsetsButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Discard")));
+
+	Calibration_Titles_Choose().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Titles/Choose"));
+
+	Calibration_Captions_Recommended().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Captions/Recommended"));
+
+	Calibration_Titles_Automatic().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Titles/Automatic"));
+
+	Calibration_Captions_Automatic().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Captions/Automatic"));
+
+	Calibration_Titles_Manual().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Titles/Manual"));
+
+	Calibration_Captions_Manual().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Captions/Manual"));
+
+	CancelCalibrationButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Cancel")));
+
+	Calibration_Captions_Manual().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Headers/Automatic"));
+
+	CalibrationInstructionsLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Captions/Start"));
+
+	StartAutoCalibrationButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Calibration/Begin")));
+
+	Calibration_Titles_Points().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Titles/Points"));
+
+	Calibration_Captions_Points().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Captions/Points"));
+
+	DiscardAutoCalibrationButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Cancel")));
+
+	Calibration_Headers_Manual().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Headers/Manual"));
+
+	Calibration_Labels_Brief_Left().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Labels/Brief/Left"));
+
+	Calibration_LabelsWhat_Brief_Left().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/LabelsWhat/Brief/Left"));
+
+	Calibration_Labels_Brief_Right().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Labels/Brief/Right"));
+
+	Calibration_LabelsWhat_Brief_Right().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/LabelsWhat/Brief/Right"));
+
+	Calibration_Labels_Grips_Left().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Labels/Grips/Left"));
+
+	Calibration_Labels_Triggers_Left().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Labels/Triggers/Left"));
+
+	Calibration_LabelsWhat_Grips_Left().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/LabelsWhat/Grips/Left"));
+
+	Calibration_Labels_Grips_Right().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Labels/Grips/Right"));
+
+	Calibration_Labels_Grips_Right().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Labels/Grips/Right"));
+
+	Calibration_LabelsWhat_Grips_Right().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/LabelsWhat/Grips/Right"));
+
+	Calibration_Labels_Triggers_Both().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Labels/Triggers/Both"));
+
+	Calibration_LabelsWhat_Triggers().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/LabelsWhat/Triggers"));
+
+	Calibration_Labels_InputsNotice().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Labels/InputsNotice"));
+
+	DiscardCalibrationButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Cancel")));
+
+	Titles_Trackers().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Titles/Trackers"));
+
+	CalibrationButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Calibration/Begin")));
+
+	BaseCalibration().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Calibration/Base")));
+
+	OverrideCalibration().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Calibration/Override")));
+
+	Captions_CalibrateOverrides().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/CalibrateOverrides"));
+
+	OffsetsButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Offsets")));
+
+	ToggleTrackersButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/TrackersToggle/Connect")));
+
+	Titles_Device().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Titles/Device"));
+
+	Captions_Device_Name().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Device/Name"));
+
+	Captions_Device_Status().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Device/Status"));
+
+	OpenDiscordButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Help/Discord")));
+
+	OpenDocsButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Help/Docs")));
+	
+	Captions_OverrideDevice_Name().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/OverrideDevice/Name"));
+
+	Titles_Status().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Titles/Status"));
+
+	Captions_DriverStatus_Label().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/DriverStatus/Label"));
+
+	ServerStatusLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/DriverStatus/Content"));
+
+	ReRegisterButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/ReRegister")));
+	
+	Captions_VersionText().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/VersionText"));
+
+	Captions_Preview_NoSkeleton().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Preview/NoSkeleton"));
+
+	NoSkeletonTextNotice().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Preview/NoSkeletonText"));
+
+	Captions_Preview_Disabled().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Preview/Disabled"));
+
+	Captions_Preview_DisabledText().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Preview/DisabledText"));
+
+	Captions_Preview_NoFocus().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Preview/NoFocus"));
+
+	Captions_Preview_NoFocusText().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Preview/NoFocusText"));
+
+	Captions_Preview_NoDashboard().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Preview/NoDashboard"));
+
+	Captions_Preview_NoDashboardText().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Preview/NoDashboardText"));
+
+	Labels_Tracking().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Labels/Tracking"));
+	
+	Labels_Inferred().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Labels/Inferred"));
+
+	SkeletonToggleButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Skeleton/Hide")));
+
+	ForceRenderText().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Preview/Force"));
+
+	ToggleTrackingButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Skeleton/Freeze")));
+
+	FreezeOnlyLowerCheckBoxLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/FreezeLowerOnly"));
+
+	DismissSetErrorButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/Error/Dismiss")));
+
 	// Start the main loop since we're done with basic setup
 	k2app::shared::devices::smphSignalStartMain.release();
 

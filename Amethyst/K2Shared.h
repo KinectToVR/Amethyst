@@ -272,4 +272,9 @@ namespace k2app::interfacing
 		return shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
 			(dictionary + L"/" + key).c_str()).ValueAsString().c_str();
 	}
+
+	inline std::wstring LocalizedJSONString(const std::wstring& key)
+	{
+		return L"";
+	}
 }

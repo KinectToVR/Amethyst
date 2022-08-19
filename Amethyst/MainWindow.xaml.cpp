@@ -1985,3 +1985,41 @@ void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Opening(
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 }
+
+
+void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	NavViewGeneralButtonLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/General"));
+
+	NavViewSettingsButtonLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Settings"));
+
+	NavViewDevicesButtonLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Devices"));
+
+	NavViewInfoButtonLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Info"));
+
+	UpdateIconText().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Updates/Header"));
+
+	HelpIconText().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Help/Header"));
+
+	InstallLaterButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Updates/Skip")));
+
+	InstallNowButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Updates/Install")));
+
+	HelpFlyoutDiscordButton().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Help/Discord"));
+
+	HelpFlyoutDevButton().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Help/Developers"));
+
+	HelpFlyoutLicensesButton().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Help/Licenses"));
+}
