@@ -4,8 +4,6 @@
 #include "K2EVRInput.h"
 #include "K2Shared.h"
 
-#include "LocalizedServerStatuses.h"
-
 #include <ShlObj.h>
 
 namespace winrt::Microsoft::UI::Xaml::Controls
@@ -647,30 +645,30 @@ namespace k2app::interfacing
 		}
 
 		isServerDriverPresent = false; // Assume fail
-		serverStatusString = GetLocalizedStatusWStringAutomatic(status_wtf_map);
+		serverStatusString = LocalizedJSONString(L"/ServerStatuses/WTF");
 		//L"COULD NOT CHECK STATUS (Code -12)\nE_WTF\nSomething's fucked a really big time.";
 
 		switch (serverDriverStatusCode)
 		{
 		case -10:
-			serverStatusString = GetLocalizedStatusWStringAutomatic(status_exception_map);
+			serverStatusString = LocalizedJSONString(L"/ServerStatuses/Exception");
 		//L"EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
 			break;
 		case -1:
-			serverStatusString = GetLocalizedStatusWStringAutomatic(status_connection_error_map);
-		//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
+			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ConnectionError");
+			//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
 			break;
 		case 10:
-			serverStatusString = GetLocalizedStatusWStringAutomatic(status_server_failure_map);
-		//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
+			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ServerFailure");
+			//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
 			break;
 		case 1:
-			serverStatusString = GetLocalizedStatusWStringAutomatic(status_ok_map);
-		//L"Success! (Code 1)\nI_OK\nEverything's good!";
+			serverStatusString = LocalizedJSONString(L"/ServerStatuses/Success");
+			//L"Success! (Code 1)\nI_OK\nEverything's good!";
 			isServerDriverPresent = true; // Change to success
 			break;
 		default:
-			serverStatusString = GetLocalizedStatusWStringAutomatic(status_api_failure_map);
+			serverStatusString = LocalizedJSONString(L"/ServerStatuses/APIFailure");
 		//L"COULD NOT CONNECT TO K2API (Code -11)\nE_K2API_FAILURE\nThis error shouldn't occur, actually. Something's wrong a big part.";
 			break;
 		}

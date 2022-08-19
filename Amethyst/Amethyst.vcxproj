@@ -165,7 +165,6 @@ xcopy /y /d /s /i "$(SolutionDir)external\app_resources\*" "$(OutDir)"</Command>
     <ClInclude Include="K2Settings.h" />
     <ClInclude Include="K2Shared.h" />
     <ClInclude Include="KalmanFilter.h" />
-    <ClInclude Include="LocalizedServerStatuses.h" />
     <ClInclude Include="LowpassFilter.h" />
     <ClInclude Include="OffsetsController.h" />
     <ClInclude Include="OffsetsPivotItem.h" />

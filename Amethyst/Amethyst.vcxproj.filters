@@ -92,9 +92,6 @@
     <ClInclude Include="OffsetsController.h">
       <Filter>Header Files\Custom Controls</Filter>
     </ClInclude>
-    <ClInclude Include="LocalizedServerStatuses.h">
-      <Filter>Header Files\Strings</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
