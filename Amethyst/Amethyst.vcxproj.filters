@@ -278,26 +278,8 @@
     <Filter Include="Header Files">
       <UniqueIdentifier>{0fc750fd-6054-4c3d-8204-d91bb847daca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Strings">
-      <UniqueIdentifier>{ec2128d2-1cb5-42ac-bf32-79b5fa75026b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Strings\en-US">
-      <UniqueIdentifier>{0c073a15-b136-4bd2-b2de-67d72d3fedc0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Custom Controls">
       <UniqueIdentifier>{fee0c485-5d6e-48cc-bc58-75a411e0eae9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Strings">
-      <UniqueIdentifier>{5a3e1d2e-63a6-4335-ae44-681e3cd7d18c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Strings\fr-FR">
-      <UniqueIdentifier>{f6179d06-76df-4234-bb42-3604a5e853ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Strings\ru-RU">
-      <UniqueIdentifier>{a1ae387e-80bf-4ae9-8017-a0b39cd43898}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Strings\de-DE">
-      <UniqueIdentifier>{bffeb799-b6cd-426a-b2a2-b755de131cc3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets\Sounds">
       <UniqueIdentifier>{81879332-1ac8-4f09-8d51-61731b39b77c}</UniqueIdentifier>
@@ -317,80 +299,6 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Amethyst.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\en-US\InfoPage.resw">
-      <Filter>Strings\en-US</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\en-US\SettingsPage.resw">
-      <Filter>Strings\en-US</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\en-US\DevicesPage.resw">
-      <Filter>Strings\en-US</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\en-US\SharedStrings.resw">
-      <Filter>Strings\en-US</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\en-US\SettingsLearn.resw">
-      <Filter>Strings\en-US</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\fr-FR\DevicesPage.resw">
-      <Filter>Strings\fr-FR</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\fr-FR\InfoPage.resw">
-      <Filter>Strings\fr-FR</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\fr-FR\SettingsLearn.resw">
-      <Filter>Strings\fr-FR</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\fr-FR\SettingsPage.resw">
-      <Filter>Strings\fr-FR</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\fr-FR\SharedStrings.resw">
-      <Filter>Strings\fr-FR</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\en-US\GeneralPage.resw">
-      <Filter>Strings\en-US</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\fr-FR\GeneralPage.resw">
-      <Filter>Strings\fr-FR</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\ru-RU\DevicesPage.resw">
-      <Filter>Strings\ru-RU</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\ru-RU\GeneralPage.resw">
-      <Filter>Strings\ru-RU</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\ru-RU\InfoPage.resw">
-      <Filter>Strings\ru-RU</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\ru-RU\SettingsLearn.resw">
-      <Filter>Strings\ru-RU</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\ru-RU\SettingsPage.resw">
-      <Filter>Strings\ru-RU</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\ru-RU\SharedStrings.resw">
-      <Filter>Strings\ru-RU</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\de-DE\DevicesPage.resw">
-      <Filter>Strings\de-DE</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\de-DE\GeneralPage.resw">
-      <Filter>Strings\de-DE</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\de-DE\InfoPage.resw">
-      <Filter>Strings\de-DE</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\de-DE\SettingsLearn.resw">
-      <Filter>Strings\de-DE</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\de-DE\SettingsPage.resw">
-      <Filter>Strings\de-DE</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\de-DE\SharedStrings.resw">
-      <Filter>Strings\de-DE</Filter>
-    </PRIResource>
   </ItemGroup>
   <ItemGroup>
     <Media Include="Assets\Sounds\TrackersDisconnected.wav">

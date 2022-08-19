@@ -3,7 +3,6 @@
 #include "SettingsPage.g.h"
 #include "TrackingDevices.h"
 #include "JointExpander.h"
-#include "LocalizedServerStatuses.h"
 
 namespace winrt::Amethyst::implementation
 {
