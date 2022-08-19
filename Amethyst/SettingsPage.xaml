@@ -71,8 +71,8 @@
                                      VerticalAlignment="Bottom" HorizontalAlignment="Right" />
                 </Grid>
 
-                <!--x:Uid="/SettingsPage/Titles/Sounds"-->
                 <TextBlock FontWeight="SemiBold" Text="Application"
+                           x:Name="Titles_Application"
                            FontSize="25" Margin="0,30,0,0">
                     <TextBlock.Transitions>
                         <TransitionCollection>
@@ -93,7 +93,7 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               Text="Display Language:"
+                               Name="Labels_DisplayLanguage"
                                Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
 
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
@@ -104,7 +104,7 @@
                     </ComboBox>
 
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               Text="App Theme:"
+                               Name="Labels_AppTheme"
                                Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
 
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
@@ -125,7 +125,7 @@
                         </Grid.Transitions>
 
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                                   x:Uid="/SettingsPage/Captions/Sounds" Margin="30,0,0,10" />
+                                   x:Name="Captions_Sounds" Margin="30,0,0,10" />
                         <CheckBox x:Name="SoundsEnabledCheckBox"
                                   Checked="EnableSounds_Checked" Unchecked="EnableSounds_Unchecked"
                                   HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -146,7 +146,7 @@
                 <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
                             x:Name="FlipDropDownContainer" Margin="0,20,0,10" Grid.Row="0">
 
-                    <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/SkeletonFlip" FontSize="25" />
+                    <TextBlock FontWeight="SemiBold" x:Name="Titles_SkeletonFlip" FontSize="25" />
 
                     <Grid x:Name="FlipDropDownGrid">
                         <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
@@ -155,7 +155,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Captions/SkeletonFlip"
+                            <TextBlock FontWeight="SemiBold" x:Name="Captions_SkeletonFlip"
                                        FontSize="14" Margin="0,-3,0,0"
                                        Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
@@ -167,7 +167,6 @@
 
                             <ToggleSwitch IsOn="True" x:Name="FlipToggle"
                                           Toggled="FlipToggle_Toggled"
-                                          x:Uid="/SettingsPage/Elements/FlipToggle"
                                           Grid.Column="1" Margin="0,0,-125,0"
                                           OnContent="" OffContent=""
                                           VerticalAlignment="Center"
@@ -208,7 +207,6 @@
                                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
                                                        FontWeight="Medium"
                                                        x:Name="ExternalFlipCheckBoxLabel"
-                                                       x:Uid="/SettingsPage/Titles/ExtFlip"
                                                        Margin="30,0,0,10"
                                                        Grid.Column="0" />
                                             <CheckBox x:Name="ExternalFlipCheckBox"
@@ -220,16 +218,16 @@
                                         </Grid>
 
                                         <AppBarButton IsCompact="True" Width="35" Height="65" Margin="5,17,0,0"
-                                                      x:Uid="/SettingsPage/Elements/ExtFlipCalibration"
+                                                      x:Name="ExtFlipAppBarButton"
                                                       IsEnabled="{Binding ElementName=ExternalFlipCheckBox, 
 									                    Path=IsChecked,TargetNullValue=False}">
                                             <AppBarButton.Flyout>
                                                 <MenuFlyout Opening="ButtonFlyout_Opening"
                                                             Closing="ButtonFlyout_Closing">
-                                                    <MenuFlyoutItem x:Uid="/SettingsPage/Captions/FaceTheKinect"
+                                                    <MenuFlyoutItem x:Name="Captions_FaceTheKinect"
                                                                     FontWeight="Medium"
                                                                     IsHitTestVisible="False" />
-                                                    <MenuFlyoutItem x:Uid="/SettingsPage/Captions/CalibrateExtFlip"
+                                                    <MenuFlyoutItem x:Name="Captions_CalibrateExtFlip"
                                                                     Tag="Calibrate"
                                                                     Click="CalibrateExternalFlipMenuFlyoutItem_Click" />
                                                 </MenuFlyout>
@@ -242,7 +240,7 @@
                                                 x:Name="ExtFlipStatusStackPanel">
                                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
                                                    FontWeight="SemiBold"
-                                                   x:Uid="/GeneralPage/Captions/Device/Status"
+                                                   x:Name="Captions_Device_Status"
                                                    Foreground="{ThemeResource ControlDisplayTextBrush}"
                                                    Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
 									                    Path=Opacity,TargetNullValue=1.0}" />
@@ -256,7 +254,7 @@
 
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
                                                FontWeight="SemiBold"
-                                               x:Uid="/SettingsPage/Captions/ExtFlip"
+                                               x:Name="Captions_ExtFlip"
                                                Margin="30,0,0,7" Foreground="{ThemeResource ControlDisplayTextBrush}"
                                                Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
 									                    Path=Opacity,TargetNullValue=1.0}">
@@ -289,10 +287,9 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock FontWeight="SemiBold" FontSize="25" Grid.Column="0"
-                                   x:Uid="/SettingsPage/Titles/TrackerConfig/Header" />
+                                   x:Name="Titles_TrackerConfig_Header" />
 
-                        <HyperlinkButton FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/TrackerConfig/Learn"
-                                         FontSize="16" Grid.Column="1" HorizontalAlignment="Right"
+                        <HyperlinkButton FontWeight="SemiBold" FontSize="16" Grid.Column="1" HorizontalAlignment="Right"
                                          x:Name="LearnAboutFiltersButton" Click="LearnAboutFiltersButton_Click">
 
                             <HyperlinkButton.Resources>
@@ -327,91 +324,91 @@
                                                 VerticalAlignment="Stretch"
                                                 Margin="10,0" MaxWidth="660">
 
-                                        <TextBlock x:Uid="/SettingsLearn/Titles/TrackerConfig" FontSize="24"
+                                        <TextBlock x:Name="Titles_TrackerConfig" FontSize="24"
                                                    FontWeight="SemiBold" Margin="0,10,0,20" />
 
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
-                                                   x:Uid="/SettingsLearn/Captions/TrackerConfig" />
+                                                   x:Name="Captions_TrackerConfig" />
 
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15"
                                                    Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                   x:Uid="/SettingsLearn/Captions/TrackerConfigNote" />
+                                                   x:Name="Captions_TrackerConfigNote" />
 
-                                        <TextBlock FontSize="20" x:Uid="/SettingsLearn/Titles/FilterSettings"
+                                        <TextBlock FontSize="20" x:Name="Titles_FilterSettings"
                                                    FontWeight="SemiBold" Margin="0,20,0,20" />
 
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10">
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Names/LERP" />
+                                            <Run x:Name="Captions_Filters_Names_LERP" />
                                             <LineBreak />
 
                                             <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Filters/Explanations/LERP" />
+                                                 x:Name="Captions_Filters_Explanations_LERP" />
                                             <LineBreak /><LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Names/LowPass" />
+                                            <Run x:Name="Captions_Filters_Names_LowPass" />
                                             <LineBreak />
 
                                             <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Filters/Explanations/LowPass" />
+                                                 x:Name="Captions_Filters_Explanations_LowPass" />
                                             <LineBreak /><LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Names/EKF" />
+                                            <Run x:Name="Captions_Filters_Names_EKF" />
                                             <LineBreak />
 
                                             <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Filters/Explanations/EKF" />
+                                                 x:Name="Captions_Filters_Explanations_EKF" />
                                             <LineBreak /><LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Filters/Names/None" />
+                                            <Run x:Name="Captions_Filters_Names_None" />
                                             <LineBreak />
 
                                             <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Filters/Explanations/None" />
+                                                 x:Name="Captions_Filters_Explanations_None" />
 
                                         </TextBlock>
-                                        <TextBlock x:Uid="/SettingsLearn/Titles/RotationSettings" FontSize="20"
+                                        <TextBlock x:Name="Titles_RotationSettings" FontSize="20"
                                                    FontWeight="SemiBold" Margin="0,20,0,20" />
 
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10">
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Introduction" />
+                                            <Run x:Name="Captions_Orientation_Introduction" />
                                             <LineBreak /><LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Names/Default" />
+                                            <Run x:Name="Captions_Orientation_Names_Default" />
                                             <LineBreak />
 
                                             <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/Default" />
+                                                 x:Name="Captions_Orientation_Explanations_Default" />
                                             <LineBreak /><LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Names/MathBased" />
+                                            <Run x:Name="Captions_Orientation_Names_MathBased" />
                                             <LineBreak />
 
                                             <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/MathBased" />
+                                                 x:Name="Captions_Orientation_Explanations_MathBased" />
                                             <LineBreak /><LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Names/HMD" />
+                                            <Run x:Name="Captions_Orientation_Names_HMD" />
                                             <LineBreak />
 
                                             <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/HMD" />
+                                                 x:Name="Captions_Orientation_Explanations_HMD" />
                                             <LineBreak /><LineBreak />
 
-                                            <Run x:Uid="/SettingsLearn/Captions/Orientation/Names/None" />
+                                            <Run x:Name="Captions_Orientation_Names_None" />
                                             <LineBreak />
 
                                             <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 x:Uid="/SettingsLearn/Captions/Orientation/Explanations/None" />
+                                                 x:Name="Captions_Orientation_Explanations_None" />
 
                                         </TextBlock>
 
-                                        <TextBlock x:Uid="/SettingsLearn/Titles/ManageTrackers" FontSize="20"
+                                        <TextBlock x:Name="Titles_ManageTrackers" FontSize="20"
                                                    FontWeight="SemiBold" Margin="0,20,0,20" />
 
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
-                                                   x:Uid="/SettingsLearn/Captions/ManageTrackers" />
+                                                   x:Name="Captions_ManageTrackers" />
 
                                     </StackPanel>
 
@@ -484,21 +481,20 @@
                             Style="{StaticResource AccentButtonStyle}" x:Name="RestartButton"
                             Click="RestartButton_Click" FontWeight="SemiBold"
                             HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                            x:Uid="/SettingsPage/Buttons/RestartSteamVR"
                             FontSize="16" IsEnabled="False" />
 
                     <StackPanel Grid.Column="0" Orientation="Vertical" Margin="0,2,15,0" Grid.Row="0">
-                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
-                                   x:Uid="/SettingsPage/Captions/TrackersRestart/Line1"
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" 
+                                   x:Name="Captions_TrackersRestart_Line1" FontWeight="SemiBold"
                                    Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
-                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"
-                                   x:Uid="/SettingsPage/Captions/TrackersRestart/Line2"
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   x:Name="Captions_TrackersRestart_Line2" FontWeight="SemiBold"
                                    Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                     </StackPanel>
 
                     <Grid Grid.Column="0" Grid.Row="1" Margin="0,20,0,0">
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                                   x:Uid="/SettingsPage/Captions/TrackersAutoSpawn" Margin="30,0,0,10" />
+                                   x:Name="Captions_TrackersAutoSpawn" Margin="30,0,0,10" />
                         <CheckBox x:Name="AutoSpawnCheckBox" Checked="AutoSpawn_Checked"
                                   Unchecked="AutoSpawn_Unchecked"
                                   HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -507,16 +503,15 @@
 
                     <Grid Grid.Column="0" Grid.Row="2">
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                                   x:Uid="/SettingsPage/Captions/TrackersAutoCheck" Margin="30,0,0,10" />
+                                   x:Name="Captions_TrackersAutoCheck" Margin="30,0,0,10" />
                         <CheckBox x:Name="CheckOverlapsCheckBox" Checked="CheckOverlapsCheckBox_Checked"
                                   Unchecked="CheckOverlapsCheckBox_Unchecked"
                                   HorizontalAlignment="Left" VerticalAlignment="Center"
                                   MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="False" />
                     </Grid>
-
                 </Grid>
 
-                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Troubleshooting"
+                <TextBlock FontWeight="SemiBold" x:Name="Titles_Troubleshooting"
                            FontSize="25" Margin="0,40,0,15">
                     <TextBlock.Transitions>
                         <TransitionCollection>
@@ -541,24 +536,20 @@
                     <StackPanel HorizontalAlignment="Stretch"
                                 Grid.Column="0" Orientation="Vertical">
 
-                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10"
-                                x:Name="ResetButton" Click="ResetButton_Click" FontWeight="SemiBold"
-                                x:Uid="/SettingsPage/Buttons/Reset" FontSize="16" />
+                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10" FontSize="16"
+                                x:Name="ResetButton" Click="ResetButton_Click" FontWeight="SemiBold" />
 
-                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10"
-                                x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold"
-                                x:Uid="/SettingsPage/Buttons/ReRegister" FontSize="16" />
+                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10" FontSize="16"
+                                x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold" />
 
-                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10"
-                                x:Name="ViewLogsButton" Click="ViewLogsButton_Click" FontWeight="SemiBold"
-                                x:Uid="/SettingsPage/Buttons/ViewLogs" FontSize="16" />
+                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10" FontSize="16" 
+                                x:Name="ViewLogsButton" Click="ViewLogsButton_Click" FontWeight="SemiBold" />
                     </StackPanel>
                 </Grid>
 
                 <SplitButton Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
-                             x:Name="ReManifestButton" Click="ReManifestButton_Click" FontWeight="SemiBold"
-                             Width="{Binding ElementName=TroubleshootingControlsContainerGrid, Path=ActualWidth, TargetNullValue=315}"
-                             x:Uid="/SettingsPage/Buttons/ReManifest" FontSize="16">
+                             x:Name="ReManifestButton" Click="ReManifestButton_Click" FontWeight="SemiBold" FontSize="16"
+                             Width="{Binding ElementName=TroubleshootingControlsContainerGrid, Path=ActualWidth, TargetNullValue=315}">
                     <SplitButton.Flyout>
                         <Flyout Placement="RightEdgeAlignedBottom"
                                 Opening="AutoStartFlyout_Opening"
@@ -573,7 +564,7 @@
 
                             <Grid>
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                                           x:Uid="/SettingsPage/Captions/AutoStart" Margin="30,0,0,3" />
+                                           x:Name="Captions_AutoStart" Margin="30,0,0,3" />
                                 <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
                                           Unchecked="AutoStartCheckBox_Unchecked"
                                           HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -629,11 +620,9 @@
                                 <Button FontSize="15" x:Name="DismissSetErrorButton"
                                         Click="DismissSetErrorButton_Click"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        x:Uid="/SettingsPage/Buttons/Error/Dismiss"
                                         Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
-
                             </Grid>
 
                             <TextBlock FontSize="15" HorizontalAlignment="Stretch"

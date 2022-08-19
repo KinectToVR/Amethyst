@@ -270,6 +270,163 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 	LOG(INFO) << "Re/Loading page with tag: \"settings\"...";
 	k2app::interfacing::currentAppState = L"settings";
 
+	// Load strings (must be the first thing we're doing)
+	
+	Titles_Application().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Titles/Application"));
+
+	Labels_DisplayLanguage().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Labels/DisplayLanguage"));
+
+	Labels_AppTheme().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Labels/AppTheme"));
+
+	Captions_Sounds().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/Sounds"));
+
+	Titles_SkeletonFlip().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Titles/SkeletonFlip"));
+
+	Captions_SkeletonFlip().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/SkeletonFlip"));
+
+	Controls::ToolTipService::SetToolTip(
+		FlipToggle(), box_value(
+			k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Elements/FlipToggle/ToolTip")));
+
+	ExternalFlipCheckBoxLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Titles/ExtFlip"));
+
+	Controls::ToolTipService::SetToolTip(
+		ExtFlipAppBarButton(), box_value(
+			k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Elements/ExtFlipCalibration/ToolTip")));
+
+	Captions_FaceTheKinect().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/FaceTheKinect"));
+
+	Captions_CalibrateExtFlip().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/CalibrateExtFlip"));
+
+	Captions_Device_Status().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/Device/Status"));
+
+	Captions_ExtFlip().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/ExtFlip"));
+
+	Titles_TrackerConfig_Header().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Titles/TrackerConfig/Header"));
+
+	LearnAboutFiltersButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Titles/TrackerConfig/Learn")));
+
+	Titles_TrackerConfig().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Titles/TrackerConfig"));
+
+	Captions_TrackerConfig().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/TrackerConfig"));
+
+	Captions_TrackerConfigNote().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/TrackerConfigNote"));
+
+	Titles_FilterSettings().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Titles/FilterSettings"));
+
+	Captions_Filters_Names_LERP().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Filters/Names/LERP"));
+
+	Captions_Filters_Explanations_LERP().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Filters/Explanations/LERP"));
+
+	Captions_Filters_Names_LowPass().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Filters/Names/LowPass"));
+
+	Captions_Filters_Explanations_LowPass().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Filters/Explanations/LowPass"));
+
+	Captions_Filters_Names_EKF().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Filters/Names/EKF"));
+
+	Captions_Filters_Explanations_EKF().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Filters/Explanations/EKF"));
+
+	Captions_Filters_Names_None().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Filters/Names/None"));
+
+	Captions_Filters_Explanations_None().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Filters/Explanations/None"));
+
+	Titles_RotationSettings().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Titles/RotationSettings"));
+
+	Captions_Orientation_Introduction().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Introduction"));
+
+	Captions_Orientation_Names_Default().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Names/Default"));
+
+	Captions_Orientation_Explanations_Default().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Explanations/Default"));
+
+	Captions_Orientation_Names_MathBased().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Names/MathBased"));
+
+	Captions_Orientation_Explanations_MathBased().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Explanations/MathBased"));
+
+	Captions_Orientation_Names_HMD().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Names/HMD"));
+
+	Captions_Orientation_Explanations_HMD().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Explanations/HMD"));
+
+	Captions_Orientation_Names_None().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Names/None"));
+
+	Captions_Orientation_Explanations_None().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Explanations/None"));
+
+	Titles_ManageTrackers().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Titles/ManageTrackers"));
+
+	Captions_ManageTrackers().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/ManageTrackers"));
+
+	RestartButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/RestartSteamVR")));
+
+	Captions_TrackersRestart_Line1().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/TrackersRestart/Line1"));
+
+	Captions_TrackersRestart_Line2().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/TrackersRestart/Line2"));
+
+	Captions_TrackersAutoSpawn().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/TrackersAutoSpawn"));
+
+	Captions_TrackersAutoCheck().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/TrackersAutoCheck"));
+
+	Titles_Troubleshooting().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Titles/Troubleshooting"));
+	
+	ResetButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/Reset")));
+
+	ReRegisterButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/ReRegister")));
+
+	ViewLogsButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/ViewLogs")));
+
+	ReManifestButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/ReManifest")));
+
+	Captions_AutoStart().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/AutoStart"));
+	
+	DismissSetErrorButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/Error/Dismiss")));
+	
 	using namespace k2app::shared::settings;
 
 	// Notify of the setup end
@@ -760,7 +917,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 			{
 				// Notify of the setup end
 				k2app::shared::settings::settings_localInitFinished = false;
-				
+
 				// Create a new tracker / Remove the unchecked one
 				if (sender.as<Controls::ToggleMenuFlyoutItem>().IsChecked())
 				{
@@ -987,7 +1144,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 		{
 			// Notify of the setup end
 			k2app::shared::settings::settings_localInitFinished = false;
-			
+
 			k2app::K2Settings.useTrackerPairs = sender.as<Controls::ToggleMenuFlyoutItem>().IsChecked();
 
 			// Rebuild joint the expander stack
