@@ -1154,6 +1154,10 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 
 	DeselectDeviceButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/Deselect")));
+	
+	Controls::ToolTipService::SetToolTip(
+		DeselectDeviceButton(), box_value(
+			k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/Deselect/ToolTip")));
 
 	OpenDocsButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/ViewDocs")));
@@ -1167,11 +1171,23 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 	SetThisDeviceAsButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/SetAs/Header")));
 
+	Controls::ToolTipService::SetToolTip(
+		SetThisDeviceAsButton(), box_value(
+			k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/SetAs/Header/ToolTip")));
+
 	SetAsBaseButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/SetAs/Base")));
 
+	Controls::ToolTipService::SetToolTip(
+		SetAsBaseButton(), box_value(
+			k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/SetAs/Base/ToolTip")));
+
 	SetAsOverrideButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/SetAs/Override")));
+
+	Controls::ToolTipService::SetToolTip(
+		SetAsOverrideButton(), box_value(
+			k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/SetAs/Override/ToolTip")));
 
 	DismissOverrideTipNoJointsButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/NoJoints/Dismiss")));
