@@ -71,6 +71,78 @@
                                      VerticalAlignment="Bottom" HorizontalAlignment="Right" />
                 </Grid>
 
+                <!--x:Uid="/SettingsPage/Titles/Sounds"-->
+                <TextBlock FontWeight="SemiBold" Text="Application"
+                           FontSize="25" Margin="0,30,0,0">
+                    <TextBlock.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </TextBlock.Transitions>
+                </TextBlock>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="5*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80" />
+                        <RowDefinition Height="80" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                               Text="Display Language:"
+                               Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
+
+                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                              Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                              x:Name="LanguageOptionBox"
+                              Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                        <ComboBoxItem Content="INVALID" />
+                    </ComboBox>
+
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                               Text="App Theme:"
+                               Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
+
+                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                              Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                              x:Name="AppThemeOptionBox"
+                              Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+                        <ComboBoxItem Content="INVALID" />
+                    </ComboBox>
+
+                </Grid>
+
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid Grid.Column="0" Grid.Row="1" Margin="0,15,0,0">
+                        <Grid.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Grid.Transitions>
+
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+                                   x:Uid="/SettingsPage/Captions/Sounds" Margin="30,0,0,10" />
+                        <CheckBox x:Name="SoundsEnabledCheckBox"
+                                  Checked="EnableSounds_Checked" Unchecked="EnableSounds_Unchecked"
+                                  HorizontalAlignment="Left" VerticalAlignment="Center"
+                                  MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="True" />
+                    </Grid>
+
+                    <Slider Grid.Row="1" HorizontalAlignment="Right" Width="350" Value="69" Minimum="0" Maximum="100"
+                            IsEnabled="{Binding ElementName=SoundsEnabledCheckBox, Path=IsChecked,TargetNullValue=False}"
+                            x:Name="SoundsVolumeSlider" ValueChanged="SoundsVolumeSlider_ValueChanged" Margin="30,11,0,0">
+                        <Slider.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Slider.Transitions>
+                    </Slider>
+                </Grid>
+
                 <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
                             x:Name="FlipDropDownContainer" Margin="0,20,0,10" Grid.Row="0">
 
@@ -116,7 +188,7 @@
                         </Grid>
 
                         <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="FlipDropDown"
-                                  Expanding="FlipDropDown_Expanding" 
+                                  Expanding="FlipDropDown_Expanding"
                                   Collapsed="FlipDropDown_Collapsed"
                                   ExpandDirection="Down" HorizontalAlignment="Stretch"
                                   HorizontalContentAlignment="Stretch" IsEnabled="False">
@@ -444,55 +516,6 @@
 
                 </Grid>
 
-                <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Sounds"
-                           FontSize="25" Margin="0,30,0,0">
-                    <TextBlock.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </TextBlock.Transitions>
-                </TextBlock>
-
-                <Grid Grid.Column="0" Grid.Row="1" Margin="0,15,0,0">
-                    <Grid.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </Grid.Transitions>
-
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                               x:Uid="/SettingsPage/Captions/Sounds" Margin="30,0,0,10" />
-                    <CheckBox x:Name="SoundsEnabledCheckBox"
-                              Checked="EnableSounds_Checked" Unchecked="EnableSounds_Unchecked"
-                              HorizontalAlignment="Left" VerticalAlignment="Center"
-                              MinWidth="0" MinHeight="0" Margin="0,0,0,7" IsChecked="True" />
-                </Grid>
-
-                <Slider Grid.Row="1" HorizontalAlignment="Left" Width="400" Value="69" Minimum="0" Maximum="100"
-                        IsEnabled="{Binding ElementName=SoundsEnabledCheckBox, Path=IsChecked,TargetNullValue=False}"
-                        x:Name="SoundsVolumeSlider" ValueChanged="SoundsVolumeSlider_ValueChanged">
-                    <Slider.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </Slider.Transitions>
-                </Slider>
-
-                <StackPanel Orientation="Vertical" Margin="0,0,5,0">
-                    <StackPanel.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </StackPanel.Transitions>
-
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               x:Uid="/SettingsPage/Captions/SoundsWhen/Line1"
-                               Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               x:Uid="/SettingsPage/Captions/SoundsWhen/Line2"
-                               Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
-                </StackPanel>
-
                 <TextBlock FontWeight="SemiBold" x:Uid="/SettingsPage/Titles/Troubleshooting"
                            FontSize="25" Margin="0,40,0,15">
                     <TextBlock.Transitions>
@@ -537,7 +560,7 @@
                              Width="{Binding ElementName=TroubleshootingControlsContainerGrid, Path=ActualWidth, TargetNullValue=315}"
                              x:Uid="/SettingsPage/Buttons/ReManifest" FontSize="16">
                     <SplitButton.Flyout>
-                        <Flyout Placement="RightEdgeAlignedBottom" 
+                        <Flyout Placement="RightEdgeAlignedBottom"
                                 Opening="AutoStartFlyout_Opening"
                                 Closing="ButtonFlyout_Closing">
                             <Flyout.FlyoutPresenterStyle>

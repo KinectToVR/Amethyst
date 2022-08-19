@@ -77,3 +77,10 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::InfoPage::End
 	k2app::K2Settings.firstTimeTourShown = true;
 	k2app::K2Settings.saveSettings();
 }
+
+
+void winrt::Amethyst::implementation::InfoPage::Page_Loaded(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+
+}
