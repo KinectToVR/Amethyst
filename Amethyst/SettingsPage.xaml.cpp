@@ -264,14 +264,21 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 }
 
 
+std::vector<std::wstring> _language_codes_enum;
+
 void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	LOG(INFO) << "Re/Loading page with tag: \"settings\"...";
 	k2app::interfacing::currentAppState = L"settings";
 
+	SettingsPage_Loaded_Handler();
+}
+
+void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
+{
 	// Load strings (must be the first thing we're doing)
-	
+
 	Titles_Application().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Titles/Application"));
 
@@ -408,7 +415,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 
 	Titles_Troubleshooting().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Titles/Troubleshooting"));
-	
+
 	ResetButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/Reset")));
 
@@ -423,15 +430,34 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 
 	Captions_AutoStart().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Captions/AutoStart"));
-	
+
 	DismissSetErrorButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/Error/Dismiss")));
-	
+
 	using namespace k2app::shared::settings;
 
 	// Notify of the setup end
 	settings_localInitFinished = false;
 	CheckOverlapsCheckBox().IsChecked(k2app::K2Settings.checkForOverlappingTrackers);
+
+	// Clear available languages' list
+	LanguageOptionBox().Items().Clear();
+
+	// Push all the found languages
+	if (exists(boost::dll::program_location().parent_path() / "Assets" / "Strings"))
+		for (boost::filesystem::directory_entry& entry : boost::filesystem::directory_iterator(
+			     boost::dll::program_location().parent_path() / "Assets" / "Strings"))
+		{
+			if (entry.path().stem().wstring() == L"locales")continue;
+
+			_language_codes_enum.push_back(entry.path().stem().wstring());
+
+			LanguageOptionBox().Items().Append(box_value(
+				k2app::interfacing::GetLocalizedLanguageName(entry.path().stem().wstring())));
+
+			if (entry.path().stem().wstring() == k2app::K2Settings.appLanguage)
+				LanguageOptionBox().SelectedIndex(LanguageOptionBox().Items().Size() - 1);
+		}
 
 	// Optionally show the foreign language grid TODO
 	// if (!status_ok_map.contains(GetUserLocale()))
@@ -1389,7 +1415,7 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage:
 		co_await ui_thread;
 	}
 
-	// Navigate to the settings page
+	// Navigate to the devices page
 	k2app::shared::main::mainNavigationView->SelectedItem(
 		k2app::shared::main::mainNavigationView->MenuItems().GetAt(2));
 	k2app::shared::main::NavView_Navigate(L"devices", Media::Animation::EntranceNavigationTransitionInfo());
@@ -1442,20 +1468,44 @@ void winrt::Amethyst::implementation::SettingsPage::FlipDropDown_Collapsed
 
 
 void winrt::Amethyst::implementation::SettingsPage::LanguageOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;
 
+	if (LanguageOptionBox().SelectedIndex() < 0)
+		LanguageOptionBox().SelectedItem(e.RemovedItems().GetAt(0));
 
+	// Overwrite the current language code
+	k2app::K2Settings.appLanguage = _language_codes_enum[LanguageOptionBox().SelectedIndex()];
+
+	// Save made changes
+	k2app::K2Settings.saveSettings();
+
+	// Reload TODO
+	k2app::interfacing::LoadJSONStringResources_English();
+	k2app::interfacing::LoadJSONStringResources(k2app::K2Settings.appLanguage);
+
+	SettingsPage_Loaded_Handler();
 }
 
 
 void winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionChanged(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;
 
+	if (AppThemeOptionBox().SelectedIndex() < 0)
+		AppThemeOptionBox().SelectedItem(e.RemovedItems().GetAt(0));
+}
 
+
+void winrt::Amethyst::implementation::SettingsPage::LanguageOptionBox_DropDownOpened(
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+{
+	// Don't react to pre-init signals
+	if (!k2app::shared::settings::settings_localInitFinished)return;
 }

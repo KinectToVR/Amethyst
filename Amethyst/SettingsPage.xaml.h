@@ -21,6 +21,7 @@ namespace winrt::Amethyst::implementation
 			const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void SettingsPage_Loaded(const Windows::Foundation::IInspectable& sender,
 		                         const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void SettingsPage_Loaded_Handler();
 		void AutoSpawn_Checked(const Windows::Foundation::IInspectable& sender,
 		                       const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void AutoSpawn_Unchecked(const Windows::Foundation::IInspectable& sender,
@@ -72,6 +73,7 @@ namespace winrt::Amethyst::implementation
 		void FlipDropDown_Collapsed(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderCollapsedEventArgs const& args);
 		void LanguageOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
 		void AppThemeOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
+		void LanguageOptionBox_DropDownOpened(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
 	};
 }
 

@@ -686,6 +686,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)return;
 
+					if (_ptr_position_combo.get()->SelectedIndex() < 0)
+						_ptr_position_combo.get()->SelectedItem(e.RemovedItems().GetAt(0));
+
 					for (auto tracker_p : _tracker_pointers)
 						tracker_p->positionTrackingFilterOption =
 							static_cast<k2app::JointPositionTrackingOption>(_ptr_position_combo.get()->SelectedIndex());
@@ -712,6 +715,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)return;
+
+					if (_ptr_orientation_combo.get()->SelectedIndex() < 0)
+						_ptr_orientation_combo.get()->SelectedItem(e.RemovedItems().GetAt(0));
 
 					for (auto tracker_p : _tracker_pointers)
 						tracker_p->orientationTrackingOption =
