@@ -108,7 +108,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_orientation_label.FontWeight(winrt::Windows::UI::Text::FontWeights::Medium());
 			_orientation_label.Text(k2app::interfacing::LocalizedResourceWString(
-				L"DevicesPage", L"Titles/Set/Orientation/Text"));
+				L"DevicesPage", L"Titles/Set/Orientation"));
 
 			_orientation_label.FontSize(20);
 			ToolTipService::SetToolTip(_orientation_label,
@@ -117,7 +117,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_position_label.FontWeight(winrt::Windows::UI::Text::FontWeights::Medium());
 			_position_label.Text(k2app::interfacing::LocalizedResourceWString(
-				L"DevicesPage", L"Titles/Set/Position/Text"));
+				L"DevicesPage", L"Titles/Set/Position"));
 
 			_position_label.FontSize(20);
 			ToolTipService::SetToolTip(_position_label,

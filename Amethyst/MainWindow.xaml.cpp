@@ -336,35 +336,6 @@ namespace winrt::Amethyst::implementation
 	{
 		InitializeComponent();
 
-		// If logging was set up by some other thing / assembly,
-		// "peacefully" ask it to exit and note that 
-		if (google::IsGoogleLoggingInitialized())
-		{
-			LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n" <<
-				"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n" <<
-				"Logging will be shut down, re-initialized, and forwarded to \"" <<
-				ktvr::GetK2AppDataLogFileDir("Amethyst_").c_str() << "*.log\"";
-			google::ShutdownGoogleLogging();
-		}
-
-		// Set up logging : flags
-		FLAGS_logbufsecs = 0; //Set max timeout
-		FLAGS_minloglevel = google::GLOG_INFO;
-		FLAGS_timestamp_in_logfile_name = false;
-
-		// Set up logging
-		k2app::interfacing::thisLogDestination =
-			ktvr::GetK2AppDataLogFileDir("Amethyst_") + k2app::interfacing::GetLogTimestamp();
-
-		google::InitGoogleLogging(k2app::interfacing::thisLogDestination.c_str());
-
-		// Log everything >=INFO to same file
-		google::SetLogDestination(google::GLOG_INFO, k2app::interfacing::thisLogDestination.c_str());
-		google::SetLogFilenameExtension(".log");
-
-		// Log the current Amethyst version
-		LOG(INFO) << "Amethyst version: " << k2app::interfacing::K2InternalVersion;
-
 		// Set up mica controllers
 		if (Microsoft::UI::Composition::SystemBackdrops::MicaController::IsSupported())
 		{
@@ -635,10 +606,6 @@ namespace winrt::Amethyst::implementation
 		// Priority: Set up the K2API & Server
 		static std::thread serverStatusThread(k2app::interfacing::K2ServerDriverSetup);
 		serverStatusThread.detach();
-
-		// Read settings
-		LOG(INFO) << "Now reading saved settings...";
-		k2app::K2Settings.readSettings();
 
 		// Start the main loop
 		std::thread(k2app::main::K2MainLoop).detach();

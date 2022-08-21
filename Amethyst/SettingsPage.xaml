@@ -521,10 +521,9 @@
                 </TextBlock>
 
                 <Grid x:Name="TroubleshootingControlsContainerGrid"
-                      HorizontalAlignment="Left">
+                      HorizontalAlignment="Left" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="35" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.Transitions>
@@ -536,51 +535,48 @@
                     <StackPanel HorizontalAlignment="Stretch"
                                 Grid.Column="0" Orientation="Vertical">
 
-                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10" FontSize="16"
+                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,35,10" FontSize="16"
                                 x:Name="ResetButton" Click="ResetButton_Click" FontWeight="SemiBold" />
 
-                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10" FontSize="16"
+                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,35,10" FontSize="16"
                                 x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold" />
 
-                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,10" FontSize="16" 
+                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,35,10" FontSize="16" 
                                 x:Name="ViewLogsButton" Click="ViewLogsButton_Click" FontWeight="SemiBold" />
-                    </StackPanel>
-                </Grid>
 
-                <SplitButton Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,20"
-                             x:Name="ReManifestButton" Click="ReManifestButton_Click" FontWeight="SemiBold" FontSize="16"
-                             Width="{Binding ElementName=TroubleshootingControlsContainerGrid, Path=ActualWidth, TargetNullValue=315}">
-                    <SplitButton.Flyout>
-                        <Flyout Placement="RightEdgeAlignedBottom"
+                        <SplitButton Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                             x:Name="ReManifestButton" Click="ReManifestButton_Click" FontWeight="SemiBold" FontSize="16">
+                            <SplitButton.Flyout>
+                                <Flyout Placement="RightEdgeAlignedBottom"
                                 Opening="AutoStartFlyout_Opening"
                                 Closing="ButtonFlyout_Closing">
-                            <Flyout.FlyoutPresenterStyle>
-                                <Style TargetType="FlyoutPresenter">
-                                    <Setter Property="CornerRadius" Value="8" />
-                                    <Setter Property="Background"
+                                    <Flyout.FlyoutPresenterStyle>
+                                        <Style TargetType="FlyoutPresenter">
+                                            <Setter Property="CornerRadius" Value="8" />
+                                            <Setter Property="Background"
                                             Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                                </Style>
-                            </Flyout.FlyoutPresenterStyle>
+                                        </Style>
+                                    </Flyout.FlyoutPresenterStyle>
 
-                            <Grid>
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+                                    <Grid>
+                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
                                            x:Name="Captions_AutoStart" Margin="30,0,0,3" />
-                                <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
+                                        <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
                                           Unchecked="AutoStartCheckBox_Unchecked"
                                           HorizontalAlignment="Left" VerticalAlignment="Center"
                                           MinWidth="0" MinHeight="0" />
-                            </Grid>
-                        </Flyout>
-                    </SplitButton.Flyout>
+                                    </Grid>
+                                </Flyout>
+                            </SplitButton.Flyout>
 
-                    <SplitButton.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </SplitButton.Transitions>
+                            <SplitButton.Transitions>
+                                <TransitionCollection>
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </SplitButton.Transitions>
 
-                    <SplitButton.Resources>
-                        <TeachingTip x:Name="AutoStartTeachingTip"
+                            <SplitButton.Resources>
+                                <TeachingTip x:Name="AutoStartTeachingTip"
                                      Target="{Binding ElementName=ReManifestButton}"
                                      Title="Start Amethyst with SteamVR"
                                      Subtitle="To skip searching for Amethyst every time, you can enable it to start automatically. The check is hidden inside this dropdown."
@@ -588,8 +584,10 @@
                                      IsLightDismissEnabled="False"
                                      CloseButtonContent="Show the next tip"
                                      Closed="AutoStartTeachingTip_Closed" />
-                    </SplitButton.Resources>
-                </SplitButton>
+                            </SplitButton.Resources>
+                        </SplitButton>
+                    </StackPanel>
+                </Grid>
 
                 <!--Flyout for manifest and reregister errors-->
                 <FlyoutBase.AttachedFlyout>

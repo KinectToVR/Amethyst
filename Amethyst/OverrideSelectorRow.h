@@ -297,9 +297,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			ToggleMenuFlyoutItem _override_position, _override_orientation;
 
 			_override_position.Text(k2app::interfacing::LocalizedResourceWString(
-				L"DevicesPage", L"Titles/Check/Position/Text"));
+				L"DevicesPage", L"Titles/Check/Position"));
 			_override_orientation.Text(k2app::interfacing::LocalizedResourceWString(
-				L"DevicesPage", L"Titles/Check/Orientation/Text"));
+				L"DevicesPage", L"Titles/Check/Orientation"));
 
 			_selector_flyout.Items().Append(_override_position);
 			_selector_flyout.Items().Append(_override_orientation);

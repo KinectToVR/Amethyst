@@ -500,14 +500,14 @@ namespace k2app::main
 									interfacing::LocalizedResourceWString(
 										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Title"),
 									interfacing::LocalizedResourceWString(
-										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Content"),
+										L"SharedStrings", L"Toasts/TrackersAutoDisabled"),
 									true); // This one's gonna be a high-priority one
 
 								interfacing::ShowVRToast(
 									interfacing::LocalizedJSONString_EN(
 										L"/SharedStrings/Toasts/TrackersAutoDisabled/Title"),
 									interfacing::LocalizedJSONString_EN(
-										L"/SharedStrings/Toasts/TrackersAutoDisabled/Content"));
+										L"/SharedStrings/Toasts/TrackersAutoDisabled"));
 							}
 						});
 			}

@@ -198,13 +198,13 @@ namespace TrackingDevices
 						k2app::interfacing::LocalizedResourceWString(
 							L"SharedStrings", L"Toasts/TrackersConfigChanged/Title"),
 						k2app::interfacing::LocalizedResourceWString(
-							L"SharedStrings", L"Toasts/TrackersConfigChanged/Content"));
+							L"SharedStrings", L"Toasts/TrackersConfigChanged"));
 
 					k2app::interfacing::ShowVRToast(
 						k2app::interfacing::LocalizedJSONString_EN(
 							L"/SharedStrings/Toasts/TrackersConfigChanged/Title"),
 						k2app::interfacing::LocalizedJSONString_EN(
-							L"/SharedStrings/Toasts/TrackersConfigChanged/Content"));
+							L"/SharedStrings/Toasts/TrackersConfigChanged"));
 				}
 
 			// Compare with saved settings and unlock the restart

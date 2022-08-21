@@ -280,15 +280,15 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			{
 				{
 					0, k2app::interfacing::LocalizedResourceWString(
-						L"DevicesPage", L"Titles/Joints/WaistAndFeet/Text")
+						L"DevicesPage", L"Titles/Joints/WaistAndFeet")
 				},
 				{
 					1, k2app::interfacing::LocalizedResourceWString(
-						L"DevicesPage", L"Titles/Joints/ElbowsAndKnees/Text")
+						L"DevicesPage", L"Titles/Joints/ElbowsAndKnees")
 				},
 				{
 					2, k2app::interfacing::LocalizedResourceWString(
-						L"DevicesPage", L"Titles/Joints/Other/Text")
+						L"DevicesPage", L"Titles/Joints/Other")
 				}
 			};
 
@@ -340,7 +340,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_tracker.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 			_tracker.Text(k2app::interfacing::LocalizedResourceWString(
-				L"DevicesPage", L"Titles/Set/Tracker/Text"));
+				L"DevicesPage", L"Titles/Set/Tracker"));
 
 			_header.Children().Append(_tracker);
 			_header.SetRow(_tracker, 0);
@@ -351,7 +351,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_position_joint.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 			_position_joint.Text(k2app::interfacing::LocalizedResourceWString(
-				L"DevicesPage", L"Titles/Set/Position/Text"));
+				L"DevicesPage", L"Titles/Set/Position"));
 
 			_header.Children().Append(_position_joint);
 			_header.SetRow(_position_joint, 0);
@@ -362,7 +362,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_orientation_joint.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 			_orientation_joint.Text(k2app::interfacing::LocalizedResourceWString(
-				L"DevicesPage", L"Titles/Set/Orientation/Text"));
+				L"DevicesPage", L"Titles/Set/Orientation"));
 
 			_header.Children().Append(_orientation_joint);
 			_header.SetRow(_orientation_joint, 0);

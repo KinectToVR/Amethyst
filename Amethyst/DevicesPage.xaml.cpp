@@ -705,7 +705,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 
 	// Also update in the UI
 	overrideDeviceName.get()->Text(
-		k2app::interfacing::LocalizedResourceWString(L"DevicesPage", L"Titles/NoOverrides/Text"));
+		k2app::interfacing::LocalizedResourceWString(L"DevicesPage", L"Titles/NoOverrides"));
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -1039,7 +1039,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	baseDeviceName.get()->Text(StringToWString(deviceName));
 	if (overrideDeviceName.get()->Text() == StringToWString(deviceName))
 		overrideDeviceName.get()->Text(
-			k2app::interfacing::LocalizedResourceWString(L"DevicesPage", L"Titles/NoOverrides/Text"));
+			k2app::interfacing::LocalizedResourceWString(L"DevicesPage", L"Titles/NoOverrides"));
 
 	LOG(INFO) << "Changed the current tracking device (Base) to " << deviceName;
 

@@ -31,15 +31,61 @@ App::App()
 	Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode(
 		Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize);
 
+	// If logging was set up by some other thing / assembly,
+	// "peacefully" ask it to exit and note that 
+	if (google::IsGoogleLoggingInitialized())
+	{
+		LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n" <<
+			"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n" <<
+			"Logging will be shut down, re-initialized, and forwarded to \"" <<
+			ktvr::GetK2AppDataLogFileDir("Amethyst_").c_str() << "*.log\"";
+		google::ShutdownGoogleLogging();
+	}
+
+	// Set up logging : flags
+	FLAGS_logbufsecs = 0; //Set max timeout
+	FLAGS_minloglevel = google::GLOG_INFO;
+	FLAGS_timestamp_in_logfile_name = false;
+
+	// Set up logging
+	k2app::interfacing::thisLogDestination =
+		ktvr::GetK2AppDataLogFileDir("Amethyst_") + k2app::interfacing::GetLogTimestamp();
+
+	google::InitGoogleLogging(k2app::interfacing::thisLogDestination.c_str());
+
+	// Log everything >=INFO to same file
+	google::SetLogDestination(google::GLOG_INFO, k2app::interfacing::thisLogDestination.c_str());
+	google::SetLogFilenameExtension(".log");
+
+	// Log the current Amethyst version
+	LOG(INFO) << "Amethyst version: " << k2app::interfacing::K2InternalVersion;
+
+	// Read settings
+	LOG(INFO) << "Now reading saved settings...";
+	k2app::K2Settings.readSettings();
+
+	// Load the language resources
+	LOG(INFO) << "Now reading resource settings...";
+
+	try
+	{
+		k2app::interfacing::LoadJSONStringResources_English();
+		k2app::interfacing::LoadJSONStringResources(k2app::K2Settings.appLanguage);
+	}
+	catch (...)
+	{
+		LOG(ERROR) << "EXCEPTION READING RESOURCE STRINGS! THE APP INTERFACE WILL BE BROKEN!";
+	}
+
 #if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
-    UnhandledException([this](IInspectable const&, UnhandledExceptionEventArgs const& e)
-    {
-        if (IsDebuggerPresent())
-        {
-            auto errorMessage = e.Message(); // LOG it?
-            __debugbreak();
-        }
-    });
+	UnhandledException([this](const IInspectable&, const UnhandledExceptionEventArgs& e)
+	{
+		if (IsDebuggerPresent())
+		{
+			auto errorMessage = e.Message(); // LOG it?
+			__debugbreak();
+		}
+	});
 #endif
 }
 

@@ -83,7 +83,7 @@
     "/GeneralPage/Titles/Device": "Device",
     "/GeneralPage/Titles/Status": "Status",
     "/GeneralPage/Titles/Trackers": "Trackers",
-    "/SettingsPage/Button/Error/Dismiss": "Dismiss",
+    "/SettingsPage/Buttons/Error/Dismiss": "Dismiss",
     "/SettingsPage/Buttons/ReManifest": "Reinstall SteamVR manifests",
     "/SettingsPage/Buttons/ReRegister": "Re-register SteamVR driver entry",
     "/SettingsPage/Buttons/Reset": "Delete configuration and restart",

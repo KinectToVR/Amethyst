@@ -26,11 +26,11 @@ void skeleton_visibility_set_ui(const bool& v)
 		                                              ? box_value(
 			                                              k2app::interfacing::LocalizedResourceWString(
 				                                              L"GeneralPage",
-				                                              L"Buttons/Skeleton/Hide/Content"))
+				                                              L"Buttons/Skeleton/Hide"))
 		                                              : box_value(
 			                                              k2app::interfacing::LocalizedResourceWString(
 				                                              L"GeneralPage",
-				                                              L"Buttons/Skeleton/Show/Content"))));
+				                                              L"Buttons/Skeleton/Show"))));
 
 	forceRenderCheckBox.get()->IsEnabled(v);
 	forceRenderText.get()->Opacity(v ? 1.0 : 0.5);
@@ -159,9 +159,9 @@ void Amethyst::implementation::GeneralPage::SkeletonToggleButton_Click(
 	skeletonToggleButton.get()->Content(
 		k2app::K2Settings.skeletonPreviewEnabled
 			? box_value(k2app::interfacing::LocalizedResourceWString(
-				L"GeneralPage", L"Buttons/Skeleton/Hide/Content"))
+				L"GeneralPage", L"Buttons/Skeleton/Hide"))
 			: box_value(k2app::interfacing::LocalizedResourceWString(
-				L"GeneralPage", L"Buttons/Skeleton/Show/Content")));
+				L"GeneralPage", L"Buttons/Skeleton/Show")));
 
 	// Play a sound
 	playAppSound(k2app::K2Settings.skeletonPreviewEnabled
@@ -279,14 +279,14 @@ void Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
 
 	CalibrationInstructionsLabel().Text(
 		k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Calibration/Captions/Start/Text"));
+			L"GeneralPage", L"Calibration/Captions/Start"));
 	CalibrationCountdownLabel().Text(L"~");
 	DiscardAutoCalibrationButton().Content(box_value(
 		k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Buttons/Cancel/Content")));
+			L"GeneralPage", L"Buttons/Cancel")));
 
 	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
-		L"GeneralPage", L"Captions/Preview/NoSkeletonTextCalibrating/Text"));
+		L"GeneralPage", L"Captions/Preview/NoSkeletonTextCalibrating"));
 }
 
 
@@ -306,7 +306,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 	DiscardAutoCalibrationButton().Content(box_value(
 		k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Buttons/Abort/Content")));
+			L"GeneralPage", L"Buttons/Abort")));
 
 	// Ref current matrices to helper pointers
 	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
@@ -361,7 +361,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 		// Wait for the user to move
 		CalibrationInstructionsLabel().Text(
 			points_format(k2app::interfacing::LocalizedResourceWString(
-				              L"GeneralPage", L"Calibration/Captions/Move/Text"),
+				              L"GeneralPage", L"Calibration/Captions/Move"),
 			              point + 1, k2app::K2Settings.calibrationPointsNumber));
 
 		for (int i = 3; i >= 0; i--)
@@ -390,7 +390,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 		CalibrationInstructionsLabel().Text(
 			points_format(k2app::interfacing::LocalizedResourceWString(
-				              L"GeneralPage", L"Calibration/Captions/Stand/Text"),
+				              L"GeneralPage", L"Calibration/Captions/Stand"),
 			              point + 1, k2app::K2Settings.calibrationPointsNumber));
 
 		for (int i = 3; i >= 0; i--)
@@ -418,7 +418,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 			else if (i == 0)
 				CalibrationInstructionsLabel().Text(
 					k2app::interfacing::LocalizedResourceWString(
-						L"GeneralPage", L"Calibration/Captions/Captured/Text"));
+						L"GeneralPage", L"Calibration/Captions/Captured"));
 
 			// Wait and eventually break
 			{
@@ -524,9 +524,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 	CalibrationCountdownLabel().Text(L"~");
 	CalibrationInstructionsLabel().Text(CalibrationPending
 		                                    ? k2app::interfacing::LocalizedResourceWString(
-			                                    L"GeneralPage", L"Calibration/Captions/Done/Text")
+			                                    L"GeneralPage", L"Calibration/Captions/Done")
 		                                    : k2app::interfacing::LocalizedResourceWString(
-			                                    L"GeneralPage", L"Calibration/Captions/Aborted/Text"));
+			                                    L"GeneralPage", L"Calibration/Captions/Aborted"));
 
 	{
 		// Sleep on UI
@@ -547,7 +547,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 	k2app::interfacing::currentAppState = L"general";
 
 	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
-		L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
+		L"GeneralPage", L"Captions/Preview/NoSkeletonText"));
 
 	CalibrationPending = false; // We're finished
 	AutoCalibration_StillPending = false;
@@ -577,7 +577,7 @@ void Amethyst::implementation::GeneralPage::DiscardCalibrationButton_Click(
 		k2app::interfacing::currentAppState = L"general";
 
 		NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Captions/Preview/NoSkeletonText/Text"));
+			L"GeneralPage", L"Captions/Preview/NoSkeletonText"));
 
 		k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 		skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
@@ -836,12 +836,12 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Checked(
 			k2app::interfacing::K2ServerDriverSetup(); // Refresh
 			k2app::interfacing::ShowToast(
 				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title"),
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content"),
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed"),
 				true); // High priority - it's probably a server failure
 
 			k2app::interfacing::ShowVRToast(
 				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed/Title"),
-				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed/Content"));
+				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed"));
 		}
 
 		// Update things
@@ -1063,7 +1063,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/DriverStatus/Label"));
 
 	ServerStatusLabel().Text(
-		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/DriverStatus/Content"));
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/DriverStatus"));
 
 	ReRegisterButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/ReRegister")));
@@ -1144,12 +1144,12 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 			k2app::interfacing::K2ServerDriverSetup(); // Refresh
 			k2app::interfacing::ShowToast(
 				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title"),
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content"),
+				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed"),
 				true); // High priority - it's probably a server failure
 
 			k2app::interfacing::ShowVRToast(
 				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed/Title"),
-				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed/Content"));
+				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed"));
 		}
 	}
 
@@ -1180,11 +1180,11 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 		                                  ? box_value(
 			                                  k2app::interfacing::LocalizedResourceWString(
 				                                  L"GeneralPage",
-				                                  L"Buttons/Skeleton/Unfreeze/Content"))
+				                                  L"Buttons/Skeleton/Unfreeze"))
 		                                  : box_value(
 			                                  k2app::interfacing::LocalizedResourceWString(
 				                                  L"GeneralPage",
-				                                  L"Buttons/Skeleton/Freeze/Content")));
+				                                  L"Buttons/Skeleton/Freeze")));
 
 	freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
 }
@@ -1858,11 +1858,11 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 			? box_value(
 				k2app::interfacing::LocalizedResourceWString(
 					L"GeneralPage",
-					L"Buttons/Skeleton/Unfreeze/Content"))
+					L"Buttons/Skeleton/Unfreeze"))
 			: box_value(
 				k2app::interfacing::LocalizedResourceWString(
 					L"GeneralPage",
-					L"Buttons/Skeleton/Freeze/Content")));
+					L"Buttons/Skeleton/Freeze")));
 
 	// Play a sound
 	playAppSound(k2app::interfacing::isTrackingFrozen

@@ -255,11 +255,11 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 		LOG(ERROR) << "App will not be restarted due to caller process identification error.";
 		k2app::interfacing::ShowToast(
 			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
-			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content"));
+			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed"));
 
 		k2app::interfacing::ShowVRToast(
 			k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed/Title"),
-			k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed/Content"));
+			k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed"));
 	}
 }
 
