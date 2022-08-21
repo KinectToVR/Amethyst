@@ -258,8 +258,8 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content"));
 
 		k2app::interfacing::ShowVRToast(
-			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title", L"en-US"),
-			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Content", L"en-US"));
+			k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed/Title"),
+			k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed/Content"));
 	}
 }
 
@@ -1438,4 +1438,24 @@ void winrt::Amethyst::implementation::SettingsPage::FlipDropDown_Collapsed
 
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+}
+
+
+void winrt::Amethyst::implementation::SettingsPage::LanguageOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!k2app::shared::settings::settings_localInitFinished)return;
+
+
+}
+
+
+void winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionChanged(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+	// Don't react to pre-init signals
+	if (!k2app::shared::settings::settings_localInitFinished)return;
+
+
 }

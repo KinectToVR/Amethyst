@@ -49,8 +49,8 @@ namespace k2app::main
 			});
 
 			{
-				auto _header = LocalizedResourceWString(
-					L"GeneralPage", L"Tips/TrackingFreeze/Header", L"en-US");
+				auto _header = LocalizedJSONString_EN(
+					L"/GeneralPage/Tips/TrackingFreeze/Header");
 
 				// Change the tip depending on the currently connected controllers
 				char _controller_model[1024];
@@ -133,8 +133,8 @@ namespace k2app::main
 			});
 
 			{
-				auto _header = LocalizedResourceWString(
-					L"SettingsPage", L"Tips/FlipToggle/Header", L"en-US");
+				auto _header = LocalizedJSONString_EN(
+					L"/SettingsPage/Tips/FlipToggle/Header");
 
 				// Change the tip depending on the currently connected controllers
 				char _controller_model[1024];
@@ -504,10 +504,10 @@ namespace k2app::main
 									true); // This one's gonna be a high-priority one
 
 								interfacing::ShowVRToast(
-									interfacing::LocalizedResourceWString(
-										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Title", L"en-US"),
-									interfacing::LocalizedResourceWString(
-										L"SharedStrings", L"Toasts/TrackersAutoDisabled/Content", L"en-US"));
+									interfacing::LocalizedJSONString_EN(
+										L"/SharedStrings/Toasts/TrackersAutoDisabled/Title"),
+									interfacing::LocalizedJSONString_EN(
+										L"/SharedStrings/Toasts/TrackersAutoDisabled/Content"));
 							}
 						});
 			}

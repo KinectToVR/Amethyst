@@ -19,7 +19,8 @@ namespace k2app::shared
 	{
 		// Navigate the main view (w/ animations)
 		void NavView_Navigate(std::wstring navItemTag,
-			const winrt::Microsoft::UI::Xaml::Media::Animation::NavigationTransitionInfo& transitionInfo);
+		                      const winrt::Microsoft::UI::Xaml::Media::Animation::NavigationTransitionInfo&
+		                      transitionInfo);
 
 		// Vector of std::pair holding the Navigation Tag and the relative Navigation Page.
 		inline std::vector<std::pair<std::wstring, winrt::Windows::UI::Xaml::Interop::TypeName>> m_pages;
@@ -57,7 +58,7 @@ namespace k2app::shared
 		namespace navigation_items
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Canvas>
-				navViewDevicesButtonIconCanvas;
+			navViewDevicesButtonIconCanvas;
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Shapes::Path>
 				navViewDevicesButtonIcon_Empty,
@@ -75,7 +76,6 @@ namespace k2app::shared
 				navViewDevicesButtonLabel,
 				navViewInfoButtonLabel,
 				navViewOkashiButtonLabel;
-
 		}
 	}
 
@@ -219,62 +219,204 @@ namespace k2app::shared
 		namespace main
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-				initializerTeachingTip;
+			initializerTeachingTip;
 		}
 
 		namespace general
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-				toggleTrackersTeachingTip;
+			toggleTrackersTeachingTip;
 		}
 
 		namespace settings
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-				manageTrackersTeachingTip;
+			manageTrackersTeachingTip;
 		}
 
 		namespace devices
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-				devicesListTeachingTip;
+			devicesListTeachingTip;
 		}
 
 		namespace info
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-				endingTeachingTip;
+			endingTeachingTip;
 		}
 	}
 }
 
 namespace k2app::interfacing
 {
+	// Return a language name by code
+	// Input: The current (or deduced) language key / en
+	// Returns: LANG_NATIVE (LANG_LOCALIZED) / Nihongo (Japanese)
+	inline std::wstring GetLocalizedLanguageName(const std::wstring& language_key)
+	{
+		// Load the locales.json from Assets/Strings/
+
+		const boost::filesystem::path resource_path =
+			boost::dll::program_location().parent_path() /
+			"Assets" / "Strings" / "locales.json";
+
+		// If the specified language doesn't exist somehow, fallback to 'en'
+		if (!exists(resource_path))
+		{
+			LOG(ERROR) << "Could not load language enumeration resources at \"" <<
+				resource_path.string() << "\", app interface will be broken!";
+			return language_key; // Give up on trying
+		}
+
+		// If everything's ok, load the resources into the current resource tree
+		boost::property_tree::wptree w_enum_resources;
+		read_json(resource_path.string(), w_enum_resources);
+
+		// Check if the resource root is fine
+		if (w_enum_resources.empty())
+		{
+			LOG(ERROR) << "The current language enumeration resource root is empty!"
+				"App interface will be broken!";
+			return language_key; // Give up on trying
+		}
+
+		// Check if the language code exists
+		if (w_enum_resources.find(language_key) != w_enum_resources.not_found() && // Find the current language
+			// Check if the current language's name (local) exists in the property tree
+			w_enum_resources.get_optional<std::wstring>(
+				language_key + L"." + language_key).has_value() &&
+			// Check if the current language's name (self) exists in the property tree
+			w_enum_resources.get_optional<std::wstring>(
+				K2Settings.appLanguage + L"." + K2Settings.appLanguage).has_value() &&
+			// Check if the desired (set) language's name (local) exists in the property tree
+			w_enum_resources.get_optional<std::wstring>(
+				K2Settings.appLanguage + L"." + language_key).has_value())
+		{
+			// If everything's fine, compose the return
+
+			// If the language key is the current language, don't split the name
+			if (K2Settings.appLanguage == language_key)
+				return w_enum_resources.get<std::wstring>(K2Settings.appLanguage + L"." + K2Settings.appLanguage);
+
+			// Else split the same way as in docs
+			return w_enum_resources.get<std::wstring>(language_key + L"." + language_key) +
+				L" (" + w_enum_resources.get<std::wstring>(K2Settings.appLanguage + L"." + language_key) + L")";
+		}
+
+		// Else return they key alone
+		return language_key;
+	}
+
+	// Amethyst language resource trees
+	inline boost::property_tree::wptree
+		w_local_resources, w_english_resources, w_language_enum;
+
+	// Load the current desired resource JSON into app memory
+	inline void LoadJSONStringResources(const std::wstring& language_key)
+	{
+		boost::filesystem::path resource_path =
+			boost::dll::program_location().parent_path() /
+			"Assets" / "Strings" / (language_key + L".json");
+
+		// If the specified language doesn't exist somehow, fallback to 'en'
+		if (!exists(resource_path))
+		{
+			LOG(WARNING) << "Could not load language resources at \"" <<
+				resource_path.string() << "\", falling back to 'en' (en.json)!";
+
+			resource_path = boost::dll::program_location().parent_path() /
+				"Assets" / "Strings" / "en.json";
+		}
+
+		// If failed again, just give up
+		if (!exists(resource_path))
+		{
+			LOG(ERROR) << "Could not load language resources at \"" <<
+				resource_path.string() << "\", the app interface will be broken!";
+			return; // Just give up
+		}
+
+		// If everything's ok, load the resources into the current resource tree
+		read_json(resource_path.string(), w_local_resources);
+
+		// Check if the resource root is fine
+		if (w_local_resources.empty())
+			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+	}
+
+	// Load the english resource JSON into app memory
+	inline void LoadJSONStringResources_English()
+	{
+		const boost::filesystem::path resource_path =
+			boost::dll::program_location().parent_path() /
+			"Assets" / "Strings" / "en.json";
+
+		// If the specified language doesn't exist somehow, fallback to 'en'
+		if (!exists(resource_path))
+		{
+			LOG(ERROR) << "Could not load language resources at \"" <<
+				resource_path.string() << "\", falling back to the current one! " <<
+				"WARNING: The app interface will be broken if not existent!";
+
+			// Override the current english resource tree
+			w_english_resources = w_local_resources;
+			return; // Give up on trying
+		}
+
+		// If everything's ok, load the resources into the current resource tree
+		read_json(resource_path.string(), w_english_resources);
+
+		// Check if the resource root is fine
+		if (w_english_resources.empty())
+			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+	}
+
+	// Get a string from runtime JSON resources, language from settings
+	inline std::wstring LocalizedJSONString(const std::wstring& resource_key)
+	{
+		// Check if the resource root is fine
+		if (w_local_resources.empty())
+		{
+			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+			return L""; // Just give up
+		}
+
+		// Check if the desired key exists
+		if (w_local_resources.find(resource_key) == w_local_resources.not_found())
+		{
+			LOG(ERROR) << "Could not find a resource string with key (narrowed) \"" <<
+				WStringToString(resource_key) << "\" in the current resource! App interface will be broken!";
+			return L""; // Just give up
+		}
+
+		return w_local_resources.get<std::wstring>(resource_key);
+	}
+
+	// Get a string from runtime JSON resources, specify language
+	inline std::wstring LocalizedJSONString_EN(const std::wstring& resource_key)
+	{
+		// Check if the resource root is fine
+		if (w_english_resources.empty())
+		{
+			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+			return L""; // Just give up
+		}
+		
+		// Check if the desired key exists
+		if (w_english_resources.find(resource_key) == w_english_resources.not_found())
+		{
+			LOG(ERROR) << "Could not find a resource string with key (narrowed) \"" <<
+				WStringToString(resource_key) << "\" in the current resource! App interface will be broken!";
+			return L""; // Just give up
+		}
+
+		return w_english_resources.get<std::wstring>(resource_key);
+	}
+
 	// Get a string from resources (crash handler's LangResString)
 	inline std::wstring LocalizedResourceWString(const std::wstring& dictionary, const std::wstring& key)
 	{
-		winrt::Windows::Globalization::Language language{
-			winrt::Windows::System::UserProfile::GlobalizationPreferences::Languages().GetAt(0)
-		};
-
-		shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language.LanguageTag();
-
-		return shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
-			(dictionary + L"/" + key).c_str()).ValueAsString().c_str();
-	}
-
-	// Get a string from resources (crash handler's LangResString)
-	inline std::wstring LocalizedResourceWString(
-		const std::wstring& dictionary, const std::wstring& key, const std::wstring& language)
-	{
-		shared::main::thisResourceContext->QualifierValues().Lookup(L"Language") = language;
-
-		return shared::main::thisResourceManager.get()->MainResourceMap().GetValue(
-			(dictionary + L"/" + key).c_str()).ValueAsString().c_str();
-	}
-
-	inline std::wstring LocalizedJSONString(const std::wstring& key)
-	{
-		return L"";
+		return LocalizedJSONString(L"/" + dictionary + L"/" + key);
 	}
 }

@@ -12,19 +12,6 @@
 #include "K2Interfacing.h"
 #include "K2Main.h"
 
-#include <openvr.h>
-
-#include <boost/algorithm/string.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/member.hpp>
-
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
-
 namespace muxc
 {
 	using namespace winrt::Microsoft::UI::Xaml::Controls;

@@ -840,10 +840,8 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Checked(
 				true); // High priority - it's probably a server failure
 
 			k2app::interfacing::ShowVRToast(
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title",
-				                                             L"en-US"),
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content",
-				                                             L"en-US"));
+				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed/Content"));
 		}
 
 		// Update things
@@ -1150,10 +1148,8 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 				true); // High priority - it's probably a server failure
 
 			k2app::interfacing::ShowVRToast(
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Title",
-				                                             L"en-US"),
-				k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/AutoSpawnFailed/Content",
-				                                             L"en-US"));
+				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed/Content"));
 		}
 	}
 

@@ -43,7 +43,9 @@ namespace k2app
 		template <class Archive>
 		void serialize(Archive& archive, unsigned int version)
 		{
-			archive& BOOST_SERIALIZATION_NVP(K2TrackersVector)
+			archive & BOOST_SERIALIZATION_NVP(appLanguage)
+				& BOOST_SERIALIZATION_NVP(appTheme)
+				& BOOST_SERIALIZATION_NVP(K2TrackersVector)
 				& BOOST_SERIALIZATION_NVP(useTrackerPairs)
 				& BOOST_SERIALIZATION_NVP(checkForOverlappingTrackers)
 				& BOOST_SERIALIZATION_NVP(trackingDeviceID)
@@ -73,6 +75,12 @@ namespace k2app
 
 	public:
 		/* Members part */
+
+		// Current language & theme
+		std::wstring appLanguage = L"en";
+
+		// 0:system, 1:dark, 2:light
+		uint32_t appTheme = 0;
 
 		// Current joints
 		std::vector<K2AppTracker> K2TrackersVector;
@@ -274,6 +282,10 @@ namespace k2app
 			// Optionally fix calibration points
 			calibrationPointsNumber = std::clamp(
 				calibrationPointsNumber, static_cast<uint32_t>(3), static_cast<uint32_t>(5));
+
+			// Optionally fix the app theme value
+			appTheme = std::clamp(
+				appTheme, static_cast<uint32_t>(0), static_cast<uint32_t>(2));
 		}
 	} inline K2Settings;
 }
