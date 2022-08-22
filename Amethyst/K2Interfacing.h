@@ -99,6 +99,10 @@ namespace k2app::interfacing
 	inline vr::VROverlayHandle_t vrOverlayHandle = vr::k_ulOverlayHandleInvalid;
 	inline vr::VRNotificationId vrNotificationID = 0;
 
+	// The actual app theme (ONLY dark/light)
+	inline winrt::Microsoft::UI::Xaml::ElementTheme actualTheme =
+		winrt::Microsoft::UI::Xaml::ElementTheme::Dark;
+
 	// Show SteamVR toast / notification
 	inline void ShowVRToast(const std::wstring& header,
 	                        const std::wstring& text)

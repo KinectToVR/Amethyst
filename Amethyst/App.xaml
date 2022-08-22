@@ -15,6 +15,12 @@
             <SolidColorBrush x:Key="WindowCaptionBackgroundDisabled">Transparent</SolidColorBrush>
             <SolidColorBrush x:Key="WindowCaptionForegroundDisabled">LightGray</SolidColorBrush>
 
+            <SolidColorBrush x:Key="AttentionBrush_Dark" Color="{ThemeResource SystemAccentColorLight2}" />
+            <SolidColorBrush x:Key="AttentionBrush_Light" Color="{ThemeResource SystemAccentColor}" />
+
+            <SolidColorBrush x:Key="NeutralBrush_Dark" Color="#8BFFFFFF" />
+            <SolidColorBrush x:Key="NeutralBrush_Light" Color="#72000000" />
+
             <ResourceDictionary x:Key="Light">
                 <SolidColorBrush x:Key="WindowCaptionForeground">Black</SolidColorBrush>
             </ResourceDictionary>

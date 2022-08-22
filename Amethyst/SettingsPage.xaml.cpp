@@ -1573,16 +1573,9 @@ void winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionC
 		break;
 		}
 	}
-
+	
 	// Save made changes
 	k2app::K2Settings.saveSettings();
-
-	// Request page reloads
-	k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();
-	k2app::shared::semaphores::semaphore_ReloadPage_GeneralPage.release();
-	k2app::shared::semaphores::semaphore_ReloadPage_SettingsPage.release();
-	k2app::shared::semaphores::semaphore_ReloadPage_DevicesPage.release();
-	k2app::shared::semaphores::semaphore_ReloadPage_InfoPage.release();
 }
 
 

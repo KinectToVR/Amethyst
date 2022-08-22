@@ -30,6 +30,10 @@ std::atomic_bool checkingUpdatesNow = false;
 std::string K2RemoteVersion =
 	k2app::interfacing::K2InternalVersion;
 
+// Dark, Light
+std::pair<std::shared_ptr<Media::SolidColorBrush>, std::shared_ptr<Media::SolidColorBrush>>
+	attentionBrush, neutralBrush;
+
 // Toast struct (json)
 struct toast
 {
@@ -465,7 +469,7 @@ namespace winrt::Amethyst::implementation
 
 		LOG(INFO) << "Making the app window available for children views...";
 		k2app::shared::main::thisAppWindow = std::make_shared<Window>(this->try_as<Window>());
-		
+
 		LOG(INFO) << "Making the app dispatcher available for children...";
 		k2app::shared::main::thisDispatcherQueue =
 			std::make_shared<Microsoft::UI::Dispatching::DispatcherQueue>(DispatcherQueue());
@@ -1982,6 +1986,92 @@ void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 	// Execute the handler
 	XMainGrid_Loaded_Handler();
 
+	// Overwrite the attention (accent) color
+	if (Application::Current().Resources().HasKey(
+		box_value(L"SystemFillColorAttentionBrush")))
+		Application::Current().Resources().TryRemove(
+			box_value(L"SystemFillColorAttentionBrush"));
+
+	attentionBrush = std::make_pair(
+		std::make_shared<Media::SolidColorBrush>(
+			Application::Current().Resources().TryLookup(
+				box_value(L"AttentionBrush_Dark"
+				)).as<Media::SolidColorBrush>()),
+		std::make_shared<Media::SolidColorBrush>(
+			Application::Current().Resources().TryLookup(
+				box_value(L"AttentionBrush_Light"
+				)).as<Media::SolidColorBrush>()));
+
+	// Overwrite the neutral (dim) color
+	if (Application::Current().Resources().HasKey(
+		box_value(L"SystemFillColorNeutralBrush")))
+		Application::Current().Resources().TryRemove(
+			box_value(L"SystemFillColorNeutralBrush"));
+
+	neutralBrush = std::make_pair(
+		std::make_shared<Media::SolidColorBrush>(
+			Application::Current().Resources().TryLookup(
+				box_value(L"NeutralBrush_Dark"
+				)).as<Media::SolidColorBrush>()),
+		std::make_shared<Media::SolidColorBrush>(
+			Application::Current().Resources().TryLookup(
+				box_value(L"NeutralBrush_Light"
+				)).as<Media::SolidColorBrush>()));
+
+	// Register a theme watchdog
+	XMainGrid().XamlRoot()
+	           .Content().as<Controls::Grid>()
+	           .ActualThemeChanged([&, this](auto, auto)
+	           {
+		           k2app::interfacing::actualTheme = XMainGrid().ActualTheme();
+
+		           // Overwrite the attention (accent) color
+		           if (Application::Current().Resources().HasKey(
+			           box_value(L"SystemFillColorAttentionBrush")))
+			           Application::Current().Resources().TryRemove(
+				           box_value(L"SystemFillColorAttentionBrush"));
+
+		           Application::Current().Resources().Insert(
+			           box_value(L"SystemFillColorAttentionBrush"),
+			           box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
+				                     ? *attentionBrush.first
+				                     : *attentionBrush.second)
+		           );
+
+		           // Overwrite the neutral (dim) color
+		           if (Application::Current().Resources().HasKey(
+			           box_value(L"SystemFillColorNeutralBrush")))
+			           Application::Current().Resources().TryRemove(
+				           box_value(L"SystemFillColorNeutralBrush"));
+
+		           Application::Current().Resources().Insert(
+			           box_value(L"SystemFillColorNeutralBrush"),
+			           box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
+				                     ? *neutralBrush.first
+				                     : *neutralBrush.second)
+		           );
+
+		           // Overwrite the titlebar (decorations) color
+		           if (Application::Current().Resources().HasKey(
+			           box_value(L"WindowCaptionForeground")))
+			           Application::Current().Resources().TryRemove(
+				           box_value(L"WindowCaptionForeground"));
+
+		           Application::Current().Resources().Insert(
+			           box_value(L"WindowCaptionForeground"),
+			           box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
+				                     ? Windows::UI::Colors::White()
+				                     : Windows::UI::Colors::Black())
+		           );
+
+		           // Request page reloads
+		           k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();
+		           k2app::shared::semaphores::semaphore_ReloadPage_GeneralPage.release();
+		           k2app::shared::semaphores::semaphore_ReloadPage_SettingsPage.release();
+		           k2app::shared::semaphores::semaphore_ReloadPage_DevicesPage.release();
+		           k2app::shared::semaphores::semaphore_ReloadPage_InfoPage.release();
+	           });
+
 	// Mark as loaded
 	main_loadedOnce = true;
 }
@@ -2024,14 +2114,6 @@ void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded_Handler()
 
 	using namespace k2app;
 	using namespace shared::main;
-
-	Application::Current().Resources().TryRemove(
-		box_value(L"SystemFillColorAttentionBrush"));
-
-	Application::Current().Resources().Insert(
-		box_value(L"SystemFillColorAttentionBrush"),
-		Media::SolidColorBrush(
-			Windows::UI::ColorHelper::FromArgb(255, 0, 255, 0)));
 
 	if (interfacing::currentPageClass == L"Amethyst.GeneralPage")
 	{
