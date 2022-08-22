@@ -68,9 +68,9 @@ void Amethyst::implementation::InfoPage::Grid_Loaded(
 }
 
 
-Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::InfoPage::EndingTeachingTip_CloseButtonClick(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Windows::Foundation::IInspectable& args)
+Windows::Foundation::IAsyncAction Amethyst::implementation::InfoPage::EndingTeachingTip_CloseButtonClick(
+	const Controls::TeachingTip& sender,
+	const Windows::Foundation::IInspectable& args)
 {
 	// Dismiss the current tip
 	EndingTeachingTip().IsOpen(false);
@@ -100,8 +100,8 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::InfoPage::End
 }
 
 
-void winrt::Amethyst::implementation::InfoPage::Page_Loaded(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void Amethyst::implementation::InfoPage::Page_Loaded(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Execute the handler
 	Page_Loaded_Handler();
@@ -111,7 +111,7 @@ void winrt::Amethyst::implementation::InfoPage::Page_Loaded(
 }
 
 
-void winrt::Amethyst::implementation::InfoPage::Page_Loaded_Handler()
+void Amethyst::implementation::InfoPage::Page_Loaded_Handler()
 {
 	AppTitle().Text(
 		k2app::interfacing::LocalizedJSONString(L"/InfoPage/AppTitle"));

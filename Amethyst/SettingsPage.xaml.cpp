@@ -271,17 +271,14 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 
 		exit(0);
 	}
-	else
-	{
-		LOG(ERROR) << "App will not be restarted due to caller process identification error.";
-		k2app::interfacing::ShowToast(
-			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
-			k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed"));
+	LOG(ERROR) << "App will not be restarted due to caller process identification error.";
+	k2app::interfacing::ShowToast(
+		k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
+		k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed"));
 
-		k2app::interfacing::ShowVRToast(
-			k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed/Title"),
-			k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed"));
-	}
+	k2app::interfacing::ShowVRToast(
+		k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed/Title"),
+		k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed"));
 }
 
 
@@ -1406,27 +1403,27 @@ void Amethyst::implementation::SettingsPage::ViewLogsButton_Click(
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::ManageTrackersTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+void Amethyst::implementation::SettingsPage::ManageTrackersTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	AddTrackersTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	AddTrackersTeachingTip().IsOpen(true);
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+void Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	LearnAboutFiltersTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	LearnAboutFiltersTeachingTip().IsOpen(true);
 }
 
 
-Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage::LearnAboutFiltersTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::LearnAboutFiltersTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	PageMainScrollViewer().UpdateLayout();
 	PageMainScrollViewer().ChangeView(nullptr,
@@ -1442,9 +1439,9 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage:
 }
 
 
-Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage::AutoStartTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AutoStartTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	// Wait a bit
 	{
@@ -1477,26 +1474,26 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::SettingsPage:
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::ButtonFlyout_Opening(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void Amethyst::implementation::SettingsPage::ButtonFlyout_Opening(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::ButtonFlyout_Closing(
-	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs& args)
+void Amethyst::implementation::SettingsPage::ButtonFlyout_Closing(
+	const Controls::Primitives::FlyoutBase& sender,
+	const Controls::Primitives::FlyoutBaseClosingEventArgs& args)
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::FlipDropDown_Collapsed
-(const winrt::Microsoft::UI::Xaml::Controls::Expander& sender,
- const winrt::Microsoft::UI::Xaml::Controls::ExpanderCollapsedEventArgs& args)
+void Amethyst::implementation::SettingsPage::FlipDropDown_Collapsed
+(const Controls::Expander& sender,
+ const Controls::ExpanderCollapsedEventArgs& args)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;
@@ -1506,9 +1503,9 @@ void winrt::Amethyst::implementation::SettingsPage::FlipDropDown_Collapsed
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::LanguageOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+void Amethyst::implementation::SettingsPage::LanguageOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;
@@ -1536,9 +1533,9 @@ void winrt::Amethyst::implementation::SettingsPage::LanguageOptionBox_SelectionC
 
 
 Windows::Foundation::IAsyncAction
-winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionChanged(
-	const winrt::Windows::Foundation::IInspectable& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
+Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionChanged(
+	const Windows::Foundation::IInspectable& sender,
+	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)co_return;
@@ -1549,39 +1546,39 @@ winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionChange
 	// Overwrite the current theme
 	k2app::K2Settings.appTheme = AppThemeOptionBox().SelectedIndex();
 
-	switch(k2app::K2Settings.appTheme)
+	switch (k2app::K2Settings.appTheme)
 	{
 	case 2:
 		{
-		k2app::shared::main::mainNavigationView->XamlRoot()
-			.Content().as<Controls::Grid>()
-			.RequestedTheme(ElementTheme::Light);
-		break;
+			k2app::shared::main::mainNavigationView->XamlRoot()
+			                                       .Content().as<Controls::Grid>()
+			                                       .RequestedTheme(ElementTheme::Light);
+			break;
 		}
 	case 1:
 		{
-		k2app::shared::main::mainNavigationView->XamlRoot()
-			.Content().as<Controls::Grid>()
-			.RequestedTheme(ElementTheme::Dark);
-		break;
+			k2app::shared::main::mainNavigationView->XamlRoot()
+			                                       .Content().as<Controls::Grid>()
+			                                       .RequestedTheme(ElementTheme::Dark);
+			break;
 		}
 	case 0:
 	default:
 		{
-		k2app::shared::main::mainNavigationView->XamlRoot()
-			.Content().as<Controls::Grid>()
-			.RequestedTheme(ElementTheme::Default);
-		break;
+			k2app::shared::main::mainNavigationView->XamlRoot()
+			                                       .Content().as<Controls::Grid>()
+			                                       .RequestedTheme(ElementTheme::Default);
+			break;
 		}
 	}
-	
+
 	// Save made changes
 	k2app::K2Settings.saveSettings();
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::LanguageOptionBox_DropDownOpened(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void Amethyst::implementation::SettingsPage::LanguageOptionBox_DropDownOpened(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;

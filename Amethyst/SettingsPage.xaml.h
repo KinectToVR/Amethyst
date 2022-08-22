@@ -64,16 +64,29 @@ namespace winrt::Amethyst::implementation
 		                                     const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ViewLogsButton_Click(const Windows::Foundation::IInspectable& sender,
 		                          const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void ManageTrackersTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
-		void AddTrackersTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
-		Windows::Foundation::IAsyncAction LearnAboutFiltersTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
-		Windows::Foundation::IAsyncAction AutoStartTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
-		void ButtonFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
-		void ButtonFlyout_Closing(winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase const& sender, winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs const& args);
-		void FlipDropDown_Collapsed(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderCollapsedEventArgs const& args);
-		void LanguageOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
-		Windows::Foundation::IAsyncAction AppThemeOptionBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
-		void LanguageOptionBox_DropDownOpened(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
+		void ManageTrackersTeachingTip_Closed(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+		                                      const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+		void AddTrackersTeachingTip_Closed(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+		                                   const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+		Windows::Foundation::IAsyncAction LearnAboutFiltersTeachingTip_Closed(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+			const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+		Windows::Foundation::IAsyncAction AutoStartTeachingTip_Closed(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+			const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+		void ButtonFlyout_Opening(const Windows::Foundation::IInspectable& sender,
+		                          const Windows::Foundation::IInspectable& e);
+		void ButtonFlyout_Closing(const Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
+		                          const Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs& args);
+		void FlipDropDown_Collapsed(const Microsoft::UI::Xaml::Controls::Expander& sender,
+		                            const Microsoft::UI::Xaml::Controls::ExpanderCollapsedEventArgs& args);
+		void LanguageOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
+		                                        const Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e);
+		Windows::Foundation::IAsyncAction AppThemeOptionBox_SelectionChanged(
+			const Windows::Foundation::IInspectable& sender,
+			const Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e);
+		void LanguageOptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
+		                                      const Windows::Foundation::IInspectable& e);
 	};
 }
 

@@ -217,7 +217,7 @@ namespace TrackingDevices
 			if (k2app::interfacing::currentPageTag == L"devices")
 			{
 				if (k2app::shared::devices::devicesListView.get() != nullptr &&
-					k2app::shared::devices::devicesListView.get()->SelectedIndex() == 
+					k2app::shared::devices::devicesListView.get()->SelectedIndex() ==
 					k2app::K2Settings.overrideDeviceID && status_ok)
 					k2app::interfacing::currentAppState = L"overrides";
 				else

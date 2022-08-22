@@ -51,7 +51,7 @@ namespace winrt::Amethyst::implementation
 			const Windows::Foundation::IInspectable& /* sender */,
 			const Windows::UI::Core::BackRequestedEventArgs& args);
 		bool TryGoBack();
-		
+
 		Windows::Foundation::IAsyncAction checkUpdates(bool show = false, DWORD delay_ms = 0);
 		void InstallLaterButton_Click(
 			const Windows::Foundation::IInspectable& sender, const Microsoft::UI::Xaml::RoutedEventArgs& e);
@@ -67,18 +67,31 @@ namespace winrt::Amethyst::implementation
 		                                                      const
 		                                                      Microsoft::UI::Xaml::Input::TappedRoutedEventArgs&
 		                                                      e);
-		void InitializerTeachingTip_ActionButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
-		void InitializerTeachingTip_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
-		void HelpButton_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
-		void HelpFlyoutDocsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void HelpFlyoutDiscordButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void HelpFlyoutDevButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void ButtonFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
-		void ButtonFlyout_Closing(winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase const& sender, winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs const& args);
-		winrt::Windows::Foundation::IAsyncAction HelpFlyoutLicensesButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void LicensesFlyout_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
-		void LicensesFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
-		void XMainGrid_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void InitializerTeachingTip_ActionButtonClick(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+		                                              const Windows::Foundation::IInspectable& args);
+		void InitializerTeachingTip_CloseButtonClick(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+		                                             const Windows::Foundation::IInspectable& args);
+		void HelpButton_Tapped(const Windows::Foundation::IInspectable& sender,
+		                       const Microsoft::UI::Xaml::Input::TappedRoutedEventArgs& e);
+		void HelpFlyoutDocsButton_Click(const Windows::Foundation::IInspectable& sender,
+		                                const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void HelpFlyoutDiscordButton_Click(const Windows::Foundation::IInspectable& sender,
+		                                   const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void HelpFlyoutDevButton_Click(const Windows::Foundation::IInspectable& sender,
+		                               const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ButtonFlyout_Opening(const Windows::Foundation::IInspectable& sender,
+		                          const Windows::Foundation::IInspectable& e);
+		void ButtonFlyout_Closing(const Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
+		                          const Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs& args);
+		Windows::Foundation::IAsyncAction HelpFlyoutLicensesButton_Click(
+			const Windows::Foundation::IInspectable& sender,
+			const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void LicensesFlyout_Closed(const Windows::Foundation::IInspectable& sender,
+		                           const Windows::Foundation::IInspectable& e);
+		void LicensesFlyout_Opening(const Windows::Foundation::IInspectable& sender,
+		                            const Windows::Foundation::IInspectable& e);
+		void XMainGrid_Loaded(const Windows::Foundation::IInspectable& sender,
+		                      const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		Windows::Foundation::IAsyncAction XMainGrid_Loaded_Handler();
 	};
 }

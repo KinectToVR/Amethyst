@@ -2047,27 +2047,27 @@ void Amethyst::implementation::GeneralPage::DismissSetErrorButton_Click(
 }
 
 
-void winrt::Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+void Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	CalibrationTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	CalibrationTeachingTip().IsOpen(true);
 }
 
 
-void winrt::Amethyst::implementation::GeneralPage::CalibrationTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+void Amethyst::implementation::GeneralPage::CalibrationTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	StatusTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	StatusTeachingTip().IsOpen(true);
 }
 
 
-Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::GeneralPage::StatusTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StatusTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	// Wait a bit
 	{
@@ -2097,17 +2097,17 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::GeneralPage::
 }
 
 
-void winrt::Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Opening(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Opening(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 }
 
 
-void winrt::Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Closing(
-	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs& args)
+void Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Closing(
+	const Controls::Primitives::FlyoutBase& sender,
+	const Controls::Primitives::FlyoutBaseClosingEventArgs& args)
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);

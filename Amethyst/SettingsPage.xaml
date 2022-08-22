@@ -135,7 +135,8 @@
 
                     <Slider Grid.Row="1" HorizontalAlignment="Right" Width="350" Value="69" Minimum="0" Maximum="100"
                             IsEnabled="{Binding ElementName=SoundsEnabledCheckBox, Path=IsChecked,TargetNullValue=False}"
-                            x:Name="SoundsVolumeSlider" ValueChanged="SoundsVolumeSlider_ValueChanged" Margin="30,11,0,0">
+                            x:Name="SoundsVolumeSlider" ValueChanged="SoundsVolumeSlider_ValueChanged"
+                            Margin="30,11,0,0">
                         <Slider.Transitions>
                             <TransitionCollection>
                                 <RepositionThemeTransition />
@@ -290,7 +291,8 @@
                         <TextBlock FontWeight="SemiBold" FontSize="25" Grid.Column="0"
                                    x:Name="Titles_TrackerConfig_Header" />
 
-                        <HyperlinkButton FontWeight="SemiBold" FontSize="16" Grid.Column="1" HorizontalAlignment="Right"
+                        <HyperlinkButton FontWeight="SemiBold" FontSize="16" Grid.Column="1"
+                                         HorizontalAlignment="Right"
                                          x:Name="LearnAboutFiltersButton" Click="LearnAboutFiltersButton_Click">
 
                             <HyperlinkButton.Resources>
@@ -485,7 +487,7 @@
                             FontSize="16" IsEnabled="False" />
 
                     <StackPanel Grid.Column="0" Orientation="Vertical" Margin="0,2,15,0" Grid.Row="0">
-                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" 
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
                                    x:Name="Captions_TrackersRestart_Line1" FontWeight="SemiBold"
                                    Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -542,30 +544,32 @@
                         <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,35,10" FontSize="16"
                                 x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold" />
 
-                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,35,10" FontSize="16" 
+                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,35,10" FontSize="16"
                                 x:Name="ViewLogsButton" Click="ViewLogsButton_Click" FontWeight="SemiBold" />
 
                         <SplitButton Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                             x:Name="ReManifestButton" Click="ReManifestButton_Click" FontWeight="SemiBold" FontSize="16">
+                                     x:Name="ReManifestButton" Click="ReManifestButton_Click" FontWeight="SemiBold"
+                                     FontSize="16">
                             <SplitButton.Flyout>
                                 <Flyout Placement="RightEdgeAlignedBottom"
-                                Opening="AutoStartFlyout_Opening"
-                                Closing="ButtonFlyout_Closing">
+                                        Opening="AutoStartFlyout_Opening"
+                                        Closing="ButtonFlyout_Closing">
                                     <Flyout.FlyoutPresenterStyle>
                                         <Style TargetType="FlyoutPresenter">
                                             <Setter Property="CornerRadius" Value="8" />
                                             <Setter Property="Background"
-                                            Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                                    Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                                         </Style>
                                     </Flyout.FlyoutPresenterStyle>
 
                                     <Grid>
-                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                                           x:Name="Captions_AutoStart" Margin="30,0,0,3" />
+                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                   FontWeight="Medium"
+                                                   x:Name="Captions_AutoStart" Margin="30,0,0,3" />
                                         <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
-                                          Unchecked="AutoStartCheckBox_Unchecked"
-                                          HorizontalAlignment="Left" VerticalAlignment="Center"
-                                          MinWidth="0" MinHeight="0" />
+                                                  Unchecked="AutoStartCheckBox_Unchecked"
+                                                  HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                  MinWidth="0" MinHeight="0" />
                                     </Grid>
                                 </Flyout>
                             </SplitButton.Flyout>
@@ -578,13 +582,13 @@
 
                             <SplitButton.Resources>
                                 <TeachingTip x:Name="AutoStartTeachingTip"
-                                     Target="{Binding ElementName=ReManifestButton}"
-                                     Title="Start Amethyst with SteamVR"
-                                     Subtitle="To skip searching for Amethyst every time, you can enable it to start automatically. The check is hidden inside this dropdown."
-                                     PreferredPlacement="RightTop"
-                                     IsLightDismissEnabled="False"
-                                     CloseButtonContent="Show the next tip"
-                                     Closed="AutoStartTeachingTip_Closed" />
+                                             Target="{Binding ElementName=ReManifestButton}"
+                                             Title="Start Amethyst with SteamVR"
+                                             Subtitle="To skip searching for Amethyst every time, you can enable it to start automatically. The check is hidden inside this dropdown."
+                                             PreferredPlacement="RightTop"
+                                             IsLightDismissEnabled="False"
+                                             CloseButtonContent="Show the next tip"
+                                             Closed="AutoStartTeachingTip_Closed" />
                             </SplitButton.Resources>
                         </SplitButton>
                     </StackPanel>

@@ -637,7 +637,7 @@ namespace ktvr
 			virtual void AppendSingleElement(
 				const Element& element,
 				const SingleLayoutHorizontalAlignment& alignment =
-				SingleLayoutHorizontalAlignment::Left)
+					SingleLayoutHorizontalAlignment::Left)
 			{
 			}
 
@@ -723,7 +723,10 @@ namespace ktvr
 		// Both should be updated either on call or as frequent as possible
 		virtual HRESULT getStatusResult() { return E_NOTIMPL; }
 		// Device status wide string: to get system locale/language, use GetUserDefaultUILanguage
-		virtual std::wstring statusResultWString(HRESULT stat) { return L"Not Defined\nE_NOT_DEFINED\nstatusResultWString behaviour not defined"; }
+		virtual std::wstring statusResultWString(HRESULT stat)
+		{
+			return L"Not Defined\nE_NOT_DEFINED\nstatusResultWString behaviour not defined";
+		}
 
 		// This should be updated on every frame,
 		// along with joint devices
@@ -789,31 +792,31 @@ namespace ktvr
 		Interface::LayoutRoot* layoutRoot;
 
 		// Create a text block
-		std::function<Interface::TextBlock* (const std::wstring& text)> CreateTextBlock;
+		std::function<Interface::TextBlock*(const std::wstring& text)> CreateTextBlock;
 
 		// Create a labeled button
-		std::function<Interface::Button* (const std::wstring& content)> CreateButton;
+		std::function<Interface::Button*(const std::wstring& content)> CreateButton;
 
 		// Create a number box
-		std::function<Interface::NumberBox* (const int& value)> CreateNumberBox;
+		std::function<Interface::NumberBox*(const int& value)> CreateNumberBox;
 
 		// Create a combo box
-		std::function<Interface::ComboBox* (const std::vector<std::wstring>& entries)> CreateComboBox;
+		std::function<Interface::ComboBox*(const std::vector<std::wstring>& entries)> CreateComboBox;
 
 		// Create a check box
-		std::function<Interface::CheckBox* ()> CreateCheckBox;
+		std::function<Interface::CheckBox*()> CreateCheckBox;
 
 		// Create a toggle switch
-		std::function<Interface::ToggleSwitch* ()> CreateToggleSwitch;
+		std::function<Interface::ToggleSwitch*()> CreateToggleSwitch;
 
 		// Create a text box
-		std::function<Interface::TextBox* ()> CreateTextBox;
+		std::function<Interface::TextBox*()> CreateTextBox;
 
 		// Create a progress ring
-		std::function<Interface::ProgressRing* ()> CreateProgressRing;
+		std::function<Interface::ProgressRing*()> CreateProgressRing;
 
 		// Create a progress bar
-		std::function<Interface::ProgressBar* ()> CreateProgressBar;
+		std::function<Interface::ProgressBar*()> CreateProgressBar;
 
 	protected:
 		K2DeviceCharacteristics deviceCharacteristics = K2_Character_Unknown;
@@ -943,7 +946,10 @@ namespace ktvr
 		// Both should be updated either on call or as frequent as possible
 		virtual HRESULT getStatusResult() { return E_NOTIMPL; }
 		// Device status wide string: to get system locale/language, use GetUserDefaultUILanguage
-		virtual std::wstring statusResultWString(HRESULT stat) { return L"Not Defined\nE_NOT_DEFINED\nstatusResultWString behaviour not defined"; }
+		virtual std::wstring statusResultWString(HRESULT stat)
+		{
+			return L"Not Defined\nE_NOT_DEFINED\nstatusResultWString behaviour not defined";
+		}
 
 		// Signal the joint eg psm_id0 that it's being selected
 		virtual void signalJoint(uint32_t at)
@@ -1006,31 +1012,31 @@ namespace ktvr
 		Interface::LayoutRoot* layoutRoot;
 
 		// Create a text block
-		std::function<Interface::TextBlock* (const std::wstring& text)> CreateTextBlock;
+		std::function<Interface::TextBlock*(const std::wstring& text)> CreateTextBlock;
 
 		// Create a labeled button
-		std::function<Interface::Button* (const std::wstring& content)> CreateButton;
+		std::function<Interface::Button*(const std::wstring& content)> CreateButton;
 
 		// Create a number box
-		std::function<Interface::NumberBox* (const int& value)> CreateNumberBox;
+		std::function<Interface::NumberBox*(const int& value)> CreateNumberBox;
 
 		// Create a combo box
-		std::function<Interface::ComboBox* (const std::vector<std::wstring>& entries)> CreateComboBox;
+		std::function<Interface::ComboBox*(const std::vector<std::wstring>& entries)> CreateComboBox;
 
 		// Create a check box
-		std::function<Interface::CheckBox* ()> CreateCheckBox;
+		std::function<Interface::CheckBox*()> CreateCheckBox;
 
 		// Create a toggle switch
-		std::function<Interface::ToggleSwitch* ()> CreateToggleSwitch;
+		std::function<Interface::ToggleSwitch*()> CreateToggleSwitch;
 
 		// Create a text box
-		std::function<Interface::TextBox* ()> CreateTextBox;
+		std::function<Interface::TextBox*()> CreateTextBox;
 
 		// Create a progress ring
-		std::function<Interface::ProgressRing* ()> CreateProgressRing;
+		std::function<Interface::ProgressRing*()> CreateProgressRing;
 
 		// Create a progress bar
-		std::function<Interface::ProgressBar* ()> CreateProgressBar;
+		std::function<Interface::ProgressBar*()> CreateProgressBar;
 
 	protected:
 		K2DeviceType deviceType = K2_Unknown;

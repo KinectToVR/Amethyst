@@ -1921,8 +1921,8 @@ void Amethyst::implementation::MainWindow::ButtonFlyout_Closing(
 }
 
 
-winrt::Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::MainWindow::HelpFlyoutLicensesButton_Click(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::HelpFlyoutLicensesButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	apartment_context ui_thread;
 	co_await resume_background();
@@ -1937,8 +1937,8 @@ winrt::Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::MainWi
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Closed(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void Amethyst::implementation::MainWindow::LicensesFlyout_Closed(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
 	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
@@ -1947,8 +1947,8 @@ void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Closed(
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Opening(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void Amethyst::implementation::MainWindow::LicensesFlyout_Opening(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
 	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
@@ -1980,8 +1980,8 @@ void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Opening(
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+void Amethyst::implementation::MainWindow::XMainGrid_Loaded(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Load theme config
 	switch (k2app::K2Settings.appTheme)
@@ -2107,7 +2107,7 @@ void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 }
 
 
-Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded_Handler()
+Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGrid_Loaded_Handler()
 {
 	NavViewGeneralButtonLabel().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/General"));

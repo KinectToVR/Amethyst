@@ -42,11 +42,17 @@ namespace winrt::Amethyst::implementation
 		                             const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void OpenDocsButton_Click(const Windows::Foundation::IInspectable& sender,
 		                          const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void DevicesListTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
-		void DeviceStatusTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
-		Windows::Foundation::IAsyncAction DeviceControlsTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
-		void ButtonFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
-		void ButtonFlyout_Closing(winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase const& sender, winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs const& args);
+		void DevicesListTeachingTip_Closed(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+		                                   const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+		void DeviceStatusTeachingTip_Closed(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+		                                    const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+		Windows::Foundation::IAsyncAction DeviceControlsTeachingTip_Closed(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+			const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+		void ButtonFlyout_Opening(const Windows::Foundation::IInspectable& sender,
+		                          const Windows::Foundation::IInspectable& e);
+		void ButtonFlyout_Closing(const Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
+		                          const Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs& args);
 	};
 }
 

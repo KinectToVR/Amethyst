@@ -254,11 +254,11 @@ namespace k2app::shared
 	namespace semaphores
 	{
 		inline std::binary_semaphore
-			semaphore_ReloadPage_MainWindow{ 0 },
-			semaphore_ReloadPage_GeneralPage{ 0 },
-			semaphore_ReloadPage_SettingsPage{ 0 },
-			semaphore_ReloadPage_DevicesPage{ 0 },
-			semaphore_ReloadPage_InfoPage{ 0 };
+			semaphore_ReloadPage_MainWindow{0},
+			semaphore_ReloadPage_GeneralPage{0},
+			semaphore_ReloadPage_SettingsPage{0},
+			semaphore_ReloadPage_DevicesPage{0},
+			semaphore_ReloadPage_InfoPage{0};
 	}
 }
 
@@ -286,7 +286,7 @@ namespace k2app::interfacing
 		// If everything's ok, load the resources into the current resource tree
 		boost::property_tree::wptree w_enum_resources;
 		read_json(resource_path.string(), w_enum_resources,
-			std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+		          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
 
 		// Check if the resource root is fine
 		if (w_enum_resources.empty())
@@ -354,7 +354,7 @@ namespace k2app::interfacing
 
 		// If everything's ok, load the resources into the current resource tree
 		read_json(resource_path.string(), w_local_resources,
-			std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+		          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
 
 		// Check if the resource root is fine
 		if (w_local_resources.empty())
@@ -382,7 +382,7 @@ namespace k2app::interfacing
 
 		// If everything's ok, load the resources into the current resource tree
 		read_json(resource_path.string(), w_english_resources,
-			std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+		          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
 
 		// Check if the resource root is fine
 		if (w_english_resources.empty())
@@ -419,7 +419,7 @@ namespace k2app::interfacing
 			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
 			return L""; // Just give up
 		}
-		
+
 		// Check if the desired key exists
 		if (w_english_resources.find(resource_key) == w_english_resources.not_found())
 		{

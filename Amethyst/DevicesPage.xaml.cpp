@@ -1524,27 +1524,27 @@ void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 }
 
 
-void winrt::Amethyst::implementation::DevicesPage::DevicesListTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+void Amethyst::implementation::DevicesPage::DevicesListTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	DeviceStatusTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	DeviceStatusTeachingTip().IsOpen(true);
 }
 
 
-void winrt::Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+void Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	DeviceControlsTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	DeviceControlsTeachingTip().IsOpen(true);
 }
 
 
-Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::DevicesPage::DeviceControlsTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::DeviceControlsTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	// Wait a bit
 	{
@@ -1572,17 +1572,17 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::DevicesPage::
 }
 
 
-void winrt::Amethyst::implementation::DevicesPage::ButtonFlyout_Opening(
-	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
+void Amethyst::implementation::DevicesPage::ButtonFlyout_Opening(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 }
 
 
-void winrt::Amethyst::implementation::DevicesPage::ButtonFlyout_Closing(
-	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs& args)
+void Amethyst::implementation::DevicesPage::ButtonFlyout_Closing(
+	const Controls::Primitives::FlyoutBase& sender,
+	const Controls::Primitives::FlyoutBaseClosingEventArgs& args)
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
