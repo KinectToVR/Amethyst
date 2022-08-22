@@ -79,7 +79,7 @@ namespace winrt::Amethyst::implementation
 		void LicensesFlyout_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
 		void LicensesFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
 		void XMainGrid_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void XMainGrid_Loaded_Handler();
+		Windows::Foundation::IAsyncAction XMainGrid_Loaded_Handler();
 	};
 }
 

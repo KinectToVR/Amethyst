@@ -1535,12 +1535,13 @@ void winrt::Amethyst::implementation::SettingsPage::LanguageOptionBox_SelectionC
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionChanged(
+Windows::Foundation::IAsyncAction
+winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionChanged(
 	const winrt::Windows::Foundation::IInspectable& sender,
 	const winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)co_return;
 
 	if (AppThemeOptionBox().SelectedIndex() < 0)
 		AppThemeOptionBox().SelectedItem(e.RemovedItems().GetAt(0));
@@ -1552,14 +1553,14 @@ void winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionC
 	{
 	case 2:
 		{
-		sender.as<Controls::ComboBox>().XamlRoot()
+		k2app::shared::main::mainNavigationView->XamlRoot()
 			.Content().as<Controls::Grid>()
 			.RequestedTheme(ElementTheme::Light);
 		break;
 		}
 	case 1:
 		{
-		sender.as<Controls::ComboBox>().XamlRoot()
+		k2app::shared::main::mainNavigationView->XamlRoot()
 			.Content().as<Controls::Grid>()
 			.RequestedTheme(ElementTheme::Dark);
 		break;
@@ -1567,7 +1568,7 @@ void winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionC
 	case 0:
 	default:
 		{
-		sender.as<Controls::ComboBox>().XamlRoot()
+		k2app::shared::main::mainNavigationView->XamlRoot()
 			.Content().as<Controls::Grid>()
 			.RequestedTheme(ElementTheme::Default);
 		break;

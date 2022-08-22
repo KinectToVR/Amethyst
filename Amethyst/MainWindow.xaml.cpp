@@ -1983,6 +1983,36 @@ void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Opening(
 void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
 {
+	// Load theme config
+	switch (k2app::K2Settings.appTheme)
+	{
+	case 2:
+		{
+			k2app::shared::main::mainNavigationView->
+				XamlRoot()
+				.Content().as<Controls::Grid>()
+				.RequestedTheme(ElementTheme::Light);
+			break;
+		}
+	case 1:
+		{
+			k2app::shared::main::mainNavigationView->
+				XamlRoot()
+				.Content().as<Controls::Grid>()
+				.RequestedTheme(ElementTheme::Dark);
+			break;
+		}
+	case 0:
+	default:
+		{
+			k2app::shared::main::mainNavigationView->
+				XamlRoot()
+				.Content().as<Controls::Grid>()
+				.RequestedTheme(ElementTheme::Default);
+			break;
+		}
+	}
+
 	// Execute the handler
 	XMainGrid_Loaded_Handler();
 
@@ -2019,65 +2049,65 @@ void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 				)).as<Media::SolidColorBrush>()));
 
 	// Register a theme watchdog
-	XMainGrid().XamlRoot()
-	           .Content().as<Controls::Grid>()
-	           .ActualThemeChanged([&, this](auto, auto)
-	           {
-		           k2app::interfacing::actualTheme = XMainGrid().ActualTheme();
+	NavView().XamlRoot()
+	         .Content().as<Controls::Grid>()
+	         .ActualThemeChanged([&, this](auto, auto)
+	         {
+		         k2app::interfacing::actualTheme = NavView().ActualTheme();
 
-		           // Overwrite the attention (accent) color
-		           if (Application::Current().Resources().HasKey(
-			           box_value(L"SystemFillColorAttentionBrush")))
-			           Application::Current().Resources().TryRemove(
-				           box_value(L"SystemFillColorAttentionBrush"));
+		         // Overwrite the attention (accent) color
+		         if (Application::Current().Resources().HasKey(
+			         box_value(L"SystemFillColorAttentionBrush")))
+			         Application::Current().Resources().TryRemove(
+				         box_value(L"SystemFillColorAttentionBrush"));
 
-		           Application::Current().Resources().Insert(
-			           box_value(L"SystemFillColorAttentionBrush"),
-			           box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
-				                     ? *attentionBrush.first
-				                     : *attentionBrush.second)
-		           );
+		         Application::Current().Resources().Insert(
+			         box_value(L"SystemFillColorAttentionBrush"),
+			         box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
+				                   ? *attentionBrush.first
+				                   : *attentionBrush.second)
+		         );
 
-		           // Overwrite the neutral (dim) color
-		           if (Application::Current().Resources().HasKey(
-			           box_value(L"SystemFillColorNeutralBrush")))
-			           Application::Current().Resources().TryRemove(
-				           box_value(L"SystemFillColorNeutralBrush"));
+		         // Overwrite the neutral (dim) color
+		         if (Application::Current().Resources().HasKey(
+			         box_value(L"SystemFillColorNeutralBrush")))
+			         Application::Current().Resources().TryRemove(
+				         box_value(L"SystemFillColorNeutralBrush"));
 
-		           Application::Current().Resources().Insert(
-			           box_value(L"SystemFillColorNeutralBrush"),
-			           box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
-				                     ? *neutralBrush.first
-				                     : *neutralBrush.second)
-		           );
+		         Application::Current().Resources().Insert(
+			         box_value(L"SystemFillColorNeutralBrush"),
+			         box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
+				                   ? *neutralBrush.first
+				                   : *neutralBrush.second)
+		         );
 
-		           // Overwrite the titlebar (decorations) color
-		           if (Application::Current().Resources().HasKey(
-			           box_value(L"WindowCaptionForeground")))
-			           Application::Current().Resources().TryRemove(
-				           box_value(L"WindowCaptionForeground"));
+		         // Overwrite the titlebar (decorations) color
+		         if (Application::Current().Resources().HasKey(
+			         box_value(L"WindowCaptionForeground")))
+			         Application::Current().Resources().TryRemove(
+				         box_value(L"WindowCaptionForeground"));
 
-		           Application::Current().Resources().Insert(
-			           box_value(L"WindowCaptionForeground"),
-			           box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
-				                     ? Windows::UI::Colors::White()
-				                     : Windows::UI::Colors::Black())
-		           );
+		         Application::Current().Resources().Insert(
+			         box_value(L"WindowCaptionForeground"),
+			         box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
+				                   ? Windows::UI::Colors::White()
+				                   : Windows::UI::Colors::Black())
+		         );
 
-		           // Request page reloads
-		           k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();
-		           k2app::shared::semaphores::semaphore_ReloadPage_GeneralPage.release();
-		           k2app::shared::semaphores::semaphore_ReloadPage_SettingsPage.release();
-		           k2app::shared::semaphores::semaphore_ReloadPage_DevicesPage.release();
-		           k2app::shared::semaphores::semaphore_ReloadPage_InfoPage.release();
-	           });
+		         // Request page reloads
+		         k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();
+		         k2app::shared::semaphores::semaphore_ReloadPage_GeneralPage.release();
+		         k2app::shared::semaphores::semaphore_ReloadPage_SettingsPage.release();
+		         k2app::shared::semaphores::semaphore_ReloadPage_DevicesPage.release();
+		         k2app::shared::semaphores::semaphore_ReloadPage_InfoPage.release();
+	         });
 
 	// Mark as loaded
 	main_loadedOnce = true;
 }
 
 
-void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded_Handler()
+Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded_Handler()
 {
 	NavViewGeneralButtonLabel().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/General"));
@@ -2223,4 +2253,45 @@ void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded_Handler()
 			          ? L"SystemFillColorAttentionBrush"
 			          : L"SystemFillColorNeutralBrush"
 		)).as<Media::SolidColorBrush>());
+
+	const ElementTheme oppositeTheme =
+		interfacing::actualTheme == ElementTheme::Dark
+			? ElementTheme::Light
+			: ElementTheme::Dark;
+
+	{
+		// Sleep a bit
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(30);
+		co_await ui_thread;
+	}
+	HelpButton().RequestedTheme(oppositeTheme);
+	NavViewGeneralButtonLabel().RequestedTheme(oppositeTheme);
+	NavViewSettingsButtonLabel().RequestedTheme(oppositeTheme);
+	NavViewDevicesButtonIcon_Empty().RequestedTheme(oppositeTheme);
+	NavViewDevicesButtonIcon_Solid().RequestedTheme(oppositeTheme);
+	NavViewDevicesButtonLabel().RequestedTheme(oppositeTheme);
+	NavViewInfoButtonLabel().RequestedTheme(oppositeTheme);
+	NavViewOkashiButtonLabel().RequestedTheme(oppositeTheme);
+	UpdateIconText().RequestedTheme(oppositeTheme);
+	PreviewBadgeLabel().RequestedTheme(oppositeTheme);
+
+	{
+		// Sleep a bit
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(30);
+		co_await ui_thread;
+	}
+	HelpButton().RequestedTheme(interfacing::actualTheme);
+	NavViewGeneralButtonLabel().RequestedTheme(interfacing::actualTheme);
+	NavViewSettingsButtonLabel().RequestedTheme(interfacing::actualTheme);
+	NavViewDevicesButtonIcon_Empty().RequestedTheme(interfacing::actualTheme);
+	NavViewDevicesButtonIcon_Solid().RequestedTheme(interfacing::actualTheme);
+	NavViewDevicesButtonLabel().RequestedTheme(interfacing::actualTheme);
+	NavViewInfoButtonLabel().RequestedTheme(interfacing::actualTheme);
+	NavViewOkashiButtonLabel().RequestedTheme(interfacing::actualTheme);
+	UpdateIconText().RequestedTheme(interfacing::actualTheme);
+	PreviewBadgeLabel().RequestedTheme(interfacing::actualTheme);
 }
