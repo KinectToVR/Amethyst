@@ -317,5 +317,23 @@
     "/Plugins/PSMS/Statuses/Success": "Success!\nS_OK\nEverything's good!",
     "/Plugins/PSMS/Statuses/NotRunning": "Connection error!\nE_PSMS_NOT_RUNNING\nCheck if PSMoveService is running, working and accessible by clients.",
     "/Plugins/PSMS/Statuses/NoJoints": "No controllers found!\nE_PSMS_NO_JOINTS\nCheck if any controllers are connected, and if PSMoveService is working properly.",
-    "/Plugins/PSMS/Settings/Labels/Dim": "If you're using PSMS for rotation tracking only, you can dim controller LED lights to save power."
+    "/Plugins/PSMS/Settings/Labels/Dim": "If you're using PSMS for rotation tracking only, you can dim controller LED lights to save power.",
+
+    "/Plugins/OWO/Statuses/Success": "Success!\nS_OK\nEverything's good!",
+    "/Plugins/OWO/Statuses/ConnectionDead": "Connection error!\nE_CONNECTION_DEAD\nCheck if owoTrackVR app is running, working and connected.",
+    "/Plugins/OWO/Statuses/NoData": "Connection error!\nE_NO_DATA\nCheck if owoTrackVR app is running, working and connected.",
+    "/Plugins/OWO/Statuses/InitFailure": "Listener startup fail!\nE_INIT_FAILED\nThe data server failed to start, check logs and port number.",
+    "/Plugins/OWO/Statuses/NotStarted": "Connection error!\nE_NOT_STARTED\nPress the 'Refresh' button to start the server's listener up.",
+    "/Plugins/OWO/Settings/Labels/LocalIP/One": "Your Local IP: ",
+    "/Plugins/OWO/Settings/Labels/LocalIP/Multiple": "Your Local IP: (One of) ",
+    "/Plugins/OWO/Settings/Labels/Port": "Connection Port: ",
+    "/Plugins/OWO/Settings/Labels/HipHeight": "Waist Height:",
+    "/Plugins/OWO/Settings/Notices/NotStarted": "Please start the server first!",
+    "/Plugins/OWO/Settings/Notices/NotConnected": "Please connect your phone!",
+    "/Plugins/OWO/Settings/Notices/Still": "Please stay like that a bit...",
+    "/Plugins/OWO/Settings/Notices/Failure": "Server has failed to start up!",
+    "/Plugins/OWO/Settings/Instructions/Forward": "Hold your phone in the same direction\nas your VR headset orientation, screen facing up...",
+    "/Plugins/OWO/Settings/Instructions/Down": "Attach your phone to your waist now,\nstand straight in your natural forward position...",
+    "/Plugins/OWO/Settings/Buttons/Calibration/Forward": "Calibrate Forward",
+    "/Plugins/OWO/Settings/Buttons/Calibration/Down": "Calibrate Down"
 }
