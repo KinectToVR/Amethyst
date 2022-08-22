@@ -479,7 +479,7 @@
                     </AppBarButton>
 
                     <Button Grid.Column="1" Grid.Row="0" Padding="15,0" Height="40"
-                            Style="{StaticResource AccentButtonStyle}" x:Name="RestartButton"
+                            Style="{ThemeResource AccentButtonStyle}" x:Name="RestartButton"
                             Click="RestartButton_Click" FontWeight="SemiBold"
                             HorizontalAlignment="Stretch" VerticalAlignment="Center"
                             FontSize="16" IsEnabled="False" />

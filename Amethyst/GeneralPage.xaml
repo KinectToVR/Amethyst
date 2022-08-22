@@ -30,7 +30,7 @@
                             <ColumnDefinition Width="7" />
                         </Grid.ColumnDefinitions>
                         <Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="3"
-                                FontSize="14" Height="50" Grid.Column="2" Style="{StaticResource AccentButtonStyle}"
+                                FontSize="14" Height="50" Grid.Column="2" Style="{ThemeResource AccentButtonStyle}"
                                 FontWeight="Medium"
                                 Margin="5,15,5,0" HorizontalAlignment="Stretch" />
                         <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="3"
@@ -72,8 +72,8 @@
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="260"
                                       Width="435" Opacity="1.0" x:Name="AutoCalibrationButtonDecorations">
                                     <Border Height="20" CornerRadius="3" Padding="5,0"
-                                            BorderBrush="{StaticResource SystemAccentColorLight2}"
-                                            Background="{StaticResource SystemAccentColorLight2}"
+                                            BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
+                                            Background="{ThemeResource SystemFillColorAttentionBrush}"
                                             VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,7,0,0">
                                         <TextBlock x:Name="Calibration_Captions_Recommended"
                                                    FontWeight="Medium" Foreground="Black" />
@@ -173,7 +173,7 @@
 
                                             <TextBlock x:Name="CalibrationCountdownLabel" HorizontalAlignment="Stretch"
                                                        VerticalAlignment="Stretch"
-                                                       Foreground="{StaticResource SystemAccentColorLight2}"
+                                                       Foreground="{ThemeResource SystemFillColorAttentionBrush}"
                                                        Margin="0,3,0,0" Grid.Column="0"
                                                        HorizontalTextAlignment="Center"
                                                        Text="~" FontSize="48" FontWeight="Bold" />
@@ -430,7 +430,7 @@
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
                                                HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1"
-                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               Style="{ThemeResource BaseTextBlockStyle}"
                                                x:Name="Calibration_LabelsWhat_Triggers" />
                                 </Grid>
                             </Border>
@@ -491,7 +491,7 @@
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
                                 IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
                                 Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}">
+                                VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
 
                             <Button.Resources>
                                 <TeachingTip x:Name="CalibrationTeachingTip"
@@ -537,7 +537,7 @@
                                                     Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch"
-                                                    Style="{StaticResource AccentButtonStyle}" />
+                                                    Style="{ThemeResource AccentButtonStyle}" />
                                             <Button FontSize="15" x:Name="OverrideCalibration"
                                                     Click="OverrideCalibration_Click"
                                                     VerticalContentAlignment="Center" FontWeight="SemiBold"
@@ -633,7 +633,7 @@
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            Text="[DUM_STATUS_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
                                            x:Name="TrackingDeviceErrorLabel"
-                                           Foreground="{StaticResource SystemFillColorAttentionBrush}" />
+                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            x:Name="ErrorWhatText" TextWrapping="WrapWholeWords"
@@ -659,7 +659,7 @@
                                         Height="65" VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
+                                        VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
                             </Grid>
 
                             <!--Override Status-->
@@ -695,7 +695,7 @@
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            Text="[DUM_STATUS_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
                                            x:Name="OverrideTrackingDeviceErrorLabel"
-                                           Foreground="{StaticResource SystemFillColorAttentionBrush}" />
+                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            x:Name="OverrideErrorWhatText"
@@ -726,7 +726,7 @@
                                         Content="{Binding ElementName=OpenDocsButton, Path=Content}"
                                         Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
+                                        VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
 
                             </Grid>
 
@@ -758,7 +758,7 @@
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            Text="[DUM_SERVER_ERROR_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
                                            x:Name="ServerErrorLabel"
-                                           Foreground="{StaticResource SystemFillColorAttentionBrush}" />
+                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            x:Name="ServerErrorWhatText"
@@ -789,7 +789,7 @@
                                         Content="{Binding ElementName=OpenDocsButton, Path=Content}"
                                         Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" />
+                                        VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
                             </Grid>
 
                             <!--If this button is visible, set the (upper two)'s height to 40-->

@@ -223,7 +223,7 @@
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                                Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
                                                x:Name="TrackingDeviceErrorLabel"
-                                               Foreground="{StaticResource SystemFillColorAttentionBrush}" />
+                                               Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                                x:Name="ErrorWhatText"
@@ -240,7 +240,7 @@
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                             Margin="0,0,3,5" CornerRadius="3"
                                             x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
-                                            Height="55" Width="140" Style="{StaticResource AccentButtonStyle}"
+                                            Height="55" Width="140" Style="{ThemeResource AccentButtonStyle}"
                                             HorizontalAlignment="Right" VerticalAlignment="Top" />
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
@@ -285,7 +285,7 @@
 
                                                 <StackPanel Orientation="Vertical">
                                                     <Button FontWeight="SemiBold"
-                                                            Style="{StaticResource AccentButtonStyle}"
+                                                            Style="{ThemeResource AccentButtonStyle}"
                                                             HorizontalAlignment="Stretch"
                                                             CornerRadius="3" Height="35" Margin="0,0,0,15"
                                                             x:Name="SetAsBaseButton" Click="SetAsBaseButton_Click" />

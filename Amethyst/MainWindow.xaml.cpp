@@ -2025,6 +2025,14 @@ void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded_Handler()
 	using namespace k2app;
 	using namespace shared::main;
 
+	Application::Current().Resources().TryRemove(
+		box_value(L"SystemFillColorAttentionBrush"));
+
+	Application::Current().Resources().Insert(
+		box_value(L"SystemFillColorAttentionBrush"),
+		Media::SolidColorBrush(
+			Windows::UI::ColorHelper::FromArgb(255, 0, 255, 0)));
+
 	if (interfacing::currentPageClass == L"Amethyst.GeneralPage")
 	{
 		navigation_items::navViewGeneralButtonIcon->Glyph(L"\uEA8A");

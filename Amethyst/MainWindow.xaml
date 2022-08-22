@@ -359,12 +359,12 @@
             <Grid Height="35" Width="35" Margin="0,0,10,0">
                 <FontIcon Glyph="&#xE921;" FontSize="13" Canvas.ZIndex="1" IsHitTestVisible="False" />
                 <Button Height="35" Width="35" Click="MinimizeButton_Click"
-                        Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}" />
+                        Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}" />
             </Grid>
             <Grid Height="35" Width="35">
                 <FontIcon Glyph="&#xE8BB;" FontSize="13" Canvas.ZIndex="1" IsHitTestVisible="False" />
                 <Button Height="35" Width="35" Click="ExitButton_Click"
-                        Background="{StaticResource AcrylicBackgroundFillColorDefaultBrush}" />
+                        Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}" />
             </Grid>
         </StackPanel>
 
@@ -402,7 +402,7 @@
                                 HorizontalAlignment="Stretch" />
                         <Button x:Name="InstallNowButton" Click="InstallNowButton_Click"
                                 Grid.Column="1" Margin="5,0,0,0"
-                                Style="{StaticResource AccentButtonStyle}"
+                                Style="{ThemeResource AccentButtonStyle}"
                                 HorizontalAlignment="Stretch" />
                     </Grid>
                 </StackPanel>
