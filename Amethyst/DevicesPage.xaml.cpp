@@ -11,6 +11,8 @@ using namespace k2app::shared::devices;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+bool devices_loadedOnce = false;
+
 namespace winrt::Amethyst::implementation
 {
 	DevicesPage::DevicesPage()
@@ -149,6 +151,25 @@ namespace winrt::Amethyst::implementation
 
 		NavigationCacheMode(Navigation::NavigationCacheMode::Required);
 		TrackingDevices::devices_update_current();
+
+		LOG(INFO) << "Registering a detached binary semaphore reload handler for DevicesPage...";
+		std::thread([&, this]
+		{
+			while (true)
+			{
+				// Wait for a reload signal (blocking)
+				k2app::shared::semaphores::semaphore_ReloadPage_DevicesPage.acquire();
+
+				// Reload & restart the waiting loop
+				if (devices_loadedOnce)
+					k2app::shared::main::thisDispatcherQueue->TryEnqueue([&, this]
+					{
+						DevicesPage_Loaded_Handler();
+					});
+
+				Sleep(100); // Sleep a bit
+			}
+		}).detach();
 	}
 }
 
@@ -483,7 +504,7 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	const RoutedEventArgs& e)
 {
 	auto _index = devicesListView.get()->SelectedIndex();
-	
+
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	LOG(INFO) << "Now disconnecting the tracking device...";
@@ -619,7 +640,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	const RoutedEventArgs& e)
 {
 	auto _index = devicesListView.get()->SelectedIndex();
-	
+
 	auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(_index);
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	LOG(INFO) << "Now deselecting the tracking device...";
@@ -721,7 +742,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	std::string deviceName = "[UNKNOWN]";
-	
+
 	if (trackingDevice.index() == 0)
 	{
 		k2app::K2Settings.overrideDeviceID = selectedTrackingDeviceID;
@@ -949,7 +970,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	std::string deviceName = "[UNKNOWN]";
-	
+
 	if (trackingDevice.index() == 0)
 	{
 		k2app::K2Settings.trackingDeviceID = selectedTrackingDeviceID;
@@ -1126,8 +1147,18 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 	LOG(INFO) << "Re/Loading page with tag: \"devices\"...";
 	k2app::interfacing::currentAppState = L"devices";
 
+	// Execute the handler
+	DevicesPage_Loaded_Handler();
+
+	// Mark as loaded
+	devices_loadedOnce = true;
+}
+
+
+void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
+{
 	// Load strings (must be the first thing we're doing)
-	
+
 	Titles_Devices().Text(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/Devices"));
 
@@ -1154,7 +1185,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 
 	DeselectDeviceButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/Deselect")));
-	
+
 	Controls::ToolTipService::SetToolTip(
 		DeselectDeviceButton(), box_value(
 			k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Buttons/Deselect/ToolTip")));
@@ -1200,7 +1231,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded(
 
 	JointBasisLabel().Text(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/Joints/Assign"));
-	
+
 	// Reset
 	devices_tab_re_setup_finished = false;
 

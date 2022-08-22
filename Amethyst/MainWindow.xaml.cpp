@@ -21,7 +21,8 @@ using namespace winrt::Microsoft::UI::Xaml;
 // Helper local variables
 HANDLE hNamedMutex = nullptr;
 bool updateFound = false,
-     main_localInitFinished = false;
+     main_localInitFinished = false,
+     main_loadedOnce = false;
 
 std::atomic_bool checkingUpdatesNow = false;
 
@@ -498,6 +499,25 @@ namespace winrt::Amethyst::implementation
 			(L"info", winrt::xaml_typename<InfoPage>()));
 		k2app::shared::main::m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
 			(L"console", winrt::xaml_typename<ConsolePage>()));
+
+		LOG(INFO) << "Registering a detached binary semaphore reload handler for MainWindow...";
+		std::thread([&, this]
+		{
+			while (true)
+			{
+				// Wait for a reload signal (blocking)
+				k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.acquire();
+
+				// Reload & restart the waiting loop
+				if (main_loadedOnce)
+					k2app::shared::main::thisDispatcherQueue->TryEnqueue([&, this]
+					{
+						XMainGrid_Loaded_Handler();
+					});
+
+				Sleep(100); // Sleep a bit
+			}
+		}).detach();
 
 		LOG(INFO) << "~~~Amethyst new logging session begins here!~~~";
 
@@ -1955,7 +1975,17 @@ void winrt::Amethyst::implementation::MainWindow::LicensesFlyout_Opening(
 
 
 void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	// Execute the handler
+	XMainGrid_Loaded_Handler();
+
+	// Mark as loaded
+	main_loadedOnce = true;
+}
+
+
+void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded_Handler()
 {
 	NavViewGeneralButtonLabel().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/General"));

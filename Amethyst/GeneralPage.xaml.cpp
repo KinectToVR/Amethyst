@@ -10,7 +10,8 @@ using namespace k2app::shared::general;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-bool show_skeleton_previous = true;
+bool show_skeleton_previous = true,
+     general_loadedOnce = false;
 
 enum class general_calibrating_device
 {
@@ -119,6 +120,25 @@ namespace winrt::Amethyst::implementation
 		offsetsControlHostGrid.get()->SetRow(*offsetsController->Container(), 0);
 
 		offsetsController->ReAppendTrackerPivots();
+
+		LOG(INFO) << "Registering a detached binary semaphore reload handler for GeneralPage...";
+		std::thread([&, this]
+		{
+			while (true)
+			{
+				// Wait for a reload signal (blocking)
+				k2app::shared::semaphores::semaphore_ReloadPage_GeneralPage.acquire();
+
+				// Reload & restart the waiting loop
+				if (general_loadedOnce)
+					k2app::shared::main::thisDispatcherQueue->TryEnqueue([&, this]
+					{
+						GeneralPage_Loaded_Handler();
+					});
+
+				Sleep(100); // Sleep a bit
+			}
+		}).detach();
 	}
 }
 
@@ -879,7 +899,7 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
 
 	// Request a check for already-added trackers
 	k2app::interfacing::alreadyAddedTrackersScanRequested = true;
-	
+
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::TrackersDisconnected);
 
@@ -925,6 +945,16 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 	LOG(INFO) << "Re/Loading page with tag: \"general\"...";
 	k2app::interfacing::currentAppState = L"general";
 
+	// Execute the handler
+	GeneralPage_Loaded_Handler();
+
+	// Mark as loaded
+	general_loadedOnce = true;
+}
+
+
+void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
+{
 	// Load strings (must be the first thing we're doing)
 
 	SaveOffsetsButton().Content(box_value(
@@ -1052,7 +1082,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 
 	OpenDocsButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Help/Docs")));
-	
+
 	Captions_OverrideDevice_Name().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/OverrideDevice/Name"));
 
@@ -1067,7 +1097,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 
 	ReRegisterButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/ReRegister")));
-	
+
 	Captions_VersionText().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/VersionText"));
 
@@ -1097,7 +1127,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded(
 
 	Labels_Tracking().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Labels/Tracking"));
-	
+
 	Labels_Inferred().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Labels/Inferred"));
 
@@ -1866,8 +1896,8 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 
 	// Play a sound
 	playAppSound(k2app::interfacing::isTrackingFrozen
-		? k2app::interfacing::sounds::AppSounds::ToggleOn
-		: k2app::interfacing::sounds::AppSounds::ToggleOff);
+		             ? k2app::interfacing::sounds::AppSounds::ToggleOn
+		             : k2app::interfacing::sounds::AppSounds::ToggleOff);
 
 	// Optionally show the binding teaching tip
 	if (!k2app::K2Settings.teachingTipShown_Freeze &&
@@ -2068,7 +2098,7 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::GeneralPage::
 
 
 void winrt::Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Opening(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& e)
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
@@ -2076,8 +2106,8 @@ void winrt::Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Opening(
 
 
 void winrt::Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Closing(
-	winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase const& sender, 
-	winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs& args)
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);

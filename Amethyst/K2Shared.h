@@ -249,6 +249,16 @@ namespace k2app::shared
 			endingTeachingTip;
 		}
 	}
+
+	namespace semaphores
+	{
+		inline std::binary_semaphore
+			semaphore_ReloadPage_MainWindow{ 0 },
+			semaphore_ReloadPage_GeneralPage{ 0 },
+			semaphore_ReloadPage_SettingsPage{ 0 },
+			semaphore_ReloadPage_DevicesPage{ 0 },
+			semaphore_ReloadPage_InfoPage{ 0 };
+	}
 }
 
 namespace k2app::interfacing

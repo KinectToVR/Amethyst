@@ -10,6 +10,8 @@ using namespace winrt::Microsoft::UI::Xaml;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+bool info_loadedOnce = false;
+
 namespace winrt::Amethyst::implementation
 {
 	InfoPage::InfoPage()
@@ -20,6 +22,25 @@ namespace winrt::Amethyst::implementation
 			std::make_shared<Controls::TeachingTip>(EndingTeachingTip());
 
 		LOG(INFO) << "Constructing page with tag: \"info\"...";
+
+		LOG(INFO) << "Registering a detached binary semaphore reload handler for InfoPage...";
+		std::thread([&, this]
+		{
+			while (true)
+			{
+				// Wait for a reload signal (blocking)
+				k2app::shared::semaphores::semaphore_ReloadPage_InfoPage.acquire();
+
+				// Reload & restart the waiting loop
+				if (info_loadedOnce)
+					k2app::shared::main::thisDispatcherQueue->TryEnqueue([&, this]
+					{
+						Page_Loaded_Handler();
+					});
+
+				Sleep(100); // Sleep a bit
+			}
+		}).detach();
 	}
 
 	void InfoPage::K2DoubleTapped(
@@ -80,7 +101,17 @@ Windows::Foundation::IAsyncAction winrt::Amethyst::implementation::InfoPage::End
 
 
 void winrt::Amethyst::implementation::InfoPage::Page_Loaded(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	const winrt::Windows::Foundation::IInspectable& sender, const winrt::Microsoft::UI::Xaml::RoutedEventArgs& e)
+{
+	// Execute the handler
+	Page_Loaded_Handler();
+
+	// Mark as loaded
+	info_loadedOnce = true;
+}
+
+
+void winrt::Amethyst::implementation::InfoPage::Page_Loaded_Handler()
 {
 	AppTitle().Text(
 		k2app::interfacing::LocalizedJSONString(L"/InfoPage/AppTitle"));

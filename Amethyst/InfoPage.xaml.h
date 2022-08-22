@@ -17,6 +17,7 @@ namespace winrt::Amethyst::implementation
 			const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
 			const winrt::Windows::Foundation::IInspectable& args);
 		void Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void Page_Loaded_Handler();
 	};
 }
 

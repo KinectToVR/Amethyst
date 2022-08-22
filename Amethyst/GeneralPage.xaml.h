@@ -71,6 +71,7 @@ namespace winrt::Amethyst::implementation
 		                                const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void GeneralPage_Loaded(const Windows::Foundation::IInspectable& sender,
 		                        const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void GeneralPage_Loaded_Handler();
 		void SkeletonDrawingCanvas_Loaded(const Windows::Foundation::IInspectable& sender,
 		                                  const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void CalibrationButton_Click(const Windows::Foundation::IInspectable& sender,

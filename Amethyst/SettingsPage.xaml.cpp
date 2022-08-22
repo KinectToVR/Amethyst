@@ -11,6 +11,8 @@ using namespace winrt::Microsoft::UI::Xaml;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+bool settings_loadedOnce = false;
+
 void settings_safe_clear(const std::shared_ptr<Controls::StackPanel>& panel)
 {
 	[&]
@@ -136,6 +138,25 @@ namespace winrt::Amethyst::implementation
 			}
 			else _expander_number++;
 		}
+
+		LOG(INFO) << "Registering a detached binary semaphore reload handler for SettingsPage...";
+		std::thread([&, this]
+		{
+			while (true)
+			{
+				// Wait for a reload signal (blocking)
+				k2app::shared::semaphores::semaphore_ReloadPage_SettingsPage.acquire();
+
+				// Reload & restart the waiting loop
+				if (settings_loadedOnce)
+					k2app::shared::main::thisDispatcherQueue->TryEnqueue([&, this]
+					{
+						SettingsPage_Loaded_Handler();
+					});
+
+				Sleep(100); // Sleep a bit
+			}
+		}).detach();
 	}
 }
 
@@ -272,7 +293,11 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded(
 	LOG(INFO) << "Re/Loading page with tag: \"settings\"...";
 	k2app::interfacing::currentAppState = L"settings";
 
+	// Execute the handler
 	SettingsPage_Loaded_Handler();
+
+	// Mark as loaded
+	settings_loadedOnce = true;
 }
 
 void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
@@ -1483,11 +1508,16 @@ void winrt::Amethyst::implementation::SettingsPage::LanguageOptionBox_SelectionC
 	// Save made changes
 	k2app::K2Settings.saveSettings();
 
-	// Reload TODO
+	// Reload
 	k2app::interfacing::LoadJSONStringResources_English();
 	k2app::interfacing::LoadJSONStringResources(k2app::K2Settings.appLanguage);
 
-	SettingsPage_Loaded_Handler();
+	// Request page reloads
+	k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();
+	k2app::shared::semaphores::semaphore_ReloadPage_GeneralPage.release();
+	k2app::shared::semaphores::semaphore_ReloadPage_SettingsPage.release();
+	k2app::shared::semaphores::semaphore_ReloadPage_DevicesPage.release();
+	k2app::shared::semaphores::semaphore_ReloadPage_InfoPage.release();
 }
 
 

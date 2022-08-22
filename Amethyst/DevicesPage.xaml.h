@@ -37,6 +37,7 @@ namespace winrt::Amethyst::implementation
 		                                            const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DevicesPage_Loaded(const Windows::Foundation::IInspectable& sender,
 		                        const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void DevicesPage_Loaded_Handler();
 		void OpenDiscordButton_Click(const Windows::Foundation::IInspectable& sender,
 		                             const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void OpenDocsButton_Click(const Windows::Foundation::IInspectable& sender,
