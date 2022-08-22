@@ -129,8 +129,6 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\KinectV1" "$(
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="KinectV1Handler.h" />
-    <ClInclude Include="LocalizedSettings.h" />
-    <ClInclude Include="LocalizedStatuses.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

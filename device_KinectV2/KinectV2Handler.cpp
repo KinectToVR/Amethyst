@@ -10,8 +10,6 @@
 #include <thread>
 #include <chrono>
 
-#include "LocalizedStatuses.h"
-
 #define _PI 3.14159265358979323846
 
 HRESULT KinectV2Handler::getStatusResult()
@@ -29,13 +27,17 @@ HRESULT KinectV2Handler::getStatusResult()
 std::wstring KinectV2Handler::statusResultWString(HRESULT stat)
 {
 	// Wrap status to string for readability
-	switch (stat)
-	{
-	case S_OK: return GetLocalizedStatusWStringAutomatic(status_ok_map);
-	case S_FALSE: return GetLocalizedStatusWStringAutomatic(status_unavailable_map);
-	default: return L"Undefined: " + std::to_wstring(stat) +
-			L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
-	}
+	if (_loaded)
+		switch (stat)
+		{
+		case S_OK: return requestLocalizedString(L"/Plugins/KinectV2/Statuses/Success");
+		case S_FALSE: return requestLocalizedString(L"/Plugins/KinectV2/Statuses/NotAvailable");
+		default: return L"Undefined: " + std::to_wstring(stat) +
+				L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
+		}
+
+	return L"Undefined: " + std::to_wstring(stat) +
+		L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 }
 
 void KinectV2Handler::initialize()

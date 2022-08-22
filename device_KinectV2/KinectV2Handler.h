@@ -53,7 +53,14 @@ public:
 	void onBodyFrameArrived(IBodyFrameReader& sender, IBodyFrameArrivedEventArgs& eventArgs);
 	virtual void updateSkeletalData();
 
+	void onLoad() override
+	{
+		_loaded = true;
+	}
+
 private:
+	bool _loaded = false;
+
 	bool initKinect();
 	void updateParseFrame();
 	void initializeSkeleton();

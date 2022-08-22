@@ -17,19 +17,24 @@ HRESULT KinectV1Handler::getStatusResult()
 std::wstring KinectV1Handler::statusResultWString(HRESULT stat)
 {
 	// Wrap status to string for readability
-	switch (stat)
-	{
-	case S_OK: return GetLocalizedStatusWStringAutomatic(status_ok_map);
-	case S_NUI_INITIALIZING: return GetLocalizedStatusWStringAutomatic(status_initializing_map);
-	case E_NUI_NOTCONNECTED: return GetLocalizedStatusWStringAutomatic(status_not_connected_map);
-	case E_NUI_NOTGENUINE: return GetLocalizedStatusWStringAutomatic(status_not_genuine_map);
-	case E_NUI_NOTSUPPORTED: return GetLocalizedStatusWStringAutomatic(status_not_supported_map);
-	case E_NUI_INSUFFICIENTBANDWIDTH: return GetLocalizedStatusWStringAutomatic(status_insufficient_bandwidth_map);
-	case E_NUI_NOTPOWERED: return GetLocalizedStatusWStringAutomatic(status_not_powered_map);
-	case E_NUI_NOTREADY: return GetLocalizedStatusWStringAutomatic(status_not_ready_map);
-	default: return L"Undefined: " + std::to_wstring(stat) +
-			L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
-	}
+	if (_loaded)
+		switch (stat)
+		{
+		case S_OK: return requestLocalizedString(L"/Plugins/KinectV1/Statuses/Success");
+		case S_NUI_INITIALIZING: return requestLocalizedString(L"/Plugins/KinectV1/Statuses/Initializing");
+		case E_NUI_NOTCONNECTED: return requestLocalizedString(L"/Plugins/KinectV1/Statuses/NotConnected");
+		case E_NUI_NOTGENUINE: return requestLocalizedString(L"/Plugins/KinectV1/Statuses/NotGenuine");
+		case E_NUI_NOTSUPPORTED: return requestLocalizedString(L"/Plugins/KinectV1/Statuses/NotSupported");
+		case E_NUI_INSUFFICIENTBANDWIDTH: return requestLocalizedString(
+				L"/Plugins/KinectV1/Statuses/InsufficientBandwidth");
+		case E_NUI_NOTPOWERED: return requestLocalizedString(L"/Plugins/KinectV1/Statuses/NotPowered");
+		case E_NUI_NOTREADY: return requestLocalizedString(L"/Plugins/KinectV1/Statuses/NotReady");
+		default: return L"Undefined: " + std::to_wstring(stat) +
+				L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
+		}
+
+	return L"Undefined: " + std::to_wstring(stat) +
+		L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 }
 
 void KinectV1Handler::initialize()

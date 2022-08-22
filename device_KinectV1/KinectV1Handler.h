@@ -12,9 +12,6 @@
 #include "Amethyst_API_Devices.h"
 #include "Amethyst_API_Paths.h"
 
-#include "LocalizedStatuses.h"
-#include "LocalizedSettings.h"
-
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/archives/xml.hpp>
@@ -81,7 +78,7 @@ public:
 		// Append the elements : Static Data
 		layoutRoot->AppendElementPairStack(
 			CreateTextBlock(
-				GetLocalizedStatusWStringAutomatic(elevation_angle_label_map)),
+				requestLocalizedString(L"/Plugins/KinectV1/Settings/Labels/Angle")),
 			m_elevation_spinner);
 
 		// Set up particular handlers

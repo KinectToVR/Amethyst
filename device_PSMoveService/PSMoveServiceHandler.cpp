@@ -27,14 +27,18 @@ HRESULT PSMoveServiceHandler::getStatusResult()
 std::wstring PSMoveServiceHandler::statusResultWString(HRESULT stat)
 {
 	// Wrap status to string for readability
-	switch (stat)
-	{
-	case S_OK: return GetLocalizedStatusWStringAutomatic(status_ok_map);
-	case E_PSMS_NOT_RUNNING: return GetLocalizedStatusWStringAutomatic(status_not_running_map);
-	case E_PSMS_NO_JOINTS: return GetLocalizedStatusWStringAutomatic(status_no_joints_map);
-	default: return L"Undefined: " + std::to_wstring(stat) +
-			L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
-	}
+	if (_loaded)
+		switch (stat)
+		{
+		case S_OK: return requestLocalizedString(L"/Plugins/PSMS/Statuses/Success");
+		case E_PSMS_NOT_RUNNING: return requestLocalizedString(L"/Plugins/PSMS/Statuses/NotRunning");
+		case E_PSMS_NO_JOINTS: return requestLocalizedString(L"/Plugins/PSMS/Statuses/NoJoints");
+		default: return L"Undefined: " + std::to_wstring(stat) +
+				L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
+		}
+
+	return L"Undefined: " + std::to_wstring(stat) +
+		L"\nE_UNDEFINED\nSomething weird has happened, though we can't tell what.";
 }
 
 void PSMoveServiceHandler::initialize()

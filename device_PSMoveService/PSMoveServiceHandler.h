@@ -8,9 +8,6 @@
 #include "Amethyst_API_Devices.h"
 #include "Amethyst_API_Paths.h"
 
-#include "LocalizedStatuses.h"
-#include "LocalizedSettings.h"
-
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/archives/xml.hpp>
@@ -59,7 +56,7 @@ public:
 
 		layoutRoot->AppendSingleElement(
 			CreateTextBlock(
-				GetLocalizedStatusWStringAutomatic(dim_lights_label_map)));
+				requestLocalizedString(L"/Plugins/PSMS/Settings/Labels/Dim")));
 
 		auto lights_toggle = CreateToggleSwitch();
 		lights_toggle->IsChecked(m_lightsOff); // Read from settings
@@ -88,12 +85,16 @@ public:
 			CreateTextBlock(
 				L"Dim PSMS lights:"),
 			lights_toggle);
+
+		_loaded = true;
 	}
 
 	HRESULT getStatusResult() override;
 	std::wstring statusResultWString(HRESULT stat) override;
 
 private:
+	bool _loaded = false;
+
 	bool startup();
 	void processKeyInputs();
 	void rebuildPSMoveLists();
