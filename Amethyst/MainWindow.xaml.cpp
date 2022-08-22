@@ -426,10 +426,10 @@ namespace winrt::Amethyst::implementation
 		k2app::shared::main::navigation_items::navViewDevicesButtonIconCanvas = std::make_shared<Controls::Canvas>(
 			NavViewDevicesButtonIconCanvas());
 
-		k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Empty = std::make_shared<
-			Shapes::Path>(NavViewDevicesButtonIcon_Empty());
-		k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Solid = std::make_shared<
-			Shapes::Path>(NavViewDevicesButtonIcon_Solid());
+		k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Empty =
+			std::make_shared<Shapes::Path>(NavViewDevicesButtonIcon_Empty());
+		k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Solid =
+			std::make_shared<Shapes::Path>(NavViewDevicesButtonIcon_Solid());
 
 		k2app::shared::main::navigation_items::navViewGeneralButtonIcon = std::make_shared<Controls::FontIcon>(
 			NavViewGeneralButtonIcon());
@@ -2093,6 +2093,18 @@ void Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 				                   ? Windows::UI::Colors::White()
 				                   : Windows::UI::Colors::Black())
 		         );
+
+		         // Trigger a titlebar repaint
+		         if (k2app::shared::main::thisAppWindowID == GetActiveWindow())
+		         {
+			         SendMessage(k2app::shared::main::thisAppWindowID, WM_ACTIVATE, WA_INACTIVE, 0);
+			         SendMessage(k2app::shared::main::thisAppWindowID, WM_ACTIVATE, WA_ACTIVE, 0);
+		         }
+		         else
+		         {
+			         SendMessage(k2app::shared::main::thisAppWindowID, WM_ACTIVATE, WA_ACTIVE, 0);
+			         SendMessage(k2app::shared::main::thisAppWindowID, WM_ACTIVATE, WA_INACTIVE, 0);
+		         }
 
 		         // Request page reloads
 		         k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();
