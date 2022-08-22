@@ -16,6 +16,7 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WinRT.Interop;
+using Microsoft.UI.Xaml.Shapes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,16 +28,38 @@ namespace K2CrashHandler
         public static int ProcessExitCode;
         public static ContentDialogView DialogView;
 
-        private static ResourceManager ResourceManager;
-        private static ResourceContext ResourceContext;
-
         public MainWindow()
         {
             InitializeComponent();
 
             // Load strings
-            ResourceManager = new ResourceManager("resources.pri");
-            ResourceContext = ResourceManager.CreateResourceContext();
+            try
+            {
+                var langResPath = System.IO.Path.Combine(
+                    Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
+                        .ToString()).ToString(), "Assets", "Strings",
+                    Shared.LanguageCode + ".json"); // The ame one
+
+                if (!File.Exists(langResPath))
+                    langResPath = System.IO.Path.Combine(
+                        Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
+                            .ToString()).ToString(), "Assets", "Strings",
+                        CultureInfo.CurrentUICulture.Name[..2]
+                        + ".json"); // System default one fallback
+
+                if (!File.Exists(langResPath))
+                    langResPath = System.IO.Path.Combine(
+                        Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
+                            .ToString()).ToString(), "Assets", "Strings",
+                        "en.json"); // English fallback
+
+                // Finally read the string resources
+                Shared.AppStrings = JsonFile.Read<Dictionary<string, string>>(langResPath);
+            }
+            catch (Exception)
+            {
+                // Ignored
+            }
 
             // Prepare placeholder strings (recovery mode)
             string handlerTitle = LangResString("Title/Recovery"),
@@ -195,7 +218,7 @@ namespace K2CrashHandler
                     WindowNative.GetWindowHandle(this)));
 
             // Fix no icon in titlebar/task view
-            appWindow.SetIcon(Path.Combine(
+            appWindow.SetIcon(System.IO.Path.Combine(
                 Directory.GetParent(
                     Assembly.GetExecutingAssembly().Location).ToString(),
                 "Assets", "crashhandler.ico"));
@@ -252,8 +275,7 @@ namespace K2CrashHandler
 
         private static string LangResString(string key)
         {
-            ResourceContext.QualifierValues["Language"] = CultureInfo.InstalledUICulture.IetfLanguageTag;
-            return ResourceManager.MainResourceMap.GetValue($"Resources/{key}", ResourceContext).ValueAsString;
+            return Shared.AppStrings["/CrashHandler/" + key] ?? "";
         }
 
         private async void Action_ReRegister(object sender, RoutedEventArgs e)
@@ -324,7 +346,7 @@ namespace K2CrashHandler
 
                 // For each found manifest, check if there is an ame driver dll inside
                 foreach (var localDriverManifest in allLocalDriverManifests)
-                    if (File.Exists(Path.Combine(
+                    if (File.Exists(System.IO.Path.Combine(
                             Directory.GetParent(localDriverManifest).ToString(),
                             "bin", "win64", "driver_Amethyst.dll")))
                     {
@@ -545,7 +567,7 @@ namespace K2CrashHandler
 
         private void Action_ResetConfig(object sender, RoutedEventArgs e)
         {
-            File.Delete(Path.Combine(Environment.GetFolderPath(
+            File.Delete(System.IO.Path.Combine(Environment.GetFolderPath(
                 Environment.SpecialFolder.ApplicationData), "Amethyst", "Amethyst_settings.xml"));
         }
 

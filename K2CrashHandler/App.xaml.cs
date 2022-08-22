@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -19,6 +21,32 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
+
+        try
+        {
+            var amethystConfigText = File.ReadAllText(Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData), "Amethyst", "Amethyst_settings.xml"));
+
+            Helpers.Shared.LanguageCode = amethystConfigText.Contains("<appLanguage>")
+                ? amethystConfigText.Substring(
+                    amethystConfigText.IndexOf("<appLanguage>") + "<appLanguage>".Length, 2)
+                : "en";
+
+            if (!int.TryParse(amethystConfigText.AsSpan(
+                        amethystConfigText.IndexOf("<appTheme>") + "<appTheme>".Length, 1),
+                    out var themeConfig)) return;
+
+            Current.RequestedTheme = themeConfig switch
+            {
+                2 => ApplicationTheme.Light,
+                1 => ApplicationTheme.Dark,
+                _ => Current.RequestedTheme
+            };
+        }
+        catch (Exception)
+        {
+            // Ignored
+        }
     }
 
     /// <summary>
