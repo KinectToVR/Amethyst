@@ -921,12 +921,14 @@
                 </StackPanel.OpacityTransition>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock x:Name="Labels_Tracking" FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"/>
+                    <TextBlock x:Name="Labels_Tracking" Foreground="White"
+                               FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"/>
                     <Border Height="16" Width="16" Background="White" CornerRadius="10"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
-                    <TextBlock x:Name="Labels_Inferred" FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"/>
+                    <TextBlock x:Name="Labels_Inferred" Foreground="White"
+                               FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"/>
                     <Border Height="16" Width="16" Background="{ThemeResource SystemFillColorAttentionBrush}" CornerRadius="10"/>
                 </StackPanel>
             </StackPanel>

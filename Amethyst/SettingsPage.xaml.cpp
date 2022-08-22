@@ -1548,6 +1548,32 @@ void winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionC
 	// Overwrite the current theme
 	k2app::K2Settings.appTheme = AppThemeOptionBox().SelectedIndex();
 
+	switch(k2app::K2Settings.appTheme)
+	{
+	case 2:
+		{
+		sender.as<Controls::ComboBox>().XamlRoot()
+			.Content().as<Controls::Grid>()
+			.RequestedTheme(ElementTheme::Light);
+		break;
+		}
+	case 1:
+		{
+		sender.as<Controls::ComboBox>().XamlRoot()
+			.Content().as<Controls::Grid>()
+			.RequestedTheme(ElementTheme::Dark);
+		break;
+		}
+	case 0:
+	default:
+		{
+		sender.as<Controls::ComboBox>().XamlRoot()
+			.Content().as<Controls::Grid>()
+			.RequestedTheme(ElementTheme::Default);
+		break;
+		}
+	}
+
 	// Save made changes
 	k2app::K2Settings.saveSettings();
 

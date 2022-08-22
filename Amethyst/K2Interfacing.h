@@ -657,15 +657,15 @@ namespace k2app::interfacing
 			break;
 		case -1:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ConnectionError");
-			//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
+		//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
 			break;
 		case 10:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ServerFailure");
-			//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
+		//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
 			break;
 		case 1:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/Success");
-			//L"Success! (Code 1)\nI_OK\nEverything's good!";
+		//L"Success! (Code 1)\nI_OK\nEverything's good!";
 			isServerDriverPresent = true; // Change to success
 			break;
 		default:

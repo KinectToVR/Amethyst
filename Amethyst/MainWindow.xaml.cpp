@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MainWindow.xaml.h"
 
 #include <codecvt>
@@ -456,16 +456,16 @@ namespace winrt::Amethyst::implementation
 
 		// Set titlebar/taskview icon
 		LOG(INFO) << "Setting the App Window icon...";
-		HWND hWnd{nullptr};
-		this->try_as<IWindowNative>()->get_WindowHandle(&hWnd);
+		this->try_as<IWindowNative>()->get_WindowHandle(
+			&k2app::shared::main::thisAppWindowID);
 
 		Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
-			Microsoft::UI::GetWindowIdFromWindow(hWnd)).SetIcon(
+			Microsoft::UI::GetWindowIdFromWindow(k2app::shared::main::thisAppWindowID)).SetIcon(
 			(boost::dll::program_location().parent_path() / "Assets" / "ktvr.ico").c_str());
 
 		LOG(INFO) << "Making the app window available for children views...";
 		k2app::shared::main::thisAppWindow = std::make_shared<Window>(this->try_as<Window>());
-
+		
 		LOG(INFO) << "Making the app dispatcher available for children...";
 		k2app::shared::main::thisDispatcherQueue =
 			std::make_shared<Microsoft::UI::Dispatching::DispatcherQueue>(DispatcherQueue());
