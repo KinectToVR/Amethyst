@@ -484,6 +484,20 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 				LanguageOptionBox().SelectedIndex(LanguageOptionBox().Items().Size() - 1);
 		}
 
+	// Clear available themes' list
+	AppThemeOptionBox().Items().Clear();
+
+	// Push all the available themes
+	AppThemeOptionBox().Items().Append(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Themes/System")));
+	AppThemeOptionBox().Items().Append(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Themes/Dark")));
+	AppThemeOptionBox().Items().Append(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Themes/White")));
+
+	// Select the current theme
+	AppThemeOptionBox().SelectedIndex(k2app::K2Settings.appTheme);
+
 	// Optionally show the foreign language grid TODO
 	// if (!status_ok_map.contains(GetUserLocale()))
 	// 		ForeignLangGrid().Visibility(Visibility::Visible);
@@ -1530,6 +1544,19 @@ void winrt::Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionC
 
 	if (AppThemeOptionBox().SelectedIndex() < 0)
 		AppThemeOptionBox().SelectedItem(e.RemovedItems().GetAt(0));
+
+	// Overwrite the current theme
+	k2app::K2Settings.appTheme = AppThemeOptionBox().SelectedIndex();
+
+	// Save made changes
+	k2app::K2Settings.saveSettings();
+
+	// Request page reloads
+	k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();
+	k2app::shared::semaphores::semaphore_ReloadPage_GeneralPage.release();
+	k2app::shared::semaphores::semaphore_ReloadPage_SettingsPage.release();
+	k2app::shared::semaphores::semaphore_ReloadPage_DevicesPage.release();
+	k2app::shared::semaphores::semaphore_ReloadPage_InfoPage.release();
 }
 
 

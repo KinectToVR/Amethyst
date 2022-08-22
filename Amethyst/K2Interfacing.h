@@ -90,6 +90,7 @@ namespace k2app::interfacing
 
 	// Current page string
 	inline std::wstring currentPageTag = L"general";
+	inline std::wstring currentPageClass = L"Amethyst.GeneralPage";
 
 	// Current app state string (e.g. "general", "calibration_manual")
 	inline std::wstring currentAppState = L"general";

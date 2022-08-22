@@ -1421,6 +1421,8 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 		}
 
 		interfacing::currentPageTag = navItemTag; // Cache the current page tag
+		interfacing::currentPageClass = pageTypeName.Name; // Cache the current page tag
+
 		mainContentFrame->Navigate(pageTypeName, nullptr, transitionInfo);
 	}
 }
@@ -2019,4 +2021,116 @@ void winrt::Amethyst::implementation::MainWindow::XMainGrid_Loaded_Handler()
 
 	HelpFlyoutLicensesButton().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Help/Licenses"));
+
+	using namespace k2app;
+	using namespace shared::main;
+
+	if (interfacing::currentPageClass == L"Amethyst.GeneralPage")
+	{
+		navigation_items::navViewGeneralButtonIcon->Glyph(L"\uEA8A");
+		navigation_items::navViewGeneralButtonIcon->Foreground(
+			Application::Current().Resources().TryLookup(
+				box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+		navigation_items::navViewGeneralButtonLabel->Opacity(0.0);
+		navigation_items::navViewGeneralButtonIcon->Translation({0, 0, 0});
+	}
+	else
+	{
+		navigation_items::navViewGeneralButtonIcon->Translation({0, -8, 0});
+		navigation_items::navViewGeneralButtonLabel->Opacity(1.0);
+
+		navigation_items::navViewGeneralButtonIcon->Foreground(
+			Application::Current().Resources().TryLookup(
+				box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewGeneralButtonIcon->Glyph(L"\uE80F");
+	}
+
+	if (interfacing::currentPageClass == L"Amethyst.SettingsPage")
+	{
+		navigation_items::navViewSettingsButtonIcon->Glyph(L"\uF8B0");
+		navigation_items::navViewSettingsButtonIcon->Foreground(
+			Application::Current().Resources().TryLookup(
+				box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+		navigation_items::navViewSettingsButtonLabel->Opacity(0.0);
+		navigation_items::navViewSettingsButtonIcon->Translation({0, 0, 0});
+	}
+	else
+	{
+		navigation_items::navViewSettingsButtonIcon->Translation({0, -8, 0});
+		navigation_items::navViewSettingsButtonLabel->Opacity(1.0);
+
+		navigation_items::navViewSettingsButtonIcon->Foreground(
+			Application::Current().Resources().TryLookup(
+				box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewSettingsButtonIcon->Glyph(L"\uE713");
+	}
+
+	if (interfacing::currentPageClass == L"Amethyst.DevicesPage")
+	{
+		navigation_items::navViewDevicesButtonIcon_Solid->Visibility(Visibility::Visible);
+		navigation_items::navViewDevicesButtonIcon_Empty->
+			Visibility(Visibility::Collapsed);
+
+		navigation_items::navViewDevicesButtonLabel->Opacity(0.0);
+		navigation_items::navViewDevicesButtonIconCanvas->Translation({0, 0, 0});
+	}
+	else
+	{
+		navigation_items::navViewDevicesButtonIconCanvas->Translation({0, -8, 0});
+		navigation_items::navViewDevicesButtonLabel->Opacity(1.0);
+
+		navigation_items::navViewDevicesButtonIcon_Empty->Visibility(Visibility::Visible);
+		navigation_items::navViewDevicesButtonIcon_Solid->
+			Visibility(Visibility::Collapsed);
+	}
+
+	if (interfacing::currentPageClass == L"Amethyst.InfoPage")
+	{
+		navigation_items::navViewInfoButtonIcon->Glyph(L"\uF167");
+		navigation_items::navViewInfoButtonIcon->Foreground(
+			Application::Current().Resources().TryLookup(
+				box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+		navigation_items::navViewInfoButtonLabel->Opacity(0.0);
+		navigation_items::navViewInfoButtonIcon->Translation({0, 0, 0});
+	}
+	else
+	{
+		navigation_items::navViewInfoButtonIcon->Translation({0, -8, 0});
+		navigation_items::navViewInfoButtonLabel->Opacity(1.0);
+
+		navigation_items::navViewInfoButtonIcon->Foreground(
+			Application::Current().Resources().TryLookup(
+				box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewInfoButtonIcon->Glyph(L"\uE946");
+	}
+
+	if (interfacing::currentPageClass == L"Amethyst.ConsolePage")
+	{
+		navigation_items::navViewOkashiButtonIcon->Glyph(L"\uEB52");
+		navigation_items::navViewOkashiButtonIcon->Foreground(
+			Application::Current().Resources().TryLookup(
+				box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+		navigation_items::navViewOkashiButtonLabel->Opacity(0.0);
+		navigation_items::navViewOkashiButtonIcon->Translation({0, 0, 0});
+	}
+	else
+	{
+		navigation_items::navViewOkashiButtonIcon->Translation({0, -8, 0});
+		navigation_items::navViewOkashiButtonLabel->Opacity(1.0);
+
+		navigation_items::navViewOkashiButtonIcon->Foreground(
+			Application::Current().Resources().TryLookup(
+				box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewOkashiButtonIcon->Glyph(L"\uEB51");
+	}
+
+	UpdateIcon().Foreground(Application::Current().Resources().TryLookup(
+		box_value(checkingUpdatesNow
+			          ? L"SystemFillColorAttentionBrush"
+			          : L"SystemFillColorNeutralBrush"
+		)).as<Media::SolidColorBrush>());
 }
