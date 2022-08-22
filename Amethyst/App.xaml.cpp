@@ -71,6 +71,46 @@ App::App()
 	{
 		k2app::interfacing::LoadJSONStringResources_English();
 		k2app::interfacing::LoadJSONStringResources(k2app::K2Settings.appLanguage);
+
+		std::thread([&, this]
+		{
+			const boost::filesystem::path resource_path =
+				boost::dll::program_location().parent_path() /
+				"Assets" / "Strings";
+
+			// If the specified language doesn't exist somehow, fallback to 'en'
+			if (!exists(resource_path))
+			{
+				LOG(ERROR) << "Could not load language enumeration resources at \"" <<
+					resource_path.string() << "\", app interface will be broken!";
+				return; // Give up on trying
+			}
+
+			HANDLE ChangeHandle = FindFirstChangeNotification(
+				resource_path.wstring().c_str(),
+				FALSE, FILE_NOTIFY_CHANGE_LAST_WRITE);
+
+			while (true)
+			{
+				if (WaitForSingleObject(ChangeHandle, INFINITE) == WAIT_OBJECT_0)
+				{
+					// Reload
+					k2app::interfacing::LoadJSONStringResources_English();
+					k2app::interfacing::LoadJSONStringResources(k2app::K2Settings.appLanguage);
+
+					// Request page reloads
+					k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();
+					k2app::shared::semaphores::semaphore_ReloadPage_GeneralPage.release();
+					k2app::shared::semaphores::semaphore_ReloadPage_SettingsPage.release();
+					k2app::shared::semaphores::semaphore_ReloadPage_DevicesPage.release();
+					k2app::shared::semaphores::semaphore_ReloadPage_InfoPage.release();
+
+					// Wait for the next change
+					FindNextChangeNotification(ChangeHandle);
+				}
+				else return;
+			}
+		}).detach();
 	}
 	catch (...)
 	{
