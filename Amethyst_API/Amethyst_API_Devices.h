@@ -30,7 +30,7 @@ inline std::string WStringToString(const std::wstring& s)
 namespace ktvr
 {
 	// Interface Version
-	static const char* IK2API_Devices_Version = "IK2API_Version_012";
+	static const char* IK2API_Devices_Version = "IK2API_Version_013";
 
 	// Return messaging types
 	enum K2InitErrorType
@@ -775,6 +775,12 @@ namespace ktvr
 		// Request a refresh of the status/name/etc. interface
 		std::function<void()> requestStatusUIRefresh;
 
+		// Request a code of the currently selected language, i.e. en | fr | ja
+		std::function<std::wstring()> requestLanguageCode;
+
+		// Request a string from AME resources, empty for no match
+		std::function<std::wstring(std::wstring)> requestLocalizedString;
+
 		// To support settings daemon and register the layout root,
 		// the device must properly report it first
 		// -> will lead to showing an additional 'settings' button
@@ -995,6 +1001,12 @@ namespace ktvr
 		// Request a refresh of the status/name/etc. interface
 		std::function<void()> requestStatusUIRefresh;
 
+		// Request a code of the currently selected language, i.e. en | fr | ja
+		std::function<std::wstring()> requestLanguageCode;
+
+		// Request a string from AME resources, empty for no match
+		std::function<std::wstring(std::wstring)> requestLocalizedString;
+
 		// To support settings daemon and register the layout root,
 		// the device must properly report it first
 		// -> will lead to showing an additional 'settings' button
@@ -1102,5 +1114,11 @@ namespace ktvr
 		 * Note: Waist,LFoot,RFoot,LElbow,RElbow,LKnee,RKnee
 		 */
 		std::function<std::array<K2TrackedJoint, 7>()> getAppJointPoses;
+
+		// Request a code of the currently selected language, i.e. en | fr | ja
+		std::function<std::wstring()> requestLanguageCode;
+
+		// Request a string from AME resources, empty for no match
+		std::function<std::wstring(const std::wstring&)> requestLocalizedString;
 	};
 }

@@ -1150,6 +1150,16 @@ namespace k2app::interfacing
 			// Request an explicit status UI refresh
 			statusUIRefreshRequested = true;
 		}
+
+		inline std::wstring plugins_requestLanguageCode()
+		{
+			return K2Settings.appLanguage;
+		}
+
+		inline std::wstring plugins_requestLocalizedString(const std::wstring& key)
+		{
+			return LocalizedJSONString(key);
+		}
 	}
 
 	namespace overrides

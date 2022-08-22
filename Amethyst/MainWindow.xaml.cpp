@@ -754,6 +754,11 @@ namespace winrt::Amethyst::implementation
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
 
+													pDevice->requestLanguageCode =
+														k2app::interfacing::plugins::plugins_requestLanguageCode;
+													pDevice->requestLocalizedString =
+														k2app::interfacing::plugins::plugins_requestLocalizedString;
+
 													pDevice->requestStatusUIRefresh =
 														k2app::interfacing::plugins::plugins_requestStatusUIRefresh;
 
@@ -883,6 +888,11 @@ namespace winrt::Amethyst::implementation
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
 
+													pDevice->requestLanguageCode =
+														k2app::interfacing::plugins::plugins_requestLanguageCode;
+													pDevice->requestLocalizedString =
+														k2app::interfacing::plugins::plugins_requestLocalizedString;
+
 													pDevice->requestStatusUIRefresh =
 														k2app::interfacing::plugins::plugins_requestStatusUIRefresh;
 
@@ -1009,6 +1019,11 @@ namespace winrt::Amethyst::implementation
 
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
+
+													pDevice->requestLanguageCode =
+														k2app::interfacing::plugins::plugins_requestLanguageCode;
+													pDevice->requestLocalizedString =
+														k2app::interfacing::plugins::plugins_requestLocalizedString;
 
 													// State that everything's fine and he device's loaded
 													// Note: the dispatcher is starting AFTER device setup
