@@ -21,6 +21,7 @@ using namespace winrt::Microsoft::UI::Xaml;
 // Helper local variables
 HANDLE hNamedMutex = nullptr;
 bool updateFound = false,
+     updateOnClosed = false,
      main_localInitFinished = false,
      main_loadedOnce = false;
 
@@ -40,6 +41,16 @@ struct toast
 	std::string guid, title, message;
 	bool show_always = false;
 };
+
+// Updating function
+Windows::Foundation::IAsyncAction ExecuteUpdate()
+{
+	ShellExecuteA(nullptr, nullptr,
+	              "https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
+	              nullptr, nullptr, SW_SHOW);
+
+	co_return;
+}
 
 // Updates checking function
 Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpdates(
@@ -656,46 +667,50 @@ namespace winrt::Amethyst::implementation
 		// Priority: Register the app exit handler
 		LOG(INFO) << "Registering an exit handler for the app window...";
 		this->Closed([&](const IInspectable& window, const WindowEventArgs& e)
-		{
-			// Handle all the exit actions (if needed)
-			if (!k2app::interfacing::isExitHandled)
+		-> Windows::Foundation::IAsyncAction
 			{
-				// Handled(true) means Cancel()
-				// and Handled(false) means Continue()
-				// -> Block exiting until we're done
-				e.Handled(true);
+				if (updateOnClosed)
+					co_await ExecuteUpdate();
 
-				// Show the close tip (if not shown yet)
-				if (!k2app::K2Settings.firstShutdownTipShown)
+				// Handle all the exit actions (if needed)
+				if (!k2app::interfacing::isExitHandled)
 				{
-					ShutdownTeachingTip().IsOpen(true);
+					// Handled(true) means Cancel()
+					// and Handled(false) means Continue()
+					// -> Block exiting until we're done
+					e.Handled(true);
 
-					k2app::K2Settings.firstShutdownTipShown = true;
-					k2app::K2Settings.saveSettings(); // Save settings
+					// Show the close tip (if not shown yet)
+					if (!k2app::K2Settings.firstShutdownTipShown)
+					{
+						ShutdownTeachingTip().IsOpen(true);
 
-					return;
+						k2app::K2Settings.firstShutdownTipShown = true;
+						k2app::K2Settings.saveSettings(); // Save settings
+
+						co_return;
+					}
+
+					// Shut down the mica controller
+					if (nullptr != m_micaController)
+					{
+						m_micaController.Close();
+						m_micaController = nullptr;
+					}
+
+					// Shut down the dispatcher
+					if (nullptr != m_dispatcherQueueController)
+					{
+						m_dispatcherQueueController.ShutdownQueueAsync();
+						m_dispatcherQueueController = nullptr;
+					}
+
+					// Handle the exit actions
+					k2app::interfacing::handle_app_exit_n();
+
+					e.Handled(false); // Finally exit
 				}
-
-				// Shut down the mica controller
-				if (nullptr != m_micaController)
-				{
-					m_micaController.Close();
-					m_micaController = nullptr;
-				}
-
-				// Shut down the dispatcher
-				if (nullptr != m_dispatcherQueueController)
-				{
-					m_dispatcherQueueController.ShutdownQueueAsync();
-					m_dispatcherQueueController = nullptr;
-				}
-
-				// Handle the exit actions
-				k2app::interfacing::handle_app_exit_n();
-
-				e.Handled(false); // Finally exit
-			}
-		});
+			});
 
 		// Priority: Launch the crash handler
 		LOG(INFO) << "Starting the crash handler passing the app PID...";
@@ -1661,14 +1676,16 @@ Windows::UI::Xaml::Controls::Primitives::Popup GetPopup()
 void Amethyst::implementation::MainWindow::InstallLaterButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	updateOnClosed = true;
+
 	UpdateFlyout().Hide();
 }
 
 void Amethyst::implementation::MainWindow::InstallNowButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	ShellExecuteA(nullptr, nullptr, "https://github.com/KinectToVR/Amethyst-Releases/releases/latest", nullptr, nullptr,
-	              SW_SHOW);
+	ExecuteUpdate();
+
 	UpdateFlyout().Hide();
 }
 
