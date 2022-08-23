@@ -495,9 +495,14 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 	// Select the current theme
 	AppThemeOptionBox().SelectedIndex(k2app::K2Settings.appTheme);
 
-	// Optionally show the foreign language grid TODO
-	// if (!status_ok_map.contains(GetUserLocale()))
-	// 		ForeignLangGrid().Visibility(Visibility::Visible);
+	// Optionally show the foreign language grid
+	if (!exists(boost::dll::program_location().parent_path() /
+		"Assets" / "Strings" / (std::wstring(
+			Windows::Globalization::Language(
+				Windows::System::UserProfile::
+				GlobalizationPreferences::Languages()
+				.GetAt(0)).LanguageTag()).substr(0, 2) + L".json")))
+		ForeignLangGrid().Visibility(Visibility::Visible);
 
 	// Select saved flip, position and rotation options
 	flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);

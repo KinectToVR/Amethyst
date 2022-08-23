@@ -818,7 +818,7 @@
 
             <!--Skeleton canvas-->
             <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Canvas.ZIndex="-1"
-                    x:Name="SkeletonDrawingCanvas" Loaded="SkeletonDrawingCanvas_Loaded">
+                    Opacity="0.0" x:Name="SkeletonDrawingCanvas" Loaded="SkeletonDrawingCanvas_Loaded">
                 <Canvas.OpacityTransition>
                     <ScalarTransition />
                 </Canvas.OpacityTransition>

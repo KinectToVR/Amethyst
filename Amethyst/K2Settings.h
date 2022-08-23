@@ -77,7 +77,7 @@ namespace k2app
 		/* Members part */
 
 		// Current language & theme
-		std::wstring appLanguage = L"en";
+		std::wstring appLanguage;
 
 		// 0:system, 1:dark, 2:light
 		uint32_t appTheme = 0;
@@ -286,6 +286,46 @@ namespace k2app
 			// Optionally fix the app theme value
 			appTheme = std::clamp(
 				appTheme, static_cast<uint32_t>(0), static_cast<uint32_t>(2));
+
+			/* Optionally fix the selected language / select a new one */
+			boost::filesystem::path resource_path =
+				boost::dll::program_location().parent_path() /
+				"Assets" / "Strings" / (appLanguage + L".json");
+
+			// If there's no specified language, fallback to {system}
+			if (appLanguage.empty())
+			{
+				appLanguage = std::wstring(
+					winrt::Windows::Globalization::Language(
+						winrt::Windows::System::UserProfile::
+						GlobalizationPreferences::Languages()
+						.GetAt(0)).LanguageTag()).substr(0, 2);
+
+				LOG(WARNING) << "No language specified! Trying with the system one: \"" <<
+					WStringToString(appLanguage) << "\"!";
+
+				resource_path = boost::dll::program_location().parent_path() /
+					"Assets" / "Strings" / (appLanguage + L".json");
+			}
+
+			// If the specified language doesn't exist somehow, fallback to 'en'
+			if (!exists(resource_path))
+			{
+				LOG(WARNING) << "Could not load language resources at \"" <<
+					resource_path.string() << "\", falling back to 'en' (en.json)!";
+
+				appLanguage = L"en"; // Change to english
+
+				resource_path = boost::dll::program_location().parent_path() /
+					"Assets" / "Strings" / (appLanguage + L".json");
+			}
+
+			// If failed again, just give up
+			if (!exists(resource_path))
+			{
+				LOG(ERROR) << "Could not load language resources at \"" <<
+					resource_path.string() << "\", the app interface will be broken!";
+			}
 		}
 	} inline K2Settings;
 }

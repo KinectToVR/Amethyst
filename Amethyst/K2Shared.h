@@ -330,6 +330,9 @@ namespace k2app::interfacing
 	// Load the current desired resource JSON into app memory
 	inline void LoadJSONStringResources(const std::wstring& language_key)
 	{
+		LOG(INFO) << "Searching for language resources with key \"" <<
+			WStringToString(language_key) << "\"...";
+
 		boost::filesystem::path resource_path =
 			boost::dll::program_location().parent_path() /
 			"Assets" / "Strings" / (language_key + L".json");
@@ -359,11 +362,17 @@ namespace k2app::interfacing
 		// Check if the resource root is fine
 		if (w_local_resources.empty())
 			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+
+		else
+			LOG(INFO) << "Successfully loaded language resources with key \"" <<
+				WStringToString(language_key) << "\"!";
 	}
 
 	// Load the english resource JSON into app memory
 	inline void LoadJSONStringResources_English()
 	{
+		LOG(INFO) << "Searching for shared (English) language resources...";
+
 		const boost::filesystem::path resource_path =
 			boost::dll::program_location().parent_path() /
 			"Assets" / "Strings" / "en.json";
@@ -387,6 +396,9 @@ namespace k2app::interfacing
 		// Check if the resource root is fine
 		if (w_english_resources.empty())
 			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+
+		else
+			LOG(INFO) << "Successfully loaded shared (English) language resources!";
 	}
 
 	// Get a string from runtime JSON resources, language from settings
