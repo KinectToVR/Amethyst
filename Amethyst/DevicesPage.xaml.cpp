@@ -165,6 +165,40 @@ namespace winrt::Amethyst::implementation
 					k2app::shared::main::thisDispatcherQueue->TryEnqueue([&, this]
 					{
 						DevicesPage_Loaded_Handler();
+						
+						LOG(INFO) << "Rebuilding joint selector expanders... this may take a while...";
+
+						// Set joint expanders up
+
+						// Type 0: WF
+						jointSelectorExpanders[0] = std::move(std::make_shared<Controls::JointSelectorExpander>(0));
+
+						// Type 1: EK
+						jointSelectorExpanders[1] = std::move(std::make_shared<Controls::JointSelectorExpander>(1));
+
+						// Type 2: OTHER
+						jointSelectorExpanders[2] = std::move(std::make_shared<Controls::JointSelectorExpander>(2));
+
+						for (auto& expander : jointSelectorExpanders)
+							jointsBasisExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
+
+						LOG(INFO) << "Rebuilding override selector expanders... this may take a while...";
+
+						// Set override expanders up
+
+						// Type 0: WF
+						overrideSelectorExpanders[0] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(0));
+
+						// Type 1: EK
+						overrideSelectorExpanders[1] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(1));
+
+						// Type 2: OTHER
+						overrideSelectorExpanders[2] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(2));
+
+						for (auto& expander : overrideSelectorExpanders)
+							overridesExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
+
+						TrackingDevices::devices_update_current();
 					});
 
 				Sleep(100); // Sleep a bit

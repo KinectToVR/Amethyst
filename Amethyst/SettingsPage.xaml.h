@@ -80,8 +80,9 @@ namespace winrt::Amethyst::implementation
 		                          const Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs& args);
 		void FlipDropDown_Collapsed(const Microsoft::UI::Xaml::Controls::Expander& sender,
 		                            const Microsoft::UI::Xaml::Controls::ExpanderCollapsedEventArgs& args);
-		void LanguageOptionBox_SelectionChanged(const Windows::Foundation::IInspectable& sender,
-		                                        const Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e);
+		Windows::Foundation::IAsyncAction LanguageOptionBox_SelectionChanged(
+			const Windows::Foundation::IInspectable& sender,
+			const Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e);
 		Windows::Foundation::IAsyncAction AppThemeOptionBox_SelectionChanged(
 			const Windows::Foundation::IInspectable& sender,
 			const Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e);

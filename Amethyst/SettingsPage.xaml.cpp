@@ -152,6 +152,129 @@ namespace winrt::Amethyst::implementation
 					k2app::shared::main::thisDispatcherQueue->TryEnqueue([&, this]
 					{
 						SettingsPage_Loaded_Handler();
+
+						LOG(INFO) << "Rebuilding joint expanders... this may take a while...";
+
+						jointExpanderVector.clear();
+						jointExpanderVector.push_back(std::move(
+							std::make_shared<Controls::JointExpander>(std::vector{
+								&k2app::K2Settings.K2TrackersVector[0]
+								})));
+
+						if (k2app::K2Settings.useTrackerPairs)
+						{
+							LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
+
+							jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+								std::vector{ &k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2] },
+								k2app::interfacing::LocalizedResourceWString(
+									L"SharedStrings", L"Joints/Pairs/Feet"))));
+
+							jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+								std::vector{ &k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4] },
+								k2app::interfacing::LocalizedResourceWString(
+									L"SharedStrings", L"Joints/Pairs/Elbows"))));
+
+							jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
+								std::vector{ &k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6] },
+								k2app::interfacing::LocalizedResourceWString(
+									L"SharedStrings", L"Joints/Pairs/Knees"))));
+						}
+
+						LOG(INFO) << "Appending additional expanders (if they exist)...";
+
+						// k2app::K2Settings.useTrackerPairs ? 7 : 1 means that if pairs have
+						// already been appended, we'll start after them, and if not -
+						// - we'll append them as individual tracker/joint expanders
+
+						for (uint32_t ind = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
+							ind < k2app::K2Settings.K2TrackersVector.size(); ind++)
+							jointExpanderVector.push_back(std::move(
+								std::make_shared<Controls::JointExpander>(std::vector{
+									&k2app::K2Settings.K2TrackersVector[ind]
+									})));
+
+						LOG(INFO) << "Clearing the appended expanders (UI Node)";
+						settings_safe_clear(jointExpanderHostStackPanel);
+
+						LOG(INFO) << "Appending the new expanders to the UI Node";
+
+						int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
+						for (auto expander : jointExpanderVector)
+						{
+							// Append the expander
+							jointExpanderHostStackPanel->Children().Append(*expander->Container());
+
+							// Append the separator (optionally)
+							if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+							{
+								auto separator = Controls::MenuFlyoutSeparator();
+								separator.Margin({ 10, 10, 10, 0 });
+
+								Media::Animation::TransitionCollection c_transition_collection;
+								c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
+								separator.Transitions(c_transition_collection);
+
+								jointExpanderHostStackPanel->Children().Append(separator);
+								_expander_number = 1;
+							}
+							else _expander_number++;
+						}
+
+						if (const auto& trackingDevice = TrackingDevices::getCurrentDevice();
+							trackingDevice.index() == 0)
+						{
+							// Kinect Basis
+							const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+								isAppOrientationSupported();
+
+							for (auto expander : jointExpanderVector)
+								expander->EnableSoftwareOrientation(_sup);
+
+							flipToggle.get()->IsEnabled(
+								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+							flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
+								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+							flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
+
+							// Hide/Show the flip controls container
+							flipDropDownContainer.get()->Visibility(
+								flipToggle.get()->IsEnabled()
+								? Visibility::Visible
+								: Visibility::Collapsed);
+
+							TrackingDevices::settings_set_external_flip_is_enabled();
+						}
+						else if (trackingDevice.index() == 1)
+						{
+							// Joints Basis
+							for (auto expander : jointExpanderVector)
+								expander->EnableSoftwareOrientation(false);
+
+							flipToggle.get()->IsEnabled(false);
+							flipDropDown.get()->IsEnabled(false);
+							flipDropDownGrid.get()->Opacity(0.5);
+
+							// Hide the flip controls container
+							flipDropDownContainer.get()->Visibility(Visibility::Collapsed);
+
+							TrackingDevices::settings_set_external_flip_is_enabled();
+						}
+
+						// Load the tracker configuration
+						for (auto expander : jointExpanderVector)
+							expander->UpdateIsActive();
+
+						// Enable/Disable combos
+						TrackingDevices::settings_trackersConfig_UpdateIsEnabled();
+
+						// Enable/Disable ExtFlip
+						TrackingDevices::settings_set_external_flip_is_enabled();
+
+						// Notify of the setup end
+						settings_localInitFinished = true;
+						k2app::K2Settings.saveSettings();
+						k2app::K2Settings.readSettings(); // Calls config check
 					});
 
 				Sleep(100); // Sleep a bit
@@ -1038,7 +1161,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 							k2app::K2Settings.saveSettings();
 						}
 
-				// Rebuild joint the expander stack
+				// Rebuild the joint expander stack
 				using namespace k2app::shared::settings;
 
 				LOG(INFO) << "Rebuilding joint expanders... this may take a while...";
@@ -1214,7 +1337,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 			k2app::K2Settings.useTrackerPairs = sender.as<Controls::ToggleMenuFlyoutItem>().IsChecked();
 
-			// Rebuild joint the expander stack
+			// Rebuild the joint expander stack
 			using namespace k2app::shared::settings;
 
 			LOG(INFO) << "Rebuilding joint expanders... this may take a while...";
@@ -1508,12 +1631,13 @@ void Amethyst::implementation::SettingsPage::FlipDropDown_Collapsed
 }
 
 
-void Amethyst::implementation::SettingsPage::LanguageOptionBox_SelectionChanged(
+Windows::Foundation::IAsyncAction
+Amethyst::implementation::SettingsPage::LanguageOptionBox_SelectionChanged(
 	const Windows::Foundation::IInspectable& sender,
 	const Controls::SelectionChangedEventArgs& e)
 {
 	// Don't react to pre-init signals
-	if (!k2app::shared::settings::settings_localInitFinished)return;
+	if (!k2app::shared::settings::settings_localInitFinished)co_return;
 
 	if (LanguageOptionBox().SelectedIndex() < 0)
 		LanguageOptionBox().SelectedItem(e.RemovedItems().GetAt(0));
