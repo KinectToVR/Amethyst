@@ -633,10 +633,10 @@ namespace k2app::interfacing
 	}
 
 	/**
-	 * \brief This will init K2API and server driver
+	 * \brief This will init K2API and server driver (refresh-wise)
 	 * \return Success?
 	 */
-	inline void K2ServerDriverSetup()
+	inline void K2ServerDriverRefresh()
 	{
 		if (!serverDriverFailure)
 		{
@@ -657,26 +657,36 @@ namespace k2app::interfacing
 		{
 		case -10:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/Exception");
-		//L"EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
+			//L"EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
 			break;
 		case -1:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ConnectionError");
-		//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
+			//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
 			break;
 		case 10:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ServerFailure");
-		//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
+			//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
 			break;
 		case 1:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/Success");
-		//L"Success! (Code 1)\nI_OK\nEverything's good!";
+			//L"Success! (Code 1)\nI_OK\nEverything's good!";
 			isServerDriverPresent = true; // Change to success
 			break;
 		default:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/APIFailure");
-		//L"COULD NOT CONNECT TO K2API (Code -11)\nE_K2API_FAILURE\nThis error shouldn't occur, actually. Something's wrong a big part.";
+			//L"COULD NOT CONNECT TO K2API (Code -11)\nE_K2API_FAILURE\nThis error shouldn't occur, actually. Something's wrong a big part.";
 			break;
 		}
+	}
+
+	/**
+	 * \brief This will init K2API and server driver (setup-wise)
+	 * \return Success?
+	 */
+	inline void K2ServerDriverSetup()
+	{
+		// Refresh the server driver status
+		K2ServerDriverRefresh();
 
 		// Play an error sound if smth's wrong
 		if (serverDriverStatusCode != 1)

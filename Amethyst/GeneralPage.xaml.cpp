@@ -1183,6 +1183,9 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 		}
 	}
 
+	// Refresh the server status
+	k2app::interfacing::K2ServerDriverRefresh();
+
 	// Update things
 	k2app::interfacing::UpdateServerStatusUI();
 	TrackingDevices::updateTrackingDeviceUI();
