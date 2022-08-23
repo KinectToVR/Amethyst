@@ -920,7 +920,7 @@
             </Viewbox>
 
             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,0,20,20"
-                        Opacity="{Binding ElementName=SkeletonDrawingCanvas, Path=Opacity, TargetNullValue=0.0}"
+                        x:Name="TrackingStateLabelsPanel" Opacity="0.0"
                         VerticalAlignment="Bottom" HorizontalAlignment="Right">
                 <StackPanel.OpacityTransition>
                     <ScalarTransition />

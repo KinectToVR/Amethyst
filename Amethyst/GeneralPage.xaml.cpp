@@ -1450,6 +1450,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 		{
 			// Hide the UI, only show that viewing is disabled
 			SkeletonDrawingCanvas().Opacity(0.0);
+			TrackingStateLabelsPanel().Opacity(0.0);
 
 			NotTrackedNotice().Opacity(0.0);
 			NotInFocusNotice().Opacity(0.0);
@@ -1467,6 +1468,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 			{
 				// Hide the UI, only show that viewing is disabled
 				SkeletonDrawingCanvas().Opacity(0.0);
+				TrackingStateLabelsPanel().Opacity(0.0);
 
 				NotTrackedNotice().Opacity(0.0);
 				SkeletonHiddenNotice().Opacity(0.0);
@@ -1481,6 +1483,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 			{
 				// Hide the UI, only show that viewing is disabled
 				SkeletonDrawingCanvas().Opacity(0.0);
+				TrackingStateLabelsPanel().Opacity(0.0);
 
 				NotTrackedNotice().Opacity(0.0);
 				SkeletonHiddenNotice().Opacity(0.0);
@@ -1515,6 +1518,8 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 					// Show the UI
 					SkeletonDrawingCanvas().Opacity(1.0);
+					TrackingStateLabelsPanel().Opacity(1.0);
+
 					NotTrackedNotice().Opacity(0.0);
 
 					if (device->getDeviceCharacteristics() == ktvr::K2_Character_Full)
@@ -1688,6 +1693,8 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 				else
 				{
 					SkeletonDrawingCanvas().Opacity(0.0);
+					TrackingStateLabelsPanel().Opacity(0.0);
+
 					NotTrackedNotice().Opacity(1.0);
 				}
 			}
@@ -1706,6 +1713,8 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 					// Show the UI
 					SkeletonDrawingCanvas().Opacity(1.0);
+					TrackingStateLabelsPanel().Opacity(1.0);
+
 					NotTrackedNotice().Opacity(0.0);
 
 					{
@@ -1729,6 +1738,8 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 				else
 				{
 					SkeletonDrawingCanvas().Opacity(0.0);
+					TrackingStateLabelsPanel().Opacity(0.0);
+
 					NotTrackedNotice().Opacity(1.0);
 				}
 			}
