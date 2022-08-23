@@ -41,17 +41,25 @@ namespace K2CrashHandler
                     Shared.LanguageCode + ".json"); // The ame one
 
                 if (!File.Exists(langResPath))
+                {
                     langResPath = System.IO.Path.Combine(
                         Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
                             .ToString()).ToString(), "Assets", "Strings",
                         CultureInfo.CurrentUICulture.Name[..2]
                         + ".json"); // System default one fallback
 
+                    Shared.LanguageCode = CultureInfo.CurrentUICulture.Name[..2];
+                }
+
                 if (!File.Exists(langResPath))
+                {
                     langResPath = System.IO.Path.Combine(
                         Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
                             .ToString()).ToString(), "Assets", "Strings",
                         "en.json"); // English fallback
+
+                    Shared.LanguageCode = "en";
+                }
 
                 // Finally read the string resources
                 Shared.AppStrings = JsonFile.Read<Dictionary<string, string>>(langResPath);
@@ -573,12 +581,12 @@ namespace K2CrashHandler
 
         private void Action_VRDocs(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer", "https://k2vr.tech/docs/");
+            Process.Start("explorer", $"https://docs.k2vr.tech/{Shared.DocsLanguageCode}/");
         }
 
         private void Action_DeviceDocs(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer", "https://k2vr.tech/docs/");
+            Process.Start("explorer", $"https://docs.k2vr.tech/{Shared.DocsLanguageCode}/");
         }
 
         private void Action_Discord(object sender, RoutedEventArgs e)

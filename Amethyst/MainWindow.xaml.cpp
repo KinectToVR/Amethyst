@@ -90,17 +90,40 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 			// Check for deez updates
 			try
 			{
-				std::ostringstream release_version_os;
+				std::ostringstream release_version_os,
+				                   docs_languages_os;
 
-				curlpp::options::Url myUrl(
-					std::string("https://github.com/KinectToVR/Amethyst-Releases/releases/latest/download/version"));
-				curlpp::Easy myRequest;
-				myRequest.setOpt(myUrl);
-				myRequest.setOpt(cURLpp::Options::FollowLocation(true));
+				LOG(INFO) << "Checking for updates... [GET]";
 
-				curlpp::options::WriteStream ws(&release_version_os);
-				myRequest.setOpt(ws);
-				myRequest.perform();
+				// Release
+				{
+					curlpp::options::Url myUrl(
+						std::string(
+							"https://github.com/KinectToVR/Amethyst-Releases/releases/latest/download/version"));
+					curlpp::Easy myRequest;
+					myRequest.setOpt(myUrl);
+					myRequest.setOpt(cURLpp::Options::FollowLocation(true));
+
+					curlpp::options::WriteStream ws(&release_version_os);
+					myRequest.setOpt(ws);
+					myRequest.perform();
+				}
+
+				LOG(INFO) << "Checking available languages... [GET]";
+
+				// Language
+				{
+					curlpp::options::Url myUrl(
+						std::string(
+							"https://docs.k2vr.tech/shared/locales.json"));
+					curlpp::Easy myRequest;
+					myRequest.setOpt(myUrl);
+					myRequest.setOpt(cURLpp::Options::FollowLocation(true));
+
+					curlpp::options::WriteStream ws(&docs_languages_os);
+					myRequest.setOpt(ws);
+					myRequest.perform();
+				}
 
 				// If the read string isn't empty, proceed to checking for updates
 				if (std::string read_buffer = release_version_os.str(); !read_buffer.empty())
@@ -213,6 +236,28 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				}
 				else
 					LOG(ERROR) << "Update failed, string was empty.";
+
+				if (std::string read_buffer = docs_languages_os.str(); !read_buffer.empty())
+				{
+					std::stringstream docs_languages_os_stream;
+					docs_languages_os_stream << read_buffer;
+
+					boost::property_tree::ptree root;
+					read_json(docs_languages_os_stream, root);
+
+					// Check if the resource root is fine & the language code exists
+					k2app::interfacing::docsLanguageCode = k2app::K2Settings.appLanguage;
+
+					if (root.empty() || root.find(WStringToString(
+						k2app::interfacing::docsLanguageCode)) == root.not_found())
+					{
+						LOG(INFO) << "Docs do not contain a language with code \"" <<
+							WStringToString(k2app::interfacing::docsLanguageCode) <<
+							"\", falling back to \"en\" (English)!";
+
+						k2app::interfacing::docsLanguageCode = L"en";
+					}
+				}
 			}
 			catch (...)
 			{
@@ -1828,54 +1873,54 @@ void Amethyst::implementation::MainWindow::HelpFlyoutDocsButton_Click(
 	// General Page
 	if (k2app::interfacing::currentAppState == L"general")
 	{
-		ShellExecuteA(nullptr, nullptr,
-		              "https://k2vr.tech/docs/",
+		ShellExecuteW(nullptr, nullptr,
+		              std::format(L"https://docs.k2vr.tech/{}/", k2app::K2Settings.appLanguage).c_str(),
 		              nullptr, nullptr, SW_SHOW);
 	}
 	else if (k2app::interfacing::currentAppState == L"calibration")
 	{
-		ShellExecuteA(nullptr, nullptr,
-		              "https://k2vr.tech/docs/",
+		ShellExecuteW(nullptr, nullptr,
+		              std::format(L"https://docs.k2vr.tech/{}/calibration/", k2app::K2Settings.appLanguage).c_str(),
 		              nullptr, nullptr, SW_SHOW);
 	}
 	else if (k2app::interfacing::currentAppState == L"calibration_auto")
 	{
-		ShellExecuteA(nullptr, nullptr,
-		              "https://k2vr.tech/docs/",
+		ShellExecuteW(nullptr, nullptr,
+		              std::format(L"https://docs.k2vr.tech/{}/calibration/#3", k2app::K2Settings.appLanguage).c_str(),
 		              nullptr, nullptr, SW_SHOW);
 	}
 	else if (k2app::interfacing::currentAppState == L"calibration_manual")
 	{
-		ShellExecuteA(nullptr, nullptr,
-		              "https://k2vr.tech/docs/",
+		ShellExecuteW(nullptr, nullptr,
+		              std::format(L"https://docs.k2vr.tech/{}/calibration/#6", k2app::K2Settings.appLanguage).c_str(),
 		              nullptr, nullptr, SW_SHOW);
 	}
 	else if (k2app::interfacing::currentAppState == L"offsets")
 	{
-		ShellExecuteA(nullptr, nullptr,
-		              "https://k2vr.tech/docs/",
+		ShellExecuteW(nullptr, nullptr,
+		              std::format(L"https://docs.k2vr.tech/{}/", k2app::K2Settings.appLanguage).c_str(),
 		              nullptr, nullptr, SW_SHOW);
 	}
 
 	// Settings Page
 	else if (k2app::interfacing::currentAppState == L"settings")
 	{
-		ShellExecuteA(nullptr, nullptr,
-		              "https://k2vr.tech/docs/",
+		ShellExecuteW(nullptr, nullptr,
+		              std::format(L"https://docs.k2vr.tech/{}/", k2app::K2Settings.appLanguage).c_str(),
 		              nullptr, nullptr, SW_SHOW);
 	}
 
 	// Devices Page
 	else if (k2app::interfacing::currentAppState == L"devices")
 	{
-		ShellExecuteA(nullptr, nullptr,
-		              "https://k2vr.tech/docs/",
+		ShellExecuteW(nullptr, nullptr,
+		              std::format(L"https://docs.k2vr.tech/{}/", k2app::K2Settings.appLanguage).c_str(),
 		              nullptr, nullptr, SW_SHOW);
 	}
 	else if (k2app::interfacing::currentAppState == L"overrides")
 	{
-		ShellExecuteA(nullptr, nullptr,
-		              "https://k2vr.tech/docs/",
+		ShellExecuteW(nullptr, nullptr,
+		              std::format(L"https://docs.k2vr.tech/{}/overrides/", k2app::K2Settings.appLanguage).c_str(),
 		              nullptr, nullptr, SW_SHOW);
 	}
 

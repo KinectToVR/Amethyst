@@ -95,6 +95,9 @@ namespace k2app::interfacing
 	// Current app state string (e.g. "general", "calibration_manual")
 	inline std::wstring currentAppState = L"general";
 
+	// Currently available website language code
+	inline std::wstring docsLanguageCode = L"en";
+
 	// VR Overlay handle
 	inline vr::VROverlayHandle_t vrOverlayHandle = vr::k_ulOverlayHandleInvalid;
 	inline vr::VRNotificationId vrNotificationID = 0;

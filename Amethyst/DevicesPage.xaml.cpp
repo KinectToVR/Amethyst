@@ -1520,7 +1520,78 @@ void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 
-	ShellExecuteA(nullptr, nullptr, "https://k2vr.tech/docs/", nullptr, nullptr, SW_SHOW);
+	const auto _device_error_string = TrackingDeviceErrorLabel().Text();
+	const auto _device_name = SelectedDeviceNameLabel().Text();
+
+	if (_device_name == L"Xbox 360 Kinect")
+	{
+		if (_device_error_string == L"E_NUI_NOTPOWERED")
+			ShellExecuteW(nullptr, nullptr,
+			              std::format(L"https://docs.k2vr.tech/{}/360/troubleshooting/notpowered/",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
+
+		else if (_device_error_string == L"E_NUI_NOTREADY")
+			ShellExecuteW(nullptr, nullptr,
+			              std::format(L"https://docs.k2vr.tech/{}/360/troubleshooting/notready/",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
+
+		else if (_device_error_string == L"E_NUI_NOTGENUINE")
+			ShellExecuteW(nullptr, nullptr,
+			              std::format(L"https://docs.k2vr.tech/{}/360/troubleshooting/notgenuine/",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
+
+		else if (_device_error_string == L"E_NUI_INSUFFICIENTBANDWIDTH")
+			ShellExecuteW(nullptr, nullptr,
+			              std::format(L"https://docs.k2vr.tech/{}/360/troubleshooting/insufficientbandwidth",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
+
+		else
+			ShellExecuteW(nullptr, nullptr,
+				std::format(L"https://docs.k2vr.tech/{}/app/help/", k2app::interfacing::docsLanguageCode).c_str(),
+				nullptr, nullptr, SW_SHOW);
+	}
+
+	else if (_device_name == L"Xbox One Kinect")
+	{
+		if (_device_error_string == L"E_NOTAVAILABLE")
+			ShellExecuteW(nullptr, nullptr,
+			              std::format(L"https://docs.k2vr.tech/{}/one/troubleshooting",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
+
+		else
+			ShellExecuteW(nullptr, nullptr,
+				std::format(L"https://docs.k2vr.tech/{}/app/help/", k2app::interfacing::docsLanguageCode).c_str(),
+				nullptr, nullptr, SW_SHOW);
+	}
+
+	else if (_device_name == L"PSMove Service")
+	{
+		if (_device_error_string == L"E_PSMS_NOT_RUNNING")
+			ShellExecuteW(nullptr, nullptr,
+			              std::format(L"https://docs.k2vr.tech/{}/psmove/troubleshooting",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
+
+		else if (_device_error_string == L"E_PSMS_NO_JOINTS")
+			ShellExecuteW(nullptr, nullptr,
+			              std::format(L"https://docs.k2vr.tech/{}/psmove/troubleshooting",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
+		else
+			ShellExecuteW(nullptr, nullptr,
+				std::format(L"https://docs.k2vr.tech/{}/app/help/", k2app::interfacing::docsLanguageCode).c_str(),
+				nullptr, nullptr, SW_SHOW);
+	}
+
+	else
+		ShellExecuteW(nullptr, nullptr,
+		              std::format(L"https://docs.k2vr.tech/{}/app/help/", k2app::interfacing::docsLanguageCode).c_str(),
+		              nullptr, nullptr, SW_SHOW);
 }
 
 

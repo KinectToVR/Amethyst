@@ -1,6 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using K2CrashHandler.Helpers;
 using Microsoft.UI.Xaml;
+using Newtonsoft.Json.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,7 +33,7 @@ public partial class App : Application
             var amethystConfigText = File.ReadAllText(Path.Combine(Environment.GetFolderPath(
                 Environment.SpecialFolder.ApplicationData), "Amethyst", "Amethyst_settings.xml"));
 
-            Helpers.Shared.LanguageCode = amethystConfigText.Contains("<appLanguage>")
+            Shared.LanguageCode = amethystConfigText.Contains("<appLanguage>")
                 ? amethystConfigText.Substring(
                     amethystConfigText.IndexOf("<appLanguage>") + "<appLanguage>".Length, 2)
                 : "en";
@@ -36,12 +42,34 @@ public partial class App : Application
                         amethystConfigText.IndexOf("<appTheme>") + "<appTheme>".Length, 1),
                     out var themeConfig)) return;
 
+            Shared.DocsLanguageCode = Shared.LanguageCode;
             Current.RequestedTheme = themeConfig switch
             {
                 2 => ApplicationTheme.Light,
                 1 => ApplicationTheme.Dark,
                 _ => Current.RequestedTheme
             };
+
+            // Do this in the meantime
+            Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    var client = new HttpClient();
+
+                    using var response = await client.GetAsync("https://docs.k2vr.tech/shared/locales.json");
+                    using var content = response.Content;
+                    var json = await content.ReadAsStringAsync();
+
+                    // Optionally fall back to English
+                    if (JArray.Parse(json)[Shared.DocsLanguageCode] == null)
+                        Shared.DocsLanguageCode = "en";
+                }
+                catch (Exception)
+                {
+                    Shared.DocsLanguageCode = "en";
+                }
+            });
         }
         catch (Exception)
         {

@@ -269,58 +269,70 @@ namespace k2app::interfacing
 	// Returns: LANG_NATIVE (LANG_LOCALIZED) / Nihongo (Japanese)
 	inline std::wstring GetLocalizedLanguageName(const std::wstring& language_key)
 	{
-		// Load the locales.json from Assets/Strings/
-
-		const boost::filesystem::path resource_path =
-			boost::dll::program_location().parent_path() /
-			"Assets" / "Strings" / "locales.json";
-
-		// If the specified language doesn't exist somehow, fallback to 'en'
-		if (!exists(resource_path))
+		try
 		{
-			LOG(ERROR) << "Could not load language enumeration resources at \"" <<
-				resource_path.string() << "\", app interface will be broken!";
-			return language_key; // Give up on trying
+			// Load the locales.json from Assets/Strings/
+
+			const boost::filesystem::path resource_path =
+				boost::dll::program_location().parent_path() /
+				"Assets" / "Strings" / "locales.json";
+
+			// If the specified language doesn't exist somehow, fallback to 'en'
+			if (!exists(resource_path))
+			{
+				LOG(ERROR) << "Could not load language enumeration resources at \"" <<
+					resource_path.string() << "\", app interface will be broken!";
+				return language_key; // Give up on trying
+			}
+
+			// If everything's ok, load the resources into the current resource tree
+			boost::property_tree::wptree w_enum_resources;
+			read_json(resource_path.string(), w_enum_resources,
+			          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+
+			// Check if the resource root is fine
+			if (w_enum_resources.empty())
+			{
+				LOG(ERROR) << "The current language enumeration resource root is empty!"
+					"App interface will be broken!";
+				return language_key; // Give up on trying
+			}
+
+			// Check if the language code exists
+			if (w_enum_resources.find(language_key) != w_enum_resources.not_found() && // Find the current language
+				// Check if the current language's name (local) exists in the property tree
+				w_enum_resources.get_optional<std::wstring>(
+					language_key + L"." + language_key).has_value() &&
+				// Check if the current language's name (self) exists in the property tree
+				w_enum_resources.get_optional<std::wstring>(
+					K2Settings.appLanguage + L"." + K2Settings.appLanguage).has_value() &&
+				// Check if the desired (set) language's name (local) exists in the property tree
+				w_enum_resources.get_optional<std::wstring>(
+					K2Settings.appLanguage + L"." + language_key).has_value())
+			{
+				// If everything's fine, compose the return
+
+				// If the language key is the current language, don't split the name
+				if (K2Settings.appLanguage == language_key)
+					return w_enum_resources.get<std::wstring>(K2Settings.appLanguage + L"." + K2Settings.appLanguage);
+
+				// Else split the same way as in docs
+				return w_enum_resources.get<std::wstring>(language_key + L"." + language_key) +
+					L" (" + w_enum_resources.get<std::wstring>(K2Settings.appLanguage + L"." + language_key) + L")";
+			}
+
+			// Else return they key alone
+			return language_key;
 		}
-
-		// If everything's ok, load the resources into the current resource tree
-		boost::property_tree::wptree w_enum_resources;
-		read_json(resource_path.string(), w_enum_resources,
-		          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
-
-		// Check if the resource root is fine
-		if (w_enum_resources.empty())
+		catch (...)
 		{
-			LOG(ERROR) << "The current language enumeration resource root is empty!"
+			LOG(ERROR) << "An exception occurred! "
+				"The current language enumeration will be empty! "
 				"App interface will be broken!";
-			return language_key; // Give up on trying
+
+			// Else return they key alone
+			return language_key;
 		}
-
-		// Check if the language code exists
-		if (w_enum_resources.find(language_key) != w_enum_resources.not_found() && // Find the current language
-			// Check if the current language's name (local) exists in the property tree
-			w_enum_resources.get_optional<std::wstring>(
-				language_key + L"." + language_key).has_value() &&
-			// Check if the current language's name (self) exists in the property tree
-			w_enum_resources.get_optional<std::wstring>(
-				K2Settings.appLanguage + L"." + K2Settings.appLanguage).has_value() &&
-			// Check if the desired (set) language's name (local) exists in the property tree
-			w_enum_resources.get_optional<std::wstring>(
-				K2Settings.appLanguage + L"." + language_key).has_value())
-		{
-			// If everything's fine, compose the return
-
-			// If the language key is the current language, don't split the name
-			if (K2Settings.appLanguage == language_key)
-				return w_enum_resources.get<std::wstring>(K2Settings.appLanguage + L"." + K2Settings.appLanguage);
-
-			// Else split the same way as in docs
-			return w_enum_resources.get<std::wstring>(language_key + L"." + language_key) +
-				L" (" + w_enum_resources.get<std::wstring>(K2Settings.appLanguage + L"." + language_key) + L")";
-		}
-
-		// Else return they key alone
-		return language_key;
 	}
 
 	// Amethyst language resource trees
@@ -330,117 +342,149 @@ namespace k2app::interfacing
 	// Load the current desired resource JSON into app memory
 	inline void LoadJSONStringResources(const std::wstring& language_key)
 	{
-		LOG(INFO) << "Searching for language resources with key \"" <<
-			WStringToString(language_key) << "\"...";
-
-		boost::filesystem::path resource_path =
-			boost::dll::program_location().parent_path() /
-			"Assets" / "Strings" / (language_key + L".json");
-
-		// If the specified language doesn't exist somehow, fallback to 'en'
-		if (!exists(resource_path))
+		try
 		{
-			LOG(WARNING) << "Could not load language resources at \"" <<
-				resource_path.string() << "\", falling back to 'en' (en.json)!";
+			LOG(INFO) << "Searching for language resources with key \"" <<
+				WStringToString(language_key) << "\"...";
 
-			resource_path = boost::dll::program_location().parent_path() /
-				"Assets" / "Strings" / "en.json";
+			boost::filesystem::path resource_path =
+				boost::dll::program_location().parent_path() /
+				"Assets" / "Strings" / (language_key + L".json");
+
+			// If the specified language doesn't exist somehow, fallback to 'en'
+			if (!exists(resource_path))
+			{
+				LOG(WARNING) << "Could not load language resources at \"" <<
+					resource_path.string() << "\", falling back to 'en' (en.json)!";
+
+				resource_path = boost::dll::program_location().parent_path() /
+					"Assets" / "Strings" / "en.json";
+			}
+
+			// If failed again, just give up
+			if (!exists(resource_path))
+			{
+				LOG(ERROR) << "Could not load language resources at \"" <<
+					resource_path.string() << "\", the app interface will be broken!";
+				return; // Just give up
+			}
+
+			// If everything's ok, load the resources into the current resource tree
+			read_json(resource_path.string(), w_local_resources,
+			          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+
+			// Check if the resource root is fine
+			if (w_local_resources.empty())
+				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+
+			else
+				LOG(INFO) << "Successfully loaded language resources with key \"" <<
+					WStringToString(language_key) << "\"!";
 		}
-
-		// If failed again, just give up
-		if (!exists(resource_path))
+		catch (...)
 		{
-			LOG(ERROR) << "Could not load language resources at \"" <<
-				resource_path.string() << "\", the app interface will be broken!";
-			return; // Just give up
+			LOG(ERROR) <<
+				"An exception occurred! The current resource root will be empty! App interface will be broken!";
 		}
-
-		// If everything's ok, load the resources into the current resource tree
-		read_json(resource_path.string(), w_local_resources,
-		          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
-
-		// Check if the resource root is fine
-		if (w_local_resources.empty())
-			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
-
-		else
-			LOG(INFO) << "Successfully loaded language resources with key \"" <<
-				WStringToString(language_key) << "\"!";
 	}
 
 	// Load the english resource JSON into app memory
 	inline void LoadJSONStringResources_English()
 	{
-		LOG(INFO) << "Searching for shared (English) language resources...";
-
-		const boost::filesystem::path resource_path =
-			boost::dll::program_location().parent_path() /
-			"Assets" / "Strings" / "en.json";
-
-		// If the specified language doesn't exist somehow, fallback to 'en'
-		if (!exists(resource_path))
+		try
 		{
-			LOG(ERROR) << "Could not load language resources at \"" <<
-				resource_path.string() << "\", falling back to the current one! " <<
-				"WARNING: The app interface will be broken if not existent!";
+			LOG(INFO) << "Searching for shared (English) language resources...";
 
-			// Override the current english resource tree
-			w_english_resources = w_local_resources;
-			return; // Give up on trying
+			const boost::filesystem::path resource_path =
+				boost::dll::program_location().parent_path() /
+				"Assets" / "Strings" / "en.json";
+
+			// If the specified language doesn't exist somehow, fallback to 'en'
+			if (!exists(resource_path))
+			{
+				LOG(ERROR) << "Could not load language resources at \"" <<
+					resource_path.string() << "\", falling back to the current one! " <<
+					"WARNING: The app interface will be broken if not existent!";
+
+				// Override the current english resource tree
+				w_english_resources = w_local_resources;
+				return; // Give up on trying
+			}
+
+			// If everything's ok, load the resources into the current resource tree
+			read_json(resource_path.string(), w_english_resources,
+			          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+
+			// Check if the resource root is fine
+			if (w_english_resources.empty())
+				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+
+			else
+				LOG(INFO) << "Successfully loaded shared (English) language resources!";
 		}
-
-		// If everything's ok, load the resources into the current resource tree
-		read_json(resource_path.string(), w_english_resources,
-		          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
-
-		// Check if the resource root is fine
-		if (w_english_resources.empty())
-			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
-
-		else
-			LOG(INFO) << "Successfully loaded shared (English) language resources!";
+		catch (...)
+		{
+			LOG(ERROR) <<
+				"An exception occurred! The current resource root will be empty! App interface will be broken!";
+		}
 	}
 
 	// Get a string from runtime JSON resources, language from settings
 	inline std::wstring LocalizedJSONString(const std::wstring& resource_key)
 	{
-		// Check if the resource root is fine
-		if (w_local_resources.empty())
+		try
 		{
-			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
-			return L""; // Just give up
-		}
+			// Check if the resource root is fine
+			if (w_local_resources.empty())
+			{
+				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+				return L""; // Just give up
+			}
 
-		// Check if the desired key exists
-		if (w_local_resources.find(resource_key) == w_local_resources.not_found())
+			// Check if the desired key exists
+			if (w_local_resources.find(resource_key) == w_local_resources.not_found())
+			{
+				LOG(ERROR) << "Could not find a resource string with key (narrowed) \"" <<
+					WStringToString(resource_key) << "\" in the current resource! App interface will be broken!";
+				return L""; // Just give up
+			}
+
+			return w_local_resources.get<std::wstring>(resource_key);
+		}
+		catch (...)
 		{
-			LOG(ERROR) << "Could not find a resource string with key (narrowed) \"" <<
-				WStringToString(resource_key) << "\" in the current resource! App interface will be broken!";
-			return L""; // Just give up
+			LOG(ERROR) << "An exception occurred! App interface will be broken!";
+			return resource_key;
 		}
-
-		return w_local_resources.get<std::wstring>(resource_key);
 	}
 
 	// Get a string from runtime JSON resources, specify language
 	inline std::wstring LocalizedJSONString_EN(const std::wstring& resource_key)
 	{
-		// Check if the resource root is fine
-		if (w_english_resources.empty())
+		try
 		{
-			LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
-			return L""; // Just give up
-		}
+			// Check if the resource root is fine
+			if (w_english_resources.empty())
+			{
+				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+				return L""; // Just give up
+			}
 
-		// Check if the desired key exists
-		if (w_english_resources.find(resource_key) == w_english_resources.not_found())
+			// Check if the desired key exists
+			if (w_english_resources.find(resource_key) == w_english_resources.not_found())
+			{
+				LOG(ERROR) << "Could not find a resource string with key (narrowed) \"" <<
+					WStringToString(resource_key) << "\" in the current resource! App interface will be broken!";
+				return L""; // Just give up
+			}
+
+			return w_english_resources.get<std::wstring>(resource_key);
+		}
+		catch (...)
 		{
-			LOG(ERROR) << "Could not find a resource string with key (narrowed) \"" <<
-				WStringToString(resource_key) << "\" in the current resource! App interface will be broken!";
-			return L""; // Just give up
+			LOG(ERROR) << "An exception occurred! App interface will be broken!";
+			return resource_key;
 		}
-
-		return w_english_resources.get<std::wstring>(resource_key);
 	}
 
 	// Get a string from resources (crash handler's LangResString)
