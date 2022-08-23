@@ -127,7 +127,7 @@
     "/SettingsPage/Tips/FlipToggle/Header": "Du kannst den Skelett-Flip auch in VR umschalten, indem du {0} auf deinem rechten Controller drückst.",
     "/SettingsPage/Titles/ExtFlip": "Verwende externe Taillentrackingsdaten statt Daten vom Headset",
     "/SettingsPage/Titles/SkeletonFlip": "Skelett-Flip",
-    "/SettingsPage/Titles/Application": "Sounds",
+    "/SettingsPage/Titles/Application": "Anmeldung",
     "/SettingsPage/Titles/TrackerConfig/Header": "Trackerkonfiguration",
     "/SettingsPage/Titles/TrackerConfig/Learn": "Erfahre mehr über diese Einstellungen",
     "/SettingsPage/Titles/Troubleshooting": "Fehlerbehebung",
