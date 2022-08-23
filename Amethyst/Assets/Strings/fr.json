@@ -174,7 +174,7 @@
     "/DevicesPage/Buttons/SetAs/Header": "Définir en tant que...",
     "/DevicesPage/Buttons/SetAs/Override/ToolTip": "La position et rotation de un ou plusieurs\ntrackers virtuels sera modifiée par cet appareil.",
     "/DevicesPage/Buttons/SetAs/Override": "Définir comme substitut.",
-    "/DevicesPage/Buttons/ViewDocs": "Voir la Documentation",
+    "/DevicesPage/Buttons/ViewDocs": "Voir la Docs",
     "/DevicesPage/Placeholders/Joints/Disabled/PlaceholderText": "Articulation inactive",
     "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText": "Aucun substitut",
     "/DevicesPage/Titles/Check/Orientation": "Rotation",
