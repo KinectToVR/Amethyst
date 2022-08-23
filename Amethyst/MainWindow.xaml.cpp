@@ -562,6 +562,65 @@ namespace winrt::Amethyst::implementation
 					k2app::shared::main::thisDispatcherQueue->TryEnqueue([&, this]
 					{
 						XMainGrid_Loaded_Handler();
+
+						// Rebuild devices' settings
+						// (Trick the device into rebuilding its interface)
+						for (size_t index = 0; index < TrackingDevices::TrackingDevicesVector.size(); index++)
+						{
+							LOG(INFO) << "Rebuilding device[" << index <<
+								"]'s layout root...";
+
+							const auto pLayoutRoot = new
+								k2app::interfacing::AppInterface::AppLayoutRoot();
+
+							switch (const auto& device =
+								TrackingDevices::TrackingDevicesVector.at(
+									index); device.index())
+							{
+							case 0:
+								{
+									const auto& pDevice =
+										std::get<
+											ktvr::K2TrackingDeviceBase_KinectBasis*>(
+											device);
+
+									// Register the layout
+									pDevice->layoutRoot = dynamic_cast<
+											ktvr::Interface::LayoutRoot*>
+										(pLayoutRoot);
+
+									// State that everything's fine and the device's loaded
+									// Note: the dispatcher is starting AFTER device setup
+									pDevice->onLoad();
+								}
+								break;
+							case 1:
+								{
+									const auto& pDevice =
+										std::get<
+											ktvr::K2TrackingDeviceBase_JointsBasis*>(
+											device);
+
+									// Register the layout
+									pDevice->layoutRoot = dynamic_cast<
+											ktvr::Interface::LayoutRoot*>
+										(pLayoutRoot);
+
+									// State that everything's fine and the device's loaded
+									// Note: the dispatcher is starting AFTER device setup
+									pDevice->onLoad();
+								}
+								break;
+							}
+
+							LOG(INFO) <<
+								"Appending the device[" << index <<
+								"]'s layout root to the global registry...";
+
+							// Push the device's layout root to pointers' vector
+							TrackingDevices::TrackingDevicesLayoutRootsVector.
+								at(index) = pLayoutRoot;
+						}
 					});
 
 				Sleep(100); // Sleep a bit
@@ -859,7 +918,7 @@ namespace winrt::Amethyst::implementation
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
 
-																	// State that everything's fine and he device's loaded
+																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
 																}
@@ -876,7 +935,7 @@ namespace winrt::Amethyst::implementation
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
 
-																	// State that everything's fine and he device's loaded
+																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
 																}
@@ -993,7 +1052,7 @@ namespace winrt::Amethyst::implementation
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
 
-																	// State that everything's fine and he device's loaded
+																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
 																}
@@ -1010,7 +1069,7 @@ namespace winrt::Amethyst::implementation
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
 
-																	// State that everything's fine and he device's loaded
+																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
 																}
@@ -1070,7 +1129,7 @@ namespace winrt::Amethyst::implementation
 													pDevice->requestLocalizedString =
 														k2app::interfacing::plugins::plugins_requestLocalizedString;
 
-													// State that everything's fine and he device's loaded
+													// State that everything's fine and the device's loaded
 													// Note: the dispatcher is starting AFTER device setup
 													pDevice->onLoad();
 

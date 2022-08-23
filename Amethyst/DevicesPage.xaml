@@ -161,7 +161,7 @@
                                                x:Name="TrackingDeviceStatusLabel" />
 
                                     <SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                 Margin="0,0,3,0" CornerRadius="3" Height="35" Width="140"
+                                                 Margin="0,0,3,0" CornerRadius="3" Height="35" Width="160"
                                                  HorizontalAlignment="Right" VerticalAlignment="Top"
                                                  x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click">
 
@@ -240,12 +240,12 @@
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                             Margin="0,0,3,5" CornerRadius="3"
                                             x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
-                                            Height="55" Width="140" Style="{ThemeResource AccentButtonStyle}"
+                                            Height="55" Width="160" Style="{ThemeResource AccentButtonStyle}"
                                             HorizontalAlignment="Right" VerticalAlignment="Top" />
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                             Margin="0,0,3,0" CornerRadius="3"
-                                            Height="55" Width="140" x:Name="OpenDiscordButton"
+                                            Height="55" Width="160" x:Name="OpenDiscordButton"
                                             Click="OpenDiscordButton_Click"
                                             HorizontalAlignment="Right" VerticalAlignment="Top" />
 
@@ -269,7 +269,7 @@
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                             Margin="0,0,3,0" CornerRadius="3"
-                                            Height="35" Width="140" x:Name="SetThisDeviceAsButton"
+                                            Height="35" Width="160" x:Name="SetThisDeviceAsButton"
                                             HorizontalAlignment="Right" VerticalAlignment="Top">
 
                                         <Button.Flyout>
