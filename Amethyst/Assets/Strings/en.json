@@ -232,7 +232,7 @@
     "/SharedStrings/Buttons/Settings": "Settings",
     "/SharedStrings/Buttons/Updates/Header": "Updates",
     "/SharedStrings/Buttons/Updates/Install": "Install Now",
-    "/SharedStrings/Buttons/Updates/Skip": "Install Later",
+    "/SharedStrings/Buttons/Updates/Skip": "Install On Exit",
     "/SharedStrings/Joints/Enum/0": "Handed Tracker",
     "/SharedStrings/Joints/Enum/1": "Left Foot Tracker",
     "/SharedStrings/Joints/Enum/10": "Chest Tracker",
@@ -317,7 +317,8 @@
     "/Plugins/PSMS/Statuses/Success": "Success!\nS_OK\nEverything's good!",
     "/Plugins/PSMS/Statuses/NotRunning": "Connection error!\nE_PSMS_NOT_RUNNING\nCheck if PSMoveService is running, working and accessible by clients.",
     "/Plugins/PSMS/Statuses/NoJoints": "No controllers found!\nE_PSMS_NO_JOINTS\nCheck if any controllers are connected, and if PSMoveService is working properly.",
-    "/Plugins/PSMS/Settings/Labels/Dim": "If you're using PSMS for rotation tracking only, you can dim controller LED lights to save power.",
+    "/Plugins/PSMS/Settings/Contents/Dim": "If you're using PSMS for rotation tracking only, you can dim controller LED lights to save power.",
+    "/Plugins/PSMS/Settings/Labels/Dim": "Dim PSMS lights:",
 
     "/Plugins/OWO/Statuses/Success": "Success!\nS_OK\nEverything's good!",
     "/Plugins/OWO/Statuses/ConnectionDead": "Connection error!\nE_CONNECTION_DEAD\nCheck if owoTrackVR app is running, working and connected.",

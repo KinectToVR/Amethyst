@@ -179,6 +179,8 @@ namespace winrt::Amethyst::implementation
 						// Type 2: OTHER
 						jointSelectorExpanders[2] = std::move(std::make_shared<Controls::JointSelectorExpander>(2));
 
+						jointsBasisExpanderHostStackPanel->Children().Clear();
+
 						for (auto& expander : jointSelectorExpanders)
 							jointsBasisExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
 
@@ -194,6 +196,8 @@ namespace winrt::Amethyst::implementation
 
 						// Type 2: OTHER
 						overrideSelectorExpanders[2] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(2));
+
+						overridesExpanderHostStackPanel->Children().Clear();
 
 						for (auto& expander : overrideSelectorExpanders)
 							overridesExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());

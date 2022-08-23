@@ -56,7 +56,7 @@ public:
 
 		layoutRoot->AppendSingleElement(
 			CreateTextBlock(
-				requestLocalizedString(L"/Plugins/PSMS/Settings/Labels/Dim")));
+				requestLocalizedString(L"/Plugins/PSMS/Settings/Contents/Dim")));
 
 		auto lights_toggle = CreateToggleSwitch();
 		lights_toggle->IsChecked(m_lightsOff); // Read from settings
@@ -83,7 +83,7 @@ public:
 
 		layoutRoot->AppendElementPairStack(
 			CreateTextBlock(
-				L"Dim PSMS lights:"),
+				requestLocalizedString(L"/Plugins/PSMS/Settings/Labels/Dim")),
 			lights_toggle);
 
 		_loaded = true;
