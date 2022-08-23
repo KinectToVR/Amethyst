@@ -50,9 +50,10 @@
 
         <ScrollViewer x:Name="PageMainScrollViewer"
                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
-                      VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
+                      VerticalScrollBarVisibility="Visible" Padding="00,-20,20,-20" Margin="-20,20,-20,20">
 
-            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
+            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                        Padding="20,0,0,0" Orientation="Vertical">
 
                 <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -81,8 +82,9 @@
                     </TextBlock.Transitions>
                 </TextBlock>
 
-                <Grid>
+                <Grid Margin="-20,0,0,0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20" />
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="5*" />
                     </Grid.ColumnDefinitions>
@@ -92,26 +94,34 @@
                         <RowDefinition Height="80" />
                     </Grid.RowDefinitions>
 
+                    <FontIcon Foreground="White" Margin="0,3,0,0"
+                              Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" 
+                              VerticalAlignment="Center" FontSize="16" Glyph="&#xF2B7;">
+                        <FontIcon.TranslationTransition>
+                            <Vector3Transition />
+                        </FontIcon.TranslationTransition>
+                    </FontIcon>
+
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                Name="Labels_DisplayLanguage"
-                               Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
+                               Margin="0,0,20,0" Grid.Column="1" Grid.Row="0" />
 
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
                               Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
                               x:Name="LanguageOptionBox" SelectionChanged="LanguageOptionBox_SelectionChanged"
                               DropDownOpened="LanguageOptionBox_DropDownOpened"
-                              Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                              Grid.Column="2" Grid.Row="0" Margin="0,0,0,0">
                         <ComboBoxItem Content="INVALID" />
                     </ComboBox>
 
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                Name="Labels_AppTheme"
-                               Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
+                               Margin="0,0,20,0" Grid.Column="1" Grid.Row="1" />
 
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
                               Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
                               x:Name="AppThemeOptionBox" SelectionChanged="AppThemeOptionBox_SelectionChanged"
-                              Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+                              Grid.Column="2" Grid.Row="1" Margin="0,0,0,0">
                         <ComboBoxItem Content="INVALID" />
                     </ComboBox>
 
