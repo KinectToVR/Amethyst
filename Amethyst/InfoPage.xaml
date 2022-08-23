@@ -103,10 +103,11 @@
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
                            x:Name="Credits_Translators_Title" Margin="0,17,0,0" />
 
-                <TextBlock FontWeight="SemiBold">
+                <TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords">
                     <Run xml:space="preserve">Ella (AuroraNemoia)    </Run>
                     <Run xml:space="preserve">Skye (DergnNamedSkye)    </Run>
                     <Run xml:space="preserve">Sara the Maid    </Run>
+                    <Run xml:space="preserve">m1nt_ (Rubber Duck Shobe)    </Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
