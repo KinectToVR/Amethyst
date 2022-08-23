@@ -24,18 +24,18 @@
 
                     <Grid Grid.Row="1" Margin="0,0,0,10" VerticalAlignment="Top">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="250" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="7" />
                         </Grid.ColumnDefinitions>
+                        <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="3"
+                                FontSize="14" HorizontalAlignment="Stretch" Padding="15,0"
+                                Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0" />
                         <Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="3"
                                 FontSize="14" Height="50" Grid.Column="2" Style="{ThemeResource AccentButtonStyle}"
-                                FontWeight="Medium"
+                                FontWeight="Medium" Padding="15,0"
                                 Margin="5,15,5,0" HorizontalAlignment="Stretch" />
-                        <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="3"
-                                FontSize="14" HorizontalAlignment="Stretch"
-                                Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0" />
                     </Grid>
 
                 </Grid>

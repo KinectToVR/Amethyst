@@ -1079,7 +1079,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	CancelCalibrationButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Cancel")));
 
-	Calibration_Captions_Manual().Text(
+	Calibration_Headers_Automatic().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Headers/Automatic"));
 
 	CalibrationInstructionsLabel().Text(

@@ -153,6 +153,8 @@ namespace winrt::Amethyst::implementation
 					{
 						SettingsPage_Loaded_Handler();
 
+						settings_localInitFinished = false;
+
 						LOG(INFO) << "Rebuilding joint expanders... this may take a while...";
 
 						jointExpanderVector.clear();
