@@ -164,8 +164,6 @@ namespace winrt::Amethyst::implementation
 				if (devices_loadedOnce)
 					k2app::shared::main::thisDispatcherQueue->TryEnqueue([&, this]
 					{
-						DevicesPage_Loaded_Handler();
-						
 						LOG(INFO) << "Rebuilding joint selector expanders... this may take a while...";
 
 						// Set joint expanders up
@@ -203,6 +201,8 @@ namespace winrt::Amethyst::implementation
 							overridesExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
 
 						TrackingDevices::devices_update_current();
+
+						DevicesPage_Loaded_Handler();
 					});
 
 				Sleep(100); // Sleep a bit
