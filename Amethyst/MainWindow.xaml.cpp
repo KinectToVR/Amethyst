@@ -27,6 +27,9 @@ bool updateFound = false,
 
 std::atomic_bool checkingUpdatesNow = false;
 
+// Notifications stuff
+event_token notification_token;
+
 // Assume we're up to date
 std::string K2RemoteVersion =
 	k2app::interfacing::K2InternalVersion;
@@ -530,13 +533,29 @@ namespace winrt::Amethyst::implementation
 		k2app::shared::main::thisDispatcherQueue =
 			std::make_shared<Microsoft::UI::Dispatching::DispatcherQueue>(DispatcherQueue());
 
-		LOG(INFO) << "Creating the default notification manager...";
-		k2app::shared::main::thisNotificationManager =
-			std::make_shared<Microsoft::Windows::AppNotifications::AppNotificationManager>(
-				Microsoft::Windows::AppNotifications::AppNotificationManager::Default());
+		{
+			using namespace Microsoft::Windows::AppNotifications;
+			using namespace Microsoft::Windows::AppLifecycle;
 
-		LOG(INFO) << "Registering the notification manager...";
-		k2app::shared::main::thisNotificationManager.get()->Register();
+			LOG(INFO) << "Registering for NotificationInvoked WinRT event...";
+
+			// To ensure all Notification handling happens in this process instance, register for
+			// NotificationInvoked before calling Register(). Without this a new process will
+			// be launched to handle the notification.
+			notification_token = AppNotificationManager::Default()
+				.NotificationInvoked([&, this](const auto&,
+				                               const AppNotificationActivatedEventArgs& notificationActivatedEventArgs)
+				{
+					k2app::interfacing::ProcessToastArguments(notificationActivatedEventArgs);
+				});
+
+			LOG(INFO) << "Creating the default notification manager...";
+			k2app::shared::main::thisNotificationManager =
+				std::make_shared<AppNotificationManager>(AppNotificationManager::Default());
+
+			LOG(INFO) << "Registering the notification manager...";
+			k2app::shared::main::thisNotificationManager.get()->Register();
+		}
 
 		LOG(INFO) << "Creating and registering the default resource manager...";
 		k2app::shared::main::thisResourceManager =
@@ -669,17 +688,17 @@ namespace winrt::Amethyst::implementation
 		this->Closed([&](const IInspectable& window, const WindowEventArgs& e)
 		-> Windows::Foundation::IAsyncAction
 			{
+				// Handled(true) means Cancel()
+				// and Handled(false) means Continue()
+				// -> Block exiting until we're done
+				e.Handled(true);
+
 				if (updateOnClosed)
 					co_await ExecuteUpdate();
 
 				// Handle all the exit actions (if needed)
 				if (!k2app::interfacing::isExitHandled)
 				{
-					// Handled(true) means Cancel()
-					// and Handled(false) means Continue()
-					// -> Block exiting until we're done
-					e.Handled(true);
-
 					// Show the close tip (if not shown yet)
 					if (!k2app::K2Settings.firstShutdownTipShown)
 					{
@@ -707,9 +726,16 @@ namespace winrt::Amethyst::implementation
 
 					// Handle the exit actions
 					k2app::interfacing::handle_app_exit_n();
-
-					e.Handled(false); // Finally exit
 				}
+
+				// Cleanup event handler
+				k2app::shared::main::thisNotificationManager.get()->NotificationInvoked(notification_token);
+
+				// Call Unregister() before exiting main so that subsequent invocations will launch a new process
+				k2app::shared::main::thisNotificationManager.get()->Unregister();
+
+				// Finally allow exits
+				e.Handled(false);
 			});
 
 		// Priority: Launch the crash handler

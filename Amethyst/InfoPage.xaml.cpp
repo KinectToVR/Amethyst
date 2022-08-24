@@ -48,7 +48,7 @@ namespace winrt::Amethyst::implementation
 		const Input::DoubleTappedRoutedEventArgs& e)
 	{
 		k2app::interfacing::ShowToast(
-			L"お可愛いこと❢", L"(P.S. Congratulations!)");
+			L"お可愛いこと❢", L"(P.S. Congratulations!)", false, L"okashi");
 
 		// Play a sound
 		playAppSound(k2app::interfacing::sounds::AppSounds::Show);

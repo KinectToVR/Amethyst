@@ -260,6 +260,9 @@ namespace K2CrashHandler
                 GetSystemMetrics(SystemMetric.SM_CYSCREEN) / 2 - height / 2,
                 width, height, 0x0040); // SWP_SHOWWINDOW
 
+            // (Second try ...but first)
+            Activate();
+
             // And show it (forcibly)
             SetForegroundWindow(WindowNative
                 .GetWindowHandle(this));

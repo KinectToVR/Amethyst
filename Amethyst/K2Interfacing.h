@@ -127,12 +127,14 @@ namespace k2app::interfacing
 
 	// Show an app toast / notification
 	inline void ShowToast(const std::wstring& header,
-	                      const std::wstring& text, const bool high_priority = false)
+	                      const std::wstring& text,
+	                      const bool high_priority = false,
+	                      const std::wstring& action = L"none")
 	{
 		if (header.empty() || text.empty())return;
 
 		winrt::hstring payload =
-		(LR"(<toast>
+		(LR"(<toast launch="action=)" + action + LR"(&amp;actionId=00000">
 						<visual>
 							<binding template = "ToastGeneric">
 								<text>)" + header + LR"(</text>"
@@ -148,6 +150,106 @@ namespace k2app::interfacing
 			winrt::Microsoft::Windows::AppNotifications::AppNotificationPriority>(high_priority));
 
 		shared::main::thisNotificationManager.get()->Show(toast);
+	}
+
+	inline void ProcessToastArguments(const winrt::Microsoft::Windows::
+		AppNotifications::AppNotificationActivatedEventArgs& notificationActivatedEventArgs)
+	{
+		// When a tracker's been auto-disabled
+		if (const std::wstring arg(notificationActivatedEventArgs.Argument().c_str());
+			arg.find(L"focus_trackers") != std::wstring::npos)
+		{
+			shared::main::thisDispatcherQueue->TryEnqueue([&]()
+			-> winrt::Windows::Foundation::IAsyncAction
+				{
+					// Bring Amethyst to front
+					SetActiveWindow(shared::main::thisAppWindowID);
+
+					if (currentPageTag != L"settings")
+					{
+						// Navigate to the settings page
+						shared::main::mainNavigationView->SelectedItem(
+							shared::main::mainNavigationView->MenuItems().GetAt(1));
+						shared::main::NavView_Navigate(L"settings",
+						                               winrt::Microsoft::UI::Xaml::Media::Animation::EntranceNavigationTransitionInfo());
+
+						// Sleep on UI (Non-blocking)
+						winrt::apartment_context ui_thread;
+						co_await winrt::resume_background();
+						Sleep(500);
+						co_await ui_thread;
+					}
+
+					shared::settings::pageMainScrollViewer->UpdateLayout();
+					shared::settings::pageMainScrollViewer->ChangeView(
+						nullptr,
+						shared::settings::pageMainScrollViewer->ExtentHeight(), nullptr);
+
+					winrt::apartment_context ui_thread;
+					co_await winrt::resume_background();
+					Sleep(500);
+					co_await ui_thread;
+
+					// Focus on the restart button
+					shared::settings::checkOverlapsCheckBox->Focus(
+						winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
+				});
+		}
+
+		// When you need to restart OpenVR
+		else if (arg.find(L"focus_restart") != std::wstring::npos)
+		{
+			shared::main::thisDispatcherQueue->TryEnqueue([&]()
+			-> winrt::Windows::Foundation::IAsyncAction
+				{
+					// Bring Amethyst to front
+					SetActiveWindow(shared::main::thisAppWindowID);
+
+					if (currentPageTag != L"settings")
+					{
+						// Navigate to the settings page
+						shared::main::mainNavigationView->SelectedItem(
+							shared::main::mainNavigationView->MenuItems().GetAt(1));
+						shared::main::NavView_Navigate(L"settings",
+						                               winrt::Microsoft::UI::Xaml::Media::Animation::EntranceNavigationTransitionInfo());
+
+						// Sleep on UI (Non-blocking)
+						winrt::apartment_context ui_thread;
+						co_await winrt::resume_background();
+						Sleep(500);
+						co_await ui_thread;
+					}
+
+					shared::settings::pageMainScrollViewer->UpdateLayout();
+					shared::settings::pageMainScrollViewer->ChangeView(
+						nullptr,
+						shared::settings::pageMainScrollViewer->ExtentHeight(), nullptr);
+
+					winrt::apartment_context ui_thread;
+					co_await winrt::resume_background();
+					Sleep(500);
+					co_await ui_thread;
+
+					// Focus on the restart button
+					shared::settings::restartButton->Focus(
+						winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
+				});
+		}
+
+		// When you've entered the cheater mode
+		else if (arg.find(L"okashi") != std::wstring::npos)
+		{
+			shared::main::thisDispatcherQueue->TryEnqueue([&]
+			{
+				// Navigate to the okashi/console page
+				shared::main::mainNavigationView->SelectedItem(
+					shared::main::mainNavigationView->MenuItems().GetAt(4));
+				shared::main::NavView_Navigate(L"console",
+				                               winrt::Microsoft::UI::Xaml::Media::Animation::EntranceNavigationTransitionInfo());
+			});
+		}
+
+		// Else no click action requested ("none")
 	}
 
 	namespace sounds
@@ -660,24 +762,24 @@ namespace k2app::interfacing
 		{
 		case -10:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/Exception");
-			//L"EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
+		//L"EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
 			break;
 		case -1:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ConnectionError");
-			//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
+		//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
 			break;
 		case 10:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ServerFailure");
-			//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
+		//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
 			break;
 		case 1:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/Success");
-			//L"Success! (Code 1)\nI_OK\nEverything's good!";
+		//L"Success! (Code 1)\nI_OK\nEverything's good!";
 			isServerDriverPresent = true; // Change to success
 			break;
 		default:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/APIFailure");
-			//L"COULD NOT CONNECT TO K2API (Code -11)\nE_K2API_FAILURE\nThis error shouldn't occur, actually. Something's wrong a big part.";
+		//L"COULD NOT CONNECT TO K2API (Code -11)\nE_K2API_FAILURE\nThis error shouldn't occur, actually. Something's wrong a big part.";
 			break;
 		}
 	}

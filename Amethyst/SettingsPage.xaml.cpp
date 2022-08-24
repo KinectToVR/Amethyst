@@ -56,8 +56,11 @@ namespace winrt::Amethyst::implementation
 		autoSpawnCheckbox = std::make_shared<Controls::CheckBox>(AutoSpawnCheckBox());
 		enableSoundsCheckbox = std::make_shared<Controls::CheckBox>(SoundsEnabledCheckBox());
 		autoStartCheckBox = std::make_shared<Controls::CheckBox>(AutoStartCheckBox());
+		checkOverlapsCheckBox = std::make_shared<Controls::CheckBox>(CheckOverlapsCheckBox());
 
 		flipDropDownGrid = std::make_shared<Controls::Grid>(FlipDropDownGrid());
+
+		pageMainScrollViewer = std::make_shared<Controls::ScrollViewer>(PageMainScrollViewer());
 
 		flipDropDownContainer = std::make_shared<Controls::StackPanel>(FlipDropDownContainer());
 		jointExpanderHostStackPanel = std::make_shared<Controls::StackPanel>(JointExpanderHostStackPanel());

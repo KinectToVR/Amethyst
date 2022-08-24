@@ -145,7 +145,8 @@ namespace k2app::shared
 			externalFlipCheckBox,
 			autoSpawnCheckbox,
 			enableSoundsCheckbox,
-			autoStartCheckBox;
+			autoStartCheckBox,
+			checkOverlapsCheckBox;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
 			externalFlipCheckBoxLabel,
@@ -154,6 +155,9 @@ namespace k2app::shared
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
 		flipDropDownGrid;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ScrollViewer>
+		pageMainScrollViewer;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch> flipToggle;
 
