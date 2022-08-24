@@ -693,23 +693,24 @@ namespace winrt::Amethyst::implementation
 				// -> Block exiting until we're done
 				e.Handled(true);
 
+				// Handle all the exit actions (if needed)
+				// Show the close tip (if not shown yet)
+				if (!k2app::interfacing::isExitHandled &&
+					!k2app::K2Settings.firstShutdownTipShown)
+				{
+					ShutdownTeachingTip().IsOpen(true);
+
+					k2app::K2Settings.firstShutdownTipShown = true;
+					k2app::K2Settings.saveSettings(); // Save settings
+
+					co_return;
+				}
+
 				if (updateOnClosed)
 					co_await ExecuteUpdate();
 
-				// Handle all the exit actions (if needed)
 				if (!k2app::interfacing::isExitHandled)
 				{
-					// Show the close tip (if not shown yet)
-					if (!k2app::K2Settings.firstShutdownTipShown)
-					{
-						ShutdownTeachingTip().IsOpen(true);
-
-						k2app::K2Settings.firstShutdownTipShown = true;
-						k2app::K2Settings.saveSettings(); // Save settings
-
-						co_return;
-					}
-
 					// Shut down the mica controller
 					if (nullptr != m_micaController)
 					{
