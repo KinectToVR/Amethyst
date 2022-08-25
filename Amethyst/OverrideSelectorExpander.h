@@ -80,11 +80,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 		void UpdateIsEnabled()
 		{
-			bool _isEnabled = false;
 			for (const auto& _row : _overrideSelectorRows)
 			{
-				if (_row.get()->Tracker()->data.isActive)_isEnabled = true;
-
 				_row.get()->TrackerPositionCombo().get()->IsEnabled(
 					_row.get()->Tracker()->data.isActive && _row.get()->Tracker()->isPositionOverridden);
 				_row.get()->TrackerOrientationCombo().get()->IsEnabled(
@@ -116,12 +113,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					_row.get()->TrackerPositionCombo().get()->SelectedIndex(-1);
 					_row.get()->TrackerOrientationCombo().get()->SelectedIndex(-1);
 				}
-			}
-
-			if (!_isEnabled)
-			{
-				_ptr_container_expander.get()->IsEnabled(true);
-				_ptr_container_expander.get()->IsExpanded(false);
 			}
 		}
 
