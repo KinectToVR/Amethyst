@@ -86,8 +86,10 @@ namespace winrt::Amethyst::implementation
 		Windows::Foundation::IAsyncAction AppThemeOptionBox_SelectionChanged(
 			const Windows::Foundation::IInspectable& sender,
 			const Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs& e);
-		void LanguageOptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
-		                                      const Windows::Foundation::IInspectable& e);
+		void OptionBox_DropDownOpened(const Windows::Foundation::IInspectable& sender,
+		                              const Windows::Foundation::IInspectable& e);
+		void OptionBox_DropDownClosed(const Windows::Foundation::IInspectable& sender,
+		                              const Windows::Foundation::IInspectable& e);
 	};
 }
 

@@ -109,7 +109,10 @@
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
                               Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
                               x:Name="LanguageOptionBox" SelectionChanged="LanguageOptionBox_SelectionChanged"
-                              DropDownOpened="LanguageOptionBox_DropDownOpened"
+
+                              DropDownOpened="OptionBox_DropDownOpened"
+                              DropDownClosed="OptionBox_DropDownClosed"
+
                               Grid.Column="2" Grid.Row="0" Margin="0,0,0,0">
                         <ComboBoxItem Content="INVALID" />
                     </ComboBox>
@@ -121,6 +124,10 @@
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
                               Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
                               x:Name="AppThemeOptionBox" SelectionChanged="AppThemeOptionBox_SelectionChanged"
+
+                              DropDownOpened="OptionBox_DropDownOpened"
+                              DropDownClosed="OptionBox_DropDownClosed"
+
                               Grid.Column="2" Grid.Row="1" Margin="0,0,0,0">
                         <ComboBoxItem Content="INVALID" />
                     </ComboBox>

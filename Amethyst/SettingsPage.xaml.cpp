@@ -1711,9 +1711,23 @@ Amethyst::implementation::SettingsPage::AppThemeOptionBox_SelectionChanged(
 }
 
 
-void Amethyst::implementation::SettingsPage::LanguageOptionBox_DropDownOpened(
+void Amethyst::implementation::SettingsPage::OptionBox_DropDownOpened(
 	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+}
+
+
+void winrt::Amethyst::implementation::SettingsPage::OptionBox_DropDownClosed(
+	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+{
+	// Don't react to pre-init signals
+	if (!k2app::shared::settings::settings_localInitFinished)return;
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 }
