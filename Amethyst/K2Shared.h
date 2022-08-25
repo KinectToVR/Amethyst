@@ -34,7 +34,8 @@ namespace k2app::shared
 			settingsItem,
 			devicesItem,
 			infoItem,
-			consoleItem;
+			consoleItem,
+			helpButton;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Window> thisAppWindow;
 		inline HWND thisAppWindowID{nullptr};
@@ -50,7 +51,11 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceContext>
 		thisResourceContext;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock> appTitleLabel;
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
+			appTitleLabel,
+			flyoutHeader,
+			flyoutFooter,
+			flyoutContent;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Grid>
 			interfaceBlockerGrid, navigationBlockerGrid;
@@ -58,6 +63,14 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::NavigationView> mainNavigationView;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Frame> mainContentFrame;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::FontIcon> updateIconDot;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Flyout> updateFlyout;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
+			installNowButton,
+			installLaterButton;
 
 		namespace navigation_items
 		{

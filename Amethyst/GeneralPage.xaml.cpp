@@ -961,8 +961,9 @@ void Amethyst::implementation::GeneralPage::OpenDocsButton_Click(
 
 		else
 			ShellExecuteW(nullptr, nullptr,
-				std::format(L"https://docs.k2vr.tech/{}/app/help/", k2app::interfacing::docsLanguageCode).c_str(),
-				nullptr, nullptr, SW_SHOW);
+			              std::format(L"https://docs.k2vr.tech/{}/app/help/",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
 	}
 
 	else if (_device_name == L"Xbox One Kinect")
@@ -975,8 +976,9 @@ void Amethyst::implementation::GeneralPage::OpenDocsButton_Click(
 
 		else
 			ShellExecuteW(nullptr, nullptr,
-				std::format(L"https://docs.k2vr.tech/{}/app/help/", k2app::interfacing::docsLanguageCode).c_str(),
-				nullptr, nullptr, SW_SHOW);
+			              std::format(L"https://docs.k2vr.tech/{}/app/help/",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
 	}
 
 	else if (_device_name == L"PSMove Service")
@@ -995,8 +997,9 @@ void Amethyst::implementation::GeneralPage::OpenDocsButton_Click(
 
 		else
 			ShellExecuteW(nullptr, nullptr,
-				std::format(L"https://docs.k2vr.tech/{}/app/help/", k2app::interfacing::docsLanguageCode).c_str(),
-				nullptr, nullptr, SW_SHOW);
+			              std::format(L"https://docs.k2vr.tech/{}/app/help/",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
 	}
 
 	else
@@ -1423,15 +1426,18 @@ void Amethyst::implementation::GeneralPage::sk_dot(
 	             s_scale_h = s_mat_height / s_mat_height_default;
 
 	// Move the ellipse to the appropriate point
-	auto thicc = Thickness();
+	ellipse.Margin({
+		// Left
+		joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply +
+		s_mat_width / 2. - (s_ellipse_wh + s_ellipse_stroke) / 2.,
 
-	thicc.Left = joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply +
-		s_mat_width / 2. - (s_ellipse_wh + s_ellipse_stroke) / 2.;
+		// Top
+		joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply +
+		s_mat_height / 3. - (s_ellipse_wh + s_ellipse_stroke) / 2.,
 
-	thicc.Top = joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply +
-		s_mat_height / 3. - (s_ellipse_wh + s_ellipse_stroke) / 2.;
-
-	ellipse.Margin(thicc);
+		// Not used
+		0, 0
+	});
 	ellipse.Visibility(Visibility::Visible);
 }
 

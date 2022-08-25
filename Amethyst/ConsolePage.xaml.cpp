@@ -96,3 +96,27 @@ void Amethyst::implementation::ConsolePage::DatePicker_SelectedDateChanged(
 		).Format(Windows::Foundation::DateTime(clock::now())))
 		WhaaatFlyout().ShowAt(sender);
 }
+
+
+void Amethyst::implementation::ConsolePage::UpdateButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+{
+	k2app::shared::main::flyoutHeader->Text(k2app::interfacing::LocalizedResourceWString(
+		L"SharedStrings", L"Updates/NewUpdateFound"));
+
+	k2app::shared::main::flyoutFooter->Text(L"Amethyst v{}.{}.{}.{}");
+	k2app::shared::main::flyoutContent->Text(L"Forced by the user");
+	
+	k2app::shared::main::flyoutContent->Margin({0,0,0,12});
+
+	k2app::shared::main::installLaterButton->Visibility(Visibility::Visible);
+	k2app::shared::main::installNowButton->Visibility(Visibility::Visible);
+
+	k2app::shared::main::updateIconDot->Opacity(1.0);
+
+	Controls::Primitives::FlyoutShowOptions options;
+	options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
+	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+
+	k2app::shared::main::updateFlyout->ShowAt(*k2app::shared::main::helpButton, options);
+}

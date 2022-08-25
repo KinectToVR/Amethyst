@@ -310,12 +310,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 					changelog_string.pop_back(); // Remove the last \n
 				FlyoutContent().Text(StringToWString(changelog_string));
 
-				auto thickness = Thickness();
-				thickness.Left = 0;
-				thickness.Top = 0;
-				thickness.Right = 0;
-				thickness.Bottom = 12;
-				FlyoutContent().Margin(thickness);
+				FlyoutContent().Margin({0, 0, 0, 12});
 
 				InstallLaterButton().Visibility(Visibility::Visible);
 				InstallNowButton().Visibility(Visibility::Visible);
@@ -330,12 +325,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				FlyoutContent().Text(k2app::interfacing::LocalizedResourceWString(
 					L"SharedStrings", L"Updates/Suggestions"));
 
-				auto thickness = Thickness();
-				thickness.Left = 0;
-				thickness.Top = 0;
-				thickness.Right = 0;
-				thickness.Bottom = 0;
-				FlyoutContent().Margin(thickness);
+				FlyoutContent().Margin({0, 0, 0, 0});
 
 				InstallLaterButton().Visibility(Visibility::Collapsed);
 				InstallNowButton().Visibility(Visibility::Collapsed);
@@ -472,15 +462,28 @@ namespace winrt::Amethyst::implementation
 		k2app::shared::main::mainNavigationView = std::make_shared<Controls::NavigationView>(NavView());
 
 		k2app::shared::main::appTitleLabel = std::make_shared<Controls::TextBlock>(AppTitleLabel());
+		k2app::shared::main::flyoutHeader = std::make_shared<Controls::TextBlock>(FlyoutHeader());
+		k2app::shared::main::flyoutFooter = std::make_shared<Controls::TextBlock>(FlyoutFooter());
+		k2app::shared::main::flyoutContent = std::make_shared<Controls::TextBlock>(FlyoutContent());
+
 		k2app::shared::main::interfaceBlockerGrid = std::make_shared<Controls::Grid>(InterfaceBlockerGrid());
 		k2app::shared::main::navigationBlockerGrid = std::make_shared<Controls::Grid>(NavigationBlockerGrid());
+
 		k2app::shared::main::mainContentFrame = std::make_shared<Controls::Frame>(ContentFrame());
+
+		k2app::shared::main::updateIconDot = std::make_shared<Controls::FontIcon>(UpdateIconDot());
+
+		k2app::shared::main::updateFlyout = std::make_shared<Controls::Flyout>(UpdateFlyout());
+
+		k2app::shared::main::installNowButton = std::make_shared<Controls::Button>(InstallNowButton());
+		k2app::shared::main::installLaterButton = std::make_shared<Controls::Button>(InstallLaterButton());
 
 		k2app::shared::main::generalItem = std::make_shared<Controls::NavigationViewItem>(GeneralItem());
 		k2app::shared::main::settingsItem = std::make_shared<Controls::NavigationViewItem>(SettingsItem());
 		k2app::shared::main::devicesItem = std::make_shared<Controls::NavigationViewItem>(DevicesItem());
 		k2app::shared::main::infoItem = std::make_shared<Controls::NavigationViewItem>(InfoItem());
 		k2app::shared::main::consoleItem = std::make_shared<Controls::NavigationViewItem>(ConsoleItem());
+		k2app::shared::main::helpButton = std::make_shared<Controls::NavigationViewItem>(HelpButton());
 
 		k2app::shared::main::navigation_items::navViewDevicesButtonIconCanvas = std::make_shared<Controls::Canvas>(
 			NavViewDevicesButtonIconCanvas());
