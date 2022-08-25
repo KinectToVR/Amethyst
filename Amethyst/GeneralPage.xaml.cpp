@@ -1317,6 +1317,29 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 				                                  L"GeneralPage",
 				                                  L"Buttons/Skeleton/Freeze")));
 
+	// Set up the co/re/disconnect button
+	if (!k2app::interfacing::K2AppTrackersSpawned) 
+	{
+		toggleTrackersButton.get()->Content(box_value(
+			k2app::interfacing::LocalizedResourceWString(
+				L"GeneralPage", L"Buttons/TrackersToggle/Connect")));
+
+		toggleTrackersButton.get()->IsChecked(false);
+	}
+	else
+	{
+		toggleTrackersButton.get()->IsChecked(k2app::interfacing::K2AppTrackersInitialized);
+		toggleTrackersButton.get()->Content(k2app::interfacing::K2AppTrackersInitialized
+			? box_value(
+				k2app::interfacing::LocalizedResourceWString(
+					L"GeneralPage",
+					L"Buttons/TrackersToggle/Reconnect"))
+			: box_value(
+				k2app::interfacing::LocalizedResourceWString(
+					L"GeneralPage",
+					L"Buttons/TrackersToggle/Disconnect")));
+	}
+	
 	freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
 }
 
