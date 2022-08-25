@@ -1961,7 +1961,7 @@ void Amethyst::implementation::MainWindow::HelpButton_Tapped(
 	// Okashi Page
 	else if (k2app::interfacing::currentAppState == L"okashi")
 	{
-		HelpFlyoutDocsButton().Text(L"？？？？？？？");
+		HelpFlyoutDocsButton().Text(L"\u2753\u2754\u2753\u2754\u2753\u2754");
 	}
 
 	// Show the help flyout
