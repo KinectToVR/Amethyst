@@ -2011,8 +2011,8 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 
 	// Play a sound
 	playAppSound(k2app::interfacing::isTrackingFrozen
-		             ? k2app::interfacing::sounds::AppSounds::ToggleOn
-		             : k2app::interfacing::sounds::AppSounds::ToggleOff);
+		             ? k2app::interfacing::sounds::AppSounds::ToggleOff
+		             : k2app::interfacing::sounds::AppSounds::ToggleOn);
 
 	// Optionally show the binding teaching tip
 	if (!k2app::K2Settings.teachingTipShown_Freeze &&

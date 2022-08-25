@@ -33,7 +33,7 @@ namespace k2app::main
 			isTrackingFrozen = !isTrackingFrozen;
 
 			// Play a Sound and Update UI
-			playAppSound(isTrackingFrozen ? sounds::AppSounds::ToggleOn : sounds::AppSounds::ToggleOff);
+			playAppSound(isTrackingFrozen ? sounds::AppSounds::ToggleOff : sounds::AppSounds::ToggleOn);
 
 			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
 			{
