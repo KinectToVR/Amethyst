@@ -58,47 +58,92 @@
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
                            x:Name="Credits_MainTeam_Title" Margin="0,17,0,0" />
 
-                <TextBlock FontWeight="SemiBold">
-                    <Run x:Name="Credits_MainTeam_Roles_Akaya" />
-                    <Hyperlink NavigateUri="https://github.com/KimihikoAkayasaki" UnderlineStyle="None">KimihikoAkayasaki</Hyperlink>
-                    <Run xml:space="preserve">&#x09;"Akaya"</Run>
-                </TextBlock>
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <TextBlock FontWeight="SemiBold">
-                    <Run x:Name="Credits_MainTeam_Roles_Ella" />
-                    <Hyperlink NavigateUri="https://github.com/TripingPC" UnderlineStyle="None">AuroraNemoia</Hyperlink>
-                    <Run xml:space="preserve">&#x09;"Ella"</Run>
-                </TextBlock>
+                    <StackPanel HorizontalAlignment="Stretch" 
+                                Grid.Column="0" Orientation="Vertical">
 
-                <TextBlock FontWeight="SemiBold">
-                    <Run x:Name="Credits_MainTeam_Roles_Hekky" />
-                    <Hyperlink NavigateUri="https://github.com/hyblocker" UnderlineStyle="None">hyblocker</Hyperlink>
-                    <Run xml:space="preserve">&#x09;&#x09;"Hekky"</Run>
-                </TextBlock>
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="Credits_MainTeam_Roles_Akaya" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/KimihikoAkayasaki" UnderlineStyle="None">KimihikoAkayasaki</Hyperlink>
+                        </TextBlock>
 
-                <TextBlock FontWeight="SemiBold">
-                    <Run x:Name="Credits_MainTeam_Roles_Himbeer" />
-                    <Hyperlink NavigateUri="https://github.com/HimbeersaftLP" UnderlineStyle="None">himbeersaft</Hyperlink>
-                    <Run xml:space="preserve">&#x09;"Himbeer"</Run>
-                </TextBlock>
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="Credits_MainTeam_Roles_Ella" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/TripingPC" UnderlineStyle="None">AuroraNemoia</Hyperlink>
+                        </TextBlock>
 
-                <TextBlock FontWeight="SemiBold">
-                    <Run x:Name="Credits_MainTeam_Roles_Artemis" />
-                    <Hyperlink NavigateUri="https://github.com/ArtemisMax" UnderlineStyle="None">ArtemisMax</Hyperlink>
-                    <Run xml:space="preserve">&#x09;&#x09;&#x09;"Artemis"</Run>
-                </TextBlock>
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="Credits_MainTeam_Roles_Hekky" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/hyblocker" UnderlineStyle="None">hyblocker</Hyperlink>
+                        </TextBlock>
 
-                <TextBlock FontWeight="SemiBold">
-                    <Run x:Name="Credits_MainTeam_Roles_Ollie" />
-                    <Hyperlink NavigateUri="https://github.com/i386sh" UnderlineStyle="None">i386sh</Hyperlink>
-                    <Run xml:space="preserve">/ notzer0&#x09;&#x09;&#x09;"Ollie"</Run>
-                </TextBlock>
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="Credits_MainTeam_Roles_Himbeer" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/HimbeersaftLP" UnderlineStyle="None">himbeersaft</Hyperlink>
+                        </TextBlock>
 
-                <TextBlock FontWeight="SemiBold">
-                    <Run x:Name="Credits_MainTeam_Roles_Aria" />
-                    <Hyperlink NavigateUri="https://github.com/conatsera" UnderlineStyle="None">conatsera</Hyperlink>
-                    <Run xml:space="preserve">&#x09;&#x09;"Ene"</Run>
-                </TextBlock>
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="Credits_MainTeam_Roles_Artemis" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/ArtemisMax" UnderlineStyle="None">ArtemisMax</Hyperlink>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="Credits_MainTeam_Roles_Ollie" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/i386sh" UnderlineStyle="None">i386sh</Hyperlink>
+                            <Run xml:space="preserve">/ notzer0</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="Credits_MainTeam_Roles_Aria" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/conatsera" UnderlineStyle="None">conatsera</Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <StackPanel HorizontalAlignment="Stretch" 
+                                Grid.Column="2" Orientation="Vertical">
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Akaya"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Ella"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Hekky"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Himbeer"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Artemis"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Ollie"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Ene"</Run>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
 
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
                            x:Name="Credits_Translators_Title" Margin="0,17,0,0" />
