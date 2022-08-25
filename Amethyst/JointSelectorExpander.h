@@ -249,6 +249,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			TextBlock _tracker, _tracked_joint;
 
+			_tracker.Margin({0, 0, -5, 0});
+
 			_tracker.HorizontalAlignment(HorizontalAlignment::Center);
 			_tracker.VerticalAlignment(VerticalAlignment::Center);
 

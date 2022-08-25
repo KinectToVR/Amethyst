@@ -338,6 +338,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracker.HorizontalAlignment(HorizontalAlignment::Center);
 			_tracker.VerticalAlignment(VerticalAlignment::Center);
 
+			_tracker.Margin({-20, 0, 0, 0});
+
 			_tracker.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 			_tracker.Text(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Titles/Set/Tracker"));

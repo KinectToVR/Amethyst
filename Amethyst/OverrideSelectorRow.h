@@ -307,7 +307,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_selector.Flyout(_selector_flyout);
 
 			Grid _title_container;
-			_title_container.Width(130);
 			_title_container.HorizontalAlignment(HorizontalAlignment::Center);
 			_title_container.VerticalAlignment(VerticalAlignment::Center);
 

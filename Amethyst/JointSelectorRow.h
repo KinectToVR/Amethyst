@@ -128,7 +128,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Create the title text
 			TextBlock _title;
-			_title.Width(130);
 			_title.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 
 			_title.Text(eraseSubStr(k2app::interfacing::LocalizedResourceWString(
@@ -201,10 +200,10 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_container.Children().Append(_tracker_combo);
 
 			_container.SetColumn(_title, 0);
-			_container.SetRow(_title, 2);
+			_container.SetRow(_title, 0);
 
 			_container.SetColumn(_tracker_combo, 2);
-			_container.SetRow(_tracker_combo, 2);
+			_container.SetRow(_tracker_combo, 0);
 		}
 	};
 }

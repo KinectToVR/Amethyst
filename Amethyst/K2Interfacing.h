@@ -16,6 +16,14 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		_grid.ColumnDefinitions().Append(_col);
 	}
 
+	inline void AppendGridAutoColumn(Grid& _grid)
+	{
+		ColumnDefinition _col;
+		_col.Width(GridLengthHelper::Auto());
+
+		_grid.ColumnDefinitions().Append(_col);
+	}
+
 	inline void AppendGridStarsColumn(Grid& _grid, uint32_t stars)
 	{
 		ColumnDefinition _col;
@@ -29,6 +37,16 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 	{
 		ColumnDefinition _col;
 		_col.Width(GridLengthHelper::FromValueAndType(stars, GridUnitType::Star));
+		_col.MinWidth(pixels);
+
+		_grid.ColumnDefinitions().Append(_col);
+	}
+
+	inline void AppendGridAutoColumnMinWidthPixels(
+		Grid& _grid, uint32_t pixels)
+	{
+		ColumnDefinition _col;
+		_col.Width(GridLengthHelper::Auto());
 		_col.MinWidth(pixels);
 
 		_grid.ColumnDefinitions().Append(_col);
