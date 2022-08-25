@@ -1333,11 +1333,11 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 			? box_value(
 				k2app::interfacing::LocalizedResourceWString(
 					L"GeneralPage",
-					L"Buttons/TrackersToggle/Reconnect"))
+					L"Buttons/TrackersToggle/Disconnect"))
 			: box_value(
 				k2app::interfacing::LocalizedResourceWString(
 					L"GeneralPage",
-					L"Buttons/TrackersToggle/Disconnect")));
+					L"Buttons/TrackersToggle/Reconnect")));
 	}
 	
 	freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
