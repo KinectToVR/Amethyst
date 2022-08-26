@@ -72,6 +72,9 @@ namespace k2app::shared
 			installNowButton,
 			installLaterButton;
 
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Media::SolidColorBrush>
+			attentionBrush, neutralBrush;
+
 		namespace navigation_items
 		{
 			/*inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Canvas>

@@ -94,9 +94,9 @@
                         <RowDefinition Height="80" />
                     </Grid.RowDefinitions>
 
-                    <FontIcon Foreground="White" Margin="0,3,0,0"
-                              Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" 
-                              VerticalAlignment="Center" FontSize="16" Glyph="&#xF2B7;">
+                    <FontIcon Margin="0,3,0,0" Grid.Column="0" Grid.Row="0" 
+                              HorizontalAlignment="Left" VerticalAlignment="Center" 
+                              FontSize="16" Glyph="&#xF2B7;">
                         <FontIcon.TranslationTransition>
                             <Vector3Transition />
                         </FontIcon.TranslationTransition>

@@ -1372,8 +1372,7 @@ void Amethyst::implementation::GeneralPage::sk_line(
 
 	if (states[from] != ktvr::State_Tracked ||
 		states[to] != ktvr::State_Tracked)
-		line.Stroke(Application::Current().Resources().TryLookup(
-			box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+		line.Stroke(*k2app::shared::main::attentionBrush);
 	else
 		line.Stroke(Media::SolidColorBrush(Windows::UI::Colors::White()));
 

@@ -34,10 +34,6 @@ event_token notification_token;
 std::string K2RemoteVersion =
 	k2app::interfacing::K2InternalVersion;
 
-// Dark, Light
-std::pair<std::shared_ptr<Media::SolidColorBrush>, std::shared_ptr<Media::SolidColorBrush>>
-	attentionBrush, neutralBrush;
-
 // Toast struct (json)
 struct toast
 {
@@ -81,8 +77,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				UpdateIconGrid().Translation({0, 0, 0});
 				UpdateIconText().Opacity(0.0);
 
-				UpdateIcon().Foreground(Application::Current().Resources().TryLookup(
-					box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+				UpdateIcon().Foreground(*k2app::shared::main::attentionBrush);
 			}
 
 			// Here check for updates (via external bool)
@@ -289,8 +284,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 
 			// Mark the update footer as inactive
 			{
-				UpdateIcon().Foreground(Application::Current().Resources().TryLookup(
-					box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				UpdateIcon().Foreground(*k2app::shared::main::neutralBrush);
 
 				UpdateIconGrid().Translation({0, -8, 0});
 				UpdateIconText().Opacity(1.0);
@@ -1423,6 +1417,30 @@ namespace winrt::Amethyst::implementation
 void Amethyst::implementation::MainWindow::NavView_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	k2app::interfacing::actualTheme = NavView().ActualTheme();
+
+	k2app::shared::main::attentionBrush =
+		k2app::interfacing::actualTheme == ElementTheme::Dark
+		? std::make_shared<Media::SolidColorBrush>(
+			Application::Current().Resources().TryLookup(
+				box_value(L"AttentionBrush_Dark"
+				)).as<Media::SolidColorBrush>())
+		: std::make_shared<Media::SolidColorBrush>(
+			Application::Current().Resources().TryLookup(
+				box_value(L"AttentionBrush_Light"
+				)).as<Media::SolidColorBrush>());
+
+	k2app::shared::main::neutralBrush =
+		k2app::interfacing::actualTheme == ElementTheme::Dark
+		? std::make_shared<Media::SolidColorBrush>(
+			Application::Current().Resources().TryLookup(
+				box_value(L"NeutralBrush_Dark"
+				)).as<Media::SolidColorBrush>())
+		: std::make_shared<Media::SolidColorBrush>(
+			Application::Current().Resources().TryLookup(
+				box_value(L"NeutralBrush_Light"
+				)).as<Media::SolidColorBrush>());
+
 	// NavView doesn't load any page by default, so load home page.
 	NavView().SelectedItem(NavView().MenuItems().GetAt(0));
 
@@ -1490,9 +1508,7 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 				navigation_items::navViewGeneralButtonIcon->Translation({0, -8, 0});
 				navigation_items::navViewGeneralButtonLabel->Opacity(1.0);
 
-				navigation_items::navViewGeneralButtonIcon->Foreground(
-					Application::Current().Resources().TryLookup(
-						box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				navigation_items::navViewGeneralButtonIcon->Foreground(*neutralBrush);
 				navigation_items::navViewGeneralButtonIcon->Glyph(L"\uE80F");
 			}
 			else if (prevNavPageType.Name == L"Amethyst.SettingsPage")
@@ -1500,19 +1516,15 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 				navigation_items::navViewSettingsButtonIcon->Translation({0, -8, 0});
 				navigation_items::navViewSettingsButtonLabel->Opacity(1.0);
 
-				navigation_items::navViewSettingsButtonIcon->Foreground(
-					Application::Current().Resources().TryLookup(
-						box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				navigation_items::navViewSettingsButtonIcon->Foreground(*neutralBrush);
 				navigation_items::navViewSettingsButtonIcon->Glyph(L"\uE713");
 			}
 			else if (prevNavPageType.Name == L"Amethyst.DevicesPage")
 			{
-				navigation_items::navViewDevicesButtonIcon->Translation({ 0, -8, 0 });
+				navigation_items::navViewDevicesButtonIcon->Translation({0, -8, 0});
 				navigation_items::navViewDevicesButtonLabel->Opacity(1.0);
 
-				navigation_items::navViewDevicesButtonIcon->Foreground(
-					Application::Current().Resources().TryLookup(
-						box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				navigation_items::navViewDevicesButtonIcon->Foreground(*neutralBrush);
 
 				navigation_items::navViewDevicesButtonIcon->Glyph(L"\uF158");
 				navigation_items::navViewDevicesButtonIcon->FontSize(20);
@@ -1522,9 +1534,7 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 				navigation_items::navViewInfoButtonIcon->Translation({0, -8, 0});
 				navigation_items::navViewInfoButtonLabel->Opacity(1.0);
 
-				navigation_items::navViewInfoButtonIcon->Foreground(
-					Application::Current().Resources().TryLookup(
-						box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				navigation_items::navViewInfoButtonIcon->Foreground(*neutralBrush);
 				navigation_items::navViewInfoButtonIcon->Glyph(L"\uE946");
 			}
 			else if (prevNavPageType.Name == L"Amethyst.ConsolePage")
@@ -1532,9 +1542,7 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 				navigation_items::navViewOkashiButtonIcon->Translation({0, -8, 0});
 				navigation_items::navViewOkashiButtonLabel->Opacity(1.0);
 
-				navigation_items::navViewOkashiButtonIcon->Foreground(
-					Application::Current().Resources().TryLookup(
-						box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+				navigation_items::navViewOkashiButtonIcon->Foreground(*neutralBrush);
 				navigation_items::navViewOkashiButtonIcon->Glyph(L"\uEB51");
 			}
 		}
@@ -1545,9 +1553,7 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 			if (pageTypeName.Name == L"Amethyst.GeneralPage")
 			{
 				navigation_items::navViewGeneralButtonIcon->Glyph(L"\uEA8A");
-				navigation_items::navViewGeneralButtonIcon->Foreground(
-					Application::Current().Resources().TryLookup(
-						box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+				navigation_items::navViewGeneralButtonIcon->Foreground(*attentionBrush);
 
 				navigation_items::navViewGeneralButtonLabel->Opacity(0.0);
 				navigation_items::navViewGeneralButtonIcon->Translation({0, 0, 0});
@@ -1555,9 +1561,7 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 			else if (pageTypeName.Name == L"Amethyst.SettingsPage")
 			{
 				navigation_items::navViewSettingsButtonIcon->Glyph(L"\uF8B0");
-				navigation_items::navViewSettingsButtonIcon->Foreground(
-					Application::Current().Resources().TryLookup(
-						box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+				navigation_items::navViewSettingsButtonIcon->Foreground(*attentionBrush);
 
 				navigation_items::navViewSettingsButtonLabel->Opacity(0.0);
 				navigation_items::navViewSettingsButtonIcon->Translation({0, 0, 0});
@@ -1565,11 +1569,9 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 			else if (pageTypeName.Name == L"Amethyst.DevicesPage")
 			{
 				navigation_items::navViewDevicesButtonLabel->Opacity(0.0);
-				navigation_items::navViewDevicesButtonIcon->Translation({ 0, 0, 0 });
+				navigation_items::navViewDevicesButtonIcon->Translation({0, 0, 0});
 
-				navigation_items::navViewDevicesButtonIcon->Foreground(
-					Application::Current().Resources().TryLookup(
-						box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+				navigation_items::navViewDevicesButtonIcon->Foreground(*attentionBrush);
 
 				navigation_items::navViewDevicesButtonIcon->Glyph(L"\uEBD2");
 				navigation_items::navViewDevicesButtonIcon->FontSize(23);
@@ -1577,9 +1579,7 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 			else if (pageTypeName.Name == L"Amethyst.InfoPage")
 			{
 				navigation_items::navViewInfoButtonIcon->Glyph(L"\uF167");
-				navigation_items::navViewInfoButtonIcon->Foreground(
-					Application::Current().Resources().TryLookup(
-						box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+				navigation_items::navViewInfoButtonIcon->Foreground(*attentionBrush);
 
 				navigation_items::navViewInfoButtonLabel->Opacity(0.0);
 				navigation_items::navViewInfoButtonIcon->Translation({0, 0, 0});
@@ -1587,9 +1587,7 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 			else if (pageTypeName.Name == L"Amethyst.ConsolePage")
 			{
 				navigation_items::navViewOkashiButtonIcon->Glyph(L"\uEB52");
-				navigation_items::navViewOkashiButtonIcon->Foreground(
-					Application::Current().Resources().TryLookup(
-						box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+				navigation_items::navViewOkashiButtonIcon->Foreground(*attentionBrush);
 
 				navigation_items::navViewOkashiButtonLabel->Opacity(0.0);
 				navigation_items::navViewOkashiButtonIcon->Translation({0, 0, 0});
@@ -2190,38 +2188,6 @@ void Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 	// Execute the handler
 	XMainGrid_Loaded_Handler();
 
-	// Overwrite the attention (accent) color
-	if (Application::Current().Resources().HasKey(
-		box_value(L"SystemFillColorAttentionBrush")))
-		Application::Current().Resources().TryRemove(
-			box_value(L"SystemFillColorAttentionBrush"));
-
-	attentionBrush = std::make_pair(
-		std::make_shared<Media::SolidColorBrush>(
-			Application::Current().Resources().TryLookup(
-				box_value(L"AttentionBrush_Dark"
-				)).as<Media::SolidColorBrush>()),
-		std::make_shared<Media::SolidColorBrush>(
-			Application::Current().Resources().TryLookup(
-				box_value(L"AttentionBrush_Light"
-				)).as<Media::SolidColorBrush>()));
-
-	// Overwrite the neutral (dim) color
-	if (Application::Current().Resources().HasKey(
-		box_value(L"SystemFillColorNeutralBrush")))
-		Application::Current().Resources().TryRemove(
-			box_value(L"SystemFillColorNeutralBrush"));
-
-	neutralBrush = std::make_pair(
-		std::make_shared<Media::SolidColorBrush>(
-			Application::Current().Resources().TryLookup(
-				box_value(L"NeutralBrush_Dark"
-				)).as<Media::SolidColorBrush>()),
-		std::make_shared<Media::SolidColorBrush>(
-			Application::Current().Resources().TryLookup(
-				box_value(L"NeutralBrush_Light"
-				)).as<Media::SolidColorBrush>()));
-
 	// Register a theme watchdog
 	NavView().XamlRoot()
 	         .Content().as<Controls::Grid>()
@@ -2229,31 +2195,27 @@ void Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 	         {
 		         k2app::interfacing::actualTheme = NavView().ActualTheme();
 
-		         // Overwrite the attention (accent) color
-		         if (Application::Current().Resources().HasKey(
-			         box_value(L"SystemFillColorAttentionBrush")))
-			         Application::Current().Resources().TryRemove(
-				         box_value(L"SystemFillColorAttentionBrush"));
+				 k2app::shared::main::attentionBrush =
+			         k2app::interfacing::actualTheme == ElementTheme::Dark
+				         ? std::make_shared<Media::SolidColorBrush>(
+					         Application::Current().Resources().TryLookup(
+						         box_value(L"AttentionBrush_Dark"
+						         )).as<Media::SolidColorBrush>())
+				         : std::make_shared<Media::SolidColorBrush>(
+					         Application::Current().Resources().TryLookup(
+						         box_value(L"AttentionBrush_Light"
+						         )).as<Media::SolidColorBrush>());
 
-		         Application::Current().Resources().Insert(
-			         box_value(L"SystemFillColorAttentionBrush"),
-			         box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
-				                   ? *attentionBrush.first
-				                   : *attentionBrush.second)
-		         );
-
-		         // Overwrite the neutral (dim) color
-		         if (Application::Current().Resources().HasKey(
-			         box_value(L"SystemFillColorNeutralBrush")))
-			         Application::Current().Resources().TryRemove(
-				         box_value(L"SystemFillColorNeutralBrush"));
-
-		         Application::Current().Resources().Insert(
-			         box_value(L"SystemFillColorNeutralBrush"),
-			         box_value(k2app::interfacing::actualTheme == ElementTheme::Dark
-				                   ? *neutralBrush.first
-				                   : *neutralBrush.second)
-		         );
+				 k2app::shared::main::neutralBrush =
+			         k2app::interfacing::actualTheme == ElementTheme::Dark
+				         ? std::make_shared<Media::SolidColorBrush>(
+					         Application::Current().Resources().TryLookup(
+						         box_value(L"NeutralBrush_Dark"
+						         )).as<Media::SolidColorBrush>())
+				         : std::make_shared<Media::SolidColorBrush>(
+					         Application::Current().Resources().TryLookup(
+						         box_value(L"NeutralBrush_Light"
+						         )).as<Media::SolidColorBrush>());
 
 		         // Overwrite the titlebar (decorations) color
 		         if (Application::Current().Resources().HasKey(
@@ -2334,9 +2296,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 	if (interfacing::currentPageClass == L"Amethyst.GeneralPage")
 	{
 		navigation_items::navViewGeneralButtonIcon->Glyph(L"\uEA8A");
-		navigation_items::navViewGeneralButtonIcon->Foreground(
-			Application::Current().Resources().TryLookup(
-				box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewGeneralButtonIcon->Foreground(*attentionBrush);
 
 		navigation_items::navViewGeneralButtonLabel->Opacity(0.0);
 		navigation_items::navViewGeneralButtonIcon->Translation({0, 0, 0});
@@ -2346,18 +2306,14 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 		navigation_items::navViewGeneralButtonIcon->Translation({0, -8, 0});
 		navigation_items::navViewGeneralButtonLabel->Opacity(1.0);
 
-		navigation_items::navViewGeneralButtonIcon->Foreground(
-			Application::Current().Resources().TryLookup(
-				box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewGeneralButtonIcon->Foreground(*neutralBrush);
 		navigation_items::navViewGeneralButtonIcon->Glyph(L"\uE80F");
 	}
 
 	if (interfacing::currentPageClass == L"Amethyst.SettingsPage")
 	{
 		navigation_items::navViewSettingsButtonIcon->Glyph(L"\uF8B0");
-		navigation_items::navViewSettingsButtonIcon->Foreground(
-			Application::Current().Resources().TryLookup(
-				box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewSettingsButtonIcon->Foreground(*attentionBrush);
 
 		navigation_items::navViewSettingsButtonLabel->Opacity(0.0);
 		navigation_items::navViewSettingsButtonIcon->Translation({0, 0, 0});
@@ -2367,32 +2323,26 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 		navigation_items::navViewSettingsButtonIcon->Translation({0, -8, 0});
 		navigation_items::navViewSettingsButtonLabel->Opacity(1.0);
 
-		navigation_items::navViewSettingsButtonIcon->Foreground(
-			Application::Current().Resources().TryLookup(
-				box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewSettingsButtonIcon->Foreground(*neutralBrush);
 		navigation_items::navViewSettingsButtonIcon->Glyph(L"\uE713");
 	}
 
 	if (interfacing::currentPageClass == L"Amethyst.DevicesPage")
 	{
 		navigation_items::navViewDevicesButtonLabel->Opacity(0.0);
-		navigation_items::navViewDevicesButtonIcon->Translation({ 0, 0, 0 });
+		navigation_items::navViewDevicesButtonIcon->Translation({0, 0, 0});
 
-		navigation_items::navViewDevicesButtonIcon->Foreground(
-			Application::Current().Resources().TryLookup(
-				box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewDevicesButtonIcon->Foreground(*attentionBrush);
 
 		navigation_items::navViewDevicesButtonIcon->Glyph(L"\uEBD2");
 		navigation_items::navViewDevicesButtonIcon->FontSize(23);
 	}
 	else
 	{
-		navigation_items::navViewDevicesButtonIcon->Translation({ 0, -8, 0 });
+		navigation_items::navViewDevicesButtonIcon->Translation({0, -8, 0});
 		navigation_items::navViewDevicesButtonLabel->Opacity(1.0);
 
-		navigation_items::navViewDevicesButtonIcon->Foreground(
-			Application::Current().Resources().TryLookup(
-				box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewDevicesButtonIcon->Foreground(*neutralBrush);
 
 		navigation_items::navViewDevicesButtonIcon->Glyph(L"\uF158");
 		navigation_items::navViewDevicesButtonIcon->FontSize(20);
@@ -2401,9 +2351,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 	if (interfacing::currentPageClass == L"Amethyst.InfoPage")
 	{
 		navigation_items::navViewInfoButtonIcon->Glyph(L"\uF167");
-		navigation_items::navViewInfoButtonIcon->Foreground(
-			Application::Current().Resources().TryLookup(
-				box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewInfoButtonIcon->Foreground(*attentionBrush);
 
 		navigation_items::navViewInfoButtonLabel->Opacity(0.0);
 		navigation_items::navViewInfoButtonIcon->Translation({0, 0, 0});
@@ -2413,18 +2361,14 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 		navigation_items::navViewInfoButtonIcon->Translation({0, -8, 0});
 		navigation_items::navViewInfoButtonLabel->Opacity(1.0);
 
-		navigation_items::navViewInfoButtonIcon->Foreground(
-			Application::Current().Resources().TryLookup(
-				box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewInfoButtonIcon->Foreground(*neutralBrush);
 		navigation_items::navViewInfoButtonIcon->Glyph(L"\uE946");
 	}
 
 	if (interfacing::currentPageClass == L"Amethyst.ConsolePage")
 	{
 		navigation_items::navViewOkashiButtonIcon->Glyph(L"\uEB52");
-		navigation_items::navViewOkashiButtonIcon->Foreground(
-			Application::Current().Resources().TryLookup(
-				box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewOkashiButtonIcon->Foreground(*attentionBrush);
 
 		navigation_items::navViewOkashiButtonLabel->Opacity(0.0);
 		navigation_items::navViewOkashiButtonIcon->Translation({0, 0, 0});
@@ -2434,17 +2378,14 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 		navigation_items::navViewOkashiButtonIcon->Translation({0, -8, 0});
 		navigation_items::navViewOkashiButtonLabel->Opacity(1.0);
 
-		navigation_items::navViewOkashiButtonIcon->Foreground(
-			Application::Current().Resources().TryLookup(
-				box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+		navigation_items::navViewOkashiButtonIcon->Foreground(*neutralBrush);
 		navigation_items::navViewOkashiButtonIcon->Glyph(L"\uEB51");
 	}
 
-	UpdateIcon().Foreground(Application::Current().Resources().TryLookup(
-		box_value(checkingUpdatesNow
-			          ? L"SystemFillColorAttentionBrush"
-			          : L"SystemFillColorNeutralBrush"
-		)).as<Media::SolidColorBrush>());
+	UpdateIcon().Foreground(
+		checkingUpdatesNow
+			? *attentionBrush
+			: *neutralBrush);
 
 	const ElementTheme oppositeTheme =
 		interfacing::actualTheme == ElementTheme::Dark
