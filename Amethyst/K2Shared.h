@@ -74,16 +74,17 @@ namespace k2app::shared
 
 		namespace navigation_items
 		{
-			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Canvas>
-			navViewDevicesButtonIconCanvas;
+			/*inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Canvas>
+			navViewDevicesButtonIconCanvas;*/
 
-			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Shapes::Path>
+			/*inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Shapes::Path>
 				navViewDevicesButtonIcon_Empty,
-				navViewDevicesButtonIcon_Solid;
+				navViewDevicesButtonIcon_Solid;*/
 
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::FontIcon>
 				navViewGeneralButtonIcon,
 				navViewSettingsButtonIcon,
+				navViewDevicesButtonIcon,
 				navViewInfoButtonIcon,
 				navViewOkashiButtonIcon;
 

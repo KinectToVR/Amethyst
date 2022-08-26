@@ -485,18 +485,20 @@ namespace winrt::Amethyst::implementation
 		k2app::shared::main::consoleItem = std::make_shared<Controls::NavigationViewItem>(ConsoleItem());
 		k2app::shared::main::helpButton = std::make_shared<Controls::NavigationViewItem>(HelpButton());
 
-		k2app::shared::main::navigation_items::navViewDevicesButtonIconCanvas = std::make_shared<Controls::Canvas>(
-			NavViewDevicesButtonIconCanvas());
+		/*k2app::shared::main::navigation_items::navViewDevicesButtonIconCanvas =
+		    std::make_shared<Controls::Canvas>(NavViewDevicesButtonIconCanvas());
 
 		k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Empty =
 			std::make_shared<Shapes::Path>(NavViewDevicesButtonIcon_Empty());
 		k2app::shared::main::navigation_items::navViewDevicesButtonIcon_Solid =
-			std::make_shared<Shapes::Path>(NavViewDevicesButtonIcon_Solid());
+			std::make_shared<Shapes::Path>(NavViewDevicesButtonIcon_Solid());*/
 
 		k2app::shared::main::navigation_items::navViewGeneralButtonIcon = std::make_shared<Controls::FontIcon>(
 			NavViewGeneralButtonIcon());
 		k2app::shared::main::navigation_items::navViewSettingsButtonIcon = std::make_shared<Controls::FontIcon>(
 			NavViewSettingsButtonIcon());
+		k2app::shared::main::navigation_items::navViewDevicesButtonIcon = std::make_shared<Controls::FontIcon>(
+			NavViewDevicesButtonIcon());
 		k2app::shared::main::navigation_items::navViewInfoButtonIcon = std::make_shared<Controls::FontIcon>(
 			NavViewInfoButtonIcon());
 		k2app::shared::main::navigation_items::navViewOkashiButtonIcon = std::make_shared<Controls::FontIcon>(
@@ -1505,12 +1507,15 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 			}
 			else if (prevNavPageType.Name == L"Amethyst.DevicesPage")
 			{
-				navigation_items::navViewDevicesButtonIconCanvas->Translation({0, -8, 0});
+				navigation_items::navViewDevicesButtonIcon->Translation({ 0, -8, 0 });
 				navigation_items::navViewDevicesButtonLabel->Opacity(1.0);
 
-				navigation_items::navViewDevicesButtonIcon_Empty->Visibility(Visibility::Visible);
-				navigation_items::navViewDevicesButtonIcon_Solid->
-					Visibility(Visibility::Collapsed);
+				navigation_items::navViewDevicesButtonIcon->Foreground(
+					Application::Current().Resources().TryLookup(
+						box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+
+				navigation_items::navViewDevicesButtonIcon->Glyph(L"\uF158");
+				navigation_items::navViewDevicesButtonIcon->FontSize(20);
 			}
 			else if (prevNavPageType.Name == L"Amethyst.InfoPage")
 			{
@@ -1559,12 +1564,15 @@ void k2app::shared::main::NavView_Navigate(std::wstring navItemTag,
 			}
 			else if (pageTypeName.Name == L"Amethyst.DevicesPage")
 			{
-				navigation_items::navViewDevicesButtonIcon_Solid->Visibility(Visibility::Visible);
-				navigation_items::navViewDevicesButtonIcon_Empty->
-					Visibility(Visibility::Collapsed);
-
 				navigation_items::navViewDevicesButtonLabel->Opacity(0.0);
-				navigation_items::navViewDevicesButtonIconCanvas->Translation({0, 0, 0});
+				navigation_items::navViewDevicesButtonIcon->Translation({ 0, 0, 0 });
+
+				navigation_items::navViewDevicesButtonIcon->Foreground(
+					Application::Current().Resources().TryLookup(
+						box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+				navigation_items::navViewDevicesButtonIcon->Glyph(L"\uEBD2");
+				navigation_items::navViewDevicesButtonIcon->FontSize(23);
 			}
 			else if (pageTypeName.Name == L"Amethyst.InfoPage")
 			{
@@ -2367,21 +2375,27 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 
 	if (interfacing::currentPageClass == L"Amethyst.DevicesPage")
 	{
-		navigation_items::navViewDevicesButtonIcon_Solid->Visibility(Visibility::Visible);
-		navigation_items::navViewDevicesButtonIcon_Empty->
-			Visibility(Visibility::Collapsed);
-
 		navigation_items::navViewDevicesButtonLabel->Opacity(0.0);
-		navigation_items::navViewDevicesButtonIconCanvas->Translation({0, 0, 0});
+		navigation_items::navViewDevicesButtonIcon->Translation({ 0, 0, 0 });
+
+		navigation_items::navViewDevicesButtonIcon->Foreground(
+			Application::Current().Resources().TryLookup(
+				box_value(L"SystemFillColorAttentionBrush")).as<Media::SolidColorBrush>());
+
+		navigation_items::navViewDevicesButtonIcon->Glyph(L"\uEBD2");
+		navigation_items::navViewDevicesButtonIcon->FontSize(23);
 	}
 	else
 	{
-		navigation_items::navViewDevicesButtonIconCanvas->Translation({0, -8, 0});
+		navigation_items::navViewDevicesButtonIcon->Translation({ 0, -8, 0 });
 		navigation_items::navViewDevicesButtonLabel->Opacity(1.0);
 
-		navigation_items::navViewDevicesButtonIcon_Empty->Visibility(Visibility::Visible);
-		navigation_items::navViewDevicesButtonIcon_Solid->
-			Visibility(Visibility::Collapsed);
+		navigation_items::navViewDevicesButtonIcon->Foreground(
+			Application::Current().Resources().TryLookup(
+				box_value(L"SystemFillColorNeutralBrush")).as<Media::SolidColorBrush>());
+
+		navigation_items::navViewDevicesButtonIcon->Glyph(L"\uF158");
+		navigation_items::navViewDevicesButtonIcon->FontSize(20);
 	}
 
 	if (interfacing::currentPageClass == L"Amethyst.InfoPage")
@@ -2447,8 +2461,6 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 	HelpButton().RequestedTheme(oppositeTheme);
 	NavViewGeneralButtonLabel().RequestedTheme(oppositeTheme);
 	NavViewSettingsButtonLabel().RequestedTheme(oppositeTheme);
-	NavViewDevicesButtonIcon_Empty().RequestedTheme(oppositeTheme);
-	NavViewDevicesButtonIcon_Solid().RequestedTheme(oppositeTheme);
 	NavViewDevicesButtonLabel().RequestedTheme(oppositeTheme);
 	NavViewInfoButtonLabel().RequestedTheme(oppositeTheme);
 	NavViewOkashiButtonLabel().RequestedTheme(oppositeTheme);
@@ -2465,8 +2477,6 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 	HelpButton().RequestedTheme(interfacing::actualTheme);
 	NavViewGeneralButtonLabel().RequestedTheme(interfacing::actualTheme);
 	NavViewSettingsButtonLabel().RequestedTheme(interfacing::actualTheme);
-	NavViewDevicesButtonIcon_Empty().RequestedTheme(interfacing::actualTheme);
-	NavViewDevicesButtonIcon_Solid().RequestedTheme(interfacing::actualTheme);
 	NavViewDevicesButtonLabel().RequestedTheme(interfacing::actualTheme);
 	NavViewInfoButtonLabel().RequestedTheme(interfacing::actualTheme);
 	NavViewOkashiButtonLabel().RequestedTheme(interfacing::actualTheme);

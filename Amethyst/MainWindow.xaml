@@ -166,15 +166,14 @@
                 <NavigationViewItem FontSize="10" FontWeight="Medium"
                                     Tag="devices" x:Name="DevicesItem" Height="63" BackgroundSizing="OuterBorderEdge">
                     <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                        <FontIcon Glyph="&#xF5ED;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                  Visibility="Collapsed"
-                                  x:Name="NavViewDevicesButtonIcon" FontSize="22" Translation="0,-8,0">
+                        <FontIcon Glyph="&#xF158;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                  x:Name="NavViewDevicesButtonIcon" FontSize="20" Translation="0,-8,0">
                             <FontIcon.TranslationTransition>
                                 <Vector3Transition />
                             </FontIcon.TranslationTransition>
                         </FontIcon>
 
-                        <Canvas Height="24" Width="24" Translation="0,-8,0"
+                        <!--<Canvas Height="24" Width="24" Translation="0,-8,0"
                                 x:Name="NavViewDevicesButtonIconCanvas">
 
                             <Path Fill="{ThemeResource SystemFillColorNeutralBrush}" Margin="0,-2,0,0"
@@ -188,7 +187,7 @@
                             <Canvas.TranslationTransition>
                                 <Vector3Transition />
                             </Canvas.TranslationTransition>
-                        </Canvas>
+                        </Canvas>-->
 
                         <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                             <TextBlock HorizontalAlignment="Center"
