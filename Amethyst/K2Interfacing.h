@@ -1388,8 +1388,7 @@ namespace k2app::interfacing
 			bool IsPrimary() override
 			{
 				if (_ptr_text_block.get())
-					return (_ptr_text_block.get()->Foreground()
-						== Media::SolidColorBrush(winrt::Windows::UI::Colors::White()));
+					return (_ptr_text_block.get()->Opacity() == 1.0);
 				return true;
 			}
 
@@ -1401,11 +1400,8 @@ namespace k2app::interfacing
 						if (isExitingNow)return;
 						if (_ptr_text_block.get())
 						{
-							_ptr_text_block.get()->Foreground(
-								primary
-									? Media::SolidColorBrush(winrt::Windows::UI::Colors::White())
-									: Application::Current().Resources().TryLookup(
-										winrt::box_value(L"ControlDisplayTextBrush")).as<Media::SolidColorBrush>());
+							_ptr_text_block.get()->Opacity(
+								primary ? 1.0 : 0.5);
 						}
 					});
 			}
