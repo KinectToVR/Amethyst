@@ -324,6 +324,7 @@
     "/Plugins/OWO/Statuses/ConnectionDead": "Erreur de connexion!\nE_CONNECTION_DEAD\nVérifiez si l'app owoTrackVR fonctionne et est connectée.",
     "/Plugins/OWO/Statuses/NoData": "Erreur de connexion!\nE_NO_DATA\nVérifiez si l'app owoTrackVR fonctionne et est connectée.",
     "/Plugins/OWO/Statuses/InitFailure": "Erreur du serveur!\nE_INIT_FAILED\nLe serveur n'a pas démarré correctement. Vérifiez les logs et le port.",
+    "/Plugins/OWO/Statuses/NoPorts": "Échec de la config des ports!\nE_PORTS_TAKEN\nLe port est indisponible! (Fermer les autres apps liées à owoTrack)",
     "/Plugins/OWO/Statuses/NotStarted": "Erreur de connexion!\nE_NOT_STARTED\nCliquez sur 'Actualiser' pour démarrer le serveur owoTrack.",
     "/Plugins/OWO/Settings/Labels/LocalIP/One": "Votre IP locale:",
     "/Plugins/OWO/Settings/Labels/LocalIP/Multiple": "Votre IP locale: (Plusieurs possibilités)",

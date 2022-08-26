@@ -324,6 +324,7 @@
     "/Plugins/OWO/Statuses/ConnectionDead": "Connection error!\nE_CONNECTION_DEAD\nCheck if owoTrackVR app is running, working and connected.",
     "/Plugins/OWO/Statuses/NoData": "Connection error!\nE_NO_DATA\nCheck if owoTrackVR app is running, working and connected.",
     "/Plugins/OWO/Statuses/InitFailure": "Listener startup fail!\nE_INIT_FAILED\nThe data server failed to start, check logs and port number.",
+    "/Plugins/OWO/Statuses/NoPorts": "Ports setup failure!\nE_PORTS_TAKEN\nThe port is unavailable! (Close any other apps related to owoTrack)",
     "/Plugins/OWO/Statuses/NotStarted": "Connection error!\nE_NOT_STARTED\nPress the 'Refresh' button to start the server's listener up.",
     "/Plugins/OWO/Settings/Labels/LocalIP/One": "Your Local IP:",
     "/Plugins/OWO/Settings/Labels/LocalIP/Multiple": "Your Local IP: (One of)",
