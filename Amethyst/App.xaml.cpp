@@ -35,24 +35,27 @@ App::App()
 	// "peacefully" ask it to exit and note that 
 	if (google::IsGoogleLoggingInitialized())
 	{
-		LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n" <<
-			"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n" <<
+		LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n " <<
+			"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n " <<
 			"Logging will be shut down, re-initialized, and forwarded to \"" <<
 			ktvr::GetK2AppDataLogFileDir("Amethyst_").c_str() << "*.log\"";
 		google::ShutdownGoogleLogging();
 	}
 
 	// Set up logging : flags
-	FLAGS_logbufsecs = 0; //Set max timeout
+	FLAGS_logbufsecs = 0; // Set max timeout
 	FLAGS_minloglevel = google::GLOG_INFO;
-	FLAGS_timestamp_in_logfile_name = false;
+	FLAGS_timestamp_in_logfile_name = true;
 
-	// Set up logging
-	k2app::interfacing::thisLogDestination =
-		ktvr::GetK2AppDataLogFileDir("Amethyst_") + k2app::interfacing::GetLogTimestamp();
+	// Set up the logging directory
+	k2app::interfacing::thisLogDestination = ktvr::GetK2AppDataLogFileDir("Amethyst_");
 
+	// Init logging
 	google::InitGoogleLogging(k2app::interfacing::thisLogDestination.c_str());
 
+	// Delete logs older than 7 days
+	google::EnableLogCleaner(7);
+	
 	// Log everything >=INFO to same file
 	google::SetLogDestination(google::GLOG_INFO, k2app::interfacing::thisLogDestination.c_str());
 	google::SetLogFilenameExtension(".log");

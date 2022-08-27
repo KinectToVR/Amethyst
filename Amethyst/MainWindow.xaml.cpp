@@ -734,6 +734,9 @@ namespace winrt::Amethyst::implementation
 				// Call Unregister() before exiting main so that subsequent invocations will launch a new process
 				k2app::shared::main::thisNotificationManager.get()->Unregister();
 
+				// Flush the log cleaner
+				google::FlushLogFiles(google::GLOG_INFO);
+
 				// Finally allow exits
 				e.Handled(false);
 			});

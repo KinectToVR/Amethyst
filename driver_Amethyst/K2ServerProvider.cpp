@@ -111,29 +111,38 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 	 * "peacefully" ask it to exit and note that */
 	if (google::IsGoogleLoggingInitialized())
 	{
-		LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n" <<
-			"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n" <<
+		LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n " <<
+			"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n " <<
 			"Logging will be shut down, re-initialized, and forwarded to \"" <<
 			ktvr::GetK2AppDataLogFileDir("Amethyst_VRDriver_").c_str() << "*.log\"";
 		google::ShutdownGoogleLogging();
 	}
 
-	/* Initialize logging */
-	google::InitGoogleLogging(ktvr::GetK2AppDataLogFileDir("Amethyst_VRDriver_").c_str());
-	/* Log everything >=INFO to same file */
-	google::SetLogDestination(google::GLOG_INFO, ktvr::GetK2AppDataLogFileDir("Amethyst_VRDriver_").c_str());
-	google::SetLogFilenameExtension(".log");
-
-	FLAGS_logbufsecs = 0; //Set max timeout
+	// Set up logging : flags
+	FLAGS_logbufsecs = 0; // Set max timeout
 	FLAGS_minloglevel = google::GLOG_INFO;
+	FLAGS_timestamp_in_logfile_name = true;
 
-	LOG(WARNING) <<
-		"If you get a \"Check failed: !IsGoogleLoggingInitialized() You called InitGoogleLogging() twice!\","
-		"please unregister all other drivers using the GLog library";
+	// Set up the logging directory
+	const auto thisLogDestination = ktvr::GetK2AppDataLogFileDir("Amethyst_VRDriver_");
 
+	// Init logging
+	google::InitGoogleLogging(thisLogDestination.c_str());
+
+	// Delete logs older than 7 days
+	google::EnableLogCleaner(7);
+
+	// Log everything >=INFO to same file
+	google::SetLogDestination(google::GLOG_INFO, thisLogDestination.c_str());
+	google::SetLogFilenameExtension(".log");
+	
 	LOG(INFO) << "~~~Amethyst OpenVR Driver new logging session begins here!~~~";
 	LOG(INFO) << "Interface version name: " << pInterfaceName;
 	LOG(INFO) << "K2API version name: " << ktvr::IK2API_Version;
+
+	LOG(WARNING) <<
+		"If you get a \"Check failed: !IsGoogleLoggingInitialized() You called InitGoogleLogging() twice!\", "
+		"please unregister all other drivers using the GLog library";
 
 	static k2_driver::K2ServerProvider k2_server_provider;
 	static K2WatchdogDriver k2_watchdog_driver;
