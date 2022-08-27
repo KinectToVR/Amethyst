@@ -752,7 +752,7 @@ namespace winrt::Amethyst::implementation
 				              (boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
 				              .string().c_str(),
 				              (std::to_string(GetCurrentProcessId()) +
-					              " \"" + k2app::interfacing::thisLogDestination + ".log\"").c_str(),
+					              " \"" + k2app::interfacing::thisLogDestination + "\"").c_str(),
 				              nullptr,
 				              SW_SHOWDEFAULT);
 			}).detach();

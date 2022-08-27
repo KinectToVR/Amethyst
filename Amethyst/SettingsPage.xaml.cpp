@@ -1529,7 +1529,7 @@ void Amethyst::implementation::SettingsPage::ViewLogsButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	k2app::interfacing::openFolderAndSelectItem(
-		k2app::interfacing::thisLogDestination + ".log");
+		k2app::interfacing::thisLogDestination);
 
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);

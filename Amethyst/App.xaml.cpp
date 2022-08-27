@@ -15,6 +15,44 @@ using namespace implementation;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+#include <boost/filesystem.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+// https://stackoverflow.com/a/32725606/13934610
+boost::filesystem::path getLastLogAdded(const boost::filesystem::path path)
+{
+	namespace fs = boost::filesystem;
+	namespace pt = boost::posix_time;
+
+	std::vector<fs::path> files;
+
+	pt::ptime max = {pt::neg_infin};
+	fs::path last;
+
+	for (fs::recursive_directory_iterator it(path), directory_iterator; it != directory_iterator; ++it)
+		if (is_regular_file(*it) && // If it's a file
+			it->path().filename().wstring().find(L"Amethyst") != std::wstring::npos && // If amethyst logs
+			it->path().filename().wstring().find(L"VRDriver") == std::wstring::npos && // If not driver log
+			it->path().extension() == ".log") // If it's a .log file
+		{
+			try
+			{
+				if (auto stamp = pt::from_time_t(last_write_time(*it));
+					stamp >= max)
+				{
+					last = *it;
+					max = stamp;
+				}
+			}
+			catch (const std::exception& e)
+			{
+				std::cerr << "Skipping: " << *it << " (" << e.what() << ")\n";
+			}
+		}
+
+	return last; // empty if no file matched
+}
+
 /// <summary>
 /// Initializes the singleton application object.  This is the first line of authored code
 /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -55,13 +93,24 @@ App::App()
 
 	// Delete logs older than 7 days
 	google::EnableLogCleaner(7);
-	
+
 	// Log everything >=INFO to same file
 	google::SetLogDestination(google::GLOG_INFO, k2app::interfacing::thisLogDestination.c_str());
 	google::SetLogFilenameExtension(".log");
 
 	// Log the current Amethyst version
 	LOG(INFO) << "Amethyst version: " << k2app::interfacing::K2InternalVersion;
+
+	if (const auto deducedLogName = getLastLogAdded(ktvr::GetK2AppDataLogFileDir("")).string();
+		!deducedLogName.empty())
+	{
+		LOG(INFO) << "The last added Amethyst log appears to be at: "
+			"(Does not support special characters!) \"" <<
+			deducedLogName << "\"!";
+
+		// Overwrite the logging directory
+		k2app::interfacing::thisLogDestination = deducedLogName;
+	}
 
 	// Read settings
 	LOG(INFO) << "Now reading saved settings...";
