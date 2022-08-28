@@ -36,7 +36,9 @@
 #include <winrt/Windows.UI.Xaml.Navigation.h>
 #include <winrt/Windows.UI.ViewManagement.h>
 #include <winrt/Windows.UI.Notifications.h>
+
 #include <winrt/Windows.Data.Xml.Dom.h>
+#include <winrt/Windows.Data.Json.h>
 
 #include <winrt/Windows.Media.h>
 #include <winrt/Windows.Media.Core.h>
@@ -100,6 +102,5 @@
 
 #include <openvr.h>
 
-#include <boost/algorithm/string.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>

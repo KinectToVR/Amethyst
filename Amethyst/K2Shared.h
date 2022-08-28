@@ -287,6 +287,8 @@ namespace k2app::interfacing
 	// Return a language name by code
 	// Input: The current (or deduced) language key / en
 	// Returns: LANG_NATIVE (LANG_LOCALIZED) / Nihongo (Japanese)
+    // https://stackoverflow.com/a/10607146/13934610
+    // https://stackoverflow.com/a/51867679/13934610
 	inline std::wstring GetLocalizedLanguageName(const std::wstring& language_key)
 	{
 		try
@@ -304,42 +306,37 @@ namespace k2app::interfacing
 					resource_path.string() << "\", app interface will be broken!";
 				return language_key; // Give up on trying
 			}
+			
+			// Load the JSON source into buffer
+			std::wifstream wif(resource_path);
+			wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+			std::wstringstream wss;
+			wss << wif.rdbuf();
 
-			// If everything's ok, load the resources into the current resource tree
-			boost::property_tree::wptree w_enum_resources;
-			read_json(resource_path.string(), w_enum_resources,
-			          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+			// Parse the loaded json
+			const auto json_object = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
 
 			// Check if the resource root is fine
-			if (w_enum_resources.empty())
+			if (json_object.Size() <= 0)
 			{
 				LOG(ERROR) << "The current language enumeration resource root is empty!"
 					"App interface will be broken!";
 				return language_key; // Give up on trying
 			}
 
-			// Check if the language code exists
-			if (w_enum_resources.find(language_key) != w_enum_resources.not_found() && // Find the current language
-				// Check if the current language's name (local) exists in the property tree
-				w_enum_resources.get_optional<std::wstring>(
-					language_key + L"." + language_key).has_value() &&
-				// Check if the current language's name (self) exists in the property tree
-				w_enum_resources.get_optional<std::wstring>(
-					K2Settings.appLanguage + L"." + K2Settings.appLanguage).has_value() &&
-				// Check if the desired (set) language's name (local) exists in the property tree
-				w_enum_resources.get_optional<std::wstring>(
-					K2Settings.appLanguage + L"." + language_key).has_value())
-			{
-				// If everything's fine, compose the return
+			// If the language key is the current language, don't split the name
+			if (K2Settings.appLanguage == language_key)
+				return json_object.GetNamedObject(K2Settings.appLanguage).GetNamedString(K2Settings.appLanguage).c_str();
 
-				// If the language key is the current language, don't split the name
-				if (K2Settings.appLanguage == language_key)
-					return w_enum_resources.get<std::wstring>(K2Settings.appLanguage + L"." + K2Settings.appLanguage);
-
-				// Else split the same way as in docs
-				return w_enum_resources.get<std::wstring>(language_key + L"." + language_key) +
-					L" (" + w_enum_resources.get<std::wstring>(K2Settings.appLanguage + L"." + language_key) + L")";
-			}
+			// Else split the same way as in docs
+			return (json_object.GetNamedObject(language_key).GetNamedString(language_key) +
+				L" (" + json_object.GetNamedObject(K2Settings.appLanguage).GetNamedString(language_key) + L")").c_str();
+		}
+		catch (const winrt::hresult_error& ex)
+		{
+			LOG(ERROR) << "JSON error at key: \"" << 
+				WStringToString(language_key) << "\"! Message: "
+				<< WStringToString(ex.message().c_str());
 
 			// Else return they key alone
 			return language_key;
@@ -356,9 +353,9 @@ namespace k2app::interfacing
 	}
 
 	// Amethyst language resource trees
-	inline boost::property_tree::wptree
-		w_local_resources, w_english_resources, w_language_enum;
-
+	inline winrt::Windows::Data::Json::JsonObject
+		m_local_resources, m_english_resources, m_language_enum;
+	
 	// Load the current desired resource JSON into app memory
 	inline void LoadJSONStringResources(const std::wstring& language_key)
 	{
@@ -390,16 +387,29 @@ namespace k2app::interfacing
 			}
 
 			// If everything's ok, load the resources into the current resource tree
-			read_json(resource_path.string(), w_local_resources,
-			          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
 
+			// Load the JSON source into buffer
+			std::wifstream wif(resource_path);
+			wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+			std::wstringstream wss;
+			wss << wif.rdbuf();
+
+			// Parse the loaded json
+			m_local_resources = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
+			
 			// Check if the resource root is fine
-			if (w_local_resources.empty())
+			if (m_local_resources.Size() <= 0)
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
 
 			else
 				LOG(INFO) << "Successfully loaded language resources with key \"" <<
 					WStringToString(language_key) << "\"!";
+		}
+		catch (const winrt::hresult_error& ex)
+		{
+			LOG(ERROR) << "JSON error at key: \"" <<
+				WStringToString(language_key) << "\"! Message: "
+				<< WStringToString(ex.message().c_str());
 		}
 		catch (...)
 		{
@@ -427,20 +437,32 @@ namespace k2app::interfacing
 					"WARNING: The app interface will be broken if not existent!";
 
 				// Override the current english resource tree
-				w_english_resources = w_local_resources;
+				m_english_resources = m_local_resources;
 				return; // Give up on trying
 			}
 
 			// If everything's ok, load the resources into the current resource tree
-			read_json(resource_path.string(), w_english_resources,
-			          std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
 
+			// Load the JSON source into buffer
+			std::wifstream wif(resource_path);
+			wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+			std::wstringstream wss;
+			wss << wif.rdbuf();
+
+			// Parse the loaded json
+			m_english_resources = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
+			
 			// Check if the resource root is fine
-			if (w_english_resources.empty())
+			if (m_english_resources.Size() <= 0)
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
 
 			else
 				LOG(INFO) << "Successfully loaded shared (English) language resources!";
+		}
+		catch (const winrt::hresult_error& ex)
+		{
+			LOG(ERROR) << "JSON error at key: \"en\"! Message: "
+				<< WStringToString(ex.message().c_str());
 		}
 		catch (...)
 		{
@@ -455,25 +477,28 @@ namespace k2app::interfacing
 		try
 		{
 			// Check if the resource root is fine
-			if (w_local_resources.empty())
+			if (m_local_resources.Size() <= 0)
 			{
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
 				return L""; // Just give up
 			}
+			
+			return m_local_resources.GetNamedString(resource_key).c_str();
+		}
+		catch (const winrt::hresult_error& ex)
+		{
+			LOG(ERROR) << "JSON error at key: \"" <<
+				WStringToString(resource_key) << "\"! Message: "
+				<< WStringToString(ex.message().c_str());
 
-			// Check if the desired key exists
-			if (w_local_resources.find(resource_key) == w_local_resources.not_found())
-			{
-				LOG(ERROR) << "Could not find a resource string with key (narrowed) \"" <<
-					WStringToString(resource_key) << "\" in the current resource! App interface will be broken!";
-				return L""; // Just give up
-			}
-
-			return w_local_resources.get<std::wstring>(resource_key);
+			// Else return they key alone
+			return resource_key;
 		}
 		catch (...)
 		{
 			LOG(ERROR) << "An exception occurred! App interface will be broken!";
+
+			// Else return they key alone
 			return resource_key;
 		}
 	}
@@ -484,25 +509,28 @@ namespace k2app::interfacing
 		try
 		{
 			// Check if the resource root is fine
-			if (w_english_resources.empty())
+			if (m_english_resources.Size() <= 0)
 			{
-				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
+				LOG(ERROR) << "The current EN resource root is empty! App interface will be broken!";
 				return L""; // Just give up
 			}
 
-			// Check if the desired key exists
-			if (w_english_resources.find(resource_key) == w_english_resources.not_found())
-			{
-				LOG(ERROR) << "Could not find a resource string with key (narrowed) \"" <<
-					WStringToString(resource_key) << "\" in the current resource! App interface will be broken!";
-				return L""; // Just give up
-			}
+			return m_english_resources.GetNamedString(resource_key).c_str();
+		}
+		catch (const winrt::hresult_error& ex)
+		{
+			LOG(ERROR) << "JSON error at key: \"" <<
+				WStringToString(resource_key) << "\"! Message: "
+				<< WStringToString(ex.message().c_str());
 
-			return w_english_resources.get<std::wstring>(resource_key);
+			// Else return they key alone
+			return resource_key;
 		}
 		catch (...)
 		{
 			LOG(ERROR) << "An exception occurred! App interface will be broken!";
+
+			// Else return they key alone
 			return resource_key;
 		}
 	}
