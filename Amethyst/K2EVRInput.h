@@ -1,10 +1,16 @@
 #pragma once
 #include "pch.h"
 
-#include <openvr.h>
+namespace k2app::interfacing
+{
+	inline std::filesystem::path GetProgramLocation()
+	{
+		TCHAR buffer[MAX_PATH] = {0};
+		GetModuleFileName(nullptr, buffer, MAX_PATH);
 
-#include <boost/filesystem.hpp>
-#include <boost/dll.hpp>
+		return buffer; // Self-converts
+	}
+}
 
 namespace k2app::K2EVRInput
 {
@@ -58,8 +64,8 @@ namespace k2app::K2EVRInput
 		bool InitInputActions()
 		{
 			// Find the absolute path of manifest
-			boost::filesystem::path absoluteManifestPath =
-				boost::dll::program_location().parent_path() / m_actionManifestPath;
+			std::filesystem::path absoluteManifestPath =
+				interfacing::GetProgramLocation().parent_path() / m_actionManifestPath;
 
 			if (!exists(absoluteManifestPath))
 			{

@@ -238,7 +238,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 
 					get_release_version = co_await response.Content().ReadAsStringAsync();
 				}
-				catch (hresult_error const& ex)
+				catch (const hresult_error& ex)
 				{
 					LOG(ERROR) << "Error getting the release info! Message: "
 						<< WStringToString(ex.message().c_str());
@@ -254,7 +254,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 
 					get_docs_languages = co_await response.Content().ReadAsStringAsync();
 				}
-				catch (hresult_error const& ex)
+				catch (const hresult_error& ex)
 				{
 					LOG(ERROR) << "Error getting the language info! Message: "
 						<< WStringToString(ex.message().c_str());
@@ -287,25 +287,27 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 
 						// Split version strings into integers
 						std::vector<std::string> local_version_num, remote_version_num;
-						split(local_version_num, k2app::interfacing::K2InternalVersion, boost::is_any_of("."));
-						split(remote_version_num, K2RemoteVersion, boost::is_any_of("."));
 
+						using namespace std::string_literals;
+						local_version_num = k2app::interfacing::splitStringByDelimiter(k2app::interfacing::K2InternalVersion, "."s);
+						remote_version_num = k2app::interfacing::splitStringByDelimiter(K2RemoteVersion, "."s);
+						
 						// Compare to the current version
 						for (uint32_t i = 0; i < 4; i++)
 						{
 							// Check the version
-							if (const auto _ver = boost::lexical_cast<uint32_t>(remote_version_num.at(i));
-								_ver > boost::lexical_cast<uint32_t>(local_version_num.at(i)))
+							if (const auto _ver = std::stoi(remote_version_num.at(i));
+								_ver > std::stoi(local_version_num.at(i)))
 								k2app::interfacing::updateFound = true;
 
 								// Not to false-alarm in situations like 1.0.1.0 (local) vs 1.0.0.1 (remote)
-							else if (_ver < boost::lexical_cast<uint32_t>(local_version_num.at(i))) break;
+							else if (_ver < std::stoi(local_version_num.at(i))) break;
 						}
 
 						// Cache the changes
 						BOOST_FOREACH(boost::property_tree::wptree::value_type &v, root.get_child(L"changes"))
 							changes_strings_vector.push_back(v.second.get_value<std::wstring>());
-						
+
 						// Thanks to this chad: https://stackoverflow.com/a/45123408
 						// Now check for push notifications aka toasts
 
@@ -332,7 +334,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 								tst.show_always = node.get<bool>(L"show_always", false);
 
 								if (!toasts.insert(tst).second)
-									LOG(INFO) << "Skipping toast with duplicate guid: " << WStringToString(tst.guid) << '\n';
+									LOG(INFO) << "Skipping toast with duplicate guid: " << WStringToString(tst.guid) <<
+										'\n';
 							}
 
 							// Iterate over all the found toasts
@@ -340,8 +343,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 							{
 								// Log everything
 								LOG(INFO) << "Found a toast with:\n    guid: " << WStringToString(itr.guid) <<
-									"\n    title: " << WStringToString(itr.title) << "\n    message: " << 
-									WStringToString(itr.message) << "\n    which needs to show " << 
+									"\n    title: " << WStringToString(itr.title) << "\n    message: " <<
+									WStringToString(itr.message) << "\n    which needs to show " <<
 									(itr.show_always ? "always" : "once");
 
 								// Check if this toast hasn't already been shown, and opt show it
@@ -646,7 +649,7 @@ namespace winrt::Amethyst::implementation
 
 		Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
 			Microsoft::UI::GetWindowIdFromWindow(k2app::shared::main::thisAppWindowID)).SetIcon(
-			(boost::dll::program_location().parent_path() / "Assets" / "ktvr.ico").c_str());
+			(k2app::interfacing::GetProgramLocation().parent_path() / "Assets" / "ktvr.ico").c_str());
 
 		LOG(INFO) << "Making the app window available for children views...";
 		k2app::shared::main::thisAppWindow = std::make_shared<Window>(this->try_as<Window>());
@@ -788,12 +791,13 @@ namespace winrt::Amethyst::implementation
 		{
 			LOG(ERROR) << "Startup failed! The app is already running.";
 
-			if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
+			if (exists(
+				k2app::interfacing::GetProgramLocation().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
 			{
 				std::thread([]
 				{
 					ShellExecuteA(nullptr, "open",
-					              (boost::dll::program_location().parent_path() / "K2CrashHandler" /
+					              (k2app::interfacing::GetProgramLocation().parent_path() / "K2CrashHandler" /
 						              "K2CrashHandler.exe ")
 					              .string().c_str(), "already_running", nullptr, SW_SHOWDEFAULT);
 				}).detach();
@@ -867,12 +871,13 @@ namespace winrt::Amethyst::implementation
 		// Priority: Launch the crash handler
 		LOG(INFO) << "Starting the crash handler passing the app PID...";
 
-		if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
+		if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
 		{
 			std::thread([]
 			{
 				ShellExecuteA(nullptr, "open",
-				              (boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
+				              (k2app::interfacing::GetProgramLocation().parent_path() / "K2CrashHandler" /
+					              "K2CrashHandler.exe ")
 				              .string().c_str(),
 				              (std::to_string(GetCurrentProcessId()) +
 					              " \"" + k2app::interfacing::thisLogDestination + "\"").c_str(),
@@ -911,17 +916,13 @@ namespace winrt::Amethyst::implementation
 		// Scan for tracking devices
 		std::thread([&]
 			{
-				LOG(INFO) << "Searching for tracking devices";
+				LOG(INFO) << "Searching for tracking devices...";
+				LOG(INFO) << "Current path is: " << k2app::interfacing::GetProgramLocation().parent_path().string();
 
-				using namespace boost::filesystem;
-				using namespace std::string_literals;
-
-				LOG(INFO) << "Current path is: " << boost::dll::program_location().parent_path().string();
-
-				if (exists(boost::dll::program_location().parent_path() / "devices"))
+				if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "devices"))
 				{
-					for (directory_entry& entry : directory_iterator(
-						     boost::dll::program_location().parent_path() / "devices"))
+					for (auto entry : std::filesystem::directory_iterator(
+						     k2app::interfacing::GetProgramLocation().parent_path() / "devices"))
 					{
 						if (exists(entry.path() / "device.k2devicemanifest"))
 						{
@@ -953,7 +954,7 @@ namespace winrt::Amethyst::implementation
 								{
 									BOOST_FOREACH(boost::property_tree::ptree::value_type & v,
 									              root.get_child("linked_dll_path"))
-										if (!exists(v.second.get_value<std::string>()))
+										if (!std::filesystem::exists(v.second.get_value<std::string>()))
 										{
 											_found = false; // Mark as failed
 											LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
@@ -2254,11 +2255,11 @@ void Amethyst::implementation::MainWindow::LicensesFlyout_Opening(
 	k2app::interfacing::isNUXPending = true;
 
 	// Load the license text
-	if (exists(boost::dll::program_location().parent_path() / "Assets" / "Licenses.txt") &&
-		is_regular_file(boost::dll::program_location().parent_path() / "Assets" / "Licenses.txt"))
+	if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "Assets" / "Licenses.txt") &&
+		is_regular_file(k2app::interfacing::GetProgramLocation().parent_path() / "Assets" / "Licenses.txt"))
 	{
 		std::wifstream fileHandler(
-			(boost::dll::program_location().parent_path() / "Assets" / "Licenses.txt").wstring());
+			(k2app::interfacing::GetProgramLocation().parent_path() / "Assets" / "Licenses.txt").wstring());
 
 		// Change the reader's locale
 		fileHandler.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
@@ -2509,7 +2510,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 	}
 
 	UpdateIcon().Foreground(
-		k2app::interfacing::checkingUpdatesNow
+		interfacing::checkingUpdatesNow
 			? *attentionBrush
 			: *neutralBrush);
 

@@ -12,11 +12,9 @@ using K2CrashHandler.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.Windows.ApplicationModel.Resources;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WinRT.Interop;
-using Microsoft.UI.Xaml.Shapes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,14 +33,14 @@ namespace K2CrashHandler
             // Load strings
             try
             {
-                var langResPath = System.IO.Path.Combine(
+                var langResPath = Path.Combine(
                     Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
                         .ToString()).ToString(), "Assets", "Strings",
                     Shared.LanguageCode + ".json"); // The ame one
 
                 if (!File.Exists(langResPath))
                 {
-                    langResPath = System.IO.Path.Combine(
+                    langResPath = Path.Combine(
                         Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
                             .ToString()).ToString(), "Assets", "Strings",
                         CultureInfo.CurrentUICulture.Name[..2]
@@ -53,7 +51,7 @@ namespace K2CrashHandler
 
                 if (!File.Exists(langResPath))
                 {
-                    langResPath = System.IO.Path.Combine(
+                    langResPath = Path.Combine(
                         Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
                             .ToString()).ToString(), "Assets", "Strings",
                         "en.json"); // English fallback
@@ -226,7 +224,7 @@ namespace K2CrashHandler
                     WindowNative.GetWindowHandle(this)));
 
             // Fix no icon in titlebar/task view
-            appWindow.SetIcon(System.IO.Path.Combine(
+            appWindow.SetIcon(Path.Combine(
                 Directory.GetParent(
                     Assembly.GetExecutingAssembly().Location).ToString(),
                 "Assets", "crashhandler.ico"));
@@ -359,7 +357,7 @@ namespace K2CrashHandler
 
                 // For each found manifest, check if there is an ame driver dll inside
                 foreach (var localDriverManifest in allLocalDriverManifests)
-                    if (File.Exists(System.IO.Path.Combine(
+                    if (File.Exists(Path.Combine(
                             Directory.GetParent(localDriverManifest).ToString(),
                             "bin", "win64", "driver_Amethyst.dll")))
                     {
@@ -580,7 +578,7 @@ namespace K2CrashHandler
 
         private void Action_ResetConfig(object sender, RoutedEventArgs e)
         {
-            File.Delete(System.IO.Path.Combine(Environment.GetFolderPath(
+            File.Delete(Path.Combine(Environment.GetFolderPath(
                 Environment.SpecialFolder.ApplicationData), "Amethyst", "Amethyst_settings.xml"));
         }
 

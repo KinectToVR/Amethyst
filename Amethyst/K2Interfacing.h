@@ -275,6 +275,31 @@ namespace k2app::interfacing
 
 		// Else no click action requested ("none")
 	}
+	
+	template<typename T>
+	requires std::same_as<std::string, T> || std::same_as<std::wstring, T>
+	std::vector<T> splitStringByDelimiter(T target, T delimiter)
+	{
+		std::vector<T> components;
+		if (!target.empty())
+		{
+			size_t start = 0;
+			do
+			{
+				const size_t index = target.find(delimiter, start);
+				if (index == T::npos)
+				{
+					break;
+				}
+				const size_t length = index - start;
+				components.push_back(target.substr(start, length));
+				start += (length + delimiter.size());
+			} while (true);
+			components.push_back(target.substr(start));
+		}
+
+		return components;
+	}
 
 	namespace sounds
 	{
@@ -331,13 +356,13 @@ namespace k2app::interfacing
 				{
 					// Check if the sound file even exists & if sounds are on
 					if (K2Settings.enableAppSounds &&
-						exists(boost::dll::program_location().parent_path() /
+						exists(GetProgramLocation().parent_path() /
 							"Assets" / "Sounds" / (AppSoundsNamesMap.at(sound) + ".wav")))
 					{
 						// Load the sound file into a player
 						const auto soundPlayer = winrt::Windows::Media::Playback::MediaPlayer();
 						soundPlayer.Source(winrt::Windows::Media::Core::MediaSource::CreateFromUri(
-							winrt::Windows::Foundation::Uri((boost::dll::program_location().parent_path() /
+							winrt::Windows::Foundation::Uri((GetProgramLocation().parent_path() /
 								"Assets" / "Sounds" / (AppSoundsNamesMap.at(sound) + ".wav")).wstring())));
 
 						// Set the desired volume
@@ -352,7 +377,7 @@ namespace k2app::interfacing
 					}
 					else
 					{
-						LOG(WARNING) << "Sound file " << boost::dll::program_location().parent_path() /
+						LOG(WARNING) << "Sound file " << GetProgramLocation().parent_path() /
 							"Assets" / "Sounds" / (AppSoundsNamesMap.at(sound) + ".wav") <<
 							"could not be played because it does not exist, please check if it's there.";
 					}
@@ -594,11 +619,11 @@ namespace k2app::interfacing
 			LOG(INFO) << "Amethyst manifest is already installed";
 			return 1;
 		}
-		if (exists(boost::dll::program_location().parent_path() / "Amethyst.vrmanifest"))
+		if (exists(GetProgramLocation().parent_path() / "Amethyst.vrmanifest"))
 		{
 			const auto app_error =
 				vr::VRApplications()->AddApplicationManifest(
-					(boost::dll::program_location().parent_path() / "Amethyst.vrmanifest").string().c_str());
+					(GetProgramLocation().parent_path() / "Amethyst.vrmanifest").string().c_str());
 
 			if (app_error != vr::VRApplicationError_None)
 			{
@@ -606,7 +631,7 @@ namespace k2app::interfacing
 				return 2;
 			}
 			LOG(INFO) << "Amethyst manifest installed at: " <<
-				boost::dll::program_location().parent_path() / "Amethyst.vrmanifest";
+				GetProgramLocation().parent_path() / "Amethyst.vrmanifest";
 			return 1;
 		}
 		LOG(WARNING) << "Amethyst vr manifest (./Amethyst.vrmanifest) not found!";
@@ -621,10 +646,10 @@ namespace k2app::interfacing
 		if (vr::VRApplications()->IsApplicationInstalled("KinectToVR.Amethyst"))
 		{
 			vr::VRApplications()->RemoveApplicationManifest(
-				(boost::dll::program_location().parent_path() / "Amethyst.vrmanifest").string().c_str());
+				(GetProgramLocation().parent_path() / "Amethyst.vrmanifest").string().c_str());
 
 			LOG(INFO) << "Attempted to remove Amethyst manifest at: " <<
-				boost::dll::program_location().parent_path() / "Amethyst.vrmanifest";
+				GetProgramLocation().parent_path() / "Amethyst.vrmanifest";
 		}
 		if (vr::VRApplications()->IsApplicationInstalled("KinectToVR.Amethyst"))
 			LOG(WARNING) << "Amethyst manifest removal failed! It may have been installed from somewhere else too";
@@ -1105,7 +1130,7 @@ namespace k2app::interfacing
 	{
 		PIDLIST_ABSOLUTE pidl = nullptr;
 
-		if (boost::filesystem::exists(path) &&
+		if (std::filesystem::exists(path) &&
 			SHParseDisplayName(StringToWString(path).c_str(), nullptr,
 			                   &pidl, 0, nullptr) == S_OK)
 		{

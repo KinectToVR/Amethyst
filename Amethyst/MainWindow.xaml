@@ -427,7 +427,7 @@
                                x:Name="UpdatePendingFlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
 
                     <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
-                        <TextBlock Text="Statsus:" Margin="0,0,7,0" 
+                        <TextBlock Text="Statsus:" Margin="0,0,7,0"
                                    x:Name="UpdatePendingFlyoutStatusLabel"
                                    Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
                         <TextBlock Text="Downlodign - 0%"

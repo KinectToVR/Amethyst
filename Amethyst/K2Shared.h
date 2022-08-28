@@ -1,9 +1,8 @@
 #pragma once
 #include "pch.h"
+#include "K2Settings.h"
 
 #include <codecvt>
-
-#include "K2Settings.h"
 
 inline std::array<std::wstring, 3> split_status(const std::wstring& s)
 {
@@ -294,8 +293,8 @@ namespace k2app::interfacing
 		{
 			// Load the locales.json from Assets/Strings/
 
-			const boost::filesystem::path resource_path =
-				boost::dll::program_location().parent_path() /
+			const std::filesystem::path resource_path =
+				GetProgramLocation().parent_path() /
 				"Assets" / "Strings" / "locales.json";
 
 			// If the specified language doesn't exist somehow, fallback to 'en'
@@ -368,8 +367,8 @@ namespace k2app::interfacing
 			LOG(INFO) << "Searching for language resources with key \"" <<
 				WStringToString(language_key) << "\"...";
 
-			boost::filesystem::path resource_path =
-				boost::dll::program_location().parent_path() /
+			std::filesystem::path resource_path =
+				GetProgramLocation().parent_path() /
 				"Assets" / "Strings" / (language_key + L".json");
 
 			// If the specified language doesn't exist somehow, fallback to 'en'
@@ -378,7 +377,7 @@ namespace k2app::interfacing
 				LOG(WARNING) << "Could not load language resources at \"" <<
 					resource_path.string() << "\", falling back to 'en' (en.json)!";
 
-				resource_path = boost::dll::program_location().parent_path() /
+				resource_path = GetProgramLocation().parent_path() /
 					"Assets" / "Strings" / "en.json";
 			}
 
@@ -416,8 +415,8 @@ namespace k2app::interfacing
 		{
 			LOG(INFO) << "Searching for shared (English) language resources...";
 
-			const boost::filesystem::path resource_path =
-				boost::dll::program_location().parent_path() /
+			const std::filesystem::path resource_path =
+				GetProgramLocation().parent_path() /
 				"Assets" / "Strings" / "en.json";
 
 			// If the specified language doesn't exist somehow, fallback to 'en'

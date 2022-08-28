@@ -34,12 +34,12 @@
             <!--From WinUI-Gallery-->
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <AcrylicBrush x:Key="CalibrationPaneBackgroundAcrylicBrush" 
+                    <AcrylicBrush x:Key="CalibrationPaneBackgroundAcrylicBrush"
                                   TintOpacity="0.1" TintLuminosityOpacity="0.1"
                                   TintColor="#FF000000" FallbackColor="#FF000000" />
 
-                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrush" Color="White"/>
-                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrushOpposite" Color="Black"/>
+                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrush" Color="White" />
+                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrushOpposite" Color="Black" />
 
                     <StaticResource x:Key="ControlDisplayBackgroundBrush"
                                     ResourceKey="SolidBackgroundFillColorBaseBrush" />
@@ -47,12 +47,12 @@
                     <Thickness x:Key="ControlExampleDisplayBorderThickness">1</Thickness>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <AcrylicBrush x:Key="CalibrationPaneBackgroundAcrylicBrush" 
+                    <AcrylicBrush x:Key="CalibrationPaneBackgroundAcrylicBrush"
                                   TintOpacity="0.1" TintLuminosityOpacity="0.2"
                                   TintColor="#FF000000" FallbackColor="#FF000000" />
 
-                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrush" Color="Black"/>
-                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrushOpposite" Color="White"/>
+                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrush" Color="Black" />
+                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrushOpposite" Color="White" />
 
                     <StaticResource x:Key="ControlDisplayBackgroundBrush"
                                     ResourceKey="SolidBackgroundFillColorBaseBrush" />
@@ -60,12 +60,12 @@
                     <Thickness x:Key="ControlExampleDisplayBorderThickness">1</Thickness>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
-                    <AcrylicBrush x:Key="CalibrationPaneBackgroundAcrylicBrush" 
+                    <AcrylicBrush x:Key="CalibrationPaneBackgroundAcrylicBrush"
                                   TintOpacity="0.1" TintLuminosityOpacity="0.2"
                                   TintColor="#FF000000" FallbackColor="#FF000000" />
 
-                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrush" Color="Black"/>
-                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrushOpposite" Color="White"/>
+                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrush" Color="Black" />
+                    <SolidColorBrush x:Key="NoThemeColorSolidColorBrushOpposite" Color="White" />
 
                     <SolidColorBrush x:Key="ControlDisplayBackgroundBrush"
                                      Color="{ThemeResource SystemColorWindowColor}" />

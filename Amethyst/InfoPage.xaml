@@ -60,12 +60,12 @@
 
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel HorizontalAlignment="Stretch" 
+                    <StackPanel HorizontalAlignment="Stretch"
                                 Grid.Column="0" Orientation="Vertical">
 
                         <TextBlock FontWeight="SemiBold">
@@ -112,7 +112,7 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <StackPanel HorizontalAlignment="Stretch" 
+                    <StackPanel HorizontalAlignment="Stretch"
                                 Grid.Column="2" Orientation="Vertical">
 
                         <TextBlock FontWeight="SemiBold">

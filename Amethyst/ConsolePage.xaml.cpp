@@ -106,8 +106,8 @@ void Amethyst::implementation::ConsolePage::UpdateButton_Click(
 
 	k2app::shared::main::flyoutFooter->Text(L"Amethyst v{}.{}.{}.{}");
 	k2app::shared::main::flyoutContent->Text(L"Forced by the user");
-	
-	k2app::shared::main::flyoutContent->Margin({0,0,0,12});
+
+	k2app::shared::main::flyoutContent->Margin({0, 0, 0, 12});
 
 	k2app::shared::main::installLaterButton->Visibility(Visibility::Visible);
 	k2app::shared::main::installNowButton->Visibility(Visibility::Visible);

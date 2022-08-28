@@ -187,13 +187,16 @@ namespace winrt::Amethyst::implementation
 						// Set override expanders up
 
 						// Type 0: WF
-						overrideSelectorExpanders[0] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(0));
+						overrideSelectorExpanders[0] = std::move(
+							std::make_shared<Controls::OverrideSelectorExpander>(0));
 
 						// Type 1: EK
-						overrideSelectorExpanders[1] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(1));
+						overrideSelectorExpanders[1] = std::move(
+							std::make_shared<Controls::OverrideSelectorExpander>(1));
 
 						// Type 2: OTHER
-						overrideSelectorExpanders[2] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(2));
+						overrideSelectorExpanders[2] = std::move(
+							std::make_shared<Controls::OverrideSelectorExpander>(2));
 
 						overridesExpanderHostStackPanel->Children().Clear();
 
@@ -1589,8 +1592,9 @@ void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 
 		else
 			ShellExecuteW(nullptr, nullptr,
-				std::format(L"https://docs.k2vr.tech/{}/app/help/", k2app::interfacing::docsLanguageCode).c_str(),
-				nullptr, nullptr, SW_SHOW);
+			              std::format(L"https://docs.k2vr.tech/{}/app/help/",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
 	}
 
 	else if (_device_name == L"Xbox One Kinect")
@@ -1603,8 +1607,9 @@ void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 
 		else
 			ShellExecuteW(nullptr, nullptr,
-				std::format(L"https://docs.k2vr.tech/{}/app/help/", k2app::interfacing::docsLanguageCode).c_str(),
-				nullptr, nullptr, SW_SHOW);
+			              std::format(L"https://docs.k2vr.tech/{}/app/help/",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
 	}
 
 	else if (_device_name == L"PSMove Service")
@@ -1622,8 +1627,9 @@ void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 			              nullptr, nullptr, SW_SHOW);
 		else
 			ShellExecuteW(nullptr, nullptr,
-				std::format(L"https://docs.k2vr.tech/{}/app/help/", k2app::interfacing::docsLanguageCode).c_str(),
-				nullptr, nullptr, SW_SHOW);
+			              std::format(L"https://docs.k2vr.tech/{}/app/help/",
+			                          k2app::interfacing::docsLanguageCode).c_str(),
+			              nullptr, nullptr, SW_SHOW);
 	}
 
 	else

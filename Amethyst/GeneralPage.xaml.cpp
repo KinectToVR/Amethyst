@@ -1318,7 +1318,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 				                                  L"Buttons/Skeleton/Freeze")));
 
 	// Set up the co/re/disconnect button
-	if (!k2app::interfacing::K2AppTrackersSpawned) 
+	if (!k2app::interfacing::K2AppTrackersSpawned)
 	{
 		toggleTrackersButton.get()->Content(box_value(
 			k2app::interfacing::LocalizedResourceWString(
@@ -1330,16 +1330,16 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	{
 		toggleTrackersButton.get()->IsChecked(k2app::interfacing::K2AppTrackersInitialized);
 		toggleTrackersButton.get()->Content(k2app::interfacing::K2AppTrackersInitialized
-			? box_value(
-				k2app::interfacing::LocalizedResourceWString(
-					L"GeneralPage",
-					L"Buttons/TrackersToggle/Disconnect"))
-			: box_value(
-				k2app::interfacing::LocalizedResourceWString(
-					L"GeneralPage",
-					L"Buttons/TrackersToggle/Reconnect")));
+			                                    ? box_value(
+				                                    k2app::interfacing::LocalizedResourceWString(
+					                                    L"GeneralPage",
+					                                    L"Buttons/TrackersToggle/Disconnect"))
+			                                    : box_value(
+				                                    k2app::interfacing::LocalizedResourceWString(
+					                                    L"GeneralPage",
+					                                    L"Buttons/TrackersToggle/Reconnect")));
 	}
-	
+
 	freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
 }
 
@@ -2154,13 +2154,14 @@ void Amethyst::implementation::GeneralPage::CalibrationPointsNumberBox_ValueChan
 void Amethyst::implementation::GeneralPage::ReRegisterButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
+	if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
 	{
 		std::thread([]
 		{
 			ShellExecuteA(nullptr, "open",
-			              (boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
-			              .string().c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
+			              (k2app::interfacing::GetProgramLocation().parent_path() /
+				              "K2CrashHandler" / "K2CrashHandler.exe ").string().c_str(),
+			              nullptr, nullptr, SW_SHOWDEFAULT);
 		}).detach();
 	}
 	else

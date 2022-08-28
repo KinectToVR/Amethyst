@@ -15,21 +15,13 @@ using namespace implementation;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-#include <boost/filesystem.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-
 // https://stackoverflow.com/a/32725606/13934610
-boost::filesystem::path getLastLogAdded(const boost::filesystem::path path)
+std::filesystem::path getLastLogAdded(const std::filesystem::path path)
 {
-	namespace fs = boost::filesystem;
-	namespace pt = boost::posix_time;
+	std::filesystem::file_time_type max{};
+	std::filesystem::path last;
 
-	std::vector<fs::path> files;
-
-	pt::ptime max = {pt::neg_infin};
-	fs::path last;
-
-	for (fs::recursive_directory_iterator it(path), directory_iterator; it != directory_iterator; ++it)
+	for (std::filesystem::recursive_directory_iterator it(path), directory_iterator; it != directory_iterator; ++it)
 		if (is_regular_file(*it) && // If it's a file
 			it->path().filename().wstring().find(L"Amethyst") != std::wstring::npos && // If amethyst logs
 			it->path().filename().wstring().find(L"VRDriver") == std::wstring::npos && // If not driver log
@@ -37,7 +29,7 @@ boost::filesystem::path getLastLogAdded(const boost::filesystem::path path)
 		{
 			try
 			{
-				if (auto stamp = pt::from_time_t(last_write_time(*it));
+				if (auto stamp = last_write_time(*it);
 					stamp >= max)
 				{
 					last = *it;
@@ -126,8 +118,8 @@ App::App()
 
 		std::thread([&, this]
 		{
-			const boost::filesystem::path resource_path =
-				boost::dll::program_location().parent_path() /
+			const std::filesystem::path resource_path =
+				k2app::interfacing::GetProgramLocation().parent_path() /
 				"Assets" / "Strings";
 
 			// If the specified language doesn't exist somehow, fallback to 'en'

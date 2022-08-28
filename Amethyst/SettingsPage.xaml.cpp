@@ -164,24 +164,30 @@ namespace winrt::Amethyst::implementation
 						jointExpanderVector.push_back(std::move(
 							std::make_shared<Controls::JointExpander>(std::vector{
 								&k2app::K2Settings.K2TrackersVector[0]
-								})));
+							})));
 
 						if (k2app::K2Settings.useTrackerPairs)
 						{
 							LOG(INFO) << "UseTrackerPairs is set to true: Appending the default expanders as pairs...";
 
 							jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-								std::vector{ &k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2] },
+								std::vector{
+									&k2app::K2Settings.K2TrackersVector[1], &k2app::K2Settings.K2TrackersVector[2]
+								},
 								k2app::interfacing::LocalizedResourceWString(
 									L"SharedStrings", L"Joints/Pairs/Feet"))));
 
 							jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-								std::vector{ &k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4] },
+								std::vector{
+									&k2app::K2Settings.K2TrackersVector[3], &k2app::K2Settings.K2TrackersVector[4]
+								},
 								k2app::interfacing::LocalizedResourceWString(
 									L"SharedStrings", L"Joints/Pairs/Elbows"))));
 
 							jointExpanderVector.push_back(std::move(std::make_shared<Controls::JointExpander>(
-								std::vector{ &k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6] },
+								std::vector{
+									&k2app::K2Settings.K2TrackersVector[5], &k2app::K2Settings.K2TrackersVector[6]
+								},
 								k2app::interfacing::LocalizedResourceWString(
 									L"SharedStrings", L"Joints/Pairs/Knees"))));
 						}
@@ -193,11 +199,11 @@ namespace winrt::Amethyst::implementation
 						// - we'll append them as individual tracker/joint expanders
 
 						for (uint32_t ind = (k2app::K2Settings.useTrackerPairs ? 7 : 1);
-							ind < k2app::K2Settings.K2TrackersVector.size(); ind++)
+						     ind < k2app::K2Settings.K2TrackersVector.size(); ind++)
 							jointExpanderVector.push_back(std::move(
 								std::make_shared<Controls::JointExpander>(std::vector{
 									&k2app::K2Settings.K2TrackersVector[ind]
-									})));
+								})));
 
 						LOG(INFO) << "Clearing the appended expanders (UI Node)";
 						settings_safe_clear(jointExpanderHostStackPanel);
@@ -214,7 +220,7 @@ namespace winrt::Amethyst::implementation
 							if (_expander_number >= 2 && jointExpanderVector.back() != expander)
 							{
 								auto separator = Controls::MenuFlyoutSeparator();
-								separator.Margin({ 10, 10, 10, 0 });
+								separator.Margin({10, 10, 10, 0});
 
 								Media::Animation::TransitionCollection c_transition_collection;
 								c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
@@ -245,8 +251,8 @@ namespace winrt::Amethyst::implementation
 							// Hide/Show the flip controls container
 							flipDropDownContainer.get()->Visibility(
 								flipToggle.get()->IsEnabled()
-								? Visibility::Visible
-								: Visibility::Collapsed);
+									? Visibility::Visible
+									: Visibility::Collapsed);
 
 							TrackingDevices::settings_set_external_flip_is_enabled();
 						}
@@ -594,9 +600,9 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 	LanguageOptionBox().Items().Clear();
 
 	// Push all the found languages
-	if (exists(boost::dll::program_location().parent_path() / "Assets" / "Strings"))
-		for (boost::filesystem::directory_entry& entry : boost::filesystem::directory_iterator(
-			     boost::dll::program_location().parent_path() / "Assets" / "Strings"))
+	if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "Assets" / "Strings"))
+		for (auto entry : std::filesystem::directory_iterator(
+			     k2app::interfacing::GetProgramLocation().parent_path() / "Assets" / "Strings"))
 		{
 			if (entry.path().stem().wstring() == L"locales")continue;
 
@@ -624,7 +630,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 	AppThemeOptionBox().SelectedIndex(k2app::K2Settings.appTheme);
 
 	// Optionally show the foreign language grid
-	if (!exists(boost::dll::program_location().parent_path() /
+	if (!exists(k2app::interfacing::GetProgramLocation().parent_path() /
 		"Assets" / "Strings" / (std::wstring(
 			Windows::Globalization::Language(
 				Windows::System::UserProfile::
@@ -981,12 +987,13 @@ void Amethyst::implementation::SettingsPage::ReManifestButton_Click(
 void Amethyst::implementation::SettingsPage::ReRegisterButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	if (exists(boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
+	if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe"))
 	{
 		std::thread([]
 		{
 			ShellExecuteA(nullptr, "open",
-			              (boost::dll::program_location().parent_path() / "K2CrashHandler" / "K2CrashHandler.exe ")
+			              (k2app::interfacing::GetProgramLocation().parent_path() / "K2CrashHandler" /
+				              "K2CrashHandler.exe ")
 			              .string().c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 		}).detach();
 	}
@@ -1722,8 +1729,8 @@ void Amethyst::implementation::SettingsPage::OptionBox_DropDownOpened(
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::OptionBox_DropDownClosed(
-	winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+void Amethyst::implementation::SettingsPage::OptionBox_DropDownClosed(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
 	// Don't react to pre-init signals
 	if (!k2app::shared::settings::settings_localInitFinished)return;

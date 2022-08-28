@@ -52,7 +52,7 @@
                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
                       VerticalScrollBarVisibility="Visible" Padding="00,-20,20,-20" Margin="-20,20,-20,20">
 
-            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                         Padding="20,0,0,0" Orientation="Vertical">
 
                 <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
@@ -94,8 +94,8 @@
                         <RowDefinition Height="80" />
                     </Grid.RowDefinitions>
 
-                    <FontIcon Margin="0,3,0,0" Grid.Column="0" Grid.Row="0" 
-                              HorizontalAlignment="Left" VerticalAlignment="Center" 
+                    <FontIcon Margin="0,3,0,0" Grid.Column="0" Grid.Row="0"
+                              HorizontalAlignment="Left" VerticalAlignment="Center"
                               FontSize="16" Glyph="&#xF2B7;">
                         <FontIcon.TranslationTransition>
                             <Vector3Transition />

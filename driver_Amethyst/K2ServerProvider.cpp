@@ -135,7 +135,7 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 	// Log everything >=INFO to same file
 	google::SetLogDestination(google::GLOG_INFO, thisLogDestination.c_str());
 	google::SetLogFilenameExtension(".log");
-	
+
 	LOG(INFO) << "~~~Amethyst OpenVR Driver new logging session begins here!~~~";
 	LOG(INFO) << "Interface version name: " << pInterfaceName;
 	LOG(INFO) << "K2API version name: " << ktvr::IK2API_Version;

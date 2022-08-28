@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Windows.Web.Http;
 using K2CrashHandler.Helpers;
 using Microsoft.UI.Xaml;
 using Newtonsoft.Json.Linq;
@@ -52,7 +53,7 @@ public partial class App : Application
             {
                 try
                 {
-                    var client = new Windows.Web.Http.HttpClient();
+                    var client = new HttpClient();
 
                     using var response = await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
                     using var content = response.Content;

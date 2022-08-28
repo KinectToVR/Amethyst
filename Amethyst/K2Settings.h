@@ -18,6 +18,7 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 
+#include "K2EVRInput.h"
 #include "K2AppTracker.h"
 #define _PI 3.14159265358979323846
 
@@ -288,8 +289,8 @@ namespace k2app
 				appTheme, static_cast<uint32_t>(0), static_cast<uint32_t>(2));
 
 			/* Optionally fix the selected language / select a new one */
-			boost::filesystem::path resource_path =
-				boost::dll::program_location().parent_path() /
+			std::filesystem::path resource_path =
+				interfacing::GetProgramLocation().parent_path() /
 				"Assets" / "Strings" / (appLanguage + L".json");
 
 			// If there's no specified language, fallback to {system}
@@ -304,7 +305,7 @@ namespace k2app
 				LOG(WARNING) << "No language specified! Trying with the system one: \"" <<
 					WStringToString(appLanguage) << "\"!";
 
-				resource_path = boost::dll::program_location().parent_path() /
+				resource_path = interfacing::GetProgramLocation().parent_path() /
 					"Assets" / "Strings" / (appLanguage + L".json");
 			}
 
@@ -316,7 +317,7 @@ namespace k2app
 
 				appLanguage = L"en"; // Change to english
 
-				resource_path = boost::dll::program_location().parent_path() /
+				resource_path = interfacing::GetProgramLocation().parent_path() /
 					"Assets" / "Strings" / (appLanguage + L".json");
 			}
 
