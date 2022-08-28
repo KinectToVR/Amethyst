@@ -53,6 +53,8 @@ namespace winrt::Amethyst::implementation
 		bool TryGoBack();
 
 		Windows::Foundation::IAsyncAction checkUpdates(bool show = false, DWORD delay_ms = 0);
+		Windows::Foundation::IAsyncAction executeUpdates();
+
 		void InstallLaterButton_Click(
 			const Windows::Foundation::IInspectable& sender, const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void InstallNowButton_Click(const Windows::Foundation::IInspectable& sender,

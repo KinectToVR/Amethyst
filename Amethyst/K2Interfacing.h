@@ -95,6 +95,12 @@ namespace k2app::interfacing
 	inline bool isExitingNow = false,
 	            isExitHandled = false; // If actions have been done
 
+	// Update check
+	inline std::atomic_bool updateFound = false,
+	                        updateOnClosed = false,
+	                        checkingUpdatesNow = false,
+	                        updatingNow = false;
+
 	inline std::pair<Eigen::Vector3f, Eigen::Vector3f> // Position helpers for k2 devices -> Base, Override
 		kinectHeadPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}, // But this one's kinect-only
 		kinectWaistPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}; // This one applies to both bases

@@ -286,7 +286,9 @@ namespace K2CrashHandler
 
         private static string LangResString(string key)
         {
-            return Shared.AppStrings["/CrashHandler/" + key] ?? "";
+            return Shared.AppStrings.ContainsKey("/CrashHandler/" + key)
+                ? Shared.AppStrings["/CrashHandler/" + key]
+                : ""; // If empty, return nothing (null guard)
         }
 
         private async void Action_ReRegister(object sender, RoutedEventArgs e)

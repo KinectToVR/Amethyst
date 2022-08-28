@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using K2CrashHandler.Helpers;
 using Microsoft.UI.Xaml;
@@ -55,9 +52,9 @@ public partial class App : Application
             {
                 try
                 {
-                    var client = new HttpClient();
+                    var client = new Windows.Web.Http.HttpClient();
 
-                    using var response = await client.GetAsync("https://docs.k2vr.tech/shared/locales.json");
+                    using var response = await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
                     using var content = response.Content;
                     var json = await content.ReadAsStringAsync();
 

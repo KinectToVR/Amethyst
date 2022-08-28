@@ -119,4 +119,6 @@ void Amethyst::implementation::ConsolePage::UpdateButton_Click(
 	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
 	k2app::shared::main::updateFlyout->ShowAt(*k2app::shared::main::helpButton, options);
+
+	k2app::interfacing::updateFound = true;
 }

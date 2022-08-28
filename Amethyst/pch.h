@@ -60,6 +60,9 @@
 #include <winrt/Microsoft.UI.Interop.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
 
+#include <winrt/Windows.Web.h>
+#include <winrt/Windows.Web.Http.h>
+
 #include <wil/cppwinrt_helpers.h>
 #include <wil/win32_helpers.h>
 
@@ -91,10 +94,6 @@
 
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>
-
-#include <curlpp/cURLpp.hpp>
-#include <curlpp/Easy.hpp>
-#include <curlpp/Options.hpp>
 
 #include <openvr.h>
 

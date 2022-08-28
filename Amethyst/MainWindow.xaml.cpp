@@ -20,12 +20,8 @@ using namespace winrt::Microsoft::UI::Xaml;
 
 // Helper local variables
 HANDLE hNamedMutex = nullptr;
-bool updateFound = false,
-     updateOnClosed = false,
-     main_localInitFinished = false,
+bool main_localInitFinished = false,
      main_loadedOnce = false;
-
-std::atomic_bool checkingUpdatesNow = false;
 
 // Notifications stuff
 event_token notification_token;
@@ -37,18 +33,131 @@ std::string K2RemoteVersion =
 // Toast struct (json)
 struct toast
 {
-	std::string guid, title, message;
+	std::wstring guid, title, message;
 	bool show_always = false;
 };
 
 // Updating function
-Windows::Foundation::IAsyncAction ExecuteUpdate()
+Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::executeUpdates()
 {
-	ShellExecuteA(nullptr, nullptr,
-	              "https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
-	              nullptr, nullptr, SW_SHOW);
+	k2app::interfacing::updatingNow = true;
 
-	co_return;
+	UpdatePendingFlyout().Hide();
+
+	// Setup the flyout contents: action & footer
+	/*UpdatePendingFlyoutHeader().Text(k2app::interfacing::LocalizedResourceWString(
+		L"SharedStrings", L"Updates/UpToDate"));
+	UpdatePendingFlyoutFooter().Text(L"Amethyst v" + StringToWString(k2app::interfacing::K2InternalVersion));*/
+
+	// Hide the new-update icon dot
+	UpdateIconDot().Opacity(0.0);
+
+	// Sleep on UI (Non-blocking)
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
+
+	// Mark the update footer as active
+	UpdateIconGrid().Translation({0, 0, 0});
+	UpdateIconText().Opacity(0.0);
+	UpdateIcon().Foreground(*k2app::shared::main::attentionBrush);
+	IconRotation().Begin();
+
+	// Show the updater progress flyout
+	Controls::Primitives::FlyoutShowOptions options;
+	options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
+	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+
+	if (!k2app::interfacing::isNUXPending)
+		UpdatePendingFlyout().ShowAt(HelpButton(), options);
+
+	// Success? ...or nah?
+	bool m_update_error = false;
+
+	// Reset the progressbar
+	auto UpdatePendingFlyoutProgressBar = Controls::ProgressBar();
+	UpdatePendingFlyoutProgressBar.IsIndeterminate(false);
+	UpdatePendingFlyoutProgressBar.HorizontalAlignment(
+		HorizontalAlignment::Stretch);
+
+	UpdatePendingFlyoutMainStack().Children().Append(
+		UpdatePendingFlyoutProgressBar);
+
+	/* Simulate some work being done */
+	for (uint32_t i = 0; i <= 100; i++)
+	{
+		UpdatePendingFlyoutProgressBar.Value(i);
+		UpdatePendingFlyoutStatusContent().Text(
+			L"Downlodign - " + std::to_wstring(i) + L"%");
+
+		// Sleep on UI (Non-blocking)
+		{
+			apartment_context ui_thread;
+			co_await resume_background();
+			Sleep(150);
+			co_await ui_thread;
+		}
+
+		// Simulate an error
+		if (i > 60)
+		{
+			m_update_error = true;
+			break;
+		}
+	}
+
+	// Mark the update footer as inactive
+	IconRotation().Stop();
+	UpdateIcon().Foreground(*k2app::shared::main::neutralBrush);
+	UpdateIconGrid().Translation({0, -8, 0});
+	UpdateIconText().Opacity(1.0);
+
+	// Check the file result and the DL result
+	if (!m_update_error)
+	{
+		// Execute the update
+		ShellExecuteA(nullptr, nullptr,
+		              "https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
+		              nullptr, nullptr, SW_SHOW);
+	}
+	else
+	{
+		// Play a sound
+		playAppSound(k2app::interfacing::sounds::AppSounds::Error);
+
+		UpdatePendingFlyoutProgressBar.ShowError(true);
+		UpdatePendingFlyoutStatusContent().Text(L"Erraa downlodign!");
+
+		// Sleep on UI (Non-blocking)
+		{
+			apartment_context ui_thread;
+			co_await resume_background();
+			Sleep(3200);
+			co_await ui_thread;
+		}
+	}
+
+	// Hide the flyout
+	UpdatePendingFlyout().Hide();
+
+	// Sleep on UI (Non-blocking)
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
+
+	// Don't give up yet
+	k2app::interfacing::updatingNow = false;
+	if (k2app::interfacing::updateFound)
+		UpdateIconDot().Opacity(1.0);
+
+	// Remove the progressbar
+	UpdatePendingFlyoutMainStack().Children().RemoveAtEnd();
 }
 
 // Updates checking function
@@ -58,8 +167,22 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 	// Attempt only after init
 	if (main_localInitFinished)
 	{
+		// Check if we're midway updating
+		if (k2app::interfacing::updatingNow)
+		{
+			// Show the updater progress flyout
+			Controls::Primitives::FlyoutShowOptions options;
+			options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
+			options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+
+			if (!k2app::interfacing::isNUXPending)
+				UpdatePendingFlyout().ShowAt(HelpButton(), options);
+
+			co_return; // Don't proceed further
+		}
+
 		// Mark as checking
-		checkingUpdatesNow = true;
+		k2app::interfacing::checkingUpdatesNow = true;
 
 		{
 			// Sleep on UI (Non-blocking)
@@ -70,7 +193,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 		}
 
 		// Don't check if found
-		if (!updateFound)
+		if (!k2app::interfacing::updateFound)
 		{
 			// Mark the update footer as active
 			{
@@ -91,68 +214,74 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 			auto start_time = std::chrono::high_resolution_clock::now();
 
 			// Check now
-			updateFound = false;
+			k2app::interfacing::updateFound = false;
 
 			// Dummy for holding change logs
-			std::vector<std::string> changes_strings_vector;
+			std::vector<std::wstring> changes_strings_vector;
 
 			// Check for deez updates
 			try
 			{
-				std::ostringstream release_version_os,
-				                   docs_languages_os;
+				auto client = Windows::Web::Http::HttpClient();
+
+				std::wstring get_release_version,
+				             get_docs_languages;
 
 				LOG(INFO) << "Checking for updates... [GET]";
 
 				// Release
+				try
 				{
-					curlpp::options::Url myUrl(
-						std::string(
-							"https://github.com/KinectToVR/Amethyst-Releases/releases/latest/download/version"));
-					curlpp::Easy myRequest;
-					myRequest.setOpt(myUrl);
-					myRequest.setOpt(cURLpp::Options::FollowLocation(true));
+					const auto& response = co_await client.GetAsync(
+						Windows::Foundation::Uri(
+							L"https://github.com/KinectToVR/Amethyst-Releases/releases/latest/download/version"));
 
-					curlpp::options::WriteStream ws(&release_version_os);
-					myRequest.setOpt(ws);
-					myRequest.perform();
+					get_release_version = co_await response.Content().ReadAsStringAsync();
+				}
+				catch (hresult_error const& ex)
+				{
+					LOG(ERROR) << "Error getting the release info! Message: "
+						<< WStringToString(ex.message().c_str());
 				}
 
 				LOG(INFO) << "Checking available languages... [GET]";
 
 				// Language
+				try
 				{
-					curlpp::options::Url myUrl(
-						std::string(
-							"https://docs.k2vr.tech/shared/locales.json"));
-					curlpp::Easy myRequest;
-					myRequest.setOpt(myUrl);
-					myRequest.setOpt(cURLpp::Options::FollowLocation(true));
+					const auto& response = co_await client.GetAsync(
+						Windows::Foundation::Uri(L"https://docs.k2vr.tech/shared/locales.json"));
 
-					curlpp::options::WriteStream ws(&docs_languages_os);
-					myRequest.setOpt(ws);
-					myRequest.perform();
+					get_docs_languages = co_await response.Content().ReadAsStringAsync();
+				}
+				catch (hresult_error const& ex)
+				{
+					LOG(ERROR) << "Error getting the language info! Message: "
+						<< WStringToString(ex.message().c_str());
 				}
 
 				// If the read string isn't empty, proceed to checking for updates
-				if (std::string read_buffer = release_version_os.str(); !read_buffer.empty())
+				if (!get_release_version.empty())
 				{
-					LOG(INFO) << "Update-check successful, string:\n" << read_buffer;
+					LOG(INFO) << "Update-check successful, string:\n" << WStringToString(get_release_version);
 
-					std::stringstream release_version_os_stream;
-					release_version_os_stream << read_buffer;
+					std::wstringstream release_version_os_stream;
+					release_version_os_stream << get_release_version;
 
-					boost::property_tree::ptree root;
+					boost::property_tree::wptree root;
 					read_json(release_version_os_stream, root);
 
-					if (root.find("version_string") == root.not_found() ||
-						root.find("changes") == root.not_found())
+					if (root.find(L"version_string") == root.not_found() ||
+						root.find(L"changes") == root.not_found())
 						LOG(ERROR) << "The latest release's manifest was invalid!";
 
 					else
 					{
 						// Find the version tag (it's a string only to save time, trust me...)
-						K2RemoteVersion = root.get<std::string>("version_string");
+						K2RemoteVersion = WStringToString(root.get<std::wstring>(L"version_string"));
+
+						LOG(INFO) << "Local version string: " << k2app::interfacing::K2InternalVersion;
+						LOG(INFO) << "Remote version string: " << K2RemoteVersion;
 
 						/* Now split the gathered string into the version number */
 
@@ -167,26 +296,22 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 							// Check the version
 							if (const auto _ver = boost::lexical_cast<uint32_t>(remote_version_num.at(i));
 								_ver > boost::lexical_cast<uint32_t>(local_version_num.at(i)))
-								updateFound = true;
+								k2app::interfacing::updateFound = true;
 
 								// Not to false-alarm in situations like 1.0.1.0 (local) vs 1.0.0.1 (remote)
 							else if (_ver < boost::lexical_cast<uint32_t>(local_version_num.at(i))) break;
 						}
 
 						// Cache the changes
-						BOOST_FOREACH(boost::property_tree::ptree::value_type & v, root.get_child("changes"))
-							changes_strings_vector.push_back(v.second.get_value<std::string>());
-
-						// And maybe log it too
-						LOG(INFO) << "Remote version number: " << K2RemoteVersion;
-						LOG(INFO) << "Local version number: " << k2app::interfacing::K2InternalVersion;
-
+						BOOST_FOREACH(boost::property_tree::wptree::value_type &v, root.get_child(L"changes"))
+							changes_strings_vector.push_back(v.second.get_value<std::wstring>());
+						
 						// Thanks to this chad: https://stackoverflow.com/a/45123408
 						// Now check for push notifications aka toasts
 
 						// !show checks if the update handler was run automatically:
 						//       (by design) it's false only when run at the startup
-						if (root.find("toasts") != root.not_found() && !show)
+						if (root.find(L"toasts") != root.not_found() && !show)
 						{
 							// Scan for all toasts & push them to a table
 							boost::multi_index::multi_index_container<
@@ -194,29 +319,30 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 									boost::multi_index::ordered_unique<
 										boost::multi_index::tag<struct by_name>,
 										boost::multi_index::member<
-											toast, std::string, &toast::guid>>>> toasts;
+											toast, std::wstring, &toast::guid>>>> toasts;
 
-							for (auto& v : root.get_child("toasts"))
+							for (auto v : root.get_child(L"toasts"))
 							{
 								auto& node = v.second;
 								toast tst;
 
-								tst.guid = node.get<std::string>("guid", "");
-								tst.title = node.get<std::string>("title", "");
-								tst.message = node.get<std::string>("message", "");
-								tst.show_always = node.get<bool>("show_always", false);
+								tst.guid = node.get<std::wstring>(L"guid", L"");
+								tst.title = node.get<std::wstring>(L"title", L"");
+								tst.message = node.get<std::wstring>(L"message", L"");
+								tst.show_always = node.get<bool>(L"show_always", false);
 
 								if (!toasts.insert(tst).second)
-									LOG(INFO) << "Skipping toast with duplicate guid: " << tst.guid << '\n';
+									LOG(INFO) << "Skipping toast with duplicate guid: " << WStringToString(tst.guid) << '\n';
 							}
 
 							// Iterate over all the found toasts
 							for (auto& itr : toasts)
 							{
 								// Log everything
-								LOG(INFO) << "Found a toast with:\n    guid: " << itr.guid <<
-									"\n    title: " << itr.title << "\n    message: " << itr.message <<
-									"\n    which needs to show " << (itr.show_always ? "always" : "once");
+								LOG(INFO) << "Found a toast with:\n    guid: " << WStringToString(itr.guid) <<
+									"\n    title: " << WStringToString(itr.title) << "\n    message: " << 
+									WStringToString(itr.message) << "\n    which needs to show " << 
+									(itr.show_always ? "always" : "once");
 
 								// Check if this toast hasn't already been shown, and opt show it
 								if (itr.show_always ||
@@ -224,16 +350,12 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 									== k2app::K2Settings.shownToastsGuidVector.end())
 								{
 									// Log it
-									LOG(INFO) << "Showing toast with guid " << itr.guid << " now...";
+									LOG(INFO) << "Showing toast with guid " << WStringToString(itr.guid) << " now...";
 
 									// Show the toast (and optionally cache it)
-									k2app::interfacing::ShowToast(
-										StringToWString(itr.title),
-										StringToWString(itr.message));
+									k2app::interfacing::ShowToast(itr.title, itr.message);
 
-									k2app::interfacing::ShowVRToast(
-										StringToWString(itr.title),
-										StringToWString(itr.message));
+									k2app::interfacing::ShowVRToast(itr.title, itr.message);
 
 									// If the toast isn't meant to be shown always, cache it
 									if (!itr.show_always)
@@ -244,21 +366,20 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 					}
 				}
 				else
-					LOG(ERROR) << "Update failed, string was empty.";
+					LOG(ERROR) << "Update-check failed, the string was empty.";
 
-				if (std::string read_buffer = docs_languages_os.str(); !read_buffer.empty())
+				if (!get_docs_languages.empty())
 				{
-					std::stringstream docs_languages_os_stream;
-					docs_languages_os_stream << read_buffer;
+					std::wstringstream docs_languages_os_stream;
+					docs_languages_os_stream << get_docs_languages;
 
-					boost::property_tree::ptree root;
+					boost::property_tree::wptree root;
 					read_json(docs_languages_os_stream, root);
 
 					// Check if the resource root is fine & the language code exists
 					k2app::interfacing::docsLanguageCode = k2app::K2Settings.appLanguage;
 
-					if (root.empty() || root.find(WStringToString(
-						k2app::interfacing::docsLanguageCode)) == root.not_found())
+					if (root.empty() || root.find(k2app::interfacing::docsLanguageCode) == root.not_found())
 					{
 						LOG(INFO) << "Docs do not contain a language with code \"" <<
 							WStringToString(k2app::interfacing::docsLanguageCode) <<
@@ -267,6 +388,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 						k2app::interfacing::docsLanguageCode = L"en";
 					}
 				}
+				else
+					LOG(ERROR) << "Language-check failed, the string was empty.";
 			}
 			catch (...)
 			{
@@ -290,19 +413,19 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				UpdateIconText().Opacity(1.0);
 			}
 
-			if (updateFound)
+			if (k2app::interfacing::updateFound)
 			{
 				FlyoutHeader().Text(k2app::interfacing::LocalizedResourceWString(
 					L"SharedStrings", L"Updates/NewUpdateFound"));
 				FlyoutFooter().Text(L"Amethyst v" + StringToWString(K2RemoteVersion));
 
-				std::string changelog_string;
+				std::wstring changelog_string;
 				for (const auto& str : changes_strings_vector)
-					changelog_string += "- " + str + '\n';
+					changelog_string += L"- " + str + L'\n';
 
 				if (changelog_string.length() > 0)
 					changelog_string.pop_back(); // Remove the last \n
-				FlyoutContent().Text(StringToWString(changelog_string));
+				FlyoutContent().Text(changelog_string);
 
 				FlyoutContent().Margin({0, 0, 0, 12});
 
@@ -334,11 +457,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 
 		// If an update was found, show it
 		// (or if the cheack was manual)
-		if ((updateFound || show) && !k2app::interfacing::isNUXPending)
+		if ((k2app::interfacing::updateFound || show) && !k2app::interfacing::isNUXPending)
 			UpdateFlyout().ShowAt(HelpButton(), options);
 
 		// Uncheck
-		checkingUpdatesNow = false;
+		k2app::interfacing::checkingUpdatesNow = false;
 	}
 }
 
@@ -705,8 +828,8 @@ namespace winrt::Amethyst::implementation
 					co_return;
 				}
 
-				if (updateOnClosed)
-					co_await ExecuteUpdate();
+				if (k2app::interfacing::updateOnClosed)
+					co_await executeUpdates();
 
 				if (!k2app::interfacing::isExitHandled)
 				{
@@ -1424,25 +1547,25 @@ void Amethyst::implementation::MainWindow::NavView_Loaded(
 
 	k2app::shared::main::attentionBrush =
 		k2app::interfacing::actualTheme == ElementTheme::Dark
-		? std::make_shared<Media::SolidColorBrush>(
-			Application::Current().Resources().TryLookup(
-				box_value(L"AttentionBrush_Dark"
-				)).as<Media::SolidColorBrush>())
-		: std::make_shared<Media::SolidColorBrush>(
-			Application::Current().Resources().TryLookup(
-				box_value(L"AttentionBrush_Light"
-				)).as<Media::SolidColorBrush>());
+			? std::make_shared<Media::SolidColorBrush>(
+				Application::Current().Resources().TryLookup(
+					box_value(L"AttentionBrush_Dark"
+					)).as<Media::SolidColorBrush>())
+			: std::make_shared<Media::SolidColorBrush>(
+				Application::Current().Resources().TryLookup(
+					box_value(L"AttentionBrush_Light"
+					)).as<Media::SolidColorBrush>());
 
 	k2app::shared::main::neutralBrush =
 		k2app::interfacing::actualTheme == ElementTheme::Dark
-		? std::make_shared<Media::SolidColorBrush>(
-			Application::Current().Resources().TryLookup(
-				box_value(L"NeutralBrush_Dark"
-				)).as<Media::SolidColorBrush>())
-		: std::make_shared<Media::SolidColorBrush>(
-			Application::Current().Resources().TryLookup(
-				box_value(L"NeutralBrush_Light"
-				)).as<Media::SolidColorBrush>());
+			? std::make_shared<Media::SolidColorBrush>(
+				Application::Current().Resources().TryLookup(
+					box_value(L"NeutralBrush_Dark"
+					)).as<Media::SolidColorBrush>())
+			: std::make_shared<Media::SolidColorBrush>(
+				Application::Current().Resources().TryLookup(
+					box_value(L"NeutralBrush_Light"
+					)).as<Media::SolidColorBrush>());
 
 	// NavView doesn't load any page by default, so load home page.
 	NavView().SelectedItem(NavView().MenuItems().GetAt(0));
@@ -1715,7 +1838,7 @@ Windows::UI::Xaml::Controls::Primitives::Popup GetPopup()
 void Amethyst::implementation::MainWindow::InstallLaterButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	updateOnClosed = true;
+	k2app::interfacing::updateOnClosed = true;
 
 	UpdateFlyout().Hide();
 }
@@ -1723,7 +1846,7 @@ void Amethyst::implementation::MainWindow::InstallLaterButton_Click(
 void Amethyst::implementation::MainWindow::InstallNowButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	ExecuteUpdate();
+	executeUpdates();
 
 	UpdateFlyout().Hide();
 }
@@ -1785,7 +1908,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateBu
 	const Input::TappedRoutedEventArgs& e)
 {
 	// Check for updates (and show)
-	if (!checkingUpdatesNow)
+	if (!k2app::interfacing::checkingUpdatesNow)
 	{
 		playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 		co_await checkUpdates(true);
@@ -2198,7 +2321,7 @@ void Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 	         {
 		         k2app::interfacing::actualTheme = NavView().ActualTheme();
 
-				 k2app::shared::main::attentionBrush =
+		         k2app::shared::main::attentionBrush =
 			         k2app::interfacing::actualTheme == ElementTheme::Dark
 				         ? std::make_shared<Media::SolidColorBrush>(
 					         Application::Current().Resources().TryLookup(
@@ -2209,7 +2332,7 @@ void Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 						         box_value(L"AttentionBrush_Light"
 						         )).as<Media::SolidColorBrush>());
 
-				 k2app::shared::main::neutralBrush =
+		         k2app::shared::main::neutralBrush =
 			         k2app::interfacing::actualTheme == ElementTheme::Dark
 				         ? std::make_shared<Media::SolidColorBrush>(
 					         Application::Current().Resources().TryLookup(
@@ -2386,7 +2509,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 	}
 
 	UpdateIcon().Foreground(
-		checkingUpdatesNow
+		k2app::interfacing::checkingUpdatesNow
 			? *attentionBrush
 			: *neutralBrush);
 

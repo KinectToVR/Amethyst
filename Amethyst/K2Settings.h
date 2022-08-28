@@ -138,7 +138,7 @@ namespace k2app
 		bool teachingTipShown_Flip = false;
 
 		// Already shown toasts vector
-		std::vector<std::string> shownToastsGuidVector;
+		std::vector<std::wstring> shownToastsGuidVector;
 
 		// If the first-launch guide's been shown
 		bool firstTimeTourShown = false;

@@ -407,6 +407,35 @@
                 </StackPanel>
             </Flyout>
 
+            <Flyout x:Name="UpdatePendingFlyout"
+                    Opening="ButtonFlyout_Opening"
+                    Closing="ButtonFlyout_Closing">
+                <Flyout.FlyoutPresenterStyle>
+                    <Style TargetType="FlyoutPresenter">
+                        <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="Background"
+                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                    </Style>
+                </Flyout.FlyoutPresenterStyle>
+
+                <StackPanel x:Name="UpdatePendingFlyoutMainStack"
+                            Orientation="Vertical">
+                    <TextBlock Text="Downlodign een updaat"
+                               x:Name="UpdatePendingFlyoutHeader" FontSize="17"
+                               Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
+                    <TextBlock Text="Amethyisht v6.9.42.0"
+                               x:Name="UpdatePendingFlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
+                        <TextBlock Text="Statsus:" Margin="0,0,7,0" 
+                                   x:Name="UpdatePendingFlyoutStatusLabel"
+                                   Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
+                        <TextBlock Text="Downlodign - 0%"
+                                   x:Name="UpdatePendingFlyoutStatusContent" Margin="0,0,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Flyout>
+
             <MenuFlyout x:Name="HelpFlyout"
                         Opening="ButtonFlyout_Opening"
                         Closing="ButtonFlyout_Closing">
