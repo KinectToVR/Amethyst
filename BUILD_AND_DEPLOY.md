@@ -23,7 +23,7 @@ Follow these steps:
   > cd ./vcpkg
   > ./bootstrap-vcpkg.bat
   ```
-  When vcpkg is set up, intgrate it and install some of `boost` and `curlpp`:
+  When vcpkg is set up, intgrate it and install some of `boost` and `cereal`:
   ```powershell
   > ./vcpkg integrate install
   > ./vcpkg install `
@@ -37,7 +37,6 @@ Follow these steps:
     boost-unordered:x64-windows `
     boost-math:x64-windows `
     boost-algorithm:x64-windows `
-    curlpp:x64-windows `
     cereal:x64-windows
   ```
 
