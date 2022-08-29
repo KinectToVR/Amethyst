@@ -77,7 +77,7 @@
                         <TextBlock FontWeight="SemiBold">
                             <Run x:Name="Credits_MainTeam_Roles_Ella" />
                             <Run />
-                            <Hyperlink NavigateUri="https://github.com/TripingPC" UnderlineStyle="None">AuroraNemoia</Hyperlink>
+                            <Hyperlink NavigateUri="https://github.com/AuroraNemoia" UnderlineStyle="None">AuroraNemoia</Hyperlink>
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
