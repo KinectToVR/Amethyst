@@ -60,33 +60,36 @@ namespace k2app::main
 					vr::ETrackedDeviceProperty::Prop_ModelNumber_String,
 					_controller_model, std::size(_controller_model));
 
+				// For the ""s operator
+				using namespace std::string_literals;
+
 				if (findStringIC(_controller_model, "knuckles") ||
 					findStringIC(_controller_model, "index"))
-					boost::replace_all(_header, L"{0}",
-					                   LocalizedResourceWString(
-						                   L"GeneralPage",
-						                   L"Tips/TrackingFreeze/Buttons/Index"));
+					stringReplaceAll(_header, L"{0}"s,
+					                 LocalizedResourceWString(
+						                 L"GeneralPage",
+						                 L"Tips/TrackingFreeze/Buttons/Index"));
 
 				else if (findStringIC(_controller_model, "vive"))
-					boost::replace_all(_header, L"{0}",
-					                   LocalizedResourceWString(
-						                   L"GeneralPage",
-						                   L"Tips/TrackingFreeze/Buttons/VIVE"));
+					stringReplaceAll(_header, L"{0}"s,
+					                 LocalizedResourceWString(
+						                 L"GeneralPage",
+						                 L"Tips/TrackingFreeze/Buttons/VIVE"));
 
 				else if (findStringIC(_controller_model, "mr"))
-					boost::replace_all(_header, L"{0}",
-					                   LocalizedResourceWString(
-						                   L"GeneralPage",
-						                   L"Tips/TrackingFreeze/Buttons/WMR"));
+					stringReplaceAll(_header, L"{0}"s,
+					                 LocalizedResourceWString(
+						                 L"GeneralPage",
+						                 L"Tips/TrackingFreeze/Buttons/WMR"));
 
 				else
-					boost::replace_all(_header, L"{0}",
-					                   LocalizedResourceWString(
-						                   L"GeneralPage",
-						                   L"Tips/TrackingFreeze/Buttons/Oculus"));
+					stringReplaceAll(_header, L"{0}"s,
+					                 LocalizedResourceWString(
+						                 L"GeneralPage",
+						                 L"Tips/TrackingFreeze/Buttons/Oculus"));
 
-				boost::replace_all(_header,
-				                   L"also toggle tracker freeze while in VR", L"toggle it");
+				stringReplaceAll(_header,
+				                 L"also toggle tracker freeze while in VR"s, L"toggle it"s);
 
 				ShowVRToast(std::wstring(L"Tracking Freeze ") +
 				            (isTrackingFrozen ? L"enabled!" : L"disabled!"), _header);
@@ -144,33 +147,36 @@ namespace k2app::main
 					vr::ETrackedDeviceProperty::Prop_ModelNumber_String,
 					_controller_model, std::size(_controller_model));
 
+				// For the ""s operator
+				using namespace std::string_literals;
+
 				if (findStringIC(_controller_model, "knuckles") ||
 					findStringIC(_controller_model, "index"))
-					boost::replace_all(_header, L"{0}",
-					                   LocalizedResourceWString(
-						                   L"SettingsPage",
-						                   L"Tips/FlipToggle/Buttons/Index"));
+					stringReplaceAll(_header, L"{0}"s,
+					                 LocalizedResourceWString(
+						                 L"SettingsPage",
+						                 L"Tips/FlipToggle/Buttons/Index"));
 
 				else if (findStringIC(_controller_model, "vive"))
-					boost::replace_all(_header, L"{0}",
-					                   LocalizedResourceWString(
-						                   L"SettingsPage",
-						                   L"Tips/FlipToggle/Buttons/VIVE"));
+					stringReplaceAll(_header, L"{0}"s,
+					                 LocalizedResourceWString(
+						                 L"SettingsPage",
+						                 L"Tips/FlipToggle/Buttons/VIVE"));
 
 				else if (findStringIC(_controller_model, "mr"))
-					boost::replace_all(_header, L"{0}",
-					                   LocalizedResourceWString(
-						                   L"SettingsPage",
-						                   L"Tips/FlipToggle/Buttons/WMR"));
+					stringReplaceAll(_header, L"{0}"s,
+					                 LocalizedResourceWString(
+						                 L"SettingsPage",
+						                 L"Tips/FlipToggle/Buttons/WMR"));
 
 				else
-					boost::replace_all(_header, L"{0}",
-					                   LocalizedResourceWString(
-						                   L"SettingsPage",
-						                   L"Tips/FlipToggle/Buttons/Oculus"));
+					stringReplaceAll(_header, L"{0}"s,
+					                 LocalizedResourceWString(
+						                 L"SettingsPage",
+						                 L"Tips/FlipToggle/Buttons/Oculus"));
 
-				boost::replace_all(_header,
-				                   L"also toggle skeleton flip while in VR", L"toggle it");
+				stringReplaceAll(_header,
+				                 L"also toggle skeleton flip while in VR"s, L"toggle it"s);
 
 				ShowVRToast(std::wstring(L"Skeleton Flip ") +
 				            (K2Settings.isFlipEnabled ? L"enabled!" : L"disabled!"), _header);

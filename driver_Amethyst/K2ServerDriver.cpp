@@ -1,8 +1,7 @@
 #include "K2ServerDriver.h"
 #include <thread>
-#include <boost/lexical_cast.hpp>
+
 #include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 
 int K2ServerDriver::init_ServerDriver(

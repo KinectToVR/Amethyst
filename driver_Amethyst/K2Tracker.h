@@ -6,57 +6,55 @@
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>
 
-#include <boost/assign/list_of.hpp>
-#include <boost/assign.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/unordered_map.hpp>
-
 // Mapping enum to string for eliminating if-else loop
-const boost::unordered_map<ktvr::ITrackerType, const char*>
-	ITrackerType_String = boost::assign::map_list_of
-		(ktvr::ITrackerType::Tracker_Handed, "vive_tracker_handed")
-		(ktvr::ITrackerType::Tracker_LeftFoot, "vive_tracker_left_foot")
-		(ktvr::ITrackerType::Tracker_RightFoot, "vive_tracker_right_foot")
-		(ktvr::ITrackerType::Tracker_LeftShoulder, "vive_tracker_left_Shoulder")
-		(ktvr::ITrackerType::Tracker_RightShoulder, "vive_tracker_right_shoulder")
-		(ktvr::ITrackerType::Tracker_LeftElbow, "vive_tracker_left_elbow")
-		(ktvr::ITrackerType::Tracker_RightElbow, "vive_tracker_right_elbow")
-		(ktvr::ITrackerType::Tracker_LeftKnee, "vive_tracker_left_knee")
-		(ktvr::ITrackerType::Tracker_RightKnee, "vive_tracker_right_knee")
-		(ktvr::ITrackerType::Tracker_Waist, "vive_tracker_waist")
-		(ktvr::ITrackerType::Tracker_Chest, "vive_tracker_chest")
-		(ktvr::ITrackerType::Tracker_Camera, "vive_tracker_camera")
-		(ktvr::ITrackerType::Tracker_Keyboard, "vive_tracker_keyboard"),
+const std::map<ktvr::ITrackerType, const char*>
+	ITrackerType_String{
+		{ktvr::ITrackerType::Tracker_Handed, "vive_tracker_handed"},
+		{ktvr::ITrackerType::Tracker_LeftFoot, "vive_tracker_left_foot"},
+		{ktvr::ITrackerType::Tracker_RightFoot, "vive_tracker_right_foot"},
+		{ktvr::ITrackerType::Tracker_LeftShoulder, "vive_tracker_left_Shoulder"},
+		{ktvr::ITrackerType::Tracker_RightShoulder, "vive_tracker_right_shoulder"},
+		{ktvr::ITrackerType::Tracker_LeftElbow, "vive_tracker_left_elbow"},
+		{ktvr::ITrackerType::Tracker_RightElbow, "vive_tracker_right_elbow"},
+		{ktvr::ITrackerType::Tracker_LeftKnee, "vive_tracker_left_knee"},
+		{ktvr::ITrackerType::Tracker_RightKnee, "vive_tracker_right_knee"},
+		{ktvr::ITrackerType::Tracker_Waist, "vive_tracker_waist"},
+		{ktvr::ITrackerType::Tracker_Chest, "vive_tracker_chest"},
+		{ktvr::ITrackerType::Tracker_Camera, "vive_tracker_camera"},
+		{ktvr::ITrackerType::Tracker_Keyboard, "vive_tracker_keyboard"}
+	},
 
-	ITrackerType_Role_String = boost::assign::map_list_of
-		(ktvr::ITrackerType::Tracker_Handed, "TrackerRole_Handed")
-		(ktvr::ITrackerType::Tracker_LeftFoot, "TrackerRole_LeftFoot")
-		(ktvr::ITrackerType::Tracker_RightFoot, "TrackerRole_RightFoot")
-		(ktvr::ITrackerType::Tracker_LeftShoulder, "TrackerRole_LeftShoulder")
-		(ktvr::ITrackerType::Tracker_RightShoulder, "TrackerRole_RightShoulder")
-		(ktvr::ITrackerType::Tracker_LeftElbow, "TrackerRole_LeftElbow")
-		(ktvr::ITrackerType::Tracker_RightElbow, "TrackerRole_RightElbow")
-		(ktvr::ITrackerType::Tracker_LeftKnee, "TrackerRole_LeftKnee")
-		(ktvr::ITrackerType::Tracker_RightKnee, "TrackerRole_RightKnee")
-		(ktvr::ITrackerType::Tracker_Waist, "TrackerRole_Waist")
-		(ktvr::ITrackerType::Tracker_Chest, "TrackerRole_Chest")
-		(ktvr::ITrackerType::Tracker_Camera, "TrackerRole_Camera")
-		(ktvr::ITrackerType::Tracker_Keyboard, "TrackerRole_Keyboard"),
+	ITrackerType_Role_String{
+		{ktvr::ITrackerType::Tracker_Handed, "TrackerRole_Handed"},
+		{ktvr::ITrackerType::Tracker_LeftFoot, "TrackerRole_LeftFoot"},
+		{ktvr::ITrackerType::Tracker_RightFoot, "TrackerRole_RightFoot"},
+		{ktvr::ITrackerType::Tracker_LeftShoulder, "TrackerRole_LeftShoulder"},
+		{ktvr::ITrackerType::Tracker_RightShoulder, "TrackerRole_RightShoulder"},
+		{ktvr::ITrackerType::Tracker_LeftElbow, "TrackerRole_LeftElbow"},
+		{ktvr::ITrackerType::Tracker_RightElbow, "TrackerRole_RightElbow"},
+		{ktvr::ITrackerType::Tracker_LeftKnee, "TrackerRole_LeftKnee"},
+		{ktvr::ITrackerType::Tracker_RightKnee, "TrackerRole_RightKnee"},
+		{ktvr::ITrackerType::Tracker_Waist, "TrackerRole_Waist"},
+		{ktvr::ITrackerType::Tracker_Chest, "TrackerRole_Chest"},
+		{ktvr::ITrackerType::Tracker_Camera, "TrackerRole_Camera"},
+		{ktvr::ITrackerType::Tracker_Keyboard, "TrackerRole_Keyboard"}
+	},
 
-	ITrackerType_Role_Serial = boost::assign::map_list_of
-		(ktvr::ITrackerType::Tracker_Handed, "AME-HANDED")
-		(ktvr::ITrackerType::Tracker_LeftFoot, "AME-LFOOT")
-		(ktvr::ITrackerType::Tracker_RightFoot, "AME-RFOOT")
-		(ktvr::ITrackerType::Tracker_LeftShoulder, "AME-LSHOULDER")
-		(ktvr::ITrackerType::Tracker_RightShoulder, "AME-RSHOULDER")
-		(ktvr::ITrackerType::Tracker_LeftElbow, "AME-LELBOW")
-		(ktvr::ITrackerType::Tracker_RightElbow, "AME-RELBOW")
-		(ktvr::ITrackerType::Tracker_LeftKnee, "AME-LKNEE")
-		(ktvr::ITrackerType::Tracker_RightKnee, "AME-RKNEE")
-		(ktvr::ITrackerType::Tracker_Waist, "AME-WAIST")
-		(ktvr::ITrackerType::Tracker_Chest, "AME-CHEST")
-		(ktvr::ITrackerType::Tracker_Camera, "AME-CAMERA")
-		(ktvr::ITrackerType::Tracker_Keyboard, "AME-KEYBOARD");
+	ITrackerType_Role_Serial{
+		{ktvr::ITrackerType::Tracker_Handed, "AME-HANDED"},
+		{ktvr::ITrackerType::Tracker_LeftFoot, "AME-LFOOT"},
+		{ktvr::ITrackerType::Tracker_RightFoot, "AME-RFOOT"},
+		{ktvr::ITrackerType::Tracker_LeftShoulder, "AME-LSHOULDER"},
+		{ktvr::ITrackerType::Tracker_RightShoulder, "AME-RSHOULDER"},
+		{ktvr::ITrackerType::Tracker_LeftElbow, "AME-LELBOW"},
+		{ktvr::ITrackerType::Tracker_RightElbow, "AME-RELBOW"},
+		{ktvr::ITrackerType::Tracker_LeftKnee, "AME-LKNEE"},
+		{ktvr::ITrackerType::Tracker_RightKnee, "AME-RKNEE"},
+		{ktvr::ITrackerType::Tracker_Waist, "AME-WAIST"},
+		{ktvr::ITrackerType::Tracker_Chest, "AME-CHEST"},
+		{ktvr::ITrackerType::Tracker_Camera, "AME-CAMERA"},
+		{ktvr::ITrackerType::Tracker_Keyboard, "AME-KEYBOARD"}
+	};
 
 class K2Tracker : public vr::ITrackedDeviceServerDriver
 {

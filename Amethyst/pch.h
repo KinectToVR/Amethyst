@@ -101,6 +101,3 @@
 #include <glog/logging.h>
 
 #include <openvr.h>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>

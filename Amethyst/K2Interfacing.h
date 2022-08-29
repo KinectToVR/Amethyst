@@ -300,6 +300,23 @@ namespace k2app::interfacing
 
 		return components;
 	}
+	
+	template<typename T>
+	requires std::same_as<std::string, T> || std::same_as<std::wstring, T>
+	void stringReplaceAll(T& data, const T& match, const T& replace)
+	{
+		// Get the first occurrence 
+		size_t pos = data.find(match);
+
+		// Repeat till end is reached 
+		while (pos != std::string::npos)
+		{
+			data.replace(pos, match.size(), replace);
+
+			// Get the next occurrence from the current position 
+			pos = data.find(match, pos + replace.size());
+		}
+	}
 
 	namespace sounds
 	{

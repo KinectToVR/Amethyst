@@ -9,8 +9,6 @@
 #include "OffsetsPivotItem.h"
 #include "OffsetsController.h"
 
-#include <boost/algorithm/string/replace.hpp>
-
 namespace winrt::Amethyst::implementation
 {
 	struct GeneralPage : GeneralPageT<GeneralPage>

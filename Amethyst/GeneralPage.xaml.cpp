@@ -46,8 +46,10 @@ void skeleton_force_set_ui(const bool& v)
 std::wstring points_format(std::wstring fmt,
                            const int32_t& p1, const int32_t& p2)
 {
-	boost::replace_all(fmt, "{1}", std::to_wstring(p1));
-	boost::replace_all(fmt, "{2}", std::to_wstring(p2));
+	using namespace std::string_literals;
+	k2app::interfacing::stringReplaceAll(fmt, L"{1}"s, std::to_wstring(p1));
+	k2app::interfacing::stringReplaceAll(fmt, L"{2}"s, std::to_wstring(p2));
+
 	return fmt;
 }
 
@@ -2052,30 +2054,33 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 			vr::ETrackedDeviceProperty::Prop_ModelNumber_String,
 			_controller_model, std::size(_controller_model));
 
+		// For the ""s operator
+		using namespace std::string_literals;
+
 		if (k2app::interfacing::findStringIC(_controller_model, "knuckles") ||
 			k2app::interfacing::findStringIC(_controller_model, "index"))
-			boost::replace_all(_header, L"{0}",
-			                   k2app::interfacing::LocalizedResourceWString(
-				                   L"GeneralPage",
-				                   L"Tips/TrackingFreeze/Buttons/Index"));
+			k2app::interfacing::stringReplaceAll(_header, L"{0}"s,
+			                                     k2app::interfacing::LocalizedResourceWString(
+				                                     L"GeneralPage",
+				                                     L"Tips/TrackingFreeze/Buttons/Index"));
 
 		else if (k2app::interfacing::findStringIC(_controller_model, "vive"))
-			boost::replace_all(_header, L"{0}",
-			                   k2app::interfacing::LocalizedResourceWString(
-				                   L"GeneralPage",
-				                   L"Tips/TrackingFreeze/Buttons/VIVE"));
+			k2app::interfacing::stringReplaceAll(_header, L"{0}"s,
+			                                     k2app::interfacing::LocalizedResourceWString(
+				                                     L"GeneralPage",
+				                                     L"Tips/TrackingFreeze/Buttons/VIVE"));
 
 		else if (k2app::interfacing::findStringIC(_controller_model, "mr"))
-			boost::replace_all(_header, L"{0}",
-			                   k2app::interfacing::LocalizedResourceWString(
-				                   L"GeneralPage",
-				                   L"Tips/TrackingFreeze/Buttons/WMR"));
+			k2app::interfacing::stringReplaceAll(_header, L"{0}"s,
+			                                     k2app::interfacing::LocalizedResourceWString(
+				                                     L"GeneralPage",
+				                                     L"Tips/TrackingFreeze/Buttons/WMR"));
 
 		else
-			boost::replace_all(_header, L"{0}",
-			                   k2app::interfacing::LocalizedResourceWString(
-				                   L"GeneralPage",
-				                   L"Tips/TrackingFreeze/Buttons/Oculus"));
+			k2app::interfacing::stringReplaceAll(_header, L"{0}"s,
+			                                     k2app::interfacing::LocalizedResourceWString(
+				                                     L"GeneralPage",
+				                                     L"Tips/TrackingFreeze/Buttons/Oculus"));
 
 		FreezeTrackingTeachingTip().Title(_header.c_str());
 		FreezeTrackingTeachingTip().Subtitle(

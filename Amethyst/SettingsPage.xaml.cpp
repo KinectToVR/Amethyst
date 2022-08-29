@@ -854,30 +854,33 @@ void Amethyst::implementation::SettingsPage::FlipToggle_Toggled(
 			vr::ETrackedDeviceProperty::Prop_ModelNumber_String,
 			_controller_model, std::size(_controller_model));
 
+		// For the ""s operator
+		using namespace std::string_literals;
+
 		if (k2app::interfacing::findStringIC(_controller_model, "knuckles") ||
 			k2app::interfacing::findStringIC(_controller_model, "index"))
-			boost::replace_all(_header, L"{0}",
-			                   k2app::interfacing::LocalizedResourceWString(
-				                   L"SettingsPage",
-				                   L"Tips/FlipToggle/Buttons/Index"));
+			k2app::interfacing::stringReplaceAll(_header, L"{0}"s,
+			                                     k2app::interfacing::LocalizedResourceWString(
+				                                     L"SettingsPage",
+				                                     L"Tips/FlipToggle/Buttons/Index"));
 
 		else if (k2app::interfacing::findStringIC(_controller_model, "vive"))
-			boost::replace_all(_header, L"{0}",
-			                   k2app::interfacing::LocalizedResourceWString(
-				                   L"SettingsPage",
-				                   L"Tips/FlipToggle/Buttons/VIVE"));
+			k2app::interfacing::stringReplaceAll(_header, L"{0}"s,
+			                                     k2app::interfacing::LocalizedResourceWString(
+				                                     L"SettingsPage",
+				                                     L"Tips/FlipToggle/Buttons/VIVE"));
 
 		else if (k2app::interfacing::findStringIC(_controller_model, "mr"))
-			boost::replace_all(_header, L"{0}",
-			                   k2app::interfacing::LocalizedResourceWString(
-				                   L"SettingsPage",
-				                   L"Tips/FlipToggle/Buttons/WMR"));
+			k2app::interfacing::stringReplaceAll(_header, L"{0}"s,
+			                                     k2app::interfacing::LocalizedResourceWString(
+				                                     L"SettingsPage",
+				                                     L"Tips/FlipToggle/Buttons/WMR"));
 
 		else
-			boost::replace_all(_header, L"{0}",
-			                   k2app::interfacing::LocalizedResourceWString(
-				                   L"SettingsPage",
-				                   L"Tips/FlipToggle/Buttons/Oculus"));
+			k2app::interfacing::stringReplaceAll(_header, L"{0}"s,
+			                                     k2app::interfacing::LocalizedResourceWString(
+				                                     L"SettingsPage",
+				                                     L"Tips/FlipToggle/Buttons/Oculus"));
 
 		ToggleFlipTeachingTip().Title(_header.c_str());
 		ToggleFlipTeachingTip().Subtitle(
