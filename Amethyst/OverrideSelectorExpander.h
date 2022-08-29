@@ -83,28 +83,28 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			for (const auto& _row : _overrideSelectorRows)
 			{
 				_row.get()->TrackerPositionCombo().get()->IsEnabled(
-					_row.get()->Tracker()->data.isActive && _row.get()->Tracker()->isPositionOverridden);
+					_row.get()->Tracker()->data_isActive && _row.get()->Tracker()->isPositionOverridden);
 				_row.get()->TrackerOrientationCombo().get()->IsEnabled(
-					_row.get()->Tracker()->data.isActive && _row.get()->Tracker()->isRotationOverridden);
+					_row.get()->Tracker()->data_isActive && _row.get()->Tracker()->isRotationOverridden);
 
-				_row.get()->OverridePosition().get()->IsEnabled(_row.get()->Tracker()->data.isActive);
-				_row.get()->OverrideOrientation().get()->IsEnabled(_row.get()->Tracker()->data.isActive);
+				_row.get()->OverridePosition().get()->IsEnabled(_row.get()->Tracker()->data_isActive);
+				_row.get()->OverrideOrientation().get()->IsEnabled(_row.get()->Tracker()->data_isActive);
 
 				// Change the placeholder to 'No Override' or 'Joint Disabled'
 				_row.get()->TrackerPositionCombo().get()->PlaceholderText(
-					_row.get()->Tracker()->data.isActive
+					_row.get()->Tracker()->data_isActive
 						? k2app::interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText")
 						: k2app::interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
 				_row.get()->TrackerOrientationCombo().get()->PlaceholderText(
-					_row.get()->Tracker()->data.isActive
+					_row.get()->Tracker()->data_isActive
 						? k2app::interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText")
 						: k2app::interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
 
-				if (!_row.get()->Tracker()->data.isActive)
+				if (!_row.get()->Tracker()->data_isActive)
 				{
 					_row.get()->OverridePosition().get()->IsChecked(false);
 					_row.get()->OverrideOrientation().get()->IsChecked(false);
@@ -433,9 +433,9 @@ namespace k2app::interfacing
 			{
 				Helpers::SetComboBoxIsEnabled_Safe(
 					row.get()->TrackerCombo(),
-					row.get()->Tracker()->data.isActive);
+					row.get()->Tracker()->data_isActive);
 
-				if (!row.get()->Tracker()->data.isActive)
+				if (!row.get()->Tracker()->data_isActive)
 					Helpers::SelectComboBoxItem_Safe(
 						row.get()->TrackerCombo(), -1); // Placeholder
 			}

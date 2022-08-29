@@ -794,7 +794,7 @@ void Amethyst::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem
 		k2app::K2Settings.externalFlipCalibrationYaw =
 			EigenUtils::RotationProjectedYaw( // Overriden tracker
 				k2app::interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
-				k2app::K2Settings.K2TrackersVector[0].pose.orientation); // Raw orientation
+				k2app::K2Settings.K2TrackersVector[0].pose_orientation); // Raw orientation
 	}
 	// If it's from an external tracker
 	else
@@ -1109,7 +1109,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 			     Tracker_Chest));
 
 		for (const auto& tracker : k2app::K2Settings.K2TrackersVector)
-			if (tracker.tracker == tracker_map[static_cast<i_tracker_list>(index)])
+			if (tracker.base_tracker == tracker_map[static_cast<i_tracker_list>(index)])
 				isChecked = true; // Tracker is enabled
 
 		menuTrackerToggleItem.IsEnabled(isEnabled);
@@ -1130,22 +1130,22 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					k2app::K2Settings.K2TrackersVector.push_back(k2app::K2AppTracker());
 
 					// Set the newly created tracker up
-					k2app::K2Settings.K2TrackersVector.back().tracker = current_tracker;
-					k2app::K2Settings.K2TrackersVector.back().data.serial =
-						k2app::ITrackerType_Role_Serial[k2app::K2Settings.K2TrackersVector.back().tracker];
+					k2app::K2Settings.K2TrackersVector.back().base_tracker = current_tracker;
+					k2app::K2Settings.K2TrackersVector.back().data_serial =
+						k2app::ITrackerType_Role_Serial[k2app::K2Settings.K2TrackersVector.back().base_tracker];
 				}
 				else
 				// If the tracker was unchecked
 					for (uint32_t _t = 0; _t < k2app::K2Settings.K2TrackersVector.size(); _t++)
-						if (k2app::K2Settings.K2TrackersVector[_t].tracker == current_tracker)
+						if (k2app::K2Settings.K2TrackersVector[_t].base_tracker == current_tracker)
 						{
 							// Cache the tracker's state
-							const bool trackerState = k2app::K2Settings.K2TrackersVector.at(_t).data.isActive;
+							const bool trackerState = k2app::K2Settings.K2TrackersVector.at(_t).data_isActive;
 
 							// Make actual changes
 							if (trackerState && k2app::interfacing::K2AppTrackersInitialized)
 								ktvr::set_tracker_state<false>(
-									k2app::K2Settings.K2TrackersVector.at(_t).tracker, false);
+									k2app::K2Settings.K2TrackersVector.at(_t).base_tracker, false);
 
 							// Sleep on UI's background
 							apartment_context _ui_thread;
@@ -1313,7 +1313,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				// No std::ranges today...
 				bool _find_result = false;
 				for (const auto& tracker : k2app::K2Settings.K2TrackersVector)
-					if (tracker.data.isActive)_find_result = true;
+					if (tracker.data_isActive)_find_result = true;
 
 				// No trackers are enabled, force-enable the waist tracker
 				if (!_find_result)

@@ -9,7 +9,7 @@
 #include <Eigen/Dense>
 
 /*
- * K2API Devices
+ * AME_API Devices
  *
  * This is a separate header because we won't need linking
  * & doing much more stuff for nothing, just gonna include
@@ -30,7 +30,7 @@ inline std::string WStringToString(const std::wstring& s)
 namespace ktvr
 {
 	// Interface Version
-	static const char* IK2API_Devices_Version = "IK2API_Version_013";
+	static const char* IAME_API_Devices_Version = "IAME_API_Version_013";
 
 	// Return messaging types
 	enum K2InitErrorType

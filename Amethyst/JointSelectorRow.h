@@ -132,7 +132,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_title.Text(eraseSubStr(k2app::interfacing::LocalizedResourceWString(
 				                        L"SharedStrings", L"Joints/Enum/" +
-				                        std::to_wstring(static_cast<int>(_tracker_pointer->tracker))),
+				                        std::to_wstring(static_cast<int>(_tracker_pointer->base_tracker))),
 			                        L" Tracker"));
 
 			_title.FontSize(14);

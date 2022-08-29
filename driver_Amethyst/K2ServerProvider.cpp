@@ -138,7 +138,7 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 
 	LOG(INFO) << "~~~Amethyst OpenVR Driver new logging session begins here!~~~";
 	LOG(INFO) << "Interface version name: " << pInterfaceName;
-	LOG(INFO) << "K2API version name: " << ktvr::IK2API_Version;
+	LOG(INFO) << "K2API version name: " << ktvr::IAME_API_Version;
 
 	LOG(WARNING) <<
 		"If you get a \"Check failed: !IsGoogleLoggingInitialized() You called InitGoogleLogging() twice!\", "

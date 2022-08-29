@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -18,6 +18,9 @@
     </Filter>
     <Filter Include="Object Files">
       <UniqueIdentifier>{ba72db6f-e381-444b-8adb-7a5e7da51b16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{d4dc231e-7e66-4afa-a3fd-aa898a9b5bda}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -39,6 +42,9 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Generated Files\Amethyst_API.pb.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -49,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="Amethyst_API.cpp">
       <Filter>API Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated Files\Amethyst_API.pb.cc">
+      <Filter>Generated Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -275,9 +275,9 @@ namespace k2app::interfacing
 
 		// Else no click action requested ("none")
 	}
-	
-	template<typename T>
-	requires std::same_as<std::string, T> || std::same_as<std::wstring, T>
+
+	template <typename T>
+		requires std::same_as<std::string, T> || std::same_as<std::wstring, T>
 	std::vector<T> splitStringByDelimiter(T target, T delimiter)
 	{
 		std::vector<T> components;
@@ -294,15 +294,16 @@ namespace k2app::interfacing
 				const size_t length = index - start;
 				components.push_back(target.substr(start, length));
 				start += (length + delimiter.size());
-			} while (true);
+			}
+			while (true);
 			components.push_back(target.substr(start));
 		}
 
 		return components;
 	}
-	
-	template<typename T>
-	requires std::same_as<std::string, T> || std::same_as<std::wstring, T>
+
+	template <typename T>
+		requires std::same_as<std::string, T> || std::same_as<std::wstring, T>
 	void stringReplaceAll(T& data, const T& match, const T& replace)
 	{
 		// Get the first occurrence 
@@ -477,7 +478,7 @@ namespace k2app::interfacing
 	inline void devices_check_disabled_joints();
 
 	// Controllers' ID's (vr::k_unTrackedDeviceIndexInvalid for non-existent)
-	inline std::pair<uint32_t, uint32_t> vrControllerIndexes{
+	inline std::pair vrControllerIndexes{
 		vr::k_unTrackedDeviceIndexInvalid, // Left
 		vr::k_unTrackedDeviceIndexInvalid // Right
 	};
@@ -507,8 +508,8 @@ namespace k2app::interfacing
 			// Create a dummy update vector
 			std::vector<std::pair<ktvr::ITrackerType, bool>> k2_tracker_statuses;
 			for (const auto& tracker : K2Settings.K2TrackersVector)
-				if (tracker.data.isActive)
-					k2_tracker_statuses.push_back(std::make_pair(tracker.tracker, true));
+				if (tracker.data_isActive)
+					k2_tracker_statuses.push_back(std::make_pair(tracker.base_tracker, true));
 
 			// Try 3 times cause why not
 			if (!k2_tracker_statuses.empty())
@@ -516,7 +517,7 @@ namespace k2app::interfacing
 				{
 					// Update status in server
 					spawned.push_back(
-						ktvr::update_tracker_state_vector<true>(k2_tracker_statuses).success);
+						ktvr::update_tracker_state_vector<true>(k2_tracker_statuses).success());
 					std::this_thread::sleep_for(std::chrono::milliseconds(15));
 				}
 
@@ -694,14 +695,14 @@ namespace k2app::interfacing
 				// Dump data to variables
 				pingTime = full_time;
 				parsingTime = std::clamp( // Subtract message creation (got) time and send time
-					test_response.messageTimestamp - test_response.messageManualTimestamp,
+					test_response.messagetimestamp() - test_response.messagemanualtimestamp(),
 					static_cast<long long>(1), LLONG_MAX);
 
 				// Log ?success
 				LOG(INFO) <<
 					"Connection test has ended, [result: " <<
-					(test_response.success ? "success" : "fail") <<
-					"], response code: " << test_response.result;
+					(test_response.success() ? "success" : "fail") <<
+					"], response code: " << test_response.result();
 
 				// Log some data if needed
 				LOG(INFO) <<
@@ -709,7 +710,7 @@ namespace k2app::interfacing
 
 					"call time: " <<
 					std::clamp( // Subtract message creation (got) time and send time
-						send_time - test_response.messageManualTimestamp,
+						send_time - test_response.messagemanualtimestamp(),
 						static_cast<long long>(0), LLONG_MAX) <<
 					" [micros], " <<
 
@@ -719,7 +720,7 @@ namespace k2app::interfacing
 
 					"flight-back time: " <<
 					std::clamp( // Subtract message creation (got) time and send time
-						K2API_GET_TIMESTAMP_NOW - test_response.messageManualTimestamp,
+						AME_API_GET_TIMESTAMP_NOW - test_response.messagemanualtimestamp(),
 						static_cast<long long>(1), LLONG_MAX) <<
 					" [micros]";
 
@@ -729,7 +730,7 @@ namespace k2app::interfacing
 					static_cast<int>(maxPingCheckingThreads) + 1);
 
 				// Return the result
-				return test_response.success;
+				return test_response.success();
 			}
 			catch (const std::exception& e)
 			{
@@ -762,9 +763,9 @@ namespace k2app::interfacing
 			{
 				/* Initialize the port */
 				LOG(INFO) << "Initializing the server IPC...";
-				LOG(INFO) << "K2API version name: " << ktvr::IK2API_Version;
+				LOG(INFO) << "AME_API version name: " << ktvr::IAME_API_Version;
 
-				const auto init_code = ktvr::init_k2api();
+				const auto init_code = ktvr::init_ame_api();
 				bool server_connected = false;
 
 				LOG(INFO) << "Server IPC initialization " <<
@@ -942,7 +943,7 @@ namespace k2app::interfacing
 
 				if (!_can_be_ame)
 					for (const auto& _tracker : K2Settings.K2TrackersVector)
-						if (std::string(buf_p) == _tracker.data.serial)
+						if (std::string(buf_p) == _tracker.data_serial)
 						{
 							LOG_IF(INFO, _log) <<
 								"Skipping the latest found tracker because it's been added from Amethyst";
@@ -1093,10 +1094,6 @@ namespace k2app::interfacing
 
 	// HMD pose in OpenVR
 	inline std::pair
-	<
-		Eigen::Vector3f, // Position
-		Eigen::Quaternionf // Rotation
-	>
 	vrHMDPose
 	{
 		Eigen::Vector3f(0.f, 0.f, 0.f), // Init as zero
@@ -1307,22 +1304,22 @@ namespace k2app::interfacing
 
 		inline std::array<ktvr::K2TrackedJoint, 7> plugins_getAppJointPoses()
 		{
-			return std::array<ktvr::K2TrackedJoint, 7>
+			return std::array
 			{
 				K2Settings.K2TrackersVector.at(0).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[0].data.isActive, "Waist"),
+					K2Settings.K2TrackersVector[0].data_isActive, "Waist"),
 				K2Settings.K2TrackersVector.at(1).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[1].data.isActive, "Left Foot"),
+					K2Settings.K2TrackersVector[1].data_isActive, "Left Foot"),
 				K2Settings.K2TrackersVector.at(2).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[2].data.isActive, "Right Foot"),
+					K2Settings.K2TrackersVector[2].data_isActive, "Right Foot"),
 				K2Settings.K2TrackersVector.at(3).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[3].data.isActive, "Left Elbow"),
+					K2Settings.K2TrackersVector[3].data_isActive, "Left Elbow"),
 				K2Settings.K2TrackersVector.at(4).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[4].data.isActive, "Right Elbow"),
+					K2Settings.K2TrackersVector[4].data_isActive, "Right Elbow"),
 				K2Settings.K2TrackersVector.at(5).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[5].data.isActive, "Left Knee"),
+					K2Settings.K2TrackersVector[5].data_isActive, "Left Knee"),
 				K2Settings.K2TrackersVector.at(6).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[6].data.isActive, "Right Knee"),
+					K2Settings.K2TrackersVector[6].data_isActive, "Right Knee"),
 			};
 		}
 
@@ -1658,9 +1655,7 @@ namespace k2app::interfacing
 				_ptr_button = std::make_shared<Controls::Button>(_button);
 
 				// Create a dummy callback
-				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e)>
+				const std::function
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const RoutedEventArgs& e) ->
 					void
@@ -1816,9 +1811,7 @@ namespace k2app::interfacing
 				_ptr_number_box = std::make_shared<Controls::NumberBox>(_number_box);
 
 				// Create a dummy callback
-				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const Controls::NumberBoxValueChangedEventArgs& e)>
+				const std::function
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const Controls::NumberBoxValueChangedEventArgs
 					                     & e) ->
@@ -2017,9 +2010,7 @@ namespace k2app::interfacing
 				_ptr_combo_box = std::make_shared<Controls::ComboBox>(_combo_box);
 
 				// Create a dummy callback
-				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const Controls::SelectionChangedEventArgs& e)>
+				const std::function
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const Controls::SelectionChangedEventArgs
 					                     & e) ->
@@ -2175,9 +2166,7 @@ namespace k2app::interfacing
 				_ptr_check_box = std::make_shared<Controls::CheckBox>(_check_box);
 
 				// Create a dummy callback
-				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e)>
+				const std::function
 					_n_callback_checked = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                             const RoutedEventArgs& e) ->
 					void
@@ -2190,9 +2179,7 @@ namespace k2app::interfacing
 					};
 
 				// Create a dummy callback
-				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e)>
+				const std::function
 					_n_callback_unchecked = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                               const RoutedEventArgs& e) ->
 					void
@@ -2341,9 +2328,7 @@ namespace k2app::interfacing
 				_ptr_toggle_switch = std::make_shared<Controls::ToggleSwitch>(_toggle_switch);
 
 				// Create a dummy callback
-				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const RoutedEventArgs& e)>
+				const std::function
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const RoutedEventArgs& e) ->
 					void
@@ -2482,9 +2467,7 @@ namespace k2app::interfacing
 				_ptr_text_box = std::make_shared<Controls::TextBox>(_text_box);
 
 				// Create a dummy callback
-				const std::function<void(
-						const winrt::Windows::Foundation::IInspectable& sender,
-						const Input::KeyRoutedEventArgs& e)>
+				const std::function
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const Input::KeyRoutedEventArgs& e) ->
 					void

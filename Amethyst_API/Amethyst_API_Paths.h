@@ -3,7 +3,7 @@
 #include <string>
 
 /*
- * K2API Paths
+ * AME_API Paths
  *
  * This is a separate header because we won't need linking
  * & doing much more stuff for nothing, just gonna include

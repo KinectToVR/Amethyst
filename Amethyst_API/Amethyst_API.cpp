@@ -1,9 +1,6 @@
 #include "pch.h"
 #include "Amethyst_API.h"
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
 void replace_all(std::string& str, const std::string& from, const std::string& to)
 {
 	if (from.empty())
@@ -18,7 +15,7 @@ void replace_all(std::string& str, const std::string& from, const std::string& t
 
 namespace ktvr
 {
-	int init_k2api(
+	int init_ame_api(
 		const std::wstring& k2_to_pipe,
 		const std::wstring& k2_from_pipe,
 		const std::wstring& k2_to_sem,
@@ -28,33 +25,33 @@ namespace ktvr
 		try
 		{
 			// Copy pipe & semaphore addresses
-			k2api_to_pipe_address = k2_to_pipe;
-			k2api_from_pipe_address = k2_from_pipe;
-			k2api_to_semaphore_address = k2_to_sem;
-			k2api_from_semaphore_address = k2_from_sem;
-			k2api_start_semaphore_address = k2_start_sem;
+			ame_api_to_pipe_address = k2_to_pipe;
+			ame_api_from_pipe_address = k2_from_pipe;
+			ame_api_to_semaphore_address = k2_to_sem;
+			ame_api_from_semaphore_address = k2_from_sem;
+			ame_api_start_semaphore_address = k2_start_sem;
 
 			// Open existing *to* semaphore
-			k2api_to_semaphore = OpenSemaphoreW(
+			ame_api_to_semaphore = OpenSemaphoreW(
 				SYNCHRONIZE | SEMAPHORE_MODIFY_STATE,
 				FALSE,
 				k2_to_sem.c_str()); //Semaphore Name
 
 			// Open existing *from* semaphore
-			k2api_from_semaphore = OpenSemaphoreW(
+			ame_api_from_semaphore = OpenSemaphoreW(
 				SYNCHRONIZE | SEMAPHORE_MODIFY_STATE,
 				FALSE,
 				k2_from_sem.c_str()); //Semaphore Name
 
 			// Open existing *start* semaphore
-			k2api_start_semaphore = OpenSemaphoreW(
+			ame_api_start_semaphore = OpenSemaphoreW(
 				SYNCHRONIZE | SEMAPHORE_MODIFY_STATE,
 				FALSE,
 				k2_start_sem.c_str()); //Semaphore Name
 
-			if (k2api_to_semaphore == nullptr ||
-				k2api_from_semaphore == nullptr ||
-				k2api_start_semaphore == nullptr)
+			if (ame_api_to_semaphore == nullptr ||
+				ame_api_from_semaphore == nullptr ||
+				ame_api_start_semaphore == nullptr)
 				return -1;
 		}
 		catch (const std::exception& e)
@@ -65,13 +62,13 @@ namespace ktvr
 	}
 
 	// May be blocking
-	int close_k2api() noexcept
+	int close_ame_api() noexcept
 	{
 		try
 		{
-			CloseHandle(k2api_to_semaphore);
-			CloseHandle(k2api_from_semaphore);
-			CloseHandle(k2api_start_semaphore);
+			CloseHandle(ame_api_to_semaphore);
+			CloseHandle(ame_api_from_semaphore);
+			CloseHandle(ame_api_start_semaphore);
 		}
 		catch (const std::exception& e)
 		{
@@ -82,30 +79,27 @@ namespace ktvr
 
 	std::string send_message(const std::string& data, const bool want_reply) noexcept(false)
 	{
-		// change the string to hex format
-		std::string msg_data = hexString(data);
-
 		///// Send the message via named pipe /////
 
 		// Wait for the semaphore if it's locked
-		WaitForSingleObject(k2api_to_semaphore, INFINITE);
+		WaitForSingleObject(ame_api_to_semaphore, INFINITE);
 
 		// Here, write to the *to* pipe
 		HANDLE API_WriterPipe = CreateNamedPipeW(
-			k2api_to_pipe_address.c_str(),
+			ame_api_to_pipe_address.c_str(),
 			PIPE_ACCESS_INBOUND | PIPE_ACCESS_OUTBOUND,
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
 			1, 4096, 4096, 1000L, nullptr);
 		DWORD Written;
 
 		// Let the server know we'll be writing soon
-		ReleaseSemaphore(k2api_start_semaphore, 1, nullptr);
+		ReleaseSemaphore(ame_api_start_semaphore, 1, nullptr);
 
 		// Read from the pipe
 		ConnectNamedPipe(API_WriterPipe, nullptr);
 		WriteFile(API_WriterPipe,
-		          msg_data.c_str(),
-		          strlen(msg_data.c_str()),
+		          data.c_str(),
+		          strlen(data.c_str()),
 		          &Written, nullptr);
 		FlushFileBuffers(API_WriterPipe);
 
@@ -120,9 +114,9 @@ namespace ktvr
 		if (want_reply)
 		{
 			// Wait for the server to request a response, max 1s
-			if (WaitForSingleObject(k2api_from_semaphore, 1000L) != WAIT_OBJECT_0)
+			if (WaitForSingleObject(ame_api_from_semaphore, 1000L) != WAIT_OBJECT_0)
 			{
-				k2api_last_error = "Server didn't respond by the max timeout / 1 second.\n";
+				ame_api_last_error = "Server didn't respond by the max timeout / 1 second.\n";
 				return "";
 				//LOG(ERROR) << "Server didn't respond after 1 second.\n";
 			}
@@ -130,7 +124,7 @@ namespace ktvr
 			// Here, read from the *from* pipe
 			// Create the pipe file
 			std::optional<HANDLE> API_ReaderPipe = CreateFileW(
-				k2api_from_pipe_address.c_str(),
+				ame_api_from_pipe_address.c_str(),
 				GENERIC_READ | GENERIC_WRITE,
 				0, nullptr, OPEN_EXISTING, 0, nullptr);
 
@@ -148,7 +142,7 @@ namespace ktvr
 			}
 			else
 			{
-				k2api_last_error = "Error: Pipe object was not initialized.";
+				ame_api_last_error = "Error: Pipe object was not initialized.";
 				return "";
 				//LOG(ERROR) << "Error: Pipe object was not initialized.";
 			}
@@ -156,64 +150,50 @@ namespace ktvr
 			CloseHandle(API_ReaderPipe.value());
 
 			// Unlock the semaphore after job done
-			ReleaseSemaphore(k2api_to_semaphore, 1, nullptr);
+			ReleaseSemaphore(ame_api_to_semaphore, 1, nullptr);
 
 			///// Receive the response via named pipe /////
 
-			// I don't know why, when and how,
-			// but somehow K2API inserts this shit at index 62
-			std::string _s = API_read_buffer;
-			if (_s.find("3120300a") == 62)_s.erase(62, 8);
-
-			// decode hex reply
-			return asciiString(_s); // Return only the reply
+			return API_read_buffer; // Return only the reply
 		}
 		// Unlock the semaphore after job done
-		ReleaseSemaphore(k2api_to_semaphore, 1, nullptr);
+		ReleaseSemaphore(ame_api_to_semaphore, 1, nullptr);
 		return ""; // No reply
 	}
 
 	std::monostate send_message_no_reply(K2Message message)
 	{
 		// Add timestamp
-		message.messageTimestamp = K2API_GET_TIMESTAMP_NOW;
-		message.want_reply = false;
+		message.set_messagetimestamp(AME_API_GET_TIMESTAMP_NOW);
+		message.set_want_reply(false);
 
 		// Serialize to string
-		std::ostringstream o;
-		boost::archive::text_oarchive oa(o);
-		oa << message;
 
 		// Send the message
-
-		// Probably void
-		send_message(o.str(), false);
+		send_message(message.SerializeAsString(), false);
 		return std::monostate();
 	}
 
 	K2ResponseMessage send_message_want_reply(K2Message message)
 	{
 		// Add timestamp
-		message.messageTimestamp = K2API_GET_TIMESTAMP_NOW;
-		message.want_reply = true;
+		message.set_messagetimestamp(AME_API_GET_TIMESTAMP_NOW);
+		message.set_want_reply(true);
 
 		// Serialize to string
-		std::ostringstream o;
-		boost::archive::text_oarchive oa(o);
-		oa << message;
 
 		// Send the message
 		// Deserialize then
 
 		// Compose the response
-		K2ResponseMessage response;
-		auto reply = send_message(o.str(), true);
-
-		std::istringstream i(reply);
-		boost::archive::text_iarchive ia(i);
-		ia >> response;
+		const auto reply = send_message(
+			message.SerializeAsString(),
+			true);
 
 		// Deserialize reply and return
+		auto response = K2ResponseMessage();
+		response.ParseFromString(reply);
+
 		return response;
 	}
 
@@ -222,16 +202,17 @@ namespace ktvr
 		try
 		{
 			auto message = K2Message();
-			message.messageType = static_cast<int>(K2MessageType::K2Message_Ping);
+			message.set_messagetype(K2Message_Ping);
 
 			// Grab the current time and send the message
-			const long long send_time = K2API_GET_TIMESTAMP_NOW;
+			const long long send_time = AME_API_GET_TIMESTAMP_NOW;
 			const auto response = send_message(message);
 
 			// Return tuple with response and elapsed time
 			const auto elapsed_time = // Always >= 0
-				std::clamp(K2API_GET_TIMESTAMP_NOW - send_time,
+				std::clamp(AME_API_GET_TIMESTAMP_NOW - send_time,
 				           static_cast<long long>(0), LLONG_MAX);
+
 			return std::make_tuple(response, send_time, elapsed_time);
 		}
 		catch (const std::exception& e)
@@ -239,80 +220,5 @@ namespace ktvr
 			return std::make_tuple(K2ResponseMessage(), static_cast<long long>(0), static_cast<long long>(0));
 			// Success is set to false by default
 		}
-	}
-
-	std::string hexString(const std::string& s)
-	{
-		std::ostringstream ret;
-
-		// Change ascii string to hex string
-		for (char c : s)
-			ret << std::hex << std::setfill('0') << std::setw(2) << std::nouppercase << static_cast<int>(c);
-		std::string ret_s = ret.str();
-
-		// Erase 0a00 if there is so
-		if (ret_s.find("0a00") == 0)ret_s.erase(0, 4);
-		return ret_s;
-	}
-
-	std::string asciiString(const std::string& s)
-	{
-		std::ostringstream ret;
-
-		// Start from the index 2, removing 0A00 occur
-		for (std::string::size_type i = 0; i < s.length(); i += 2)
-			ret << static_cast<char>(static_cast<int>(strtol(s.substr(i, 2).c_str(), nullptr, 16)));
-
-		return ret.str();
-	}
-
-	std::string K2Message::serializeToString()
-	{
-		std::ostringstream o;
-		boost::archive::text_oarchive oa(o);
-		oa << *this;
-		return o.str();
-	}
-
-	[[nodiscard]] K2Message K2Message::parseFromString(const std::string& str) noexcept
-	{
-		try
-		{
-			std::istringstream i(str);
-			boost::archive::text_iarchive ia(i);
-
-			K2Message response;
-			ia >> response;
-			return response;
-		}
-		catch (const boost::archive::archive_exception& e)
-		{
-			return K2Message();
-		}
-	}
-
-	std::string K2ResponseMessage::serializeToString()
-	{
-		std::ostringstream o;
-		boost::archive::text_oarchive oa(o);
-		oa << *this;
-		return o.str();
-	}
-
-	[[nodiscard]] K2ResponseMessage K2ResponseMessage::parseFromString(const std::string& str) noexcept
-	{
-		try
-		{
-			std::istringstream i(str);
-			boost::archive::text_iarchive ia(i);
-
-			K2ResponseMessage response;
-			ia >> response;
-			return response;
-		}
-		catch (const boost::archive::archive_exception& e)
-		{
-		}
-		return K2ResponseMessage();
 	}
 }

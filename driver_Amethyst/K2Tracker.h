@@ -140,7 +140,7 @@ public:
 	vr::DriverPose_t GetPose() override;
 
 	// Update pose
-	void set_pose(const ktvr::K2PosePacket& pose);
+	void set_pose(const ktvr::K2TrackerPose& pose);
 
 	void set_state(bool state);
 	bool spawn(); // TrackedDeviceAdded

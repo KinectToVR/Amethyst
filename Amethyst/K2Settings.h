@@ -6,6 +6,7 @@
 
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/utility.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/optional.hpp>
 
@@ -26,6 +27,37 @@ template <typename T>
 T radiansToDegrees(T angleRadians)
 {
 	return angleRadians * 180.0 / _PI;
+}
+
+namespace boost::serialization
+{
+	// Eigen serialization
+	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
+	void serialize(Archive& ar,
+		Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
+		const unsigned int file_version
+	)
+	{
+		for (size_t i = 0; i < t.size(); i++)
+			ar& make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
+	}
+
+	template <class Archive, typename _Scalar>
+	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
+	{
+		ar& make_nvp("w", q.w())
+			& make_nvp("x", q.x())
+			& make_nvp("y", q.y())
+			& make_nvp("z", q.z());
+	}
+
+	template <class Archive, typename _Scalar>
+	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
+	{
+		ar& make_nvp("x", v.x())
+			& make_nvp("y", v.y())
+			& make_nvp("z", v.z());
+	}
 }
 
 namespace k2app
@@ -184,22 +216,22 @@ namespace k2app
 				K2TrackersVector.push_back(K2AppTracker());
 
 			// Force the first 7 trackers to be the default ones : roles
-			K2TrackersVector.at(0).tracker = ktvr::ITrackerType::Tracker_Waist;
-			K2TrackersVector.at(1).tracker = ktvr::ITrackerType::Tracker_LeftFoot;
-			K2TrackersVector.at(2).tracker = ktvr::ITrackerType::Tracker_RightFoot;
-			K2TrackersVector.at(3).tracker = ktvr::ITrackerType::Tracker_LeftElbow;
-			K2TrackersVector.at(4).tracker = ktvr::ITrackerType::Tracker_RightElbow;
-			K2TrackersVector.at(5).tracker = ktvr::ITrackerType::Tracker_LeftKnee;
-			K2TrackersVector.at(6).tracker = ktvr::ITrackerType::Tracker_RightKnee;
+			K2TrackersVector.at(0).base_tracker = ktvr::ITrackerType::Tracker_Waist;
+			K2TrackersVector.at(1).base_tracker = ktvr::ITrackerType::Tracker_LeftFoot;
+			K2TrackersVector.at(2).base_tracker = ktvr::ITrackerType::Tracker_RightFoot;
+			K2TrackersVector.at(3).base_tracker = ktvr::ITrackerType::Tracker_LeftElbow;
+			K2TrackersVector.at(4).base_tracker = ktvr::ITrackerType::Tracker_RightElbow;
+			K2TrackersVector.at(5).base_tracker = ktvr::ITrackerType::Tracker_LeftKnee;
+			K2TrackersVector.at(6).base_tracker = ktvr::ITrackerType::Tracker_RightKnee;
 
 			for (auto& tracker : K2TrackersVector)
 			{
 				// Force the first 7 trackers to be the default ones : serials
-				tracker.data.serial = ITrackerType_Role_Serial[tracker.tracker];
+				tracker.data_serial = ITrackerType_Role_Serial[tracker.base_tracker];
 
 				// Force disable software orientation if used by a non-foot
-				if (tracker.tracker != ktvr::ITrackerType::Tracker_LeftFoot &&
-					tracker.tracker != ktvr::ITrackerType::Tracker_RightFoot &&
+				if (tracker.base_tracker != ktvr::ITrackerType::Tracker_LeftFoot &&
+					tracker.base_tracker != ktvr::ITrackerType::Tracker_RightFoot &&
 					tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation)
 					tracker.orientationTrackingOption = k2_DeviceInferredRotation;
 			}
@@ -207,27 +239,27 @@ namespace k2app
 			// If the vector was broken, override waist & feet statuses
 			if (_vector_broken)
 			{
-				K2TrackersVector.at(0).data.isActive = true;
-				K2TrackersVector.at(1).data.isActive = true;
-				K2TrackersVector.at(2).data.isActive = true;
+				K2TrackersVector.at(0).data_isActive = true;
+				K2TrackersVector.at(1).data_isActive = true;
+				K2TrackersVector.at(2).data_isActive = true;
 			}
 
 			// Scan for duplicate trackers
 			std::vector<ktvr::ITrackerType> _thisK2TrackerTypes;
 			for (uint32_t _tracker_index = 0; _tracker_index < K2TrackersVector.size(); _tracker_index++)
 				for (const auto& _tracker_type : _thisK2TrackerTypes)
-					if (K2TrackersVector[_tracker_index].tracker == _tracker_type)
+					if (K2TrackersVector[_tracker_index].base_tracker == _tracker_type)
 					{
 						LOG(WARNING) << "A duplicate tracker was found in the trackers vector! Removing it...";
 						K2TrackersVector.erase(K2TrackersVector.begin() + _tracker_index);
 					}
-					else _thisK2TrackerTypes.push_back(K2TrackersVector[_tracker_index].tracker);
+					else _thisK2TrackerTypes.push_back(K2TrackersVector[_tracker_index].base_tracker);
 
 			// Check if any trackers are enabled
 			// No std::ranges today...
 			bool _find_result = false;
 			for (const auto& tracker : K2TrackersVector)
-				if (tracker.data.isActive)_find_result = true;
+				if (tracker.data_isActive)_find_result = true;
 
 			// No trackers are enabled, force-enable the waist tracker
 			if (!_find_result)
@@ -235,18 +267,18 @@ namespace k2app
 				LOG(WARNING) << "All trackers have been disabled, force-enabling the waist tracker!";
 
 				// Enable the waist tracker
-				K2TrackersVector[0].data.isActive = true;
+				K2TrackersVector[0].data_isActive = true;
 			}
 
 			// Fix statuses (optional)
 			if (useTrackerPairs)
 			{
-				K2TrackersVector.at(2).data.isActive =
-					K2TrackersVector.at(1).data.isActive;
-				K2TrackersVector.at(4).data.isActive =
-					K2TrackersVector.at(3).data.isActive;
-				K2TrackersVector.at(6).data.isActive =
-					K2TrackersVector.at(5).data.isActive;
+				K2TrackersVector.at(2).data_isActive =
+					K2TrackersVector.at(1).data_isActive;
+				K2TrackersVector.at(4).data_isActive =
+					K2TrackersVector.at(3).data_isActive;
+				K2TrackersVector.at(6).data_isActive =
+					K2TrackersVector.at(5).data_isActive;
 
 				K2TrackersVector.at(2).orientationTrackingOption =
 					K2TrackersVector.at(1).orientationTrackingOption;

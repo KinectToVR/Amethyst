@@ -102,7 +102,7 @@ namespace TrackingDevices
 
 		// If we have an override and if it's actually affecting the waist rotation
 		if (overrideDevice.first &&
-			k2app::K2Settings.K2TrackersVector.at(0).data.isActive &&
+			k2app::K2Settings.K2TrackersVector.at(0).data_isActive &&
 			k2app::K2Settings.K2TrackersVector.at(0).isRotationOverridden)
 		{
 			// If the override device is a kinect then it HAS NOT TO support flip
@@ -116,7 +116,7 @@ namespace TrackingDevices
 		}
 
 		// If still not, then also check if the waist is disabled by any chance
-		else if (!k2app::K2Settings.K2TrackersVector.at(0).data.isActive)
+		else if (!k2app::K2Settings.K2TrackersVector.at(0).data_isActive)
 			/* Here check if there's a proper waist tracker in steamvr to pull data from */
 			return k2app::interfacing::findVRTracker("waist").first; // .first is [Success?]
 
@@ -353,9 +353,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		void UpdateIsActive()
 		{
 			_ptr_joint_switch.get()->IsOn(
-				_tracker_pointers[0]->data.isActive);
+				_tracker_pointers[0]->data_isActive);
 
-			if (!_tracker_pointers[0]->data.isActive)
+			if (!_tracker_pointers[0]->data_isActive)
 			{
 				_ptr_main_expander->IsEnabled(false);
 				_ptr_main_expander->IsExpanded(false);
@@ -368,8 +368,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		// Will work only if the expander is bound to a foot tracker
 		void EnableSoftwareOrientation(const bool& enable)
 		{
-			if (_tracker_pointers[0]->tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
-				_tracker_pointers[0]->tracker == ktvr::ITrackerType::Tracker_RightFoot)
+			if (_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
+				_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_RightFoot)
 			{
 				_ptr_software_orientation.get()->IsEnabled(enable);
 
@@ -419,7 +419,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_title.Text(title.value_or(k2app::interfacing::LocalizedResourceWString(
 				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(_tracker_pointers[0]->tracker)))));
+				std::to_wstring(static_cast<int>(_tracker_pointers[0]->base_tracker)))));
 
 			_title.FontSize(14);
 			_title.Margin({0, -3, 0, 0});
@@ -595,9 +595,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 							expander->MainExpander().get()->IsExpanded(false);
 
 					for (auto tracker_p : _tracker_pointers)
-						tracker_p->data.isActive = _tracker_pointers[0]->data.isActive;
+						tracker_p->data_isActive = _tracker_pointers[0]->data_isActive;
 
-					if (!_tracker_pointers[0]->data.isActive)
+					if (!_tracker_pointers[0]->data_isActive)
 					{
 						sender.IsEnabled(false);
 						sender.IsExpanded(false);
@@ -616,7 +616,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Make actual changes
 					for (auto tracker_p : _tracker_pointers)
 					{
-						tracker_p->data.isActive = _ptr_joint_switch.get()->IsOn();
+						tracker_p->data_isActive = _ptr_joint_switch.get()->IsOn();
 
 						// Do that on UI's background
 						apartment_context _ui_thread;
@@ -630,14 +630,14 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 							{
 								// Update status in server
 								ktvr::set_tracker_state<false>(
-									tracker_p->tracker, tracker_p->data.isActive);
+									tracker_p->base_tracker, tracker_p->data_isActive);
 								Sleep(20); // Wait a bit
 							}
 						}
 						co_await _ui_thread;
 					}
 
-					if (!_tracker_pointers[0]->data.isActive)
+					if (!_tracker_pointers[0]->data_isActive)
 					{
 						_ptr_main_expander->IsEnabled(false);
 						_ptr_main_expander->IsExpanded(false);
@@ -661,7 +661,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// No std::ranges today...
 					bool _find_result = false;
 					for (const auto& tracker : k2app::K2Settings.K2TrackersVector)
-						if (tracker.data.isActive)_find_result = true;
+						if (tracker.data_isActive)_find_result = true;
 
 					// No trackers are enabled, force-enable the waist tracker
 					if (!_find_result)
@@ -741,8 +741,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 			});
 
-			if (_tracker_pointers[0]->tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
-				_tracker_pointers[0]->tracker == ktvr::ITrackerType::Tracker_RightFoot)
+			if (_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
+				_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_RightFoot)
 				_ptr_software_orientation.get()->Visibility(Visibility::Visible);
 
 			_ptr_main_expander->Expanding([&](const auto&, const auto&)

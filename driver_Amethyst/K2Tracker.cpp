@@ -6,14 +6,14 @@
 
 K2Tracker::K2Tracker(const ktvr::K2TrackerBase& tracker_base)
 {
-	_serial = tracker_base.data.serial;
-	_role = static_cast<int>(tracker_base.data.role);
-	_active = tracker_base.data.isActive;
+	_serial = tracker_base.data().serial();
+	_role = static_cast<int>(tracker_base.data().role());
+	_active = tracker_base.data().isactive();
 
 	_pose = {0};
 	_pose.poseIsValid = true; // Otherwise tracker may disappear
 	_pose.result = vr::TrackingResult_Running_OK;
-	_pose.deviceIsConnected = tracker_base.data.isActive;
+	_pose.deviceIsConnected = tracker_base.data().isactive();
 
 	_pose.qWorldFromDriverRotation.w = 1;
 	_pose.qWorldFromDriverRotation.x = 0;
@@ -45,27 +45,22 @@ void K2Tracker::update()
 	}
 }
 
-void K2Tracker::set_pose(const ktvr::K2PosePacket& pose)
+void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 {
 	try
 	{
 		// For handling PosePacket's time offset
 		std::thread([&, pose]()
 		{
-			// Wait the specified time
-			if (pose.millisFromNow > 0)
-				std::this_thread::sleep_for(std::chrono::milliseconds(
-					static_cast<int>(pose.millisFromNow)));
-
 			// Just copy the values
-			_pose.vecPosition[0] = pose.position.x();
-			_pose.vecPosition[1] = pose.position.y();
-			_pose.vecPosition[2] = pose.position.z();
+			_pose.vecPosition[0] = pose.position().x();
+			_pose.vecPosition[1] = pose.position().y();
+			_pose.vecPosition[2] = pose.position().z();
 
-			_pose.qRotation.w = pose.orientation.w();
-			_pose.qRotation.x = pose.orientation.x();
-			_pose.qRotation.y = pose.orientation.y();
-			_pose.qRotation.z = pose.orientation.z();
+			_pose.qRotation.w = pose.orientation().w();
+			_pose.qRotation.x = pose.orientation().x();
+			_pose.qRotation.y = pose.orientation().y();
+			_pose.qRotation.z = pose.orientation().z();
 
 			// Automatically update the tracker when finished
 			update(); // called from this
@@ -231,20 +226,20 @@ vr::DriverPose_t K2Tracker::GetPose()
 ktvr::K2TrackerBase K2Tracker::getTrackerBase()
 {
 	// Copy the data
-	_trackerBase.data.serial = _serial;
-	_trackerBase.data.role = static_cast<ktvr::ITrackerType>(_role);
-	_trackerBase.data.isActive = _active;
+	_trackerBase.mutable_data()->set_serial(_serial);
+	_trackerBase.mutable_data()->set_role(static_cast<ktvr::ITrackerType>(_role));
+	_trackerBase.mutable_data()->set_isactive(_active);
 
 	// Copy the position
-	_trackerBase.pose.position.x() = _pose.vecPosition[0];
-	_trackerBase.pose.position.y() = _pose.vecPosition[1];
-	_trackerBase.pose.position.z() = _pose.vecPosition[2];
+	_trackerBase.mutable_pose()->mutable_position()->set_x(_pose.vecPosition[0]);
+	_trackerBase.mutable_pose()->mutable_position()->set_y(_pose.vecPosition[1]);
+	_trackerBase.mutable_pose()->mutable_position()->set_z(_pose.vecPosition[2]);
 
 	// Copy the orientation
-	_trackerBase.pose.orientation.w() = _pose.qRotation.w;
-	_trackerBase.pose.orientation.x() = _pose.qRotation.x;
-	_trackerBase.pose.orientation.y() = _pose.qRotation.y;
-	_trackerBase.pose.orientation.z() = _pose.qRotation.z;
+	_trackerBase.mutable_pose()->mutable_orientation()->set_w(_pose.qRotation.w);
+	_trackerBase.mutable_pose()->mutable_orientation()->set_x(_pose.qRotation.x);
+	_trackerBase.mutable_pose()->mutable_orientation()->set_y(_pose.qRotation.y);
+	_trackerBase.mutable_pose()->mutable_orientation()->set_z(_pose.qRotation.z);
 
 	// Return the base object
 	return _trackerBase;

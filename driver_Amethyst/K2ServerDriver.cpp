@@ -5,11 +5,11 @@
 #include <boost/serialization/string.hpp>
 
 int K2ServerDriver::init_ServerDriver(
-	const std::wstring& k2_to_pipe,
-	const std::wstring& k2_from_pipe,
-	const std::wstring& k2_to_sem,
-	const std::wstring& k2_from_sem,
-	const std::wstring& k2_start_sem)
+	const std::wstring& ame_api_to_pipe,
+	const std::wstring& ame_api_from_pipe,
+	const std::wstring& ame_api_to_sem,
+	const std::wstring& ame_api_from_sem,
+	const std::wstring& ame_api_start_sem)
 {
 	using namespace std::chrono_literals;
 	_isActive = true;
@@ -22,7 +22,7 @@ int K2ServerDriver::init_ServerDriver(
 			nullptr, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
-			k2_to_sem.c_str()); //Semaphore Name
+			ame_api_to_sem.c_str()); //Semaphore Name
 
 		if (nullptr == k2api_to_Semaphore)
 		{
@@ -40,7 +40,7 @@ int K2ServerDriver::init_ServerDriver(
 			nullptr, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
-			k2_from_sem.c_str()); //Semaphore Name
+			ame_api_from_sem.c_str()); //Semaphore Name
 
 		if (nullptr == k2api_from_Semaphore)
 		{
@@ -55,7 +55,7 @@ int K2ServerDriver::init_ServerDriver(
 			nullptr, //Security Attributes
 			0, //Initial State i.e.Non Signaled
 			1, //No. of Resources
-			k2_start_sem.c_str()); //Semaphore Name
+			ame_api_start_sem.c_str()); //Semaphore Name
 
 		if (nullptr == k2api_start_Semaphore)
 		{
@@ -74,23 +74,21 @@ int K2ServerDriver::init_ServerDriver(
 	// Add 1 tracker for each role
 	for (uint32_t role = 0;
 	     role <= static_cast<int>(ktvr::ITrackerType::Tracker_Keyboard); role++)
-		trackerVector.push_back(
-			K2Tracker(
-				ktvr::K2TrackerBase(
-					ktvr::K2TrackerPose(), // Default pose 
-					ktvr::K2TrackerData(
-						ITrackerType_Role_Serial.at(
-							static_cast<ktvr::ITrackerType>(role)), // Serial
-						static_cast<ktvr::ITrackerType>(role), // Role
-						false // AutoAdd
-					)
-				)));
+	{
+		auto tracker_base = ktvr::K2TrackerBase();
+		tracker_base.mutable_data()->set_serial(
+			ITrackerType_Role_Serial.at(static_cast<ktvr::ITrackerType>(role)));
+		tracker_base.mutable_data()->set_role(static_cast<ktvr::ITrackerType>(role));
+		tracker_base.mutable_data()->set_isactive(false); // AutoAdd: false
+
+		trackerVector.push_back(K2Tracker(tracker_base));
+	}
 
 	// Log the prepended trackers
 	for (auto& _tracker : trackerVector)
 		LOG(INFO) << "Registered a tracker: " << _tracker.get_serial();
 
-	std::thread([&, k2_to_pipe]
+	std::thread([&, ame_api_to_pipe]
 	{
 		LOG(INFO) << "Server thread started";
 
@@ -122,7 +120,7 @@ int K2ServerDriver::init_ServerDriver(
 						// Here, read from the *TO* pipe
 						// Create the pipe file
 						std::optional<HANDLE> ReaderPipe = CreateFileW(
-							k2_to_pipe.c_str(),
+							ame_api_to_pipe.c_str(),
 							GENERIC_READ | GENERIC_WRITE,
 							0, nullptr, OPEN_EXISTING, 0, nullptr);
 
@@ -151,26 +149,9 @@ int K2ServerDriver::init_ServerDriver(
 						// parse request, send reply and return
 						try
 						{
-							// I don't know why, when and how,
-							// but somehow K2API inserts this shit at index 62
-							std::string _s = read_string;
-							if (_s.find("3120300a") == 62)_s.erase(62, 8);
-
-							// Convert hex to readable ascii and parse
-							std::string s = ktvr::asciiString(_s);
-
-#ifdef K2PAI_DEBUG
-								LOG(INFO) << s;
-#endif
-
-							// This is also in parsefromstring of K2Message.
-							// Though, this time we want to catch any error ourselves.
-							std::istringstream i(s);
-							boost::archive::text_iarchive ia(i);
-
 							// Deserialize now
 							ktvr::K2Message response;
-							ia >> response;
+							response.ParseFromString(read_string);
 
 							parse_message(response);
 						}
@@ -223,41 +204,40 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 	ktvr::K2ResponseMessage _response; // Response message to be sent
 
 	// Add the timestamp: parsing
-	_response.messageManualTimestamp = K2API_GET_TIMESTAMP_NOW;
+	_response.set_messagemanualtimestamp(AME_API_GET_TIMESTAMP_NOW);
 
 	// Parse the message if it's not invalid
-	if (static_cast<ktvr::K2MessageType>(message.messageType) != ktvr::K2MessageType::K2Message_Invalid)
+	if (message.messagetype() != ktvr::K2MessageType::K2Message_Invalid)
 	{
 		// Switch based on the message type
-		switch (static_cast<ktvr::K2MessageType>(message.messageType))
+		switch (message.messagetype())
 		{
 		case ktvr::K2MessageType::K2Message_SetTrackerState:
 			{
 				// Check if desired tracker exists
 				// Set tracker's state to one gathered from argument
-				if (!trackerVector.at(static_cast<int>(message.tracker)).is_added())
-					if (!trackerVector.at(static_cast<int>(message.tracker)).spawn())
+				if (!trackerVector.at(message.tracker()).is_added())
+					if (!trackerVector.at(message.tracker()).spawn())
 					{
 						// spawn if needed
 						LOG(INFO) << "Tracker autospawn exception! Serial: " +
-							trackerVector.at(static_cast<int>(message.tracker)).
-							              get_serial();
-						_response.result = static_cast<int>(
-							ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
+							trackerVector.at(message.tracker()).get_serial();
+
+						_response.set_result(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
 					}
 
 				// Set the state
-				trackerVector.at(static_cast<int>(message.tracker)).set_state(message.state);
-				LOG(INFO) << "Tracker role: " << static_cast<int>(message.tracker) <<
-					" state has been set to: " + std::to_string(message.state);
+				trackerVector.at(message.tracker()).set_state(message.state());
+				LOG(INFO) << "Tracker role: " << message.tracker() <<
+					" state has been set to: " + std::to_string(message.state());
 
 				// Update the tracker
-				trackerVector.at(static_cast<int>(message.tracker)).update();
+				trackerVector.at(message.tracker()).update();
 
 				// Compose the response
-				_response.success = true;
-				_response.tracker = message.tracker; // ID
-				_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
+				_response.set_success(true);
+				_response.set_tracker(message.tracker()); // ID
+				_response.set_messagetype(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 			}
 			break;
 
@@ -271,75 +251,50 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 						{
 							// spawn if needed
 							LOG(INFO) << "Tracker autospawn exception! Serial: " + k2_tracker.get_serial();
-							_response.result = static_cast<int>(
-								ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
+							_response.set_result(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
 						}
-					k2_tracker.set_state(message.state); // set state
+					k2_tracker.set_state(message.state()); // set state
 					k2_tracker.update(); // Update the tracker
 				}
-				LOG(INFO) << "All trackers' state has been set to: " + std::to_string(message.state);
+				LOG(INFO) << "All trackers' state has been set to: " + std::to_string(message.state());
 
 				// Compose the response
-				_response.success = true;
-				_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Success);
-			}
-			break;
-
-		case ktvr::K2MessageType::K2Message_UpdateTrackerPose:
-			{
-				// Check if the pose exists
-				if (message.tracker_pose.has_value())
-				{
-					// Check if desired tracker exists
-					// Update tracker pose (with time offset)
-					trackerVector.at(static_cast<int>(message.tracker))
-					             .set_pose(message.tracker_pose.value());
-
-					// Compose the response
-					_response.success = true;
-					_response.tracker = message.tracker; // ID
-					_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
-				}
-				else
-				{
-					LOG(ERROR) << "Couldn't set tracker id: " +
-						std::to_string(static_cast<int>(message.tracker)) + " pose. Pose is empty.";
-					_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
-				}
+				_response.set_success(true);
+				_response.set_messagetype(ktvr::K2ResponseMessageType::K2ResponseMessage_Success);
 			}
 			break;
 
 		case ktvr::K2MessageType::K2Message_RefreshTracker:
 			{
 				// Update the tracker
-				trackerVector.at(static_cast<int>(message.tracker)).update();
+				trackerVector.at(message.tracker()).update();
 
 				// Compose the response
-				_response.success = true;
-				_response.tracker = message.tracker; // ID
-				_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
+				_response.set_success(true);
+				_response.set_tracker(message.tracker()); // ID
+				_response.set_messagetype(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 			}
 			break;
 
 		case ktvr::K2MessageType::K2Message_RequestRestart:
 			{
 				// Request the reboot
-				if (!message.message_string.empty())
+				if (!message.message_string().empty())
 				{
-					LOG(INFO) << "Requesting OpenVR restart with reason: " + message.message_string;
+					LOG(INFO) << "Requesting OpenVR restart with reason: " + message.message_string();
 
 					// Perform the request
 					vr::VRServerDriverHost()->RequestRestart(
-						message.message_string.c_str(), "vrstartup.exe", "", "");
+						message.message_string().c_str(), "vrstartup.exe", "", "");
 
 					// Compose the response
-					_response.success = true;
-					_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Success);
+					_response.set_success(true);
+					_response.set_messagetype(ktvr::K2ResponseMessageType::K2ResponseMessage_Success);
 				}
 				else
 				{
 					LOG(ERROR) << "Couldn't request a reboot. Reason string is empty.";
-					_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
+					_response.set_result(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
 				}
 			}
 			break;
@@ -347,35 +302,34 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 		case ktvr::K2MessageType::K2Message_Ping:
 			{
 				// Compose the response
-				_response.success = true;
-				_response.messageType =
-					static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Tracker);
+				_response.set_success(true);
+				_response.set_messagetype(ktvr::K2ResponseMessageType::K2ResponseMessage_Tracker);
 			}
 			break;
 
 		case ktvr::K2MessageType::K2Message_UpdateTrackerPoseVector:
 			{
 				// Check if the pose exists
-				if (message.tracker_bases_vector.has_value())
+				if (message.trackerbasevector_size() > 0)
 				{
-					for (const auto& _tracker : message.tracker_bases_vector.value())
+					for (const auto& _tracker : message.trackerbasevector())
 					{
 						/* Pose */
 
 						// Check if desired tracker exists
 						// Update tracker pose (with time offset)
-						trackerVector.at(static_cast<int>(_tracker.tracker)).set_pose(_tracker.pose);
+						trackerVector.at(_tracker.tracker()).set_pose(_tracker.pose());
 
 						// Compose the response
-						_response.success = true;
-						_response.tracker = _tracker.tracker; // ID
-						_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
+						_response.set_success(true);
+						_response.set_tracker(_tracker.tracker()); // ID
+						_response.set_messagetype(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 					}
 				}
 				else
 				{
 					LOG(ERROR) << "Couldn't update multiple trackers, bases are empty.";
-					_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
+					_response.set_result(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
 				}
 			}
 			break;
@@ -383,57 +337,56 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 		case ktvr::K2MessageType::K2Message_SetTrackerStateVector:
 			{
 				// Check if the pose exists
-				if (message.tracker_statuses_vector.has_value())
+				if (message.trackerstatusesvector_size() > 0)
 				{
-					for (const auto& _tracker : message.tracker_statuses_vector.value())
+					for (const auto& _tracker : message.trackerstatusesvector())
 					{
 						// Assume success
-						_response.success = true;
+						_response.set_success(true);
 
 						/* State */
 
-						if (!trackerVector.at(static_cast<int>(_tracker.first)).is_added())
-							if (!trackerVector.at(static_cast<int>(_tracker.first)).spawn())
+						if (!trackerVector.at(_tracker.tracker()).is_added())
+							if (!trackerVector.at(_tracker.tracker()).spawn())
 							{
 								// spawn if needed
 								LOG(INFO) << "Tracker autospawn exception! Serial: " +
-									trackerVector.at(static_cast<int>(_tracker.first)).get_serial();
-								_response.result = static_cast<int>(
-									ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
-								_response.success = false; // Oof we didn't make it
+									trackerVector.at(_tracker.tracker()).get_serial();
+								_response.set_result(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
+								_response.set_success(false); // Oof we didn't make it
 							}
 
 						// Set the state
-						trackerVector.at(static_cast<int>(_tracker.first)).set_state(_tracker.second);
-						LOG(INFO) << "Tracker role: " << static_cast<int>(_tracker.first) <<
-							" state has been set to: " + std::to_string(_tracker.second);
+						trackerVector.at(_tracker.tracker()).set_state(_tracker.status());
+						LOG(INFO) << "Tracker role: " << _tracker.tracker() <<
+							" state has been set to: " + std::to_string(_tracker.status());
 
 						// Update the tracker
-						trackerVector.at(static_cast<int>(_tracker.first)).update();
+						trackerVector.at(_tracker.tracker()).update();
 
 						// Compose the response
-						_response.tracker = _tracker.first; // ID
-						_response.messageType = static_cast<int>(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
+						_response.set_tracker(_tracker.tracker()); // ID
+						_response.set_messagetype(ktvr::K2ResponseMessageType::K2ResponseMessage_Role);
 					}
 				}
 				else
 				{
 					LOG(ERROR) << "Couldn't update multiple trackers, bases are empty.";
-					_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
+					_response.set_result(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
 				}
 			}
 			break;
 
 		default:
 			LOG(ERROR) << "Couldn't process message. The message type was not set. (Type invalid)";
-			_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
+			_response.set_result(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_BadRequest);
 			break;
 		}
 	}
 	else
 	{
 		LOG(ERROR) << "Couldn't process message. Message had had invalid type.";
-		_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_ParsingError);
+		_response.set_result(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_ParsingError);
 
 		// We're done, screw em if the type was bad
 		ReleaseSemaphore(k2api_to_Semaphore, 1, nullptr);
@@ -441,22 +394,21 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 	}
 
 	// Check the return code
-	if (_response.success) // If succeed, let's assume it's okay
-		_response.result = static_cast<int>(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_OK);
+	if (_response.success()) // If succeed, let's assume it's okay
+		_response.set_result(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_OK);
 
 	// Set the manual timestamp
-	_response.messageTimestamp = K2API_GET_TIMESTAMP_NOW;
+	_response.set_messagetimestamp(AME_API_GET_TIMESTAMP_NOW);
 
 	// Serialize the response
-	_reply = // Serialize to hex format
-		ktvr::hexString(_response.serializeToString());
+	_reply = _response.SerializeAsString();
 
 	// Check if the client wants a response and eventually send it
-	if (message.want_reply)
+	if (message.want_reply())
 	{
 		// Here, write to the *from* pipe
 		HANDLE WriterPipe = CreateNamedPipeW(
-			ktvr::k2api_from_pipe_address.c_str(),
+			ktvr::ame_api_from_pipe_address.c_str(),
 			PIPE_ACCESS_INBOUND | PIPE_ACCESS_OUTBOUND,
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
 			1, 4096, 4096, 1000L, nullptr);

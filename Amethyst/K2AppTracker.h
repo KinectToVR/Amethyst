@@ -113,7 +113,7 @@ namespace k2app
 		{ktvr::ITrackedJointType::Joint_HandRight, ktvr::ITrackerType::Tracker_Keyboard}
 	};
 
-	class K2AppTracker : public ktvr::K2TrackerBase
+	class K2AppTracker
 	{
 	public:
 		// Default constructors
@@ -130,8 +130,8 @@ namespace k2app
 		K2AppTracker(const std::string& _serial, const ktvr::ITrackerType& _role)
 		{
 			// Copy serial and role
-			data.serial = _serial;
-			data.role = _role;
+			data_serial = _serial;
+			data_role = _role;
 
 			// Init the Kalman filter
 			for (auto& filter : kalmanFilter)
@@ -142,8 +142,8 @@ namespace k2app
 		K2AppTracker(const std::string& _serial, const ktvr::ITrackerType& _role, const double& m_lerp_const)
 		{
 			// Copy serial and role
-			data.serial = _serial;
-			data.role = _role;
+			data_serial = _serial;
+			data_role = _role;
 
 			// Init the Kalman filter
 			for (auto& filter : kalmanFilter)
@@ -155,7 +155,7 @@ namespace k2app
 
 		ktvr::K2TrackedJoint getK2TrackedJoint(const bool& _state, const std::string& _name)
 		{
-			return ktvr::K2TrackedJoint(pose.position, pose.orientation,
+			return ktvr::K2TrackedJoint(pose_position, pose_orientation,
 			                            _state ? ktvr::State_Tracked : ktvr::State_NotTracked, _name);
 		}
 
@@ -167,9 +167,9 @@ namespace k2app
 				                Eigen::VectorXd(1), Eigen::VectorXd(1), Eigen::VectorXd(1)
 			                }, u(1); // c == 1
 
-			y[0] << pose.position.x();
-			y[1] << pose.position.y();
-			y[2] << pose.position.z();
+			y[0] << pose_position.x();
+			y[1] << pose_position.y();
+			y[2] << pose_position.z();
 			u << 0; // zero control input
 
 			for (int i = 0; i < 3; i++)
@@ -185,12 +185,12 @@ namespace k2app
 
 			/* Update the LowPass filter */
 			lowPassPosition = Eigen::Vector3f(
-				lowPassFilter[0].update(pose.position.x()),
-				lowPassFilter[1].update(pose.position.y()),
-				lowPassFilter[2].update(pose.position.z()));
+				lowPassFilter[0].update(pose_position.x()),
+				lowPassFilter[1].update(pose_position.y()),
+				lowPassFilter[2].update(pose_position.z()));
 
 			/* Update the LERP (mix) filter */
-			LERPPosition = EigenUtils::lerp(lastLERPPosition, pose.position, _lerp_const);
+			LERPPosition = EigenUtils::lerp(lastLERPPosition, pose_position, _lerp_const);
 			lastLERPPosition = LERPPosition; // Backup the position
 		}
 
@@ -199,12 +199,12 @@ namespace k2app
 			// ik that's a bunch of normalizations but we really em, weird things happen sometimes
 
 			/* Update the SLERP filter */
-			SLERPOrientation = lastSLERPOrientation.normalized().slerp(0.25, pose.orientation.normalized());
-			lastSLERPOrientation = pose.orientation.normalized(); // Backup the orientation
+			SLERPOrientation = lastSLERPOrientation.normalized().slerp(0.25, pose_orientation.normalized());
+			lastSLERPOrientation = pose_orientation.normalized(); // Backup the orientation
 
 			/* Update the Slower SLERP filter */
-			SLERPSlowOrientation = lastSLERPSlowOrientation.normalized().slerp(0.15, pose.orientation.normalized());
-			lastSLERPSlowOrientation = pose.orientation.normalized(); // Backup the orientation
+			SLERPSlowOrientation = lastSLERPSlowOrientation.normalized().slerp(0.15, pose_orientation.normalized());
+			lastSLERPSlowOrientation = pose_orientation.normalized(); // Backup the orientation
 		}
 
 		// Get filtered data
@@ -219,7 +219,7 @@ namespace k2app
 			switch (m_filter)
 			{
 			default:
-				return pose.position;
+				return pose_position;
 			case k2_PositionTrackingFilter_LERP:
 				return LERPPosition;
 			case k2_PositionTrackingFilter_Lowpass:
@@ -227,7 +227,7 @@ namespace k2app
 			case k2_PositionTrackingFilter_Kalman:
 				return kalmanPosition;
 			case k2_NoPositionTrackingFilter:
-				return pose.position;
+				return pose_position;
 			}
 		}
 
@@ -243,13 +243,13 @@ namespace k2app
 			switch (m_filter)
 			{
 			default:
-				return pose.orientation;
+				return pose_orientation;
 			case k2_OrientationTrackingFilter_SLERP:
 				return SLERPOrientation;
 			case k2_OrientationTrackingFilter_SLERP_Slow:
 				return SLERPSlowOrientation;
 			case k2_NoOrientationTrackingFilter:
-				return pose.orientation;
+				return pose_orientation;
 			}
 		}
 
@@ -312,7 +312,7 @@ namespace k2app
 		// exclusive filtered data from K2AppTracker
 		// By default, the saved filter is selected
 		// Offsets are added inside called methods
-		[[nodiscard]] K2TrackerBase getTrackerBase
+		[[nodiscard]] ktvr::K2TrackerBase getTrackerBase
 		(
 			Eigen::Matrix<float, 3, 3> rotationMatrix,
 			Eigen::Matrix<float, 3, 1> translationVector,
@@ -327,21 +327,29 @@ namespace k2app
 				calibration_origin.isZero();
 
 			// Construct the return type
-			K2TrackerBase tracker_base(
-				ktvr::K2TrackerPose(
-					getFullOrientation(ori_filter),
-					not_calibrated
-						? getFullPosition(pos_filter)
-						: getFullCalibratedPosition(
-							rotationMatrix, translationVector, calibration_origin, pos_filter)
-				),
-				ktvr::K2TrackerData(
-					data.serial, data.role, data.isActive
-				)
-			);
+			ktvr::K2TrackerBase tracker_base;
 
-			// Add id and return
-			tracker_base.tracker = tracker;
+			auto _full_orientation = getFullOrientation(ori_filter);
+			auto _full_position = not_calibrated
+				                      ? getFullPosition(pos_filter)
+				                      : getFullCalibratedPosition(
+					                      rotationMatrix, translationVector, calibration_origin, pos_filter);
+
+			tracker_base.mutable_pose()->mutable_orientation()->set_w(_full_orientation.w());
+			tracker_base.mutable_pose()->mutable_orientation()->set_x(_full_orientation.x());
+			tracker_base.mutable_pose()->mutable_orientation()->set_y(_full_orientation.y());
+			tracker_base.mutable_pose()->mutable_orientation()->set_z(_full_orientation.z());
+
+			tracker_base.mutable_pose()->mutable_position()->set_x(_full_position.x());
+			tracker_base.mutable_pose()->mutable_position()->set_y(_full_position.y());
+			tracker_base.mutable_pose()->mutable_position()->set_z(_full_position.z());
+
+			tracker_base.mutable_data()->set_serial(data_serial);
+			tracker_base.mutable_data()->set_role(data_role);
+			tracker_base.mutable_data()->set_isactive(data_isActive);
+
+			// Add ID and return
+			tracker_base.set_tracker(base_tracker);
 			return tracker_base;
 		}
 
@@ -350,22 +358,30 @@ namespace k2app
 		// exclusive filtered data from K2AppTracker
 		// By default, the saved filter is selected
 		// Offsets are added inside called methods
-		[[nodiscard]] K2TrackerBase getTrackerBase(
+		[[nodiscard]] ktvr::K2TrackerBase getTrackerBase(
 			int pos_filter = -1, int ori_filter = -1) const
 		{
 			// Construct the return type
-			K2TrackerBase tracker_base(
-				ktvr::K2TrackerPose(
-					getFullOrientation(ori_filter),
-					getFullPosition(pos_filter)
-				),
-				ktvr::K2TrackerData(
-					data.serial, data.role, data.isActive
-				)
-			);
+			ktvr::K2TrackerBase tracker_base;
 
-			// Add id and return
-			tracker_base.tracker = tracker;
+			auto _full_orientation = getFullOrientation(ori_filter);
+			auto _full_position = getFullPosition(pos_filter);
+
+			tracker_base.mutable_pose()->mutable_orientation()->set_w(_full_orientation.w());
+			tracker_base.mutable_pose()->mutable_orientation()->set_x(_full_orientation.x());
+			tracker_base.mutable_pose()->mutable_orientation()->set_y(_full_orientation.y());
+			tracker_base.mutable_pose()->mutable_orientation()->set_z(_full_orientation.z());
+
+			tracker_base.mutable_pose()->mutable_position()->set_x(_full_position.x());
+			tracker_base.mutable_pose()->mutable_position()->set_y(_full_position.y());
+			tracker_base.mutable_pose()->mutable_position()->set_z(_full_position.z());
+
+			tracker_base.mutable_data()->set_serial(data_serial);
+			tracker_base.mutable_data()->set_role(data_role);
+			tracker_base.mutable_data()->set_isactive(data_isActive);
+
+			// Add ID and return
+			tracker_base.set_tracker(base_tracker);
 			return tracker_base;
 		}
 
@@ -391,18 +407,30 @@ namespace k2app
 		uint32_t positionOverrideJointID = 0,
 		         rotationOverrideJointID = 0;
 
+		// Tracker data (inherited)
+		std::string data_serial;
+		ktvr::ITrackerType data_role = ktvr::ITrackerType::Tracker_Handed;
+		ktvr::ITrackerType base_tracker = ktvr::ITrackerType::Tracker_Handed;
+		bool data_isActive = false;
+
+		// Tracker pose (inherited)
+		Eigen::Vector3f pose_position{0, 0, 0};
+		Eigen::Quaternionf pose_orientation{1, 0, 0, 0};
+
 		template <class Archive>
 		void serialize(Archive& ar, const unsigned int version)
 		{
-			ar & boost::serialization::make_nvp("K2AppTracker",
-			                                    boost::serialization::base_object<K2TrackerBase>(*this))
-				& BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
+			ar & BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
 				& BOOST_SERIALIZATION_NVP(isPositionOverridden)
 				& BOOST_SERIALIZATION_NVP(isRotationOverridden)
 				& BOOST_SERIALIZATION_NVP(positionOverrideJointID)
 				& BOOST_SERIALIZATION_NVP(rotationOverrideJointID)
-				& BOOST_SERIALIZATION_NVP(pose) // Just why not
-				& BOOST_SERIALIZATION_NVP(data) // IsActive
+				& BOOST_SERIALIZATION_NVP(pose_position)
+				& BOOST_SERIALIZATION_NVP(pose_orientation)
+				& BOOST_SERIALIZATION_NVP(data_serial)
+				& BOOST_SERIALIZATION_NVP(data_role)
+				& BOOST_SERIALIZATION_NVP(data_isActive)
+				& BOOST_SERIALIZATION_NVP(base_tracker)
 				& BOOST_SERIALIZATION_NVP(orientationTrackingOption) // e.g. from HMD
 				& BOOST_SERIALIZATION_NVP(orientationTrackingFilterOption) // e.g. SLERP
 				& BOOST_SERIALIZATION_NVP(positionTrackingFilterOption) // e.g. EKF

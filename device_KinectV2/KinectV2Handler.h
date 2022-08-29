@@ -78,11 +78,11 @@ extern "C" __declspec(dllexport) void* TrackingDeviceBaseFactory(
 	const char* pVersionName, int* pReturnCode)
 {
 	LOG(INFO) << "[KinectV2 Device] Interface version name: " << pVersionName;
-	LOG(INFO) << "[KinectV2 Device] K2API version name: " << ktvr::IK2API_Devices_Version;
+	LOG(INFO) << "[KinectV2 Device] Amethyst version name: " << ktvr::IAME_API_Devices_Version;
 
 	// Return the device handler for tracking
 	// but only if interfaces are the same / up-to-date
-	if (0 == strcmp(ktvr::IK2API_Devices_Version, pVersionName))
+	if (0 == strcmp(ktvr::IAME_API_Devices_Version, pVersionName))
 	{
 		static KinectV2Handler TrackingHandler; // Create a new device handler -> KinectV2
 

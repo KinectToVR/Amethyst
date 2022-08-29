@@ -298,8 +298,8 @@ namespace k2app::main
 				if (p_frozen_loops >= 1000)
 				{
 					for (const auto& tracker : K2Settings.K2TrackersVector)
-						if (tracker.data.isActive)
-							ktvr::refresh_tracker_pose<false>(tracker.tracker);
+						if (tracker.data_isActive)
+							ktvr::refresh_tracker_pose<false>(tracker.base_tracker);
 
 					// Reset
 					p_frozen_loops = 0;
@@ -336,9 +336,9 @@ namespace k2app::main
 					{
 						// Only lower body joints
 						for (auto& tracker : K2Settings.K2TrackersVector)
-							if (tracker.data.isActive &&
-								static_cast<int>(ITrackerType_Joint[tracker.tracker]) >= 16)
-								ktvr::refresh_tracker_pose<false>(tracker.tracker);
+							if (tracker.data_isActive &&
+								static_cast<int>(ITrackerType_Joint[tracker.base_tracker]) >= 16)
+								ktvr::refresh_tracker_pose<false>(tracker.base_tracker);
 
 						// Reset
 						p_frozen_loops = 0;
@@ -350,12 +350,12 @@ namespace k2app::main
 				for (auto& tracker : K2Settings.K2TrackersVector)
 				{
 					// If lower body is omitted
-					if (static_cast<int>(ITrackerType_Joint[tracker.tracker]) >= 16
+					if (static_cast<int>(ITrackerType_Joint[tracker.base_tracker]) >= 16
 						&& !_updateLowerBody)
 						continue;
 
 					// If the tracker is off
-					if (!tracker.data.isActive) continue;
+					if (!tracker.data_isActive) continue;
 
 					// If not overridden by second device
 					if (!tracker.isPositionOverridden || K2Settings.overrideDeviceID < 0)
@@ -413,9 +413,9 @@ namespace k2app::main
 					// Create a dummy update vector
 					std::vector<std::pair<ktvr::ITrackerType, bool>> k2_tracker_statuses;
 					for (const auto& tracker : K2Settings.K2TrackersVector)
-						if (tracker.data.isActive)
+						if (tracker.data_isActive)
 							k2_tracker_statuses.push_back(
-								std::make_pair(tracker.tracker, interfacing::K2AppTrackersInitialized));
+								std::make_pair(tracker.base_tracker, interfacing::K2AppTrackersInitialized));
 
 					// try 3 times cause why not
 					for (int i = 0; i < 3; i++)
@@ -461,17 +461,17 @@ namespace k2app::main
 							std::vector<bool> foundVRTracker;
 							for (const auto& _tracker : K2Settings.K2TrackersVector)
 								foundVRTracker.push_back(interfacing::findVRTracker(
-									ITrackerType_Serial[_tracker.tracker], false, true).first);
+									ITrackerType_Serial[_tracker.base_tracker], false, true).first);
 							co_await ui_thread;
 
 							// Disable an (already-added tracker)'s been found
 							for (uint32_t tracker_index = 0;
 							     tracker_index < K2Settings.K2TrackersVector.size(); tracker_index++)
-								if (K2Settings.K2TrackersVector[tracker_index].data.isActive &&
+								if (K2Settings.K2TrackersVector[tracker_index].data_isActive &&
 									foundVRTracker[tracker_index])
 								{
 									// Make actual changes
-									K2Settings.K2TrackersVector[tracker_index].data.isActive = false; // Deactivate
+									K2Settings.K2TrackersVector[tracker_index].data_isActive = false; // Deactivate
 									for (auto expander : shared::settings::jointExpanderVector)
 										expander->UpdateIsActive();
 
@@ -483,7 +483,7 @@ namespace k2app::main
 									for (int i = 0; i < 5; i++)
 									{
 										ktvr::set_tracker_state<false>(
-											K2Settings.K2TrackersVector[tracker_index].tracker, false);
+											K2Settings.K2TrackersVector[tracker_index].base_tracker, false);
 										Sleep(20);
 									}
 									co_await _ui_thread;
@@ -565,13 +565,13 @@ namespace k2app::main
 			if (K2Settings.isFlipEnabled && K2Settings.isExternalFlipEnabled)
 			{
 				// If the extflip is from Amethyst
-				if (K2Settings.K2TrackersVector[0].data.isActive &&
+				if (K2Settings.K2TrackersVector[0].data_isActive &&
 					K2Settings.K2TrackersVector[0].isRotationOverridden)
 				{
 					_current_yaw =
 						EigenUtils::RotationProjectedYaw( // Overriden tracker
 							interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
-							K2Settings.K2TrackersVector[0].pose.orientation); // Raw orientation
+							K2Settings.K2TrackersVector[0].pose_orientation); // Raw orientation
 				}
 				// If it's from an external tracker
 				else
@@ -606,7 +606,7 @@ namespace k2app::main
 			for (auto& tracker : K2Settings.K2TrackersVector)
 			{
 				// Copy the orientation to the tracker
-				tracker.pose.orientation = _device.index() == 0
+				tracker.pose_orientation = _device.index() == 0
 
 					                           // KinectBasis Device - grab L or R depending on flip : index0
 					                           ? (base_flip
@@ -615,11 +615,11 @@ namespace k2app::main
 						                              ? std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
 						                              getJointOrientations()[
 							                              interfacing::overrides::getFlippedJointType(
-								                              ITrackerType_Joint[tracker.tracker])].inverse()
+								                              ITrackerType_Joint[tracker.base_tracker])].inverse()
 
 						                              // If no flip
 						                              : std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
-						                              getJointOrientations()[ITrackerType_Joint[tracker.tracker]]
+						                              getJointOrientations()[ITrackerType_Joint[tracker.base_tracker]]
 					                           )
 
 					                           // JointsBasis Device - select based on settings : index1
@@ -629,12 +629,12 @@ namespace k2app::main
 				// Optionally overwrite the rotation with HMD orientation
 				// Not the "calibrated" variant, as the fix will be applied after everything else
 				if (tracker.orientationTrackingOption == k2_FollowHMDRotation)
-					tracker.pose.orientation = EigenUtils::EulersToQuat(
+					tracker.pose_orientation = EigenUtils::EulersToQuat(
 						Eigen::Vector3f(0, interfacing::plugins::plugins_getHMDOrientationYaw(), 0));
 
 				// Optionally overwrite the rotation with NONE
 				if (tracker.orientationTrackingOption == k2_DisableJointRotation)
-					tracker.pose.orientation = Eigen::Quaternionf(1, 0, 0, 0);
+					tracker.pose_orientation = Eigen::Quaternionf(1, 0, 0, 0);
 			}
 
 			/*
@@ -846,7 +846,7 @@ namespace k2app::main
 						// Left Foot
 						if (K2Settings.K2TrackersVector[1].orientationTrackingOption == k2_SoftwareCalculatedRotation)
 						{
-							K2Settings.K2TrackersVector[1].pose.orientation = base_flip
+							K2Settings.K2TrackersVector[1].pose_orientation = base_flip
 								                                                  // If flip
 								                                                  ? ktvr::quaternion_normal(
 									                                                  calculatedRightFootOrientation).
@@ -859,7 +859,7 @@ namespace k2app::main
 
 							// Grab original orientations and make them euler angles
 							Eigen::Vector3f left_ori_vector = EigenUtils::QuatToEulers(
-								K2Settings.K2TrackersVector[1].pose.orientation);
+								K2Settings.K2TrackersVector[1].pose_orientation);
 
 							// Kind of a solution for flipping at too big X.
 							// Found out during testing,
@@ -878,14 +878,14 @@ namespace k2app::main
 							/****************************************************/
 
 							// Apply to the base
-							K2Settings.K2TrackersVector[1].pose.orientation =
+							K2Settings.K2TrackersVector[1].pose_orientation =
 								EigenUtils::EulersToQuat(left_ori_vector);
 						}
 
 						// Left Foot
 						if (K2Settings.K2TrackersVector[2].orientationTrackingOption == k2_SoftwareCalculatedRotation)
 						{
-							K2Settings.K2TrackersVector[2].pose.orientation = base_flip
+							K2Settings.K2TrackersVector[2].pose_orientation = base_flip
 								                                                  // If flip
 								                                                  ? ktvr::quaternion_normal(
 									                                                  calculatedLeftFootOrientation).
@@ -898,7 +898,7 @@ namespace k2app::main
 
 							// Grab original orientations and make them euler angles
 							Eigen::Vector3f right_ori_vector = EigenUtils::QuatToEulers(
-								K2Settings.K2TrackersVector[2].pose.orientation);
+								K2Settings.K2TrackersVector[2].pose_orientation);
 
 							// Kind of a solution for flipping at too big X.
 							// Found out during testing,
@@ -917,7 +917,7 @@ namespace k2app::main
 							/****************************************************/
 
 							// Apply to the base
-							K2Settings.K2TrackersVector[2].pose.orientation =
+							K2Settings.K2TrackersVector[2].pose_orientation =
 								EigenUtils::EulersToQuat(right_ori_vector);
 						}
 					}
@@ -948,25 +948,25 @@ namespace k2app::main
 							// Remove the pitch angle
 							// Grab original orientations and make them euler angles
 							Eigen::Vector3f tracker_ori_with_yaw =
-								EigenUtils::QuatToEulers(tracker.pose.orientation);
+								EigenUtils::QuatToEulers(tracker.pose_orientation);
 
 							// Remove pitch from eulers and apply to the parent
-							tracker.pose.orientation = EigenUtils::EulersToQuat(
+							tracker.pose_orientation = EigenUtils::EulersToQuat(
 								Eigen::Vector3f(
 									tracker_ori_with_yaw.x(),
 									-tracker_ori_with_yaw.y(),
 									-tracker_ori_with_yaw.z()));
 
 							// Apply the turn-around flip quaternion
-							tracker.pose.orientation =
-								yawFlipQuaternion * tracker.pose.orientation;
+							tracker.pose_orientation =
+								yawFlipQuaternion * tracker.pose_orientation;
 
 							// Fix orientations with the R calibration value
 							if (tracker.orientationTrackingOption != k2_DisableJointRotation &&
 								!K2Settings.calibrationRotationMatrices.first.isZero())
-								tracker.pose.orientation =
+								tracker.pose_orientation =
 									K2Settings.calibrationRotationMatrices.first.cast<float>() *
-									tracker.pose.orientation;
+									tracker.pose_orientation;
 						}
 				}
 				else
@@ -976,9 +976,9 @@ namespace k2app::main
 						if (tracker.orientationTrackingOption != k2_DisableJointRotation &&
 							tracker.orientationTrackingOption != k2_FollowHMDRotation &&
 							!K2Settings.calibrationRotationMatrices.first.isZero())
-							tracker.pose.orientation =
+							tracker.pose_orientation =
 								K2Settings.calibrationRotationMatrices.first.cast<float>() *
-								tracker.pose.orientation;
+								tracker.pose_orientation;
 				}
 			}
 
@@ -990,8 +990,8 @@ namespace k2app::main
 			for (auto& tracker : K2Settings.K2TrackersVector)
 				if (tracker.orientationTrackingOption == k2_FollowHMDRotation)
 					// Offset to fit the playspace
-					tracker.pose.orientation =
-						interfacing::vrPlayspaceOrientationQuaternion.inverse() * tracker.pose.orientation;
+					tracker.pose_orientation =
+						interfacing::vrPlayspaceOrientationQuaternion.inverse() * tracker.pose_orientation;
 
 			/*****************************************************************************************/
 			// Push RAW poses to trackers
@@ -1003,9 +1003,9 @@ namespace k2app::main
 					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device);
 
 				for (auto& tracker : K2Settings.K2TrackersVector)
-					tracker.pose.position = _kinect->getJointPositions()[
+					tracker.pose_position = _kinect->getJointPositions()[
 						interfacing::overrides::getFlippedJointType(
-							ITrackerType_Joint[tracker.tracker], base_flip)];
+							ITrackerType_Joint[tracker.base_tracker], base_flip)];
 			}
 			else if (_device.index() == 1)
 			{
@@ -1013,7 +1013,7 @@ namespace k2app::main
 					std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_device);
 
 				for (auto& tracker : K2Settings.K2TrackersVector)
-					tracker.pose.position =
+					tracker.pose_position =
 						_joints->getTrackedJoints().at(tracker.selectedTrackedJointID).getJointPosition();
 			}
 		}
@@ -1048,7 +1048,7 @@ namespace k2app::main
 				if (K2Settings.isFlipEnabled && K2Settings.isExternalFlipEnabled)
 				{
 					// If the extflip is from Amethyst
-					if (K2Settings.K2TrackersVector[0].data.isActive &&
+					if (K2Settings.K2TrackersVector[0].data_isActive &&
 						K2Settings.K2TrackersVector[0].isRotationOverridden)
 					{
 						_current_yaw = _neutral_yaw; // Never flip overrides if so
@@ -1092,7 +1092,7 @@ namespace k2app::main
 							tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation))
 					{
 						// Copy the orientation to the tracker
-						tracker.pose.orientation = _device.index() == 0
+						tracker.pose_orientation = _device.index() == 0
 
 							                           // KinectBasis Device - grab L or R depending on flip : index1
 							                           ? (override_flip
@@ -1159,24 +1159,24 @@ namespace k2app::main
 								// Remove the pitch angle
 								// Grab original orientations and make them euler angles
 								Eigen::Vector3f tracker_ori_with_yaw =
-									EigenUtils::QuatToEulers(tracker.pose.orientation);
+									EigenUtils::QuatToEulers(tracker.pose_orientation);
 
 								// Remove pitch from eulers and apply to the parent
-								tracker.pose.orientation = EigenUtils::EulersToQuat(
+								tracker.pose_orientation = EigenUtils::EulersToQuat(
 									Eigen::Vector3f(
 										tracker_ori_with_yaw.x(),
 										-tracker_ori_with_yaw.y(),
 										-tracker_ori_with_yaw.z()));
 
 								// Apply the turn-around flip quaternion
-								tracker.pose.orientation = yawFlipQuaternion * tracker.pose.orientation;
+								tracker.pose_orientation = yawFlipQuaternion * tracker.pose_orientation;
 
 								// Fix orientations with the R calibration value
 								if (tracker.orientationTrackingOption != k2_DisableJointRotation &&
 									!K2Settings.calibrationRotationMatrices.second.isZero())
-									tracker.pose.orientation =
+									tracker.pose_orientation =
 										K2Settings.calibrationRotationMatrices.second.cast<float>() *
-										tracker.pose.orientation;
+										tracker.pose_orientation;
 							}
 					}
 					else
@@ -1185,8 +1185,8 @@ namespace k2app::main
 							if (tracker.orientationTrackingOption != k2_DisableJointRotation &&
 								tracker.orientationTrackingOption != k2_FollowHMDRotation &&
 								tracker.isRotationOverridden && !K2Settings.calibrationRotationMatrices.second.isZero())
-								tracker.pose.orientation = K2Settings.calibrationRotationMatrices.second.cast<float>() *
-									tracker.pose.orientation;
+								tracker.pose_orientation = K2Settings.calibrationRotationMatrices.second.cast<float>() *
+									tracker.pose_orientation;
 				}
 
 				/*****************************************************************************************/
@@ -1200,7 +1200,7 @@ namespace k2app::main
 
 					for (auto& tracker : K2Settings.K2TrackersVector)
 						if (tracker.isPositionOverridden)
-							tracker.pose.position = _kinect->getJointPositions()[
+							tracker.pose_position = _kinect->getJointPositions()[
 								interfacing::overrides::getFlippedJointType(
 									static_cast<ktvr::ITrackedJointType>(
 										TrackingDevices::devices_override_joint_id(
@@ -1213,7 +1213,7 @@ namespace k2app::main
 
 					for (auto& tracker : K2Settings.K2TrackersVector)
 						if (tracker.isPositionOverridden)
-							tracker.pose.position =
+							tracker.pose_position =
 								_joints->getTrackedJoints().at(tracker.positionOverrideJointID).getJointPosition();
 				}
 			}

@@ -7,7 +7,7 @@
 inline std::array<std::wstring, 3> split_status(const std::wstring& s)
 {
 	// If there are 3 strings separated by \n
-	return std::array<std::wstring, 3>{
+	return std::array{
 		s.substr(0, s.find(L"\n")),
 		s.substr(s.find(L"\n") + 1,
 		         s.rfind(L"\n") - (s.find(L"\n") + 1)),

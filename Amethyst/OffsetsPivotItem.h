@@ -255,7 +255,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_container.Content(_container_grid);
 			_container.Header(box_value(eraseSubStr(k2app::interfacing::LocalizedResourceWString(
 				                                        L"SharedStrings", L"Joints/Enum/" +
-				                                        std::to_wstring(static_cast<int>(_tracker_pointer->tracker))),
+				                                        std::to_wstring(_tracker_pointer->base_tracker)),
 			                                        L" Tracker")));
 
 			_ptr_container = std::make_shared<PivotItem>(_container);

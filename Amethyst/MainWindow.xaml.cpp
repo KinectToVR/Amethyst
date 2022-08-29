@@ -992,7 +992,7 @@ namespace winrt::Amethyst::implementation
 											{
 												auto pDevice =
 													static_cast<ktvr::K2TrackingDeviceBase_KinectBasis*>(
-														(hDeviceFactory)(ktvr::IK2API_Version, &returnCode));
+														(hDeviceFactory)(ktvr::IAME_API_Version, &returnCode));
 
 												if (returnCode == ktvr::K2InitError_None)
 												{
@@ -1126,7 +1126,7 @@ namespace winrt::Amethyst::implementation
 											{
 												auto pDevice =
 													static_cast<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-														(hDeviceFactory)(ktvr::IK2API_Version, &returnCode));
+														(hDeviceFactory)(ktvr::IAME_API_Version, &returnCode));
 
 												if (returnCode == ktvr::K2InitError_None)
 												{
@@ -1260,7 +1260,7 @@ namespace winrt::Amethyst::implementation
 											{
 												auto pDevice =
 													static_cast<ktvr::K2TrackingDeviceBase_Spectator*>(
-														(hDeviceFactory)(ktvr::IK2API_Version, &returnCode));
+														(hDeviceFactory)(ktvr::IAME_API_Version, &returnCode));
 
 												if (returnCode == ktvr::K2InitError_None)
 												{
@@ -1324,7 +1324,7 @@ namespace winrt::Amethyst::implementation
 													LOG(ERROR) <<
 														"Device's interface is incompatible with current Amethyst API "
 														<<
-														ktvr::IK2API_Version <<
+														ktvr::IAME_API_Version <<
 														", it's probably outdated.";
 												}
 												break;
@@ -1340,7 +1340,7 @@ namespace winrt::Amethyst::implementation
 										{
 											LOG(ERROR) <<
 												"Device's interface is incompatible with current Amethyst API " <<
-												ktvr::IK2API_Version <<
+												ktvr::IAME_API_Version <<
 												", it's probably outdated.";
 										}
 									}
