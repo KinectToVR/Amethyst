@@ -4,9 +4,6 @@
 [submodule "external/eigen"]
 	path = external/eigen
 	url = https://gitlab.com/libeigen/eigen
-[submodule "external/glog"]
-	path = external/glog
-	url = https://github.com/google/glog
 [submodule "external/gflags"]
 	path = external/gflags
 	url = https://github.com/gflags/gflags
