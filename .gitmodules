@@ -1,12 +1,3 @@
 [submodule "external/openvr"]
 	path = external/openvr
 	url = https://github.com/ValveSoftware/openvr
-[submodule "external/eigen"]
-	path = external/eigen
-	url = https://gitlab.com/libeigen/eigen
-[submodule "external/gflags"]
-	path = external/gflags
-	url = https://github.com/gflags/gflags
-[submodule "external/protobuf"]
-	path = external/protobuf
-	url = https://github.com/protocolbuffers/protobuf
