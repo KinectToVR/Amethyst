@@ -265,20 +265,16 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				{
 					LOG(INFO) << "Update-check successful, string:\n" << WStringToString(get_release_version);
 
-					std::wstringstream release_version_os_stream;
-					release_version_os_stream << get_release_version;
+					// Parse the loaded json
+					const auto json_root = Windows::Data::Json::JsonObject::Parse(get_release_version);
 
-					boost::property_tree::wptree root;
-					read_json(release_version_os_stream, root);
-
-					if (root.find(L"version_string") == root.not_found() ||
-						root.find(L"changes") == root.not_found())
+					if (!json_root.HasKey(L"version_string") || !json_root.HasKey(L"changes"))
 						LOG(ERROR) << "The latest release's manifest was invalid!";
 
 					else
 					{
 						// Find the version tag (it's a string only to save time, trust me...)
-						K2RemoteVersion = WStringToString(root.get<std::wstring>(L"version_string"));
+						K2RemoteVersion = WStringToString(json_root.GetNamedString(L"version_string").c_str());
 
 						LOG(INFO) << "Local version string: " << k2app::interfacing::K2InternalVersion;
 						LOG(INFO) << "Remote version string: " << K2RemoteVersion;
@@ -289,9 +285,10 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 						std::vector<std::string> local_version_num, remote_version_num;
 
 						using namespace std::string_literals;
-						local_version_num = k2app::interfacing::splitStringByDelimiter(k2app::interfacing::K2InternalVersion, "."s);
+						local_version_num = k2app::interfacing::splitStringByDelimiter(
+							k2app::interfacing::K2InternalVersion, "."s);
 						remote_version_num = k2app::interfacing::splitStringByDelimiter(K2RemoteVersion, "."s);
-						
+
 						// Compare to the current version
 						for (uint32_t i = 0; i < 4; i++)
 						{
@@ -305,64 +302,58 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 						}
 
 						// Cache the changes
-						BOOST_FOREACH(boost::property_tree::wptree::value_type &v, root.get_child(L"changes"))
-							changes_strings_vector.push_back(v.second.get_value<std::wstring>());
+						for (auto change_entry : json_root.GetNamedArray(L"changes"))
+							changes_strings_vector.push_back(change_entry.GetString().c_str());
 
 						// Thanks to this chad: https://stackoverflow.com/a/45123408
 						// Now check for push notifications aka toasts
 
 						// !show checks if the update handler was run automatically:
 						//       (by design) it's false only when run at the startup
-						if (root.find(L"toasts") != root.not_found() && !show)
+						if (json_root.HasKey(L"toasts") && !show)
 						{
 							// Scan for all toasts & push them to a table
-							boost::multi_index::multi_index_container<
-								toast, boost::multi_index::indexed_by<
-									boost::multi_index::ordered_unique<
-										boost::multi_index::tag<struct by_name>,
-										boost::multi_index::member<
-											toast, std::wstring, &toast::guid>>>> toasts;
+							std::map<std::wstring, toast> toasts;
 
-							for (auto v : root.get_child(L"toasts"))
+							for (auto v : json_root.GetNamedArray(L"toasts"))
 							{
-								auto& node = v.second;
+								auto node = v.GetObject();
 								toast tst;
 
-								tst.guid = node.get<std::wstring>(L"guid", L"");
-								tst.title = node.get<std::wstring>(L"title", L"");
-								tst.message = node.get<std::wstring>(L"message", L"");
-								tst.show_always = node.get<bool>(L"show_always", false);
+								tst.guid = node.GetNamedString(L"guid", L"");
+								tst.title = node.GetNamedString(L"title", L"");
+								tst.message = node.GetNamedString(L"message", L"");
+								tst.show_always = node.GetNamedBoolean(L"show_always", false);
 
-								if (!toasts.insert(tst).second)
-									LOG(INFO) << "Skipping toast with duplicate guid: " << WStringToString(tst.guid) <<
-										'\n';
+								// Add or replace (won't allow duplicates)
+								toasts.insert_or_assign(tst.guid, tst);
 							}
 
 							// Iterate over all the found toasts
 							for (auto& itr : toasts)
 							{
 								// Log everything
-								LOG(INFO) << "Found a toast with:\n    guid: " << WStringToString(itr.guid) <<
-									"\n    title: " << WStringToString(itr.title) << "\n    message: " <<
-									WStringToString(itr.message) << "\n    which needs to show " <<
-									(itr.show_always ? "always" : "once");
+								LOG(INFO) << "Found a toast with:\n    guid: " << WStringToString(itr.first) <<
+									"\n    title: " << WStringToString(itr.second.title) << "\n    message: " <<
+									WStringToString(itr.second.message) << "\n    which needs to show " <<
+									(itr.second.show_always ? "always" : "once");
 
 								// Check if this toast hasn't already been shown, and opt show it
-								if (itr.show_always ||
-									std::ranges::find(k2app::K2Settings.shownToastsGuidVector, itr.guid)
+								if (itr.second.show_always ||
+									std::ranges::find(k2app::K2Settings.shownToastsGuidVector, itr.first)
 									== k2app::K2Settings.shownToastsGuidVector.end())
 								{
 									// Log it
-									LOG(INFO) << "Showing toast with guid " << WStringToString(itr.guid) << " now...";
+									LOG(INFO) << "Showing toast with guid " << WStringToString(itr.first) << " now...";
 
 									// Show the toast (and optionally cache it)
-									k2app::interfacing::ShowToast(itr.title, itr.message);
+									k2app::interfacing::ShowToast(itr.second.title, itr.second.message);
 
-									k2app::interfacing::ShowVRToast(itr.title, itr.message);
+									k2app::interfacing::ShowVRToast(itr.second.title, itr.second.message);
 
 									// If the toast isn't meant to be shown always, cache it
-									if (!itr.show_always)
-										k2app::K2Settings.shownToastsGuidVector.push_back(itr.guid);
+									if (!itr.second.show_always)
+										k2app::K2Settings.shownToastsGuidVector.push_back(itr.first);
 								}
 							}
 						}
@@ -373,16 +364,13 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 
 				if (!get_docs_languages.empty())
 				{
-					std::wstringstream docs_languages_os_stream;
-					docs_languages_os_stream << get_docs_languages;
-
-					boost::property_tree::wptree root;
-					read_json(docs_languages_os_stream, root);
-
+					// Parse the loaded json
+					const auto json_root = Windows::Data::Json::JsonObject::Parse(get_docs_languages);
+					
 					// Check if the resource root is fine & the language code exists
 					k2app::interfacing::docsLanguageCode = k2app::K2Settings.appLanguage;
 
-					if (root.empty() || root.find(k2app::interfacing::docsLanguageCode) == root.not_found())
+					if (json_root.Size() <= 0 || !json_root.HasKey(k2app::interfacing::docsLanguageCode))
 					{
 						LOG(INFO) << "Docs do not contain a language with code \"" <<
 							WStringToString(k2app::interfacing::docsLanguageCode) <<
@@ -393,6 +381,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				}
 				else
 					LOG(ERROR) << "Language-check failed, the string was empty.";
+			}
+			catch (const winrt::hresult_error& ex)
+			{
+				LOG(ERROR) << "Update failed, an exception occurred."
+					<< " Message: " << WStringToString(ex.message().c_str());
 			}
 			catch (...)
 			{
@@ -926,22 +919,28 @@ namespace winrt::Amethyst::implementation
 					{
 						if (exists(entry.path() / "device.k2devicemanifest"))
 						{
-							boost::property_tree::ptree root;
-							read_json((entry.path() / "device.k2devicemanifest").string(), root);
+							// Load the JSON source into buffer
+							std::wifstream wif(entry.path() / L"device.k2devicemanifest");
+							wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+							std::wstringstream wss;
+							wss << wif.rdbuf();
 
-							if (root.find("device_name") == root.not_found() ||
-								root.find("device_type") == root.not_found())
+							// Parse the loaded json
+							const auto json_root = Windows::Data::Json::JsonObject::Parse(wss.str());
+
+							if (!json_root.HasKey(L"device_name") || !json_root.HasKey(L"device_type"))
 							{
 								LOG(ERROR) << entry.path().stem().string() << "'s manifest was invalid!";
 								continue;
 							}
 
-							auto device_name = root.get<std::string>("device_name");
-							auto device_type = root.get<std::string>("device_type");
+							std::wstring device_name = json_root.GetNamedString(L"device_name").c_str(),
+							             device_type = json_root.GetNamedString(L"device_type").c_str();
 
-							LOG(INFO) << "Found tracking device with:\n - name: " << device_name;
+							LOG(INFO) << "Found tracking device with:\n - name: " << WStringToString(device_name);
 
-							auto deviceDllPath = entry.path() / "bin" / "win64" / ("device_" + device_name + ".dll");
+							auto deviceDllPath = entry.path() / L"bin" / L"win64" /
+								(L"device_" + device_name + L".dll");
 
 							if (exists(deviceDllPath))
 							{
@@ -950,19 +949,16 @@ namespace winrt::Amethyst::implementation
 								bool _found = true; // assume success
 
 								// Check for deez dlls
-								if (root.find("linked_dll_path") != root.not_found())
-								{
-									BOOST_FOREACH(boost::property_tree::ptree::value_type & v,
-									              root.get_child("linked_dll_path"))
-										if (!std::filesystem::exists(v.second.get_value<std::string>()))
+								if (json_root.HasKey(L"linked_dll_path"))
+									for (auto dll_entry : json_root.GetNamedArray(L"linked_dll_path"))
+										if (!std::filesystem::exists(dll_entry.GetString().c_str()))
 										{
 											_found = false; // Mark as failed
-											LOG(ERROR) << "Linked dll not found at path: " << v.second.get_value<
-												std::string>();
+											LOG(ERROR) << "Linked dll not found at path: " <<
+												WStringToString(dll_entry.GetString().c_str());
 										}
-								}
-								// Else continue
 
+								// Else continue
 								if (_found)
 								{
 									LOG(INFO) << "Found the device's dependency dll, now loading...";
@@ -992,7 +988,7 @@ namespace winrt::Amethyst::implementation
 											std::wstring stat = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 											bool blocks_flip = false, supports_math = true;
 
-											if (strcmp(device_type.c_str(), "KinectBasis") == 0)
+											if (wcscmp(device_type.c_str(), L"KinectBasis") == 0)
 											{
 												auto pDevice =
 													static_cast<ktvr::K2TrackingDeviceBase_KinectBasis*>(
@@ -1126,7 +1122,7 @@ namespace winrt::Amethyst::implementation
 													supports_math = pDevice->isAppOrientationSupported();
 												}
 											}
-											else if (strcmp(device_type.c_str(), "JointsBasis") == 0)
+											else if (wcscmp(device_type.c_str(), L"JointsBasis") == 0)
 											{
 												auto pDevice =
 													static_cast<ktvr::K2TrackingDeviceBase_JointsBasis*>(
@@ -1260,7 +1256,7 @@ namespace winrt::Amethyst::implementation
 													supports_math = false; // Always the same for JointsBasis
 												}
 											}
-											else if (strcmp(device_type.c_str(), "Spectator") == 0)
+											else if (wcscmp(device_type.c_str(), L"Spectator") == 0)
 											{
 												auto pDevice =
 													static_cast<ktvr::K2TrackingDeviceBase_Spectator*>(
@@ -1310,13 +1306,14 @@ namespace winrt::Amethyst::implementation
 											{
 											case ktvr::K2InitError_None:
 												{
-													LOG(INFO) << "Registered tracking device with:\n - name: " <<
-														device_name << "\n - type: " << device_type <<
+													LOG(INFO) << "Registered tracking device with:"
+														"\n - name: " << WStringToString(device_name) <<
+														"\n - type: " << WStringToString(device_type) <<
 														"\n - blocks flip: " << blocks_flip <<
 														"\n - supports math-based orientation: " << supports_math <<
 
-														"\nat index " << TrackingDevices::TrackingDevicesVector.size() -
-														1;
+														"\nat index " <<
+														TrackingDevices::TrackingDevicesVector.size() - 1;
 
 													LOG(INFO) << "Device status (should be 'not initialized'): \n[\n" <<
 														WStringToString(stat) << "\n]\n";
