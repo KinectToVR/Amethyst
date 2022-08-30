@@ -9,10 +9,7 @@ Follow these steps:
 - [Install tools for the Windows App development](https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/set-up-your-development-environment?tabs=vs-2022-17-1-a%2Cvs-2022-17-1-b).<br>
   You'll have to install Visual Studio 2022, [WASDK Plugins and Runtime](https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads).<br>
   (Make sure to check MFC, UWP, C++/CLI, .NET Desktop & Framework<br>
-   and proper v143 Tools & Windows SDK when installing Visual Studio)
-
-- Install [CMake](https://cmake.org/download/) and [git](https://git-scm.com/download/win) if you still somehow don't have them.<br>
-  Note: If you have `chocolatey` installed, you can just ```choco install cmake git```
+  and proper v143 Tools & Windows SDK when installing Visual Studio)
 
 - Install `vcpkg` and its Visual Studio integration<br>
   (If you already have `vcpkg` set up, **please only install libraries**)<br>
@@ -23,55 +20,30 @@ Follow these steps:
   > cd ./vcpkg
   > ./bootstrap-vcpkg.bat
   ```
-  When vcpkg is set up, intgrate it and install some of `boost` and `cereal`:
+  When vcpkg is set up, intgrate it and install the needed libraries:
   ```powershell
   > ./vcpkg integrate install
   > ./vcpkg install `
-    boost-serialization:x64-windows `
-    boost-assign:x64-windows `
-    boost-filesystem:x64-windows `
-    boost-dll:x64-windows `
-    boost-property-tree:x64-windows `
-    boost-foreach:x64-windows `
-    boost-lexical-cast:x64-windows `
-    boost-unordered:x64-windows `
-    boost-math:x64-windows `
-    boost-algorithm:x64-windows `
+    eigen3:x64-windows `
+    glog:x64-windows `
+    gflags:x64-windows `
+    protobuf:x64-windows `
     cereal:x64-windows
   ```
 
-- Clone latest `OpenVR` and `Eigen3` to `external/` and set up `GLog` & `GFlags`<br>
-  (For this step you must have cmake installed and visible in PATH)<br>
+- Clone the latest `OpenVR` to `external/`<br>
   ```powershell
-  # Download the vswhere tool to find msbuild without additional interactions
-  > Invoke-WebRequest -Uri 'https://github.com/microsoft/vswhere/releases/latest/download/vswhere.exe' -OutFile './vswhere.exe'
-  # Use the downloaded vswhere tool to find msbuild. Skip this step if you use the Dev Powershell
-  > $msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Select-String -Pattern "2022" | `
-        Select-String -Pattern "Studio" | Select-Object -First 1 | Select-String -Pattern "installationPath")" `
-        -replace('"installationPath": "','') -replace('",',''))".Trim() + "\\MSBuild\\Current\\Bin\\MSBuild.exe"
-
   # Set up external dependencies
   > git submodule update --init
-
-  # Build GLog
-  > cd ./external/glog
-  > mkdir builds; cd ./builds
-  > cmake .. -DBUILD_SHARED_LIBS=ON
-  > &"$msbuild" glog.vcxproj "/p:Configuration=Release;Platform=x64"
-  # Go back
-  > cd ../../..
-
-  # Build GFlags
-  > cd ./external/gflags
-  > mkdir builds; cd ./builds
-  > cmake .. -DBUILD_SHARED_LIBS=ON
-  > &"$msbuild" gflags.vcxproj "/p:Configuration=Release;Platform=x64"
-  # Go back
-  > cd ../../..
   ```
 
 - Build Amethyst:<br>
+  - Option 1:
+    Open `Amethyst.sln` in Visual Studio and `Build Solution`
+  - Option 2, via CLI:
   ```powershell
+  # Download the vswhere tool to find msbuild without additional interactions
+  > Invoke-WebRequest -Uri 'https://github.com/microsoft/vswhere/releases/latest/download/vswhere.exe' -OutFile './vswhere.exe'
   # Use the downloaded vswhere tool (again) to find msbuild. Skip this step if you use the Dev Powershell
   > $msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Select-String -Pattern "2022" | `
     Select-String -Pattern "Studio" | Select-Object -First 1 | Select-String -Pattern "installationPath")" `
