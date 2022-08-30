@@ -3,38 +3,29 @@ on: workflow_dispatch # Only manual
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2.1.0
         id: checkout_code
 
-      # This is commented out since we've got:
-      # - vcpkg (.dockerprep/nolink)
-      # - vs2022 (.dockerprepvc)
-      # - choco (.dockerprepchoco)
-      # already set up on our (or my?)
-      # self-hosted vm (on-premises vmware)
+      - name: Install Chocolatey packages
+        run: choco install 7zip.install sed
       
-      #- name: Install Chocolatey Packages
-      #  run: choco install cmake 7zip.install sed git
-      
-      #- name: Restore or install vcpkg
-      #  uses: lukka/run-vcpkg@v10
-      #  with:
-      #    setupOnly: true
-      #    vcpkgGitCommitId: 6ba505cf2c1752d8ea5abb21427e23ff89dc486f
+      - name: Restore or install vcpkg
+        uses: lukka/run-vcpkg@v10
+        with:
+          setupOnly: true
+          vcpkgGitCommitId: 6ba505cf2c1752d8ea5abb21427e23ff89dc486f
 
-      - name: Install Libraries
+      - name: Install libraries
         shell: pwsh
         run: |
-          vcpkg install boost-serialization:x64-windows boost-assign:x64-windows `
-          boost-filesystem:x64-windows boost-dll:x64-windows `
-          boost-property-tree:x64-windows boost-foreach:x64-windows `
-          boost-lexical-cast:x64-windows boost-unordered:x64-windows `
-          boost-math:x64-windows boost-algorithm:x64-windows `
-          curlpp:x64-windows kinectsdk1:x64-windows kinectsdk2:x64-windows
+          vcpkg install eigen3:x64-windows `
+          glog:x64-windows gflags:x64-windows `
+          protobuf:x64-windows cereal:x64-windows `
+          kinectsdk1:x64-windows kinectsdk2:x64-windows
 
           sed -e 's/Kinect10.lib;//g' -i "device_KinectV1/device_KinectV1.vcxproj"
           sed -e 's/Kinect20.lib;//g' -i "device_KinectV2/device_KinectV2.vcxproj"
@@ -42,36 +33,15 @@ jobs:
       - name: Install vcpkg integration
         run: vcpkg integrate install
         
-      - name: Clear vcpkg Downloads
+      - name: Setup OpenVR
         shell: pwsh
         run: |
-          Remove-Item -LiteralPath "vcpkg/buildtrees" -Force -Recurse -ErrorAction Ignore
-          Remove-Item -LiteralPath "vcpkg/downloads" -Force -Recurse -ErrorAction Ignore
-
-      - name: Setup Dependencies
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri 'https://github.com/microsoft/vswhere/releases/latest/download/vswhere.exe' -OutFile './vswhere.exe'
-          $msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Select-String -Pattern "2022" | `
-              Select-String -Pattern "Studio" | Select-Object -First 1 | Select-String -Pattern "installationPath")" `
-              -replace('"installationPath": "','') -replace('",',''))".Trim() + "\\MSBuild\\Current\\Bin\\MSBuild.exe"
-
           git submodule update --init
-
-          cd ./external/glog
-          mkdir builds; cd ./builds
-          &"C:/Program Files/CMake/bin/cmake.exe" .. -DBUILD_SHARED_LIBS=ON
-          &"$msbuild" glog.vcxproj "/p:Configuration=Release;Platform=x64"
-          cd ../../..
-
-          cd ./external/gflags
-          mkdir builds; cd ./builds
-          &"C:/Program Files/CMake/bin/cmake.exe" .. -DBUILD_SHARED_LIBS=ON
-          &"$msbuild" gflags.vcxproj "/p:Configuration=Release;Platform=x64"
 
       - name: Build Amethyst
         shell: pwsh
         run: |
+          Invoke-WebRequest -Uri 'https://github.com/microsoft/vswhere/releases/latest/download/vswhere.exe' -OutFile './vswhere.exe'
           $msbuild = "$("$(.\vswhere.exe -legacy -prerelease -products * -format json | Select-String -Pattern "2022" | `
               Select-String -Pattern "Studio" | Select-Object -First 1 | Select-String -Pattern "installationPath")" `
               -replace('"installationPath": "','') -replace('",',''))".Trim() + "\\MSBuild\\Current\\Bin\\MSBuild.exe"
@@ -82,20 +52,19 @@ jobs:
       - name: Get short commit SHA
         id: slug
         run: "$slug = '::set-output name=slug::' + $env:GITHUB_SHA.SubString(0,7); echo $slug"
-
-      # This is commented out since now we're gonna be pushing
-      # releases to another repo rather than saving artifacts
-
-      # - name: Upload Amethyst's Artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: K2App-Release-${{ steps.slug.outputs.slug }}
-      #     path: x64/Release
-      #     if-no-files-found: error
-
       - name: Prepare Release zip
         run: |
           mkdir Release; cd Release
           Copy-Item ../x64/Release/Amethyst/* -Destination ./ -Force -Recurse
           Copy-Item ../x64/Release/driver/Amethyst -Destination ./ -Force -Recurse
           7z a "Amethyst-Release-${{ steps.slug.outputs.slug }}.zip" *
+
+      - name: Upload Amethyst's artifact
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Amethyst Preview Build Artifact"
+          files: Release/Amethyst-Release-${{ steps.slug.outputs.slug }}.zip
+          
