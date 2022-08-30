@@ -1,17 +1,8 @@
 #pragma once
 #include "pch.h"
+
 #include <Amethyst_API.h>
-
 #include <fstream>
-
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/utility.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/serialization/optional.hpp>
-
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
 
 #include "K2EVRInput.h"
 #include "K2AppTracker.h"
@@ -29,77 +20,10 @@ T radiansToDegrees(T angleRadians)
 	return angleRadians * 180.0 / _PI;
 }
 
-namespace boost::serialization
-{
-	// Eigen serialization
-	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
-	void serialize(Archive& ar,
-		Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t,
-		const unsigned int file_version
-	)
-	{
-		for (size_t i = 0; i < t.size(); i++)
-			ar& make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]);
-	}
-
-	template <class Archive, typename _Scalar>
-	void serialize(Archive& ar, Eigen::Quaternion<_Scalar>& q, unsigned)
-	{
-		ar& make_nvp("w", q.w())
-			& make_nvp("x", q.x())
-			& make_nvp("y", q.y())
-			& make_nvp("z", q.z());
-	}
-
-	template <class Archive, typename _Scalar>
-	void serialize(Archive& ar, Eigen::Vector3<_Scalar>& v, unsigned)
-	{
-		ar& make_nvp("x", v.x())
-			& make_nvp("y", v.y())
-			& make_nvp("z", v.z());
-	}
-}
-
 namespace k2app
 {
 	class K2AppSettings
 	{
-	private:
-		friend class boost::serialization::access;
-
-		template <class Archive>
-		void serialize(Archive& archive, unsigned int version)
-		{
-			archive & BOOST_SERIALIZATION_NVP(appLanguage)
-				& BOOST_SERIALIZATION_NVP(appTheme)
-				& BOOST_SERIALIZATION_NVP(K2TrackersVector)
-				& BOOST_SERIALIZATION_NVP(useTrackerPairs)
-				& BOOST_SERIALIZATION_NVP(checkForOverlappingTrackers)
-				& BOOST_SERIALIZATION_NVP(trackingDeviceID)
-				& BOOST_SERIALIZATION_NVP(overrideDeviceID)
-				& BOOST_SERIALIZATION_NVP(isFlipEnabled)
-				& BOOST_SERIALIZATION_NVP(isExternalFlipEnabled)
-				& BOOST_SERIALIZATION_NVP(externalFlipCalibrationYaw)
-				& BOOST_SERIALIZATION_NVP(autoSpawnEnabledJoints)
-				& BOOST_SERIALIZATION_NVP(enableAppSounds)
-				& BOOST_SERIALIZATION_NVP(appSoundsVolume)
-				& BOOST_SERIALIZATION_NVP(isMatrixCalibrated)
-				& BOOST_SERIALIZATION_NVP(calibrationRotationMatrices)
-				& BOOST_SERIALIZATION_NVP(calibrationTranslationVectors)
-				& BOOST_SERIALIZATION_NVP(calibrationOrigins)
-				& BOOST_SERIALIZATION_NVP(calibrationYaws)
-				& BOOST_SERIALIZATION_NVP(calibrationPointsNumber)
-				& BOOST_SERIALIZATION_NVP(autoCalibration)
-				& BOOST_SERIALIZATION_NVP(skeletonPreviewEnabled)
-				& BOOST_SERIALIZATION_NVP(forceSkeletonPreview)
-				& BOOST_SERIALIZATION_NVP(freezeLowerOnly)
-				& BOOST_SERIALIZATION_NVP(shownToastsGuidVector)
-				& BOOST_SERIALIZATION_NVP(teachingTipShown_Freeze)
-				& BOOST_SERIALIZATION_NVP(teachingTipShown_Flip)
-				& BOOST_SERIALIZATION_NVP(firstTimeTourShown)
-				& BOOST_SERIALIZATION_NVP(firstShutdownTipShown);
-		}
-
 	public:
 		/* Members part */
 
@@ -180,13 +104,52 @@ namespace k2app
 		{
 			try
 			{
-				std::ofstream output(ktvr::GetK2AppDataFileDir("Amethyst_settings.xml"));
+				if (std::ofstream output(
+						ktvr::GetK2AppDataFileDir("Amethyst_settings.xml"));
+					output.fail())
+				{
+					LOG(ERROR) << "Settings archive serialization error: Couldn't save settings!\n";
+				}
+				else
+				{
+					cereal::XMLOutputArchive archive(output);
+					LOG(INFO) << "Attempting to save settings";
 
-				boost::archive::xml_oarchive archive(output);
-				archive << boost::serialization::make_nvp("K2AppSettings", *this);
-				LOG(INFO) << "Settings have been saved to file \"Amethyst_settings.xml\" (inside K2AppData)";
+					archive(
+						CEREAL_NVP(appLanguage),
+						CEREAL_NVP(appTheme),
+						CEREAL_NVP(K2TrackersVector),
+						CEREAL_NVP(useTrackerPairs),
+						CEREAL_NVP(checkForOverlappingTrackers),
+						CEREAL_NVP(trackingDeviceID),
+						CEREAL_NVP(overrideDeviceID),
+						CEREAL_NVP(isFlipEnabled),
+						CEREAL_NVP(isExternalFlipEnabled),
+						CEREAL_NVP(externalFlipCalibrationYaw),
+						CEREAL_NVP(autoSpawnEnabledJoints),
+						CEREAL_NVP(enableAppSounds),
+						CEREAL_NVP(appSoundsVolume),
+						CEREAL_NVP(isMatrixCalibrated),
+						CEREAL_NVP(calibrationRotationMatrices),
+						CEREAL_NVP(calibrationTranslationVectors),
+						CEREAL_NVP(calibrationOrigins),
+						CEREAL_NVP(calibrationYaws),
+						CEREAL_NVP(calibrationPointsNumber),
+						CEREAL_NVP(autoCalibration),
+						CEREAL_NVP(skeletonPreviewEnabled),
+						CEREAL_NVP(forceSkeletonPreview),
+						CEREAL_NVP(freezeLowerOnly),
+						CEREAL_NVP(shownToastsGuidVector),
+						CEREAL_NVP(teachingTipShown_Freeze),
+						CEREAL_NVP(teachingTipShown_Flip),
+						CEREAL_NVP(firstTimeTourShown),
+						CEREAL_NVP(firstShutdownTipShown)
+					);
+
+					LOG(INFO) << "Settings have been saved to file \"Amethyst_settings.xml\" (inside K2AppData)";
+				}
 			}
-			catch (const boost::archive::archive_exception& e)
+			catch (const std::exception& e)
 			{
 				LOG(ERROR) << "Settings archive serialization error: " << e.what();
 			}
@@ -197,13 +160,53 @@ namespace k2app
 		{
 			try
 			{
-				std::ifstream input(ktvr::GetK2AppDataFileDir("Amethyst_settings.xml"));
+				if (std::ifstream input(
+						ktvr::GetK2AppDataFileDir("Amethyst_settings.xml"));
+					input.fail())
+				{
+					LOG(WARNING) << "Settings archive serialization error: Couldn't read settings, re-generating!\n";
+					saveSettings(); // Re-generate the file
+				}
+				else
+				{
+					LOG(INFO) << "Attempting to read settings";
 
-				boost::archive::xml_iarchive archive(input);
-				archive >> boost::serialization::make_nvp("K2AppSettings", *this);
-				LOG(INFO) << "Settings have been read from file \"Amethyst_settings.xml\" (inside K2AppData)";
+					cereal::XMLInputArchive archive(input);
+					archive(
+						CEREAL_NVP(appLanguage),
+						CEREAL_NVP(appTheme),
+						CEREAL_NVP(K2TrackersVector),
+						CEREAL_NVP(useTrackerPairs),
+						CEREAL_NVP(checkForOverlappingTrackers),
+						CEREAL_NVP(trackingDeviceID),
+						CEREAL_NVP(overrideDeviceID),
+						CEREAL_NVP(isFlipEnabled),
+						CEREAL_NVP(isExternalFlipEnabled),
+						CEREAL_NVP(externalFlipCalibrationYaw),
+						CEREAL_NVP(autoSpawnEnabledJoints),
+						CEREAL_NVP(enableAppSounds),
+						CEREAL_NVP(appSoundsVolume),
+						CEREAL_NVP(isMatrixCalibrated),
+						CEREAL_NVP(calibrationRotationMatrices),
+						CEREAL_NVP(calibrationTranslationVectors),
+						CEREAL_NVP(calibrationOrigins),
+						CEREAL_NVP(calibrationYaws),
+						CEREAL_NVP(calibrationPointsNumber),
+						CEREAL_NVP(autoCalibration),
+						CEREAL_NVP(skeletonPreviewEnabled),
+						CEREAL_NVP(forceSkeletonPreview),
+						CEREAL_NVP(freezeLowerOnly),
+						CEREAL_NVP(shownToastsGuidVector),
+						CEREAL_NVP(teachingTipShown_Freeze),
+						CEREAL_NVP(teachingTipShown_Flip),
+						CEREAL_NVP(firstTimeTourShown),
+						CEREAL_NVP(firstShutdownTipShown)
+					);
+
+					LOG(INFO) << "Settings have been read from file \"Amethyst_settings.xml\" (inside K2AppData)";
+				}
 			}
-			catch (const boost::archive::archive_exception& e)
+			catch (const std::exception& e)
 			{
 				LOG(ERROR) << "Settings archive serialization error: " << e.what();
 			}

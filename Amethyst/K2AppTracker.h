@@ -4,6 +4,67 @@
 #include "LowPassFilter.h"
 #include "KalmanFilter.h"
 
+#include <codecvt>
+
+#include <cereal/access.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/tuple.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#include <cereal/specialize.hpp>
+#include <cereal/archives/xml.hpp>
+
+/* Eigen serialization */
+namespace cereal
+{
+	template <class A>
+	std::string CEREAL_SAVE_MINIMAL_FUNCTION_NAME(const A&, const std::wstring& in)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> _conv;
+		return _conv.to_bytes(in);
+	}
+
+	template <class A>
+	void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(const A&, std::wstring& out, const std::string& in)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> _conv;
+		out = _conv.from_bytes(in);
+	}
+
+	template <class Archive, typename _Scalar>
+	void serialize(Archive& archive,
+	               Eigen::Quaternion<_Scalar>& q)
+	{
+		archive(
+			make_nvp("w", q.w()),
+			make_nvp("x", q.x()),
+			make_nvp("y", q.y()),
+			make_nvp("z", q.z())
+		);
+	}
+
+	template <class Archive, typename _Scalar>
+	void serialize(Archive& archive,
+	               Eigen::Vector3<_Scalar>& v)
+	{
+		archive(
+			make_nvp("x", v.x()),
+			make_nvp("y", v.y()),
+			make_nvp("z", v.z())
+		);
+	}
+
+	template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
+	void serialize(Archive& archive,
+	               Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& t)
+	{
+		for (size_t i = 0; i < t.size(); i++)
+			archive(make_nvp(("m" + std::to_string(i)).c_str(), t.data()[i]));
+	}
+}
+
+CEREAL_SPECIALIZE_FOR_ALL_ARCHIVES(std::wstring, cereal::specialization::non_member_load_save_minimal);
+
 namespace k2app
 {
 	// Rotation tracking option enumeration
@@ -115,6 +176,8 @@ namespace k2app
 
 	class K2AppTracker
 	{
+		friend class cereal::access;
+
 	public:
 		// Default constructors
 		K2AppTracker()
@@ -418,24 +481,26 @@ namespace k2app
 		Eigen::Quaternionf pose_orientation{1, 0, 0, 0};
 
 		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
+		void serialize(Archive& archive)
 		{
-			ar & BOOST_SERIALIZATION_NVP(selectedTrackedJointID)
-				& BOOST_SERIALIZATION_NVP(isPositionOverridden)
-				& BOOST_SERIALIZATION_NVP(isRotationOverridden)
-				& BOOST_SERIALIZATION_NVP(positionOverrideJointID)
-				& BOOST_SERIALIZATION_NVP(rotationOverrideJointID)
-				& BOOST_SERIALIZATION_NVP(pose_position)
-				& BOOST_SERIALIZATION_NVP(pose_orientation)
-				& BOOST_SERIALIZATION_NVP(data_serial)
-				& BOOST_SERIALIZATION_NVP(data_role)
-				& BOOST_SERIALIZATION_NVP(data_isActive)
-				& BOOST_SERIALIZATION_NVP(base_tracker)
-				& BOOST_SERIALIZATION_NVP(orientationTrackingOption) // e.g. from HMD
-				& BOOST_SERIALIZATION_NVP(orientationTrackingFilterOption) // e.g. SLERP
-				& BOOST_SERIALIZATION_NVP(positionTrackingFilterOption) // e.g. EKF
-				& BOOST_SERIALIZATION_NVP(positionOffset) // Offsets - pos
-				& BOOST_SERIALIZATION_NVP(orientationOffset); // Offsets - ori
+			archive(
+				CEREAL_NVP(selectedTrackedJointID),
+				CEREAL_NVP(isPositionOverridden),
+				CEREAL_NVP(isRotationOverridden),
+				CEREAL_NVP(positionOverrideJointID),
+				CEREAL_NVP(rotationOverrideJointID),
+				CEREAL_NVP(pose_position),
+				CEREAL_NVP(pose_orientation),
+				CEREAL_NVP(data_serial),
+				CEREAL_NVP(data_role),
+				CEREAL_NVP(data_isActive),
+				CEREAL_NVP(base_tracker),
+				CEREAL_NVP(orientationTrackingOption),
+				CEREAL_NVP(orientationTrackingFilterOption),
+				CEREAL_NVP(positionTrackingFilterOption),
+				CEREAL_NVP(positionOffset),
+				CEREAL_NVP(orientationOffset)
+			);
 		}
 
 		// Internal filters' datas

@@ -1504,7 +1504,7 @@ bool IsDashboardOpen()
 	const auto stat = vr::VRSystem()->GetTrackedDeviceActivityLevel(vr::k_unTrackedDeviceIndex_Hmd);
 	if (stat != vr::k_EDeviceActivityLevel_UserInteraction &&
 		stat != vr::k_EDeviceActivityLevel_UserInteraction_Timeout)
-		return true;
+		return false; // Standby - hide
 
 	// Check if the dashboard is open
 	return vr::VROverlay()->IsDashboardVisible();

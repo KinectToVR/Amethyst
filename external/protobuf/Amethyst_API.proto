@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package Amethyst;
+package ktvr;
 
 enum ITrackerType
 {  
@@ -61,99 +61,97 @@ message K2TrackerBase
   required ITrackerType tracker = 3 [default = Tracker_Handed];
 }
 
+// K2API messaging types
+enum K2MessageType
+{
+  // Default
+  K2Message_Invalid = 0;
+  // State
+  K2Message_SetTrackerState = 1;
+  // State but multiple at once
+  K2Message_SetTrackerStateVector = 2;
+  // Set all trackers' state
+  K2Message_SetStateAll = 3;
+  // Update
+  K2Message_UpdateTrackerPose = 4;
+  // Update but multiple at once
+  K2Message_UpdateTrackerPoseVector = 5;
+  // Refresh tracker pose
+  K2Message_RefreshTracker = 6;
+  // Request a restart
+  K2Message_RequestRestart = 7;
+  // Test message
+  K2Message_Ping = 8;
+};
+
+// K2API response messaging types
+enum K2ResponseMessageType
+{
+  // Default
+  K2ResponseMessage_Invalid = 0;
+  // Just the role
+  K2ResponseMessage_Role = 1;
+  // State success, type only for ping
+  K2ResponseMessage_Success = 2;
+  // Tracker object
+  K2ResponseMessage_Tracker = 3;
+};
+
+// Return messaging types
+enum K2ResponseMessageCode
+{
+  K2ResponseMessageCode_Exception = 0;
+  // Exception occurred
+  K2ResponseMessageCode_UnknownError = 1;
+  // IDK
+  K2ResponseMessageCode_Invalid = 2;
+  // Default Invalid
+  K2ResponseMessageCode_OK = 3;
+  // Default OK
+  K2ResponseMessageCode_SpawnFailed = 4;
+  // Spawn failed, exception
+  K2ResponseMessageCode_AlreadyPresent = 5;
+  // Serial already present
+  K2ResponseMessageCode_BadRequest = 6;
+  // Unknown message type, wrong ID
+  K2ResponseMessageCode_ParsingError = 7;
+  // Global parsing exception
+  K2ResponseMessageCode_BadSerial = 8;
+};
+
 message K2Message 
 {
-  // K2API messaging types
-	enum K2MessageType
-	{
-		// Default
-		K2Message_Invalid = 0;
-		// State
-		K2Message_SetTrackerState = 1;
-		// State but multiple at once
-		K2Message_SetTrackerStateVector = 2;
-		// Set all trackers' state
-		K2Message_SetStateAll = 3;
-		// Update
-		K2Message_UpdateTrackerPose = 4;
-		// Update but multiple at once
-		K2Message_UpdateTrackerPoseVector = 5;
-		// Refresh tracker pose
-		K2Message_RefreshTracker = 6;
-		// Request a restart
-		K2Message_RequestRestart = 7;
-		// Test message
-		K2Message_Ping = 8;
-	};
-  
-	// Message type, assume fail
+  // Message type, assume fail
   required K2MessageType messageType = 1 [default = K2Message_Invalid];
 
-	// Message timestamp when sent
+  // Message timestamp when sent
   required int64 messageTimestamp = 2 [default = 0];
   // This one's for mid-events
   required int64 messageManualTimestamp = 3 [default = 0];
 
-	// Objects, parsing depends on type
-  optional K2TrackerBase trackerBase = 4;
-  repeated K2TrackerBase trackerBaseVector = 5;
-  repeated K2StatusPair trackerStatusesVector = 6;
-  optional K2TrackerPose trackerPose = 7;
+  // Objects, parsing depends on type
+  repeated K2TrackerBase trackerBaseVector = 4;
+  repeated K2StatusPair trackerStatusesVector = 5;
 
-	// Rest objects, depends on the message type too
-  required ITrackerType tracker = 8 [default = Tracker_Handed];
+  // Rest objects, depends on the message type too
+  required ITrackerType tracker = 6 [default = Tracker_Handed];
 
-  required bool state = 9 [default = false]; // Tracker state
-  required bool want_reply = 10 [default = true]; // Reply?
-  required string message_string = 11; // Placeholder for custom messages
+  required bool state = 7 [default = false]; // Tracker state
+  required bool want_reply = 8 [default = true]; // Reply?
+  required string message_string = 9; // Placeholder for custom messages
 }
 
 message K2ResponseMessage
 {
-  // K2API response messaging types
-	enum K2ResponseMessageType
-	{
-		// Default
-		K2ResponseMessage_Invalid = 0;
-		// Just the role
-		K2ResponseMessage_Role = 1;
-		// State success, type only for ping
-		K2ResponseMessage_Success = 2;
-		// Tracker object
-		K2ResponseMessage_Tracker = 3;
-	};
-
-  // Return messaging types
-	enum K2ResponseMessageCode
-	{
-		K2ResponseMessageCode_Exception = 0;
-		// Exception occurred
-		K2ResponseMessageCode_UnknownError = 1;
-		// IDK
-		K2ResponseMessageCode_Invalid = 2;
-		// Default Invalid
-		K2ResponseMessageCode_OK = 3;
-		// Default OK
-		K2ResponseMessageCode_SpawnFailed = 4;
-		// Spawn failed, exception
-		K2ResponseMessageCode_AlreadyPresent = 5;
-		// Serial already present
-		K2ResponseMessageCode_BadRequest = 6;
-		// Unknown message type, wrong ID
-		K2ResponseMessageCode_ParsingError = 7;
-		// Global parsing exception
-		K2ResponseMessageCode_BadSerial = 8;
-	};
-
-	// Message type, assume fail
+  // Message type, assume fail
   required K2ResponseMessageType messageType = 1 [default = K2ResponseMessage_Invalid];
 
-	// Message timestamp when sent
+  // Message timestamp when sent
   required int64 messageTimestamp = 2 [default = 0];
   // This one's for mid-events
   required int64 messageManualTimestamp = 3 [default = 0];
 
-	// Rest objects, depends on the message type too
+  // Rest objects, depends on the message type too
   required ITrackerType tracker = 4 [default = Tracker_Handed];
   required K2ResponseMessageCode result = 5 [default = K2ResponseMessageCode_UnknownError];
   required bool success = 6 [default = false];
