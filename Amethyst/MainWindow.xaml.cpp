@@ -164,6 +164,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::executeU
 	ShellExecuteA(nullptr, nullptr,
 		"https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
 		nullptr, nullptr, SW_SHOW);
+
+	co_return;
 }
 
 // Updates checking function
