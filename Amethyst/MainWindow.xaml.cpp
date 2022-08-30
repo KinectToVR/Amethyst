@@ -40,124 +40,130 @@ struct toast
 // Updating function
 Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::executeUpdates()
 {
-	k2app::interfacing::updatingNow = true;
+	//k2app::interfacing::updatingNow = true;
 
-	UpdatePendingFlyout().Hide();
+	//UpdatePendingFlyout().Hide();
 
-	// Setup the flyout contents: action & footer
-	/*UpdatePendingFlyoutHeader().Text(k2app::interfacing::LocalizedResourceWString(
-		L"SharedStrings", L"Updates/UpToDate"));
-	UpdatePendingFlyoutFooter().Text(L"Amethyst v" + StringToWString(k2app::interfacing::K2InternalVersion));*/
+	//// Setup the flyout contents: action & footer
+	///*UpdatePendingFlyoutHeader().Text(k2app::interfacing::LocalizedResourceWString(
+	//	L"SharedStrings", L"Updates/UpToDate"));
+	//UpdatePendingFlyoutFooter().Text(L"Amethyst v" + StringToWString(k2app::interfacing::K2InternalVersion));*/
 
-	// Hide the new-update icon dot
-	UpdateIconDot().Opacity(0.0);
+	//// Hide the new-update icon dot
+	//UpdateIconDot().Opacity(0.0);
 
-	// Sleep on UI (Non-blocking)
-	{
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(500);
-		co_await ui_thread;
-	}
+	//// Sleep on UI (Non-blocking)
+	//{
+	//	apartment_context ui_thread;
+	//	co_await resume_background();
+	//	Sleep(500);
+	//	co_await ui_thread;
+	//}
 
-	// Mark the update footer as active
-	UpdateIconGrid().Translation({0, 0, 0});
-	UpdateIconText().Opacity(0.0);
-	UpdateIcon().Foreground(*k2app::shared::main::attentionBrush);
-	IconRotation().Begin();
+	//// Mark the update footer as active
+	//UpdateIconGrid().Translation({0, 0, 0});
+	//UpdateIconText().Opacity(0.0);
+	//UpdateIcon().Foreground(*k2app::shared::main::attentionBrush);
+	//IconRotation().Begin();
 
-	// Show the updater progress flyout
-	Controls::Primitives::FlyoutShowOptions options;
-	options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
-	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+	//// Show the updater progress flyout
+	//Controls::Primitives::FlyoutShowOptions options;
+	//options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
+	//options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
-	if (!k2app::interfacing::isNUXPending)
-		UpdatePendingFlyout().ShowAt(HelpButton(), options);
+	//if (!k2app::interfacing::isNUXPending)
+	//	UpdatePendingFlyout().ShowAt(HelpButton(), options);
 
-	// Success? ...or nah?
-	bool m_update_error = false;
+	//// Success? ...or nah?
+	//bool m_update_error = false;
 
-	// Reset the progressbar
-	auto UpdatePendingFlyoutProgressBar = Controls::ProgressBar();
-	UpdatePendingFlyoutProgressBar.IsIndeterminate(false);
-	UpdatePendingFlyoutProgressBar.HorizontalAlignment(
-		HorizontalAlignment::Stretch);
+	//// Reset the progressbar
+	//auto UpdatePendingFlyoutProgressBar = Controls::ProgressBar();
+	//UpdatePendingFlyoutProgressBar.IsIndeterminate(false);
+	//UpdatePendingFlyoutProgressBar.HorizontalAlignment(
+	//	HorizontalAlignment::Stretch);
 
-	UpdatePendingFlyoutMainStack().Children().Append(
-		UpdatePendingFlyoutProgressBar);
+	//UpdatePendingFlyoutMainStack().Children().Append(
+	//	UpdatePendingFlyoutProgressBar);
 
-	/* Simulate some work being done */
-	for (uint32_t i = 0; i <= 100; i++)
-	{
-		UpdatePendingFlyoutProgressBar.Value(i);
-		UpdatePendingFlyoutStatusContent().Text(
-			L"Downlodign - " + std::to_wstring(i) + L"%");
+	///* Simulate some work being done */
+	//for (uint32_t i = 0; i <= 100; i++)
+	//{
+	//	UpdatePendingFlyoutProgressBar.Value(i);
+	//	UpdatePendingFlyoutStatusContent().Text(
+	//		L"Downlodign - " + std::to_wstring(i) + L"%");
 
-		// Sleep on UI (Non-blocking)
-		{
-			apartment_context ui_thread;
-			co_await resume_background();
-			Sleep(150);
-			co_await ui_thread;
-		}
+	//	// Sleep on UI (Non-blocking)
+	//	{
+	//		apartment_context ui_thread;
+	//		co_await resume_background();
+	//		Sleep(150);
+	//		co_await ui_thread;
+	//	}
 
-		// Simulate an error
-		if (i > 60)
-		{
-			m_update_error = true;
-			break;
-		}
-	}
+	//	// Simulate an error
+	//	if (i > 60)
+	//	{
+	//		m_update_error = true;
+	//		break;
+	//	}
+	//}
 
-	// Mark the update footer as inactive
-	IconRotation().Stop();
-	UpdateIcon().Foreground(*k2app::shared::main::neutralBrush);
-	UpdateIconGrid().Translation({0, -8, 0});
-	UpdateIconText().Opacity(1.0);
+	//// Mark the update footer as inactive
+	//IconRotation().Stop();
+	//UpdateIcon().Foreground(*k2app::shared::main::neutralBrush);
+	//UpdateIconGrid().Translation({0, -8, 0});
+	//UpdateIconText().Opacity(1.0);
 
-	// Check the file result and the DL result
-	if (!m_update_error)
-	{
-		// Execute the update
-		ShellExecuteA(nullptr, nullptr,
-		              "https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
-		              nullptr, nullptr, SW_SHOW);
-	}
-	else
-	{
-		// Play a sound
-		playAppSound(k2app::interfacing::sounds::AppSounds::Error);
+	//// Check the file result and the DL result
+	//if (!m_update_error)
+	//{
+	//	// Execute the update
+	//	ShellExecuteA(nullptr, nullptr,
+	//	              "https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
+	//	              nullptr, nullptr, SW_SHOW);
+	//}
+	//else
+	//{
+	//	// Play a sound
+	//	playAppSound(k2app::interfacing::sounds::AppSounds::Error);
 
-		UpdatePendingFlyoutProgressBar.ShowError(true);
-		UpdatePendingFlyoutStatusContent().Text(L"Erraa downlodign!");
+	//	UpdatePendingFlyoutProgressBar.ShowError(true);
+	//	UpdatePendingFlyoutStatusContent().Text(L"Erraa downlodign!");
 
-		// Sleep on UI (Non-blocking)
-		{
-			apartment_context ui_thread;
-			co_await resume_background();
-			Sleep(3200);
-			co_await ui_thread;
-		}
-	}
+	//	// Sleep on UI (Non-blocking)
+	//	{
+	//		apartment_context ui_thread;
+	//		co_await resume_background();
+	//		Sleep(3200);
+	//		co_await ui_thread;
+	//	}
+	//}
 
-	// Hide the flyout
-	UpdatePendingFlyout().Hide();
+	//// Hide the flyout
+	//UpdatePendingFlyout().Hide();
 
-	// Sleep on UI (Non-blocking)
-	{
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(500);
-		co_await ui_thread;
-	}
+	//// Sleep on UI (Non-blocking)
+	//{
+	//	apartment_context ui_thread;
+	//	co_await resume_background();
+	//	Sleep(500);
+	//	co_await ui_thread;
+	//}
 
-	// Don't give up yet
-	k2app::interfacing::updatingNow = false;
-	if (k2app::interfacing::updateFound)
-		UpdateIconDot().Opacity(1.0);
+	//// Don't give up yet
+	//k2app::interfacing::updatingNow = false;
+	//if (k2app::interfacing::updateFound)
+	//	UpdateIconDot().Opacity(1.0);
 
-	// Remove the progressbar
-	UpdatePendingFlyoutMainStack().Children().RemoveAtEnd();
+	//// Remove the progressbar
+	//UpdatePendingFlyoutMainStack().Children().RemoveAtEnd();
+
+
+	// Execute the update
+	ShellExecuteA(nullptr, nullptr,
+		"https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
+		nullptr, nullptr, SW_SHOW);
 }
 
 // Updates checking function
