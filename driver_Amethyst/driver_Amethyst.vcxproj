@@ -99,13 +99,10 @@
     <PostBuildEvent>
       <Command>xcopy /y /d "$(SolutionDir)external\driver_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
-xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\boost_serialization*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 
-xcopy /y /d "$(SolutionDir)external\gflags\builds\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\glog\builds\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
-
-xcopy /y /d "$(SolutionDir)external\protobuf\build_msvc\$(Configuration)\libprotobuf*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\protobuf\build_msvc\bin\$(Configuration)\abseil_dll.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\libprotobuf*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"</Command>
     </PostBuildEvent>
@@ -136,13 +133,10 @@ xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(Sol
     <PostBuildEvent>
       <Command>xcopy /y /d "$(SolutionDir)external\driver_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
-xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\boost_serialization*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 
-xcopy /y /d "$(SolutionDir)external\gflags\builds\bin\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\glog\builds\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
-
-xcopy /y /d "$(SolutionDir)external\protobuf\build_msvc\$(Configuration)\libprotobuf*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
-xcopy /y /d "$(SolutionDir)external\protobuf\build_msvc\bin\$(Configuration)\abseil_dll.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\libprotobuf*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\glog*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\gflags*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"</Command>
     </PostBuildEvent>

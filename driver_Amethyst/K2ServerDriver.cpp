@@ -1,9 +1,6 @@
 #include "K2ServerDriver.h"
 #include <thread>
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp>
-
 int K2ServerDriver::init_ServerDriver(
 	const std::wstring& ame_api_to_pipe,
 	const std::wstring& ame_api_from_pipe,
@@ -119,27 +116,22 @@ int K2ServerDriver::init_ServerDriver(
 
 						// Here, read from the *TO* pipe
 						// Create the pipe file
-						std::optional<HANDLE> ReaderPipe = CreateFileW(
+						std::optional ReaderPipe = CreateFileW(
 							ame_api_to_pipe.c_str(),
 							GENERIC_READ | GENERIC_WRITE,
 							0, nullptr, OPEN_EXISTING, 0, nullptr);
 
 						// Create the buffer
-						char read_buffer[4096];
-						DWORD Read = DWORD();
-						std::string read_string;
+						char read_buffer[2048]{};
+						DWORD read = DWORD();
 
 						// Check if we're good
 						if (ReaderPipe.has_value())
-						{
 							// Read the pipe
 							ReadFile(ReaderPipe.value(),
-							         read_buffer, 4096,
-							         &Read, nullptr);
+							         read_buffer, 2048,
+							         &read, nullptr);
 
-							// Convert the message to string
-							read_string = read_buffer;
-						}
 						else
 							LOG(ERROR) << "Error: Pipe object was not initialized.";
 
@@ -151,13 +143,9 @@ int K2ServerDriver::init_ServerDriver(
 						{
 							// Deserialize now
 							ktvr::K2Message response;
-							response.ParseFromString(read_string);
+							response.ParseFromString(std::string(read_buffer, 2048));
 
 							parse_message(response);
-						}
-						catch (const boost::archive::archive_exception& e)
-						{
-							LOG(ERROR) << "Message may be corrupted. Boost serialization error: " << e.what();
 						}
 						catch (const std::exception& e)
 						{
@@ -411,7 +399,7 @@ void K2ServerDriver::parse_message(const ktvr::K2Message& message)
 			ktvr::ame_api_from_pipe_address.c_str(),
 			PIPE_ACCESS_INBOUND | PIPE_ACCESS_OUTBOUND,
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
-			1, 4096, 4096, 1000L, nullptr);
+			1, 2048, 2048, 1000L, nullptr);
 		DWORD Written;
 
 		// Let the client know that we'll be writing soon

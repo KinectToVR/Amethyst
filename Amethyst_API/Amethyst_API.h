@@ -239,7 +239,7 @@ namespace ktvr
 		{
 			auto message = K2Message();
 
-			message.set_messagetype(K2Message_UpdateTrackerPoseVector);
+			message.set_messagetype(K2Message_SetTrackerStateVector);
 
 			// Compose a vector of pairs
 			std::vector<K2StatusPair> pairs;

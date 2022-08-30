@@ -80,7 +80,7 @@ namespace ktvr
 	std::string send_message(const std::string& data, const bool want_reply) noexcept(false)
 	{
 		///// Send the message via named pipe /////
-
+		
 		// Wait for the semaphore if it's locked
 		WaitForSingleObject(ame_api_to_semaphore, INFINITE);
 
@@ -89,7 +89,7 @@ namespace ktvr
 			ame_api_to_pipe_address.c_str(),
 			PIPE_ACCESS_INBOUND | PIPE_ACCESS_OUTBOUND,
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
-			1, 4096, 4096, 1000L, nullptr);
+			1, 2048, 2048, 1000L, nullptr);
 		DWORD Written;
 
 		// Let the server know we'll be writing soon
@@ -99,7 +99,7 @@ namespace ktvr
 		ConnectNamedPipe(API_WriterPipe, nullptr);
 		WriteFile(API_WriterPipe,
 		          data.c_str(),
-		          strlen(data.c_str()),
+		          data.length(),
 		          &Written, nullptr);
 		FlushFileBuffers(API_WriterPipe);
 
@@ -123,22 +123,22 @@ namespace ktvr
 
 			// Here, read from the *from* pipe
 			// Create the pipe file
-			std::optional<HANDLE> API_ReaderPipe = CreateFileW(
+			std::optional API_ReaderPipe = CreateFileW(
 				ame_api_from_pipe_address.c_str(),
 				GENERIC_READ | GENERIC_WRITE,
 				0, nullptr, OPEN_EXISTING, 0, nullptr);
 
 			// Create the buffer
-			char API_read_buffer[4096];
-			DWORD Read = DWORD();
+			char API_read_buffer[2048]{};
+			DWORD read = DWORD();
 
 			// Check if we're good
 			if (API_ReaderPipe.has_value())
 			{
 				// Read the pipe
 				ReadFile(API_ReaderPipe.value(),
-				         API_read_buffer, 4096,
-				         &Read, nullptr);
+				         API_read_buffer, 2048,
+				         &read, nullptr);
 			}
 			else
 			{
@@ -154,7 +154,7 @@ namespace ktvr
 
 			///// Receive the response via named pipe /////
 
-			return API_read_buffer; // Return only the reply
+			return std::string(API_read_buffer); // Return only the reply
 		}
 		// Unlock the semaphore after job done
 		ReleaseSemaphore(ame_api_to_semaphore, 1, nullptr);

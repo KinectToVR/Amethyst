@@ -1513,7 +1513,7 @@ bool IsDashboardOpen()
 
 std::pair<bool, bool> IsJointUsedAsOverride(const uint32_t& joint)
 {
-	std::pair<bool, bool> _o{false, false};
+	std::pair _o{false, false};
 
 	// Scan for position overrides
 	for (const auto& _j_p : k2app::K2Settings.K2TrackersVector)

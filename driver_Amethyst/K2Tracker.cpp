@@ -1,7 +1,6 @@
 #include "K2Tracker.h"
 #include <openvr_driver.h>
 #include <string>
-#include <thread>
 #include <Amethyst_API.h>
 
 K2Tracker::K2Tracker(const ktvr::K2TrackerBase& tracker_base)
@@ -49,22 +48,18 @@ void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 {
 	try
 	{
-		// For handling PosePacket's time offset
-		std::thread([&, pose]()
-		{
-			// Just copy the values
-			_pose.vecPosition[0] = pose.position().x();
-			_pose.vecPosition[1] = pose.position().y();
-			_pose.vecPosition[2] = pose.position().z();
+		// Just copy the values
+		_pose.vecPosition[0] = pose.position().x();
+		_pose.vecPosition[1] = pose.position().y();
+		_pose.vecPosition[2] = pose.position().z();
 
-			_pose.qRotation.w = pose.orientation().w();
-			_pose.qRotation.x = pose.orientation().x();
-			_pose.qRotation.y = pose.orientation().y();
-			_pose.qRotation.z = pose.orientation().z();
+		_pose.qRotation.w = pose.orientation().w();
+		_pose.qRotation.x = pose.orientation().x();
+		_pose.qRotation.y = pose.orientation().y();
+		_pose.qRotation.z = pose.orientation().z();
 
-			// Automatically update the tracker when finished
-			update(); // called from this
-		}).detach();
+		// Automatically update the tracker when finished
+		update(); // called from this
 	}
 	catch (...)
 	{
