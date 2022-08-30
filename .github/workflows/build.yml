@@ -1,23 +1,30 @@
-name: K2App (Amethyst) Workflow
+name: Amethyst Workflow (Self)
 on: workflow_dispatch # Only manual
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2.1.0
         id: checkout_code
 
-      - name: Install Chocolatey packages
-        run: choco install 7zip.install sed
+      # This is commented out since we've got:
+      # - vcpkg (.dockerprep/nolink)
+      # - vs2022 (.dockerprepvc)
+      # - choco (.dockerprepchoco)
+      # already set up on our (or my?)
+      # self-hosted vm (on-premises vmware)
       
-      - name: Restore or install vcpkg
-        uses: lukka/run-vcpkg@v10
-        with:
-          setupOnly: true
-          vcpkgGitCommitId: 6ba505cf2c1752d8ea5abb21427e23ff89dc486f
+      #- name: Install Chocolatey Packages
+      #  run: choco install cmake 7zip.install sed git
+      
+      #- name: Restore or install vcpkg
+      #  uses: lukka/run-vcpkg@v10
+      #  with:
+      #    setupOnly: true
+      #    vcpkgGitCommitId: 6ba505cf2c1752d8ea5abb21427e23ff89dc486f
 
       - name: Install libraries
         shell: pwsh
@@ -33,6 +40,12 @@ jobs:
       - name: Install vcpkg integration
         run: vcpkg integrate install
         
+      - name: Clear vcpkg Downloads
+        shell: pwsh
+        run: |
+          Remove-Item -LiteralPath "vcpkg/buildtrees" -Force -Recurse -ErrorAction Ignore
+          Remove-Item -LiteralPath "vcpkg/downloads" -Force -Recurse -ErrorAction Ignore
+
       - name: Setup OpenVR
         shell: pwsh
         run: |
@@ -57,6 +70,7 @@ jobs:
           mkdir Release; cd Release
           Copy-Item ../x64/Release/Amethyst/* -Destination ./ -Force -Recurse
           Copy-Item ../x64/Release/driver/Amethyst -Destination ./ -Force -Recurse
+          Remove-Item ./Amethyst.pdb, ./Amethyst.exp, ./Amethyst.lib, ./K2CrashHandler/K2CrashHandler.pdb
           7z a "Amethyst-Release-${{ steps.slug.outputs.slug }}.zip" *
 
       - name: Upload Amethyst's artifact
@@ -65,6 +79,5 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: true
-          title: "Amethyst Preview Build Artifact"
+          title: "Amethyst Build Artifact"
           files: Release/Amethyst-Release-${{ steps.slug.outputs.slug }}.zip
-          
