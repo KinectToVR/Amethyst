@@ -81,9 +81,12 @@ public:
 			save_settings();
 		};
 
+		auto _text_block = CreateTextBlock(
+			requestLocalizedString(L"/Plugins/PSMS/Settings/Labels/Dim"));
+		_text_block->IsPrimary(false);
+
 		layoutRoot->AppendElementPairStack(
-			CreateTextBlock(
-				requestLocalizedString(L"/Plugins/PSMS/Settings/Labels/Dim")),
+			_text_block,
 			lights_toggle);
 
 		_loaded = true;

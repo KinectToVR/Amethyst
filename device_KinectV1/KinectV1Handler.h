@@ -75,10 +75,13 @@ public:
 		// Set up elements
 		// m_elevation_spinner->Width(160);
 
+		auto _text_block = CreateTextBlock(
+			requestLocalizedString(L"/Plugins/KinectV1/Settings/Labels/Angle"));
+		_text_block->IsPrimary(false);
+
 		// Append the elements : Static Data
 		layoutRoot->AppendElementPairStack(
-			CreateTextBlock(
-				requestLocalizedString(L"/Plugins/KinectV1/Settings/Labels/Angle")),
+			_text_block,
 			m_elevation_spinner);
 
 		// Set up particular handlers
