@@ -199,7 +199,8 @@
                                 <Grid>
 
                                     <Image Margin="0,0,0,80" Stretch="UniformToFill"
-                                           Source="ms-appx:///Assets/crab.gif" />
+                                           x:Name="CalibrationPreviewImage"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                                     <Border Margin="0,0,0,0" Width="460" Height="80"
                                             HorizontalAlignment="Stretch"

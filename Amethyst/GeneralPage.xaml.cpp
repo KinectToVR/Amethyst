@@ -13,6 +13,9 @@ using namespace k2app::shared::general;
 bool show_skeleton_previous = true,
      general_loadedOnce = false;
 
+std::shared_ptr<winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage>
+	calibrationPreviewBitmapImageHost;
+
 enum class general_calibrating_device
 {
 	K2_BaseDevice,
@@ -114,6 +117,10 @@ namespace winrt::Amethyst::implementation
 
 		k2app::shared::teaching_tips::general::toggleTrackersTeachingTip =
 			std::make_shared<Controls::TeachingTip>(ToggleTrackersTeachingTip());
+
+		calibrationPreviewBitmapImageHost = 
+			std::make_shared<winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage>(
+				winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage());
 
 		// Create and push the offsets controller
 		offsetsController = std::move(std::make_shared<Controls::OffsetsController>());
@@ -285,6 +292,13 @@ void Amethyst::implementation::GeneralPage::CalibrationView_PaneClosing(
 void Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Setup the calibration image : reset and stop
+	calibrationPreviewBitmapImageHost->AutoPlay(false);
+
+	calibrationPreviewBitmapImageHost->UriSource(
+		Windows::Foundation::Uri(L"ms-appx:///Assets/crab.gif"));
+	calibrationPreviewBitmapImageHost->Stop();
+
 	AutoCalibrationPane().Visibility(Visibility::Visible);
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
 
@@ -315,6 +329,10 @@ void Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
 Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAutoCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	// Setup the calibration image : start
+	calibrationPreviewBitmapImageHost->AutoPlay(true);
+	calibrationPreviewBitmapImageHost->Play();
+
 	// Set the [calibration pending] bool
 	CalibrationPending = true;
 	AutoCalibration_StillPending = true;
@@ -1245,6 +1263,8 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 
 	DismissSetErrorButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/Error/Dismiss")));
+
+	CalibrationPreviewImage().Source(*calibrationPreviewBitmapImageHost);
 
 	// Start the main loop since we're done with basic setup
 	k2app::shared::devices::smphSignalStartMain.release();

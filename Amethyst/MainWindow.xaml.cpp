@@ -253,7 +253,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				}
 
 				LOG(INFO) << "Checking available languages... [GET]";
-
+				
 				// Language
 				try
 				{
