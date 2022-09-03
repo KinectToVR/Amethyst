@@ -24,11 +24,11 @@ Follow these steps:
   ```powershell
   > ./vcpkg integrate install
   > ./vcpkg install `
-    eigen3:x64-windows `
-    glog:x64-windows `
-    gflags:x64-windows `
-    protobuf:x64-windows `
-    cereal:x64-windows
+    eigen3:x64-windows-static `
+    glog:x64-windows-static `
+    gflags:x64-windows-static `
+    protobuf:x64-windows-static `
+    cereal:x64-windows-static
   ```
 
 - Clone the latest `OpenVR` to `external/`<br>

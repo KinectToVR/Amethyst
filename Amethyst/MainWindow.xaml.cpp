@@ -975,7 +975,7 @@ namespace winrt::Amethyst::implementation
 									BOOL fRunTimeLinkSuccess = FALSE;
 
 									// Get a handle to the DLL module.
-									hLibraryInstance = LoadLibraryExA(deviceDllPath.string().c_str(), nullptr,
+									hLibraryInstance = LoadLibraryExW(deviceDllPath.wstring().c_str(), nullptr,
 									                                  LOAD_LIBRARY_SEARCH_DEFAULT_DIRS |
 									                                  // Add device's folder to dll search path
 									                                  LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR |
