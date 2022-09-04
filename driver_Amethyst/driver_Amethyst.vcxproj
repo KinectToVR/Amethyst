@@ -100,8 +100,9 @@
     <PostBuildEvent>
       <Command>xcopy /y /d "$(SolutionDir)external\driver_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 
-xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"</Command>
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst" "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\Amethyst"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,8 +131,9 @@ xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(Sol
     <PostBuildEvent>
       <Command>xcopy /y /d "$(SolutionDir)external\driver_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\"
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
+xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"
 
-xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst_API.dll" "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst\bin\win64\"</Command>
+xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\driver\Amethyst" "$(SolutionDir)$(Platform)\$(Configuration)\Amethyst\Amethyst"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
