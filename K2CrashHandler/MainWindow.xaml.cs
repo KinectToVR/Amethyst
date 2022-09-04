@@ -23,6 +23,7 @@ namespace K2CrashHandler
 {
     public sealed partial class MainWindow : Window
     {
+        public static HandlerMode CrashHandlerMode;
         public static int ProcessExitCode;
         public static ContentDialogView DialogView;
 
@@ -80,17 +81,25 @@ namespace K2CrashHandler
 
             // Check if there's any argv[1]
             var args = Environment.GetCommandLineArgs();
-            bool launcherMode = args.Length > 1,
-                relaunchMode = false;
 
-            if (launcherMode)
-                relaunchMode = args[1].Contains("already_running");
+            CrashHandlerMode = args.Length > 1
+                ? HandlerMode.CRASH_WATCHDOG
+                : HandlerMode.DRIVER_REGISTER;
+
+            if (CrashHandlerMode == HandlerMode.CRASH_WATCHDOG)
+            {
+                if (args[1].Contains("already_running"))
+                    CrashHandlerMode = HandlerMode.ALREADY_RUNNING;
+
+                else if (args[1].Contains("vr_elevated"))
+                    CrashHandlerMode = HandlerMode.RUNNING_ELEVATED;
+            }
 
             // If we're OK then don't use recovery mode
             //    and wait + optionally parse the crash
-            if (launcherMode)
+            switch (CrashHandlerMode)
             {
-                if (!relaunchMode)
+                case HandlerMode.CRASH_WATCHDOG:
                 {
                     // Get argv[1] for the launch
                     var appPid = args[1];
@@ -193,8 +202,11 @@ namespace K2CrashHandler
                     {
                         Close();
                     }
+
+                    break;
                 }
-                else
+
+                case HandlerMode.ALREADY_RUNNING:
                 {
                     // Parse the strings
                     primaryButtonHandler = Action_ForceQuit;
@@ -202,6 +214,25 @@ namespace K2CrashHandler
                     handlerTitle = LangResString("Title/AlreadyRunning");
                     handlerContent = LangResString("Content/AlreadyRunning");
                     primaryButtonText = LangResString("PrimaryButton/AlreadyRunning");
+                    break;
+                }
+
+                case HandlerMode.RUNNING_ELEVATED:
+                {
+                    // Parse the strings
+                    primaryButtonHandler = Action_ForceQuit;
+
+                    handlerTitle = LangResString("Title/Elevated");
+                    handlerContent = LangResString("Content/Crash/Elevated");
+                    primaryButtonText = LangResString("PrimaryButton/Crash/Unknown");
+                    break;
+                }
+
+                case HandlerMode.DRIVER_REGISTER:
+                default:
+                {
+                    // Defaults
+                    break;
                 }
             }
 
@@ -210,11 +241,7 @@ namespace K2CrashHandler
                 height = 295;
 
             // Set window title, drag-space and size
-            Title = launcherMode
-                ? relaunchMode
-                    ? LangResString("Title/AlreadyRunning")
-                    : LangResString("Title/Crash")
-                : LangResString("Title/Recovery");
+            Title = handlerTitle;
 
             SetWindowSize(WindowNative
                 .GetWindowHandle(this), width, height);
@@ -274,7 +301,7 @@ namespace K2CrashHandler
                 secondaryButtonText,
                 primaryButtonHandler,
                 secondaryButtonHandler,
-                launcherMode,
+                args.Length > 1,
                 logFileLocation
             );
 
@@ -790,4 +817,12 @@ public enum SystemMetric
 
     SM_CONVERTIBLESLATEMODE = 0x2003,
     SM_SYSTEMDOCKED = 0x2004
+}
+
+public enum HandlerMode
+{
+    CRASH_WATCHDOG,
+    DRIVER_REGISTER,
+    ALREADY_RUNNING,
+    RUNNING_ELEVATED
 }
