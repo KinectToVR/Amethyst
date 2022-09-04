@@ -273,6 +273,7 @@
     "/CrashHandler/Content/Crash/OpenVR": "The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.\n\nPlease check if SteamVR is running, and your VR headset is connected properly to it. Additionally, you can restart SteamVR and additionally check its logs.",
     "/CrashHandler/Content/Crash/Panic": "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\nPlease check if all your devices / plugins are working and check logs. Optionally, you can erase the app configuration and then try running it again.",
     "/CrashHandler/Content/Crash/Unknown": "Looks like some weird thing happened to the app.\n\nDon't panic yet, it (probably) isn't even your fault.\n\nPlease try re-running the app.\nIf problem persists, grab logs and reach us on Discord.",
+    "/CrashHandler/Content/Crash/Elevated": "The SteamVR process is currently elevated and Amethyst cannot communicate with it.\n\nEither Steam or SteamVR was tampered with to cause this. Undo these changes and try again.",
     "/CrashHandler/Content/Recovery": "Looks like you've manually ran the Crash Handler. What would you like to do?\n\nIf the Amethyst driver for SteamVR is not being detected properly, you can re-register the SteamVR driver (button below) and then try again.",
     "/CrashHandler/PrimaryButton/AlreadyRunning": "Force Exit",
     "/CrashHandler/PrimaryButton/Crash/Default": "View Docs",
@@ -300,6 +301,7 @@
     "/CrashHandler/Title/AlreadyRunning": "Amethyst Already Running!",
     "/CrashHandler/Title/Crash": "Amethyst's given you up!",
     "/CrashHandler/Title/Recovery": "Amethyst Recovery",
+    "/CrashHandler/Title/Elevated": "SteamVR running as admin!",
 
     "/Plugins/KinectV1/Statuses/Success": "Success!\nS_OK\nEverything's good!",
     "/Plugins/KinectV1/Statuses/Initializing": "INITIALIZING\nS_NUI_INITIALIZING\nThe device is connected, but still initializing.",
