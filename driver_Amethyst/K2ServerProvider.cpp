@@ -1,4 +1,5 @@
-﻿#include <iostream>
+﻿#include <filesystem>
+#include <iostream>
 #include <Windows.h>
 #include <thread>
 #include <openvr_driver.h>
@@ -103,6 +104,9 @@ void K2WatchdogDriver::Cleanup()
 	g_bExiting = true;
 }
 
+BOOL IsUserAdmin(VOID);
+std::filesystem::path GetProgramLocation();
+
 extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceName, int* pReturnCode)
 {
 	// ktvr::GetK2AppDataFileDir will create all directories by itself
@@ -149,6 +153,42 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 
 	LOG(INFO) << "Amethyst OpenVR Driver will try to run on Amethyst API's default addresses.";
 
+	/* Check if we're not running on admin */
+	if (IsUserAdmin())
+	{
+		LOG(WARNING) << "SteamVR running as administrator! All app connection requests will be refused by it!";
+		
+		const auto CHandlerPath = GetProgramLocation()
+		                          .parent_path() // win64 (driver)
+		                          .parent_path() // bin (driver)
+		                          .parent_path() // Amethyst (driver)
+		                          .parent_path() // Amethyst (root)
+			/ "K2CrashHandler" / "K2CrashHandler.exe";
+
+		LOG(INFO) << "Got crash handler assumed location: " << CHandlerPath.string();
+
+		if (exists(CHandlerPath))
+		{
+			std::thread([CHandlerPath]
+			{
+				ShellExecuteW(nullptr, L"open",
+				              CHandlerPath.wstring().c_str(), L"vr_elevated", nullptr, SW_SHOWDEFAULT);
+			}).detach();
+		}
+		else
+		{
+			LOG(WARNING) << "Crash handler exe (../../../K2CrashHandler/K2CrashHandler.exe) not found!";
+
+			MessageBoxA(nullptr, "SteamVR is running as administrator!\n\n"
+			            "The SteamVR process is currently elevated and Amethyst cannot communicate with it. "
+			            "Either Steam or SteamVR was tampered with to cause this.Undo these changes and try again. "
+			            "You see this error as a messagebox because the crash handler exe has not been found! "
+			            "(should be at \"../../../K2CrashHandler/K2CrashHandler.exe\" reative to the driver's .dll) ",
+			            "SteamVR running as admin!",
+			            MB_OK);
+		}
+	}
+
 	if (0 == strcmp(vr::IServerTrackedDeviceProvider_Version, pInterfaceName))
 	{
 		return &k2_server_provider;
@@ -162,4 +202,53 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 
 	if (pReturnCode)
 		*pReturnCode = vr::VRInitError_Init_InterfaceNotFound;
+}
+
+// https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-checktokenmembership#examples
+BOOL IsUserAdmin(VOID)
+/*++
+Routine Description: This routine returns TRUE if the caller's
+process is a member of the Administrators local group. Caller is NOT
+expected to be impersonating anyone and is expected to be able to
+open its own process and process token.
+Arguments: None.
+Return Value:
+   TRUE - Caller has Administrators local group.
+   FALSE - Caller does not have Administrators local group. --
+*/
+{
+	BOOL b;
+	SID_IDENTIFIER_AUTHORITY NtAuthority = SECURITY_NT_AUTHORITY;
+	PSID AdministratorsGroup;
+	b = AllocateAndInitializeSid(
+		&NtAuthority,
+		2,
+		SECURITY_BUILTIN_DOMAIN_RID,
+		DOMAIN_ALIAS_RID_ADMINS,
+		0, 0, 0, 0, 0, 0,
+		&AdministratorsGroup);
+	if (b)
+	{
+		if (!CheckTokenMembership(nullptr, AdministratorsGroup, &b))
+		{
+			b = FALSE;
+		}
+		FreeSid(AdministratorsGroup);
+	}
+
+	return (b);
+}
+
+// From k2appLLinterfacing@K2EVRInput.h
+std::filesystem::path GetProgramLocation()
+{
+	TCHAR buffer[MAX_PATH] = {0};
+	HMODULE hm = NULL;
+
+	GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+	                  GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+	                  (LPCWSTR)&HmdDriverFactory, &hm);
+	GetModuleFileName(hm, buffer, MAX_PATH);
+
+	return buffer; // Self-converts
 }
