@@ -13,7 +13,7 @@ using namespace k2app::shared::general;
 bool show_skeleton_previous = true,
      general_loadedOnce = false;
 
-std::shared_ptr<winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage>
+std::shared_ptr<Media::Imaging::BitmapImage>
 	calibrationPreviewBitmapImageHost;
 
 enum class general_calibrating_device
@@ -119,8 +119,8 @@ namespace winrt::Amethyst::implementation
 			std::make_shared<Controls::TeachingTip>(ToggleTrackersTeachingTip());
 
 		calibrationPreviewBitmapImageHost = 
-			std::make_shared<winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage>(
-				winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage());
+			std::make_shared<Media::Imaging::BitmapImage>(
+				Media::Imaging::BitmapImage());
 
 		// Create and push the offsets controller
 		offsetsController = std::move(std::make_shared<Controls::OffsetsController>());

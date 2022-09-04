@@ -1363,7 +1363,7 @@ namespace k2app::main
 					// Wait a moment
 					Sleep(200);
 
-					exit(-13); // -13 is the code for giving up then, I guess
+					interfacing::_fail(-13); // -13 is the code for giving up then, I guess
 					// user will be prompted to reset the config (opt)
 				}
 			}

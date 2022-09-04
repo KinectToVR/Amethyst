@@ -155,6 +155,13 @@ namespace K2CrashHandler
                                 handlerContent = LangResString("Content/Crash/OpenVR");
                             }
                                 break;
+                            case -1073740791:
+                            {
+                                // OpenVR Init timeout error
+                                primaryButtonHandler = Action_DeviceDocs;
+                                handlerContent = LangResString("Content/Crash/OpenVR");
+                            }
+                                break;
                             case 0:
                             {
                                 // We're OK

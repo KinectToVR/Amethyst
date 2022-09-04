@@ -390,7 +390,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				else
 					LOG(ERROR) << "Language-check failed, the string was empty.";
 			}
-			catch (const winrt::hresult_error& ex)
+			catch (const hresult_error& ex)
 			{
 				LOG(ERROR) << "Update failed, an exception occurred."
 					<< " Message: " << WStringToString(ex.message().c_str());
@@ -893,7 +893,7 @@ namespace winrt::Amethyst::implementation
 		if (!k2app::interfacing::OpenVRStartup())
 		{
 			LOG(ERROR) << "Could not connect to OpenVR! The app will be shut down.";
-			exit(-11); // OpenVR is critical, so exit
+			k2app::interfacing::_fail(-11); // OpenVR is critical, so exit
 		}
 
 		// Priority: Set up Amethyst as a vr app
@@ -1530,13 +1530,13 @@ namespace winrt::Amethyst::implementation
 					else // Log and exit, we have nothing to do
 					{
 						LOG(ERROR) << "No proper tracking devices (K2Devices) found :/";
-						exit(-12); // -12 is for NO_DEVICES
+						k2app::interfacing::_fail(-12); // -12 is for NO_DEVICES
 					}
 				}
 				else // Log and exit, we have nothing to do
 				{
 					LOG(ERROR) << "No tracking devices (K2Devices) found :/";
-					exit(-12);
+					k2app::interfacing::_fail(-12);
 				}
 			}
 		).join(); // Now this would be in background but to spare bugs, we're gonna wait

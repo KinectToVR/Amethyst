@@ -130,6 +130,13 @@ namespace k2app::interfacing
 	inline winrt::Microsoft::UI::Xaml::ElementTheme actualTheme =
 		winrt::Microsoft::UI::Xaml::ElementTheme::Dark;
 
+	// Fail with exit(X)
+	inline void _fail(int32_t code)
+	{
+		isExitHandled = true;
+		exit(code);
+	}
+
 	// Show SteamVR toast / notification
 	inline void ShowVRToast(const std::wstring& header,
 	                        const std::wstring& text)
@@ -563,19 +570,39 @@ namespace k2app::interfacing
 		LOG(INFO) << "Attempting connection to VRSystem... ";
 
 		vr::EVRInitError eError = vr::VRInitError_None;
-		vr::IVRSystem* m_VRSystem = VR_Init(&eError, vr::VRApplication_Overlay);
+
+		using namespace std::chrono_literals;
+
+		std::future<vr::IVRSystem*> future_VRSystem =
+			std::async(std::launch::async, [&]()
+			{
+				return VR_Init(&eError, vr::VRApplication_Overlay);
+			});
+
+		LOG(INFO) << "Waiting for the VR System to initialize...";
+		std::future_status status;
+		do
+		{
+			switch (status = future_VRSystem.wait_for(5s); status)
+			{
+			case std::future_status::deferred:
+				LOG(WARNING) << "The async future has failed and reported to be unusable!";
+				break;
+
+			case std::future_status::timeout:
+				LOG(ERROR) << "The VR System took too long to initialize, giving up!";
+				std::abort(); // We've failed this time, exit
+
+			case std::future_status::ready:
+				LOG(INFO) << "The async future reports that the VR System is ready!";
+				break;
+			}
+		}
+		while (status != std::future_status::ready);
 
 		if (eError != vr::VRInitError_None)
 		{
 			LOG(ERROR) << "IVRSystem could not be initialized: EVRInitError Code " << eError;
-			/*MessageBoxA(nullptr,
-							std::string(
-								"Couldn't initialise VR system. (Code " + std::to_string(eError) +
-								")\n\nPlease check if SteamVR is installed (or running) and try again."
-							).c_str(),
-							"IVRSystem Init Failure!",
-							MB_OK);*/
-
 			return false; // Fail
 		}
 
@@ -583,7 +610,7 @@ namespace k2app::interfacing
 		vr::VROverlay()->CreateOverlay("k2vr.amethyst.desktop", "Amethyst", &vrOverlayHandle);
 
 		// Since we're ok, capture playspace details
-		const auto trackingOrigin = m_VRSystem->GetRawZeroPoseToStandingAbsoluteTrackingPose();
+		const auto trackingOrigin = future_VRSystem.get()->GetRawZeroPoseToStandingAbsoluteTrackingPose();
 
 		vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
 		vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(trackingOrigin);

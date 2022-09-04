@@ -38,14 +38,14 @@ void Amethyst::implementation::ConsolePage::ConsolePage_Loaded(
 void Amethyst::implementation::ConsolePage::DevicesCrashButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	exit(-12);
+	k2app::interfacing::_fail(-12);
 }
 
 
 void Amethyst::implementation::ConsolePage::OpenVRCrashButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	exit(-11);
+	k2app::interfacing::_fail(-11);
 }
 
 
