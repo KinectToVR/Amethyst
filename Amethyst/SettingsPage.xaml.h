@@ -46,8 +46,8 @@ namespace winrt::Amethyst::implementation
 		                               const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void AutoStartCheckBox_Unchecked(const Windows::Foundation::IInspectable& sender,
 		                                 const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void ReManifestButton_Click(const Microsoft::UI::Xaml::Controls::SplitButton& sender,
-		                            const Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args);
+		void ReManifestButton_Click(const Windows::Foundation::IInspectable& sender,
+		                            const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ReRegisterButton_Click(const Windows::Foundation::IInspectable& sender,
 		                            const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DismissSetErrorButton_Click(const Windows::Foundation::IInspectable& sender,
@@ -64,16 +64,12 @@ namespace winrt::Amethyst::implementation
 		                                     const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ViewLogsButton_Click(const Windows::Foundation::IInspectable& sender,
 		                          const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void ManageTrackersTeachingTip_Closed(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-		                                      const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
-		void AddTrackersTeachingTip_Closed(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-		                                   const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
-		Windows::Foundation::IAsyncAction LearnAboutFiltersTeachingTip_Closed(
-			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-			const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+		Windows::Foundation::IAsyncAction ManageTrackersTeachingTip_Closed(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args);
+		Windows::Foundation::IAsyncAction AddTrackersTeachingTip_Closed(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args);
 		Windows::Foundation::IAsyncAction AutoStartTeachingTip_Closed(
-			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-			const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args);
 		void ButtonFlyout_Opening(const Windows::Foundation::IInspectable& sender,
 		                          const Windows::Foundation::IInspectable& e);
 		void ButtonFlyout_Closing(const Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
@@ -90,6 +86,13 @@ namespace winrt::Amethyst::implementation
 		                              const Windows::Foundation::IInspectable& e);
 		void OptionBox_DropDownClosed(const Windows::Foundation::IInspectable& sender,
 		                              const Windows::Foundation::IInspectable& e);
+		winrt::Windows::Foundation::IAsyncAction AutoStartTeachingTip_ActionButtonClick(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args);
+		Windows::Foundation::IAsyncAction ManageTrackersTeachingTip_ActionButtonClick(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+			const Windows::Foundation::IInspectable& args);
+		winrt::Windows::Foundation::IAsyncAction AddTrackersTeachingTip_ActionButtonClick(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args);
 	};
 }
 

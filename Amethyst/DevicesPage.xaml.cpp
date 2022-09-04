@@ -45,6 +45,8 @@ namespace winrt::Amethyst::implementation
 
 		k2app::shared::teaching_tips::devices::devicesListTeachingTip =
 			std::make_shared<Controls::TeachingTip>(DevicesListTeachingTip());
+		k2app::shared::teaching_tips::devices::deviceControlsTeachingTip =
+			std::make_shared<Controls::TeachingTip>(DeviceControlsTeachingTip());
 
 		setAsOverrideButton = std::make_shared<Controls::Button>(SetAsOverrideButton());
 		setAsBaseButton = std::make_shared<Controls::Button>(SetAsBaseButton());
@@ -1273,6 +1275,33 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 	JointBasisLabel().Text(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/Joints/Assign"));
 
+	DevicesListTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip8/Title"));
+	DevicesListTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip8/Content"));
+	DevicesListTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	DevicesListTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
+
+	DeviceStatusTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip9/Title"));
+	DeviceStatusTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip9/Content"));
+	DeviceStatusTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	DeviceStatusTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
+
+	DeviceControlsTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip10/Title"));
+	DeviceControlsTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip10/Content"));
+	DeviceControlsTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	DeviceControlsTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
+
 	// Reset
 	devices_tab_re_setup_finished = false;
 
@@ -1640,8 +1669,7 @@ void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 
 
 void Amethyst::implementation::DevicesPage::DevicesListTeachingTip_Closed(
-	const Controls::TeachingTip& sender,
-	const Controls::TeachingTipClosedEventArgs& args)
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
 	DeviceStatusTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	DeviceStatusTeachingTip().IsOpen(true);
@@ -1649,8 +1677,7 @@ void Amethyst::implementation::DevicesPage::DevicesListTeachingTip_Closed(
 
 
 void Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_Closed(
-	const Controls::TeachingTip& sender,
-	const Controls::TeachingTipClosedEventArgs& args)
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
 	DeviceControlsTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	DeviceControlsTeachingTip().IsOpen(true);
@@ -1658,8 +1685,7 @@ void Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_Closed(
 
 
 Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::DeviceControlsTeachingTip_Closed(
-	const Controls::TeachingTip& sender,
-	const Controls::TeachingTipClosedEventArgs& args)
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
 	// Wait a bit
 	{
@@ -1683,7 +1709,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::DeviceC
 	}
 
 	// Show the next tip
-	k2app::shared::teaching_tips::info::endingTeachingTip->IsOpen(true);
+	k2app::shared::teaching_tips::info::helpTeachingTip->TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
+	k2app::shared::teaching_tips::info::helpTeachingTip->IsOpen(true);
 }
 
 
@@ -1701,4 +1729,68 @@ void Amethyst::implementation::DevicesPage::ButtonFlyout_Closing(
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+}
+
+
+Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::DevicesListTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
+{
+	// Close the current tip
+	DevicesListTeachingTip().IsOpen(false);
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(400);
+		co_await ui_thread;
+	}
+
+	// Reset the next page layout (if ever changed)
+	if (k2app::shared::settings::pageMainScrollViewer)
+		k2app::shared::settings::pageMainScrollViewer->ScrollToVerticalOffset(0);
+
+	// Navigate to the settings page
+	k2app::shared::main::mainNavigationView->SelectedItem(
+		k2app::shared::main::mainNavigationView->MenuItems().GetAt(1));
+	k2app::shared::main::NavView_Navigate(L"settings", Media::Animation::EntranceNavigationTransitionInfo());
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
+
+	// Show the next tip
+	k2app::shared::teaching_tips::settings::autoStartTeachingTip->TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
+	k2app::shared::teaching_tips::settings::autoStartTeachingTip->IsOpen(true);
+}
+
+
+void Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
+{
+	// Close the current tip
+	DeviceStatusTeachingTip().IsOpen(false);
+
+	// Show the previous one
+	DevicesListTeachingTip().TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
+	DevicesListTeachingTip().IsOpen(true);
+}
+
+
+void Amethyst::implementation::DevicesPage::DeviceControlsTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
+{
+	// Close the current tip
+	DeviceControlsTeachingTip().IsOpen(false);
+
+	// Show the previous one
+	DeviceStatusTeachingTip().TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
+	DeviceStatusTeachingTip().IsOpen(true);
 }

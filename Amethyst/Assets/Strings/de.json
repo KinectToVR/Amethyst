@@ -341,9 +341,12 @@
     "/Plugins/OWO/Settings/Buttons/Calibration/Forward": "Vorwärts kalibrieren",
     "/Plugins/OWO/Settings/Buttons/Calibration/Down": "Rückwärts kalibrieren",
     
+    "/NUX/Prev": "Go back",
     "/NUX/Next": "Next",
     "/NUX/Skip": "Skip tutorial",
     "/NUX/Finish": "Finish",
+    "/NUX/Tip0/Title": "Are you sure?",
+    "/NUX/Tip0/Content": "Amethyst must be running for tracking to work. Click again to exit.\n\nThis message will only show once.",
     "/NUX/Tip1/Title": "Welcome to Amethyst",
     "/NUX/Tip1/Content": "Let's take a tour of the app and how to use it.\n\nYou can replay this tutorial at any time from the Settings tab.\n\n1 of 12",
     "/NUX/Tip2/Title": "Connecting trackers",

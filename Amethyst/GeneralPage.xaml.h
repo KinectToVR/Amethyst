@@ -100,17 +100,23 @@ namespace winrt::Amethyst::implementation
 		                                             Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs
 		                                             & args);
 		void ToggleTrackersTeachingTip_Closed(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-		                                      const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+		                                      const Windows::Foundation::IInspectable& args);
 		Windows::Foundation::IAsyncAction StatusTeachingTip_Closed(
 			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-			const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+			const Windows::Foundation::IInspectable& args);
 		void CalibrationTeachingTip_Closed(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-		                                   const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+		                                   const Windows::Foundation::IInspectable& args);
 		void ToggleButtonFlyout_Opening(const Windows::Foundation::IInspectable& sender,
 		                                const Windows::Foundation::IInspectable& e);
 		void ToggleButtonFlyout_Closing(const Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase& sender,
 		                                const Microsoft::UI::Xaml::Controls::Primitives::FlyoutBaseClosingEventArgs&
 		                                args);
+		void ToggleTrackersTeachingTip_ActionButtonClick(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+		                                                 const Windows::Foundation::IInspectable& args);
+		void CalibrationTeachingTip_ActionButtonClick(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+		                                              const Windows::Foundation::IInspectable& args);
+		void StatusTeachingTip_ActionButtonClick(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+		                                         const Windows::Foundation::IInspectable& args);
 	};
 }
 

@@ -249,25 +249,25 @@ namespace k2app::shared
 		namespace general
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-			toggleTrackersTeachingTip;
+				toggleTrackersTeachingTip, statusTeachingTip;
 		}
 
 		namespace settings
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-			manageTrackersTeachingTip;
+				manageTrackersTeachingTip, autoStartTeachingTip;
 		}
 
 		namespace devices
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-			devicesListTeachingTip;
+				devicesListTeachingTip, deviceControlsTeachingTip;
 		}
 
 		namespace info
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-			endingTeachingTip;
+			helpTeachingTip;
 		}
 	}
 
@@ -287,8 +287,8 @@ namespace k2app::interfacing
 	// Return a language name by code
 	// Input: The current (or deduced) language key / en
 	// Returns: LANG_NATIVE (LANG_LOCALIZED) / Nihongo (Japanese)
-    // https://stackoverflow.com/a/10607146/13934610
-    // https://stackoverflow.com/a/51867679/13934610
+	// https://stackoverflow.com/a/10607146/13934610
+	// https://stackoverflow.com/a/51867679/13934610
 	inline std::wstring GetLocalizedLanguageName(const std::wstring& language_key)
 	{
 		try
@@ -306,7 +306,7 @@ namespace k2app::interfacing
 					resource_path.string() << "\", app interface will be broken!";
 				return language_key; // Give up on trying
 			}
-			
+
 			// Load the JSON source into buffer
 			std::wifstream wif(resource_path);
 			wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
@@ -326,7 +326,8 @@ namespace k2app::interfacing
 
 			// If the language key is the current language, don't split the name
 			if (K2Settings.appLanguage == language_key)
-				return json_object.GetNamedObject(K2Settings.appLanguage).GetNamedString(K2Settings.appLanguage).c_str();
+				return json_object.GetNamedObject(K2Settings.appLanguage).GetNamedString(K2Settings.appLanguage).
+				                   c_str();
 
 			// Else split the same way as in docs
 			return (json_object.GetNamedObject(language_key).GetNamedString(language_key) +
@@ -334,7 +335,7 @@ namespace k2app::interfacing
 		}
 		catch (const winrt::hresult_error& ex)
 		{
-			LOG(ERROR) << "JSON error at key: \"" << 
+			LOG(ERROR) << "JSON error at key: \"" <<
 				WStringToString(language_key) << "\"! Message: "
 				<< WStringToString(ex.message().c_str());
 
@@ -355,7 +356,7 @@ namespace k2app::interfacing
 	// Amethyst language resource trees
 	inline winrt::Windows::Data::Json::JsonObject
 		m_local_resources, m_english_resources, m_language_enum;
-	
+
 	// Load the current desired resource JSON into app memory
 	inline void LoadJSONStringResources(const std::wstring& language_key)
 	{
@@ -396,7 +397,7 @@ namespace k2app::interfacing
 
 			// Parse the loaded json
 			m_local_resources = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
-			
+
 			// Check if the resource root is fine
 			if (m_local_resources.Size() <= 0)
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
@@ -451,7 +452,7 @@ namespace k2app::interfacing
 
 			// Parse the loaded json
 			m_english_resources = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
-			
+
 			// Check if the resource root is fine
 			if (m_english_resources.Size() <= 0)
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
@@ -480,9 +481,9 @@ namespace k2app::interfacing
 			if (m_local_resources.Size() <= 0)
 			{
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
-				return L""; // Just give up
+				return resource_key; // Just give up
 			}
-			
+
 			return m_local_resources.GetNamedString(resource_key).c_str();
 		}
 		catch (const winrt::hresult_error& ex)
@@ -512,7 +513,7 @@ namespace k2app::interfacing
 			if (m_english_resources.Size() <= 0)
 			{
 				LOG(ERROR) << "The current EN resource root is empty! App interface will be broken!";
-				return L""; // Just give up
+				return resource_key; // Just give up
 			}
 
 			return m_english_resources.GetNamedString(resource_key).c_str();

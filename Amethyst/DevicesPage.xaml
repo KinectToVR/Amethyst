@@ -26,7 +26,26 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock FontWeight="SemiBold" x:Name="Titles_Devices" FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
+                <TextBlock FontWeight="SemiBold" x:Name="DevicesListTipDummyContextDummy" 
+                           Text="Devices" Opacity="0.0"
+                           FontSize="25" Margin="0,20,0,0" Grid.Row="0"/>
+
+                <TextBlock FontWeight="SemiBold" x:Name="Titles_Devices" 
+                           FontSize="25" Margin="40,20,0,0" Grid.Row="0">
+                    <TextBlock.Resources>
+                        <TeachingTip x:Name="DevicesListTeachingTip"
+                                     Target="{Binding ElementName=DevicesListTipDummyContextDummy}"
+                                     Title="/DEVICES"
+                                     Subtitle="/TEXT"
+                                     PreferredPlacement="BottomRight"
+                                     IsLightDismissEnabled="False"
+                                     ActionButtonContent="/BACK"
+                                     CloseButtonContent="/NEXT"
+                                     Style="{ThemeResource BigTeachingTipStyle}"
+                                     ActionButtonClick="DevicesListTeachingTip_ActionButtonClick"
+                                     CloseButtonClick="DevicesListTeachingTip_Closed" />
+                    </TextBlock.Resources>
+                </TextBlock>
 
                 <ListView x:Name="TrackingDeviceListView" Grid.Column="1" CornerRadius="5"
                           VerticalAlignment="Top" HorizontalAlignment="Left"
@@ -39,15 +58,6 @@
                             <Setter Property="Margin" Value="0,0,0,20" />
                             <Setter Property="Background" Value="{ThemeResource ControlDisplayBackgroundBrush}" />
                         </Style>
-
-                        <TeachingTip x:Name="DevicesListTeachingTip"
-                                     Target="{Binding ElementName=TrackingDeviceListView}"
-                                     Title="Find your tracking devices here"
-                                     Subtitle="This list contains all devices currently supported on your machine. You can easily manage them from here."
-                                     PreferredPlacement="BottomLeft"
-                                     IsLightDismissEnabled="False"
-                                     CloseButtonContent="Show the next tip"
-                                     Closed="DevicesListTeachingTip_Closed" />
                     </ListView.Resources>
 
                     <ListView.ItemTemplate>
@@ -63,7 +73,7 @@
 
                                 <TextBlock Grid.Column="0" Margin="30,0,0,2" FontWeight="Bold"
                                            VerticalAlignment="Center" FontSize="16"
-                                           Text="{x:Bind DeviceName, Mode=OneWay}" />
+                                           Text="{x:Bind DeviceName}" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -131,12 +141,15 @@
                                 <TextBlock.Resources>
                                     <TeachingTip x:Name="DeviceStatusTeachingTip"
                                                  Target="{Binding ElementName=SelectedDeviceNameLabel}"
-                                                 Title="Currently selected device"
-                                                 Subtitle="You can inspect the device you selected on the lest pane here. For certain devices/states, some extra control may appear."
-                                                 PreferredPlacement="Top"
+                                                 Title="/SELECTED"
+                                                 Subtitle="/TEXT"
+                                                 PreferredPlacement="LeftBottom"
                                                  IsLightDismissEnabled="False"
-                                                 CloseButtonContent="Show the next tip"
-                                                 Closed="DeviceStatusTeachingTip_Closed" />
+                                                 ActionButtonContent="/BACK"
+                                                 CloseButtonContent="/NEXT"
+                                                 Style="{ThemeResource BigTeachingTipStyle}"
+                                                 ActionButtonClick="DeviceStatusTeachingTip_ActionButtonClick"
+                                                 CloseButtonClick="DeviceStatusTeachingTip_Closed" />
                                 </TextBlock.Resources>
                             </TextBlock>
                         </StackPanel>
@@ -168,12 +181,15 @@
                                         <SplitButton.Resources>
                                             <TeachingTip x:Name="DeviceControlsTeachingTip"
                                                          Target="{Binding ElementName=ReconnectDeviceButton}"
-                                                         Title="Basic device controls"
-                                                         Subtitle="Here, you can turn the selected device on/off and make it the one used for tracking as a base/override."
-                                                         PreferredPlacement="Auto"
+                                                         Title="/CONTROLS"
+                                                         Subtitle="/TEXT"
+                                                         PreferredPlacement="LeftBottom"
                                                          IsLightDismissEnabled="False"
-                                                         CloseButtonContent="Show the next tip"
-                                                         Closed="DeviceControlsTeachingTip_Closed" />
+                                                         ActionButtonContent="/BACK"
+                                                         CloseButtonContent="/NEXT"
+                                                         Style="{ThemeResource BigTeachingTipStyle}"
+                                                         ActionButtonClick="DeviceControlsTeachingTip_ActionButtonClick"
+                                                         CloseButtonClick="DeviceControlsTeachingTip_Closed" />
                                         </SplitButton.Resources>
 
                                         <SplitButton.Flyout>

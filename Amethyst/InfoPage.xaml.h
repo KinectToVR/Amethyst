@@ -16,9 +16,15 @@ namespace winrt::Amethyst::implementation
 		Windows::Foundation::IAsyncAction EndingTeachingTip_CloseButtonClick(
 			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
 			const Windows::Foundation::IInspectable& args);
+		Windows::Foundation::IAsyncAction HelpTeachingTip_CloseButtonClick(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+			const Windows::Foundation::IInspectable& args);
 		void Page_Loaded(const Windows::Foundation::IInspectable& sender,
 		                 const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void Page_Loaded_Handler();
+		Windows::Foundation::IAsyncAction HelpTeachingTip_ActionButtonClick(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+			const Windows::Foundation::IInspectable& args);
 	};
 }
 

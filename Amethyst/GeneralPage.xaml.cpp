@@ -14,7 +14,7 @@ bool show_skeleton_previous = true,
      general_loadedOnce = false;
 
 std::shared_ptr<Media::Imaging::BitmapImage>
-	calibrationPreviewBitmapImageHost;
+calibrationPreviewBitmapImageHost;
 
 enum class general_calibrating_device
 {
@@ -117,8 +117,10 @@ namespace winrt::Amethyst::implementation
 
 		k2app::shared::teaching_tips::general::toggleTrackersTeachingTip =
 			std::make_shared<Controls::TeachingTip>(ToggleTrackersTeachingTip());
+		k2app::shared::teaching_tips::general::statusTeachingTip =
+			std::make_shared<Controls::TeachingTip>(StatusTeachingTip());
 
-		calibrationPreviewBitmapImageHost = 
+		calibrationPreviewBitmapImageHost =
 			std::make_shared<Media::Imaging::BitmapImage>(
 				Media::Imaging::BitmapImage());
 
@@ -1264,6 +1266,33 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	DismissSetErrorButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/Error/Dismiss")));
 
+	ToggleTrackersTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip2/Title"));
+	ToggleTrackersTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip2/Content"));
+	ToggleTrackersTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	ToggleTrackersTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
+
+	CalibrationTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip3/Title"));
+	CalibrationTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip3/Content"));
+	CalibrationTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	CalibrationTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
+
+	StatusTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip4/Title"));
+	StatusTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip4/Content"));
+	StatusTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	StatusTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
+
 	CalibrationPreviewImage().Source(*calibrationPreviewBitmapImageHost);
 
 	// Start the main loop since we're done with basic setup
@@ -2211,8 +2240,7 @@ void Amethyst::implementation::GeneralPage::DismissSetErrorButton_Click(
 
 
 void Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Closed(
-	const Controls::TeachingTip& sender,
-	const Controls::TeachingTipClosedEventArgs& args)
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
 	CalibrationTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	CalibrationTeachingTip().IsOpen(true);
@@ -2220,8 +2248,7 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Closed(
 
 
 void Amethyst::implementation::GeneralPage::CalibrationTeachingTip_Closed(
-	const Controls::TeachingTip& sender,
-	const Controls::TeachingTipClosedEventArgs& args)
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
 	StatusTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	StatusTeachingTip().IsOpen(true);
@@ -2229,8 +2256,7 @@ void Amethyst::implementation::GeneralPage::CalibrationTeachingTip_Closed(
 
 
 Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StatusTeachingTip_Closed(
-	const Controls::TeachingTip& sender,
-	const Controls::TeachingTipClosedEventArgs& args)
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
 	// Wait a bit
 	{
@@ -2239,6 +2265,10 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StatusT
 		Sleep(200);
 		co_await ui_thread;
 	}
+
+	// Reset the next page layout (if ever changed)
+	if (k2app::shared::settings::pageMainScrollViewer)
+		k2app::shared::settings::pageMainScrollViewer->ScrollToVerticalOffset(0);
 
 	// Navigate to the settings page
 	k2app::shared::main::mainNavigationView->SelectedItem(
@@ -2274,4 +2304,41 @@ void Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Closing(
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+}
+
+
+void Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
+{
+	// Close the current tip
+	ToggleTrackersTeachingTip().IsOpen(false);
+
+	// Show the previous one
+	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(true);
+}
+
+
+void Amethyst::implementation::GeneralPage::CalibrationTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
+{
+	// Close the current tip
+	CalibrationTeachingTip().IsOpen(false);
+
+	// Show the previous one
+	ToggleTrackersTeachingTip().TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
+	ToggleTrackersTeachingTip().IsOpen(true);
+}
+
+
+void Amethyst::implementation::GeneralPage::StatusTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
+{
+	// Close the current tip
+	StatusTeachingTip().IsOpen(false);
+
+	// Show the previous one
+	CalibrationTeachingTip().TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
+	CalibrationTeachingTip().IsOpen(true);
 }

@@ -1995,6 +1995,21 @@ void Amethyst::implementation::MainWindow::InitializerTeachingTip_ActionButtonCl
 	// Dismiss the current tip
 	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(false);
 
+	// Just dismiss the tip
+	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
+
+	k2app::interfacing::isNUXPending = false;
+}
+
+
+void Amethyst::implementation::MainWindow::InitializerTeachingTip_CloseButtonClick(
+	const Controls::TeachingTip& sender,
+	const Windows::Foundation::IInspectable& args)
+{
+	// Dismiss the current tip
+	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(false);
+
 	// Navigate to the general page
 	k2app::shared::main::mainNavigationView->
 		SelectedItem(k2app::shared::main::mainNavigationView->MenuItems().GetAt(0));
@@ -2004,18 +2019,6 @@ void Amethyst::implementation::MainWindow::InitializerTeachingTip_ActionButtonCl
 	k2app::shared::teaching_tips::general::toggleTrackersTeachingTip->TailVisibility(
 		Controls::TeachingTipTailVisibility::Collapsed);
 	k2app::shared::teaching_tips::general::toggleTrackersTeachingTip->IsOpen(true);
-}
-
-
-void Amethyst::implementation::MainWindow::InitializerTeachingTip_CloseButtonClick(
-	const Controls::TeachingTip& sender,
-	const Windows::Foundation::IInspectable& args)
-{
-	// Just dismiss the tip
-	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
-	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
-
-	k2app::interfacing::isNUXPending = false;
 }
 
 
@@ -2421,6 +2424,20 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 
 	HelpFlyoutLicensesButton().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Buttons/Help/Licenses"));
+
+	ShutdownTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip0/Title"));
+	ShutdownTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip0/Content"));
+
+	InitializerTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip1/Title"));
+	InitializerTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip1/Content"));
+	InitializerTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	InitializerTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Skip")));
 
 	using namespace k2app;
 	using namespace shared::main;

@@ -18,8 +18,8 @@ namespace winrt::Amethyst::implementation
 	{
 		InitializeComponent();
 
-		k2app::shared::teaching_tips::info::endingTeachingTip =
-			std::make_shared<Controls::TeachingTip>(EndingTeachingTip());
+		k2app::shared::teaching_tips::info::helpTeachingTip =
+			std::make_shared<Controls::TeachingTip>(HelpTeachingTip());
 
 		LOG(INFO) << "Constructing page with tag: \"info\"...";
 
@@ -100,6 +100,55 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::InfoPage::EndingTeac
 }
 
 
+Windows::Foundation::IAsyncAction Amethyst::implementation::InfoPage::HelpTeachingTip_CloseButtonClick(
+	const Controls::TeachingTip& sender,
+	const Windows::Foundation::IInspectable& args)
+{
+	EndingTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+	EndingTeachingTip().IsOpen(true);
+
+	co_return;
+}
+
+
+Windows::Foundation::IAsyncAction Amethyst::implementation::InfoPage::HelpTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
+{
+	// Close the current tip
+	HelpTeachingTip().IsOpen(false);
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(400);
+		co_await ui_thread;
+	}
+
+	// Reset the next page layout (if ever changed)
+	if (k2app::shared::settings::pageMainScrollViewer)
+		k2app::shared::settings::pageMainScrollViewer->ScrollToVerticalOffset(0);
+
+	// Navigate to the settings page
+	k2app::shared::main::mainNavigationView->SelectedItem(
+		k2app::shared::main::mainNavigationView->MenuItems().GetAt(2));
+	k2app::shared::main::NavView_Navigate(L"devices", Media::Animation::EntranceNavigationTransitionInfo());
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
+
+	// Show the next tip
+	k2app::shared::teaching_tips::devices::deviceControlsTeachingTip->TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
+	k2app::shared::teaching_tips::devices::deviceControlsTeachingTip->IsOpen(true);
+}
+
+
 void Amethyst::implementation::InfoPage::Page_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
@@ -154,4 +203,20 @@ void Amethyst::implementation::InfoPage::Page_Loaded_Handler()
 
 	Credits_Community().Text(
 		k2app::interfacing::LocalizedJSONString(L"/InfoPage/Credits/Community"));
+
+	HelpTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip11/Title"));
+	HelpTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip11/Content"));
+	HelpTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	HelpTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
+
+	EndingTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip12/Title"));
+	EndingTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip12/Content"));
+	EndingTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Finish")));
 }

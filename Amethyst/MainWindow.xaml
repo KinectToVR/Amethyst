@@ -69,20 +69,23 @@
 
             <Grid.Resources>
                 <TeachingTip x:Name="InitializerTeachingTip"
-                             Title="Amethyst quick tour"
-                             Subtitle="Get to know Amethyst and its components. Explore setting pages, most used controls and features."
-                             PreferredPlacement="Auto"
+                             Title="/WELCOME"
+                             Subtitle="/TEXT"
+                             PreferredPlacement="Top"
                              PlacementMargin="20"
                              IsLightDismissEnabled="False"
-                             ActionButtonContent="Let's go!"
+                             ActionButtonContent="/SKIP"
+                             CloseButtonContent="/NEXT"
+                             Style="{ThemeResource BigTeachingTipStyle}"
                              ActionButtonClick="InitializerTeachingTip_ActionButtonClick"
                              CloseButtonClick="InitializerTeachingTip_CloseButtonClick" />
 
                 <TeachingTip x:Name="ShutdownTeachingTip"
-                             Title="Are you sure?"
-                             Subtitle="Amethyst must be running for tracking to work. Click again to exit.&#x0a;&#x0a;This message will only show once."
+                             Title="/SHUTDOWN"
+                             Subtitle="/TEXT"
                              PreferredPlacement="TopRight"
                              PlacementMargin="0,29,-8,0"
+                             Style="{ThemeResource BigTeachingTipStyle}"
                              IsLightDismissEnabled="True" />
             </Grid.Resources>
         </Grid>
@@ -172,22 +175,6 @@
                                 <Vector3Transition />
                             </FontIcon.TranslationTransition>
                         </FontIcon>
-
-                        <!--<Canvas Height="24" Width="24" Translation="0,-8,0"
-                                x:Name="NavViewDevicesButtonIconCanvas">
-
-                            <Path Fill="{ThemeResource SystemFillColorNeutralBrush}" Margin="0,-2,0,0"
-                                  x:Name="NavViewDevicesButtonIcon_Empty" Visibility="Visible"
-                                  Data="M15.28,24.44h3a2.52,2.52,0,0,0,1-.21,2.39,2.39,0,0,0,.83-.56,2.53,2.53,0,0,0,.56-.84,2.47,2.47,0,0,0,.21-1V17.87H21a4,4,0,0,0,3.4-3.9,3.83,3.83,0,0,0-.27-1.43,3.71,3.71,0,0,0-.73-1.19A4,4,0,0,0,21,10.06V6.11a2.68,2.68,0,0,0-.77-1.85,2.68,2.68,0,0,0-1.85-.77H13.94a4,4,0,0,0-.42-1.37A4.07,4.07,0,0,0,12.65,1,4.2,4.2,0,0,0,11.46.27,3.78,3.78,0,0,0,10,0,3.83,3.83,0,0,0,8.61.27,3.71,3.71,0,0,0,7.42,1a3.86,3.86,0,0,0-.85,1.11,3.78,3.78,0,0,0-.43,1.38H2.62a2.47,2.47,0,0,0-1,.21,2.53,2.53,0,0,0-.84.56A2.71,2.71,0,0,0,.2,5.1a2.67,2.67,0,0,0-.2,1v5.67H3.06A2.17,2.17,0,0,1,3.9,12a2.39,2.39,0,0,1,.7.47,2.39,2.39,0,0,1,.47.7,2.19,2.19,0,0,1,.17.85,2.14,2.14,0,0,1-.17.84,2.39,2.39,0,0,1-.47.7,2.39,2.39,0,0,1-.7.47,2.17,2.17,0,0,1-.84.17H0v5.67a2.64,2.64,0,0,0,.2,1,2.71,2.71,0,0,0,.57.84,2.53,2.53,0,0,0,.84.56,2.47,2.47,0,0,0,1,.21H4.89M5,22.69H2.62a.85.85,0,0,1-.87-.87V17.89H3l.35,0a3.35,3.35,0,0,0,1.39-.38,4.08,4.08,0,0,0,1.15-.86,4.1,4.1,0,0,0,.78-1.22A3.72,3.72,0,0,0,7,14a4,4,0,0,0-1.12-2.77,4.1,4.1,0,0,0-1.22-.85A3.8,3.8,0,0,0,3.12,10H1.75V6.11A.82.82,0,0,1,2,5.5a.83.83,0,0,1,.62-.26H7.86V3.93A2.05,2.05,0,0,1,8,3.08a2.55,2.55,0,0,1,.47-.69,2.55,2.55,0,0,1,.69-.47A2.22,2.22,0,0,1,10,1.75a2.14,2.14,0,0,1,.84.17,2.28,2.28,0,0,1,.69.47,2.34,2.34,0,0,1,.47.69,2.06,2.06,0,0,1,.18.85V5.24h6.11a.89.89,0,0,1,.87.87v5.67h1.31a2.06,2.06,0,0,1,.85.18,2.24,2.24,0,0,1,1.16,1.16,2.19,2.19,0,0,1,.17.85,2.14,2.14,0,0,1-.17.84A2.24,2.24,0,0,1,21.36,16a2.06,2.06,0,0,1-.85.18H19.2v5.67a.89.89,0,0,1-.87.87h-2.9" />
-
-                            <Path Fill="{ThemeResource SystemFillColorAttentionBrush}" Margin="0,-2,0,0"
-                                  x:Name="NavViewDevicesButtonIcon_Solid" Visibility="Collapsed"
-                                  Data="M15.28,24.44h3a2.52,2.52,0,0,0,1-.21,2.39,2.39,0,0,0,.83-.56,2.53,2.53,0,0,0,.56-.84,2.47,2.47,0,0,0,.21-1V17.87H21a4,4,0,0,0,3.4-3.9,3.83,3.83,0,0,0-.27-1.43,3.71,3.71,0,0,0-.73-1.19A4,4,0,0,0,21,10.06V6.11a2.68,2.68,0,0,0-.77-1.85,2.68,2.68,0,0,0-1.85-.77H13.94a4,4,0,0,0-.42-1.37A4.07,4.07,0,0,0,12.65,1,4.2,4.2,0,0,0,11.46.27,3.78,3.78,0,0,0,10,0,3.83,3.83,0,0,0,8.61.27,3.71,3.71,0,0,0,7.42,1a3.86,3.86,0,0,0-.85,1.11,3.78,3.78,0,0,0-.43,1.38H2.62a2.47,2.47,0,0,0-1,.21,2.53,2.53,0,0,0-.84.56A2.71,2.71,0,0,0,.2,5.1a2.67,2.67,0,0,0-.2,1v5.67H3.06A2.17,2.17,0,0,1,3.9,12a2.39,2.39,0,0,1,.7.47,2.39,2.39,0,0,1,.47.7,2.19,2.19,0,0,1,.17.85,2.14,2.14,0,0,1-.17.84,2.39,2.39,0,0,1-.47.7,2.39,2.39,0,0,1-.7.47,2.17,2.17,0,0,1-.84.17H0v5.67a2.64,2.64,0,0,0,.2,1,2.71,2.71,0,0,0,.57.84,2.53,2.53,0,0,0,.84.56,2.47,2.47,0,0,0,1,.21H6" />
-
-                            <Canvas.TranslationTransition>
-                                <Vector3Transition />
-                            </Canvas.TranslationTransition>
-                        </Canvas>-->
 
                         <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                             <TextBlock HorizontalAlignment="Center"

@@ -162,6 +162,30 @@
                     </Slider>
                 </Grid>
 
+                <Grid HorizontalAlignment="Stretch" Margin="0,5,0,0">
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                               FontWeight="Medium"
+                               x:Name="Captions_AutoStart" Margin="30,0,0,3" />
+                    <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
+                              Unchecked="AutoStartCheckBox_Unchecked"
+                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                              MinWidth="0" MinHeight="0" />
+
+                    <Grid.Resources>
+                        <TeachingTip x:Name="AutoStartTeachingTip"
+                                     Target="{Binding ElementName=Captions_AutoStart}"
+                                     Title="/AUTOSTART"
+                                     Subtitle="/TEXT"
+                                     PreferredPlacement="Bottom"
+                                     IsLightDismissEnabled="False"
+                                     ActionButtonContent="/BACK"
+                                     CloseButtonContent="/NEXT"
+                                     Style="{ThemeResource BigTeachingTipStyle}"
+                                     ActionButtonClick="AutoStartTeachingTip_ActionButtonClick"
+                                     CloseButtonClick="AutoStartTeachingTip_Closed" />
+                    </Grid.Resources>
+                </Grid>
+
                 <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
                             x:Name="FlipDropDownContainer" Margin="0,20,0,10" Grid.Row="0">
 
@@ -299,11 +323,26 @@
                         </TransitionCollection>
                     </Grid.Transitions>
 
-                    <Grid Margin="0,20,0,0" Grid.Row="0">
+                    <Grid Margin="0,20,0,0" Grid.Row="0"
+                          x:Name="JointExpanderStackHeader">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
+
+                        <Grid.Resources>
+                            <TeachingTip x:Name="ManageTrackersTeachingTip"
+                                         Target="{Binding ElementName=JointExpanderStackHeader}"
+                                         Title="/MANAGE"
+                                         Subtitle="/TEXT"
+                                         PreferredPlacement="Top"
+                                         IsLightDismissEnabled="False"
+                                         ActionButtonContent="/BACK"
+                                         CloseButtonContent="/NEXT"
+                                         Style="{ThemeResource BigTeachingTipStyle}"
+                                         ActionButtonClick="ManageTrackersTeachingTip_ActionButtonClick"
+                                         CloseButtonClick="ManageTrackersTeachingTip_Closed" />
+                        </Grid.Resources>
 
                         <TextBlock FontWeight="SemiBold" FontSize="25" Grid.Column="0"
                                    x:Name="Titles_TrackerConfig_Header" />
@@ -311,17 +350,6 @@
                         <HyperlinkButton FontWeight="SemiBold" FontSize="16" Grid.Column="1"
                                          HorizontalAlignment="Right"
                                          x:Name="LearnAboutFiltersButton" Click="LearnAboutFiltersButton_Click">
-
-                            <HyperlinkButton.Resources>
-                                <TeachingTip x:Name="LearnAboutFiltersTeachingTip"
-                                             Target="{Binding ElementName=LearnAboutFiltersButton}"
-                                             Title="If you wanna learn more"
-                                             Subtitle="To learn more about the applicable filters and tracking settings, please click this button."
-                                             PreferredPlacement="Auto"
-                                             IsLightDismissEnabled="False"
-                                             CloseButtonContent="Show the next tip"
-                                             Closed="LearnAboutFiltersTeachingTip_Closed" />
-                            </HyperlinkButton.Resources>
 
                             <FlyoutBase.AttachedFlyout>
                                 <Flyout Placement="Full" x:Name="LearnAboutFiltersFlyout"
@@ -451,17 +479,6 @@
                             <!--<ContentThemeTransition />-->
                         </TransitionCollection>
                     </StackPanel.Transitions>
-
-                    <StackPanel.Resources>
-                        <TeachingTip x:Name="ManageTrackersTeachingTip"
-                                     Target="{Binding ElementName=JointExpanderHostStackPanel}"
-                                     Title="Manage VR trackers"
-                                     Subtitle="Use the controls below to enable/disable your VR trackers, and manage their tracking and filtering settings."
-                                     PreferredPlacement="Top"
-                                     IsLightDismissEnabled="False"
-                                     CloseButtonContent="Show the next tip"
-                                     Closed="ManageTrackersTeachingTip_Closed" />
-                    </StackPanel.Resources>
                 </StackPanel>
 
                 <Grid Margin="0,10,0,0">
@@ -488,12 +505,15 @@
                         <AppBarButton.Resources>
                             <TeachingTip x:Name="AddTrackersTeachingTip"
                                          Target="{Binding ElementName=TrackerConfigButton}"
-                                         Title="Even more trackers!"
-                                         Subtitle="Using this menu, you can add more trackers and toggle grouping the existing ones into pairs."
-                                         PreferredPlacement="Auto"
+                                         Title="/MANAGE"
+                                         Subtitle="/TEXT"
+                                         PreferredPlacement="Right"
                                          IsLightDismissEnabled="False"
-                                         CloseButtonContent="Show the next tip"
-                                         Closed="AddTrackersTeachingTip_Closed" />
+                                         ActionButtonContent="/BACK"
+                                         CloseButtonContent="/NEXT"
+                                         Style="{ThemeResource BigTeachingTipStyle}"
+                                         ActionButtonClick="AddTrackersTeachingTip_ActionButtonClick"
+                                         CloseButtonClick="AddTrackersTeachingTip_Closed" />
                         </AppBarButton.Resources>
                     </AppBarButton>
 
@@ -564,50 +584,15 @@
                         <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,35,10" FontSize="16"
                                 x:Name="ViewLogsButton" Click="ViewLogsButton_Click" FontWeight="SemiBold" />
 
-                        <SplitButton Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                     x:Name="ReManifestButton" Click="ReManifestButton_Click" FontWeight="SemiBold"
-                                     FontSize="16">
-                            <SplitButton.Flyout>
-                                <Flyout Placement="RightEdgeAlignedBottom"
-                                        Opening="AutoStartFlyout_Opening"
-                                        Closing="ButtonFlyout_Closing">
-                                    <Flyout.FlyoutPresenterStyle>
-                                        <Style TargetType="FlyoutPresenter">
-                                            <Setter Property="CornerRadius" Value="8" />
-                                            <Setter Property="Background"
-                                                    Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                                        </Style>
-                                    </Flyout.FlyoutPresenterStyle>
-
-                                    <Grid>
-                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                                   FontWeight="Medium"
-                                                   x:Name="Captions_AutoStart" Margin="30,0,0,3" />
-                                        <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
-                                                  Unchecked="AutoStartCheckBox_Unchecked"
-                                                  HorizontalAlignment="Left" VerticalAlignment="Center"
-                                                  MinWidth="0" MinHeight="0" />
-                                    </Grid>
-                                </Flyout>
-                            </SplitButton.Flyout>
-
-                            <SplitButton.Transitions>
+                        <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,35,10"
+                                x:Name="ReManifestButton" Click="ReManifestButton_Click" FontWeight="SemiBold"
+                                FontSize="16">
+                            <Button.Transitions>
                                 <TransitionCollection>
                                     <RepositionThemeTransition />
                                 </TransitionCollection>
-                            </SplitButton.Transitions>
-
-                            <SplitButton.Resources>
-                                <TeachingTip x:Name="AutoStartTeachingTip"
-                                             Target="{Binding ElementName=ReManifestButton}"
-                                             Title="Start Amethyst with SteamVR"
-                                             Subtitle="To skip searching for Amethyst every time, you can enable it to start automatically. The check is hidden inside this dropdown."
-                                             PreferredPlacement="RightTop"
-                                             IsLightDismissEnabled="False"
-                                             CloseButtonContent="Show the next tip"
-                                             Closed="AutoStartTeachingTip_Closed" />
-                            </SplitButton.Resources>
-                        </SplitButton>
+                            </Button.Transitions>
+                        </Button>
                     </StackPanel>
                 </Grid>
 

@@ -17,16 +17,35 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+        <Grid HorizontalAlignment="Left"
+              VerticalAlignment="Bottom"
+              x:Name="HelpButtonDummyGrid"
+              Margin="0,18" Grid.Column="0">
+
         <Grid.Resources>
-            <TeachingTip x:Name="EndingTeachingTip"
-                         Title="That's all for now!"
-                         Subtitle="Thank you for reading, or something. It's not like I wanted you to read or anything 𝘣𝘭𝘶𝘴𝘩𝘦𝘴 &#x0a;&#x0a;Anyway, here are the credits. Better show your love and attention, or we're gonna cut you off!"
+            <TeachingTip x:Name="HelpTeachingTip"
+                         Target="{Binding ElementName=HelpButtonDummyGrid}"
+                         Title="/HELP"
+                         Subtitle="/TEXT"
                          PreferredPlacement="RightBottom"
-                         PlacementMargin="20"
                          IsLightDismissEnabled="False"
-                         CloseButtonContent="Finish tour"
+                         ActionButtonContent="/BACK"
+                         CloseButtonContent="/NEXT"
+                         Style="{ThemeResource BigTeachingTipStyle}"
+                         ActionButtonClick="HelpTeachingTip_ActionButtonClick"
+                         CloseButtonClick="HelpTeachingTip_CloseButtonClick" />
+
+            <TeachingTip x:Name="EndingTeachingTip"
+                         Target="{Binding ElementName=HelpButtonDummyGrid}"
+                         Title="/END"
+                         Subtitle="/TEXT"
+                         PreferredPlacement="RightBottom"
+                         IsLightDismissEnabled="False"
+                         CloseButtonContent="/FINISH"
+                         Style="{ThemeResource BigTeachingTipStyle}"
                          CloseButtonClick="EndingTeachingTip_CloseButtonClick" />
         </Grid.Resources>
+        </Grid>
 
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Grid.Column="1" Padding="20,-20" Margin="-20,20,-20,20">

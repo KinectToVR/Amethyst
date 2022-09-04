@@ -536,27 +536,31 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="1">
+                    <Grid Grid.Row="1"
+                          x:Name="ContextGridContainer">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
+                        <Grid.Resources>
+                            <TeachingTip x:Name="CalibrationTeachingTip"
+                                         Target="{Binding ElementName=ContextGridContainer}"
+                                         Title="/CALIBRATION"
+                                         Subtitle="/TEXT"
+                                         PreferredPlacement="Bottom"
+                                         IsLightDismissEnabled="False"
+                                         ActionButtonContent="/BACK"
+                                         CloseButtonContent="/NEXT"
+                                         Style="{ThemeResource BigTeachingTipStyle}"
+                                         ActionButtonClick="CalibrationTeachingTip_ActionButtonClick"
+                                         CloseButtonClick="CalibrationTeachingTip_Closed"/>
+                        </Grid.Resources>
+
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
                                 IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
                                 Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
-
-                            <Button.Resources>
-                                <TeachingTip x:Name="CalibrationTeachingTip"
-                                             Target="{Binding ElementName=CalibrationButton}"
-                                             Title="Calibrate Amethyst tracking"
-                                             Subtitle="Calibrate your body tracking in Amethyst to match your playspace. You can always go back if something goes wrong."
-                                             PreferredPlacement="Auto"
-                                             IsLightDismissEnabled="False"
-                                             CloseButtonContent="Show the next tip"
-                                             Closed="CalibrationTeachingTip_Closed" />
-                            </Button.Resources>
 
                             <FlyoutBase.AttachedFlyout>
                                 <Flyout x:Name="ChooseDeviceFlyout"
@@ -627,15 +631,17 @@
                         <ToggleButton.Resources>
                             <TeachingTip x:Name="ToggleTrackersTeachingTip"
                                          Target="{Binding ElementName=ToggleTrackersButton}"
-                                         Title="Connect/Disconnect VR trackers"
-                                         Subtitle="Press this button to add enabled trackers to SteamVR. Later, you can quickly toggle connect/disconnect all of them from here."
-                                         PreferredPlacement="Auto"
+                                         Title="/TOGGLETRACKERS"
+                                         Subtitle="/TEXT"
+                                         PreferredPlacement="Bottom"
                                          IsLightDismissEnabled="False"
-                                         CloseButtonContent="Show the next tip"
-                                         Closed="ToggleTrackersTeachingTip_Closed" />
+                                         ActionButtonContent="/BACK"
+                                         CloseButtonContent="/NEXT"
+                                         Style="{ThemeResource BigTeachingTipStyle}"
+                                         ActionButtonClick="ToggleTrackersTeachingTip_ActionButtonClick"
+                                         CloseButtonClick="ToggleTrackersTeachingTip_Closed"/>
                         </ToggleButton.Resources>
                     </ToggleButton>
-
                 </Grid>
 
                 <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -643,7 +649,22 @@
 
                     <StackPanel Grid.Row="4" Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,0,0,20">
 
-                        <StackPanel Orientation="Vertical" Margin="0,0,5,0" VerticalAlignment="Bottom">
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom"
+                                    x:Name="DeviceContextContainerPanel" Margin="0,0,5,0">
+                            <StackPanel.Resources>
+                                <TeachingTip x:Name="StatusTeachingTip"
+                                             Target="{Binding ElementName=DeviceContextContainerPanel}"
+                                             Title="/STATUS"
+                                             Subtitle="/TEXT"
+                                             PreferredPlacement="Top"
+                                             IsLightDismissEnabled="False"
+                                             ActionButtonContent="/BACK"
+                                             CloseButtonContent="/NEXT"
+                                             Style="{ThemeResource BigTeachingTipStyle}"
+                                             ActionButtonClick="StatusTeachingTip_ActionButtonClick"
+                                             CloseButtonClick="StatusTeachingTip_Closed" />
+                            </StackPanel.Resources>
+
                             <TextBlock FontWeight="SemiBold" x:Name="Titles_Device" FontSize="25"
                                        Margin="40,20,0,10" Grid.Row="3" />
 
@@ -663,19 +684,7 @@
                                            x:Name="Captions_Device_Status" Margin="0,0,0,0"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel">
-
-                                    <TextBlock.Resources>
-                                        <TeachingTip x:Name="StatusTeachingTip"
-                                                     Target="{Binding ElementName=TrackingDeviceStatusLabel}"
-                                                     Title="Device statuses at a glance"
-                                                     Subtitle="You can check statuses of the currently used tracking devices here. If something's wrong, you'll see an explanation and links to the documentation."
-                                                     PreferredPlacement="Auto"
-                                                     IsLightDismissEnabled="False"
-                                                     CloseButtonContent="Show the next tip"
-                                                     Closed="StatusTeachingTip_Closed" />
-                                    </TextBlock.Resources>
-                                </TextBlock>
+                                           Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
                             </StackPanel>
 
                             <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"

@@ -49,6 +49,8 @@ namespace winrt::Amethyst::implementation
 
 		k2app::shared::teaching_tips::settings::manageTrackersTeachingTip =
 			std::make_shared<Controls::TeachingTip>(ManageTrackersTeachingTip());
+		k2app::shared::teaching_tips::settings::autoStartTeachingTip =
+			std::make_shared<Controls::TeachingTip>(AutoStartTeachingTip());
 
 		restartButton = std::make_shared<Controls::Button>(RestartButton());
 
@@ -590,6 +592,33 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 	DismissSetErrorButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/Error/Dismiss")));
 
+	ManageTrackersTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip5/Title"));
+	ManageTrackersTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip5/Content"));
+	ManageTrackersTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	ManageTrackersTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
+
+	AddTrackersTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip6/Title"));
+	AddTrackersTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip6/Content"));
+	AddTrackersTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	AddTrackersTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
+
+	AutoStartTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip7/Title"));
+	AutoStartTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip7/Content"));
+	AutoStartTeachingTip().CloseButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
+	AutoStartTeachingTip().ActionButtonContent(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
+
 	using namespace k2app::shared::settings;
 
 	// Notify of the setup end
@@ -628,6 +657,10 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 
 	// Select the current theme
 	AppThemeOptionBox().SelectedIndex(k2app::K2Settings.appTheme);
+
+	// Check for autostart
+	AutoStartCheckBox().IsChecked(
+		vr::VRApplications()->GetApplicationAutoLaunch("KinectToVR.Amethyst"));
 
 	// Optionally show the foreign language grid
 	if (!exists(k2app::interfacing::GetProgramLocation().parent_path() /
@@ -950,8 +983,7 @@ void Amethyst::implementation::SettingsPage::AutoStartCheckBox_Unchecked(
 
 
 void Amethyst::implementation::SettingsPage::ReManifestButton_Click(
-	const Controls::SplitButton& sender,
-	const Controls::SplitButtonClickEventArgs& args)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	switch (k2app::interfacing::installApplicationManifest())
 	{
@@ -1101,7 +1133,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 		menuTrackerToggleItem.Text(
 			k2app::interfacing::LocalizedResourceWString(
 				L"SharedStrings", L"Joints/Enum/" +
-				std::to_wstring(static_cast<int>(current_tracker))));
+				std::to_wstring(current_tracker)));
 
 		bool isEnabled = (index >= static_cast<int>(
 			     Tracker_Chest)),
@@ -1546,31 +1578,28 @@ void Amethyst::implementation::SettingsPage::ViewLogsButton_Click(
 }
 
 
-void Amethyst::implementation::SettingsPage::ManageTrackersTeachingTip_Closed(
-	const Controls::TeachingTip& sender,
-	const Controls::TeachingTipClosedEventArgs& args)
+Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::ManageTrackersTeachingTip_Closed(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	PageMainScrollViewer().UpdateLayout();
+	PageMainScrollViewer().ChangeView(
+		nullptr, PageMainScrollViewer().ExtentHeight() / 2.0, nullptr);
+
+	apartment_context ui_thread;
+	co_await resume_background();
+	Sleep(500);
+	co_await ui_thread;
+
 	AddTrackersTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	AddTrackersTeachingTip().IsOpen(true);
 }
 
 
-void Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_Closed(
-	const Controls::TeachingTip& sender,
-	const Controls::TeachingTipClosedEventArgs& args)
-{
-	LearnAboutFiltersTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
-	LearnAboutFiltersTeachingTip().IsOpen(true);
-}
-
-
-Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::LearnAboutFiltersTeachingTip_Closed(
-	const Controls::TeachingTip& sender,
-	const Controls::TeachingTipClosedEventArgs& args)
+Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_Closed(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
 	PageMainScrollViewer().UpdateLayout();
-	PageMainScrollViewer().ChangeView(nullptr,
-	                                  PageMainScrollViewer().ExtentHeight(), nullptr);
+	PageMainScrollViewer().ChangeView(nullptr, 0.0, nullptr);
 
 	apartment_context ui_thread;
 	co_await resume_background();
@@ -1583,8 +1612,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::LearnA
 
 
 Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AutoStartTeachingTip_Closed(
-	const Controls::TeachingTip& sender,
-	const Controls::TeachingTipClosedEventArgs& args)
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
 	// Wait a bit
 	{
@@ -1615,7 +1643,6 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AutoSt
 		Controls::TeachingTipTailVisibility::Collapsed);
 	k2app::shared::teaching_tips::devices::devicesListTeachingTip->IsOpen(true);
 }
-
 
 void Amethyst::implementation::SettingsPage::ButtonFlyout_Opening(
 	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
@@ -1740,4 +1767,85 @@ void Amethyst::implementation::SettingsPage::OptionBox_DropDownClosed(
 
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+}
+
+
+Windows::Foundation::IAsyncAction
+Amethyst::implementation::SettingsPage::ManageTrackersTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender,
+	const Windows::Foundation::IInspectable& args)
+{
+	// Close the current tip
+	ManageTrackersTeachingTip().IsOpen(false);
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(400);
+		co_await ui_thread;
+	}
+
+	// Navigate to the settings page
+	k2app::shared::main::mainNavigationView->SelectedItem(
+		k2app::shared::main::mainNavigationView->MenuItems().GetAt(0));
+	k2app::shared::main::NavView_Navigate(L"general", Media::Animation::EntranceNavigationTransitionInfo());
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
+
+	// Show the next tip
+	k2app::shared::teaching_tips::general::statusTeachingTip->TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
+	k2app::shared::teaching_tips::general::statusTeachingTip->IsOpen(true);
+}
+
+
+Windows::Foundation::IAsyncAction
+Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
+{
+	// Close the current tip
+	AddTrackersTeachingTip().IsOpen(false);
+
+	PageMainScrollViewer().UpdateLayout();
+	PageMainScrollViewer().ChangeView(
+		nullptr, 0.0, nullptr);
+
+	apartment_context ui_thread;
+	co_await resume_background();
+	Sleep(500);
+	co_await ui_thread;
+
+	// Show the previous one
+	ManageTrackersTeachingTip().TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
+	ManageTrackersTeachingTip().IsOpen(true);
+}
+
+
+Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AutoStartTeachingTip_ActionButtonClick(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
+{
+	// Close the current tip
+	AutoStartTeachingTip().IsOpen(false);
+
+	PageMainScrollViewer().UpdateLayout();
+	PageMainScrollViewer().ChangeView(
+		nullptr, PageMainScrollViewer().ExtentHeight() / 2.0, nullptr);
+
+	apartment_context ui_thread;
+	co_await resume_background();
+	Sleep(500);
+	co_await ui_thread;
+
+	// Show the previous one
+	AddTrackersTeachingTip().TailVisibility(
+		Controls::TeachingTipTailVisibility::Collapsed);
+	AddTrackersTeachingTip().IsOpen(true);
 }
