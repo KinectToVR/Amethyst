@@ -82,12 +82,8 @@ namespace winrt::Amethyst::implementation
 		                            const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DismissSetErrorButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                 const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void ToggleTrackingButton_Click(const Microsoft::UI::Xaml::Controls::SplitButton& sender,
-		                                const Microsoft::UI::Xaml::Controls::SplitButtonClickEventArgs& args);
-		void FreezeOnlyLowerCheckBox_Checked(const Windows::Foundation::IInspectable& sender,
-		                                     const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void FreezeOnlyLowerCheckBox_Unchecked(const Windows::Foundation::IInspectable& sender,
-		                                       const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void ToggleTrackingButton_Click(const Windows::Foundation::IInspectable& sender,
+										const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void CalibrationSelectView_PaneClosing(const Microsoft::UI::Xaml::Controls::SplitView& sender,
 		                                       const Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs
 		                                       & args);
@@ -117,7 +113,8 @@ namespace winrt::Amethyst::implementation
 		                                              const Windows::Foundation::IInspectable& args);
 		void StatusTeachingTip_ActionButtonClick(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
 		                                         const Windows::Foundation::IInspectable& args);
-	};
+		void FreezeOnlyLowerToggle_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+};
 }
 
 namespace winrt::Amethyst::factory_implementation

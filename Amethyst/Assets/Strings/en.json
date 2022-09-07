@@ -1,7 +1,7 @@
 {
     "/GeneralPage/Buttons/Abort": "Abort",
     "/GeneralPage/Buttons/Calibration/Base": "Base",
-    "/GeneralPage/Buttons/Calibration/Begin": "Begin Calibration",
+    "/GeneralPage/Buttons/Calibration/Begin": "Calibrate",
     "/GeneralPage/Buttons/Calibration/Override": "Override",
     "/GeneralPage/Buttons/Cancel": "Cancel",
     "/GeneralPage/Buttons/Discard": "Discard",
@@ -51,7 +51,7 @@
     "/GeneralPage/Captions/Device/Status": "Status:",
     "/GeneralPage/Captions/DriverStatus": "Success! (Code 1)",
     "/GeneralPage/Captions/DriverStatus/Label": "SteamVR Driver:",
-    "/GeneralPage/Captions/FreezeLowerOnly": "Only Lower Body",
+    "/GeneralPage/Captions/FreezeLowerOnly": "Freeze Only Lower Body",
     "/GeneralPage/Captions/Offsets/Orientation/X": "Pitch (X):",
     "/GeneralPage/Captions/Offsets/Orientation/Y": "Yaw (Y):",
     "/GeneralPage/Captions/Offsets/Orientation/Z": "Roll (Z):",

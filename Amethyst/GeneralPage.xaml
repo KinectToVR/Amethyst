@@ -536,11 +536,12 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="1"
+                    <Grid Grid.Row="1" Margin="30,0,30,0"
                           x:Name="ContextGridContainer">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <Grid.Resources>
@@ -554,12 +555,12 @@
                                          CloseButtonContent="/NEXT"
                                          Style="{ThemeResource BigTeachingTipStyle}"
                                          ActionButtonClick="CalibrationTeachingTip_ActionButtonClick"
-                                         CloseButtonClick="CalibrationTeachingTip_Closed"/>
+                                         CloseButtonClick="CalibrationTeachingTip_Closed" />
                         </Grid.Resources>
 
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
                                 IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                Margin="40,10,10,10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
+                                Margin="10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
 
                             <FlyoutBase.AttachedFlyout>
@@ -616,11 +617,109 @@
                                 </Flyout>
                             </FlyoutBase.AttachedFlyout>
                         </Button>
-                        <Button FontSize="15" x:Name="OffsetsButton" Click="OffsetsButton_Click"
+
+                        <ToggleButton Margin="10" CornerRadius="4" Grid.Column="1" x:Name="ToggleTrackingButton"
+                                      Click="ToggleTrackingButton_Click" FontWeight="SemiBold" IsTabStop="False"
+                                      IsEnabled="{Binding ElementName=CalibrationButton,Path=IsEnabled, TargetNullValue=False}"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="16">
+
+                            <ToggleButton.Resources>
+                                <muxc:TeachingTip x:Name="FreezeTrackingTeachingTip"
+                                                  Target="{Binding ElementName=ToggleTrackingButton}"
+                                                  PreferredPlacement="Top"
+                                                  IsLightDismissEnabled="True"
+                                                  Title="[CONTENT NOT SET]"
+                                                  Subtitle="[CONTENT NOT SET]">
+                                    <TeachingTip.IconSource>
+                                        <FontIconSource Glyph="&#xE946;" />
+                                    </TeachingTip.IconSource>
+                                </muxc:TeachingTip>
+                            </ToggleButton.Resources>
+                            <!--<ToggleSplitButton.Flyout>
+                                <Flyout Placement="Bottom"
+                                    Opening="ToggleButtonFlyout_Opening"
+                                    Closing="ToggleButtonFlyout_Closing">
+                                    <Flyout.FlyoutPresenterStyle>
+                                        <Style TargetType="FlyoutPresenter">
+                                            <Setter Property="CornerRadius" Value="8" />
+                                            <Setter Property="Background"
+                                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                        </Style>
+                                    </Flyout.FlyoutPresenterStyle>
+
+                                    <Grid Margin="0,0,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="9*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                               FontWeight="Medium" Opacity="1"
+                                               
+                                               Margin="30,0,0,0"
+                                               Grid.Column="0" />
+                                        <CheckBox x:Name="FreezeOnlyLowerCheckBox"
+                                              Checked="FreezeOnlyLowerCheckBox_Checked"
+                                              Unchecked="FreezeOnlyLowerCheckBox_Unchecked"
+                                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                                              MinWidth="0" MinHeight="0" Margin="0,2,0,0" IsChecked="False" />
+
+                                    </Grid>
+                                </Flyout>
+                            </ToggleSplitButton.Flyout>-->
+                        </ToggleButton>
+
+                        <Button FontWeight="SemiBold" VerticalAlignment="Stretch" Width="65" Height="65"
+                                IsEnabled="{Binding ElementName=CalibrationButton,Path=IsEnabled, TargetNullValue=False}"
+                                Margin="10" CornerRadius="4" Grid.Column="2" HorizontalAlignment="Stretch">
+
+                            <Button.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.ThemeDictionaries>
+                                        <ResourceDictionary x:Key="Dark">
+                                            <SolidColorBrush x:Key="ButtonBackground" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBorderBrush" Color="Transparent" />
+
+                                            <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="Transparent" />
+                                        </ResourceDictionary>
+                                        <ResourceDictionary x:Key="Default">
+                                            <SolidColorBrush x:Key="ButtonBackground" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBorderBrush" Color="Transparent" />
+
+                                            <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="Transparent" />
+                                        </ResourceDictionary>
+                                    </ResourceDictionary.ThemeDictionaries>
+                                </ResourceDictionary>
+                            </Button.Resources>
+
+                            <Viewbox Margin="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <SymbolIcon Symbol="More" />
+                            </Viewbox>
+
+                            <Button.Flyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem x:Name="OffsetsButton" Click="OffsetsButton_Click" Tag="offsets">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xECC6;" />
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutSeparator />
+                                    <ToggleMenuFlyoutItem x:Name="FreezeOnlyLowerToggle"
+                                                          Click="FreezeOnlyLowerToggle_Click" Tag="freeze">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xF439;" />
+                                        </MenuFlyoutItem.Icon>
+                                    </ToggleMenuFlyoutItem>
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
+
+                        <!--<Button FontSize="15" x:Name="OffsetsButton" Click="OffsetsButton_Click"
                                 VerticalContentAlignment="Center" FontWeight="SemiBold" IsEnabled="False"
                                 Margin="10,10,40,10" CornerRadius="4" Grid.Column="1" HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch" />
-
+                                VerticalAlignment="Stretch" Visibility="Collapsed" />-->
                     </Grid>
 
                     <ToggleButton FontSize="15" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked"
@@ -639,7 +738,7 @@
                                          CloseButtonContent="/NEXT"
                                          Style="{ThemeResource BigTeachingTipStyle}"
                                          ActionButtonClick="ToggleTrackersTeachingTip_ActionButtonClick"
-                                         CloseButtonClick="ToggleTrackersTeachingTip_Closed"/>
+                                         CloseButtonClick="ToggleTrackersTeachingTip_Closed" />
                         </ToggleButton.Resources>
                     </ToggleButton>
                 </Grid>
@@ -667,7 +766,7 @@
 
                             <Grid x:Name="DeviceTitleContainer" HorizontalAlignment="Stretch">
                                 <TextBlock FontWeight="SemiBold" x:Name="Titles_Device" FontSize="25"
-                                       Margin="40,20,0,10" HorizontalAlignment="Left" />
+                                           Margin="40,20,0,10" HorizontalAlignment="Left" />
                             </Grid>
 
                             <!--Base Status-->
@@ -1051,59 +1150,6 @@
                                     <CheckBox x:Name="ForceRenderCheckBox"
                                               Checked="ForceRenderCheckBox_Checked"
                                               Unchecked="ForceRenderCheckBox_Unchecked"
-                                              HorizontalAlignment="Left" VerticalAlignment="Center"
-                                              MinWidth="0" MinHeight="0" Margin="0,2,0,0" IsChecked="False" />
-
-                                </Grid>
-                            </Flyout>
-                        </ToggleSplitButton.Flyout>
-                    </ToggleSplitButton>
-                </Grid>
-
-                <Grid Grid.Row="3" Grid.Column="0">
-                    <ToggleSplitButton Margin="20,0,0,0" x:Name="ToggleTrackingButton" Padding="12,0"
-                                       Click="ToggleTrackingButton_Click" FontWeight="SemiBold" IsTabStop="False"
-                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="16">
-
-                        <ToggleSplitButton.Resources>
-                            <muxc:TeachingTip x:Name="FreezeTrackingTeachingTip"
-                                              Target="{Binding ElementName=ToggleTrackingButton}"
-                                              PreferredPlacement="Top"
-                                              IsLightDismissEnabled="True"
-                                              Title="[CONTENT NOT SET]"
-                                              Subtitle="[CONTENT NOT SET]">
-                                <TeachingTip.IconSource>
-                                    <FontIconSource Glyph="&#xE946;" />
-                                </TeachingTip.IconSource>
-                            </muxc:TeachingTip>
-                        </ToggleSplitButton.Resources>
-
-                        <ToggleSplitButton.Flyout>
-                            <Flyout Placement="Bottom"
-                                    Opening="ToggleButtonFlyout_Opening"
-                                    Closing="ToggleButtonFlyout_Closing">
-                                <Flyout.FlyoutPresenterStyle>
-                                    <Style TargetType="FlyoutPresenter">
-                                        <Setter Property="CornerRadius" Value="8" />
-                                        <Setter Property="Background"
-                                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                                    </Style>
-                                </Flyout.FlyoutPresenterStyle>
-
-                                <Grid Margin="0,0,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*" />
-                                        <ColumnDefinition Width="9*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="Medium" Opacity="1"
-                                               x:Name="FreezeOnlyLowerCheckBoxLabel"
-                                               Margin="30,0,0,0"
-                                               Grid.Column="0" />
-                                    <CheckBox x:Name="FreezeOnlyLowerCheckBox"
-                                              Checked="FreezeOnlyLowerCheckBox_Checked"
-                                              Unchecked="FreezeOnlyLowerCheckBox_Unchecked"
                                               HorizontalAlignment="Left" VerticalAlignment="Center"
                                               MinWidth="0" MinHeight="0" Margin="0,2,0,0" IsChecked="False" />
 

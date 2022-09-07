@@ -114,11 +114,13 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
 		forceRenderCheckBox;
 
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>
+			offsetsButton;
+
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
 			calibrationButton,
 			reRegisterButton,
-			serverOpenDiscordButton,
-			offsetsButton;
+			serverOpenDiscordButton;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
 			versionLabel,
@@ -144,11 +146,11 @@ namespace k2app::shared
 			serverErrorWhatGrid,
 			serverErrorButtonsGrid;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleSplitButton>
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>
 		toggleFreezeButton;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::CheckBox>
-		freezeOnlyLowerCheckBox;
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>
+		freezeOnlyLowerToggle;
 	}
 
 	namespace settings

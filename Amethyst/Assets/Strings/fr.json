@@ -1,7 +1,7 @@
 {
     "/GeneralPage/Buttons/Abort": "Annuler",
     "/GeneralPage/Buttons/Calibration/Base": "Base",
-    "/GeneralPage/Buttons/Calibration/Begin": "Commencer la calibration",
+    "/GeneralPage/Buttons/Calibration/Begin": "Calibrage",
     "/GeneralPage/Buttons/Calibration/Override": "Substitut",
     "/GeneralPage/Buttons/Cancel": "Annuler",
     "/GeneralPage/Buttons/Discard": "Oublier",
@@ -51,7 +51,7 @@
     "/GeneralPage/Captions/Device/Status": "Statut:",
     "/GeneralPage/Captions/DriverStatus": "Succès! (Code 1)",
     "/GeneralPage/Captions/DriverStatus/Label": "Extension SteamVR:",
-    "/GeneralPage/Captions/FreezeLowerOnly": "Bas du corps seulement",
+    "/GeneralPage/Captions/FreezeLowerOnly": "Geler seul le corps inférieur",
     "/GeneralPage/Captions/Offsets/Orientation/X": "Pas (X):",
     "/GeneralPage/Captions/Offsets/Orientation/Y": "Lacet (Y):",
     "/GeneralPage/Captions/Offsets/Orientation/Z": "Normal (Z):",

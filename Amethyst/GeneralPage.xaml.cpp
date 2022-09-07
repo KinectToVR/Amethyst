@@ -86,7 +86,6 @@ namespace winrt::Amethyst::implementation
 		forceRenderCheckBox = std::make_shared<Controls::CheckBox>(ForceRenderCheckBox());
 
 		calibrationButton = std::make_shared<Controls::Button>(CalibrationButton());
-		offsetsButton = std::make_shared<Controls::Button>(OffsetsButton());
 		reRegisterButton = std::make_shared<Controls::Button>(ReRegisterButton());
 		serverOpenDiscordButton = std::make_shared<Controls::Button>(ServerOpenDiscordButton());
 
@@ -112,8 +111,10 @@ namespace winrt::Amethyst::implementation
 		serverErrorWhatGrid = std::make_shared<Controls::Grid>(ServerErrorWhatGrid());
 		serverErrorButtonsGrid = std::make_shared<Controls::Grid>(ServerErrorButtonsGrid());
 
-		toggleFreezeButton = std::make_shared<Controls::ToggleSplitButton>(ToggleTrackingButton());
-		freezeOnlyLowerCheckBox = std::make_shared<Controls::CheckBox>(FreezeOnlyLowerCheckBox());
+		toggleFreezeButton = std::make_shared<Controls::Primitives::ToggleButton>(ToggleTrackingButton());
+
+		offsetsButton = std::make_shared<Controls::MenuFlyoutItem>(OffsetsButton());
+		freezeOnlyLowerToggle = std::make_shared<Controls::ToggleMenuFlyoutItem>(FreezeOnlyLowerToggle());
 
 		k2app::shared::teaching_tips::general::toggleTrackersTeachingTip =
 			std::make_shared<Controls::TeachingTip>(ToggleTrackersTeachingTip());
@@ -904,7 +905,6 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Checked(
 
 	// Show additional controls
 	CalibrationButton().IsEnabled(true);
-	OffsetsButton().IsEnabled(true);
 }
 
 
@@ -927,7 +927,6 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Unchecked(
 
 	// Hide additional controls
 	CalibrationButton().IsEnabled(false);
-	OffsetsButton().IsEnabled(false);
 }
 
 
@@ -1182,8 +1181,8 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	Captions_CalibrateOverrides().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/CalibrateOverrides"));
 
-	OffsetsButton().Content(box_value(
-		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Offsets")));
+	OffsetsButton().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Offsets"));
 
 	ToggleTrackersButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/TrackersToggle/Connect")));
@@ -1260,7 +1259,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	ToggleTrackingButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Skeleton/Freeze")));
 
-	FreezeOnlyLowerCheckBoxLabel().Text(
+	FreezeOnlyLowerToggle().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/FreezeLowerOnly"));
 
 	DismissSetErrorButton().Content(box_value(
@@ -1313,7 +1312,6 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 			// Mark as spawned
 			toggleTrackersButton->IsChecked(true);
 			CalibrationButton().IsEnabled(true);
-			OffsetsButton().IsEnabled(true);
 		}
 
 		// Cry about it
@@ -1391,7 +1389,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 					                                    L"Buttons/TrackersToggle/Reconnect")));
 	}
 
-	freezeOnlyLowerCheckBox->IsChecked(k2app::K2Settings.freezeLowerOnly);
+	freezeOnlyLowerToggle->IsChecked(k2app::K2Settings.freezeLowerOnly);
 }
 
 
@@ -2065,8 +2063,7 @@ void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 
 
 void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
-	const Controls::SplitButton& sender,
-	const Controls::SplitButtonClickEventArgs& args)
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	k2app::interfacing::isTrackingFrozen = !k2app::interfacing::isTrackingFrozen;
 
@@ -2143,30 +2140,6 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 		k2app::K2Settings.teachingTipShown_Freeze = true;
 		k2app::K2Settings.saveSettings();
 	}
-}
-
-
-void Amethyst::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Checked(
-	const Windows::Foundation::IInspectable& sender,
-	const RoutedEventArgs& e)
-{
-	k2app::K2Settings.freezeLowerOnly = true;
-	k2app::K2Settings.saveSettings();
-
-	// Play a sound
-	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOn);
-}
-
-
-void Amethyst::implementation::GeneralPage::FreezeOnlyLowerCheckBox_Unchecked(
-	const Windows::Foundation::IInspectable& sender,
-	const RoutedEventArgs& e)
-{
-	k2app::K2Settings.freezeLowerOnly = false;
-	k2app::K2Settings.saveSettings();
-
-	// Play a sound
-	playAppSound(k2app::interfacing::sounds::AppSounds::ToggleOff);
 }
 
 
@@ -2341,4 +2314,17 @@ void Amethyst::implementation::GeneralPage::StatusTeachingTip_ActionButtonClick(
 	CalibrationTeachingTip().TailVisibility(
 		Controls::TeachingTipTailVisibility::Collapsed);
 	CalibrationTeachingTip().IsOpen(true);
+}
+
+
+void Amethyst::implementation::GeneralPage::FreezeOnlyLowerToggle_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+{
+	k2app::K2Settings.freezeLowerOnly = FreezeOnlyLowerToggle().IsChecked();
+	k2app::K2Settings.saveSettings();
+
+	// Play a sound
+	playAppSound(FreezeOnlyLowerToggle().IsChecked()
+		             ? k2app::interfacing::sounds::AppSounds::ToggleOn
+		             : k2app::interfacing::sounds::AppSounds::ToggleOff);
 }

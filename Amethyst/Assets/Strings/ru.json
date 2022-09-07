@@ -1,7 +1,7 @@
 {
     "/GeneralPage/Buttons/Abort": "Прервать",
     "/GeneralPage/Buttons/Calibration/Base": "Основное",
-    "/GeneralPage/Buttons/Calibration/Begin": "Начать калибровку",
+    "/GeneralPage/Buttons/Calibration/Begin": "Калибровка",
     "/GeneralPage/Buttons/Calibration/Override": "Переназначения",
     "/GeneralPage/Buttons/Cancel": "Отмена",
     "/GeneralPage/Buttons/Discard": "Отклонить",
@@ -51,7 +51,7 @@
     "/GeneralPage/Captions/Device/Status": "Статус:",
     "/GeneralPage/Captions/DriverStatus": "Успешно! (Код 1)",
     "/GeneralPage/Captions/DriverStatus/Label": "Драйвер SteamVR:",
-    "/GeneralPage/Captions/FreezeLowerOnly": "Только нижняя часть тела",
+    "/GeneralPage/Captions/FreezeLowerOnly": "Заморозка только нижней части тела",
     "/GeneralPage/Captions/Offsets/Orientation/X": "Тангаж (X):",
     "/GeneralPage/Captions/Offsets/Orientation/Y": "Рыскание (Y):",
     "/GeneralPage/Captions/Offsets/Orientation/Z": "Крен (Z):",
