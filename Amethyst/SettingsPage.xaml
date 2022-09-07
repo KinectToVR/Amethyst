@@ -59,7 +59,7 @@
                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                       BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
 
-                      CornerRadius="3" Padding="15,15" Visibility="Collapsed"
+                      CornerRadius="4" Padding="15,15" Visibility="Collapsed"
                       HorizontalAlignment="Stretch" Height="130" Margin="0,20,0,0" x:Name="ForeignLangGrid">
                     <TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords" Margin="0,-3,0,0"
                                HorizontalAlignment="Stretch" VerticalAlignment="Top">
@@ -625,7 +625,7 @@
                                 <Button FontSize="15" x:Name="DismissSetErrorButton"
                                         Click="DismissSetErrorButton_Click"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
+                                        Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
                             </Grid>

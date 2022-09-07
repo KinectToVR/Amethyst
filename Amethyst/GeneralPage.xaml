@@ -29,10 +29,10 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="7" />
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="3"
+                        <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="4"
                                 FontSize="14" HorizontalAlignment="Stretch" Padding="15,0"
                                 Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0" />
-                        <Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="3"
+                        <Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="4"
                                 FontSize="14" Height="50" Grid.Column="2" Style="{ThemeResource AccentButtonStyle}"
                                 FontWeight="Medium" Padding="15,0"
                                 Margin="5,15,5,0" HorizontalAlignment="Stretch" />
@@ -152,7 +152,7 @@
                                 </StackPanel>
                             </Button>
                             <Button x:Name="CancelCalibrationButton" Grid.Row="2"
-                                    Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
                                     Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
@@ -194,7 +194,7 @@
                                     HorizontalAlignment="Stretch"
                                     Grid.Row="0"
 
-                                    CornerRadius="3"
+                                    CornerRadius="4"
                                     Background="Transparent">
                                 <Grid>
 
@@ -268,7 +268,7 @@
                             </Grid>
 
                             <Button x:Name="DiscardAutoCalibrationButton" Grid.Row="7"
-                                    Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
                                     Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
@@ -303,7 +303,7 @@
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Bottom" Grid.Row="0"
 
-                                    CornerRadius="3"
+                                    CornerRadius="4"
                                     Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
 
                                 <Grid Margin="10,0" VerticalAlignment="Stretch"
@@ -334,7 +334,7 @@
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Bottom" Grid.Row="1"
 
-                                    CornerRadius="3"
+                                    CornerRadius="4"
                                     Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
 
                                 <Grid Margin="10,0" VerticalAlignment="Stretch"
@@ -365,7 +365,7 @@
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Bottom" Grid.Row="2"
 
-                                    CornerRadius="3"
+                                    CornerRadius="4"
                                     Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
 
                                 <Grid Margin="10,0" VerticalAlignment="Stretch"
@@ -407,7 +407,7 @@
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Bottom" Grid.Row="3"
 
-                                    CornerRadius="3"
+                                    CornerRadius="4"
                                     Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
 
                                 <Grid Margin="10,0" VerticalAlignment="Stretch"
@@ -450,7 +450,7 @@
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Bottom" Grid.Row="4"
 
-                                    CornerRadius="3"
+                                    CornerRadius="4"
                                     Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
 
                                 <Grid Margin="10,0" VerticalAlignment="Stretch"
@@ -498,7 +498,7 @@
                             </Grid>
 
                             <Button x:Name="DiscardCalibrationButton" Grid.Row="8"
-                                    Click="DiscardCalibrationButton_Click" CornerRadius="3" FontSize="14"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
                                     Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
@@ -559,7 +559,7 @@
 
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
                                 IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                Margin="40,10,10,10" CornerRadius="3" Grid.Column="0" HorizontalAlignment="Stretch"
+                                Margin="40,10,10,10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
 
                             <FlyoutBase.AttachedFlyout>
@@ -592,14 +592,14 @@
                                             <Button FontSize="15" x:Name="BaseCalibration"
                                                     Click="BaseCalibration_Click"
                                                     VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                    Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
+                                                    Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch"
                                                     Style="{ThemeResource AccentButtonStyle}" />
                                             <Button FontSize="15" x:Name="OverrideCalibration"
                                                     Click="OverrideCalibration_Click"
                                                     VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                    Margin="0,10,5,0" CornerRadius="3" Grid.Column="0"
+                                                    Margin="0,10,5,0" CornerRadius="4" Grid.Column="0"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch" />
 
@@ -618,14 +618,14 @@
                         </Button>
                         <Button FontSize="15" x:Name="OffsetsButton" Click="OffsetsButton_Click"
                                 VerticalContentAlignment="Center" FontWeight="SemiBold" IsEnabled="False"
-                                Margin="10,10,40,10" CornerRadius="3" Grid.Column="1" HorizontalAlignment="Stretch"
+                                Margin="10,10,40,10" CornerRadius="4" Grid.Column="1" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" />
 
                     </Grid>
 
                     <ToggleButton FontSize="15" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked"
                                   Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center"
-                                  FontWeight="SemiBold" Margin="40,10" CornerRadius="3"
+                                  FontWeight="SemiBold" Margin="40,10" CornerRadius="4"
                                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0">
 
                         <ToggleButton.Resources>
@@ -693,7 +693,8 @@
                                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                   BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
 
-                                  Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3" x:Name="ErrorWhatGrid">
+                                  Padding="0,0,5,10"
+                                  Width="440" Height="Auto" Margin="0,5,0,0" CornerRadius="4" x:Name="ErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
                                            Text="[DUM_STATUS_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
@@ -717,12 +718,12 @@
 
                                 <Button FontSize="15" x:Name="OpenDiscordButton" Click="OpenDiscordButton_Click"
                                         Height="65" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
+                                        Margin="40,10,10,10" CornerRadius="4" Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
                                 <Button FontSize="15" x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
                                         Height="65" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
+                                        Margin="10,10,40,10" CornerRadius="4" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
                             </Grid>
@@ -755,7 +756,8 @@
                                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                   BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
 
-                                  Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3"
+                                  Padding="0,0,5,10"
+                                  Width="440" Height="Auto" Margin="0,5,0,0" CornerRadius="4"
                                   x:Name="OverrideErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
@@ -783,14 +785,14 @@
                                         Click="OpenDiscordButton_Click" Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Content="{Binding ElementName=OpenDiscordButton, Path=Content}"
-                                        Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
+                                        Margin="40,10,10,10" CornerRadius="4" Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
                                 <Button FontSize="15" x:Name="OverrideOpenDocsButton"
                                         Click="OpenDocsButton_Click" Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Content="{Binding ElementName=OpenDocsButton, Path=Content}"
-                                        Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
+                                        Margin="10,10,40,10" CornerRadius="4" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
 
@@ -818,7 +820,8 @@
                                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                   BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
 
-                                  Width="440" Height="85" Margin="0,5,0,0" CornerRadius="3"
+                                  Padding="0,0,5,10"
+                                  Width="440" Height="Auto" Margin="0,5,0,0" CornerRadius="4"
                                   x:Name="ServerErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
@@ -846,14 +849,14 @@
                                         Height="65"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Content="{Binding ElementName=OpenDiscordButton, Path=Content}"
-                                        Margin="40,10,10,10" CornerRadius="3" Grid.Column="0"
+                                        Margin="40,10,10,10" CornerRadius="4" Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
                                 <Button FontSize="15" x:Name="ServerOpenDocsButton" Click="ServerOpenDocsButton_Click"
                                         Height="{Binding ElementName=ServerOpenDiscordButton, Path=Height}"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Content="{Binding ElementName=OpenDocsButton, Path=Content}"
-                                        Margin="10,10,40,10" CornerRadius="3" Grid.Column="1"
+                                        Margin="10,10,40,10" CornerRadius="4" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
                             </Grid>
@@ -1021,7 +1024,7 @@
                 <Grid Grid.Row="1" Grid.Column="0">
                     <ToggleSplitButton x:Name="SkeletonToggleButton" Click="SkeletonToggleButton_Click"
                                        IsChecked="True" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                       IsTabStop="False" Margin="20,0,0,0" CornerRadius="3" Padding="12,0"
+                                       IsTabStop="False" Margin="20,0,0,0" CornerRadius="4" Padding="12,0"
                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                         <ToggleSplitButton.Flyout>
@@ -1140,7 +1143,7 @@
                                 <Button FontSize="15" x:Name="DismissSetErrorButton"
                                         Click="DismissSetErrorButton_Click"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
+                                        Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
 

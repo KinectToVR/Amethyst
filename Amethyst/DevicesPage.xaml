@@ -26,11 +26,11 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock FontWeight="SemiBold" x:Name="DevicesListTipDummyContextDummy" 
+                <TextBlock FontWeight="SemiBold" x:Name="DevicesListTipDummyContextDummy"
                            Text="Devices" Opacity="0.0"
-                           FontSize="25" Margin="0,20,0,0" Grid.Row="0"/>
+                           FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
 
-                <TextBlock FontWeight="SemiBold" x:Name="Titles_Devices" 
+                <TextBlock FontWeight="SemiBold" x:Name="Titles_Devices"
                            FontSize="25" Margin="40,20,0,0" Grid.Row="0">
                     <TextBlock.Resources>
                         <TeachingTip x:Name="DevicesListTeachingTip"
@@ -174,7 +174,7 @@
                                                x:Name="TrackingDeviceStatusLabel" />
 
                                     <SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                 Margin="0,0,3,0" CornerRadius="3" Height="35" Width="160"
+                                                 Margin="0,0,3,0" CornerRadius="4" Height="35" Width="160"
                                                  HorizontalAlignment="Right" VerticalAlignment="Top"
                                                  x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click">
 
@@ -204,10 +204,10 @@
                                                 </Flyout.FlyoutPresenterStyle>
 
                                                 <StackPanel Orientation="Vertical">
-                                                    <Button CornerRadius="3" Height="35" HorizontalAlignment="Stretch"
+                                                    <Button CornerRadius="4" Height="35" HorizontalAlignment="Stretch"
                                                             x:Name="DisconnectDeviceButton" FontWeight="SemiBold"
                                                             Click="DisconnectDeviceButton_Click" />
-                                                    <Button FontWeight="SemiBold" CornerRadius="3" Height="35"
+                                                    <Button FontWeight="SemiBold" CornerRadius="4" Height="35"
                                                             Margin="0,15,0,0" HorizontalAlignment="Stretch"
                                                             x:Name="DeselectDeviceButton"
                                                             Click="DeselectDeviceButton_Click" />
@@ -229,44 +229,51 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
-                                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                      BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+                                <Grid HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="38" MinWidth="0" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                      Width="290" HorizontalAlignment="Left" Grid.Column="0"
-                                      Height="115" Margin="0,0,0,0" CornerRadius="3">
+                                    <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                          BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
 
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                               Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
-                                               x:Name="TrackingDeviceErrorLabel"
-                                               Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+                                          Padding="0,0,5,10" Width="Auto" Grid.Column="0"
+                                          MinHeight="115" Height="Auto" CornerRadius="4">
 
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                               x:Name="ErrorWhatText"
-                                               Margin="10,30,5,0" Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                               TextWrapping="WrapWholeWords">
-                                        <TextBlock.Text>
-                                            There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
-                                        </TextBlock.Text>
-                                    </TextBlock>
+                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                   FontWeight="SemiBold"
+                                                   Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
+                                                   x:Name="TrackingDeviceErrorLabel"
+                                                   Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+
+                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                   FontWeight="SemiBold" 
+                                                   x:Name="ErrorWhatText" Margin="10,30,5,0"
+                                                   Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                   TextWrapping="WrapWholeWords">
+                                            <TextBlock.Text>
+                                                There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Grid>
+
+                                    <StackPanel Grid.Column="2" Orientation="Vertical">
+                                        <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                                Margin="0,0,3,5" CornerRadius="4"
+                                                x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
+                                                Height="55" Width="160" Style="{ThemeResource AccentButtonStyle}"
+                                                HorizontalAlignment="Right" VerticalAlignment="Top" />
+
+                                        <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                                Margin="0,0,3,0" CornerRadius="4"
+                                                Height="55" Width="160" x:Name="OpenDiscordButton"
+                                                Click="OpenDiscordButton_Click"
+                                                HorizontalAlignment="Right" VerticalAlignment="Top" />
+                                    </StackPanel>
                                 </Grid>
-
-                                <StackPanel Grid.Column="0" Margin="0,0,0,0" Orientation="Vertical">
-
-                                    <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                            Margin="0,0,3,5" CornerRadius="3"
-                                            x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
-                                            Height="55" Width="160" Style="{ThemeResource AccentButtonStyle}"
-                                            HorizontalAlignment="Right" VerticalAlignment="Top" />
-
-                                    <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                            Margin="0,0,3,0" CornerRadius="3"
-                                            Height="55" Width="160" x:Name="OpenDiscordButton"
-                                            Click="OpenDiscordButton_Click"
-                                            HorizontalAlignment="Right" VerticalAlignment="Top" />
-
-                                </StackPanel>
-
                             </Grid>
 
                             <!--Changer Part-->
@@ -284,7 +291,7 @@
                                                Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                            Margin="0,0,3,0" CornerRadius="3"
+                                            Margin="0,0,3,0" CornerRadius="4"
                                             Height="35" Width="160" x:Name="SetThisDeviceAsButton"
                                             HorizontalAlignment="Right" VerticalAlignment="Top">
 
@@ -303,11 +310,11 @@
                                                     <Button FontWeight="SemiBold"
                                                             Style="{ThemeResource AccentButtonStyle}"
                                                             HorizontalAlignment="Stretch"
-                                                            CornerRadius="3" Height="35" Margin="0,0,0,15"
+                                                            CornerRadius="4" Height="35" Margin="0,0,0,15"
                                                             x:Name="SetAsBaseButton" Click="SetAsBaseButton_Click" />
                                                     <Button FontWeight="SemiBold"
                                                             HorizontalAlignment="Stretch"
-                                                            CornerRadius="3" Height="35"
+                                                            CornerRadius="4" Height="35"
                                                             x:Name="SetAsOverrideButton"
                                                             Click="SetAsOverrideButton_Click" />
                                                 </StackPanel>
@@ -345,7 +352,7 @@
                                                     <Button FontSize="15" x:Name="DismissOverrideTipNoJointsButton"
                                                             Click="DismissOverrideTipNoJointsButton_Click"
                                                             VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                            Margin="5,10,0,0" CornerRadius="3" Grid.Column="1"
+                                                            Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
                                                             HorizontalAlignment="Stretch"
                                                             VerticalAlignment="Stretch" />
 
