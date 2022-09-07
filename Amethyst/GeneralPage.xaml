@@ -653,7 +653,7 @@
                                     x:Name="DeviceContextContainerPanel" Margin="0,0,5,0">
                             <StackPanel.Resources>
                                 <TeachingTip x:Name="StatusTeachingTip"
-                                             Target="{Binding ElementName=DeviceContextContainerPanel}"
+                                             Target="{Binding ElementName=DeviceTitleContainer}"
                                              Title="/STATUS"
                                              Subtitle="/TEXT"
                                              PreferredPlacement="Top"
@@ -665,8 +665,10 @@
                                              CloseButtonClick="StatusTeachingTip_Closed" />
                             </StackPanel.Resources>
 
-                            <TextBlock FontWeight="SemiBold" x:Name="Titles_Device" FontSize="25"
-                                       Margin="40,20,0,10" Grid.Row="3" />
+                            <Grid x:Name="DeviceTitleContainer" HorizontalAlignment="Stretch">
+                                <TextBlock FontWeight="SemiBold" x:Name="Titles_Device" FontSize="25"
+                                       Margin="40,20,0,10" HorizontalAlignment="Left" />
+                            </Grid>
 
                             <!--Base Status-->
 
