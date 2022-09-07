@@ -4,8 +4,6 @@
 #include "LowPassFilter.h"
 #include "KalmanFilter.h"
 
-#include <codecvt>
-
 #include <cereal/access.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/types/tuple.hpp>
@@ -20,15 +18,13 @@ namespace cereal
 	template <class A>
 	std::string CEREAL_SAVE_MINIMAL_FUNCTION_NAME(const A&, const std::wstring& in)
 	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> _conv;
-		return _conv.to_bytes(in);
+		return WStringToString(in);
 	}
 
 	template <class A>
 	void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(const A&, std::wstring& out, const std::string& in)
 	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> _conv;
-		out = _conv.from_bytes(in);
+		out = StringToWString(in);
 	}
 
 	template <class Archive, typename _Scalar>

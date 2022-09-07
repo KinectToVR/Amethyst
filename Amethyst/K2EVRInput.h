@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "Amethyst_API_Devices.h"
 
 namespace k2app::interfacing
 {
@@ -72,10 +73,11 @@ namespace k2app::K2EVRInput
 				LOG(ERROR) << "Action manifest was not found in the program (exe) directory.";
 				return false;
 			}
-
+			
 			// Set the action manifest. This should be in the executable directory.
 			// Defined by m_actionManifestPath.
-			vr::EVRInputError error = vr::VRInput()->SetActionManifestPath(absoluteManifestPath.string().c_str());
+			vr::EVRInputError error = vr::VRInput()->SetActionManifestPath(
+				WStringToString(absoluteManifestPath.wstring()).c_str());
 			if (error != vr::EVRInputError::VRInputError_None)
 			{
 				LOG(ERROR) << "Action manifest error: " << EVRInputErrorString[error];

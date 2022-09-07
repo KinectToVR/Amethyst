@@ -303,7 +303,7 @@ namespace k2app::interfacing
 			if (!exists(resource_path))
 			{
 				LOG(ERROR) << "Could not load language enumeration resources at \"" <<
-					resource_path.string() << "\", app interface will be broken!";
+					WStringToString(resource_path.wstring()) << "\", app interface will be broken!";
 				return language_key; // Give up on trying
 			}
 
@@ -373,7 +373,7 @@ namespace k2app::interfacing
 			if (!exists(resource_path))
 			{
 				LOG(WARNING) << "Could not load language resources at \"" <<
-					resource_path.string() << "\", falling back to 'en' (en.json)!";
+					WStringToString(resource_path.wstring()) << "\", falling back to 'en' (en.json)!";
 
 				resource_path = GetProgramLocation().parent_path() /
 					"Assets" / "Strings" / "en.json";
@@ -383,7 +383,7 @@ namespace k2app::interfacing
 			if (!exists(resource_path))
 			{
 				LOG(ERROR) << "Could not load language resources at \"" <<
-					resource_path.string() << "\", the app interface will be broken!";
+					WStringToString(resource_path.wstring()) << "\", the app interface will be broken!";
 				return; // Just give up
 			}
 
@@ -434,7 +434,7 @@ namespace k2app::interfacing
 			if (!exists(resource_path))
 			{
 				LOG(ERROR) << "Could not load language resources at \"" <<
-					resource_path.string() << "\", falling back to the current one! " <<
+					WStringToString(resource_path.wstring()) << "\", falling back to the current one! " <<
 					"WARNING: The app interface will be broken if not existent!";
 
 				// Override the current english resource tree

@@ -17,14 +17,24 @@
  *
  */
 
-inline std::wstring StringToWString(const std::string& s)
+// https://stackoverflow.com/a/59617138
+
+// String to Wide String (The better one)
+inline std::wstring StringToWString(const std::string& str)
 {
-	return std::wstring(s.begin(), s.end());
+	const int count = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), nullptr, 0);
+	std::wstring w_str(count, 0);
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), &w_str[0], count);
+	return w_str;
 }
 
-inline std::string WStringToString(const std::wstring& s)
+// Wide String to UTF8 String (The cursed one)
+inline std::string WStringToString(const std::wstring& w_str)
 {
-	return std::string(s.begin(), s.end());
+	const int count = WideCharToMultiByte(CP_UTF8, 0, w_str.c_str(), w_str.length(), nullptr, 0, nullptr, nullptr);
+	std::string str(count, 0);
+	WideCharToMultiByte(CP_UTF8, 0, w_str.c_str(), -1, &str[0], count, nullptr, nullptr);
+	return str;
 }
 
 namespace ktvr

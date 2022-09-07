@@ -444,7 +444,7 @@ namespace k2app::interfacing
 	inline void handle_app_exit_n(void) { handle_app_exit(); } // Wrapper
 
 	// This sessions' log file dir
-	inline std::string thisLogDestination;
+	inline std::wstring thisLogDestination;
 
 	// Input actions' handler
 	inline K2EVRInput::SteamEVRInput evr_input;
@@ -666,9 +666,8 @@ namespace k2app::interfacing
 		}
 		if (exists(GetProgramLocation().parent_path() / "Amethyst.vrmanifest"))
 		{
-			const auto app_error =
-				vr::VRApplications()->AddApplicationManifest(
-					(GetProgramLocation().parent_path() / "Amethyst.vrmanifest").string().c_str());
+			const auto app_error = vr::VRApplications()->AddApplicationManifest(
+					WStringToString((GetProgramLocation().parent_path() / "Amethyst.vrmanifest").wstring()).c_str());
 
 			if (app_error != vr::VRApplicationError_None)
 			{
@@ -691,7 +690,7 @@ namespace k2app::interfacing
 		if (vr::VRApplications()->IsApplicationInstalled("KinectToVR.Amethyst"))
 		{
 			vr::VRApplications()->RemoveApplicationManifest(
-				(GetProgramLocation().parent_path() / "Amethyst.vrmanifest").string().c_str());
+				WStringToString((GetProgramLocation().parent_path() / "Amethyst.vrmanifest").wstring()).c_str());
 
 			LOG(INFO) << "Attempted to remove Amethyst manifest at: " <<
 				GetProgramLocation().parent_path() / "Amethyst.vrmanifest";
@@ -1167,12 +1166,12 @@ namespace k2app::interfacing
 		}
 	}
 
-	inline void openFolderAndSelectItem(const std::string& path)
+	inline void openFolderAndSelectItem(const std::wstring& path)
 	{
 		PIDLIST_ABSOLUTE pidl = nullptr;
 
 		if (std::filesystem::exists(path) &&
-			SHParseDisplayName(StringToWString(path).c_str(), nullptr,
+			SHParseDisplayName(path.c_str(), nullptr,
 			                   &pidl, 0, nullptr) == S_OK)
 		{
 			SHOpenFolderAndSelectItems(pidl, 0, nullptr, 0);

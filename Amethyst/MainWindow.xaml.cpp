@@ -162,8 +162,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::executeU
 
 	// Execute the update
 	ShellExecuteA(nullptr, nullptr,
-		"https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
-		nullptr, nullptr, SW_SHOW);
+	              "https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
+	              nullptr, nullptr, SW_SHOW);
 
 	co_return;
 }
@@ -253,7 +253,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				}
 
 				LOG(INFO) << "Checking available languages... [GET]";
-				
+
 				// Language
 				try
 				{
@@ -374,7 +374,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				{
 					// Parse the loaded json
 					const auto json_root = Windows::Data::Json::JsonObject::Parse(get_docs_languages);
-					
+
 					// Check if the resource root is fine & the language code exists
 					k2app::interfacing::docsLanguageCode = k2app::K2Settings.appLanguage;
 
@@ -797,10 +797,10 @@ namespace winrt::Amethyst::implementation
 			{
 				std::thread([]
 				{
-					ShellExecuteA(nullptr, "open",
-					              (k2app::interfacing::GetProgramLocation().parent_path() / "K2CrashHandler" /
-						              "K2CrashHandler.exe ")
-					              .string().c_str(), "already_running", nullptr, SW_SHOWDEFAULT);
+					ShellExecute(nullptr, L"open",
+					             (k2app::interfacing::GetProgramLocation().parent_path() /
+						             L"K2CrashHandler" / L"K2CrashHandler.exe ")
+					             .wstring().c_str(), L"already_running", nullptr, SW_SHOWDEFAULT);
 				}).detach();
 			}
 			else
@@ -876,14 +876,14 @@ namespace winrt::Amethyst::implementation
 		{
 			std::thread([]
 			{
-				ShellExecuteA(nullptr, "open",
-				              (k2app::interfacing::GetProgramLocation().parent_path() / "K2CrashHandler" /
-					              "K2CrashHandler.exe ")
-				              .string().c_str(),
-				              (std::to_string(GetCurrentProcessId()) +
-					              " \"" + k2app::interfacing::thisLogDestination + "\"").c_str(),
-				              nullptr,
-				              SW_SHOWDEFAULT);
+				ShellExecute(nullptr, L"open",
+				             (k2app::interfacing::GetProgramLocation().parent_path() /
+					             L"K2CrashHandler" / L"K2CrashHandler.exe ")
+				             .wstring().c_str(),
+				             (std::to_wstring(GetCurrentProcessId()) +
+					             L" \"" + k2app::interfacing::thisLogDestination + L"\"").c_str(),
+				             nullptr,
+				             SW_SHOWDEFAULT);
 			}).detach();
 		}
 		else
@@ -918,7 +918,7 @@ namespace winrt::Amethyst::implementation
 		std::thread([&]
 			{
 				LOG(INFO) << "Searching for tracking devices...";
-				LOG(INFO) << "Current path is: " << k2app::interfacing::GetProgramLocation().parent_path().string();
+				LOG(INFO) << "Current path is: " << WStringToString(k2app::interfacing::GetProgramLocation().parent_path().wstring());
 
 				if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "devices"))
 				{
@@ -938,7 +938,7 @@ namespace winrt::Amethyst::implementation
 
 							if (!json_root.HasKey(L"device_name") || !json_root.HasKey(L"device_type"))
 							{
-								LOG(ERROR) << entry.path().stem().string() << "'s manifest was invalid!";
+								LOG(ERROR) << WStringToString(entry.path().stem().wstring()) << "'s manifest was invalid!";
 								continue;
 							}
 
@@ -1367,7 +1367,7 @@ namespace winrt::Amethyst::implementation
 						}
 						else
 						{
-							LOG(ERROR) << entry.path().stem().string() << "'s manifest was not found :/";
+							LOG(ERROR) << WStringToString(entry.path().stem().wstring()) << "'s manifest was not found :/";
 						}
 					}
 

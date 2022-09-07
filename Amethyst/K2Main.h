@@ -49,7 +49,7 @@ namespace k2app::main
 			});
 
 			{
-				auto _header = LocalizedJSONString_EN(
+				auto _header = LocalizedJSONString(
 					L"/GeneralPage/Tips/TrackingFreeze/Header");
 
 				// Change the tip depending on the currently connected controllers
@@ -136,7 +136,7 @@ namespace k2app::main
 			});
 
 			{
-				auto _header = LocalizedJSONString_EN(
+				auto _header = LocalizedJSONString(
 					L"/SettingsPage/Tips/FlipToggle/Header");
 
 				// Change the tip depending on the currently connected controllers
@@ -510,9 +510,9 @@ namespace k2app::main
 									true, L"focus_trackers"); // This one's gonna be a high-priority one
 
 								interfacing::ShowVRToast(
-									interfacing::LocalizedJSONString_EN(
+									interfacing::LocalizedJSONString(
 										L"/SharedStrings/Toasts/TrackersAutoDisabled/Title"),
-									interfacing::LocalizedJSONString_EN(
+									interfacing::LocalizedJSONString(
 										L"/SharedStrings/Toasts/TrackersAutoDisabled"));
 							}
 						});

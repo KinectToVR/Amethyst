@@ -413,8 +413,8 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 		k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed"));
 
 	k2app::interfacing::ShowVRToast(
-		k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed/Title"),
-		k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/RestartFailed"));
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Toasts/RestartFailed/Title"),
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Toasts/RestartFailed"));
 }
 
 
@@ -1026,10 +1026,10 @@ void Amethyst::implementation::SettingsPage::ReRegisterButton_Click(
 	{
 		std::thread([]
 		{
-			ShellExecuteA(nullptr, "open",
-			              (k2app::interfacing::GetProgramLocation().parent_path() / "K2CrashHandler" /
-				              "K2CrashHandler.exe ")
-			              .string().c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
+			ShellExecute(nullptr, L"open",
+			              (k2app::interfacing::GetProgramLocation().parent_path() / 
+							  L"K2CrashHandler" / L"K2CrashHandler.exe ")
+			              .wstring().c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 		}).detach();
 	}
 	else

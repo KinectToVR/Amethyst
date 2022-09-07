@@ -168,13 +168,13 @@ namespace K2CrashHandler
                                 Close();
                             }
                                 break;
-                            case -1073741189:
-                            {
-                                // owoTrack broke our dispatcher,
-                                // just don't give a shit
-                                Close();
-                            }
-                                break;
+                            //case -1073741189:
+                            //{
+                            //    // owoTrack broke our dispatcher,
+                            //    // just don't give a shit
+                            //    Close();
+                            //}
+                            //    break;
                             case -532265403:
                             {
                                 // MS no package identity something,

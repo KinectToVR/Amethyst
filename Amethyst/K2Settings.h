@@ -105,7 +105,7 @@ namespace k2app
 			try
 			{
 				if (std::ofstream output(
-						ktvr::GetK2AppDataFileDir("Amethyst_settings.xml"));
+						ktvr::GetK2AppDataFileDir(L"Amethyst_settings.xml"));
 					output.fail())
 				{
 					LOG(ERROR) << "Settings archive serialization error: Couldn't save settings!\n";
@@ -161,7 +161,7 @@ namespace k2app
 			try
 			{
 				if (std::ifstream input(
-						ktvr::GetK2AppDataFileDir("Amethyst_settings.xml"));
+						ktvr::GetK2AppDataFileDir(L"Amethyst_settings.xml"));
 					input.fail())
 				{
 					LOG(WARNING) << "Settings archive serialization error: Couldn't read settings, re-generating!\n";
@@ -342,7 +342,7 @@ namespace k2app
 			if (!exists(resource_path))
 			{
 				LOG(WARNING) << "Could not load language resources at \"" <<
-					resource_path.string() << "\", falling back to 'en' (en.json)!";
+					WStringToString(resource_path.wstring()) << "\", falling back to 'en' (en.json)!";
 
 				appLanguage = L"en"; // Change to english
 
@@ -354,7 +354,7 @@ namespace k2app
 			if (!exists(resource_path))
 			{
 				LOG(ERROR) << "Could not load language resources at \"" <<
-					resource_path.string() << "\", the app interface will be broken!";
+					WStringToString(resource_path.wstring()) << "\", the app interface will be broken!";
 			}
 		}
 	} inline K2Settings;

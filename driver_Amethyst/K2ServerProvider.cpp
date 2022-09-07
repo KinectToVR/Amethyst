@@ -118,7 +118,7 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 		LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n " <<
 			"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n " <<
 			"Logging will be shut down, re-initialized, and forwarded to \"" <<
-			ktvr::GetK2AppDataLogFileDir("Amethyst_VRDriver_").c_str() << "*.log\"";
+			WStringToString(ktvr::GetK2AppDataLogFileDir(L"Amethyst_VRDriver_")) << "*.log\"";
 		google::ShutdownGoogleLogging();
 	}
 
@@ -128,16 +128,16 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 	FLAGS_timestamp_in_logfile_name = true;
 
 	// Set up the logging directory
-	const auto thisLogDestination = ktvr::GetK2AppDataLogFileDir("Amethyst_VRDriver_");
+	const auto thisLogDestination = ktvr::GetK2AppDataLogFileDir(L"Amethyst_VRDriver_");
 
 	// Init logging
-	google::InitGoogleLogging(thisLogDestination.c_str());
+	google::InitGoogleLogging(WStringToString(thisLogDestination).c_str());
 
 	// Delete logs older than 7 days
 	google::EnableLogCleaner(7);
 
 	// Log everything >=INFO to same file
-	google::SetLogDestination(google::GLOG_INFO, thisLogDestination.c_str());
+	google::SetLogDestination(google::GLOG_INFO, WStringToString(thisLogDestination).c_str());
 	google::SetLogFilenameExtension(".log");
 
 	LOG(INFO) << "~~~Amethyst OpenVR Driver new logging session begins here!~~~";
@@ -165,7 +165,7 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 		                          .parent_path() // Amethyst (root)
 			/ "K2CrashHandler" / "K2CrashHandler.exe";
 
-		LOG(INFO) << "Got crash handler assumed location: " << CHandlerPath.string();
+		LOG(INFO) << "Got crash handler assumed location: " << WStringToString(CHandlerPath.wstring());
 
 		if (exists(CHandlerPath))
 		{

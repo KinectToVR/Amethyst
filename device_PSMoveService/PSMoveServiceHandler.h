@@ -106,7 +106,7 @@ private:
 	void save_settings()
 	{
 		if (std::ofstream output(
-				ktvr::GetK2AppDataFileDir("Device_PSMS_settings.xml"));
+				ktvr::GetK2AppDataFileDir(L"Device_PSMS_settings.xml"));
 			output.fail())
 		{
 			LOG(ERROR) << "PSMS Device Error: Couldn't save settings!\n";
@@ -130,7 +130,7 @@ private:
 	void load_settings()
 	{
 		if (std::ifstream input(
-				ktvr::GetK2AppDataFileDir("Device_PSMS_settings.xml"));
+				ktvr::GetK2AppDataFileDir(L"Device_PSMS_settings.xml"));
 			input.fail())
 		{
 			LOG(WARNING) << "PSMS Device Error: Couldn't read settings, re-generating!\n";

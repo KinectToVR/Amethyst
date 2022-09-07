@@ -68,7 +68,7 @@ App::App()
 		LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n " <<
 			"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n " <<
 			"Logging will be shut down, re-initialized, and forwarded to \"" <<
-			ktvr::GetK2AppDataLogFileDir("Amethyst_").c_str() << "*.log\"";
+			WStringToString(ktvr::GetK2AppDataLogFileDir(L"Amethyst_")).c_str() << "*.log\"";
 		google::ShutdownGoogleLogging();
 	}
 
@@ -78,27 +78,31 @@ App::App()
 	FLAGS_timestamp_in_logfile_name = true;
 
 	// Set up the logging directory
-	k2app::interfacing::thisLogDestination = ktvr::GetK2AppDataLogFileDir("Amethyst_");
+	k2app::interfacing::thisLogDestination = ktvr::GetK2AppDataLogFileDir(L"Amethyst_");
 
 	// Init logging
-	google::InitGoogleLogging(k2app::interfacing::thisLogDestination.c_str());
+	google::InitGoogleLogging(WStringToString(
+		k2app::interfacing::thisLogDestination).c_str());
 
 	// Delete logs older than 7 days
 	google::EnableLogCleaner(7);
 
 	// Log everything >=INFO to same file
-	google::SetLogDestination(google::GLOG_INFO, k2app::interfacing::thisLogDestination.c_str());
+	google::SetLogDestination(google::GLOG_INFO,
+		WStringToString(k2app::interfacing::thisLogDestination).c_str());
+
 	google::SetLogFilenameExtension(".log");
 
 	// Log the current Amethyst version
 	LOG(INFO) << "Amethyst version: " << k2app::interfacing::K2InternalVersion;
 
-	if (const auto deducedLogName = getLastLogAdded(ktvr::GetK2AppDataLogFileDir("")).string();
+	LOG(INFO) << "Running at path: " << WStringToString(k2app::interfacing::GetProgramLocation().parent_path().wstring());
+
+	if (const auto deducedLogName = getLastLogAdded(ktvr::GetK2AppDataLogFileDir(L"")).wstring();
 		!deducedLogName.empty())
 	{
-		LOG(INFO) << "The last added Amethyst log appears to be at: "
-			"(Does not support special characters!) \"" <<
-			deducedLogName << "\"!";
+		LOG(INFO) << "The last added Amethyst log appears to be at: \"" <<
+			WStringToString(deducedLogName) << "\"!";
 
 		// Overwrite the logging directory
 		k2app::interfacing::thisLogDestination = deducedLogName;
@@ -126,7 +130,7 @@ App::App()
 			if (!exists(resource_path))
 			{
 				LOG(ERROR) << "Could not load language enumeration resources at \"" <<
-					resource_path.string() << "\", app interface will be broken!";
+					WStringToString(resource_path.wstring()) << "\", app interface will be broken!";
 				return; // Give up on trying
 			}
 

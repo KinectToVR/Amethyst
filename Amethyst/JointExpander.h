@@ -202,9 +202,9 @@ namespace TrackingDevices
 						false, L"focus_restart");
 
 					k2app::interfacing::ShowVRToast(
-						k2app::interfacing::LocalizedJSONString_EN(
+						k2app::interfacing::LocalizedJSONString(
 							L"/SharedStrings/Toasts/TrackersConfigChanged/Title"),
-						k2app::interfacing::LocalizedJSONString_EN(
+						k2app::interfacing::LocalizedJSONString(
 							L"/SharedStrings/Toasts/TrackersConfigChanged"));
 				}
 

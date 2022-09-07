@@ -882,8 +882,8 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersButton_Checked(
 				true); // High priority - it's probably a server failure
 
 			k2app::interfacing::ShowVRToast(
-				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed/Title"),
-				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed"));
+				k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+				k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Toasts/AutoSpawnFailed"));
 		}
 
 		// Update things
@@ -1327,8 +1327,8 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 				true); // High priority - it's probably a server failure
 
 			k2app::interfacing::ShowVRToast(
-				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed/Title"),
-				k2app::interfacing::LocalizedJSONString_EN(L"/SharedStrings/Toasts/AutoSpawnFailed"));
+				k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+				k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Toasts/AutoSpawnFailed"));
 		}
 	}
 
@@ -2212,10 +2212,10 @@ void Amethyst::implementation::GeneralPage::ReRegisterButton_Click(
 	{
 		std::thread([]
 		{
-			ShellExecuteA(nullptr, "open",
-			              (k2app::interfacing::GetProgramLocation().parent_path() /
-				              "K2CrashHandler" / "K2CrashHandler.exe ").string().c_str(),
-			              nullptr, nullptr, SW_SHOWDEFAULT);
+			ShellExecute(nullptr, L"open",
+			             (k2app::interfacing::GetProgramLocation().parent_path() /
+				             L"K2CrashHandler" / L"K2CrashHandler.exe ").wstring().c_str(),
+			             nullptr, nullptr, SW_SHOWDEFAULT);
 		}).detach();
 	}
 	else
