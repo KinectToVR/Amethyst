@@ -639,21 +639,45 @@ namespace winrt::Amethyst::implementation
 		// Set up
 		this->Title(L"Amethyst");
 
-		LOG(INFO) << "Extending the window titlebar...";
-		this->ExtendsContentIntoTitleBar(true);
-		this->SetTitleBar(DragElement());
-
-		// Set titlebar/taskview icon
-		LOG(INFO) << "Setting the App Window icon...";
+		LOG(INFO) << "Making the app window available for children views... (Window Handle)";
 		this->try_as<IWindowNative>()->get_WindowHandle(
 			&k2app::shared::main::thisAppWindowID);
 
-		Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
-			Microsoft::UI::GetWindowIdFromWindow(k2app::shared::main::thisAppWindowID)).SetIcon(
+		LOG(INFO) << "Making the app window available for children views... (XAML UI Window)";
+		k2app::shared::main::thisWindow = std::make_shared<Window>(this->try_as<Window>());
+
+		LOG(INFO) << "Making the app window available for children views... (Shared App Window)";
+		k2app::shared::main::thisAppWindow = std::make_shared<Microsoft::UI::Windowing::AppWindow>(
+			Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
+				Microsoft::UI::GetWindowIdFromWindow(k2app::shared::main::thisAppWindowID)));
+
+		// Set titlebar/taskview icon
+		LOG(INFO) << "Setting the App Window icon...";
+		k2app::shared::main::thisAppWindow->SetIcon(
 			(k2app::interfacing::GetProgramLocation().parent_path() / "Assets" / "ktvr.ico").c_str());
 
-		LOG(INFO) << "Making the app window available for children views...";
-		k2app::shared::main::thisAppWindow = std::make_shared<Window>(this->try_as<Window>());
+		LOG(INFO) << "Extending the window titlebar...";
+		if (Microsoft::UI::Windowing::AppWindowTitleBar::IsCustomizationSupported())
+		{
+			// Chad Windows 11
+
+			k2app::shared::main::thisAppWindow->TitleBar().ExtendsContentIntoTitleBar(true);
+			k2app::shared::main::thisAppWindow->TitleBar().SetDragRectangles(
+				std::array{Windows::Graphics::RectInt32{0, 0, 10000000, 40}});
+			
+			k2app::shared::main::thisAppWindow->TitleBar().ButtonBackgroundColor(
+				Windows::UI::Colors::Transparent());
+			k2app::shared::main::thisAppWindow->TitleBar().ButtonInactiveBackgroundColor(
+				Windows::UI::Colors::Transparent());
+			k2app::shared::main::thisAppWindow->TitleBar().ButtonHoverBackgroundColor(
+				k2app::shared::main::thisAppWindow->TitleBar().ButtonPressedBackgroundColor());
+		}
+		else
+		// Poor ass Windows 10
+		{
+			this->ExtendsContentIntoTitleBar(true);
+			this->SetTitleBar(DragElement());
+		}
 
 		LOG(INFO) << "Making the app dispatcher available for children...";
 		k2app::shared::main::thisDispatcherQueue =
@@ -838,6 +862,9 @@ namespace winrt::Amethyst::implementation
 
 				if (!k2app::interfacing::isExitHandled)
 				{
+					// Handle the exit actions
+					k2app::interfacing::handle_app_exit_n();
+
 					// Shut down the mica controller
 					if (nullptr != m_micaController)
 					{
@@ -851,9 +878,6 @@ namespace winrt::Amethyst::implementation
 						m_dispatcherQueueController.ShutdownQueueAsync();
 						m_dispatcherQueueController = nullptr;
 					}
-
-					// Handle the exit actions
-					k2app::interfacing::handle_app_exit_n();
 				}
 
 				// Cleanup event handler
@@ -1095,7 +1119,7 @@ namespace winrt::Amethyst::implementation
 																	pDevice->layoutRoot = dynamic_cast<
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
-																	
+
 																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
@@ -1112,7 +1136,7 @@ namespace winrt::Amethyst::implementation
 																	pDevice->layoutRoot = dynamic_cast<
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
-																	
+
 																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
@@ -1232,7 +1256,7 @@ namespace winrt::Amethyst::implementation
 																	pDevice->layoutRoot = dynamic_cast<
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
-																	
+
 																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
@@ -1249,7 +1273,7 @@ namespace winrt::Amethyst::implementation
 																	pDevice->layoutRoot = dynamic_cast<
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
-																	
+
 																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
@@ -1440,7 +1464,7 @@ namespace winrt::Amethyst::implementation
 								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
 
 								// Backup the name
-								k2app::K2Settings.trackingDeviceName = 
+								k2app::K2Settings.trackingDeviceName =
 									std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceName();
 							}
 							break;
@@ -1496,7 +1520,7 @@ namespace winrt::Amethyst::implementation
 								break;
 							}
 						}
-						else 
+						else
 						{
 							k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
 							k2app::K2Settings.overrideDeviceName = "";
@@ -1557,7 +1581,7 @@ namespace winrt::Amethyst::implementation
 									break;
 								}
 							}
-							else 
+							else
 							{
 								k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
 								k2app::K2Settings.overrideDeviceName = "";
@@ -1594,6 +1618,10 @@ void Amethyst::implementation::MainWindow::NavView_Loaded(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	k2app::interfacing::actualTheme = NavView().ActualTheme();
+
+	k2app::shared::main::thisAppWindow->TitleBar().ButtonForegroundColor(
+		k2app::interfacing::actualTheme == ElementTheme::Dark
+		? Windows::UI::Colors::White() : Windows::UI::Colors::Black());
 
 	k2app::shared::main::attentionBrush =
 		k2app::interfacing::actualTheme == ElementTheme::Dark
@@ -2420,6 +2448,17 @@ void Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 			         SendMessage(k2app::shared::main::thisAppWindowID, WM_ACTIVATE, WA_ACTIVE, 0);
 			         SendMessage(k2app::shared::main::thisAppWindowID, WM_ACTIVATE, WA_INACTIVE, 0);
 		         }
+
+	         	 // Overwrite titlebar colors
+				 k2app::shared::main::thisAppWindow->TitleBar().ButtonForegroundColor(
+					 k2app::interfacing::actualTheme == ElementTheme::Dark
+					 ? Windows::UI::Colors::White() : Windows::UI::Colors::Black());
+				 k2app::shared::main::thisAppWindow->TitleBar().ButtonBackgroundColor(
+					 Windows::UI::Colors::Transparent());
+				 k2app::shared::main::thisAppWindow->TitleBar().ButtonInactiveBackgroundColor(
+					 Windows::UI::Colors::Transparent());
+				 k2app::shared::main::thisAppWindow->TitleBar().ButtonHoverBackgroundColor(
+					 k2app::shared::main::thisAppWindow->TitleBar().ButtonPressedBackgroundColor());
 
 		         // Request page reloads
 		         k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();

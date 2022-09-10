@@ -1523,11 +1523,11 @@ std::pair<HWND, hresult> GetHWNDFromWindow(const Window& window)
 
 bool IsCurrentWindowActive()
 {
-	if (k2app::shared::main::thisAppWindow.get() == nullptr)
+	if (k2app::shared::main::thisWindow.get() == nullptr)
 		return true; // Give up k?
 
 	if (const auto [h_handle, h_result] =
-			GetHWNDFromWindow(*k2app::shared::main::thisAppWindow);
+			GetHWNDFromWindow(*k2app::shared::main::thisWindow);
 
 		h_result >= 0) // From winrt::check_hresult
 		return GetActiveWindow() == h_handle;

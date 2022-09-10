@@ -36,7 +36,9 @@ namespace k2app::shared
 			consoleItem,
 			helpButton;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Window> thisAppWindow;
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Window> thisWindow;
+		inline std::shared_ptr<winrt::Microsoft::UI::Windowing::AppWindow> thisAppWindow;
+
 		inline HWND thisAppWindowID{nullptr};
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Dispatching::DispatcherQueue> thisDispatcherQueue;
