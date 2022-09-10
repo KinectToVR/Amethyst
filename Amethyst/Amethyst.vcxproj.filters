@@ -252,9 +252,6 @@
     </Image>
     <Image Include="Assets\autocalibration.svg" />
     <Image Include="Assets\manualcalibration.svg" />
-    <Image Include="Assets\crab.gif">
-      <Filter>Assets</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">
@@ -339,6 +336,9 @@
     </Media>
     <Media Include="Assets\Sounds\Hide.wav">
       <Filter>Assets\Sounds</Filter>
+    </Media>
+    <Media Include="Assets\CalibrationDirections.mp4">
+      <Filter>Assets</Filter>
     </Media>
   </ItemGroup>
 </Project>

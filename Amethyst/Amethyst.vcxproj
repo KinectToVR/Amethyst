@@ -278,7 +278,6 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
     <Image Include="Assets\autocalibration.svg" />
     <Image Include="Assets\flat_ktvr.ico" />
     <Image Include="Assets\flat_ktvr.png" />
-    <Image Include="Assets\crab.gif" />
     <Image Include="Assets\hug.gif" />
     <Image Include="Assets\ktvr.ico" />
     <Image Include="Assets\ktvr.png" />
@@ -352,6 +351,7 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Media Include="Assets\CalibrationDirections.mp4" />
     <Media Include="Assets\Sounds\CalibrationAborted.wav" />
     <Media Include="Assets\Sounds\CalibrationComplete.wav" />
     <Media Include="Assets\Sounds\CalibrationPointCaptured.wav" />

@@ -13,9 +13,6 @@ using namespace k2app::shared::general;
 bool show_skeleton_previous = true,
      general_loadedOnce = false;
 
-std::shared_ptr<Media::Imaging::BitmapImage>
-calibrationPreviewBitmapImageHost;
-
 enum class general_calibrating_device
 {
 	K2_BaseDevice,
@@ -121,10 +118,6 @@ namespace winrt::Amethyst::implementation
 		k2app::shared::teaching_tips::general::statusTeachingTip =
 			std::make_shared<Controls::TeachingTip>(StatusTeachingTip());
 
-		calibrationPreviewBitmapImageHost =
-			std::make_shared<Media::Imaging::BitmapImage>(
-				Media::Imaging::BitmapImage());
-
 		// Create and push the offsets controller
 		offsetsController = std::move(std::make_shared<Controls::OffsetsController>());
 
@@ -132,6 +125,13 @@ namespace winrt::Amethyst::implementation
 		offsetsControlHostGrid.get()->SetRow(*offsetsController->Container(), 0);
 
 		offsetsController->ReAppendTrackerPivots();
+
+		// Set the media source (absolute)
+		CalibrationPreviewMediaElement().Source(
+			Windows::Media::Core::MediaSource::CreateFromUri(
+				Windows::Foundation::Uri(
+					k2app::interfacing::GetProgramLocation().parent_path().wstring()
+					+ L"\\Assets\\CalibrationDirections.mp4")));
 
 		LOG(INFO) << "Registering a detached binary semaphore reload handler for GeneralPage...";
 		std::thread([&, this]
@@ -296,11 +296,8 @@ void Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Setup the calibration image : reset and stop
-	calibrationPreviewBitmapImageHost->AutoPlay(false);
-
-	calibrationPreviewBitmapImageHost->UriSource(
-		Windows::Foundation::Uri(L"ms-appx:///Assets/crab.gif"));
-	calibrationPreviewBitmapImageHost->Stop();
+	CalibrationPreviewMediaElement().MediaPlayer().Position(Windows::Foundation::TimeSpan::zero());
+	CalibrationPreviewMediaElement().MediaPlayer().Pause();
 
 	AutoCalibrationPane().Visibility(Visibility::Visible);
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
@@ -333,8 +330,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Setup the calibration image : start
-	calibrationPreviewBitmapImageHost->AutoPlay(true);
-	calibrationPreviewBitmapImageHost->Play();
+	CalibrationPreviewMediaElement().MediaPlayer().Play();
 
 	// Set the [calibration pending] bool
 	CalibrationPending = true;
@@ -1291,8 +1287,6 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
 	StatusTeachingTip().ActionButtonContent(
 		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
-
-	CalibrationPreviewImage().Source(*calibrationPreviewBitmapImageHost);
 
 	// Start the main loop since we're done with basic setup
 	k2app::shared::devices::smphSignalStartMain.release();
