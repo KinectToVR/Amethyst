@@ -452,8 +452,8 @@
 
                             <Grid Margin="40,5,0,0" HorizontalAlignment="Stretch" MinWidth="290">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="25*" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="30" />
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0">
@@ -499,10 +499,6 @@
                                                     <Button CornerRadius="4" Height="35" HorizontalAlignment="Stretch"
                                                             x:Name="DisconnectDeviceButton" FontWeight="SemiBold"
                                                             Click="DisconnectDeviceButton_Click" />
-                                                    <Button FontWeight="SemiBold" CornerRadius="4" Height="35"
-                                                            Margin="0,15,0,0" HorizontalAlignment="Stretch"
-                                                            x:Name="DeselectDeviceButton"
-                                                            Click="DeselectDeviceButton_Click" />
                                                 </StackPanel>
                                             </Flyout>
                                         </SplitButton.Flyout>
@@ -512,69 +508,13 @@
 
                             </Grid>
 
-                            <!--Error Part-->
-
-                            <Grid Margin="40,5,0,0" HorizontalAlignment="Stretch" MinWidth="290"
-                                  x:Name="DeviceErrorGrid">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="25*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid HorizontalAlignment="Stretch">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="38" MinWidth="0" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
-                                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                          BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
-
-                                          Padding="0,0,5,10" Width="Auto" Grid.Column="0"
-                                          MinHeight="115" Height="Auto" CornerRadius="4">
-
-                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
-                                                   FontWeight="SemiBold"
-                                                   Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
-                                                   x:Name="TrackingDeviceErrorLabel"
-                                                   Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
-
-                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
-                                                   FontWeight="SemiBold"
-                                                   x:Name="ErrorWhatText" Margin="10,30,5,0"
-                                                   Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                   TextWrapping="WrapWholeWords">
-                                            <TextBlock.Text>
-                                                There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                    </Grid>
-
-                                    <StackPanel Grid.Column="2" Orientation="Vertical">
-                                        <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                Margin="0,0,3,5" CornerRadius="4"
-                                                x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
-                                                Height="55" Width="160" Style="{ThemeResource AccentButtonStyle}"
-                                                HorizontalAlignment="Right" VerticalAlignment="Top" />
-
-                                        <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                Margin="0,0,3,0" CornerRadius="4"
-                                                Height="55" Width="160" x:Name="OpenDiscordButton"
-                                                Click="OpenDiscordButton_Click"
-                                                HorizontalAlignment="Right" VerticalAlignment="Top" />
-                                    </StackPanel>
-                                </Grid>
-                            </Grid>
-
                             <!--Changer Part-->
 
                             <Grid Margin="40,5,0,0" HorizontalAlignment="Stretch" MinWidth="290"
                                   x:Name="TrackingDeviceChangePanel" Visibility="Collapsed">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="25*" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="30" />
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0">
@@ -664,17 +604,93 @@
 
                             </Grid>
 
+                            <!--Deselect Part-->
+
+                            <Grid Margin="40,5,0,0" HorizontalAlignment="Stretch" MinWidth="290"
+                                  x:Name="TrackingDeviceDeselectPanel"
+                                  Visibility="{Binding ElementName=DeselectDeviceButton, Path=Visibility, TargetNullValue=Collapsed}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="30" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0">
+                                    <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                            Margin="0,0,3,0" CornerRadius="4"
+                                            VerticalAlignment="Top" HorizontalAlignment="Right"
+                                            Height="35" Width="160" x:Name="DeselectDeviceButton"
+                                            Click="DeselectDeviceButton_Click" />
+                                </Grid>
+
+                            </Grid>
+
+                            <!--Error Part-->
+
+                            <Grid Margin="40,5,0,0" HorizontalAlignment="Stretch" MinWidth="290"
+                                  x:Name="DeviceErrorGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="30" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="38" MinWidth="0" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                          BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+
+                                          Padding="0,0,5,10" Width="Auto" Grid.Column="0"
+                                          MinHeight="115" Height="Auto" CornerRadius="4">
+
+                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                   FontWeight="SemiBold"
+                                                   Text="E_NUI_NOTPOWERED" Margin="10,7,0,0" FontFamily="Consolas"
+                                                   x:Name="TrackingDeviceErrorLabel"
+                                                   Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+
+                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                   FontWeight="SemiBold"
+                                                   x:Name="ErrorWhatText" Margin="10,30,5,0"
+                                                   Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                   TextWrapping="WrapWholeWords">
+                                            <TextBlock.Text>
+                                                There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Grid>
+
+                                    <StackPanel Grid.Column="2" Orientation="Vertical">
+                                        <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                                Margin="0,0,3,5" CornerRadius="4"
+                                                x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
+                                                Height="55" Width="160" Style="{ThemeResource AccentButtonStyle}"
+                                                HorizontalAlignment="Right" VerticalAlignment="Top" />
+
+                                        <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                                Margin="0,0,3,0" CornerRadius="4"
+                                                Height="55" Width="160" x:Name="OpenDiscordButton"
+                                                Click="OpenDiscordButton_Click"
+                                                HorizontalAlignment="Right" VerticalAlignment="Top" />
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+
                             <!--Custom device settings part-->
 
                             <Grid Margin="37,20,0,-5" HorizontalAlignment="Stretch" MinWidth="290"
                                   x:Name="SelectedDeviceSettingsHostContainer">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="25*" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="30" />
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel x:Name="SelectedDeviceSettingsRootLayoutPanel" Grid.Column="0"
-                                            Orientation="Vertical" HorizontalAlignment="Stretch" Margin="0,0,170,0">
+                                            Orientation="Vertical" HorizontalAlignment="Stretch">
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="FontWeight" Value="SemiBold" />
