@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "DevicesPage.g.h"
-#include "TrackingDevicesView.h"
 
 #include "TrackingDevices.h"
 #include "K2Shared.h"
@@ -17,10 +16,8 @@ namespace winrt::Amethyst::implementation
 	{
 		DevicesPage();
 
-		Windows::Foundation::IAsyncAction TrackingDeviceListView_SelectionChanged(
-			const Windows::Foundation::IInspectable& sender,
-			const Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs
-			& e);
+		Windows::Foundation::IAsyncAction ReloadSelectedDevice(const bool& _manual = false);
+
 		Windows::Foundation::IAsyncAction SetAsOverrideButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                                            const Microsoft::UI::Xaml::RoutedEventArgs&
 		                                                            e);
@@ -58,6 +55,8 @@ namespace winrt::Amethyst::implementation
 			const Microsoft::UI::Xaml::Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args);
 		void DeviceControlsTeachingTip_ActionButtonClick(
 			const Microsoft::UI::Xaml::Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args);
+		Windows::Foundation::IAsyncAction TrackingDeviceTreeView_ItemInvoked(
+			winrt::Microsoft::UI::Xaml::Controls::TreeView const& sender, winrt::Microsoft::UI::Xaml::Controls::TreeViewItemInvokedEventArgs const& args);
 	};
 }
 

@@ -216,8 +216,8 @@ namespace TrackingDevices
 
 			if (k2app::interfacing::currentPageTag == L"devices")
 			{
-				if (k2app::shared::devices::devicesListView.get() != nullptr &&
-					k2app::shared::devices::devicesListView.get()->SelectedIndex() ==
+				if (k2app::shared::devices::devicesTreeView.get() != nullptr &&
+					k2app::shared::devices::selectedTrackingDeviceID ==
 					k2app::K2Settings.overrideDeviceID && status_ok)
 					k2app::interfacing::currentAppState = L"overrides";
 				else
@@ -409,12 +409,11 @@ namespace TrackingDevices
 
 		devices_signal_joints = false; // Don't signal on status refresh
 
-		auto& trackingDevice = TrackingDevicesVector.at(
-			devicesListView.get()->SelectedIndex());
+		auto& trackingDevice = TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 		LOG(INFO) << "Now " << (reconnect ? "reconnecting and refreshing" : "refreshing") <<
-			" the tracking device at index " << devicesListView.get()->SelectedIndex() << "...";
+			" the tracking device at index " << selectedTrackingDeviceID << "...";
 
 		if (trackingDevice.index() == 0)
 		{

@@ -186,7 +186,6 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="TrackingDevices.h" />
-    <ClInclude Include="TrackingDevicesView.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -238,7 +237,6 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="TrackingDevicesView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">
@@ -269,7 +267,6 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="TrackingDevicesView.idl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\Licenses.txt" />

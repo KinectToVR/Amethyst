@@ -918,7 +918,8 @@ namespace winrt::Amethyst::implementation
 		std::thread([&]
 			{
 				LOG(INFO) << "Searching for tracking devices...";
-				LOG(INFO) << "Current path is: " << WStringToString(k2app::interfacing::GetProgramLocation().parent_path().wstring());
+				LOG(INFO) << "Current path is: " << WStringToString(
+					k2app::interfacing::GetProgramLocation().parent_path().wstring());
 
 				if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "devices"))
 				{
@@ -938,7 +939,8 @@ namespace winrt::Amethyst::implementation
 
 							if (!json_root.HasKey(L"device_name") || !json_root.HasKey(L"device_type"))
 							{
-								LOG(ERROR) << WStringToString(entry.path().stem().wstring()) << "'s manifest was invalid!";
+								LOG(ERROR) << WStringToString(entry.path().stem().wstring()) <<
+									"'s manifest was invalid!";
 								continue;
 							}
 
@@ -994,6 +996,7 @@ namespace winrt::Amethyst::implementation
 
 											int returnCode = ktvr::K2InitError_Invalid;
 											std::wstring stat = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
+											std::string _name = "E_UNKNOWN"; // Placeholder
 											bool blocks_flip = false, supports_math = true;
 
 											if (wcscmp(device_type.c_str(), L"KinectBasis") == 0)
@@ -1062,6 +1065,9 @@ namespace winrt::Amethyst::implementation
 													// Push the device to pointers' vector
 													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
 
+													// Cache the name
+													_name = pDevice->getDeviceName();
+
 													// Create a layout root for the device and override
 													const uint32_t _last_device_index =
 														TrackingDevices::TrackingDevicesVector.size() - 1;
@@ -1089,7 +1095,7 @@ namespace winrt::Amethyst::implementation
 																	pDevice->layoutRoot = dynamic_cast<
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
-
+																	
 																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
@@ -1106,7 +1112,7 @@ namespace winrt::Amethyst::implementation
 																	pDevice->layoutRoot = dynamic_cast<
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
-
+																	
 																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
@@ -1196,6 +1202,9 @@ namespace winrt::Amethyst::implementation
 													// Push the device to pointers' vector
 													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
 
+													// Cache the name
+													_name = pDevice->getDeviceName();
+
 													// Create a layout root for the device and override
 													const uint32_t _last_device_index =
 														TrackingDevices::TrackingDevicesVector.size() - 1;
@@ -1223,7 +1232,7 @@ namespace winrt::Amethyst::implementation
 																	pDevice->layoutRoot = dynamic_cast<
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
-
+																	
 																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
@@ -1240,7 +1249,7 @@ namespace winrt::Amethyst::implementation
 																	pDevice->layoutRoot = dynamic_cast<
 																			ktvr::Interface::LayoutRoot*>
 																		(pLayoutRoot);
-
+																	
 																	// State that everything's fine and the device's loaded
 																	// Note: the dispatcher is starting AFTER device setup
 																	pDevice->onLoad();
@@ -1325,6 +1334,20 @@ namespace winrt::Amethyst::implementation
 
 													LOG(INFO) << "Device status (should be 'not initialized'): \n[\n" <<
 														WStringToString(stat) << "\n]\n";
+
+													// Switch check the device name
+													if (_name == k2app::K2Settings.trackingDeviceName)
+													{
+														LOG(INFO) << "This device is the main device!";
+														k2app::K2Settings.trackingDeviceID =
+															TrackingDevices::TrackingDevicesVector.size() - 1;
+													}
+													else if (_name == k2app::K2Settings.overrideDeviceName)
+													{
+														LOG(INFO) << "This device is an override device!";
+														k2app::K2Settings.overrideDeviceID =
+															TrackingDevices::TrackingDevicesVector.size() - 1;
+													}
 												}
 												break;
 											case ktvr::K2InitError_BadInterface:
@@ -1367,7 +1390,8 @@ namespace winrt::Amethyst::implementation
 						}
 						else
 						{
-							LOG(ERROR) << WStringToString(entry.path().stem().wstring()) << "'s manifest was not found :/";
+							LOG(ERROR) << WStringToString(entry.path().stem().wstring()) <<
+								"'s manifest was not found :/";
 						}
 					}
 
@@ -1376,9 +1400,12 @@ namespace winrt::Amethyst::implementation
 						" tracking devices in total.";
 
 					// Now select the proper device
-					// k2app::K2Settings.trackingDeviceID must be read from settings before!
+					// k2app::K2Settings.trackingDeviceName must be read from settings before!
 					if (TrackingDevices::TrackingDevicesVector.size() > 0)
 					{
+						// Loop over all the devices and select the saved one
+						// : Has been done at loading!
+
 						// Check the base device index
 						if (k2app::K2Settings.trackingDeviceID >= TrackingDevices::TrackingDevicesVector.size())
 						{
@@ -1409,8 +1436,12 @@ namespace winrt::Amethyst::implementation
 									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption =
 										k2app::k2_DeviceInferredRotation;
 
-								//Init
+								// Init
 								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
+
+								// Backup the name
+								k2app::K2Settings.trackingDeviceName = 
+									std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceName();
 							}
 							break;
 						case 1:
@@ -1431,6 +1462,10 @@ namespace winrt::Amethyst::implementation
 
 								// Init
 								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
+
+								// Backup the name
+								k2app::K2Settings.trackingDeviceName =
+									std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->getDeviceName();
 							}
 							break;
 						}
@@ -1439,7 +1474,8 @@ namespace winrt::Amethyst::implementation
 						if (k2app::K2Settings.overrideDeviceID >= TrackingDevices::TrackingDevicesVector.size())
 						{
 							LOG(INFO) << "Previous tracking device ID was too big, it's been reset to [none]";
-							k2app::K2Settings.overrideDeviceID = -1; // Select the first one
+							k2app::K2Settings.overrideDeviceID = -1; // Select [none]
+							k2app::K2Settings.overrideDeviceName = "";
 						}
 
 						// Init the device (override, optionally)
@@ -1460,7 +1496,11 @@ namespace winrt::Amethyst::implementation
 								break;
 							}
 						}
-						else k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
+						else 
+						{
+							k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
+							k2app::K2Settings.overrideDeviceName = "";
+						}
 
 						// Second check and try after 3 seconds
 						std::thread([&]
@@ -1517,7 +1557,11 @@ namespace winrt::Amethyst::implementation
 									break;
 								}
 							}
-							else k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
+							else 
+							{
+								k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
+								k2app::K2Settings.overrideDeviceName = "";
+							}
 						}).detach();
 
 						// Update the UI

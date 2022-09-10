@@ -24,23 +24,14 @@
   <ItemGroup>
     <Midl Include="App.idl" />
     <Midl Include="MainWindow.idl" />
-    <Midl Include="TrackingDevicesView.idl">
-      <Filter>MIDL</Filter>
-    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="TrackingDevicesView.cpp">
-      <Filter>MIDL</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="TrackingDevicesView.h">
-      <Filter>MIDL</Filter>
-    </ClInclude>
     <ClInclude Include="TrackingDevices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -271,9 +262,6 @@
     </Filter>
     <Filter Include="Pages">
       <UniqueIdentifier>{9c55212e-2c38-4892-9bba-9d1ebb6d9921}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="MIDL">
-      <UniqueIdentifier>{ecf85362-3a95-4210-9c04-b7ce10dba82c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{0fc750fd-6054-4c3d-8204-d91bb847daca}</UniqueIdentifier>

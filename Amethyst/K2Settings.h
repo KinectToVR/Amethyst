@@ -39,6 +39,10 @@ namespace k2app
 		bool checkForOverlappingTrackers = true; // Check for overlapping roles
 
 		// Current tracking device: 0 is the default
+		std::string trackingDeviceName = ""; // -> Always set and >= 0
+		std::string overrideDeviceName = "";
+
+		// Current tracking device: 0 is the default
 		uint32_t trackingDeviceID = 0; // -> Always set and >= 0
 		int32_t overrideDeviceID = -1;
 
@@ -121,6 +125,8 @@ namespace k2app
 						CEREAL_NVP(K2TrackersVector),
 						CEREAL_NVP(useTrackerPairs),
 						CEREAL_NVP(checkForOverlappingTrackers),
+						CEREAL_NVP(trackingDeviceName),
+						CEREAL_NVP(overrideDeviceName),
 						CEREAL_NVP(trackingDeviceID),
 						CEREAL_NVP(overrideDeviceID),
 						CEREAL_NVP(isFlipEnabled),
@@ -178,6 +184,8 @@ namespace k2app
 						CEREAL_NVP(K2TrackersVector),
 						CEREAL_NVP(useTrackerPairs),
 						CEREAL_NVP(checkForOverlappingTrackers),
+						CEREAL_NVP(trackingDeviceName),
+						CEREAL_NVP(overrideDeviceName),
 						CEREAL_NVP(trackingDeviceID),
 						CEREAL_NVP(overrideDeviceID),
 						CEREAL_NVP(isFlipEnabled),
@@ -237,6 +245,10 @@ namespace k2app
 					tracker.base_tracker != ktvr::ITrackerType::Tracker_RightFoot &&
 					tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation)
 					tracker.orientationTrackingOption = k2_DeviceInferredRotation;
+
+				// Force fix override IDs (R <- T)
+				// On/Off configuration remains separate
+				tracker.rotationOverrideJointID = tracker.positionOverrideJointID;
 			}
 
 			// If the vector was broken, override waist & feet statuses

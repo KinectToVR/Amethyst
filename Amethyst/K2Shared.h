@@ -211,7 +211,7 @@ namespace k2app::shared
 			devicesMainContentGridInner,
 			selectedDeviceSettingsHostContainer;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ListView> devicesListView;
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TreeView> devicesTreeView;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Flyout> noJointsFlyout;
 
@@ -222,7 +222,9 @@ namespace k2app::shared
 
 		inline std::binary_semaphore smphSignalCurrentUpdate{0},
 		                             smphSignalStartMain{0};
+
 		inline uint32_t selectedTrackingDeviceID = 0;
+		inline std::string selectedTrackingDeviceName = "";
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ScrollViewer> devicesMainContentScrollViewer;
 
