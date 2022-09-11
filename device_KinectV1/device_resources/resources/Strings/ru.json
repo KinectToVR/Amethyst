@@ -1,0 +1,11 @@
+{
+    "/Plugins/KinectV1/Statuses/Success": "Успешно!\nS_OK\nВсе работает!",
+    "/Plugins/KinectV1/Statuses/Initializing": "INITIALIZING\nS_NUI_INITIALIZING\nУстройство подключено, но все еще идет инициализация.",
+    "/Plugins/KinectV1/Statuses/NotConnected": "NOTCONNECTED\nE_NUI_NOTCONNECTED\nУстройство не подключено.",
+    "/Plugins/KinectV1/Statuses/NotGenuine": "NOTGENUINE\nE_NUI_NOTGENUINE\nSDK сообщил, что Kinect недоступен.",
+    "/Plugins/KinectV1/Statuses/NotSupported": "NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nУстройство не поддерживается. (Xbox Kinect требует SDK)",
+    "/Plugins/KinectV1/Statuses/InsufficientBandwidth": "INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nУстройство подключено к хабу у которого не хватает достаточной пропускной способности.",
+    "/Plugins/KinectV1/Statuses/NotPowered": "NOTPOWERED\nE_NUI_NOTPOWERED\nВозможна проблема с адаптером/проводом или регистрацией драйвера Kinect в Windows.",
+    "/Plugins/KinectV1/Statuses/NotReady": "NOTREADY\nE_NUI_NOTREADY\nВозникла неопределенная ошибка.",
+    "/Plugins/KinectV1/Settings/Labels/Angle": "Угол возвышения Kinect:"
+}

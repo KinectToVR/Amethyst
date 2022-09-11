@@ -1,0 +1,7 @@
+{
+    "/Plugins/PSMS/Statuses/Success": "Succès!\nS_OK\nTout fonctionne!",
+    "/Plugins/PSMS/Statuses/NotRunning": "Erreur de connexion!\nE_PSMS_NOT_RUNNING\nVérifiez si PSMoveService est bien lancé, fonctionne et est accessible aux clients.",
+    "/Plugins/PSMS/Statuses/NoJoints": "Aucune manette trouvée!\nE_PSMS_NO_JOINTS\nVérifiez que les manettes sont connectées et que PSMoveService fonctionne.",
+    "/Plugins/PSMS/Settings/Contents/Dim": "Si vous utilisez PSMS uniquement pour la rotation, vous pouvez réduire l'intensité des DELs sur les manettes pour économiser de la batterie.",
+    "/Plugins/PSMS/Settings/Labels/Dim": "Réduire l'intensité des DELs:"
+}

@@ -1,0 +1,4 @@
+{
+    "/Plugins/KinectV2/Statuses/Success": "Erfolg!\nS_OK\nAlles ist gut!",
+    "/Plugins/KinectV2/Statuses/NotAvailable": "Sensor nicht verfügbar!\nE_NOTAVAILABLE\nÜberprüfe, ob Kinect an die USB- und Netzstecker des PCs angeschlossen ist."
+}

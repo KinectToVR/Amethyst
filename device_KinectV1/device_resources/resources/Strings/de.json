@@ -1,0 +1,11 @@
+{
+    "/Plugins/KinectV1/Statuses/Success": "Erfolg!\nS_OK\nAlles ist gut!",
+    "/Plugins/KinectV1/Statuses/Initializing": "INITIALIZING\nS_NUI_INITIALIZING\nDas Gerät ist verbunden, wird aber noch initialisiert.",
+    "/Plugins/KinectV1/Statuses/NotConnected": "NOTCONNECTED\nE_NUI_NOTCONNECTED\nDas Gerät ist nicht verbunden.",
+    "/Plugins/KinectV1/Statuses/NotGenuine": "NOTGENUINE\nE_NUI_NOTGENUINE\nDas SDK meldet Kinect als ungültig.",
+    "/Plugins/KinectV1/Statuses/NotSupported": "NOTSUPPORTED\nE_NUI_NOTSUPPORTED\nDas Gerät wird nicht unterstützt. (Xbox Kinect benötigt das SDK)",
+    "/Plugins/KinectV1/Statuses/InsufficientBandwidth": "INSUFFICIENTBANDWIDTH\nE_NUI_INSUFFICIENTBANDWIDTH\nDas Gerät ist ohne die erforderlichen Bandbreitenanforderungen an einen Hub angeschlossen.",
+    "/Plugins/KinectV1/Statuses/NotPowered": "NOTPOWERED\nE_NUI_NOTPOWERED\nEs liegt entweder ein Problem mit den Adaptern/Kabeln oder mit der Kinect-Gerätetreiberregistrierung in Windows vor.",
+    "/Plugins/KinectV1/Statuses/NotReady": "NOTREADY\nE_NUI_NOTREADY\nEin unbekannter Fehler ist aufgetreten.",
+    "/Plugins/KinectV1/Settings/Labels/Angle": "Kinect-Elevationswinkel:"
+}

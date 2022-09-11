@@ -80,7 +80,7 @@
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService"
 
-xcopy /y /d "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\"
+xcopy /y /d /e "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
 
@@ -116,7 +116,7 @@ xcopy /y /i /e "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService"
 
-xcopy /y /d "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\"
+xcopy /y /d /e "$(ProjectDir)device_resources\*" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\"
 
 xcopy /y /d "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)$(Platform)\$(Configuration)\devices\PSMoveService\bin\win64\"
 

@@ -1,0 +1,7 @@
+{
+    "/Plugins/PSMS/Statuses/Success": "Erfolg!\nS_OK\nAlles ist gut!",
+    "/Plugins/PSMS/Statuses/NotRunning": "Verbindungsfehler!\nE_PSMS_NOT_RUNNING\nÜberprüfe, ob PSMoveService ausgeführt wird, funktioniert und für Clients zugänglich ist.",
+    "/Plugins/PSMS/Statuses/NoJoints": "Keine Controller gefunden!\nE_PSMS_NO_JOINTS\nÜberprüfe, ob Controller angeschlossen sind, und ob PSMoveService funktioniert.",
+    "/Plugins/PSMS/Settings/Contents/Dim": "Sollte PSMS nur für die Rotationsverfolgung verwendet werden, kann man die LED-Leuchten des Controllers dimmen, um Strom zu sparen.",
+    "/Plugins/PSMS/Settings/Labels/Dim": "PSMS-Lichter dimmen:"
+}

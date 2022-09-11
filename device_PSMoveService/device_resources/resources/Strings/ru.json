@@ -1,0 +1,7 @@
+{
+    "/Plugins/PSMS/Statuses/Success": "Успешно!\nS_OK\nВсе работает!",
+    "/Plugins/PSMS/Statuses/NotRunning": "Ошибка подключения!\nE_PSMS_NOT_RUNNING\nУбедитесь, что PSMoveService запущен и доступен для подключения клиентами.",
+    "/Plugins/PSMS/Statuses/NoJoints": "Контроллеры не найдены!\nE_PSMS_NO_JOINTS\nПроверьте, подключены ли какие-либо контроллеры, и работает ли PSMoveService.",
+    "/Plugins/PSMS/Settings/Contents/Dim": "Если вы используете PSMS только для отслеживания вращения, вы можете уменьшить яркость светодиодных индикаторов контроллера для экономии энергии.",
+    "/Plugins/PSMS/Settings/Labels/Dim": "Приглушите свет PSMS:"
+}

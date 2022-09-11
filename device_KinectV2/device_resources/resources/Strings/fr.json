@@ -1,0 +1,4 @@
+{
+    "/Plugins/KinectV2/Statuses/Success": "Succès!\nS_OK\nTout fonctionne!",
+    "/Plugins/KinectV2/Statuses/NotAvailable": "Capteur non disponible!\nE_NOTAVAILABLE\nVérifiez que la Kinect est bien connectée via USB et alimentation."
+}
