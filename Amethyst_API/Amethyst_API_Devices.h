@@ -6,6 +6,8 @@
 #include <variant>
 #include <array>
 
+#include <filesystem>
+
 #include <Eigen/Dense>
 
 /*
@@ -40,7 +42,7 @@ inline std::string WStringToString(const std::wstring& w_str)
 namespace ktvr
 {
 	// Interface Version
-	static const char* IAME_API_Devices_Version = "IAME_API_Version_013";
+	static const char* IAME_API_Devices_Version = "IAME_API_Version_015";
 
 	// Return messaging types
 	enum K2InitErrorType
@@ -776,11 +778,10 @@ namespace ktvr
 
 		/*
 		 * Helper to get all joints' positions from the app,
-		 * which are sent to the openvr server driver.
-		 * Note: if joint's unused, its trackingState will be ITrackedJointState::State_NotTracked
-		 * Note: Waist,LFoot,RFoot,LElbow,RElbow,LKnee,RKnee
+		 * which are added (enabled) in Amethyst.
+		 * Note: if joint's off, its trackingState will be ITrackedJointState::State_NotTracked
 		 */
-		std::function<std::array<K2TrackedJoint, 7>()> getAppJointPoses;
+		std::function<std::vector<K2TrackedJoint>()> getAppJointPoses;
 
 		// Request a refresh of the status/name/etc. interface
 		std::function<void()> requestStatusUIRefresh;
@@ -788,7 +789,15 @@ namespace ktvr
 		// Request a code of the currently selected language, i.e. en | fr | ja
 		std::function<std::wstring()> requestLanguageCode;
 
+		// Request a folder to be set as device's AME resources,
+		// you can access these resources with the lower function later (after onLoad)
+		// Warning: Resources are containerized and can't be accessed in-between devices!
+		// Warning: The default root is "[device_folder_path]/resources/Strings"!
+		// Returns: Success? Requires: STD <filesystem> support (CPP17)
+		std::function<bool(std::filesystem::path)> setLocalizationResourcesRoot;
+
 		// Request a string from AME resources, empty for no match
+		// Warning: The primarily searched resource is the device-provided one!
 		std::function<std::wstring(std::wstring)> requestLocalizedString;
 
 		// To support settings daemon and register the layout root,
@@ -1002,11 +1011,10 @@ namespace ktvr
 
 		/*
 		 * Helper to get all joints' positions from the app,
-		 * which are sent to the openvr server driver.
-		 * Note: if joint's unused, its trackingState will be ITrackedJointState::State_NotTracked
-		 * Note: Waist,LFoot,RFoot,LElbow,RElbow,LKnee,RKnee
+		 * which are added (enabled) in Amethyst.
+		 * Note: if joint's off, its trackingState will be ITrackedJointState::State_NotTracked
 		 */
-		std::function<std::array<K2TrackedJoint, 7>()> getAppJointPoses;
+		std::function<std::vector<K2TrackedJoint>()> getAppJointPoses;
 
 		// Request a refresh of the status/name/etc. interface
 		std::function<void()> requestStatusUIRefresh;
@@ -1014,7 +1022,15 @@ namespace ktvr
 		// Request a code of the currently selected language, i.e. en | fr | ja
 		std::function<std::wstring()> requestLanguageCode;
 
+		// Request a folder to be set as device's AME resources,
+		// you can access these resources with the lower function later (after onLoad)
+		// Warning: Resources are containerized and can't be accessed in-between devices!
+		// Warning: The default root is "[device_folder_path]/resources/Strings"!
+		// Returns: Success? Requires: STD <filesystem> support (CPP17)
+		std::function<bool(std::filesystem::path)> setLocalizationResourcesRoot;
+
 		// Request a string from AME resources, empty for no match
+		// Warning: The primarily searched resource is the device-provided one!
 		std::function<std::wstring(std::wstring)> requestLocalizedString;
 
 		// To support settings daemon and register the layout root,
@@ -1119,16 +1135,9 @@ namespace ktvr
 
 		/*
 		 * Helper to get all joints' positions from the app,
-		 * which are sent to the openvr server driver.
-		 * Note: if joint's unused, its trackingState will be ITrackedJointState::State_NotTracked
-		 * Note: Waist,LFoot,RFoot,LElbow,RElbow,LKnee,RKnee
+		 * which are added (enabled) in Amethyst.
+		 * Note: if joint's off, its trackingState will be ITrackedJointState::State_NotTracked
 		 */
-		std::function<std::array<K2TrackedJoint, 7>()> getAppJointPoses;
-
-		// Request a code of the currently selected language, i.e. en | fr | ja
-		std::function<std::wstring()> requestLanguageCode;
-
-		// Request a string from AME resources, empty for no match
-		std::function<std::wstring(const std::wstring&)> requestLocalizedString;
+		std::function<std::vector<K2TrackedJoint>()> getAppJointPoses;
 	};
 }

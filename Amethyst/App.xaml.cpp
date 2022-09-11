@@ -89,14 +89,15 @@ App::App()
 
 	// Log everything >=INFO to same file
 	google::SetLogDestination(google::GLOG_INFO,
-		WStringToString(k2app::interfacing::thisLogDestination).c_str());
+	                          WStringToString(k2app::interfacing::thisLogDestination).c_str());
 
 	google::SetLogFilenameExtension(".log");
 
 	// Log the current Amethyst version
 	LOG(INFO) << "Amethyst version: " << k2app::interfacing::K2InternalVersion;
 
-	LOG(INFO) << "Running at path: " << WStringToString(k2app::interfacing::GetProgramLocation().parent_path().wstring());
+	LOG(INFO) << "Running at path: " << WStringToString(
+		k2app::interfacing::GetProgramLocation().parent_path().wstring());
 
 	if (const auto deducedLogName = getLastLogAdded(ktvr::GetK2AppDataLogFileDir(L"")).wstring();
 		!deducedLogName.empty())
@@ -145,6 +146,11 @@ App::App()
 					// Reload
 					k2app::interfacing::LoadJSONStringResources_English();
 					k2app::interfacing::LoadJSONStringResources(k2app::K2Settings.appLanguage);
+
+					// Reload plugins' strings
+					for (size_t s = 0; s < TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.size(); s++)
+						k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
+							TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector[s].second, s);
 
 					// Request page reloads
 					k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();

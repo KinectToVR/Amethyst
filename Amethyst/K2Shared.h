@@ -117,7 +117,7 @@ namespace k2app::shared
 		forceRenderCheckBox;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>
-			offsetsButton;
+		offsetsButton;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
 			calibrationButton,
@@ -547,4 +547,13 @@ namespace k2app::interfacing
 	{
 		return LocalizedJSONString(L"/" + dictionary + L"/" + key);
 	}
+}
+
+namespace TrackingDevices
+{
+	// Vector of current devices' JSON resource roots & paths
+	// Note: the size must be the same as TrackingDevicesVector's
+	inline std::vector<std::pair<
+		winrt::Windows::Data::Json::JsonObject, std::filesystem::path>>
+	TrackingDevicesLocalizationResourcesRootsVector;
 }

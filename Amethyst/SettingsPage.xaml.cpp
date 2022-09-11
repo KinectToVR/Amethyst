@@ -1725,6 +1725,11 @@ Amethyst::implementation::SettingsPage::LanguageOptionBox_SelectionChanged(
 	k2app::interfacing::LoadJSONStringResources_English();
 	k2app::interfacing::LoadJSONStringResources(k2app::K2Settings.appLanguage);
 
+	// Reload plugins' strings
+	for (size_t s = 0; s < TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.size(); s++)
+		k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
+			TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector[s].second, s);
+
 	// Request page reloads
 	k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();
 	k2app::shared::semaphores::semaphore_ReloadPage_GeneralPage.release();

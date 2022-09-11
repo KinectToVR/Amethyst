@@ -10,7 +10,7 @@
 
 namespace TrackingDevices
 {
-	// Variant of current devices' layout root pointers
+	// Vector of current devices' layout root pointers
 	// Note: the size must be the same as TrackingDevicesVector's
 	inline std::vector<k2app::interfacing::AppInterface::AppLayoutRoot*>
 	TrackingDevicesLayoutRootsVector;

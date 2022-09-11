@@ -22,7 +22,7 @@
 namespace ktvr
 {
 	// Interface Version
-	static const char* IAME_API_Version = "IAME_API_Version_013";
+	static const char* IAME_API_Version = "IAME_API_Version_015";
 
 	// Check Eigen quaternions
 	template <typename _Scalar>

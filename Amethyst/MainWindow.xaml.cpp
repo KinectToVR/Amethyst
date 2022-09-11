@@ -503,8 +503,8 @@ namespace winrt::Amethyst::implementation
 	Microsoft::UI::Composition::SystemBackdrops::MicaController m_micaController{nullptr};
 	Window::Activated_revoker m_activatedRevoker;
 	Window::Closed_revoker m_closedRevoker;
-	Microsoft::UI::Xaml::FrameworkElement::ActualThemeChanged_revoker m_themeChangedRevoker;
-	Microsoft::UI::Xaml::FrameworkElement m_rootElement{nullptr};
+	FrameworkElement::ActualThemeChanged_revoker m_themeChangedRevoker;
+	FrameworkElement m_rootElement{nullptr};
 	Windows::System::DispatcherQueueController m_dispatcherQueueController{nullptr};
 
 	MainWindow::MainWindow()
@@ -532,7 +532,7 @@ namespace winrt::Amethyst::implementation
 				// Activation state.
 				m_activatedRevoker = this->Activated(
 					auto_revoke,
-					[&](auto&&, const Microsoft::UI::Xaml::WindowActivatedEventArgs& args)
+					[&](auto&&, const WindowActivatedEventArgs& args)
 					{
 						m_configuration.IsInputActive(
 							WindowActivationState::Deactivated
@@ -543,7 +543,7 @@ namespace winrt::Amethyst::implementation
 				m_configuration.IsInputActive(true);
 
 				// Application theme.
-				m_rootElement = this->Content().try_as<Microsoft::UI::Xaml::FrameworkElement>();
+				m_rootElement = this->Content().try_as<FrameworkElement>();
 				if (nullptr != m_rootElement)
 				{
 					m_themeChangedRevoker =
@@ -1034,6 +1034,9 @@ namespace winrt::Amethyst::implementation
 												{
 													LOG(INFO) << "Interface version OK, now constructing...";
 
+													const uint32_t _last_device_index =
+														TrackingDevices::TrackingDevicesVector.size();
+
 													LOG(INFO) << "Overriding device's helper functions...";
 
 													// Push helper functions to the device
@@ -1060,8 +1063,22 @@ namespace winrt::Amethyst::implementation
 
 													pDevice->requestLanguageCode =
 														k2app::interfacing::plugins::plugins_requestLanguageCode;
+													pDevice->setLocalizationResourcesRoot =
+														std::function<bool(std::filesystem::path)>(
+															[this, _last_device_index](auto path)
+															{
+																return
+																	k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
+																		path, _last_device_index);
+															});
 													pDevice->requestLocalizedString =
-														k2app::interfacing::plugins::plugins_requestLocalizedString;
+														std::function<std::wstring(std::wstring)>(
+															[this, _last_device_index](auto key)
+															{
+																return
+																	k2app::interfacing::plugins::plugins_requestLocalizedString(
+																		key, _last_device_index);
+															});
 
 													pDevice->requestStatusUIRefresh =
 														k2app::interfacing::plugins::plugins_requestStatusUIRefresh;
@@ -1085,6 +1102,17 @@ namespace winrt::Amethyst::implementation
 													pDevice->CreateProgressBar =
 														k2app::interfacing::AppInterface::CreateAppProgressBar_Sliced;
 
+													LOG(INFO) <<
+														"Creating device's default root language resource context...";
+													TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
+														push_back(std::make_pair(Windows::Data::Json::JsonObject(),
+															entry.path() / L"resources" / L"Strings")); // Empty for now
+
+													LOG(INFO) <<
+														"Registering device's default root language resource context...";
+													k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
+														entry.path() / L"resources" / L"Strings",
+														_last_device_index); // Now either empty or ok
 													LOG(INFO) << "Appending the device to the global registry...";
 
 													// Push the device to pointers' vector
@@ -1094,8 +1122,6 @@ namespace winrt::Amethyst::implementation
 													_name = pDevice->getDeviceName();
 
 													// Create a layout root for the device and override
-													const uint32_t _last_device_index =
-														TrackingDevices::TrackingDevicesVector.size() - 1;
 													k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
 														[_last_device_index, this]
 														{
@@ -1171,6 +1197,9 @@ namespace winrt::Amethyst::implementation
 												{
 													LOG(INFO) << "Interface version OK, now constructing...";
 
+													const uint32_t _last_device_index =
+														TrackingDevices::TrackingDevicesVector.size();
+
 													LOG(INFO) << "Overriding device's helper functions...";
 
 													// Push helper functions to the device
@@ -1197,8 +1226,22 @@ namespace winrt::Amethyst::implementation
 
 													pDevice->requestLanguageCode =
 														k2app::interfacing::plugins::plugins_requestLanguageCode;
+													pDevice->setLocalizationResourcesRoot =
+														std::function<bool(std::filesystem::path)>(
+															[this, _last_device_index](auto path)
+															{
+																return
+																	k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
+																		path, _last_device_index);
+															});
 													pDevice->requestLocalizedString =
-														k2app::interfacing::plugins::plugins_requestLocalizedString;
+														std::function<std::wstring(std::wstring)>(
+															[this, _last_device_index](auto key)
+															{
+																return
+																	k2app::interfacing::plugins::plugins_requestLocalizedString(
+																		key, _last_device_index);
+															});
 
 													pDevice->requestStatusUIRefresh =
 														k2app::interfacing::plugins::plugins_requestStatusUIRefresh;
@@ -1222,6 +1265,18 @@ namespace winrt::Amethyst::implementation
 													pDevice->CreateProgressBar =
 														k2app::interfacing::AppInterface::CreateAppProgressBar_Sliced;
 
+													LOG(INFO) <<
+														"Creating device's default root language resource context...";
+													TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
+														push_back(std::make_pair(Windows::Data::Json::JsonObject(),
+															entry.path() / L"resources" / L"Strings")); // Empty for now
+
+													LOG(INFO) <<
+														"Registering device's default root language resource context...";
+													k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
+														entry.path() / L"resources" / L"Strings",
+														_last_device_index); // Now either empty or ok
+
 													LOG(INFO) << "Appending the device to the global registry...";
 
 													// Push the device to pointers' vector
@@ -1231,8 +1286,6 @@ namespace winrt::Amethyst::implementation
 													_name = pDevice->getDeviceName();
 
 													// Create a layout root for the device and override
-													const uint32_t _last_device_index =
-														TrackingDevices::TrackingDevicesVector.size() - 1;
 													k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
 														[_last_device_index, this]
 														{
@@ -1329,11 +1382,6 @@ namespace winrt::Amethyst::implementation
 
 													pDevice->getAppJointPoses =
 														k2app::interfacing::plugins::plugins_getAppJointPoses;
-
-													pDevice->requestLanguageCode =
-														k2app::interfacing::plugins::plugins_requestLanguageCode;
-													pDevice->requestLocalizedString =
-														k2app::interfacing::plugins::plugins_requestLocalizedString;
 
 													// State that everything's fine and the device's loaded
 													// Note: the dispatcher is starting AFTER device setup
@@ -1466,7 +1514,8 @@ namespace winrt::Amethyst::implementation
 
 								// Backup the name
 								k2app::K2Settings.trackingDeviceName =
-									std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->getDeviceName();
+									std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
+									getDeviceName();
 							}
 							break;
 						case 1:

@@ -213,9 +213,17 @@ namespace k2app
 		}
 
 		ktvr::K2TrackedJoint getK2TrackedJoint(const bool& _state, const std::string& _name)
+		const
 		{
 			return ktvr::K2TrackedJoint(pose_position, pose_orientation,
 			                            _state ? ktvr::State_Tracked : ktvr::State_NotTracked, _name);
+		}
+
+		ktvr::K2TrackedJoint getK2TrackedJoint()
+		const
+		{
+			return ktvr::K2TrackedJoint(pose_position, pose_orientation,
+			                            data_isActive ? ktvr::State_Tracked : ktvr::State_NotTracked, data_serial);
 		}
 
 		// For internal filters

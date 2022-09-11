@@ -667,7 +667,7 @@ namespace k2app::interfacing
 		if (exists(GetProgramLocation().parent_path() / "Amethyst.vrmanifest"))
 		{
 			const auto app_error = vr::VRApplications()->AddApplicationManifest(
-					WStringToString((GetProgramLocation().parent_path() / "Amethyst.vrmanifest").wstring()).c_str());
+				WStringToString((GetProgramLocation().parent_path() / "Amethyst.vrmanifest").wstring()).c_str());
 
 			if (app_error != vr::VRApplicationError_None)
 			{
@@ -1328,25 +1328,13 @@ namespace k2app::interfacing
 			                      Eigen::Quaternionf(1, 0, 0, 0));
 		}
 
-		inline std::array<ktvr::K2TrackedJoint, 7> plugins_getAppJointPoses()
+		inline std::vector<ktvr::K2TrackedJoint> plugins_getAppJointPoses()
 		{
-			return std::array
-			{
-				K2Settings.K2TrackersVector.at(0).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[0].data_isActive, "Waist"),
-				K2Settings.K2TrackersVector.at(1).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[1].data_isActive, "Left Foot"),
-				K2Settings.K2TrackersVector.at(2).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[2].data_isActive, "Right Foot"),
-				K2Settings.K2TrackersVector.at(3).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[3].data_isActive, "Left Elbow"),
-				K2Settings.K2TrackersVector.at(4).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[4].data_isActive, "Right Elbow"),
-				K2Settings.K2TrackersVector.at(5).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[5].data_isActive, "Left Knee"),
-				K2Settings.K2TrackersVector.at(6).getK2TrackedJoint(
-					K2Settings.K2TrackersVector[6].data_isActive, "Right Knee"),
-			};
+			std::vector<ktvr::K2TrackedJoint> _joints;
+			for (const auto& tracker : K2Settings.K2TrackersVector)
+				_joints.push_back(tracker.getK2TrackedJoint());
+
+			return _joints;
 		}
 
 		inline void plugins_requestStatusUIRefresh()
@@ -1360,9 +1348,143 @@ namespace k2app::interfacing
 			return K2Settings.appLanguage;
 		}
 
-		inline std::wstring plugins_requestLocalizedString(const std::wstring& key)
+		inline bool plugins_setLocalizationResourcesRoot(
+			const std::filesystem::path& path, const uint32_t& device_id)
 		{
-			return LocalizedJSONString(key);
+			try
+			{
+				LOG(INFO) <<
+					"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+					"Searching for language resources with key \"" <<
+					WStringToString(K2Settings.appLanguage) <<
+					"\" in \"" << path.string() << "\"...";
+
+				if (!exists(path))
+				{
+					LOG(ERROR) <<
+						"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+						"Could not find any language enumeration resources in \"" <<
+						WStringToString(path.wstring()) << "\", the device ID " <<
+						std::to_string(device_id) << "s interface may be broken!";
+					return false; // Give up on trying
+				}
+
+				std::filesystem::path resource_path =
+					path / (K2Settings.appLanguage + L".json");
+
+				// If the specified language doesn't exist somehow, fallback to 'en'
+				if (!exists(resource_path))
+				{
+					LOG(WARNING) <<
+						"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+						"Could not load language resources at \"" <<
+						WStringToString(resource_path.wstring()) << "\", falling back to 'en' (en.json)!";
+
+					resource_path = GetProgramLocation().parent_path() /
+						"Assets" / "Strings" / "en.json";
+				}
+
+				// If failed again, just give up (we'll do fallbacks later)
+				if (!exists(resource_path))
+				{
+					LOG(ERROR) <<
+						"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+						"Could not load language resources at \"" <<
+						WStringToString(resource_path.wstring()) << "\", the app interface will be broken!";
+
+					return false; // Just give up
+				}
+
+				// If everything's ok, load the resources into the current resource tree
+
+				// Load the JSON source into buffer
+				std::wifstream wif(resource_path);
+				wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+				std::wstringstream wss;
+				wss << wif.rdbuf();
+
+				// Parse the loaded json
+				auto device_local_resources = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
+
+				// Check if the resource root is fine
+				if (device_local_resources.Size() <= 0)
+					LOG(ERROR) <<
+						"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+						"The current resource root is empty! App interface will be broken!";
+
+				else
+					LOG(INFO) <<
+						"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+						"Successfully loaded language resources with key \"" <<
+						WStringToString(K2Settings.appLanguage) << "\"!";
+
+				// If everything's ok, change the root
+				TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
+					at(device_id) = std::make_pair(device_local_resources, path);
+
+				return true; // We're good
+			}
+			catch (const winrt::hresult_error& ex)
+			{
+				LOG(ERROR) <<
+					"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+					"JSON error at key: \"" <<
+					WStringToString(K2Settings.appLanguage) << "\"! Message: "
+					<< WStringToString(ex.message().c_str());
+
+				return false; // Just give up
+			}
+			catch (...)
+			{
+				LOG(ERROR) <<
+					"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+					"An exception occurred! The current resource root will be empty! App interface will be broken!";
+
+				return false; // Just give up
+			}
+		}
+
+		inline std::wstring plugins_requestLocalizedString(
+			const std::wstring& key, const uint32_t& device_id)
+		{
+			try
+			{
+				// Check if the resource root is fine
+				if (TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
+				    at(device_id).first.Size() <= 0)
+				{
+					LOG(ERROR) <<
+						"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+						"The device ID " << std::to_string(device_id) <<
+						"s resource root is empty! Its interface will be broken! " <<
+						"Falling back to Amethyst string resources!";
+
+					return LocalizedJSONString(key); // Fallback to AME
+				}
+
+				return TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
+				       at(device_id).first.GetNamedString(key).c_str();
+			}
+			catch (const winrt::hresult_error& ex)
+			{
+				LOG(ERROR) <<
+					"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+					"JSON error at key: \"" <<
+					WStringToString(key) << "\"! Message: "
+					<< WStringToString(ex.message().c_str());
+
+				// Else return they key alone
+				return key;
+			}
+			catch (...)
+			{
+				LOG(ERROR) <<
+					"[Requested by device with ID " << std::to_string(device_id) << "] " <<
+					"An exception occurred! App interface will be broken!";
+
+				// Else return they key alone
+				return key;
+			}
 		}
 	}
 
