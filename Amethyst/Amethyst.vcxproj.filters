@@ -250,8 +250,6 @@
     <Image Include="Assets\hug.gif">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\autocalibration.svg" />
-    <Image Include="Assets\manualcalibration.svg" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">

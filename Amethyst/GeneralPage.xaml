@@ -112,12 +112,6 @@
                                             </Grid>
                                         </Viewbox>
 
-                                        <!--<Image Width="150" Margin="0,45,0,40">
-                                            <Image.Source>
-                                                <SvgImageSource UriSource="ms-appx:///Assets/autocalibration.svg" />
-                                            </Image.Source>
-                                        </Image>-->
-
                                         <TextBlock x:Name="Calibration_Titles_Automatic"
                                                    HorizontalAlignment="Center" FontSize="26" FontWeight="SemiBold" />
                                         <TextBlock x:Name="Calibration_Captions_Automatic" Margin="0,20,0,0"
@@ -137,12 +131,6 @@
                                             Stroke="#00000000">
                                         </Path>
                                     </Viewbox>
-
-                                    <!--<Image Width="80" Margin="0,45,0,30">
-                                        <Image.Source>
-                                            <SvgImageSource UriSource="ms-appx:///Assets/manualcalibration.svg" />
-                                        </Image.Source>
-                                    </Image>-->
 
                                     <TextBlock x:Name="Calibration_Titles_Manual"
                                                HorizontalAlignment="Center" FontSize="26"

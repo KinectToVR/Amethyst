@@ -575,24 +575,30 @@
                     <StackPanel HorizontalAlignment="Stretch"
                                 Grid.Column="0" Orientation="Vertical">
 
-                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,35,10" FontSize="16"
-                                x:Name="ResetButton" Click="ResetButton_Click" FontWeight="SemiBold" />
+                        <Button Height="40" HorizontalAlignment="Stretch"
+                                Padding="20,0" Margin="0,0,35,10"
+                                FontSize="16" FontWeight="SemiBold"
+                                x:Name="ReNUXButton" Click="ReNUXButton_Click" />
 
-                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,35,10" FontSize="16"
-                                x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold" />
+                        <Button Height="40" HorizontalAlignment="Stretch"
+                                Padding="20,0" Margin="0,0,35,10"
+                                FontSize="16" FontWeight="SemiBold"
+                                x:Name="ResetButton" Click="ResetButton_Click" />
 
-                        <Button Height="40" HorizontalAlignment="Stretch" Margin="0,0,35,10" FontSize="16"
-                                x:Name="ViewLogsButton" Click="ViewLogsButton_Click" FontWeight="SemiBold" />
+                        <Button Height="40" HorizontalAlignment="Stretch"
+                                Padding="20,0" Margin="0,0,35,10"
+                                FontSize="16" FontWeight="SemiBold"
+                                x:Name="ReRegisterButton" Click="ReRegisterButton_Click" />
 
-                        <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,35,10"
-                                x:Name="ReManifestButton" Click="ReManifestButton_Click" FontWeight="SemiBold"
-                                FontSize="16">
-                            <Button.Transitions>
-                                <TransitionCollection>
-                                    <RepositionThemeTransition />
-                                </TransitionCollection>
-                            </Button.Transitions>
-                        </Button>
+                        <Button Height="40" HorizontalAlignment="Stretch"
+                                Padding="20,0" Margin="0,0,35,10"
+                                FontSize="16" FontWeight="SemiBold"
+                                x:Name="ViewLogsButton" Click="ViewLogsButton_Click" />
+
+                        <Button Height="40" HorizontalAlignment="Stretch"
+                                Padding="20,0" Margin="0,0,35,10"
+                                FontSize="16" FontWeight="SemiBold"
+                                x:Name="ReManifestButton" Click="ReManifestButton_Click" />
                     </StackPanel>
                 </Grid>
 

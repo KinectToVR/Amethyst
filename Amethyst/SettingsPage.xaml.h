@@ -19,6 +19,9 @@ namespace winrt::Amethyst::implementation
 		Windows::Foundation::IAsyncAction ResetButton_Click(
 			const Windows::Foundation::IInspectable& sender,
 			const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		Windows::Foundation::IAsyncAction ReNUXButton_Click(
+			const Windows::Foundation::IInspectable& sender,
+			const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void SettingsPage_Loaded(const Windows::Foundation::IInspectable& sender,
 		                         const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void SettingsPage_Loaded_Handler();

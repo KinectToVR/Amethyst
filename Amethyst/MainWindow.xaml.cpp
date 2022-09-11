@@ -664,7 +664,7 @@ namespace winrt::Amethyst::implementation
 			k2app::shared::main::thisAppWindow->TitleBar().ExtendsContentIntoTitleBar(true);
 			k2app::shared::main::thisAppWindow->TitleBar().SetDragRectangles(
 				std::array{Windows::Graphics::RectInt32{0, 0, 10000000, 40}});
-			
+
 			k2app::shared::main::thisAppWindow->TitleBar().ButtonBackgroundColor(
 				Windows::UI::Colors::Transparent());
 			k2app::shared::main::thisAppWindow->TitleBar().ButtonInactiveBackgroundColor(
@@ -1621,7 +1621,8 @@ void Amethyst::implementation::MainWindow::NavView_Loaded(
 
 	k2app::shared::main::thisAppWindow->TitleBar().ButtonForegroundColor(
 		k2app::interfacing::actualTheme == ElementTheme::Dark
-		? Windows::UI::Colors::White() : Windows::UI::Colors::Black());
+			? Windows::UI::Colors::White()
+			: Windows::UI::Colors::Black());
 
 	k2app::shared::main::attentionBrush =
 		k2app::interfacing::actualTheme == ElementTheme::Dark
@@ -1966,15 +1967,16 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateBu
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	// Show the startup tour teachingtip
-	//if (!k2app::K2Settings.firstTimeTourShown) // TODO ENABLE SOMEDAY
-	//{
-	//	k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
-	//	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
+	if (!k2app::K2Settings.firstTimeTourShown)
+	{
+		// Show the first tip
+		k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
+		k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
 
-	//	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(true);
+		k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(true);
 
-	//  k2app::interfacing::isNUXPending = true;
-	//}
+		k2app::interfacing::isNUXPending = true;
+	}
 
 	// Check for updates (and show)
 	co_await checkUpdates(false, 2000);
@@ -2449,16 +2451,17 @@ void Amethyst::implementation::MainWindow::XMainGrid_Loaded(
 			         SendMessage(k2app::shared::main::thisAppWindowID, WM_ACTIVATE, WA_INACTIVE, 0);
 		         }
 
-	         	 // Overwrite titlebar colors
-				 k2app::shared::main::thisAppWindow->TitleBar().ButtonForegroundColor(
-					 k2app::interfacing::actualTheme == ElementTheme::Dark
-					 ? Windows::UI::Colors::White() : Windows::UI::Colors::Black());
-				 k2app::shared::main::thisAppWindow->TitleBar().ButtonBackgroundColor(
-					 Windows::UI::Colors::Transparent());
-				 k2app::shared::main::thisAppWindow->TitleBar().ButtonInactiveBackgroundColor(
-					 Windows::UI::Colors::Transparent());
-				 k2app::shared::main::thisAppWindow->TitleBar().ButtonHoverBackgroundColor(
-					 k2app::shared::main::thisAppWindow->TitleBar().ButtonPressedBackgroundColor());
+		         // Overwrite titlebar colors
+		         k2app::shared::main::thisAppWindow->TitleBar().ButtonForegroundColor(
+			         k2app::interfacing::actualTheme == ElementTheme::Dark
+				         ? Windows::UI::Colors::White()
+				         : Windows::UI::Colors::Black());
+		         k2app::shared::main::thisAppWindow->TitleBar().ButtonBackgroundColor(
+			         Windows::UI::Colors::Transparent());
+		         k2app::shared::main::thisAppWindow->TitleBar().ButtonInactiveBackgroundColor(
+			         Windows::UI::Colors::Transparent());
+		         k2app::shared::main::thisAppWindow->TitleBar().ButtonHoverBackgroundColor(
+			         k2app::shared::main::thisAppWindow->TitleBar().ButtonPressedBackgroundColor());
 
 		         // Request page reloads
 		         k2app::shared::semaphores::semaphore_ReloadPage_MainWindow.release();

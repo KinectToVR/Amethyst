@@ -341,6 +341,7 @@
     "/Plugins/OWO/Settings/Buttons/Calibration/Forward": "Calibrer vers l'avant",
     "/Plugins/OWO/Settings/Buttons/Calibration/Down": "Calibrer vers le bas",
     
+    "/NUX/Replay": "Replay the welcome tour",
     "/NUX/Prev": "Go back",
     "/NUX/Next": "Next",
     "/NUX/Skip": "Skip tutorial",

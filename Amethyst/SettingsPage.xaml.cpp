@@ -340,6 +340,7 @@ void Amethyst::implementation::SettingsPage::RestartButton_Click(
 	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 }
 
+
 Windows::Foundation::IAsyncAction
 Amethyst::implementation::SettingsPage::ResetButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
@@ -415,6 +416,33 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 	k2app::interfacing::ShowVRToast(
 		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Toasts/RestartFailed/Title"),
 		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Toasts/RestartFailed"));
+}
+
+
+Windows::Foundation::IAsyncAction
+Amethyst::implementation::SettingsPage::ReNUXButton_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+{
+	// Navigate to the settings page
+	k2app::shared::main::mainNavigationView->SelectedItem(
+		k2app::shared::main::mainNavigationView->MenuItems().GetAt(0));
+	k2app::shared::main::NavView_Navigate(L"general", Media::Animation::EntranceNavigationTransitionInfo());
+
+	// Wait a bit
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
+
+	// Show the first tip
+	k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
+
+	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(true);
+
+	k2app::interfacing::isNUXPending = true;
 }
 
 
@@ -573,6 +601,9 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 
 	Titles_Troubleshooting().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Titles/Troubleshooting"));
+
+	ReNUXButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/NUX/Replay")));
 
 	ResetButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/Reset")));

@@ -275,7 +275,6 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\autocalibration.svg" />
     <Image Include="Assets\flat_ktvr.ico" />
     <Image Include="Assets\flat_ktvr.png" />
     <Image Include="Assets\hug.gif" />
@@ -286,7 +285,6 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
     <Image Include="Assets\LargeTile.scale-150.png" />
     <Image Include="Assets\LargeTile.scale-200.png" />
     <Image Include="Assets\LargeTile.scale-400.png" />
-    <Image Include="Assets\manualcalibration.svg" />
     <Image Include="Assets\SmallTile.scale-100.png" />
     <Image Include="Assets\SmallTile.scale-125.png" />
     <Image Include="Assets\SmallTile.scale-150.png" />
