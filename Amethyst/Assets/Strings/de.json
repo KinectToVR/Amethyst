@@ -261,6 +261,11 @@
     "/SharedStrings/Updates/Suggestions": "Teile deine Ideen für das nächste Amethyst-Update mit uns!",
     "/SharedStrings/Updates/UpToDate": "Du bist auf der aktuellsten Version",
 
+    "/SharedStrings/Updates/Headers/Downloading": "Downloaden einer Aktualisierung",
+    "/SharedStrings/Updates/Headers/Status": "Status:",
+    "/SharedStrings/Updates/Statuses/Downloading": "Herunterladen - 0%",
+    "/SharedStrings/Updates/Statuses/Error": "Fehler beim Herunterladen!",
+
     "/ServerStatuses/Success": "Erfolg! (Code 1)\nI_OK\nAlles ist gut!",
     "/ServerStatuses/WTF": "KONNTE NICHT ÜBERPRÜFEN (Code -12)\nE_WTF\nEtwas ist komplett schief gelaufen.",
     "/ServerStatuses/Exception": "FEHLER BEIM ÜBERPRÜFEN (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nÜberprüfe die SteamVR-Add-Ons (NICHT die Overlays) und aktiviere Amethyst.",

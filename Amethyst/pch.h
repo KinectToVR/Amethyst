@@ -65,12 +65,16 @@
 
 #include <winrt/Windows.Web.h>
 #include <winrt/Windows.Web.Http.h>
+#include <winrt/Windows.Web.Http.Headers.h>
 
 #include <wil/cppwinrt_helpers.h>
 #include <wil/win32_helpers.h>
 
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.System.Threading.h>
+
+#include <winrt/Windows.Storage.h>
+#include <winrt/Windows.Storage.Streams.h>
 
 #include "winrt/Windows.UI.Xaml.Input.h"
 #include "winrt/Windows.UI.Xaml.Media.Animation.h"

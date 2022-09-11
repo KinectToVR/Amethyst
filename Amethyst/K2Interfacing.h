@@ -91,6 +91,9 @@ namespace k2app::interfacing
 	// Internal version number
 	inline const std::string K2InternalVersion = "1.0.3.0"; // KTVR[ver:X.X.X.X]
 
+	inline constexpr uint32_t K2INTVersion = 2; // Amethyst version
+	inline constexpr uint32_t K2APIVersion = 0; // API version
+
 	// App closing check
 	inline bool isExitingNow = false,
 	            isExitHandled = false; // If actions have been done
@@ -324,6 +327,27 @@ namespace k2app::interfacing
 			// Get the next occurrence from the current position 
 			pos = data.find(match, pos + replace.size());
 		}
+	}
+
+	// stringReplaceAll but without overwriting
+	template <typename T>
+		requires std::same_as<std::string, T> || std::same_as<std::wstring, T>
+	T stringReplaceAll_R(T data, const T& match, const T& replace)
+	{
+		// Get the first occurrence 
+		size_t pos = data.find(match);
+
+		// Repeat till end is reached 
+		while (pos != std::string::npos)
+		{
+			data.replace(pos, match.size(), replace);
+
+			// Get the next occurrence from the current position 
+			pos = data.find(match, pos + replace.size());
+		}
+
+		// Return the copied data
+		return data;
 	}
 
 	namespace sounds

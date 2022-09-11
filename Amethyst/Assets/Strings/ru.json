@@ -261,6 +261,11 @@
     "/SharedStrings/Updates/Suggestions": "Пожалуйста, пришлите нам ваши идеи\nдля следующего обновления Amethyst.",
     "/SharedStrings/Updates/UpToDate": "У вас все актуально",
 
+    "/SharedStrings/Updates/Headers/Downloading": "Загрузка обновления",
+    "/SharedStrings/Updates/Headers/Status": "Статус:",
+    "/SharedStrings/Updates/Statuses/Downloading": "Скачивание - 0%",
+    "/SharedStrings/Updates/Statuses/Error": "Ошибка при скачивании!",
+
     "/ServerStatuses/Success": "Успешно! (Код 1)\nI_OK\nВсе работает!",
     "/ServerStatuses/WTF": "НЕВОЗМОЖНО ПРОВЕРИТЬ СТАТУС (Код -12)\nE_WTF\nЧто-то пошло очень не так на этот раз.",
     "/ServerStatuses/Exception": "ИСКЛЮЧЕНИЕ ПРИ ПРОВЕРКЕ (Код -10)\nE_EXCEPTION_WHILE_CHECKING\nПроверьте модули (не оверлеи) SteamVR и включите Amethyst.",

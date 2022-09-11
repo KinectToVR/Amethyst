@@ -261,6 +261,11 @@
     "/SharedStrings/Updates/Suggestions": "Please tell us if you have any ideas\nfor the next Amethyst update.",
     "/SharedStrings/Updates/UpToDate": "You're Up To Date",
 
+    "/SharedStrings/Updates/Headers/Downloading": "Downloading an update",
+    "/SharedStrings/Updates/Headers/Status": "Status:",
+    "/SharedStrings/Updates/Statuses/Downloading": "Downloading - 0%",
+    "/SharedStrings/Updates/Statuses/Error": "Error downloading!",
+
     "/ServerStatuses/Success": "Success! (Code 1)\nI_OK\nEverything's good!",
     "/ServerStatuses/WTF": "COULD NOT CHECK STATUS (Code -12)\nE_WTF\nSomething's fucked a really big time.",
     "/ServerStatuses/Exception": "EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.",

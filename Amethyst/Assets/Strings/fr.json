@@ -261,6 +261,11 @@
     "/SharedStrings/Updates/Suggestions": "Faites nous part de vos idées pour\nles prochaines mises à jour d'Amethyst.",
     "/SharedStrings/Updates/UpToDate": "Vous êtes à jour",
 
+    "/SharedStrings/Updates/Headers/Downloading": "Transfert d'une mise à jour",
+    "/SharedStrings/Updates/Headers/Status": "Statut:",
+    "/SharedStrings/Updates/Statuses/Downloading": "Téléchargement - 0%",
+    "/SharedStrings/Updates/Statuses/Error": "Erreur de téléchargement !",
+
     "/ServerStatuses/Success": "Succès! (Code 1)\nI_OK\nTout fonctionne!",
     "/ServerStatuses/WTF": "STATUT INACCESSIBLE (Code -12)\nE_WTF\nQuelque chose de grave s'est produit.",
     "/ServerStatuses/Exception": "UNE EXCEPTION EST SURVENUE (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nVérifiez qu'Amethyst est activé dans les extensions (PAS les overlays) de SteamVR.",

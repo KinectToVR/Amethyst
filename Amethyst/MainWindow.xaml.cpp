@@ -26,8 +26,7 @@ bool main_localInitFinished = false,
 // Notifications stuff
 event_token notification_token;
 
-// Assume we're up to date
-std::string K2RemoteVersion =
+std::string K2RemoteVersionString =
 	k2app::interfacing::K2InternalVersion;
 
 // Toast struct (json)
@@ -40,132 +39,243 @@ struct toast
 // Updating function
 Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::executeUpdates()
 {
-	//k2app::interfacing::updatingNow = true;
+	k2app::interfacing::updatingNow = true;
 
-	//UpdatePendingFlyout().Hide();
+	UpdatePendingFlyout().Hide();
 
-	//// Setup the flyout contents: action & footer
-	///*UpdatePendingFlyoutHeader().Text(k2app::interfacing::LocalizedResourceWString(
-	//	L"SharedStrings", L"Updates/UpToDate"));
-	//UpdatePendingFlyoutFooter().Text(L"Amethyst v" + StringToWString(k2app::interfacing::K2InternalVersion));*/
+	// Setup the flyout contents: action & footer
+	/*UpdatePendingFlyoutHeader().Text(k2app::interfacing::LocalizedResourceWString(
+		L"SharedStrings", L"Updates/UpToDate"));
+	UpdatePendingFlyoutFooter().Text(L"Amethyst v" + StringToWString(k2app::interfacing::K2InternalVersion));*/
 
-	//// Hide the new-update icon dot
-	//UpdateIconDot().Opacity(0.0);
+	// Hide the new-update icon dot
+	UpdateIconDot().Opacity(0.0);
 
-	//// Sleep on UI (Non-blocking)
-	//{
-	//	apartment_context ui_thread;
-	//	co_await resume_background();
-	//	Sleep(500);
-	//	co_await ui_thread;
-	//}
+	// Sleep on UI (Non-blocking)
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
 
-	//// Mark the update footer as active
-	//UpdateIconGrid().Translation({0, 0, 0});
-	//UpdateIconText().Opacity(0.0);
-	//UpdateIcon().Foreground(*k2app::shared::main::attentionBrush);
-	//IconRotation().Begin();
+	// Mark the update footer as active
+	UpdateIconGrid().Translation({0, 0, 0});
+	UpdateIconText().Opacity(0.0);
+	UpdateIcon().Foreground(*k2app::shared::main::attentionBrush);
+	IconRotation().Begin();
 
-	//// Show the updater progress flyout
-	//Controls::Primitives::FlyoutShowOptions options;
-	//options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
-	//options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
+	// Show the updater progress flyout
+	Controls::Primitives::FlyoutShowOptions options;
+	options.Placement(Controls::Primitives::FlyoutPlacementMode::RightEdgeAlignedBottom);
+	options.ShowMode(Controls::Primitives::FlyoutShowMode::Transient);
 
-	//if (!k2app::interfacing::isNUXPending)
-	//	UpdatePendingFlyout().ShowAt(HelpButton(), options);
+	UpdatePendingFlyoutStatusContent().Text(
+		k2app::interfacing::LocalizedJSONString(
+			L"/SharedStrings/Updates/Statuses/Downloading"));
 
-	//// Success? ...or nah?
-	//bool m_update_error = false;
+	UpdatePendingFlyoutFooter().Text(
+		L"Amethyst v" + StringToWString(K2RemoteVersionString));
 
-	//// Reset the progressbar
-	//auto UpdatePendingFlyoutProgressBar = Controls::ProgressBar();
-	//UpdatePendingFlyoutProgressBar.IsIndeterminate(false);
-	//UpdatePendingFlyoutProgressBar.HorizontalAlignment(
-	//	HorizontalAlignment::Stretch);
+	if (!k2app::interfacing::isNUXPending)
+		UpdatePendingFlyout().ShowAt(HelpButton(), options);
 
-	//UpdatePendingFlyoutMainStack().Children().Append(
-	//	UpdatePendingFlyoutProgressBar);
+	// Success? ...or nah?
+	bool m_update_error = false;
 
-	///* Simulate some work being done */
-	//for (uint32_t i = 0; i <= 100; i++)
-	//{
-	//	UpdatePendingFlyoutProgressBar.Value(i);
-	//	UpdatePendingFlyoutStatusContent().Text(
-	//		L"Downlodign - " + std::to_wstring(i) + L"%");
+	// Reset the progressbar
+	auto UpdatePendingFlyoutProgressBar = Controls::ProgressBar();
+	UpdatePendingFlyoutProgressBar.IsIndeterminate(false);
+	UpdatePendingFlyoutProgressBar.HorizontalAlignment(
+		HorizontalAlignment::Stretch);
 
-	//	// Sleep on UI (Non-blocking)
-	//	{
-	//		apartment_context ui_thread;
-	//		co_await resume_background();
-	//		Sleep(150);
-	//		co_await ui_thread;
-	//	}
+	UpdatePendingFlyoutMainStack().Children().Append(
+		UpdatePendingFlyoutProgressBar);
 
-	//	// Simulate an error
-	//	if (i > 60)
-	//	{
-	//		m_update_error = true;
-	//		break;
-	//	}
-	//}
+	// Download the latest installer/updater
+	// https://github.com/KinectToVR/Amethyst-Installer-Releases/releases/latest/download/Amethyst-Installer.exe
 
-	//// Mark the update footer as inactive
-	//IconRotation().Stop();
-	//UpdateIcon().Foreground(*k2app::shared::main::neutralBrush);
-	//UpdateIconGrid().Translation({0, -8, 0});
-	//UpdateIconText().Opacity(1.0);
+	try
+	{
+		const auto& client = Windows::Web::Http::HttpClient();
+		std::wstring installerUri = L"";
 
-	//// Check the file result and the DL result
-	//if (!m_update_error)
-	//{
-	//	// Execute the update
-	//	ShellExecuteA(nullptr, nullptr,
-	//	              "https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
-	//	              nullptr, nullptr, SW_SHOW);
-	//}
-	//else
-	//{
-	//	// Play a sound
-	//	playAppSound(k2app::interfacing::sounds::AppSounds::Error);
+		LOG(INFO) << "Checking out the updater version... [GET]";
 
-	//	UpdatePendingFlyoutProgressBar.ShowError(true);
-	//	UpdatePendingFlyoutStatusContent().Text(L"Erraa downlodign!");
+		// Get the installer download Uri
+		try
+		{
+			const auto& response = co_await client.GetAsync(
+				Windows::Foundation::Uri(L"https://api.k2vr.tech/v0/installer/version"));
 
-	//	// Sleep on UI (Non-blocking)
-	//	{
-	//		apartment_context ui_thread;
-	//		co_await resume_background();
-	//		Sleep(3200);
-	//		co_await ui_thread;
-	//	}
-	//}
-
-	//// Hide the flyout
-	//UpdatePendingFlyout().Hide();
-
-	//// Sleep on UI (Non-blocking)
-	//{
-	//	apartment_context ui_thread;
-	//	co_await resume_background();
-	//	Sleep(500);
-	//	co_await ui_thread;
-	//}
-
-	//// Don't give up yet
-	//k2app::interfacing::updatingNow = false;
-	//if (k2app::interfacing::updateFound)
-	//	UpdateIconDot().Opacity(1.0);
-
-	//// Remove the progressbar
-	//UpdatePendingFlyoutMainStack().Children().RemoveAtEnd();
+			if (const auto get_installer_uri = co_await response.Content().ReadAsStringAsync();
+				!get_installer_uri.empty())
+			{
+				// Parse the loaded json
+				if (const auto json_root = Windows::Data::Json::JsonObject::Parse(get_installer_uri);
+					json_root.HasKey(L"download"))
+					installerUri = json_root.GetNamedString(L"download");
+				else
+				{
+					LOG(ERROR) << "Installer-uri-check failed, the \"download\" key wasn't found.";
+					m_update_error = true;
+				}
+			}
+			else 
+			{
+				LOG(ERROR) << "Installer-uri-check failed, the string was empty.";
+				m_update_error = true;
+			}
+		}
+		catch (const hresult_error& ex)
+		{
+			LOG(ERROR) << "Error checking the updater download Uri! "
+				"Message: " << WStringToString(ex.message().c_str());
+			m_update_error = true;
+		}
 
 
-	// Execute the update
-	ShellExecuteA(nullptr, nullptr,
-	              "https://github.com/KinectToVR/Amethyst-Releases/releases/latest",
-	              nullptr, nullptr, SW_SHOW);
+		// Download if we're ok
+		if (!m_update_error)
+		{
+			try
+			{
+				const auto& thisFolder = co_await Windows::Storage::StorageFolder::GetFolderFromPathAsync(
+					k2app::interfacing::GetProgramLocation().parent_path().wstring());
 
-	co_return;
+				// To save downloaded image to local storage
+				const auto& installerFile = co_await thisFolder.CreateFileAsync(
+					L"Amethyst-Installer.exe",
+					Windows::Storage::CreationCollisionOption::ReplaceExisting);
+
+				const auto& fs_installerFile =
+					co_await installerFile.OpenAsync(Windows::Storage::FileAccessMode::ReadWrite);
+
+
+				const auto& response = co_await client.GetAsync(
+					Windows::Foundation::Uri(installerUri),
+					Windows::Web::Http::HttpCompletionOption::ResponseHeadersRead);
+
+				const auto& stream = co_await response.Content().ReadAsInputStreamAsync();
+
+				uint64_t totalBytesRead = 0; // Already read buffer
+				const uint64_t totalBytesToRead = response.Content().Headers().ContentLength().Value();
+
+				const auto downloadStatusString = k2app::interfacing::LocalizedJSONString(
+					L"/SharedStrings/Updates/Statuses/Downloading");
+
+				while (true)
+				{
+					Windows::Storage::Streams::IBuffer buffer =
+						Windows::Storage::Streams::Buffer(1024 * 512); // 0.5MB
+
+					buffer = co_await stream.ReadAsync(
+						buffer, buffer.Capacity(), Windows::Storage::Streams::InputStreamOptions::None);
+
+					// There's nothing else to read
+					if (buffer.Length() == 0)
+						break;
+
+					// Report the progress
+					totalBytesRead += buffer.Length();
+
+					LOG(INFO) << std::format("Downloaded {} of {} bytes...",
+					                         totalBytesRead, totalBytesToRead);
+
+					// Update the progressbar
+					const double progress = static_cast<double>(totalBytesRead) / totalBytesToRead;
+
+					UpdatePendingFlyoutProgressBar.Value(progress * 100);
+					UpdatePendingFlyoutStatusContent().Text(
+						k2app::interfacing::stringReplaceAll_R(
+							downloadStatusString, std::to_wstring(0),
+							std::to_wstring(static_cast<int>(progress * 100))));
+
+					// Write to file
+					co_await fs_installerFile.WriteAsync(buffer);
+				}
+			}
+			catch (const hresult_error& ex)
+			{
+				LOG(ERROR) << "Error downloading the updater! Message: "
+					<< WStringToString(ex.message().c_str());
+				m_update_error = true;
+			}
+		}
+	}
+	catch (const hresult_error& ex)
+	{
+		LOG(ERROR) << "Update failed, an exception occurred."
+			<< " Message: " << WStringToString(ex.message().c_str());
+		m_update_error = true;
+	}
+	catch (...)
+	{
+		LOG(ERROR) << "Update failed, an exception occurred.";
+		m_update_error = true;
+	}
+
+	// Mark the update footer as inactive
+	IconRotation().Stop();
+	UpdateIcon().Foreground(*k2app::shared::main::neutralBrush);
+	UpdateIconGrid().Translation({0, -8, 0});
+	UpdateIconText().Opacity(1.0);
+
+	// Check the file result and the DL result
+	if (!m_update_error)
+	{
+		// Execute the update
+		CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		ShellExecute(nullptr, nullptr,
+		             (k2app::interfacing::GetProgramLocation().parent_path() /
+			             L"Amethyst-Installer.exe").wstring().c_str(),
+		             k2app::interfacing::updateOnClosed
+			             ? L" --update" // Don't re-open
+			             : L" --update -o", // Re-open AME
+		             nullptr, SW_SHOWDEFAULT);
+
+		// Exit, cleanup should be automatic
+		k2app::interfacing::updateOnClosed = false; // Don't re-do
+		exit(0); // Should get caught by the exit handler
+	}
+	else
+	{
+		// Play a sound
+		playAppSound(k2app::interfacing::sounds::AppSounds::Error);
+
+		UpdatePendingFlyoutProgressBar.ShowError(true);
+		UpdatePendingFlyoutStatusContent().Text(
+			k2app::interfacing::LocalizedJSONString(
+				L"/SharedStrings/Updates/Statuses/Error"));
+	}
+
+	// Sleep on UI (Non-blocking)
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(m_update_error ? 3200 : 1000);
+		co_await ui_thread;
+	}
+
+	// Hide the flyout
+	UpdatePendingFlyout().Hide();
+
+	// Sleep on UI (Non-blocking)
+	{
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(500);
+		co_await ui_thread;
+	}
+
+	// Don't give up yet
+	k2app::interfacing::updatingNow = false;
+	if (k2app::interfacing::updateFound)
+		UpdateIconDot().Opacity(1.0);
+
+	// Remove the progressbar
+	UpdatePendingFlyoutMainStack().Children().RemoveAtEnd();
+	co_return; // END
 }
 
 // Updates checking function
@@ -241,8 +351,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 				try
 				{
 					const auto& response = co_await client.GetAsync(
-						Windows::Foundation::Uri(
-							L"https://github.com/KinectToVR/Amethyst-Releases/releases/latest/download/version"));
+						Windows::Foundation::Uri(std::format(
+							L"https://api.k2vr.tech/v{}/update", k2app::interfacing::K2APIVersion)));
 
 					get_release_version = co_await response.Content().ReadAsStringAsync();
 				}
@@ -274,43 +384,41 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 					LOG(INFO) << "Update-check successful, string:\n" << WStringToString(get_release_version);
 
 					// Parse the loaded json
-					const auto json_root = Windows::Data::Json::JsonObject::Parse(get_release_version);
+					const auto json_head = Windows::Data::Json::JsonObject::Parse(get_release_version);
 
-					if (!json_root.HasKey(L"version_string") || !json_root.HasKey(L"changes"))
+					if (!json_head.HasKey(L"amethyst"))
+						LOG(ERROR) << "The latest release's manifest was invalid!";
+
+					// Parse the amethyst entry
+					const auto json_root = json_head.GetNamedObject(L"amethyst");
+
+					if (!json_root.HasKey(L"version") ||
+						!json_root.HasKey(L"version_string") ||
+						!json_root.HasKey(L"changelog"))
 						LOG(ERROR) << "The latest release's manifest was invalid!";
 
 					else
 					{
-						// Find the version tag (it's a string only to save time, trust me...)
-						K2RemoteVersion = WStringToString(json_root.GetNamedString(L"version_string").c_str());
+						// Get the version tag (uint, fallback to latest)
+						const uint32_t K2RMTVersion = json_root.GetNamedNumber(
+							L"version", k2app::interfacing::K2INTVersion);
+
+						// Get the remote version name
+						K2RemoteVersionString = WStringToString(
+							json_root.GetNamedString(L"version_string").c_str());
+
+						LOG(INFO) << "Local version: " << k2app::interfacing::K2INTVersion;
+						LOG(INFO) << "Remote version: " << K2RMTVersion;
 
 						LOG(INFO) << "Local version string: " << k2app::interfacing::K2InternalVersion;
-						LOG(INFO) << "Remote version string: " << K2RemoteVersion;
+						LOG(INFO) << "Remote version string: " << K2RemoteVersionString;
 
-						/* Now split the gathered string into the version number */
-
-						// Split version strings into integers
-						std::vector<std::string> local_version_num, remote_version_num;
-
-						using namespace std::string_literals;
-						local_version_num = k2app::interfacing::splitStringByDelimiter(
-							k2app::interfacing::K2InternalVersion, "."s);
-						remote_version_num = k2app::interfacing::splitStringByDelimiter(K2RemoteVersion, "."s);
-
-						// Compare to the current version
-						for (uint32_t i = 0; i < 4; i++)
-						{
-							// Check the version
-							if (const auto _ver = std::stoi(remote_version_num.at(i));
-								_ver > std::stoi(local_version_num.at(i)))
-								k2app::interfacing::updateFound = true;
-
-								// Not to false-alarm in situations like 1.0.1.0 (local) vs 1.0.0.1 (remote)
-							else if (_ver < std::stoi(local_version_num.at(i))) break;
-						}
+						// Check the version
+						if (k2app::interfacing::K2INTVersion < K2RMTVersion)
+							k2app::interfacing::updateFound = true;
 
 						// Cache the changes
-						for (auto change_entry : json_root.GetNamedArray(L"changes"))
+						for (auto change_entry : json_root.GetNamedArray(L"changelog"))
 							changes_strings_vector.push_back(change_entry.GetString().c_str());
 
 						// Thanks to this chad: https://stackoverflow.com/a/45123408
@@ -421,7 +529,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::checkUpd
 			{
 				FlyoutHeader().Text(k2app::interfacing::LocalizedResourceWString(
 					L"SharedStrings", L"Updates/NewUpdateFound"));
-				FlyoutFooter().Text(L"Amethyst v" + StringToWString(K2RemoteVersion));
+				FlyoutFooter().Text(L"Amethyst v" + StringToWString(K2RemoteVersionString));
 
 				std::wstring changelog_string;
 				for (const auto& str : changes_strings_vector)
@@ -947,7 +1055,7 @@ namespace winrt::Amethyst::implementation
 
 				if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "devices"))
 				{
-					for (auto entry : std::filesystem::directory_iterator(
+					for (const auto& entry : std::filesystem::directory_iterator(
 						     k2app::interfacing::GetProgramLocation().parent_path() / "devices"))
 					{
 						if (exists(entry.path() / "device.k2devicemanifest"))
@@ -2583,6 +2691,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Next")));
 	InitializerTeachingTip().ActionButtonContent(
 		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Skip")));
+
+	UpdatePendingFlyoutHeader().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Updates/Headers/Downloading"));
+	UpdatePendingFlyoutStatusLabel().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Updates/Headers/Status"));
 
 	using namespace k2app;
 	using namespace shared::main;

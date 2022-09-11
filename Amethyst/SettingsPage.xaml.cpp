@@ -378,17 +378,13 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 	// Literals
 	using namespace std::string_literals;
 
-	// Get current caller path
-	const auto fileName = new CHAR[MAX_PATH + 1];
-	const DWORD charsWritten = GetModuleFileNameA(nullptr, fileName, MAX_PATH + 1);
-
 	LOG(INFO) << "Reset invoked: trying to restart the app...";
 
 	// If we've found who asked
-	if (charsWritten != 0)
+	if (exists(k2app::interfacing::GetProgramLocation()))
 	{
 		// Log the caller
-		LOG(INFO) << "The current caller process is: "s + fileName;
+		LOG(INFO) << "The current caller process is: " + WStringToString(k2app::interfacing::GetProgramLocation().wstring());
 
 		// Exit the app
 		LOG(INFO) << "Configuration has been reset, exiting in 500ms...";
@@ -404,7 +400,9 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 
 		// Restart and exit with code 0
 		CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		ShellExecuteA(nullptr, nullptr, fileName, nullptr, nullptr, SW_SHOWDEFAULT);
+		ShellExecute(nullptr, nullptr, 
+			k2app::interfacing::GetProgramLocation().wstring().c_str(), 
+			nullptr, nullptr, SW_SHOWDEFAULT);
 
 		exit(0);
 	}
