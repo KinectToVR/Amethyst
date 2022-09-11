@@ -72,6 +72,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::InfoPage::EndingTeac
 	const Controls::TeachingTip& sender,
 	const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Dismiss the current tip
 	EndingTeachingTip().IsOpen(false);
 
@@ -104,6 +107,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::InfoPage::HelpTeachi
 	const Controls::TeachingTip& sender,
 	const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	EndingTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	EndingTeachingTip().IsOpen(true);
 
@@ -114,6 +120,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::InfoPage::HelpTeachi
 Windows::Foundation::IAsyncAction Amethyst::implementation::InfoPage::HelpTeachingTip_ActionButtonClick(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Close the current tip
 	HelpTeachingTip().IsOpen(false);
 

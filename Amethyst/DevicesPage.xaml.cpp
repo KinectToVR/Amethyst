@@ -1368,6 +1368,9 @@ void Amethyst::implementation::DevicesPage::OpenDocsButton_Click(
 void Amethyst::implementation::DevicesPage::DevicesListTeachingTip_Closed(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	DeviceStatusTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	DeviceStatusTeachingTip().IsOpen(true);
 }
@@ -1376,6 +1379,9 @@ void Amethyst::implementation::DevicesPage::DevicesListTeachingTip_Closed(
 void Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_Closed(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	DeviceControlsTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	DeviceControlsTeachingTip().IsOpen(true);
 }
@@ -1384,6 +1390,9 @@ void Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_Closed(
 Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::DeviceControlsTeachingTip_Closed(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Wait a bit
 	{
 		apartment_context ui_thread;
@@ -1432,6 +1441,9 @@ void Amethyst::implementation::DevicesPage::ButtonFlyout_Closing(
 Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::DevicesListTeachingTip_ActionButtonClick(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Close the current tip
 	DevicesListTeachingTip().IsOpen(false);
 
@@ -1470,6 +1482,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::Devices
 void Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_ActionButtonClick(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Close the current tip
 	DeviceStatusTeachingTip().IsOpen(false);
 
@@ -1483,6 +1498,9 @@ void Amethyst::implementation::DevicesPage::DeviceStatusTeachingTip_ActionButton
 void Amethyst::implementation::DevicesPage::DeviceControlsTeachingTip_ActionButtonClick(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Close the current tip
 	DeviceControlsTeachingTip().IsOpen(false);
 

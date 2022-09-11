@@ -423,6 +423,11 @@ Windows::Foundation::IAsyncAction
 Amethyst::implementation::SettingsPage::ReNUXButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
+	LOG(INFO) << "Manual NUX relaunch invoked! Starting NUX...";
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Navigate to the settings page
 	k2app::shared::main::mainNavigationView->SelectedItem(
 		k2app::shared::main::mainNavigationView->MenuItems().GetAt(0));
@@ -1612,6 +1617,9 @@ void Amethyst::implementation::SettingsPage::ViewLogsButton_Click(
 Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::ManageTrackersTeachingTip_Closed(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	PageMainScrollViewer().UpdateLayout();
 	PageMainScrollViewer().ChangeView(
 		nullptr, PageMainScrollViewer().ExtentHeight() / 2.0, nullptr);
@@ -1629,6 +1637,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::Manage
 Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_Closed(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	PageMainScrollViewer().UpdateLayout();
 	PageMainScrollViewer().ChangeView(nullptr, 0.0, nullptr);
 
@@ -1645,6 +1656,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AddTra
 Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AutoStartTeachingTip_Closed(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Wait a bit
 	{
 		apartment_context ui_thread;
@@ -1811,6 +1825,9 @@ Amethyst::implementation::SettingsPage::ManageTrackersTeachingTip_ActionButtonCl
 	const Controls::TeachingTip& sender,
 	const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Close the current tip
 	ManageTrackersTeachingTip().IsOpen(false);
 
@@ -1846,6 +1863,9 @@ Windows::Foundation::IAsyncAction
 Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_ActionButtonClick(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Close the current tip
 	AddTrackersTeachingTip().IsOpen(false);
 
@@ -1868,6 +1888,9 @@ Amethyst::implementation::SettingsPage::AddTrackersTeachingTip_ActionButtonClick
 Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AutoStartTeachingTip_ActionButtonClick(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Close the current tip
 	AutoStartTeachingTip().IsOpen(false);
 

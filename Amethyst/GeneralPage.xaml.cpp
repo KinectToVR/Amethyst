@@ -2209,6 +2209,9 @@ void Amethyst::implementation::GeneralPage::DismissSetErrorButton_Click(
 void Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Closed(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	CalibrationTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	CalibrationTeachingTip().IsOpen(true);
 }
@@ -2217,6 +2220,9 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_Closed(
 void Amethyst::implementation::GeneralPage::CalibrationTeachingTip_Closed(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	StatusTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
 	StatusTeachingTip().IsOpen(true);
 }
@@ -2225,6 +2231,9 @@ void Amethyst::implementation::GeneralPage::CalibrationTeachingTip_Closed(
 Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StatusTeachingTip_Closed(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Wait a bit
 	{
 		apartment_context ui_thread;
@@ -2277,6 +2286,9 @@ void Amethyst::implementation::GeneralPage::ToggleButtonFlyout_Closing(
 void Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_ActionButtonClick(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Close the current tip
 	ToggleTrackersTeachingTip().IsOpen(false);
 
@@ -2288,6 +2300,9 @@ void Amethyst::implementation::GeneralPage::ToggleTrackersTeachingTip_ActionButt
 void Amethyst::implementation::GeneralPage::CalibrationTeachingTip_ActionButtonClick(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Close the current tip
 	CalibrationTeachingTip().IsOpen(false);
 
@@ -2301,6 +2316,9 @@ void Amethyst::implementation::GeneralPage::CalibrationTeachingTip_ActionButtonC
 void Amethyst::implementation::GeneralPage::StatusTeachingTip_ActionButtonClick(
 	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Close the current tip
 	StatusTeachingTip().IsOpen(false);
 

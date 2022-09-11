@@ -2019,6 +2019,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::UpdateBu
 	// Show the startup tour teachingtip
 	if (!k2app::K2Settings.firstTimeTourShown)
 	{
+		// Play a sound
+		playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 		// Show the first tip
 		k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
 		k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
@@ -2116,6 +2119,9 @@ void Amethyst::implementation::MainWindow::InitializerTeachingTip_ActionButtonCl
 	const Controls::TeachingTip& sender,
 	const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Dismiss the current tip
 	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(false);
 
@@ -2131,6 +2137,9 @@ void Amethyst::implementation::MainWindow::InitializerTeachingTip_CloseButtonCli
 	const Controls::TeachingTip& sender,
 	const Windows::Foundation::IInspectable& args)
 {
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
 	// Dismiss the current tip
 	k2app::shared::teaching_tips::main::initializerTeachingTip->IsOpen(false);
 
