@@ -107,7 +107,7 @@ namespace k2app::main
 			{
 				// Kinect Basis
 				K2Settings.isFlipEnabled =
-					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported()
+					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported()
 						? !K2Settings.isFlipEnabled // If supported
 						: false; // If not supported
 			}
@@ -240,7 +240,7 @@ namespace k2app::main
 		{
 		case 0:
 			{
-				const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device);
+				const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
 				pDevice->update(); // Update the device
 				interfacing::kinectHeadPosition.first = pDevice->getJointPositions()[ktvr::Joint_Head];
 				interfacing::kinectWaistPosition.first = pDevice->getJointPositions()[ktvr::Joint_SpineWaist];
@@ -264,7 +264,7 @@ namespace k2app::main
 			{
 			case 0:
 				{
-					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device_pair.second);
+					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device_pair.second);
 					pDevice->update(); // Update the device
 					interfacing::kinectHeadPosition.second = pDevice->getJointPositions()[ktvr::Joint_Head];
 					interfacing::kinectWaistPosition.second = pDevice->getJointPositions()[ktvr::Joint_SpineWaist];
@@ -608,17 +608,17 @@ namespace k2app::main
 				// Copy the orientation to the tracker
 				tracker.pose_orientation = _device.index() == 0
 
-					                           // KinectBasis Device - grab L or R depending on flip : index0
+					                           // SkeletonBasis Device - grab L or R depending on flip : index0
 					                           ? (base_flip
 
 						                              // If flip
-						                              ? std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
+						                              ? std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device)->
 						                              getJointOrientations()[
 							                              interfacing::overrides::getFlippedJointType(
 								                              ITrackerType_Joint[tracker.base_tracker])].inverse()
 
 						                              // If no flip
-						                              : std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device)->
+						                              : std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device)->
 						                              getJointOrientations()[ITrackerType_Joint[tracker.base_tracker]]
 					                           )
 
@@ -652,7 +652,7 @@ namespace k2app::main
 				(K2Settings.K2TrackersVector[1].orientationTrackingOption == k2_SoftwareCalculatedRotation ||
 					K2Settings.K2TrackersVector[2].orientationTrackingOption == k2_SoftwareCalculatedRotation))
 			{
-				const auto& _kinect = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device);
+				const auto& _kinect = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device);
 
 				if (_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Full ||
 					_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
@@ -925,7 +925,7 @@ namespace k2app::main
 			}
 
 			/*
-			 * Trackers orientation - Calibration-related fixes (kinectbasis-only)
+			 * Trackers orientation - Calibration-related fixes (SkeletonBasis-only)
 			 */
 
 			if (_device.index() == 0)
@@ -1000,7 +1000,7 @@ namespace k2app::main
 			if (_device.index() == 0)
 			{
 				const auto& _kinect =
-					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device);
+					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device);
 
 				for (auto& tracker : K2Settings.K2TrackersVector)
 					tracker.pose_position = _kinect->getJointPositions()[
@@ -1094,11 +1094,11 @@ namespace k2app::main
 						// Copy the orientation to the tracker
 						tracker.pose_orientation = _device.index() == 0
 
-							                           // KinectBasis Device - grab L or R depending on flip : index1
+							                           // SkeletonBasis Device - grab L or R depending on flip : index1
 							                           ? (override_flip
 
 								                              // If flip
-								                              ? std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+								                              ? std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 									                              _device)->
 								                              getJointOrientations()[
 									                              interfacing::overrides::getFlippedJointType(
@@ -1108,7 +1108,7 @@ namespace k2app::main
 								                              inverse()
 
 								                              // If no flip
-								                              : std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+								                              : std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 									                              _device)->
 								                              getJointOrientations()[
 									                              TrackingDevices::devices_override_joint_id(
@@ -1135,7 +1135,7 @@ namespace k2app::main
 				// We've got no math-based for override devices (✿◕‿◕✿)
 
 				/*
-				 * Trackers orientation - Calibration-related fixes (kinectbasis-only)
+				 * Trackers orientation - Calibration-related fixes (SkeletonBasis-only)
 				 */
 
 				if (_device.index() == 0)
@@ -1196,7 +1196,7 @@ namespace k2app::main
 				if (_device.index() == 0)
 				{
 					const auto& _kinect =
-						std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_device);
+						std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device);
 
 					for (auto& tracker : K2Settings.K2TrackersVector)
 						if (tracker.isPositionOverridden)

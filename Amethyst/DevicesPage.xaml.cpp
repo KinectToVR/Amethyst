@@ -77,7 +77,7 @@ namespace winrt::Amethyst::implementation
 			{
 			case 0:
 				{
-					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(device);
+					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
 					deviceName = pDevice->getDeviceName();
 				}
 				break;
@@ -241,12 +241,12 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		const auto& device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
 		device->shutdown();
 		device_status = device->statusResultWString(device->getStatusResult());
 
-		// We've selected a kinectbasis device, so this should be hidden
+		// We've selected a SkeletonBasis device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
@@ -391,7 +391,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		const auto& device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		// Show / Hide device settings button
@@ -479,7 +479,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		k2app::K2Settings.overrideDeviceName = selectedTrackingDeviceName;
 
 		// Kinect Basis
-		const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 		deviceName = device->getDeviceName();
 		device->initialize(); // Init the device as we'll be using it
 
@@ -528,7 +528,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		// Backup the status
 		device_status = device->statusResultWString(device->getStatusResult());
 
-		// We've selected a kinectbasis device, so this should be hidden
+		// We've selected a SkeletonBasis device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
@@ -715,13 +715,13 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 		}
 
 		// Kinect Basis
-		const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 		deviceName = device->getDeviceName();
 
 		device->initialize(); // Init the device as we'll be using it
 		device_status = device->statusResultWString(device->getStatusResult());
 
-		// We've selected a kinectbasis device, so this should be hidden
+		// We've selected a SkeletonBasis device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
@@ -1025,7 +1025,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
 		deviceNameLabel.get()->Text(StringToWString(device->getDeviceName()));
 		device_status = device->statusResultWString(device->getStatusResult());
@@ -1046,7 +1046,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 					selectedTrackingDeviceID)->Get()
 				: *k2app::interfacing::emptyLayoutRoot->Get());
 
-		// We've selected a kinectbasis device, so this should be hidden
+		// We've selected a SkeletonBasis device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
@@ -1516,7 +1516,7 @@ Amethyst::implementation::DevicesPage::TrackingDeviceTreeView_ItemInvoked(
 		{
 		case 0:
 			{
-				const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+				const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 					TrackingDevices::TrackingDevicesVector[s_index]);
 				deviceName = pDevice->getDeviceName();
 			}
@@ -1573,7 +1573,7 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+		const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
 		deviceNameLabel.get()->Text(StringToWString(device->getDeviceName()));
 		device_status = device->statusResultWString(device->getStatusResult());
@@ -1594,7 +1594,7 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 					selectedTrackingDeviceID)->Get()
 				: *k2app::interfacing::emptyLayoutRoot->Get());
 
-		// We've selected a kinectbasis device, so this should be hidden
+		// We've selected a SkeletonBasis device, so this should be hidden
 		for (auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 

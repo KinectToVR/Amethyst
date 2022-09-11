@@ -33,7 +33,7 @@ namespace TrackingDevices
 		if (trackingDevice.index() == 0)
 		{
 			// Kinect Basis
-			const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+			const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
 			device_status = device->statusResultWString(device->getStatusResult());
 			deviceName = device->getDeviceName();
@@ -100,16 +100,16 @@ namespace TrackingDevices
 			if (trackingDevice.index() == 0)
 			{
 				// Kinect Basis
-				const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
+				const bool _sup = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>
 					(trackingDevice)->isAppOrientationSupported();
 
 				for (auto expander : k2app::shared::settings::jointExpanderVector)
 					expander->EnableSoftwareOrientation(_sup);
 
 				k2app::shared::settings::flipToggle.get()->IsEnabled(
-					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
 				k2app::shared::settings::flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
-					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
 				k2app::shared::settings::flipDropDownGrid.get()->Opacity(
 					k2app::shared::settings::flipToggle.get()->IsEnabled() ? 1 : 0.5);
 
@@ -159,7 +159,7 @@ namespace TrackingDevices
 			if (overrideDevice.index() == 0)
 			{
 				// Kinect Basis
-				const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(overrideDevice);
+				const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(overrideDevice);
 
 				device_status = device->statusResultWString(device->getStatusResult());
 				deviceName = device->getDeviceName();
@@ -241,10 +241,10 @@ namespace TrackingDevices
 			return id;
 
 		if (
-			_override.first && _is_kinect // If we're using a kinectbasis
+			_override.first && _is_kinect // If we're using a SkeletonBasis
 		)
 		{
-			if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+			if (std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 					_override.second)->getDeviceCharacteristics()
 				> ktvr::K2_Character_Basic)
 			{
@@ -303,10 +303,10 @@ namespace TrackingDevices
 			return id;
 
 		if (
-			_override.first && _is_kinect // If we're using a kinectbasis
+			_override.first && _is_kinect // If we're using a SkeletonBasis
 		)
 		{
-			if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+			if (std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 					_override.second)->getDeviceCharacteristics()
 				> ktvr::K2_Character_Basic)
 			{
@@ -360,7 +360,7 @@ namespace TrackingDevices
 			if (trackingDevice.index() == 0)
 			{
 				// Kinect Basis
-				const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+				const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 				deviceName = device->getDeviceName();
 			}
 			else if (trackingDevice.index() == 1)
@@ -384,7 +384,7 @@ namespace TrackingDevices
 			if (trackingDevice.index() == 0)
 			{
 				// Kinect Basis
-				const auto device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+				const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 				deviceName = device->getDeviceName();
 			}
 			else if (trackingDevice.index() == 1)
@@ -418,12 +418,12 @@ namespace TrackingDevices
 		if (trackingDevice.index() == 0)
 		{
 			// Kinect Basis
-			const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+			const auto& device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
 			if (reconnect) device->initialize();
 			device_status = device->statusResultWString(device->getStatusResult());
 
-			// We've selected a kinectbasis device, so this should be hidden
+			// We've selected a SkeletonBasis device, so this should be hidden
 			for (auto& expander : jointSelectorExpanders)
 				expander.get()->SetVisibility(Visibility::Collapsed);
 

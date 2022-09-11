@@ -21,14 +21,14 @@
 
 /* Not exported */
 
-class KinectV1Handler : public ktvr::K2TrackingDeviceBase_KinectBasis
+class KinectV1Handler : public ktvr::K2TrackingDeviceBase_SkeletonBasis
 {
 	// A representation of the Kinect elements for the v1 api
 public:
 	KinectV1Handler()
 	{
 		//KinectV1Handler::initialize();
-		LOG(INFO) << "Constructing the Kinect V1 (X360) Handler for KinectBasis K2TrackingDevice...";
+		LOG(INFO) << "Constructing the Kinect V1 (X360) Handler for SkeletonBasis K2TrackingDevice...";
 
 		deviceType = ktvr::K2_Kinect;
 		deviceName = "Xbox 360 Kinect";

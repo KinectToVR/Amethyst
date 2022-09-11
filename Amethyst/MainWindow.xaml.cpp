@@ -761,7 +761,7 @@ namespace winrt::Amethyst::implementation
 								{
 									const auto& pDevice =
 										std::get<
-											ktvr::K2TrackingDeviceBase_KinectBasis*>(
+											ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 											device);
 
 									// Register the layout
@@ -1023,10 +1023,11 @@ namespace winrt::Amethyst::implementation
 											std::string _name = "E_UNKNOWN"; // Placeholder
 											bool blocks_flip = false, supports_math = true;
 
-											if (wcscmp(device_type.c_str(), L"KinectBasis") == 0)
+											if (wcscmp(device_type.c_str(), L"SkeletonBasis") == 0 ||
+												wcscmp(device_type.c_str(), L"KinectBasis") == 0)
 											{
 												auto pDevice =
-													static_cast<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+													static_cast<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 														(hDeviceFactory)(ktvr::IAME_API_Version, &returnCode));
 
 												if (returnCode == ktvr::K2InitError_None)
@@ -1112,7 +1113,7 @@ namespace winrt::Amethyst::implementation
 																{
 																	const auto& pDevice =
 																		std::get<
-																			ktvr::K2TrackingDeviceBase_KinectBasis*>(
+																			ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 																			device);
 
 																	// Register the layout
@@ -1249,7 +1250,7 @@ namespace winrt::Amethyst::implementation
 																{
 																	const auto& pDevice =
 																		std::get<
-																			ktvr::K2TrackingDeviceBase_KinectBasis*>(
+																			ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 																			device);
 
 																	// Register the layout
@@ -1448,24 +1449,24 @@ namespace winrt::Amethyst::implementation
 								// Update options for the device
 								if (k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
 									k2app::k2_SoftwareCalculatedRotation &&
-									!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+									!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 									isAppOrientationSupported())
 									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption =
 										k2app::k2_DeviceInferredRotation;
 
 								if (k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
 									k2app::k2_SoftwareCalculatedRotation &&
-									!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+									!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 									isAppOrientationSupported())
 									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption =
 										k2app::k2_DeviceInferredRotation;
 
 								// Init
-								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->initialize();
+								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->initialize();
 
 								// Backup the name
 								k2app::K2Settings.trackingDeviceName =
-									std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->getDeviceName();
+									std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->getDeviceName();
 							}
 							break;
 						case 1:
@@ -1512,7 +1513,7 @@ namespace winrt::Amethyst::implementation
 							{
 							case 0:
 								// Kinect Basis
-								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(overrideDevice)->initialize();
+								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(overrideDevice)->initialize();
 								break;
 							case 1:
 								// Joints Basis
@@ -1542,9 +1543,9 @@ namespace winrt::Amethyst::implementation
 								{
 								case 0:
 									// Kinect Basis
-									if (!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_trackingDevice)->
+									if (!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
 										isInitialized())
-										std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_trackingDevice)->
+										std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
 											initialize();
 									break;
 								case 1:
@@ -1567,9 +1568,9 @@ namespace winrt::Amethyst::implementation
 								{
 								case 0:
 									// Kinect Basis
-									if (!std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_trackingDevice)->
+									if (!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
 										isInitialized())
-										std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(_trackingDevice)->
+										std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
 											initialize();
 									break;
 								case 1:
@@ -2044,7 +2045,7 @@ void k2app::interfacing::handle_app_exit(const uint32_t& p_sleep_millis)
 				if (trackingDevice.index() == 0)
 				{
 					// Kinect Basis
-					const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+					const auto& device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 					device->shutdown();
 				}
 				else if (trackingDevice.index() == 1)

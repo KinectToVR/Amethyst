@@ -10,13 +10,13 @@
 
 /* Not exported */
 
-class KinectV2Handler : public ktvr::K2TrackingDeviceBase_KinectBasis
+class KinectV2Handler : public ktvr::K2TrackingDeviceBase_SkeletonBasis
 {
 public:
 	KinectV2Handler()
 	{
 		//KinectV2Handler::initialize();
-		LOG(INFO) << "Constructing the Kinect V2 (XBONE) Handler for KinectBasis K2TrackingDevice...";
+		LOG(INFO) << "Constructing the Kinect V2 (XBONE) Handler for SkeletonBasis K2TrackingDevice...";
 
 		deviceType = ktvr::K2_Kinect;
 		deviceName = "Xbox One Kinect";

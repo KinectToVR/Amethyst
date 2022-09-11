@@ -238,16 +238,16 @@ namespace winrt::Amethyst::implementation
 							trackingDevice.index() == 0)
 						{
 							// Kinect Basis
-							const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+							const bool _sup = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 								isAppOrientationSupported();
 
 							for (auto expander : jointExpanderVector)
 								expander->EnableSoftwareOrientation(_sup);
 
 							flipToggle.get()->IsEnabled(
-								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
 							flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
-								std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
 							flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
 
 							// Hide/Show the flip controls container
@@ -710,16 +710,16 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 		trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+		const bool _sup = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 			isAppOrientationSupported();
 
 		for (auto expander : jointExpanderVector)
 			expander->EnableSoftwareOrientation(_sup);
 
 		flipToggle.get()->IsEnabled(
-			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+			std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
 		flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
-			std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+			std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
 		flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
 
 		// Hide/Show the flip controls container
@@ -1313,16 +1313,16 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					trackingDevice.index() == 0)
 				{
 					// Kinect Basis
-					const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+					const bool _sup = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 						isAppOrientationSupported();
 
 					for (auto expander : jointExpanderVector)
 						expander->EnableSoftwareOrientation(_sup);
 
 					flipToggle.get()->IsEnabled(
-						std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+						std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
 					flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
-						std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+						std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
 					flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
 
 					// Hide/Show the flip controls container
@@ -1489,16 +1489,16 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				trackingDevice.index() == 0)
 			{
 				// Kinect Basis
-				const bool _sup = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+				const bool _sup = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 					isAppOrientationSupported();
 
 				for (auto expander : jointExpanderVector)
 					expander->EnableSoftwareOrientation(_sup);
 
 				flipToggle.get()->IsEnabled(
-					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
 				flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
-					std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->isFlipSupported());
+					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
 				flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
 
 				// Hide/Show the flip controls container

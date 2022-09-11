@@ -1673,7 +1673,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 		{
 		case 0:
 			{
-				const auto& device = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice);
+				const auto& device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
 				const auto joints = device->getJointPositions();
 				const auto states = device->getTrackingStates();
@@ -2001,7 +2001,7 @@ void Amethyst::implementation::GeneralPage::BaseCalibration_Click(
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+		if (std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 			getDeviceCharacteristics() == ktvr::K2_Character_Full)
 		{
 			AutoCalibrationButton().IsEnabled(true);
@@ -2043,7 +2043,7 @@ void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 	if (trackingDevice.index() == 0)
 	{
 		// Kinect Basis
-		if (std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(trackingDevice)->
+		if (std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 			getDeviceCharacteristics() == ktvr::K2_Character_Full)
 		{
 			AutoCalibrationButton().IsEnabled(true);

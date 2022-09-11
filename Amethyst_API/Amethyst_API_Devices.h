@@ -680,10 +680,10 @@ namespace ktvr
 	}
 
 	// Tracking Device class for client plugins to base on [KINECT]
-	class K2TrackingDeviceBase_KinectBasis
+	class K2TrackingDeviceBase_SkeletonBasis
 	{
 	public:
-		virtual ~K2TrackingDeviceBase_KinectBasis()
+		virtual ~K2TrackingDeviceBase_SkeletonBasis()
 		{
 		}
 
@@ -711,12 +711,12 @@ namespace ktvr
 		}
 
 		// Should be set up at construction
-		// Kinect type must provide joints: [ head, waist, knees, ankles, foot_tips ] or [ head, waist, ankles ]
+		// Skeleton type must provide joints: [ head, waist, knees, ankles, foot_tips ] or [ head, waist, ankles ]
 		// Other type must provide joints: [ waist, ankles ] and will persuade manual calibration
 
 		// Basic character will provide the same as JointsBasis but with head to support autocalibration
 		// Simple character will provide the same as Basic but with ankles and knees to support mathbased
-		// Full character will provide every kinect joint
+		// Full character will provide every skeleton (Kinect) joint
 		K2DeviceCharacteristics getDeviceCharacteristics() { return deviceCharacteristics; }
 
 		K2DeviceType getDeviceType() { return deviceType; }

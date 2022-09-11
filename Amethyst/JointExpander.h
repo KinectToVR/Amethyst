@@ -23,7 +23,7 @@ namespace TrackingDevices
 	// std::variant cause there are 3 possible device types
 	inline std::vector<
 		std::variant<
-			ktvr::K2TrackingDeviceBase_KinectBasis*,
+			ktvr::K2TrackingDeviceBase_SkeletonBasis*,
 			ktvr::K2TrackingDeviceBase_JointsBasis*>>
 	TrackingDevicesVector;
 
@@ -51,7 +51,7 @@ namespace TrackingDevices
 	// Extract the current device (variant of it)
 	inline std::pair<
 		bool, std::variant<
-			ktvr::K2TrackingDeviceBase_KinectBasis*,
+			ktvr::K2TrackingDeviceBase_SkeletonBasis*,
 			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe()
 	{
 		bool _exists = k2app::K2Settings.overrideDeviceID >= 0 &&
@@ -69,7 +69,7 @@ namespace TrackingDevices
 	// Extract the current device (variant of it)
 	inline std::pair<
 		bool, std::variant<
-			ktvr::K2TrackingDeviceBase_KinectBasis*,
+			ktvr::K2TrackingDeviceBase_SkeletonBasis*,
 			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe(const uint32_t& id)
 	{
 		bool _exists = TrackingDevicesVector.size() > id;
@@ -90,7 +90,7 @@ namespace TrackingDevices
 		const auto& trackingDevice =
 			getCurrentDevice();
 
-		if ((trackingDevice.index() == 0 && !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+		if ((trackingDevice.index() == 0 && !std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 			trackingDevice)->isFlipSupported()) || trackingDevice.index() == 1)
 			return false;
 
@@ -107,7 +107,7 @@ namespace TrackingDevices
 		{
 			// If the override device is a kinect then it HAS NOT TO support flip
 			if (overrideDevice.second.index() == 0)
-				return !std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>(
+				return !std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 					overrideDevice.second)->isFlipSupported();
 
 			// If the override device is a joints then it's always ok
@@ -252,7 +252,7 @@ namespace TrackingDevices
 			else if (device_pair.second.index() == 0) // If Kinect
 			{
 				// Note: switch based on device characteristics
-				const auto characteristics = std::get<ktvr::K2TrackingDeviceBase_KinectBasis*>
+				const auto characteristics = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>
 					(device_pair.second)->getDeviceCharacteristics();
 				uint32_t num_joints = -1; // To set later
 
