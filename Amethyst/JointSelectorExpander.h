@@ -304,7 +304,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_ptr_container_expander.get()->Expanding([&](const auto&, const auto&)
 			{
 				// Don't react to pre-init signals
-				if (!k2app::shared::settings::settings_localInitFinished)return;
+				if (!k2app::shared::devices::devices_tab_setup_finished)return;
 
 				// Play a sound
 				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
@@ -313,7 +313,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_ptr_container_expander.get()->Collapsed([&](const auto&, const auto&)
 			{
 				// Don't react to pre-init signals
-				if (!k2app::shared::settings::settings_localInitFinished)return;
+				if (!k2app::shared::devices::devices_tab_setup_finished)return;
 
 				// Play a sound
 				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
