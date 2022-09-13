@@ -537,5 +537,33 @@ namespace k2app
 
 		// LERP filter const
 		double _lerp_const = 0.31;
+
+	protected:
+		[[nodiscard]] virtual bool equals(const K2AppTracker& other) const
+		{
+			return
+				selectedTrackedJointID == other.selectedTrackedJointID &&
+				isPositionOverridden == other.isPositionOverridden &&
+				isRotationOverridden == other.isRotationOverridden &&
+				positionOverrideJointID == other.positionOverrideJointID &&
+				rotationOverrideJointID == other.rotationOverrideJointID &&
+				// pose_position == other.pose_position &&          // Doesn't matter
+				// pose_orientation == other.pose_orientation &&    // Doesn't matter
+				data_serial == other.data_serial &&
+				data_role == other.data_role &&
+				data_isActive == other.data_isActive &&
+				base_tracker == other.base_tracker &&
+				orientationTrackingOption == other.orientationTrackingOption &&
+				orientationTrackingFilterOption == other.orientationTrackingFilterOption &&
+				positionTrackingFilterOption == other.positionTrackingFilterOption &&
+				positionOffset == other.positionOffset &&
+				orientationOffset == other.orientationOffset;
+		}
+
+	public:
+		friend auto operator==(const K2AppTracker& a, const K2AppTracker& b) -> bool
+		{
+			return a.equals(b);
+		}
 	};
 }

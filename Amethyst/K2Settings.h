@@ -369,5 +369,48 @@ namespace k2app
 					WStringToString(resource_path.wstring()) << "\", the app interface will be broken!";
 			}
 		}
+
+	protected:
+		[[nodiscard]] virtual bool equals(const K2AppSettings& other) const
+		{
+			return
+				appLanguage == other.appLanguage &&
+				appTheme == other.appTheme &&
+				K2TrackersVector == other.K2TrackersVector &&
+				useTrackerPairs == other.useTrackerPairs &&
+				checkForOverlappingTrackers == other.checkForOverlappingTrackers &&
+				trackingDeviceName == other.trackingDeviceName &&
+				overrideDeviceName == other.overrideDeviceName &&
+				trackingDeviceID == other.trackingDeviceID &&
+				overrideDeviceID == other.overrideDeviceID &&
+				isFlipEnabled == other.isFlipEnabled &&
+				isExternalFlipEnabled == other.isExternalFlipEnabled &&
+				externalFlipCalibrationYaw == other.externalFlipCalibrationYaw &&
+				autoSpawnEnabledJoints == other.autoSpawnEnabledJoints &&
+				enableAppSounds == other.enableAppSounds &&
+				appSoundsVolume == other.appSoundsVolume &&
+				isMatrixCalibrated == other.isMatrixCalibrated &&
+				calibrationRotationMatrices == other.calibrationRotationMatrices &&
+				calibrationTranslationVectors == other.calibrationTranslationVectors &&
+				calibrationOrigins == other.calibrationOrigins &&
+				calibrationYaws == other.calibrationYaws &&
+				calibrationPointsNumber == other.calibrationPointsNumber &&
+				autoCalibration == other.autoCalibration &&
+				skeletonPreviewEnabled == other.skeletonPreviewEnabled &&
+				forceSkeletonPreview == other.forceSkeletonPreview &&
+				freezeLowerOnly == other.freezeLowerOnly &&
+				shownToastsGuidVector == other.shownToastsGuidVector &&
+				teachingTipShown_Freeze == other.teachingTipShown_Freeze &&
+				teachingTipShown_Flip == other.teachingTipShown_Flip &&
+				firstTimeTourShown == other.firstTimeTourShown &&
+				firstShutdownTipShown == other.firstShutdownTipShown;
+		}
+
+	public:
+		friend auto operator==(const K2AppSettings& a, const K2AppSettings& b) -> bool
+		{
+			return a.equals(b);
+		}
+
 	} inline K2Settings;
 }
