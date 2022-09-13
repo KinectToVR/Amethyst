@@ -121,7 +121,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::executeU
 					m_update_error = true;
 				}
 			}
-			else 
+			else
 			{
 				LOG(ERROR) << "Installer-uri-check failed, the string was empty.";
 				m_update_error = true;
@@ -141,7 +141,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::executeU
 			try
 			{
 				const auto& thisFolder = co_await Windows::Storage::StorageFolder::GetFolderFromPathAsync(
-					k2app::interfacing::GetProgramLocation().parent_path().wstring());
+					k2app::interfacing::GetK2AppTempDir());
 
 				// To save downloaded image to local storage
 				const auto& installerFile = co_await thisFolder.CreateFileAsync(
@@ -224,14 +224,22 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::executeU
 	// Check the file result and the DL result
 	if (!m_update_error)
 	{
+		const auto installerCommand =
+			k2app::interfacing::updateOnClosed
+				? std::format(L" --update -path \"{}\"", // Don't re-open
+				              k2app::interfacing::GetProgramLocation().parent_path().wstring()).c_str()
+				: std::format(L" --update -o -path \"{}\"", // Re-open AME
+				              k2app::interfacing::GetProgramLocation().parent_path().wstring()).c_str();
+
+		LOG(INFO) << "Starting Amethyst updater with parameters: [ " <<
+			WStringToString(installerCommand) << " ]...";
+
 		// Execute the update
 		CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 		ShellExecute(nullptr, nullptr,
-		             (k2app::interfacing::GetProgramLocation().parent_path() /
-			             L"Amethyst-Installer.exe").wstring().c_str(),
-		             k2app::interfacing::updateOnClosed
-			             ? L" --update" // Don't re-open
-			             : L" --update -o", // Re-open AME
+		             (k2app::interfacing::GetK2AppTempDir() +
+			             L"\\Amethyst-Installer.exe").c_str(),
+		             installerCommand,
 		             nullptr, SW_SHOWDEFAULT);
 
 		// Exit, cleanup should be automatic

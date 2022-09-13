@@ -11,6 +11,13 @@ namespace k2app::interfacing
 
 		return buffer; // Self-converts
 	}
+
+	inline std::wstring GetK2AppTempDir()
+	{
+		CreateDirectory(std::wstring(std::wstring(_wgetenv(L"TEMP")) +
+			L"\\Amethyst\\").c_str(), nullptr);
+		return std::wstring(_wgetenv(L"TEMP")) + L"\\Amethyst";
+	}
 }
 
 namespace k2app::K2EVRInput
