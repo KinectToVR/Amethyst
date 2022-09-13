@@ -165,10 +165,13 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				[this](const winrt::Windows::Foundation::IInspectable& sender,
 				       const SelectionChangedEventArgs& e) -> void
 				{
-					if (!k2app::shared::devices::devices_tab_setup_finished)return;
 					// Don't even try if we're not set up yet
+					if (!k2app::shared::devices::devices_tab_setup_finished)return;
+					
 					if (_ptr_tracker_combo.get()->SelectedIndex() >= 0)
 						_tracker_pointer->selectedTrackedJointID = _ptr_tracker_combo.get()->SelectedIndex();
+					else
+						_ptr_tracker_combo.get()->SelectedItem(e.RemovedItems().GetAt(0));
 
 					// If we're using a joints device then also signal the joint
 					const auto& trackingDevice = TrackingDevices::getCurrentDevice();
