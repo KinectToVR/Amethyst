@@ -10,6 +10,9 @@
 #include "JointSelectorRow.h"
 #include "JointSelectorExpander.h"
 
+#define __OVERRIDES_BEGIN_CHANGES k2app::shared::devices::devices_overrides_setup_pending = true;
+#define __OVERRIDES_END_CHANGES k2app::shared::devices::devices_overrides_setup_pending = false;
+
 // Forward declaration
 namespace winrt::Microsoft::UI::Xaml::Controls
 {
@@ -50,74 +53,94 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 		void EraseComboItems()
 		{
+			__OVERRIDES_BEGIN_CHANGES
+
 			for (const auto& _row : _overrideSelectorRows)
 				_row.get()->ClearOverrideCombos();
+
+			__OVERRIDES_END_CHANGES
 		}
 
 		void SelectComboItems()
 		{
+			__OVERRIDES_BEGIN_CHANGES
+
 			for (const auto& _row : _overrideSelectorRows)
 				_row.get()->SelectOverrideJoints();
+
+			__OVERRIDES_END_CHANGES
 		}
 
 		void PushOverrideJoints(const std::optional<bool>& all = std::nullopt)
 		{
+			__OVERRIDES_BEGIN_CHANGES
+
 			for (const auto& _row : _overrideSelectorRows)
 				_row.get()->UpdateOverrideJoints(all);
+
+			__OVERRIDES_END_CHANGES
 		}
 
-		void PushOverrideJoint(const std::wstring& _string)
+		void PushOverrideJoint(const std::wstring& _string, const bool& secondary = false)
 		{
+			__OVERRIDES_BEGIN_CHANGES
+
 			for (const auto& _row : _overrideSelectorRows)
-				_row.get()->UpdateOverrideJoints(_string);
+				_row.get()->UpdateOverrideJoints(_string, secondary);
+
+			__OVERRIDES_END_CHANGES
 		}
 
 		void UpdateOverrideToggles()
 		{
+			__OVERRIDES_BEGIN_CHANGES
+
 			for (const auto& _row : _overrideSelectorRows)
 				_row.get()->UpdateOverrideToggles();
+
+			__OVERRIDES_END_CHANGES
 		}
 
 		void UpdateIsEnabled()
 		{
+			__OVERRIDES_BEGIN_CHANGES
+
 			for (const auto& _row : _overrideSelectorRows)
 			{
-				_row.get()->TrackerPositionCombo().get()->IsEnabled(
-					_row.get()->Tracker()->data_isActive && _row.get()->Tracker()->isPositionOverridden);
-				_row.get()->TrackerOrientationCombo().get()->IsEnabled(
-					_row.get()->Tracker()->data_isActive && _row.get()->Tracker()->isRotationOverridden);
+				_row.get()->TrackerCombo().get()->IsEnabled(
+					_row.get()->Tracker()->data_isActive); // Is tracker ON?
 
-				_row.get()->OverridePosition().get()->IsEnabled(_row.get()->Tracker()->data_isActive);
-				_row.get()->OverrideOrientation().get()->IsEnabled(_row.get()->Tracker()->data_isActive);
+				_row.get()->OverridePositionSwitch().get()->IsEnabled(
+					_row.get()->Tracker()->data_isActive); // Is tracker ON?
 
-				// Change the placeholder to 'No Override' or 'Joint Disabled'
-				_row.get()->TrackerPositionCombo().get()->PlaceholderText(
-					_row.get()->Tracker()->data_isActive
-						? k2app::interfacing::LocalizedResourceWString(
-							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText")
-						: k2app::interfacing::LocalizedResourceWString(
-							L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
-				_row.get()->TrackerOrientationCombo().get()->PlaceholderText(
-					_row.get()->Tracker()->data_isActive
-						? k2app::interfacing::LocalizedResourceWString(
-							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText")
-						: k2app::interfacing::LocalizedResourceWString(
-							L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
+				_row.get()->OverrideOrientationSwitch().get()->IsEnabled(
+					_row.get()->Tracker()->data_isActive); // Is tracker ON?
 
+				// Change the placeholder to 'Joint Disabled'
+				_row.get()->TrackerCombo().get()->PlaceholderText(
+					k2app::interfacing::LocalizedResourceWString(
+						L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
+
+				// Optionally show the placeholder
 				if (!_row.get()->Tracker()->data_isActive)
 				{
-					_row.get()->OverridePosition().get()->IsChecked(false);
-					_row.get()->OverrideOrientation().get()->IsChecked(false);
+					_row.get()->OverridePositionSwitch().get()->IsOn(false);
+					_row.get()->OverrideOrientationSwitch().get()->IsOn(false);
 
 					// Show the placeholder
-					_row.get()->TrackerPositionCombo().get()->SelectedIndex(-1);
-					_row.get()->TrackerOrientationCombo().get()->SelectedIndex(-1);
+					_row.get()->TrackerCombo().get()->SelectedIndex(-1);
 				}
 			}
+
+			__OVERRIDES_END_CHANGES
 		}
 
 		void ReAppendTrackers()
 		{
+			__OVERRIDES_BEGIN_CHANGES
+
+			k2app::shared::devices::devices_overrides_setup_pending = true;
+
 			EraseComboItems();
 
 			_overrideSelectorRows.clear();
@@ -138,7 +161,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					[&]
 					{
-						LOG(WARNING) << "Couldn't clear a ComboBox. You better call an exorcist.";
+						LOG(WARNING) << "Couldn't clear a StackPanel. You better call an exorcist.";
 					}();
 				}
 			}();
@@ -158,7 +181,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					[&]
 					{
-						LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
+						LOG(WARNING) << "Couldn't push to a StackPanel. You better call an exorcist.";
 					}();
 				}
 			}();
@@ -183,10 +206,12 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					{
 						[&]
 						{
-							LOG(WARNING) << "Couldn't push to a ComboBox. You better call an exorcist.";
+							LOG(WARNING) << "Couldn't push to a StackPanel. You better call an exorcist.";
 						}();
 					}
 				}();
+
+			__OVERRIDES_END_CHANGES
 		}
 
 		void SetVisibility(const Visibility& visibility)
@@ -203,6 +228,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 		std::shared_ptr<TextBlock> TrackerName() { return _ptr_tracker; }
 
+		std::shared_ptr<TextBlock> OverrideJointName() { return _ptr_override_joint; }
 		std::shared_ptr<TextBlock> PositionJointName() { return _ptr_position_joint; }
 		std::shared_ptr<TextBlock> OrientationJointName() { return _ptr_orientation_joint; }
 
@@ -217,7 +243,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		// Underlying object shared pointer
 		std::shared_ptr<Expander> _ptr_container_expander;
 
-		std::shared_ptr<TextBlock> _ptr_tracker, _ptr_position_joint, _ptr_orientation_joint;
+		std::shared_ptr<TextBlock> _ptr_tracker, _ptr_override_joint,
+		                           _ptr_position_joint, _ptr_orientation_joint;
 
 		std::shared_ptr<StackPanel> _ptr_container_panel;
 		std::shared_ptr<Grid> _ptr_header;
@@ -306,14 +333,16 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			AppendGridStarsColumnMinWidthPixels(_header, 3, 80);
 			AppendGridStarColumn(_header);
-			AppendGridStarsColumnMinWidthPixels(_header, 3, 140);
+			AppendGridAutoColumnMinWidthPixels(_header, 140);
 			AppendGridStarColumn(_header);
-			AppendGridStarsColumnMinWidthPixels(_header, 3, 140);
+			AppendGridStarsColumnMinWidthPixels(_header, 3, 80);
+			AppendGridStarColumn(_header);
+			AppendGridStarsColumnMinWidthPixels(_header, 3, 80);
 
 			AppendGridPixelsRow(_header, 30);
 			AppendGridPixelsRow(_header, 20);
 
-			for (uint32_t i = 0; i < 5; i++)
+			for (uint32_t i = 0; i < 7; i++)
 			{
 				MenuFlyoutSeparator _separator;
 
@@ -324,12 +353,13 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				_header.SetColumn(_separator, i);
 			}
 
-			TextBlock _tracker, _position_joint, _orientation_joint;
+			TextBlock _tracker, _override_label,
+			          _position_label, _orientation_label;
 
 			_tracker.HorizontalAlignment(HorizontalAlignment::Center);
 			_tracker.VerticalAlignment(VerticalAlignment::Center);
 
-			_tracker.Margin({-20, 0, 0, 0});
+			//_tracker.Margin({-20, 0, 0, 0});
 
 			_tracker.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 			_tracker.Text(k2app::interfacing::LocalizedResourceWString(
@@ -339,27 +369,38 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_header.SetRow(_tracker, 0);
 			_header.SetColumn(_tracker, 0);
 
-			_position_joint.HorizontalAlignment(HorizontalAlignment::Center);
-			_position_joint.VerticalAlignment(VerticalAlignment::Center);
+			_override_label.HorizontalAlignment(HorizontalAlignment::Center);
+			_override_label.VerticalAlignment(VerticalAlignment::Center);
 
-			_position_joint.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
-			_position_joint.Text(k2app::interfacing::LocalizedResourceWString(
+			_override_label.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_override_label.Text(k2app::interfacing::LocalizedResourceWString(
+				L"DevicesPage", L"Titles/DeviceOverride"));
+
+			_header.Children().Append(_override_label);
+			_header.SetRow(_override_label, 0);
+			_header.SetColumn(_override_label, 2);
+
+			_position_label.HorizontalAlignment(HorizontalAlignment::Center);
+			_position_label.VerticalAlignment(VerticalAlignment::Center);
+
+			_position_label.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_position_label.Text(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Titles/Set/Position"));
 
-			_header.Children().Append(_position_joint);
-			_header.SetRow(_position_joint, 0);
-			_header.SetColumn(_position_joint, 2);
+			_header.Children().Append(_position_label);
+			_header.SetRow(_position_label, 0);
+			_header.SetColumn(_position_label, 4);
 
-			_orientation_joint.HorizontalAlignment(HorizontalAlignment::Center);
-			_orientation_joint.VerticalAlignment(VerticalAlignment::Center);
+			_orientation_label.HorizontalAlignment(HorizontalAlignment::Center);
+			_orientation_label.VerticalAlignment(VerticalAlignment::Center);
 
-			_orientation_joint.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
-			_orientation_joint.Text(k2app::interfacing::LocalizedResourceWString(
+			_orientation_label.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
+			_orientation_label.Text(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Titles/Set/Orientation"));
 
-			_header.Children().Append(_orientation_joint);
-			_header.SetRow(_orientation_joint, 0);
-			_header.SetColumn(_orientation_joint, 4);
+			_header.Children().Append(_orientation_label);
+			_header.SetRow(_orientation_label, 0);
+			_header.SetColumn(_orientation_label, 6);
 
 			// Set up the main panel
 			StackPanel _container_panel;
@@ -373,8 +414,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_ptr_container_expander = std::make_shared<Expander>(_container_expander);
 
 			_ptr_tracker = std::make_shared<TextBlock>(_tracker);
-			_ptr_position_joint = std::make_shared<TextBlock>(_position_joint);
-			_ptr_orientation_joint = std::make_shared<TextBlock>(_orientation_joint);
+			_ptr_override_joint = std::make_shared<TextBlock>(_override_label);
+			_ptr_position_joint = std::make_shared<TextBlock>(_position_label);
+			_ptr_orientation_joint = std::make_shared<TextBlock>(_orientation_label);
 
 			_ptr_container_panel = std::make_shared<StackPanel>(_container_panel);
 			_ptr_header = std::make_shared<Grid>(_header);
@@ -427,6 +469,8 @@ namespace k2app::interfacing
 		// Ditch this if not loaded yet
 		if (jointsBasisExpanderHostStackPanel.get() == nullptr)return;
 
+		__OVERRIDES_BEGIN_CHANGES
+
 		// Optionally fix combos for disabled trackers -> joint selectors for base
 		for (auto& expander : jointSelectorExpanders)
 			for (std::shared_ptr<JointSelectorRow>& row : *expander.get()->JointSelectorRows())
@@ -443,5 +487,7 @@ namespace k2app::interfacing
 		// Optionally fix combos for disabled trackers -> joint selectors for override
 		for (auto& expander : overrideSelectorExpanders)
 			expander.get()->UpdateIsEnabled();
+
+		__OVERRIDES_END_CHANGES
 	}
 }

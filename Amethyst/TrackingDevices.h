@@ -439,6 +439,12 @@ namespace TrackingDevices
 					for (auto& expander : overrideSelectorExpanders)
 						expander.get()->ReAppendTrackers();
 
+					// Push the placeholder to all combos
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoint(
+							k2app::interfacing::LocalizedResourceWString(
+								L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
+
 					// Append all joints to all combos, depend on characteristics
 					switch (device->getDeviceCharacteristics())
 					{
@@ -529,6 +535,12 @@ namespace TrackingDevices
 					// Clear items
 					for (auto& expander : overrideSelectorExpanders)
 						expander.get()->ReAppendTrackers();
+
+					// Push the placeholder to all combos
+					for (auto& expander : overrideSelectorExpanders)
+						expander.get()->PushOverrideJoint(
+							k2app::interfacing::LocalizedResourceWString(
+								L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
 					// Append all joints to all combos
 					for (auto& _joint : device->getTrackedJoints())

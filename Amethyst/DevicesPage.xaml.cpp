@@ -215,7 +215,7 @@ void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(
 {
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
-	
+
 	// Reconnect the device
 	TrackingDevices::devices_handle_refresh(true);
 
@@ -489,6 +489,12 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		for (auto& expander : overrideSelectorExpanders)
 			expander.get()->ReAppendTrackers();
 
+		// Push the placeholder to all combos
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->PushOverrideJoint(
+				k2app::interfacing::LocalizedResourceWString(
+					L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
+
 		// Append all joints to all combos, depend on characteristics
 		switch (device->getDeviceCharacteristics())
 		{
@@ -570,6 +576,12 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		// Clear items
 		for (auto& expander : overrideSelectorExpanders)
 			expander.get()->ReAppendTrackers();
+
+		// Push the placeholder to all combos
+		for (auto& expander : overrideSelectorExpanders)
+			expander.get()->PushOverrideJoint(
+				k2app::interfacing::LocalizedResourceWString(
+					L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
 		// Append all joints to all combos
 		for (auto& _joint : device->getTrackedJoints())
@@ -1078,6 +1090,12 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 				for (auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
 
+				// Push the placeholder to all combos
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->PushOverrideJoint(
+						k2app::interfacing::LocalizedResourceWString(
+							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
+
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
 				{
@@ -1190,6 +1208,12 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 				// Clear items
 				for (auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
+
+				// Push the placeholder to all combos
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->PushOverrideJoint(
+						k2app::interfacing::LocalizedResourceWString(
+							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
@@ -1644,6 +1668,12 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 				for (auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
 
+				// Push the placeholder to all combos
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->PushOverrideJoint(
+						k2app::interfacing::LocalizedResourceWString(
+							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
+
 				// Append all joints to all combos, depend on characteristics
 				switch (device->getDeviceCharacteristics())
 				{
@@ -1756,6 +1786,12 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 				// Clear items
 				for (auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
+
+				// Push the placeholder to all combos
+				for (auto& expander : overrideSelectorExpanders)
+					expander.get()->PushOverrideJoint(
+						k2app::interfacing::LocalizedResourceWString(
+							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
