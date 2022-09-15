@@ -320,7 +320,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_override_position_switch.HorizontalAlignment(HorizontalAlignment::Center);
 			_override_position_switch.VerticalAlignment(VerticalAlignment::Center);
 
-			_override_position_switch.Margin({.Right = -112});
+			_override_position_switch.Margin({.Right = -107});
 
 			_override_position_switch.OnContent(box_value(L""));
 			_override_position_switch.OffContent(box_value(L""));
