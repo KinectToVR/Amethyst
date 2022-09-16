@@ -1,6 +1,5 @@
 ﻿#pragma once
-#include "K2Interfacing.h"
-#include "TrackingDevices.h"
+#include "K2DeviceMath.h"
 
 namespace k2app::main
 {
@@ -520,22 +519,11 @@ namespace k2app::main
 		}
 	}
 
-	// For App/Software Orientation filtering
-	inline Eigen::Quaternionf yawFilteringQuaternion[2] =
-	{
-		Eigen::Quaternionf(1, 0, 0, 0),
-		Eigen::Quaternionf(1, 0, 0, 0)
-	}; // L, R
-
-	// Flip defines for the base device - iteration persistent
-	inline bool base_flip = false; // Assume non flipped
-
-	// Flip defines for the override device - iteration persistent
-	inline bool override_flip = false; // Assume non flipped
-
 	// Update trackers inside the app here
 	inline void K2UpdateAppTrackers()
 	{
+		using namespace interfacing;
+
 		/*
 		 * This is where we do EVERYTHING pose related.
 		 * All positions and rotations are calculated here,
@@ -544,7 +532,7 @@ namespace k2app::main
 
 		// Get current yaw angle
 		const double _yaw =
-			interfacing::plugins::plugins_getHMDOrientationYawCalibrated();
+			plugins::plugins_getHMDOrientationYawCalibrated();
 
 		/*
 		 * Calculate ALL poses for the base (first) device here
@@ -570,7 +558,7 @@ namespace k2app::main
 				{
 					_current_yaw =
 						EigenUtils::RotationProjectedYaw( // Overriden tracker
-							interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
+							vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
 							K2Settings.K2TrackersVector[0].pose_orientation); // Raw orientation
 				}
 				// If it's from an external tracker
@@ -578,7 +566,7 @@ namespace k2app::main
 				{
 					_current_yaw =
 						EigenUtils::RotationProjectedYaw( // External tracker
-							interfacing::getVRTrackerPoseCalibrated("waist").second);
+							getVRTrackerPoseCalibrated("waist").second);
 				}
 			}
 
@@ -614,7 +602,7 @@ namespace k2app::main
 						                              // If flip
 						                              ? std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device)->
 						                              getJointOrientations()[
-							                              interfacing::overrides::getFlippedJointType(
+							                              overrides::getFlippedJointType(
 								                              ITrackerType_Joint[tracker.base_tracker])].inverse()
 
 						                              // If no flip
@@ -630,7 +618,7 @@ namespace k2app::main
 				// Not the "calibrated" variant, as the fix will be applied after everything else
 				if (tracker.orientationTrackingOption == k2_FollowHMDRotation)
 					tracker.pose_orientation = EigenUtils::EulersToQuat(
-						Eigen::Vector3f(0, interfacing::plugins::plugins_getHMDOrientationYaw(), 0));
+						Eigen::Vector3f(0, plugins::plugins_getHMDOrientationYaw(), 0));
 
 				// Optionally overwrite the rotation with NONE
 				if (tracker.orientationTrackingOption == k2_DisableJointRotation)
@@ -651,278 +639,21 @@ namespace k2app::main
 			if (_device.index() == 0 &&
 				(K2Settings.K2TrackersVector[1].orientationTrackingOption == k2_SoftwareCalculatedRotation ||
 					K2Settings.K2TrackersVector[2].orientationTrackingOption == k2_SoftwareCalculatedRotation))
-			{
-				const auto& _kinect = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device);
 
-				if (_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Full ||
-					_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
-				{
-					const auto _joints = _kinect->getJointPositions();
-					const auto _joint_states = _kinect->getTrackingStates();
+				TrackingDevices::Math::CalculateFeetSoftwareOrientation(
+					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device));
 
-					// Placeholders for mathbased rots
-					Eigen::Quaternionf calculatedLeftFootOrientation, calculatedRightFootOrientation;
+			/*
+			 * Trackers orientation - preparations : App / Software rotation (V2)
+			 *   Note: This is only available for feet as for now
+			 */
 
-					// Capture needed joints' positions
-					Eigen::Vector3f up(0, 1, 0), forward(0, 0, 1), backward(0, 0, -1),
-					                ankleLeftPose(
-						                _joints[ktvr::Joint_AnkleLeft].x(),
-						                _joints[ktvr::Joint_AnkleLeft].y(),
-						                _joints[ktvr::Joint_AnkleLeft].z()),
+			if (_device.index() == 0 &&
+				(K2Settings.K2TrackersVector[1].orientationTrackingOption == k2_SoftwareCalculatedRotation_V2 ||
+					K2Settings.K2TrackersVector[2].orientationTrackingOption == k2_SoftwareCalculatedRotation_V2))
 
-					                ankleRightPose(
-						                _joints[ktvr::Joint_AnkleRight].x(),
-						                _joints[ktvr::Joint_AnkleRight].y(),
-						                _joints[ktvr::Joint_AnkleRight].z()),
-
-					                footLeftPose(
-						                _joints[ktvr::Joint_FootLeft].x(),
-						                _joints[ktvr::Joint_FootLeft].y(),
-						                _joints[ktvr::Joint_FootLeft].z()),
-
-					                footRightPose(
-						                _joints[ktvr::Joint_FootRight].x(),
-						                _joints[ktvr::Joint_FootRight].y(),
-						                _joints[ktvr::Joint_FootRight].z()),
-
-					                kneeLeftPose(
-						                _joints[ktvr::Joint_KneeLeft].x(),
-						                _joints[ktvr::Joint_KneeLeft].y(),
-						                _joints[ktvr::Joint_KneeLeft].z()),
-
-					                kneeRightPose(
-						                _joints[ktvr::Joint_KneeRight].x(),
-						                _joints[ktvr::Joint_KneeRight].y(),
-						                _joints[ktvr::Joint_KneeRight].z());
-
-					// Calculate euler yaw foot orientation, we'll need it later
-					Eigen::Vector3f
-						footLeftRawOrientation = EigenUtils::DirectionQuat(
-							Eigen::Vector3f(ankleLeftPose.x(), 0.f, ankleLeftPose.z()),
-							Eigen::Vector3f(footLeftPose.x(), 0.f, footLeftPose.z()),
-							forward).toRotationMatrix().eulerAngles(0, 1, 2),
-
-						footRightRawOrientation = EigenUtils::DirectionQuat(
-							Eigen::Vector3f(ankleRightPose.x(), 0.f, ankleRightPose.z()),
-							Eigen::Vector3f(footRightPose.x(), 0.f, footRightPose.z()),
-							forward).toRotationMatrix().eulerAngles(0, 1, 2);
-
-					// Flip the yaw around, without reversing it -> we need it basing to 0
-					// (what an irony that we actually need to reverse it...)
-					footLeftRawOrientation.y() *= -1.f;
-					footLeftRawOrientation.y() += _PI;
-					footRightRawOrientation.y() *= -1.f;
-					footRightRawOrientation.y() += _PI;
-
-					// Make the yaw less sensitive
-					// Decided to go for radians for the read-ability
-					// (Although my code is shit anyway, and there'll be none in the end)
-					float lsFixedYaw[2] = {
-						radiansToDegrees(footLeftRawOrientation.y()),
-						radiansToDegrees(footRightRawOrientation.y())
-					}; // L, R
-
-					// Left
-					if (lsFixedYaw[0] > 180.f && lsFixedYaw[0] < 360.f)
-						lsFixedYaw[0] = 360.f - abs(lsFixedYaw[0] - 360.f) * .5f;
-					else if (lsFixedYaw[0] < 180.f && lsFixedYaw[0] > 0.f)
-						lsFixedYaw[0] *= .5f;
-
-					// Right
-					if (lsFixedYaw[1] > 180.f && lsFixedYaw[1] < 360.f)
-						lsFixedYaw[1] = 360.f - abs(lsFixedYaw[1] - 360.f) * .5f;
-					else if (lsFixedYaw[1] < 180.f && lsFixedYaw[1] > 0.f)
-						lsFixedYaw[1] *= .5f;
-
-					// Apply to the base
-					footLeftRawOrientation.y() = degreesToRadians(lsFixedYaw[0]); // Back to the RAD format
-					footRightRawOrientation.y() = degreesToRadians(lsFixedYaw[1]);
-
-					// Construct a helpful offsetting quaternion from the stuff we got
-					// It's made like Quat->Eulers->Quat because we may need to adjust some things on-to-go
-					Eigen::Quaternionf
-						leftFootPreFilteredQuaternion = EigenUtils::EulersToQuat(footLeftRawOrientation),
-						// There is no X and Z anyway
-						rightFootPreFilteredQuaternion = EigenUtils::EulersToQuat(footRightRawOrientation);
-
-					// Smooth a bit with a slerp
-					yawFilteringQuaternion[0] = yawFilteringQuaternion[0].slerp(.25f, leftFootPreFilteredQuaternion);
-					yawFilteringQuaternion[1] = yawFilteringQuaternion[1].slerp(.25f, rightFootPreFilteredQuaternion);
-
-					// Apply to the base
-					leftFootPreFilteredQuaternion = yawFilteringQuaternion[0];
-					rightFootPreFilteredQuaternion = yawFilteringQuaternion[1];
-
-					// Calculate the knee-ankle orientation, aka "Tibia"
-					// We aren't disabling look-thorough yaw, since it'll be 0
-					Eigen::Quaternionf
-						knee_ankleLeftOrientationQuaternion = EigenUtils::DirectionQuat(
-							kneeLeftPose, ankleLeftPose, forward),
-						knee_ankleRightOrientationQuaternion = EigenUtils::DirectionQuat(
-							kneeRightPose, ankleRightPose, forward);
-
-					// The tuning quat
-					auto
-						tuneQuaternion_first = Eigen::Quaternionf(1, 0, 0, 0);
-
-					// Now adjust some values like playspace yaw and pitch, additional rotations
-					// -> they're facing purely down and Z / Y are flipped
-					tuneQuaternion_first =
-						EigenUtils::EulersToQuat(
-							Eigen::Vector3f(
-								_PI / 5.f,
-								0.f,
-								0.f
-							));
-
-					// Apply the fine-tuning to global variable
-					knee_ankleLeftOrientationQuaternion = tuneQuaternion_first * knee_ankleLeftOrientationQuaternion;
-					knee_ankleRightOrientationQuaternion = tuneQuaternion_first * knee_ankleRightOrientationQuaternion;
-
-					// Grab original orientations and make them euler angles
-					Eigen::Vector3f left_knee_ori_full = EigenUtils::QuatToEulers(knee_ankleLeftOrientationQuaternion);
-					Eigen::Vector3f right_knee_ori_full =
-						EigenUtils::QuatToEulers(knee_ankleRightOrientationQuaternion);
-
-					// Try to fix yaw and roll mismatch, caused by XYZ XZY mismatch
-					knee_ankleLeftOrientationQuaternion = EigenUtils::EulersToQuat(
-						Eigen::Vector3f(
-							left_knee_ori_full.x() - _PI / 1.6f,
-							0.0, // left_knee_ori_full.z(), // actually 0.0 but okay
-							-left_knee_ori_full.y()));
-
-					knee_ankleRightOrientationQuaternion = EigenUtils::EulersToQuat(
-						Eigen::Vector3f(
-							right_knee_ori_full.x() - _PI / 1.6f,
-							0.0, // right_knee_ori_full.z(), // actually 0.0 but okay
-							-right_knee_ori_full.y()));
-
-					if (_joint_states[ktvr::Joint_AnkleLeft] == ktvr::ITrackedJointState::State_Tracked)
-						// All the rotations
-						calculatedLeftFootOrientation = leftFootPreFilteredQuaternion *
-							knee_ankleLeftOrientationQuaternion;
-					else
-						// Without the foot's yaw
-						calculatedLeftFootOrientation = knee_ankleLeftOrientationQuaternion;
-
-					if (_joint_states[ktvr::Joint_AnkleRight] == ktvr::ITrackedJointState::State_Tracked)
-						// All the rotations
-						calculatedRightFootOrientation = rightFootPreFilteredQuaternion *
-							knee_ankleRightOrientationQuaternion;
-					else
-						// Without the foot's yaw
-						calculatedRightFootOrientation = knee_ankleRightOrientationQuaternion;
-
-					// The tuning quat
-					auto
-						leftFootFineTuneQuaternion = Eigen::Quaternionf(1, 0, 0, 0),
-						rightFootFineTuneQuaternion = Eigen::Quaternionf(1, 0, 0, 0);
-
-					// Now adjust some values like playspace yaw and pitch, additional rotations
-
-					leftFootFineTuneQuaternion =
-						EigenUtils::EulersToQuat( // Lift trackers up a bit
-							Eigen::Vector3f(
-								2.8623399733f, // this one's in radians alr
-								0.f, //glm::radians(KinectSettings::calibration_trackers_yaw),
-								0.f
-							));
-
-					rightFootFineTuneQuaternion =
-						EigenUtils::EulersToQuat( // Lift trackers up a bit
-							Eigen::Vector3f(
-								2.8623399733f, // this one's in radians alr
-								0.f, //glm::radians(KinectSettings::calibration_trackers_yaw),
-								0.f
-							));
-
-					// Apply the fine-tuning to global variable
-					calculatedLeftFootOrientation = leftFootFineTuneQuaternion * calculatedLeftFootOrientation;
-					calculatedRightFootOrientation = rightFootFineTuneQuaternion * calculatedRightFootOrientation;
-
-					// Push to global
-					if (_kinect->isSkeletonTracked())
-					{
-						// Left Foot
-						if (K2Settings.K2TrackersVector[1].orientationTrackingOption == k2_SoftwareCalculatedRotation)
-						{
-							K2Settings.K2TrackersVector[1].pose_orientation = base_flip
-								                                                  // If flip
-								                                                  ? ktvr::quaternion_normal(
-									                                                  calculatedRightFootOrientation).
-								                                                  inverse()
-								                                                  // If no flip
-								                                                  : ktvr::quaternion_normal(
-									                                                  calculatedLeftFootOrientation);
-
-							// Apply fixes
-
-							// Grab original orientations and make them euler angles
-							Eigen::Vector3f left_ori_vector = EigenUtils::QuatToEulers(
-								K2Settings.K2TrackersVector[1].pose_orientation);
-
-							// Kind of a solution for flipping at too big X.
-							// Found out during testing,
-							// no other known mathematical reason (maybe except gimbal lock)
-
-							/****************************************************/
-
-							if (left_ori_vector.y() <= 0.f
-								&& left_ori_vector.y() >= -1.f
-
-								&& left_ori_vector.z() <= -1.f
-								&& left_ori_vector.z() >= -_PI)
-
-								left_ori_vector.y() += -_PI;
-
-							/****************************************************/
-
-							// Apply to the base
-							K2Settings.K2TrackersVector[1].pose_orientation =
-								EigenUtils::EulersToQuat(left_ori_vector);
-						}
-
-						// Left Foot
-						if (K2Settings.K2TrackersVector[2].orientationTrackingOption == k2_SoftwareCalculatedRotation)
-						{
-							K2Settings.K2TrackersVector[2].pose_orientation = base_flip
-								                                                  // If flip
-								                                                  ? ktvr::quaternion_normal(
-									                                                  calculatedLeftFootOrientation).
-								                                                  inverse()
-								                                                  // If no flip
-								                                                  : ktvr::quaternion_normal(
-									                                                  calculatedRightFootOrientation);
-
-							// Apply fixes
-
-							// Grab original orientations and make them euler angles
-							Eigen::Vector3f right_ori_vector = EigenUtils::QuatToEulers(
-								K2Settings.K2TrackersVector[2].pose_orientation);
-
-							// Kind of a solution for flipping at too big X.
-							// Found out during testing,
-							// no other known mathematical reason (maybe except gimbal lock)
-
-							/****************************************************/
-
-							if (right_ori_vector.y() <= 0.f
-								&& right_ori_vector.y() >= -1.f
-
-								&& right_ori_vector.z() <= -1.f
-								&& right_ori_vector.z() >= -_PI)
-
-								right_ori_vector.y() += -_PI;
-
-							/****************************************************/
-
-							// Apply to the base
-							K2Settings.K2TrackersVector[2].pose_orientation =
-								EigenUtils::EulersToQuat(right_ori_vector);
-						}
-					}
-				}
-			}
+				TrackingDevices::Math::CalculateFeetSoftwareOrientation_V2(
+					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device));
 
 			/*
 			 * Trackers orientation - Calibration-related fixes (SkeletonBasis-only)
@@ -991,7 +722,7 @@ namespace k2app::main
 				if (tracker.orientationTrackingOption == k2_FollowHMDRotation)
 					// Offset to fit the playspace
 					tracker.pose_orientation =
-						interfacing::vrPlayspaceOrientationQuaternion.inverse() * tracker.pose_orientation;
+						vrPlayspaceOrientationQuaternion.inverse() * tracker.pose_orientation;
 
 			/*****************************************************************************************/
 			// Push RAW poses to trackers
@@ -1004,7 +735,7 @@ namespace k2app::main
 
 				for (auto& tracker : K2Settings.K2TrackersVector)
 					tracker.pose_position = _kinect->getJointPositions()[
-						interfacing::overrides::getFlippedJointType(
+						overrides::getFlippedJointType(
 							ITrackerType_Joint[tracker.base_tracker], base_flip)];
 			}
 			else if (_device.index() == 1)
@@ -1057,7 +788,7 @@ namespace k2app::main
 					else
 					{
 						_current_yaw = EigenUtils::RotationProjectedYaw( // External tracker
-							interfacing::getVRTrackerPoseCalibrated("waist").second);
+							getVRTrackerPoseCalibrated("waist").second);
 					}
 				}
 
@@ -1089,7 +820,8 @@ namespace k2app::main
 				for (auto& tracker : K2Settings.K2TrackersVector)
 					if (tracker.isRotationOverridden &&
 						(tracker.orientationTrackingOption == k2_DeviceInferredRotation ||
-							tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation))
+							tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation ||
+							tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation_V2))
 					{
 						// Copy the orientation to the tracker
 						tracker.pose_orientation = _device.index() == 0
@@ -1101,7 +833,7 @@ namespace k2app::main
 								                              ? std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 									                              _device)->
 								                              getJointOrientations()[
-									                              interfacing::overrides::getFlippedJointType(
+									                              overrides::getFlippedJointType(
 										                              static_cast<ktvr::ITrackedJointType>(
 											                              TrackingDevices::devices_override_joint_id(
 												                              tracker.rotationOverrideJointID)))].
@@ -1201,7 +933,7 @@ namespace k2app::main
 					for (auto& tracker : K2Settings.K2TrackersVector)
 						if (tracker.isPositionOverridden)
 							tracker.pose_position = _kinect->getJointPositions()[
-								interfacing::overrides::getFlippedJointType(
+								overrides::getFlippedJointType(
 									static_cast<ktvr::ITrackedJointType>(
 										TrackingDevices::devices_override_joint_id(
 											tracker.positionOverrideJointID)), override_flip)];

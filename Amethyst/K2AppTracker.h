@@ -71,6 +71,8 @@ namespace k2app
 		k2_DeviceInferredRotation,
 		// Calculated rotation - Optional and feet-only
 		k2_SoftwareCalculatedRotation,
+		// Calculated rotation v2 - Optional and feet-only
+		k2_SoftwareCalculatedRotation_V2,
 		// Copy rotation from HMD
 		k2_FollowHMDRotation,
 		// Completely disable rotation

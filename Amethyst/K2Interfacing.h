@@ -520,6 +520,21 @@ namespace k2app::interfacing
 	// Is NUX currently opened?
 	inline bool isNUXPending = false;
 
+	// For App/Software Orientation filtering
+	// [0] - Left Foot, [1] - Right Foot
+	inline Eigen::Quaternionf yawFilteringQuaternion[2] =
+	{
+		Eigen::Quaternionf(1, 0, 0, 0),
+		Eigen::Quaternionf(1, 0, 0, 0)
+	};
+
+	// Flip defines for the base device - iteration persistent
+	inline bool base_flip = false; // Assume non flipped
+
+	// Flip defines for the override device - iteration persistent
+	inline bool override_flip = false; // Assume non flipped
+
+
 	// Function to spawn default' enabled trackers
 	inline bool SpawnEnabledTrackers()
 	{

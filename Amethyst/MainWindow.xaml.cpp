@@ -237,7 +237,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::executeU
 				             parent_path().wstring() + L'\"').c_str(),
 			             nullptr, SW_SHOWDEFAULT);
 
-		// Auto-restart scenario "-o"
+			// Auto-restart scenario "-o"
 		else
 			ShellExecute(nullptr, nullptr,
 			             (k2app::interfacing::GetK2AppTempDir() +
@@ -1616,17 +1616,25 @@ namespace winrt::Amethyst::implementation
 							// Kinect Basis
 							{
 								// Update options for the device
-								if (k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
-									k2app::k2_SoftwareCalculatedRotation &&
+								if ((k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
+										k2app::k2_SoftwareCalculatedRotation ||
+										k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
+										k2app::k2_SoftwareCalculatedRotation_V2) &&
+
 									!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 									isAppOrientationSupported())
+
 									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption =
 										k2app::k2_DeviceInferredRotation;
 
-								if (k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
-									k2app::k2_SoftwareCalculatedRotation &&
+								if ((k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
+										k2app::k2_SoftwareCalculatedRotation ||
+										k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
+										k2app::k2_SoftwareCalculatedRotation_V2) &&
+
 									!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 									isAppOrientationSupported())
+
 									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption =
 										k2app::k2_DeviceInferredRotation;
 
@@ -1644,12 +1652,18 @@ namespace winrt::Amethyst::implementation
 							{
 								// Update options for the device
 								if (k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
-									k2app::k2_SoftwareCalculatedRotation)
+									k2app::k2_SoftwareCalculatedRotation ||
+									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
+									k2app::k2_SoftwareCalculatedRotation_V2)
+
 									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption =
 										k2app::k2_DeviceInferredRotation;
 
 								if (k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
-									k2app::k2_SoftwareCalculatedRotation)
+									k2app::k2_SoftwareCalculatedRotation ||
+									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
+									k2app::k2_SoftwareCalculatedRotation_V2)
+
 									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption =
 										k2app::k2_DeviceInferredRotation;
 

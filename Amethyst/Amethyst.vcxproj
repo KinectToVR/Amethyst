@@ -165,6 +165,7 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
     <ClInclude Include="K2EVRInput.h" />
     <ClInclude Include="K2Interfacing.h" />
     <ClInclude Include="K2Main.h" />
+    <ClInclude Include="K2DeviceMath.h" />
     <ClInclude Include="K2Settings.h" />
     <ClInclude Include="K2Shared.h" />
     <ClInclude Include="KalmanFilter.h" />

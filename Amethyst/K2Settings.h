@@ -243,7 +243,8 @@ namespace k2app
 				// Force disable software orientation if used by a non-foot
 				if (tracker.base_tracker != ktvr::ITrackerType::Tracker_LeftFoot &&
 					tracker.base_tracker != ktvr::ITrackerType::Tracker_RightFoot &&
-					tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation)
+					(tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation ||
+						tracker.orientationTrackingOption == k2_SoftwareCalculatedRotation_V2))
 					tracker.orientationTrackingOption = k2_DeviceInferredRotation;
 
 				// Force fix override IDs (R <- T)
@@ -407,10 +408,9 @@ namespace k2app
 		}
 
 	public:
-		friend auto operator==(const K2AppSettings& a, const K2AppSettings& b) -> bool
+		friend bool operator==(const K2AppSettings& a, const K2AppSettings& b)
 		{
 			return a.equals(b);
 		}
-
 	} inline K2Settings;
 }

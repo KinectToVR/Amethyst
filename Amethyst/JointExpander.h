@@ -338,7 +338,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 		std::shared_ptr<ToggleSwitch> JointSwitch() { return _ptr_joint_switch; }
 		std::shared_ptr<Expander> MainExpander() { return _ptr_main_expander; }
+
 		std::shared_ptr<ComboBoxItem> SoftwareOrientation() { return _ptr_software_orientation; }
+		std::shared_ptr<ComboBoxItem> SoftwareOrientationV2() { return _ptr_software_orientation_v2; }
 
 		std::shared_ptr<TextBlock> Title() { return _ptr_title; }
 		std::shared_ptr<TextBlock> Position() { return _ptr_position; }
@@ -371,11 +373,15 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			if (_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
 				_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_RightFoot)
 			{
+				// TODO HIDE OR DISABLE?
 				_ptr_software_orientation.get()->IsEnabled(enable);
+				_ptr_software_orientation_v2.get()->IsEnabled(enable);
 
 				// Reset if selected and was turned off
 				for (auto tracker_p : _tracker_pointers)
-					if (!enable && tracker_p->orientationTrackingOption == k2app::k2_SoftwareCalculatedRotation)
+					if (!enable &&
+						(tracker_p->orientationTrackingOption == k2app::k2_SoftwareCalculatedRotation ||
+							tracker_p->orientationTrackingOption == k2app::k2_SoftwareCalculatedRotation_V2))
 					{
 						tracker_p->orientationTrackingOption = k2app::k2_DeviceInferredRotation;
 						_ptr_orientation_combo.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
@@ -391,7 +397,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		                      _ptr_main_grid, _ptr_content;
 		std::shared_ptr<ToggleSwitch> _ptr_joint_switch;
 		std::shared_ptr<Expander> _ptr_main_expander;
-		std::shared_ptr<ComboBoxItem> _ptr_software_orientation;
+
+		std::shared_ptr<ComboBoxItem> _ptr_software_orientation,
+		                              _ptr_software_orientation_v2;
 
 		std::shared_ptr<TextBlock> _ptr_title,
 		                           _ptr_position, _ptr_orientation;
@@ -523,20 +531,27 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_orientation_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 
 			// Set up (content caption / pos)'s items
-			ComboBoxItem _device, _software, _hmd, _off;
+			ComboBoxItem _device, _software, _software_v2, _hmd, _off;
+
 			_device.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Orientation/Device")));
+
 			_software.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Orientation/MathBased")));
+			_software_v2.Content(box_value(k2app::interfacing::LocalizedResourceWString(
+				L"SettingsPage", L"Filters/Orientation/MathBased") + L" (V2)"));
+
 			_hmd.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Orientation/HMD")));
 			_off.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Orientation/Off")));
 
 			_software.Visibility(Visibility::Collapsed);
+			_software_v2.Visibility(Visibility::Collapsed);
 
 			_orientation_combo.Items().Append(_device);
 			_orientation_combo.Items().Append(_software);
+			_orientation_combo.Items().Append(_software_v2);
 			_orientation_combo.Items().Append(_hmd);
 			_orientation_combo.Items().Append(_off);
 
@@ -573,6 +588,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			_ptr_software_orientation =
 				std::make_shared<ComboBoxItem>(_software);
+			_ptr_software_orientation_v2 =
+				std::make_shared<ComboBoxItem>(_software_v2);
 
 			_ptr_title = std::make_shared<TextBlock>(_title);
 			_ptr_position = std::make_shared<TextBlock>(_position);
@@ -742,8 +759,11 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			});
 
 			if (_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
-				_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_RightFoot)
+				_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_RightFoot) 
+			{
 				_ptr_software_orientation.get()->Visibility(Visibility::Visible);
+				_ptr_software_orientation_v2.get()->Visibility(Visibility::Visible);
+			}
 
 			_ptr_main_expander->Expanding([&](const auto&, const auto&)
 			{
