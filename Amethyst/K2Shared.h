@@ -227,7 +227,7 @@ namespace k2app::shared
 		                             smphSignalStartMain{0};
 
 		inline uint32_t selectedTrackingDeviceID = 0;
-		inline std::string selectedTrackingDeviceName = "";
+		inline std::wstring selectedTrackingDeviceName = L"";
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ScrollViewer> devicesMainContentScrollViewer;
 

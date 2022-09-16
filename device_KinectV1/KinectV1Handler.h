@@ -29,11 +29,10 @@ public:
 	{
 		//KinectV1Handler::initialize();
 		LOG(INFO) << "Constructing the Kinect V1 (X360) Handler for SkeletonBasis K2TrackingDevice...";
-
-		deviceType = ktvr::K2_Kinect;
-		deviceName = "Xbox 360 Kinect";
-
+		
+		deviceName = L"Xbox 360 Kinect";
 		deviceCharacteristics = ktvr::K2_Character_Full;
+
 		flipSupported = true;
 		appOrientationSupported = true;
 

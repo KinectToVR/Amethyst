@@ -94,15 +94,6 @@ namespace ktvr
 		State_Tracked
 	};
 
-	// Device types for tracking
-	enum ITrackingDeviceType
-	{
-		K2_Unknown,
-		K2_Kinect,
-		K2_Joints,
-		K2_Override
-	};
-
 	// Device types for joints [KINECT]
 	enum ITrackingDeviceCharacteristics
 	{
@@ -116,9 +107,6 @@ namespace ktvr
 		K2_Character_Full
 	};
 
-	// Alias for code readability
-	typedef int JointTrackingState, K2DeviceType, K2DeviceCharacteristics, MessageType, MessageCode;
-
 	// Tracking Device Joint class for client plugins
 	class K2TrackedJoint
 	{
@@ -128,27 +116,27 @@ namespace ktvr
 		{
 		}
 
-		K2TrackedJoint(std::string name) : jointName{std::move(name)}
+		K2TrackedJoint(std::wstring name) : jointName{std::move(name)}
 		{
 		}
 
 		K2TrackedJoint(const Eigen::Vector3f& pos, const Eigen::Quaternionf& rot,
-		               const JointTrackingState& state, const std::string& name) :
+		               const ITrackedJointState& state, const std::wstring& name) :
 			jointOrientation{rot}, jointPosition{pos},
 			trackingState{state}, jointName{name}
 		{
 		}
 
-		std::string getJointName() { return jointName; } // Custom name
+		std::wstring getJointName() { return jointName; } // Custom name
 
 		Eigen::Vector3f getJointPosition() { return jointPosition; }
 		Eigen::Quaternionf getJointOrientation() { return jointOrientation; }
-		JointTrackingState getTrackingState() { return trackingState; } // ITrackedJointState
+		ITrackedJointState getTrackingState() { return trackingState; } // ITrackedJointState
 
 		// For servers!
 		void update(Eigen::Vector3f position,
 		            Eigen::Quaternionf orientation,
-		            JointTrackingState state)
+		            ITrackedJointState state)
 		{
 			jointPosition = position;
 			jointOrientation = orientation;
@@ -156,7 +144,7 @@ namespace ktvr
 		}
 
 		// For servers!
-		void update(JointTrackingState state)
+		void update(ITrackedJointState state)
 		{
 			trackingState = state;
 		}
@@ -165,9 +153,9 @@ namespace ktvr
 		// Tracker should be centered automatically
 		Eigen::Quaternionf jointOrientation = Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f);
 		Eigen::Vector3f jointPosition = Eigen::Vector3f(0.f, 0.f, 0.f);
-		JointTrackingState trackingState = State_NotTracked;
+		ITrackedJointState trackingState = State_NotTracked;
 
-		std::string jointName = "Name not set";
+		std::wstring jointName = L"Name not set";
 	};
 
 	// Namespace with settings daemon elements / Interfacing
@@ -719,14 +707,13 @@ namespace ktvr
 		// Basic character will provide the same as JointsBasis but with head to support autocalibration
 		// Simple character will provide the same as Basic but with ankles and knees to support mathbased
 		// Full character will provide every skeleton (Kinect) joint
-		K2DeviceCharacteristics getDeviceCharacteristics() { return deviceCharacteristics; }
+		ITrackingDeviceCharacteristics getDeviceCharacteristics() { return deviceCharacteristics; }
 
-		K2DeviceType getDeviceType() { return deviceType; }
-		std::string getDeviceName() { return deviceName; } // Custom name
+		std::wstring getDeviceName() { return deviceName; } // Custom name
 
 		std::array<Eigen::Vector3f, 25> getJointPositions() { return jointPositions; }
 		std::array<Eigen::Quaternionf, 25> getJointOrientations() { return jointOrientations; }
-		std::array<JointTrackingState, 25> getTrackingStates() { return trackingStates; }
+		std::array<ITrackedJointState, 25> getTrackingStates() { return trackingStates; }
 
 		// After init, this should always return true
 		[[nodiscard]] bool isInitialized() const { return initialized; }
@@ -844,10 +831,10 @@ namespace ktvr
 		std::function<Interface::ProgressBar*()> CreateProgressBar;
 
 	protected:
-		K2DeviceCharacteristics deviceCharacteristics = K2_Character_Unknown;
+		ITrackingDeviceCharacteristics deviceCharacteristics =
+			K2_Character_Unknown;
 
-		K2DeviceType deviceType = K2_Unknown;
-		std::string deviceName = "Name not set";
+		std::wstring deviceName = L"Name not set";
 
 		bool initialized = false;
 		bool skeletonTracked = false;
@@ -913,7 +900,7 @@ namespace ktvr
 			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f)
 		};
 
-		std::array<JointTrackingState, 25> trackingStates = {}; // State_NotTracked
+		std::array<ITrackedJointState, 25> trackingStates = {}; // State_NotTracked
 
 		class FailedKinectInitialization : public std::exception
 		{
@@ -958,8 +945,7 @@ namespace ktvr
 		// Should be set up at construction
 		// Kinect type must provide joints: [ head, waist, knees, ankles, foot_tips ]
 		// Other type must provide joints: [ waist, ankles ] and will persuade manual calibration
-		K2DeviceType getDeviceType() { return deviceType; }
-		std::string getDeviceName() { return deviceName; } // Custom name
+		std::wstring getDeviceName() { return deviceName; } // Custom name
 
 		// Joints' vector. You need to update appended joints in every update() call
 		std::vector<K2TrackedJoint> getTrackedJoints() { return trackedJoints; }
@@ -1077,8 +1063,7 @@ namespace ktvr
 		std::function<Interface::ProgressBar*()> CreateProgressBar;
 
 	protected:
-		K2DeviceType deviceType = K2_Unknown;
-		std::string deviceName = "Name not set";
+		std::wstring deviceName = L"Name not set";
 
 		bool initialized = false;
 		bool skeletonTracked = false;

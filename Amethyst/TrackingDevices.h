@@ -26,7 +26,7 @@ namespace TrackingDevices
 		// Get the current tracking device
 		auto& trackingDevice = TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
 
-		std::string deviceName = "[UNKNOWN]"; // Dummy name
+		std::wstring deviceName = L"[UNKNOWN]"; // Dummy name
 		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?"; // Dummy status
 		bool _flip_enabled_backup = k2app::K2Settings.isFlipEnabled;
 
@@ -79,7 +79,7 @@ namespace TrackingDevices
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
 
 			// Split status and message by \n
-			k2app::shared::general::deviceNameLabel.get()->Text(StringToWString(deviceName));
+			k2app::shared::general::deviceNameLabel.get()->Text(deviceName);
 			k2app::shared::general::deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 			k2app::shared::general::trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 			k2app::shared::general::errorWhatText.get()->Text(split_status(device_status)[2]);
@@ -148,7 +148,7 @@ namespace TrackingDevices
 		const bool _show = (k2app::K2Settings.overrideDeviceID >= 0) && (TrackingDevicesVector.size() >= 2);
 		bool status_ok = false; // Assume failure :/
 
-		std::string deviceName = "[UNKNOWN]"; // Dummy name
+		std::wstring deviceName = L"[UNKNOWN]"; // Dummy name
 		std::wstring device_status = L"E_UKNOWN\nWhat's happened here?"; // Dummy status
 
 		if (_show)
@@ -209,7 +209,7 @@ namespace TrackingDevices
 				status_ok ? Visibility::Collapsed : Visibility::Visible);
 
 			// Split status and message by \n
-			k2app::shared::general::overrideDeviceNameLabel.get()->Text(StringToWString(deviceName));
+			k2app::shared::general::overrideDeviceNameLabel.get()->Text(deviceName);
 			k2app::shared::general::overrideDeviceStatusLabel.get()->Text(split_status(device_status)[0]);
 			k2app::shared::general::overrideDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 			k2app::shared::general::overrideErrorWhatText.get()->Text(split_status(device_status)[2]);
@@ -355,7 +355,7 @@ namespace TrackingDevices
 		{
 			const auto& trackingDevice = TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
 
-			std::string deviceName = "[UNKNOWN]";
+			std::wstring deviceName = L"[UNKNOWN]";
 
 			if (trackingDevice.index() == 0)
 			{
@@ -371,15 +371,15 @@ namespace TrackingDevices
 			}
 
 			/* Update local statuses */
-			k2app::shared::devices::baseDeviceName.get()->Text(StringToWString(deviceName));
-			if (k2app::shared::devices::overrideDeviceName.get()->Text() == StringToWString(deviceName))
+			k2app::shared::devices::baseDeviceName.get()->Text(deviceName);
+			if (k2app::shared::devices::overrideDeviceName.get()->Text() == deviceName)
 				k2app::shared::devices::overrideDeviceName.get()->Text(L"No Overrides");
 		}
 		{
 			if (k2app::K2Settings.overrideDeviceID < 0)return;
 			const auto& trackingDevice = TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
 
-			std::string deviceName = "[UNKNOWN]";
+			std::wstring deviceName = L"[UNKNOWN]";
 
 			if (trackingDevice.index() == 0)
 			{
@@ -395,7 +395,7 @@ namespace TrackingDevices
 			}
 
 			/* Update local statuses */
-			k2app::shared::devices::overrideDeviceName.get()->Text(StringToWString(deviceName));
+			k2app::shared::devices::overrideDeviceName.get()->Text(deviceName);
 		}
 	}
 
@@ -544,14 +544,10 @@ namespace TrackingDevices
 
 					// Append all joints to all combos
 					for (auto& _joint : device->getTrackedJoints())
-					{
-						// Get the name into string
-						auto _jointname = _joint.getJointName();
-
 						// Push the name to all combos
 						for (auto& expander : overrideSelectorExpanders)
-							expander.get()->PushOverrideJoint(StringToWString(_jointname));
-					}
+							expander.get()->PushOverrideJoint(_joint.getJointName());
+
 
 					// Try fix override IDs if wrong
 					devices_check_override_ids(selectedTrackingDeviceID);

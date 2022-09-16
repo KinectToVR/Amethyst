@@ -208,7 +208,7 @@ void KinectV2Handler::updateParseFrame()
 				jointPositions[j].y() = joints[globalIndex[j]].Position.Y;
 				jointPositions[j].z() = joints[globalIndex[j]].Position.Z;
 
-				trackingStates[j] = joints[globalIndex[j]].TrackingState;
+				trackingStates[j] = static_cast<ktvr::ITrackedJointState>(joints[globalIndex[j]].TrackingState);
 			}
 
 			/* Copy joint orientations */

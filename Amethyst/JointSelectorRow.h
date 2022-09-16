@@ -81,7 +81,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 							[&, this]
 							{
 								_ptr_tracker_combo.get()->Items().Append(
-									box_value(StringToWString(_joint.getJointName())));
+									box_value(_joint.getJointName()));
 							}();
 						}
 						__except (EXCEPTION_EXECUTE_HANDLER)

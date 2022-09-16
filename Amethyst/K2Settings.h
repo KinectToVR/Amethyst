@@ -39,8 +39,8 @@ namespace k2app
 		bool checkForOverlappingTrackers = true; // Check for overlapping roles
 
 		// Current tracking device: 0 is the default
-		std::string trackingDeviceName = ""; // -> Always set and >= 0
-		std::string overrideDeviceName = "";
+		std::wstring trackingDeviceName = L""; // -> Always set and >= 0
+		std::wstring overrideDeviceName = L"";
 
 		// Current tracking device: 0 is the default
 		uint32_t trackingDeviceID = 0; // -> Always set and >= 0

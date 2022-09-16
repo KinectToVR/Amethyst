@@ -162,9 +162,10 @@ void KinectV1Handler::updateSkeletalData()
 						SkeletonPositions[
 							globalIndex[j]].z;
 
-					trackingStates[j] = skeletonFrame.SkeletonData[i].
+					trackingStates[j] = static_cast<ktvr::ITrackedJointState>(
+						skeletonFrame.SkeletonData[i].
 						eSkeletonPositionTrackingState
-						[globalIndex[j]];
+						[globalIndex[j]]);
 				}
 
 				// Calculate bone orientations (deprecated, may be replaced later)

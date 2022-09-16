@@ -12,7 +12,7 @@ using namespace k2app::shared::devices;
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 bool devices_loadedOnce = false;
-std::string _prev_device_name = ""; // Placeholder
+std::wstring _prev_device_name = L""; // Placeholder
 
 namespace winrt::Amethyst::implementation
 {
@@ -71,7 +71,7 @@ namespace winrt::Amethyst::implementation
 		// Add tracking devices here
 		for (const auto& device : TrackingDevices::TrackingDevicesVector)
 		{
-			std::string deviceName = "[UNKNOWN]";
+			std::wstring deviceName = L"[UNKNOWN]";
 
 			switch (device.index())
 			{
@@ -89,14 +89,14 @@ namespace winrt::Amethyst::implementation
 				break;
 			}
 
-			LOG(INFO) << "Appending " << deviceName <<
+			LOG(INFO) << "Appending " << WStringToString(deviceName) <<
 				" to UI Node's tracking devices' list...";
 
-			LOG(INFO) << "Creating \"" << deviceName << "\" Root Node";
+			LOG(INFO) << "Creating \"" << WStringToString(deviceName) << "\" Root Node";
 			Controls::TreeViewNode item;
-			item.Content(box_value(StringToWString(deviceName)));
+			item.Content(box_value(deviceName));
 
-			LOG(INFO) << "Appending \"" << deviceName << "\" Root Node";
+			LOG(INFO) << "Appending \"" << WStringToString(deviceName) << "\" Root Node";
 			devicesTreeView.get()->RootNodes().Append(item);
 		}
 
@@ -451,7 +451,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 
 	// Deselect the device
 	k2app::K2Settings.overrideDeviceID = -1; // Only acceptable for an Override
-	k2app::K2Settings.overrideDeviceName = "";
+	k2app::K2Settings.overrideDeviceName = L"";
 	TrackingDevices::updateOverrideDeviceUI();
 
 	// Also update in the UI
@@ -471,7 +471,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
-	std::string deviceName = "[UNKNOWN]";
+	std::wstring deviceName = L"[UNKNOWN]";
 
 	if (trackingDevice.index() == 0)
 	{
@@ -585,14 +585,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 
 		// Append all joints to all combos
 		for (auto& _joint : device->getTrackedJoints())
-		{
-			// Get the name into string
-			auto _jointname = _joint.getJointName();
-
 			// Push the name to all combos
 			for (auto& expander : overrideSelectorExpanders)
-				expander.get()->PushOverrideJoint(StringToWString(_jointname));
-		}
+				expander.get()->PushOverrideJoint(_joint.getJointName());
 
 		// Try fix override IDs if wrong
 		TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
@@ -639,9 +634,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	setAsBaseButton.get()->IsEnabled(true);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
 
-	overrideDeviceName.get()->Text(StringToWString(deviceName));
+	overrideDeviceName.get()->Text(deviceName);
 
-	LOG(INFO) << "Changed the current tracking device (Override) to " << deviceName;
+	LOG(INFO) << "Changed the current tracking device (Override) to " << WStringToString(deviceName);
 
 	overridesLabel.get()->Visibility(Visibility::Visible);
 	deselectDeviceButton.get()->Visibility(Visibility::Visible);
@@ -713,7 +708,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
-	std::string deviceName = "[UNKNOWN]";
+	std::wstring deviceName = L"[UNKNOWN]";
 
 	if (trackingDevice.index() == 0)
 	{
@@ -723,7 +718,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 		if (k2app::K2Settings.overrideDeviceID == k2app::K2Settings.trackingDeviceID)
 		{
 			k2app::K2Settings.overrideDeviceID = -1; // Reset the override
-			k2app::K2Settings.overrideDeviceName = "";
+			k2app::K2Settings.overrideDeviceName = L"";
 		}
 
 		// Kinect Basis
@@ -773,7 +768,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 		if (k2app::K2Settings.overrideDeviceID == k2app::K2Settings.trackingDeviceID)
 		{
 			k2app::K2Settings.overrideDeviceID = -1; // Reset the override
-			k2app::K2Settings.overrideDeviceName = "";
+			k2app::K2Settings.overrideDeviceName = L"";
 		}
 
 		// Also refresh joints
@@ -811,12 +806,12 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	setAsBaseButton.get()->IsEnabled(false);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
 
-	baseDeviceName.get()->Text(StringToWString(deviceName));
-	if (overrideDeviceName.get()->Text() == StringToWString(deviceName))
+	baseDeviceName.get()->Text(deviceName);
+	if (overrideDeviceName.get()->Text() == deviceName)
 		overrideDeviceName.get()->Text(
 			k2app::interfacing::LocalizedResourceWString(L"DevicesPage", L"Titles/NoOverrides"));
 
-	LOG(INFO) << "Changed the current tracking device (Base) to " << deviceName;
+	LOG(INFO) << "Changed the current tracking device (Base) to " << WStringToString(deviceName);
 
 	overridesLabel.get()->Visibility(Visibility::Collapsed);
 	deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
@@ -1026,7 +1021,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 	// Run the on-selected routine
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
-	std::string deviceName = "[UNKNOWN]";
+	std::wstring deviceName = L"[UNKNOWN]";
 	std::wstring device_status = L"Something's wrong!\nE_UNKNOWN\nWhat's happened here?";
 
 	// Only if override -> select enabled combos
@@ -1039,7 +1034,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 		// Kinect Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
-		deviceNameLabel.get()->Text(StringToWString(device->getDeviceName()));
+		deviceNameLabel.get()->Text(device->getDeviceName());
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
@@ -1139,7 +1134,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 		// Joints Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
-		deviceNameLabel.get()->Text(StringToWString(device->getDeviceName()));
+		deviceNameLabel.get()->Text(device->getDeviceName());
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
@@ -1214,17 +1209,13 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 					expander.get()->PushOverrideJoint(
 						k2app::interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
-
+				
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
-				{
-					// Get the name into string
-					auto _jointname = _joint.getJointName();
-
 					// Push the name to all combos
 					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoint(StringToWString(_jointname));
-				}
+						expander.get()->PushOverrideJoint(_joint.getJointName());
+
 
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
@@ -1288,7 +1279,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 	}
 
-	LOG(INFO) << "Changed the currently selected device to " << deviceName;
+	LOG(INFO) << "Changed the currently selected device to " << WStringToString(deviceName);
 
 	// Now we're good
 	devices_tab_re_setup_finished = true;
@@ -1548,11 +1539,11 @@ Amethyst::implementation::DevicesPage::TrackingDeviceTreeView_ItemInvoked(
 	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 
 	auto node = args.InvokedItem().as<Controls::TreeViewNode>();
-	std::string content = WStringToString(node.Content().as<hstring>().c_str());
+	std::wstring content = node.Content().as<hstring>().c_str();
 
 	for (size_t s_index = 0; s_index < TrackingDevices::TrackingDevicesVector.size(); s_index++)
 	{
-		std::string deviceName = "[UNKNOWN]";
+		std::wstring deviceName = L"[UNKNOWN]";
 
 		switch (TrackingDevices::TrackingDevicesVector[s_index].index())
 		{
@@ -1594,7 +1585,7 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 {
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 
-	std::string deviceName = "[UNKNOWN]";
+	std::wstring deviceName = L"[UNKNOWN]";
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 
 	// Collapse all joint expanders
@@ -1617,7 +1608,7 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 		// Kinect Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
-		deviceNameLabel.get()->Text(StringToWString(device->getDeviceName()));
+		deviceNameLabel.get()->Text(device->getDeviceName());
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
@@ -1717,7 +1708,7 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 		// Joints Basis
 		const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
-		deviceNameLabel.get()->Text(StringToWString(device->getDeviceName()));
+		deviceNameLabel.get()->Text(device->getDeviceName());
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		deviceName = device->getDeviceName();
@@ -1795,14 +1786,10 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
-				{
-					// Get the name into string
-					auto _jointname = _joint.getJointName();
-
 					// Push the name to all combos
 					for (auto& expander : overrideSelectorExpanders)
-						expander.get()->PushOverrideJoint(StringToWString(_jointname));
-				}
+						expander.get()->PushOverrideJoint(_joint.getJointName());
+
 
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceID);
@@ -1893,7 +1880,7 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 	}
 
 	devices_signal_joints = true; // Change back
-	LOG(INFO) << "Changed the currently selected device to " << deviceName;
+	LOG(INFO) << "Changed the currently selected device to " << WStringToString(deviceName);
 
 	// Remove the transition
 	apartment_context ui_thread;

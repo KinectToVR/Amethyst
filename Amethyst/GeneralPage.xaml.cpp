@@ -1390,7 +1390,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 void Amethyst::implementation::GeneralPage::sk_line(
 	Shapes::Line& line,
 	const std::array<Eigen::Vector3f, 25>& joints,
-	const std::array<ktvr::JointTrackingState, 25>& states,
+	const std::array<ktvr::ITrackedJointState, 25>& states,
 	const ktvr::ITrackedJointType& from,
 	const ktvr::ITrackedJointType& to)
 {
@@ -1437,7 +1437,7 @@ void Amethyst::implementation::GeneralPage::sk_line(
 void Amethyst::implementation::GeneralPage::sk_dot(
 	Shapes::Ellipse& ellipse,
 	const Eigen::Vector3f& joint,
-	const ktvr::JointTrackingState& state,
+	const ktvr::ITrackedJointState& state,
 	const std::pair<bool, bool>& isOverridden)
 {
 	constexpr double s_mat_width_default = 700,

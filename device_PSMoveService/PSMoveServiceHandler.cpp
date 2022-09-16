@@ -313,29 +313,30 @@ void PSMoveServiceHandler::rebuildControllerList()
 
 	for (int cntlr_ix = 0; cntlr_ix < controllerList.count; ++cntlr_ix)
 	{
-		auto controller_type = "NONE";
+		auto controller_type = L"NONE";
 
 		switch (controllerList.controller_type[cntlr_ix])
 		{
 		case PSMController_Move:
-			controller_type = "PSMove";
+			controller_type = L"PSMove";
 			break;
 		case PSMController_Navi:
-			controller_type = "PSNavi";
+			controller_type = L"PSNavi";
 			break;
 		case PSMController_DualShock4:
-			controller_type = "DualShock4";
+			controller_type = L"DualShock4";
 			break;
 		case PSMController_Virtual:
-			controller_type = "Virtual";
+			controller_type = L"Virtual";
 			break;
 		}
 
-		LOG(INFO) << "Controller ID : " << controllerList.controller_id[cntlr_ix] << " is a " << controller_type;
+		LOG(INFO) << "Controller ID : " << controllerList.controller_id[cntlr_ix] << 
+			" is a " << WStringToString(controller_type);
 
 		using namespace std::literals;
 		trackedJoints.push_back(ktvr::K2TrackedJoint( // Add the controller to K2App's vector
-			controller_type + " "s + std::to_string(controllerList.controller_id[cntlr_ix])));
+			controller_type + L" "s + std::to_wstring(controllerList.controller_id[cntlr_ix])));
 	}
 
 	// If there are no real joints, push PSMS_MAX_JOINTS placeholders
@@ -345,7 +346,7 @@ void PSMoveServiceHandler::rebuildControllerList()
 	{
 		m_deviceUsable = false;
 		for (size_t i = 0; i < PSMOVESERVICE_MAX_CONTROLLER_COUNT; i++)
-			trackedJoints.push_back(ktvr::K2TrackedJoint("INVALID " + std::to_string(i)));
+			trackedJoints.push_back(ktvr::K2TrackedJoint(L"INVALID " + std::to_wstring(i)));
 	}
 	else m_deviceUsable = true;
 }

@@ -1141,7 +1141,7 @@ namespace winrt::Amethyst::implementation
 
 											int returnCode = ktvr::K2InitError_Invalid;
 											std::wstring stat = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
-											std::string _name = "E_UNKNOWN"; // Placeholder
+											std::wstring _name = L"E_UNKNOWN"; // Placeholder
 											bool blocks_flip = false, supports_math = true;
 
 											if (wcscmp(device_type.c_str(), L"SkeletonBasis") == 0 ||
@@ -1684,7 +1684,7 @@ namespace winrt::Amethyst::implementation
 						{
 							LOG(INFO) << "Previous tracking device ID was too big, it's been reset to [none]";
 							k2app::K2Settings.overrideDeviceID = -1; // Select [none]
-							k2app::K2Settings.overrideDeviceName = "";
+							k2app::K2Settings.overrideDeviceName = L"";
 						}
 
 						// Init the device (override, optionally)
@@ -1708,7 +1708,7 @@ namespace winrt::Amethyst::implementation
 						else
 						{
 							k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
-							k2app::K2Settings.overrideDeviceName = "";
+							k2app::K2Settings.overrideDeviceName = L"";
 						}
 
 						// Second check and try after 3 seconds
@@ -1769,7 +1769,7 @@ namespace winrt::Amethyst::implementation
 							else
 							{
 								k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
-								k2app::K2Settings.overrideDeviceName = "";
+								k2app::K2Settings.overrideDeviceName = L"";
 							}
 						}).detach();
 
