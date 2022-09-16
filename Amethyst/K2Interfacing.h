@@ -89,7 +89,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 namespace k2app::interfacing
 {
 	// Internal version number
-	inline const std::string K2InternalVersion = "1.0.3.0"; // KTVR[ver:X.X.X.X]
+	inline const std::string K2InternalVersion = "1.0.3.1"; // KTVR[ver:X.X.X.X]
 
 	inline constexpr uint32_t K2INTVersion = 2; // Amethyst version
 	inline constexpr uint32_t K2APIVersion = 0; // API version
