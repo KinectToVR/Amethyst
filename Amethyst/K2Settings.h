@@ -44,7 +44,10 @@ namespace k2app
 
 		// Current tracking device: 0 is the default
 		uint32_t trackingDeviceID = 0; // -> Always set and >= 0
-		int32_t overrideDeviceID = -1;
+
+		int32_t overrideDeviceID = 0; // -> Always set and >= 0 TODO
+
+		std::vector<uint32_t> overrideDeviceIDs; // No overrides
 
 		// Skeleton flip when facing away: One-For-All and on is the default
 		bool isFlipEnabled = true;

@@ -2,6 +2,8 @@
 #include "pch.h"
 #include "K2Settings.h"
 
+#include "DeviceEntryView.h"
+
 #include <codecvt>
 
 inline std::array<std::wstring, 3> split_status(const std::wstring& s)
@@ -193,16 +195,15 @@ namespace k2app::shared
 	namespace devices
 	{
 		inline bool devices_tab_setup_finished = false, // On-load setup
-		            devices_tab_re_setup_finished = false, // Other setup
-					devices_overrides_setup_pending = false, // Overrides
-		            devices_signal_joints = true; // Optionally no signal
+			devices_tab_re_setup_finished = false, // Other setup
+			devices_overrides_setup_pending = false, // Overrides
+			devices_signal_joints = true, // Optionally no signal
+			devices_mvvm_setup_finished = false; // MVVM setup done?
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
 			deviceNameLabel,
 			deviceStatusLabel,
 			errorWhatText,
-			baseDeviceName,
-			overrideDeviceName,
 			trackingDeviceErrorLabel,
 			overridesLabel,
 			jointBasisLabel;

@@ -198,6 +198,10 @@
     "/DevicesPage/Titles/Set/Tracker": "Tracker:",
     "/DevicesPage/Titles/SetAsDevice": "Als Tracking-Gerät festlegen:",
 
+    "/DevicesPage/Badges/Devices/Base": "Base",
+    "/DevicesPage/Badges/Devices/Override": "Override",
+    "/DevicesPage/Badges/Devices/Error": "Error",
+
     "/InfoPage/AppCaption": "by K2VR Team",
     "/InfoPage/AppTitle": "Amethyst",
     "/InfoPage/Credits/Community": "Und allen anderen, die uns auf unserem Weg geholfen haben.",

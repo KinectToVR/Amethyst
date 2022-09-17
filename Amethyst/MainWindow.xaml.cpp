@@ -1066,642 +1066,795 @@ namespace winrt::Amethyst::implementation
 				LOG(INFO) << "Current path is: " << WStringToString(
 					k2app::interfacing::GetProgramLocation().parent_path().wstring());
 
-				if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "devices"))
+				const auto devices_iterator = std::filesystem::directory_iterator(
+					k2app::interfacing::GetProgramLocation().parent_path() / "devices");
+
+				if (!exists(k2app::interfacing::GetProgramLocation().parent_path() / "devices"))
 				{
-					for (const auto& entry : std::filesystem::directory_iterator(
-						     k2app::interfacing::GetProgramLocation().parent_path() / "devices"))
+					LOG(ERROR) << "No tracking devices (K2Devices) found :/";
+					k2app::interfacing::_fail(-12);
+				}
+
+				for (const auto& entry : devices_iterator)
+				{
+					if (!exists(entry.path() / "device.k2devicemanifest"))
 					{
-						if (exists(entry.path() / "device.k2devicemanifest"))
-						{
-							// Load the JSON source into buffer
-							std::wifstream wif(entry.path() / L"device.k2devicemanifest");
-							wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
-							std::wstringstream wss;
-							wss << wif.rdbuf();
+						LOG(ERROR) << WStringToString(entry.path().stem().wstring()) <<
+							"'s manifest has not been not found :/";
+						continue;
+					}
 
-							// Parse the loaded json
-							const auto json_root = Windows::Data::Json::JsonObject::Parse(wss.str());
+					// Load the JSON source into buffer
+					std::wifstream wif(entry.path() / L"device.k2devicemanifest");
+					wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+					std::wstringstream wss;
+					wss << wif.rdbuf();
 
-							if (!json_root.HasKey(L"device_name") || !json_root.HasKey(L"device_type"))
+					// Parse the loaded json
+					const auto json_root = Windows::Data::Json::JsonObject::Parse(wss.str());
+
+					if (!json_root.HasKey(L"device_name") || !json_root.HasKey(L"device_type"))
+					{
+						LOG(ERROR) << WStringToString(entry.path().stem().wstring()) <<
+							"'s manifest was invalid!";
+						continue;
+					}
+
+					std::wstring device_name = json_root.GetNamedString(L"device_name").c_str(),
+					             device_type = json_root.GetNamedString(L"device_type").c_str();
+
+					LOG(INFO) << "Found tracking device with:\n - name: " << WStringToString(device_name);
+
+					auto deviceDllPath = entry.path() / L"bin" / L"win64" /
+						(L"device_" + device_name + L".dll");
+
+					if (!exists(deviceDllPath))
+					{
+						LOG(ERROR) << "Device's driver dll (bin/win64/device_[device].dll) was not found!";
+						continue;
+					}
+
+					LOG(INFO) << "Found the device's driver dll, now checking dependencies...";
+
+					bool _found = true; // assume success
+
+					// Check for deez dlls
+					if (json_root.HasKey(L"linked_dll_path"))
+						for (auto dll_entry : json_root.GetNamedArray(L"linked_dll_path"))
+							if (!std::filesystem::exists(dll_entry.GetString().c_str()))
 							{
-								LOG(ERROR) << WStringToString(entry.path().stem().wstring()) <<
-									"'s manifest was invalid!";
+								_found = false; // Mark as failed
+								LOG(ERROR) << "Linked dll not found at path: " <<
+									WStringToString(dll_entry.GetString().c_str());
+							}
+
+					// Else continue
+					if (!_found)
+					{
+						LOG(ERROR) << "Device's dependency dll (external linked dll) was not found!";
+						continue;
+					}
+
+					LOG(INFO) << "Found the device's dependency dll, now loading...";
+
+					// Get a handle to the DLL module.
+					HINSTANCE hLibraryInstance = LoadLibraryExW(deviceDllPath.wstring().c_str(), nullptr,
+					                                            LOAD_LIBRARY_SEARCH_DEFAULT_DIRS |
+					                                            // Add device's folder to dll search path
+					                                            LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR |
+					                                            LOAD_LIBRARY_SEARCH_SYSTEM32);
+
+					if (hLibraryInstance == nullptr)
+					{
+						LOG(ERROR) << "There was an error linking with the device library!";
+						continue;
+					}
+
+					auto hDeviceFactory = reinterpret_cast<TrackingDevices::TrackingDeviceBaseFactory>(
+						GetProcAddress(hLibraryInstance, "TrackingDeviceBaseFactory"));
+
+					// If the function address is valid, call the function.
+					if (nullptr == hDeviceFactory)
+					{
+						LOG(ERROR) <<
+							"Device's interface is incompatible with current Amethyst API " <<
+							ktvr::IAME_API_Version << ", it's probably outdated.";
+
+						LOG(ERROR) << "OR: there was an error calling the device factory...";
+						continue;
+					}
+
+					LOG(INFO) << "Device library loaded, now checking interface...";
+
+					int returnCode = ktvr::K2InitError_Invalid;
+					std::wstring stat = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
+					std::wstring _name = L"E_UNKNOWN"; // Placeholder
+					bool blocks_flip = false, supports_math = true;
+
+					if (wcscmp(device_type.c_str(), L"SkeletonBasis") == 0 ||
+						wcscmp(device_type.c_str(), L"KinectBasis") == 0)
+					{
+						auto pDevice =
+							static_cast<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
+								(hDeviceFactory)(ktvr::IAME_API_Version, &returnCode));
+
+						if (returnCode == ktvr::K2InitError_None)
+						{
+							LOG(INFO) << "Interface version OK, now checking its GUID...";
+							const auto pDevice_GUID = pDevice->getDeviceGUID();
+
+							LOG(INFO) << "Device's GUID is: " << WStringToString(pDevice_GUID);
+
+							if (pDevice_GUID == L"INVALID" ||
+								TrackingDevices::deviceGUID_ID_Map.contains(pDevice_GUID))
+							{
+								LOG(INFO) << "Skipping device with invalid or duplicate GUID...";
 								continue;
 							}
 
-							std::wstring device_name = json_root.GetNamedString(L"device_name").c_str(),
-							             device_type = json_root.GetNamedString(L"device_type").c_str();
+							LOG(INFO) << "Interface version OK, now constructing...";
 
-							LOG(INFO) << "Found tracking device with:\n - name: " << WStringToString(device_name);
+							const uint32_t _last_device_index =
+								TrackingDevices::TrackingDevicesVector.size();
+							
+							LOG(INFO) << "Overriding device's helper functions...";
 
-							auto deviceDllPath = entry.path() / L"bin" / L"win64" /
-								(L"device_" + device_name + L".dll");
-
-							if (exists(deviceDllPath))
-							{
-								LOG(INFO) << "Found the device's driver dll, now checking dependencies...";
-
-								bool _found = true; // assume success
-
-								// Check for deez dlls
-								if (json_root.HasKey(L"linked_dll_path"))
-									for (auto dll_entry : json_root.GetNamedArray(L"linked_dll_path"))
-										if (!std::filesystem::exists(dll_entry.GetString().c_str()))
-										{
-											_found = false; // Mark as failed
-											LOG(ERROR) << "Linked dll not found at path: " <<
-												WStringToString(dll_entry.GetString().c_str());
-										}
-
-								// Else continue
-								if (_found)
-								{
-									LOG(INFO) << "Found the device's dependency dll, now loading...";
-
-									HINSTANCE hLibraryInstance;
-									BOOL fRunTimeLinkSuccess = FALSE;
-
-									// Get a handle to the DLL module.
-									hLibraryInstance = LoadLibraryExW(deviceDllPath.wstring().c_str(), nullptr,
-									                                  LOAD_LIBRARY_SEARCH_DEFAULT_DIRS |
-									                                  // Add device's folder to dll search path
-									                                  LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR |
-									                                  LOAD_LIBRARY_SEARCH_SYSTEM32);
-
-									if (hLibraryInstance != nullptr)
+							// Push helper functions to the device
+							pDevice->logInfoMessage =
+								std::function<void(std::wstring)>(
+									[this, pDevice_GUID](auto message)
 									{
-										auto hDeviceFactory = (TrackingDevices::TrackingDeviceBaseFactory)
-											GetProcAddress(hLibraryInstance, "TrackingDeviceBaseFactory");
+										return
+											k2app::interfacing::plugins::plugins_outputInfoString(
+												message, pDevice_GUID);
+									});
+							pDevice->logWarningMessage =
+								std::function<void(std::wstring)>(
+									[this, pDevice_GUID](auto message)
+									{
+										return
+											k2app::interfacing::plugins::plugins_outputWarningString(
+												message, pDevice_GUID);
+									});
+							pDevice->logErrorMessage =
+								std::function<void(std::wstring)>(
+									[this, pDevice_GUID](auto message)
+									{
+										return
+											k2app::interfacing::plugins::plugins_outputErrorString(
+												message, pDevice_GUID);
+									});
 
-										// If the function address is valid, call the function.
-										if (nullptr != hDeviceFactory)
+							pDevice->getHMDPose =
+								k2app::interfacing::plugins::plugins_getHMDPose;
+							pDevice->getHMDPoseCalibrated =
+								k2app::interfacing::plugins::plugins_getHMDPoseCalibrated;
+							pDevice->getHMDOrientationYaw =
+								k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
+							pDevice->getHMDOrientationYawCalibrated =
+								k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
+
+							pDevice->getLeftControllerPose =
+								k2app::interfacing::plugins::plugins_getLeftControllerPose;
+							pDevice->getLeftControllerPoseCalibrated =
+								k2app::interfacing::plugins::plugins_getLeftControllerPoseCalibrated;
+							pDevice->getRightControllerPose =
+								k2app::interfacing::plugins::plugins_getRightControllerPose;
+							pDevice->getRightControllerPoseCalibrated =
+								k2app::interfacing::plugins::plugins_getRightControllerPoseCalibrated;
+
+							pDevice->getAppJointPoses =
+								k2app::interfacing::plugins::plugins_getAppJointPoses;
+
+							pDevice->requestLanguageCode =
+								k2app::interfacing::plugins::plugins_requestLanguageCode;
+							pDevice->setLocalizationResourcesRoot =
+								std::function<bool(std::filesystem::path)>(
+									[this, _last_device_index](auto path)
+									{
+										return
+											k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
+												path, _last_device_index);
+									});
+							pDevice->requestLocalizedString =
+								std::function<std::wstring(std::wstring)>(
+									[this, _last_device_index](auto key)
+									{
+										return
+											k2app::interfacing::plugins::plugins_requestLocalizedString(
+												key, _last_device_index);
+									});
+
+							pDevice->requestStatusUIRefresh =
+								k2app::interfacing::plugins::plugins_requestStatusUIRefresh;
+
+							pDevice->CreateTextBlock =
+								k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced;
+							pDevice->CreateButton =
+								k2app::interfacing::AppInterface::CreateAppButton_Sliced;
+							pDevice->CreateNumberBox =
+								k2app::interfacing::AppInterface::CreateAppNumberBox_Sliced;
+							pDevice->CreateComboBox =
+								k2app::interfacing::AppInterface::CreateAppComboBox_Sliced;
+							pDevice->CreateCheckBox =
+								k2app::interfacing::AppInterface::CreateAppCheckBox_Sliced;
+							pDevice->CreateToggleSwitch =
+								k2app::interfacing::AppInterface::CreateAppToggleSwitch_Sliced;
+							pDevice->CreateTextBox =
+								k2app::interfacing::AppInterface::CreateAppTextBox_Sliced;
+							pDevice->CreateProgressRing =
+								k2app::interfacing::AppInterface::CreateAppProgressRing_Sliced;
+							pDevice->CreateProgressBar =
+								k2app::interfacing::AppInterface::CreateAppProgressBar_Sliced;
+
+							LOG(INFO) <<
+								"Appending the device[" << _last_device_index <<
+								"]'s GUID to the global registry...";
+
+							// Push the device's GUID---ID map
+							TrackingDevices::deviceGUID_ID_Map.insert(
+								std::make_pair(pDevice_GUID, _last_device_index));
+
+							LOG(INFO) <<
+								"Creating device's default root language resource context...";
+							TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
+								push_back(std::make_pair(Windows::Data::Json::JsonObject(),
+								                         entry.path() / L"resources" / L"Strings"));
+							// Empty for now
+
+							LOG(INFO) <<
+								"Registering device's default root language resource context...";
+							k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
+								entry.path() / L"resources" / L"Strings",
+								_last_device_index); // Now either empty or ok
+							LOG(INFO) << "Appending the device to the global registry...";
+
+							// Push the device to pointers' vector
+							TrackingDevices::TrackingDevicesVector.push_back(pDevice);
+
+							// Cache the name
+							_name = pDevice->getDeviceName();
+
+							// Create a layout root for the device and override
+							k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
+								[_last_device_index, this]
+								{
+									LOG(INFO) << "Registering device[" << _last_device_index <<
+										"]'s layout root...";
+
+									const auto pLayoutRoot = new
+										k2app::interfacing::AppInterface::AppLayoutRoot();
+
+									switch (const auto& device =
+										TrackingDevices::TrackingDevicesVector.at(
+											_last_device_index); device.index())
+									{
+									case 0:
 										{
-											fRunTimeLinkSuccess = TRUE;
-											LOG(INFO) << "Device library loaded, now checking interface...";
+											const auto& pDevice =
+												std::get<
+													ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
+													device);
 
-											int returnCode = ktvr::K2InitError_Invalid;
-											std::wstring stat = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
-											std::wstring _name = L"E_UNKNOWN"; // Placeholder
-											bool blocks_flip = false, supports_math = true;
+											// Register the layout
+											pDevice->layoutRoot = dynamic_cast<
+													ktvr::Interface::LayoutRoot*>
+												(pLayoutRoot);
 
-											if (wcscmp(device_type.c_str(), L"SkeletonBasis") == 0 ||
-												wcscmp(device_type.c_str(), L"KinectBasis") == 0)
-											{
-												auto pDevice =
-													static_cast<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
-														(hDeviceFactory)(ktvr::IAME_API_Version, &returnCode));
-
-												if (returnCode == ktvr::K2InitError_None)
-												{
-													LOG(INFO) << "Interface version OK, now constructing...";
-
-													const uint32_t _last_device_index =
-														TrackingDevices::TrackingDevicesVector.size();
-
-													LOG(INFO) << "Overriding device's helper functions...";
-
-													// Push helper functions to the device
-													pDevice->getHMDPose =
-														k2app::interfacing::plugins::plugins_getHMDPose;
-													pDevice->getHMDPoseCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDPoseCalibrated;
-													pDevice->getHMDOrientationYaw =
-														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
-													pDevice->getHMDOrientationYawCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
-
-													pDevice->getLeftControllerPose =
-														k2app::interfacing::plugins::plugins_getLeftControllerPose;
-													pDevice->getLeftControllerPoseCalibrated =
-														k2app::interfacing::plugins::plugins_getLeftControllerPoseCalibrated;
-													pDevice->getRightControllerPose =
-														k2app::interfacing::plugins::plugins_getRightControllerPose;
-													pDevice->getRightControllerPoseCalibrated =
-														k2app::interfacing::plugins::plugins_getRightControllerPoseCalibrated;
-
-													pDevice->getAppJointPoses =
-														k2app::interfacing::plugins::plugins_getAppJointPoses;
-
-													pDevice->requestLanguageCode =
-														k2app::interfacing::plugins::plugins_requestLanguageCode;
-													pDevice->setLocalizationResourcesRoot =
-														std::function<bool(std::filesystem::path)>(
-															[this, _last_device_index](auto path)
-															{
-																return
-																	k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
-																		path, _last_device_index);
-															});
-													pDevice->requestLocalizedString =
-														std::function<std::wstring(std::wstring)>(
-															[this, _last_device_index](auto key)
-															{
-																return
-																	k2app::interfacing::plugins::plugins_requestLocalizedString(
-																		key, _last_device_index);
-															});
-
-													pDevice->requestStatusUIRefresh =
-														k2app::interfacing::plugins::plugins_requestStatusUIRefresh;
-
-													pDevice->CreateTextBlock =
-														k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced;
-													pDevice->CreateButton =
-														k2app::interfacing::AppInterface::CreateAppButton_Sliced;
-													pDevice->CreateNumberBox =
-														k2app::interfacing::AppInterface::CreateAppNumberBox_Sliced;
-													pDevice->CreateComboBox =
-														k2app::interfacing::AppInterface::CreateAppComboBox_Sliced;
-													pDevice->CreateCheckBox =
-														k2app::interfacing::AppInterface::CreateAppCheckBox_Sliced;
-													pDevice->CreateToggleSwitch =
-														k2app::interfacing::AppInterface::CreateAppToggleSwitch_Sliced;
-													pDevice->CreateTextBox =
-														k2app::interfacing::AppInterface::CreateAppTextBox_Sliced;
-													pDevice->CreateProgressRing =
-														k2app::interfacing::AppInterface::CreateAppProgressRing_Sliced;
-													pDevice->CreateProgressBar =
-														k2app::interfacing::AppInterface::CreateAppProgressBar_Sliced;
-
-													LOG(INFO) <<
-														"Creating device's default root language resource context...";
-													TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
-														push_back(std::make_pair(Windows::Data::Json::JsonObject(),
-															entry.path() / L"resources" / L"Strings")); // Empty for now
-
-													LOG(INFO) <<
-														"Registering device's default root language resource context...";
-													k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
-														entry.path() / L"resources" / L"Strings",
-														_last_device_index); // Now either empty or ok
-													LOG(INFO) << "Appending the device to the global registry...";
-
-													// Push the device to pointers' vector
-													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
-
-													// Cache the name
-													_name = pDevice->getDeviceName();
-
-													// Create a layout root for the device and override
-													k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
-														[_last_device_index, this]
-														{
-															LOG(INFO) << "Registering device[" << _last_device_index <<
-																"]'s layout root...";
-
-															const auto pLayoutRoot = new
-																k2app::interfacing::AppInterface::AppLayoutRoot();
-
-															switch (const auto& device =
-																TrackingDevices::TrackingDevicesVector.at(
-																	_last_device_index); device.index())
-															{
-															case 0:
-																{
-																	const auto& pDevice =
-																		std::get<
-																			ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
-																			device);
-
-																	// Register the layout
-																	pDevice->layoutRoot = dynamic_cast<
-																			ktvr::Interface::LayoutRoot*>
-																		(pLayoutRoot);
-
-																	// State that everything's fine and the device's loaded
-																	// Note: the dispatcher is starting AFTER device setup
-																	pDevice->onLoad();
-																}
-																break;
-															case 1:
-																{
-																	const auto& pDevice =
-																		std::get<
-																			ktvr::K2TrackingDeviceBase_JointsBasis*>(
-																			device);
-
-																	// Register the layout
-																	pDevice->layoutRoot = dynamic_cast<
-																			ktvr::Interface::LayoutRoot*>
-																		(pLayoutRoot);
-
-																	// State that everything's fine and the device's loaded
-																	// Note: the dispatcher is starting AFTER device setup
-																	pDevice->onLoad();
-																}
-																break;
-															}
-
-															LOG(INFO) <<
-																"Appending the device[" << _last_device_index <<
-																"]'s layout root to the global registry...";
-
-															// Push the device's layout root to pointers' vector
-															TrackingDevices::TrackingDevicesLayoutRootsVector.
-																push_back(pLayoutRoot);
-														});
-
-													stat = pDevice->statusResultWString(
-														pDevice->getStatusResult());
-
-													blocks_flip = !pDevice->isFlipSupported();
-													supports_math = pDevice->isAppOrientationSupported();
-												}
-											}
-											else if (wcscmp(device_type.c_str(), L"JointsBasis") == 0)
-											{
-												auto pDevice =
-													static_cast<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-														(hDeviceFactory)(ktvr::IAME_API_Version, &returnCode));
-
-												if (returnCode == ktvr::K2InitError_None)
-												{
-													LOG(INFO) << "Interface version OK, now constructing...";
-
-													const uint32_t _last_device_index =
-														TrackingDevices::TrackingDevicesVector.size();
-
-													LOG(INFO) << "Overriding device's helper functions...";
-
-													// Push helper functions to the device
-													pDevice->getHMDPose =
-														k2app::interfacing::plugins::plugins_getHMDPose;
-													pDevice->getHMDPoseCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDPoseCalibrated;
-													pDevice->getHMDOrientationYaw =
-														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
-													pDevice->getHMDOrientationYawCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
-
-													pDevice->getLeftControllerPose =
-														k2app::interfacing::plugins::plugins_getLeftControllerPose;
-													pDevice->getLeftControllerPoseCalibrated =
-														k2app::interfacing::plugins::plugins_getLeftControllerPoseCalibrated;
-													pDevice->getRightControllerPose =
-														k2app::interfacing::plugins::plugins_getRightControllerPose;
-													pDevice->getRightControllerPoseCalibrated =
-														k2app::interfacing::plugins::plugins_getRightControllerPoseCalibrated;
-
-													pDevice->getAppJointPoses =
-														k2app::interfacing::plugins::plugins_getAppJointPoses;
-
-													pDevice->requestLanguageCode =
-														k2app::interfacing::plugins::plugins_requestLanguageCode;
-													pDevice->setLocalizationResourcesRoot =
-														std::function<bool(std::filesystem::path)>(
-															[this, _last_device_index](auto path)
-															{
-																return
-																	k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
-																		path, _last_device_index);
-															});
-													pDevice->requestLocalizedString =
-														std::function<std::wstring(std::wstring)>(
-															[this, _last_device_index](auto key)
-															{
-																return
-																	k2app::interfacing::plugins::plugins_requestLocalizedString(
-																		key, _last_device_index);
-															});
-
-													pDevice->requestStatusUIRefresh =
-														k2app::interfacing::plugins::plugins_requestStatusUIRefresh;
-
-													pDevice->CreateTextBlock =
-														k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced;
-													pDevice->CreateButton =
-														k2app::interfacing::AppInterface::CreateAppButton_Sliced;
-													pDevice->CreateNumberBox =
-														k2app::interfacing::AppInterface::CreateAppNumberBox_Sliced;
-													pDevice->CreateComboBox =
-														k2app::interfacing::AppInterface::CreateAppComboBox_Sliced;
-													pDevice->CreateCheckBox =
-														k2app::interfacing::AppInterface::CreateAppCheckBox_Sliced;
-													pDevice->CreateToggleSwitch =
-														k2app::interfacing::AppInterface::CreateAppToggleSwitch_Sliced;
-													pDevice->CreateTextBox =
-														k2app::interfacing::AppInterface::CreateAppTextBox_Sliced;
-													pDevice->CreateProgressRing =
-														k2app::interfacing::AppInterface::CreateAppProgressRing_Sliced;
-													pDevice->CreateProgressBar =
-														k2app::interfacing::AppInterface::CreateAppProgressBar_Sliced;
-
-													LOG(INFO) <<
-														"Creating device's default root language resource context...";
-													TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
-														push_back(std::make_pair(Windows::Data::Json::JsonObject(),
-															entry.path() / L"resources" / L"Strings")); // Empty for now
-
-													LOG(INFO) <<
-														"Registering device's default root language resource context...";
-													k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
-														entry.path() / L"resources" / L"Strings",
-														_last_device_index); // Now either empty or ok
-
-													LOG(INFO) << "Appending the device to the global registry...";
-
-													// Push the device to pointers' vector
-													TrackingDevices::TrackingDevicesVector.push_back(pDevice);
-
-													// Cache the name
-													_name = pDevice->getDeviceName();
-
-													// Create a layout root for the device and override
-													k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
-														[_last_device_index, this]
-														{
-															LOG(INFO) << "Registering device[" << _last_device_index <<
-																"]'s layout root...";
-
-															const auto pLayoutRoot = new
-																k2app::interfacing::AppInterface::AppLayoutRoot();
-
-															switch (const auto& device =
-																TrackingDevices::TrackingDevicesVector.at(
-																	_last_device_index); device.index())
-															{
-															case 0:
-																{
-																	const auto& pDevice =
-																		std::get<
-																			ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
-																			device);
-
-																	// Register the layout
-																	pDevice->layoutRoot = dynamic_cast<
-																			ktvr::Interface::LayoutRoot*>
-																		(pLayoutRoot);
-
-																	// State that everything's fine and the device's loaded
-																	// Note: the dispatcher is starting AFTER device setup
-																	pDevice->onLoad();
-																}
-																break;
-															case 1:
-																{
-																	const auto& pDevice =
-																		std::get<
-																			ktvr::K2TrackingDeviceBase_JointsBasis*>(
-																			device);
-
-																	// Register the layout
-																	pDevice->layoutRoot = dynamic_cast<
-																			ktvr::Interface::LayoutRoot*>
-																		(pLayoutRoot);
-
-																	// State that everything's fine and the device's loaded
-																	// Note: the dispatcher is starting AFTER device setup
-																	pDevice->onLoad();
-																}
-																break;
-															}
-
-															LOG(INFO) <<
-																"Appending the device[" << _last_device_index <<
-																"]'s layout root to the global registry...";
-
-															// Push the device's layout root to pointers' vector
-															TrackingDevices::TrackingDevicesLayoutRootsVector.
-																push_back(pLayoutRoot);
-														});
-
-													stat = pDevice->statusResultWString(
-														pDevice->getStatusResult());
-
-													blocks_flip = true; // Always the same for JointsBasis
-													supports_math = false; // Always the same for JointsBasis
-												}
-											}
-											else if (wcscmp(device_type.c_str(), L"Spectator") == 0)
-											{
-												auto pDevice =
-													static_cast<ktvr::K2TrackingDeviceBase_Spectator*>(
-														(hDeviceFactory)(ktvr::IAME_API_Version, &returnCode));
-
-												if (returnCode == ktvr::K2InitError_None)
-												{
-													LOG(INFO) << "Interface version OK, now constructing...";
-
-													// Push helper functions to the device
-													pDevice->getHMDPose =
-														k2app::interfacing::plugins::plugins_getHMDPose;
-													pDevice->getHMDPoseCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDPoseCalibrated;
-													pDevice->getHMDOrientationYaw =
-														k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
-													pDevice->getHMDOrientationYawCalibrated =
-														k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
-
-													pDevice->getLeftControllerPose =
-														k2app::interfacing::plugins::plugins_getLeftControllerPose;
-													pDevice->getLeftControllerPoseCalibrated =
-														k2app::interfacing::plugins::plugins_getLeftControllerPoseCalibrated;
-													pDevice->getRightControllerPose =
-														k2app::interfacing::plugins::plugins_getRightControllerPose;
-													pDevice->getRightControllerPoseCalibrated =
-														k2app::interfacing::plugins::plugins_getRightControllerPoseCalibrated;
-
-													pDevice->getAppJointPoses =
-														k2app::interfacing::plugins::plugins_getAppJointPoses;
-
-													// State that everything's fine and the device's loaded
-													// Note: the dispatcher is starting AFTER device setup
-													pDevice->onLoad();
-
-													LOG(INFO) << "A Spectator device's been added successfully!";
-													continue; // Don't do any more jobs
-												}
-											}
-
-											switch (returnCode)
-											{
-											case ktvr::K2InitError_None:
-												{
-													LOG(INFO) << "Registered tracking device with:"
-														"\n - name: " << WStringToString(device_name) <<
-														"\n - type: " << WStringToString(device_type) <<
-														"\n - blocks flip: " << blocks_flip <<
-														"\n - supports math-based orientation: " << supports_math <<
-
-														"\nat index " <<
-														TrackingDevices::TrackingDevicesVector.size() - 1;
-
-													LOG(INFO) << "Device status (should be 'not initialized'): \n[\n" <<
-														WStringToString(stat) << "\n]\n";
-
-													// Switch check the device name
-													if (_name == k2app::K2Settings.trackingDeviceName)
-													{
-														LOG(INFO) << "This device is the main device!";
-														k2app::K2Settings.trackingDeviceID =
-															TrackingDevices::TrackingDevicesVector.size() - 1;
-													}
-													else if (_name == k2app::K2Settings.overrideDeviceName)
-													{
-														LOG(INFO) << "This device is an override device!";
-														k2app::K2Settings.overrideDeviceID =
-															TrackingDevices::TrackingDevicesVector.size() - 1;
-													}
-												}
-												break;
-											case ktvr::K2InitError_BadInterface:
-												{
-													LOG(ERROR) <<
-														"Device's interface is incompatible with current Amethyst API "
-														<<
-														ktvr::IAME_API_Version <<
-														", it's probably outdated.";
-												}
-												break;
-											case ktvr::K2InitError_Invalid:
-												{
-													LOG(ERROR) <<
-														"Device either didn't give any return code or it's factory malfunctioned. You can only cry about it...";
-												}
-												break;
-											}
+											// State that everything's fine and the device's loaded
+											// Note: the dispatcher is starting AFTER device setup
+											pDevice->onLoad();
 										}
-										else
+										break;
+									case 1:
 										{
-											LOG(ERROR) <<
-												"Device's interface is incompatible with current Amethyst API " <<
-												ktvr::IAME_API_Version <<
-												", it's probably outdated.";
+											const auto& pDevice =
+												std::get<
+													ktvr::K2TrackingDeviceBase_JointsBasis*>(
+													device);
+
+											// Register the layout
+											pDevice->layoutRoot = dynamic_cast<
+													ktvr::Interface::LayoutRoot*>
+												(pLayoutRoot);
+
+											// State that everything's fine and the device's loaded
+											// Note: the dispatcher is starting AFTER device setup
+											pDevice->onLoad();
 										}
+										break;
 									}
-									else
-										LOG(ERROR) << "There was an error linking with the device library!";
 
-									// If unable to call the DLL function, use an alternative.
-									if (!fRunTimeLinkSuccess)
-										LOG(ERROR) << "There was an error calling the device factory...";
-								}
-								else
-									LOG(ERROR) << "Device's dependency dll (external linked dll) was not found!";
-							}
-							else
-								LOG(ERROR) << "Device's driver dll (bin/win64/device_[device].dll) was not found!";
+									LOG(INFO) <<
+										"Appending the device[" << _last_device_index <<
+										"]'s layout root to the global registry...";
+
+									// Push the device's layout root to pointers' vector
+									TrackingDevices::TrackingDevicesLayoutRootsVector.
+										push_back(pLayoutRoot);
+								});
+
+							stat = pDevice->statusResultWString(
+								pDevice->getStatusResult());
+
+							blocks_flip = !pDevice->isFlipSupported();
+							supports_math = pDevice->isAppOrientationSupported();
 						}
-						else
+					}
+					else if (wcscmp(device_type.c_str(), L"JointsBasis") == 0)
+					{
+						auto pDevice =
+							static_cast<ktvr::K2TrackingDeviceBase_JointsBasis*>(
+								(hDeviceFactory)(ktvr::IAME_API_Version, &returnCode));
+
+						if (returnCode == ktvr::K2InitError_None)
 						{
-							LOG(ERROR) << WStringToString(entry.path().stem().wstring()) <<
-								"'s manifest was not found :/";
+							LOG(INFO) << "Interface version OK, now checking its GUID...";
+							const auto pDevice_GUID = pDevice->getDeviceGUID();
+
+							LOG(INFO) << "Device's GUID is: " << WStringToString(pDevice_GUID);
+
+							if (pDevice_GUID == L"INVALID" ||
+								TrackingDevices::deviceGUID_ID_Map.contains(pDevice_GUID))
+							{
+								LOG(INFO) << "Skipping device with invalid or duplicate GUID...";
+								continue;
+							}
+
+							LOG(INFO) << "Interface version OK, now constructing...";
+
+							const uint32_t _last_device_index =
+								TrackingDevices::TrackingDevicesVector.size();
+
+							LOG(INFO) << "Overriding device's helper functions...";
+
+							// Push helper functions to the device
+							pDevice->logInfoMessage =
+								std::function<void(std::wstring)>(
+									[this, pDevice_GUID](auto message)
+									{
+										return
+											k2app::interfacing::plugins::plugins_outputInfoString(
+												message, pDevice_GUID);
+									});
+							pDevice->logWarningMessage =
+								std::function<void(std::wstring)>(
+									[this, pDevice_GUID](auto message)
+									{
+										return
+											k2app::interfacing::plugins::plugins_outputWarningString(
+												message, pDevice_GUID);
+									});
+							pDevice->logErrorMessage =
+								std::function<void(std::wstring)>(
+									[this, pDevice_GUID](auto message)
+									{
+										return
+											k2app::interfacing::plugins::plugins_outputErrorString(
+												message, pDevice_GUID);
+									});
+
+							pDevice->getHMDPose =
+								k2app::interfacing::plugins::plugins_getHMDPose;
+							pDevice->getHMDPoseCalibrated =
+								k2app::interfacing::plugins::plugins_getHMDPoseCalibrated;
+							pDevice->getHMDOrientationYaw =
+								k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
+							pDevice->getHMDOrientationYawCalibrated =
+								k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
+
+							pDevice->getLeftControllerPose =
+								k2app::interfacing::plugins::plugins_getLeftControllerPose;
+							pDevice->getLeftControllerPoseCalibrated =
+								k2app::interfacing::plugins::plugins_getLeftControllerPoseCalibrated;
+							pDevice->getRightControllerPose =
+								k2app::interfacing::plugins::plugins_getRightControllerPose;
+							pDevice->getRightControllerPoseCalibrated =
+								k2app::interfacing::plugins::plugins_getRightControllerPoseCalibrated;
+
+							pDevice->getAppJointPoses =
+								k2app::interfacing::plugins::plugins_getAppJointPoses;
+
+							pDevice->requestLanguageCode =
+								k2app::interfacing::plugins::plugins_requestLanguageCode;
+							pDevice->setLocalizationResourcesRoot =
+								std::function<bool(std::filesystem::path)>(
+									[this, _last_device_index](auto path)
+									{
+										return
+											k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
+												path, _last_device_index);
+									});
+							pDevice->requestLocalizedString =
+								std::function<std::wstring(std::wstring)>(
+									[this, _last_device_index](auto key)
+									{
+										return
+											k2app::interfacing::plugins::plugins_requestLocalizedString(
+												key, _last_device_index);
+									});
+
+							pDevice->requestStatusUIRefresh =
+								k2app::interfacing::plugins::plugins_requestStatusUIRefresh;
+
+							pDevice->CreateTextBlock =
+								k2app::interfacing::AppInterface::CreateAppTextBlock_Sliced;
+							pDevice->CreateButton =
+								k2app::interfacing::AppInterface::CreateAppButton_Sliced;
+							pDevice->CreateNumberBox =
+								k2app::interfacing::AppInterface::CreateAppNumberBox_Sliced;
+							pDevice->CreateComboBox =
+								k2app::interfacing::AppInterface::CreateAppComboBox_Sliced;
+							pDevice->CreateCheckBox =
+								k2app::interfacing::AppInterface::CreateAppCheckBox_Sliced;
+							pDevice->CreateToggleSwitch =
+								k2app::interfacing::AppInterface::CreateAppToggleSwitch_Sliced;
+							pDevice->CreateTextBox =
+								k2app::interfacing::AppInterface::CreateAppTextBox_Sliced;
+							pDevice->CreateProgressRing =
+								k2app::interfacing::AppInterface::CreateAppProgressRing_Sliced;
+							pDevice->CreateProgressBar =
+								k2app::interfacing::AppInterface::CreateAppProgressBar_Sliced;
+
+							LOG(INFO) <<
+								"Appending the device[" << _last_device_index <<
+								"]'s GUID to the global registry...";
+
+							// Push the device's GUID---ID map
+							TrackingDevices::deviceGUID_ID_Map.insert(
+								std::make_pair(pDevice_GUID, _last_device_index));
+
+							LOG(INFO) <<
+								"Creating device's default root language resource context...";
+							TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
+								push_back(std::make_pair(Windows::Data::Json::JsonObject(),
+								                         entry.path() / L"resources" / L"Strings"));
+							// Empty for now
+
+							LOG(INFO) <<
+								"Registering device's default root language resource context...";
+							k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
+								entry.path() / L"resources" / L"Strings",
+								_last_device_index); // Now either empty or ok
+
+							LOG(INFO) << "Appending the device to the global registry...";
+
+							// Push the device to pointers' vector
+							TrackingDevices::TrackingDevicesVector.push_back(pDevice);
+
+							// Cache the name
+							_name = pDevice->getDeviceName();
+
+							// Create a layout root for the device and override
+							k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
+								[_last_device_index, this]
+								{
+									LOG(INFO) << "Registering device[" << _last_device_index <<
+										"]'s layout root...";
+
+									const auto pLayoutRoot = new
+										k2app::interfacing::AppInterface::AppLayoutRoot();
+
+									switch (const auto& device =
+										TrackingDevices::TrackingDevicesVector.at(
+											_last_device_index); device.index())
+									{
+									case 0:
+										{
+											const auto& pDevice =
+												std::get<
+													ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
+													device);
+
+											// Register the layout
+											pDevice->layoutRoot = dynamic_cast<
+													ktvr::Interface::LayoutRoot*>
+												(pLayoutRoot);
+
+											// State that everything's fine and the device's loaded
+											// Note: the dispatcher is starting AFTER device setup
+											pDevice->onLoad();
+										}
+										break;
+									case 1:
+										{
+											const auto& pDevice =
+												std::get<
+													ktvr::K2TrackingDeviceBase_JointsBasis*>(
+													device);
+
+											// Register the layout
+											pDevice->layoutRoot = dynamic_cast<
+													ktvr::Interface::LayoutRoot*>
+												(pLayoutRoot);
+
+											// State that everything's fine and the device's loaded
+											// Note: the dispatcher is starting AFTER device setup
+											pDevice->onLoad();
+										}
+										break;
+									}
+
+									LOG(INFO) <<
+										"Appending the device[" << _last_device_index <<
+										"]'s layout root to the global registry...";
+
+									// Push the device's layout root to pointers' vector
+									TrackingDevices::TrackingDevicesLayoutRootsVector.
+										push_back(pLayoutRoot);
+								});
+
+							stat = pDevice->statusResultWString(
+								pDevice->getStatusResult());
+
+							blocks_flip = true; // Always the same for JointsBasis
+							supports_math = false; // Always the same for JointsBasis
+						}
+					}
+					else if (wcscmp(device_type.c_str(), L"Spectator") == 0)
+					{
+						auto pDevice =
+							static_cast<ktvr::K2TrackingDeviceBase_Spectator*>(
+								(hDeviceFactory)(ktvr::IAME_API_Version, &returnCode));
+
+						if (returnCode == ktvr::K2InitError_None)
+						{
+							LOG(INFO) << "Interface version OK, now constructing...";
+
+							// Push helper functions to the device
+							pDevice->getHMDPose =
+								k2app::interfacing::plugins::plugins_getHMDPose;
+							pDevice->getHMDPoseCalibrated =
+								k2app::interfacing::plugins::plugins_getHMDPoseCalibrated;
+							pDevice->getHMDOrientationYaw =
+								k2app::interfacing::plugins::plugins_getHMDOrientationYaw;
+							pDevice->getHMDOrientationYawCalibrated =
+								k2app::interfacing::plugins::plugins_getHMDOrientationYawCalibrated;
+
+							pDevice->getLeftControllerPose =
+								k2app::interfacing::plugins::plugins_getLeftControllerPose;
+							pDevice->getLeftControllerPoseCalibrated =
+								k2app::interfacing::plugins::plugins_getLeftControllerPoseCalibrated;
+							pDevice->getRightControllerPose =
+								k2app::interfacing::plugins::plugins_getRightControllerPose;
+							pDevice->getRightControllerPoseCalibrated =
+								k2app::interfacing::plugins::plugins_getRightControllerPoseCalibrated;
+
+							pDevice->getAppJointPoses =
+								k2app::interfacing::plugins::plugins_getAppJointPoses;
+
+							// State that everything's fine and the device's loaded
+							// Note: the dispatcher is starting AFTER device setup
+							pDevice->onLoad();
+
+							LOG(INFO) << "A Spectator device's been added successfully!";
+							continue; // Don't do any more jobs
 						}
 					}
 
-					LOG(INFO) << "Registration of tracking devices has ended, there are " <<
-						TrackingDevices::TrackingDevicesVector.size() <<
-						" tracking devices in total.";
-
-					// Now select the proper device
-					// k2app::K2Settings.trackingDeviceName must be read from settings before!
-					if (TrackingDevices::TrackingDevicesVector.size() > 0)
+					switch (returnCode)
 					{
-						// Loop over all the devices and select the saved one
-						// : Has been done at loading!
-
-						// Check the base device index
-						if (k2app::K2Settings.trackingDeviceID >= TrackingDevices::TrackingDevicesVector.size())
+					case ktvr::K2InitError_None:
 						{
-							LOG(INFO) << "Previous tracking device ID was too big, it's been reset to 0";
-							k2app::K2Settings.trackingDeviceID = 0; // Select the first one
-						}
+							LOG(INFO) << "Registered tracking device with:"
+								"\n - name: " << WStringToString(device_name) <<
+								"\n - type: " << WStringToString(device_type) <<
+								"\n - blocks flip: " << blocks_flip <<
+								"\n - supports math-based orientation: " << supports_math <<
 
-						// Init the device (base)
-						const auto& trackingDevice =
-							TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
-						switch (trackingDevice.index())
+								"\nat index " <<
+								TrackingDevices::TrackingDevicesVector.size() - 1;
+
+							LOG(INFO) << "Device status (should be 'not initialized'): \n[\n" <<
+								WStringToString(stat) << "\n]\n";
+
+							// Switch check the device name
+							if (_name == k2app::K2Settings.trackingDeviceName)
+							{
+								LOG(INFO) << "This device is the main device!";
+								k2app::K2Settings.trackingDeviceID =
+									TrackingDevices::TrackingDevicesVector.size() - 1;
+							}
+							else if (_name == k2app::K2Settings.overrideDeviceName)
+							{
+								LOG(INFO) << "This device is an override device!";
+								k2app::K2Settings.overrideDeviceID =
+									TrackingDevices::TrackingDevicesVector.size() - 1;
+							}
+						}
+						break;
+					case ktvr::K2InitError_BadInterface:
+						{
+							LOG(ERROR) <<
+								"Device's interface is incompatible with current Amethyst API "
+								<<
+								ktvr::IAME_API_Version <<
+								", it's probably outdated.";
+						}
+						break;
+					case ktvr::K2InitError_Invalid:
+						{
+							LOG(ERROR) <<
+								"Device either didn't give any return code or it's factory malfunctioned. You can only cry about it...";
+						}
+						break;
+					}
+				}
+
+				LOG(INFO) << "Registration of tracking devices has ended, there are " <<
+					TrackingDevices::TrackingDevicesVector.size() <<
+					" tracking devices in total.";
+
+				// Now select the proper device
+				// k2app::K2Settings.trackingDeviceName must be read from settings before!
+				if (TrackingDevices::TrackingDevicesVector.size() > 0)
+				{
+					// Loop over all the devices and select the saved one
+					// : Has been done at loading!
+
+					// Check the base device index
+					if (k2app::K2Settings.trackingDeviceID >= TrackingDevices::TrackingDevicesVector.size())
+					{
+						LOG(INFO) << "Previous tracking device ID was too big, it's been reset to 0";
+						k2app::K2Settings.trackingDeviceID = 0; // Select the first one
+					}
+
+					// Init the device (base)
+					const auto& trackingDevice =
+						TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
+					switch (trackingDevice.index())
+					{
+					case 0:
+						// Kinect Basis
+						{
+							// Update options for the device
+							if ((k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
+									k2app::k2_SoftwareCalculatedRotation ||
+									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
+									k2app::k2_SoftwareCalculatedRotation_V2) &&
+
+								!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
+								isAppOrientationSupported())
+
+								k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption =
+									k2app::k2_DeviceInferredRotation;
+
+							if ((k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
+									k2app::k2_SoftwareCalculatedRotation ||
+									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
+									k2app::k2_SoftwareCalculatedRotation_V2) &&
+
+								!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
+								isAppOrientationSupported())
+
+								k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption =
+									k2app::k2_DeviceInferredRotation;
+
+							// Init
+							std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->initialize();
+
+							// Backup the name
+							k2app::K2Settings.trackingDeviceName =
+								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
+								getDeviceName();
+						}
+						break;
+					case 1:
+						// Joints Basis
+						{
+							// Update options for the device
+							if (k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
+								k2app::k2_SoftwareCalculatedRotation ||
+								k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
+								k2app::k2_SoftwareCalculatedRotation_V2)
+
+								k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption =
+									k2app::k2_DeviceInferredRotation;
+
+							if (k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
+								k2app::k2_SoftwareCalculatedRotation ||
+								k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
+								k2app::k2_SoftwareCalculatedRotation_V2)
+
+								k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption =
+									k2app::k2_DeviceInferredRotation;
+
+							k2app::K2Settings.isFlipEnabled = false;
+
+							// Init
+							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
+
+							// Backup the name
+							k2app::K2Settings.trackingDeviceName =
+								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->getDeviceName();
+						}
+						break;
+					}
+
+					// Check the override device index
+					if (k2app::K2Settings.overrideDeviceID >= TrackingDevices::TrackingDevicesVector.size())
+					{
+						LOG(INFO) << "Previous tracking device ID was too big, it's been reset to [none]";
+						k2app::K2Settings.overrideDeviceID = -1; // Select [none]
+						k2app::K2Settings.overrideDeviceName = L"";
+					}
+
+					// Init the device (override, optionally)
+					if (k2app::K2Settings.overrideDeviceID > -1 &&
+						k2app::K2Settings.overrideDeviceID != k2app::K2Settings.trackingDeviceID)
+					{
+						const auto& overrideDevice =
+							TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
+						switch (overrideDevice.index())
 						{
 						case 0:
 							// Kinect Basis
-							{
-								// Update options for the device
-								if ((k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
-										k2app::k2_SoftwareCalculatedRotation ||
-										k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
-										k2app::k2_SoftwareCalculatedRotation_V2) &&
-
-									!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
-									isAppOrientationSupported())
-
-									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption =
-										k2app::k2_DeviceInferredRotation;
-
-								if ((k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
-										k2app::k2_SoftwareCalculatedRotation ||
-										k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
-										k2app::k2_SoftwareCalculatedRotation_V2) &&
-
-									!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
-									isAppOrientationSupported())
-
-									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption =
-										k2app::k2_DeviceInferredRotation;
-
-								// Init
-								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->initialize();
-
-								// Backup the name
-								k2app::K2Settings.trackingDeviceName =
-									std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
-									getDeviceName();
-							}
+							std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(overrideDevice)->initialize();
 							break;
 						case 1:
 							// Joints Basis
-							{
-								// Update options for the device
-								if (k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
-									k2app::k2_SoftwareCalculatedRotation ||
-									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption ==
-									k2app::k2_SoftwareCalculatedRotation_V2)
-
-									k2app::K2Settings.K2TrackersVector[1].orientationTrackingOption =
-										k2app::k2_DeviceInferredRotation;
-
-								if (k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
-									k2app::k2_SoftwareCalculatedRotation ||
-									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption ==
-									k2app::k2_SoftwareCalculatedRotation_V2)
-
-									k2app::K2Settings.K2TrackersVector[2].orientationTrackingOption =
-										k2app::k2_DeviceInferredRotation;
-
-								k2app::K2Settings.isFlipEnabled = false;
-
-								// Init
-								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
-
-								// Backup the name
-								k2app::K2Settings.trackingDeviceName =
-									std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->getDeviceName();
-							}
+							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(overrideDevice)->initialize();
 							break;
 						}
+					}
+					else
+					{
+						k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
+						k2app::K2Settings.overrideDeviceName = L"";
+					}
 
-						// Check the override device index
-						if (k2app::K2Settings.overrideDeviceID >= TrackingDevices::TrackingDevicesVector.size())
-						{
-							LOG(INFO) << "Previous tracking device ID was too big, it's been reset to [none]";
-							k2app::K2Settings.overrideDeviceID = -1; // Select [none]
-							k2app::K2Settings.overrideDeviceName = L"";
-						}
+					// Second check and try after 3 seconds
+					std::thread([&]
+					{
+						// Wait a moment
+						std::this_thread::sleep_for(std::chrono::seconds(3));
 
-						// Init the device (override, optionally)
-						if (k2app::K2Settings.overrideDeviceID > -1 &&
-							k2app::K2Settings.overrideDeviceID != k2app::K2Settings.trackingDeviceID)
+						// Init the device (optionally this time)
+						// Base
 						{
-							const auto& overrideDevice =
-								TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
-							switch (overrideDevice.index())
+							switch (const auto& _trackingDevice =
+									TrackingDevices::TrackingDevicesVector.at(
+										k2app::K2Settings.trackingDeviceID);
+								_trackingDevice.index())
 							{
 							case 0:
 								// Kinect Basis
-								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(overrideDevice)->initialize();
+								if (!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
+									isInitialized())
+									std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
+										initialize();
 								break;
 							case 1:
 								// Joints Basis
-								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(overrideDevice)->initialize();
+								if (!std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
+									isInitialized())
+									std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
+										initialize();
+								break;
+							}
+						}
+						// Override
+						if (k2app::K2Settings.overrideDeviceID > -1 &&
+							k2app::K2Settings.overrideDeviceID != k2app::K2Settings.trackingDeviceID)
+						{
+							switch (const auto& _trackingDevice =
+									TrackingDevices::TrackingDevicesVector.at(
+										k2app::K2Settings.overrideDeviceID);
+								_trackingDevice.index())
+							{
+							case 0:
+								// Kinect Basis
+								if (!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
+									isInitialized())
+									std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
+										initialize();
+								break;
+							case 1:
+								// Joints Basis
+								if (!std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
+									isInitialized())
+									std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
+										initialize();
 								break;
 							}
 						}
@@ -1710,86 +1863,19 @@ namespace winrt::Amethyst::implementation
 							k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
 							k2app::K2Settings.overrideDeviceName = L"";
 						}
+					}).detach();
 
-						// Second check and try after 3 seconds
-						std::thread([&]
-						{
-							// Wait a moment
-							std::this_thread::sleep_for(std::chrono::seconds(3));
-
-							// Init the device (optionally this time)
-							// Base
-							{
-								switch (const auto& _trackingDevice =
-										TrackingDevices::TrackingDevicesVector.at(
-											k2app::K2Settings.trackingDeviceID);
-									_trackingDevice.index())
-								{
-								case 0:
-									// Kinect Basis
-									if (!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
-										isInitialized())
-										std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
-											initialize();
-									break;
-								case 1:
-									// Joints Basis
-									if (!std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
-										isInitialized())
-										std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
-											initialize();
-									break;
-								}
-							}
-							// Override
-							if (k2app::K2Settings.overrideDeviceID > -1 &&
-								k2app::K2Settings.overrideDeviceID != k2app::K2Settings.trackingDeviceID)
-							{
-								switch (const auto& _trackingDevice =
-										TrackingDevices::TrackingDevicesVector.at(
-											k2app::K2Settings.overrideDeviceID);
-									_trackingDevice.index())
-								{
-								case 0:
-									// Kinect Basis
-									if (!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
-										isInitialized())
-										std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
-											initialize();
-									break;
-								case 1:
-									// Joints Basis
-									if (!std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
-										isInitialized())
-										std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
-											initialize();
-									break;
-								}
-							}
-							else
-							{
-								k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
-								k2app::K2Settings.overrideDeviceName = L"";
-							}
-						}).detach();
-
-						// Update the UI
-						k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue([&, this]
-						{
-							TrackingDevices::updateTrackingDeviceUI();
-							TrackingDevices::updateOverrideDeviceUI();
-						});
-					}
-					else // Log and exit, we have nothing to do
+					// Update the UI
+					k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue([&, this]
 					{
-						LOG(ERROR) << "No proper tracking devices (K2Devices) found :/";
-						k2app::interfacing::_fail(-12); // -12 is for NO_DEVICES
-					}
+						TrackingDevices::updateTrackingDeviceUI();
+						TrackingDevices::updateOverrideDeviceUI();
+					});
 				}
 				else // Log and exit, we have nothing to do
 				{
-					LOG(ERROR) << "No tracking devices (K2Devices) found :/";
-					k2app::interfacing::_fail(-12);
+					LOG(ERROR) << "No proper tracking devices (K2Devices) found :/";
+					k2app::interfacing::_fail(-12); // -12 is for NO_DEVICES
 				}
 			}
 		).join(); // Now this would be in background but to spare bugs, we're gonna wait

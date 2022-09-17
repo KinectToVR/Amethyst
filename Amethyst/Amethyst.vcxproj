@@ -145,6 +145,7 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
       <DependentUpon>ConsolePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="DeviceEntryView.h" />
     <ClInclude Include="DevicesPage.xaml.h">
       <DependentUpon>DevicesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -212,6 +213,7 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
       <DependentUpon>ConsolePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DeviceEntryView.cpp" />
     <ClCompile Include="DevicesPage.xaml.cpp">
       <DependentUpon>DevicesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -248,6 +250,7 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
       <DependentUpon>ConsolePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="DeviceEntryView.idl" />
     <Midl Include="DevicesPage.idl">
       <DependentUpon>DevicesPage.xaml</DependentUpon>
       <SubType>Code</SubType>

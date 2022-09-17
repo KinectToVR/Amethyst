@@ -709,6 +709,12 @@ namespace ktvr
 		// Full character will provide every skeleton (Kinect) joint
 		ITrackingDeviceCharacteristics getDeviceCharacteristics() { return deviceCharacteristics; }
 
+		// Return device's globally unique ID
+		// Format: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+		// Type: wide string, const for each device
+		virtual std::wstring getDeviceGUID() { return L"INVALID"; } // Override this!
+
+		// Return device's name (can repeat)
 		std::wstring getDeviceName() { return deviceName; } // Custom name
 
 		std::array<Eigen::Vector3f, 25> getJointPositions() { return jointPositions; }
@@ -786,6 +792,13 @@ namespace ktvr
 		// Request a string from AME resources, empty for no match
 		// Warning: The primarily searched resource is the device-provided one!
 		std::function<std::wstring(std::wstring)> requestLocalizedString;
+
+		// Write a string to AME logs in %AppData%/Amethyst/logs/X
+		// Hint: use std::format for a nice message parsing
+		// Warning: you mustn't use this method before Loaded() is called
+		std::function<void(std::wstring)> logInfoMessage;
+		std::function<void(std::wstring)> logWarningMessage;
+		std::function<void(std::wstring)> logErrorMessage;
 
 		// To support settings daemon and register the layout root,
 		// the device must properly report it first
@@ -942,9 +955,12 @@ namespace ktvr
 		{
 		}
 
-		// Should be set up at construction
-		// Kinect type must provide joints: [ head, waist, knees, ankles, foot_tips ]
-		// Other type must provide joints: [ waist, ankles ] and will persuade manual calibration
+		// Return device's globally unique ID
+		// Format: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+		// Type: wide string, const for each device
+		virtual std::wstring getDeviceGUID() { return L"INVALID"; } // Override this!
+
+		// Return device's name (can repeat)
 		std::wstring getDeviceName() { return deviceName; } // Custom name
 
 		// Joints' vector. You need to update appended joints in every update() call
@@ -1018,6 +1034,13 @@ namespace ktvr
 		// Request a string from AME resources, empty for no match
 		// Warning: The primarily searched resource is the device-provided one!
 		std::function<std::wstring(std::wstring)> requestLocalizedString;
+
+		// Write a string to AME logs in %AppData%/Amethyst/logs/X
+		// Hint: use std::format for a nice message parsing
+		// Warning: you mustn't use this method before Loaded() is called
+		std::function<void(std::wstring)> logInfoMessage;
+		std::function<void(std::wstring)> logWarningMessage;
+		std::function<void(std::wstring)> logErrorMessage;
 
 		// To support settings daemon and register the layout root,
 		// the device must properly report it first

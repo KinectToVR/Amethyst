@@ -25,8 +25,10 @@ public:
 		appOrientationSupported = true;
 	}
 
-	~KinectV2Handler() override
+	std::wstring getDeviceGUID() override
 	{
+		// This ID is unique to the official KV2 plugin!
+		return L"K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV2";
 	}
 
 	IKinectSensor* kinectSensor = nullptr;
@@ -47,6 +49,10 @@ public:
 	void initialize() override;
 	void update() override;
 	void shutdown() override;
+
+	~KinectV2Handler() override
+	{
+	}
 
 	bool convertColorToDepthResolution = false;
 	void onBodyFrameArrived(IBodyFrameReader& sender, IBodyFrameArrivedEventArgs& eventArgs);

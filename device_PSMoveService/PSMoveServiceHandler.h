@@ -38,6 +38,12 @@ public:
 			trackedJoints.push_back(ktvr::K2TrackedJoint(L"INVALID " + std::to_wstring(i)));
 	}
 
+	std::wstring getDeviceGUID() override
+	{
+		// This ID is unique to the official PSMS plugin!
+		return L"K2VRTEAM-AME1-API1-DVCE-DVCEPSMOVEEX";
+	}
+
 	void initialize() override;
 	void update() override;
 	void shutdown() override;

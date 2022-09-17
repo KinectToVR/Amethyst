@@ -18,6 +18,8 @@ namespace TrackingDevices
 	// Pointer to the device's constructing function
 	using TrackingDeviceBaseFactory = void* (*)(const char* pVersionName, int* pReturnCode);
 
+	inline void RefreshDevicesMVVMList();
+
 	// Select proper tracking device in the UI
 	inline void updateTrackingDeviceUI()
 	{
@@ -84,6 +86,9 @@ namespace TrackingDevices
 			k2app::shared::general::trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 			k2app::shared::general::errorWhatText.get()->Text(split_status(device_status)[2]);
 		}
+
+		// Refresh the device list MVVM
+		RefreshDevicesMVVMList();
 
 		/* Update the device in devices tab */
 
@@ -213,6 +218,9 @@ namespace TrackingDevices
 			k2app::shared::general::overrideDeviceStatusLabel.get()->Text(split_status(device_status)[0]);
 			k2app::shared::general::overrideDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 			k2app::shared::general::overrideErrorWhatText.get()->Text(split_status(device_status)[2]);
+
+			// Refresh the device list MVVM
+			RefreshDevicesMVVMList();
 
 			if (k2app::interfacing::currentPageTag == L"devices")
 			{
@@ -348,55 +356,6 @@ namespace TrackingDevices
 		}
 
 		return -1; // Return invalid
-	}
-
-	inline void devices_update_current()
-	{
-		{
-			const auto& trackingDevice = TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
-
-			std::wstring deviceName = L"[UNKNOWN]";
-
-			if (trackingDevice.index() == 0)
-			{
-				// Kinect Basis
-				const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
-				deviceName = device->getDeviceName();
-			}
-			else if (trackingDevice.index() == 1)
-			{
-				// Joints Basis
-				const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
-				deviceName = device->getDeviceName();
-			}
-
-			/* Update local statuses */
-			k2app::shared::devices::baseDeviceName.get()->Text(deviceName);
-			if (k2app::shared::devices::overrideDeviceName.get()->Text() == deviceName)
-				k2app::shared::devices::overrideDeviceName.get()->Text(L"No Overrides");
-		}
-		{
-			if (k2app::K2Settings.overrideDeviceID < 0)return;
-			const auto& trackingDevice = TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
-
-			std::wstring deviceName = L"[UNKNOWN]";
-
-			if (trackingDevice.index() == 0)
-			{
-				// Kinect Basis
-				const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
-				deviceName = device->getDeviceName();
-			}
-			else if (trackingDevice.index() == 1)
-			{
-				// Joints Basis
-				const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
-				deviceName = device->getDeviceName();
-			}
-
-			/* Update local statuses */
-			k2app::shared::devices::overrideDeviceName.get()->Text(deviceName);
-		}
 	}
 
 	inline void devices_handle_refresh(const bool& reconnect)
@@ -603,5 +562,58 @@ namespace TrackingDevices
 		errorWhatText.get()->Text(split_status(device_status)[2]);
 
 		devices_signal_joints = true; // Change back
+	}
+
+	// Refresh the device list
+	inline void RefreshDevicesMVVMList()
+	{
+		// Don't even try if not set up yet
+		if (!k2app::shared::devices::devices_mvvm_setup_finished)return;
+
+		LOG(INFO) << "Refreshing the tracking devices' MVVM...";
+
+		// Refresh the device list MVVM
+		for (const auto& device : TrackingDevicesVector)
+		{
+			std::wstring deviceName = L"[UNKNOWN]";
+			std::wstring deviceGUID = L"INVALID";
+			HRESULT deviceStatus = E_FAIL;
+
+			switch (device.index())
+			{
+			case 0:
+				{
+					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
+					deviceName = pDevice->getDeviceName();
+					deviceGUID = pDevice->getDeviceGUID();
+					deviceStatus = pDevice->getStatusResult();
+				}
+				break;
+			case 1:
+				{
+					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
+					deviceName = pDevice->getDeviceName();
+					deviceGUID = pDevice->getDeviceGUID();
+					deviceStatus = pDevice->getStatusResult();
+				}
+				break;
+			}
+
+			LOG(INFO) << "Refreshing " << WStringToString(deviceName) <<
+				WStringToString(std::format(L" (GUID: \"{}\") ", deviceGUID)) <<
+				" tracking devices' list entry...";
+
+			const bool _isBase = deviceGUID_ID_Map[deviceGUID] == k2app::K2Settings.trackingDeviceID,
+			           _isOverride = IsAnOverride(deviceGUID);
+
+			deviceMVVM_List.GetAt(deviceGUID_ID_Map[deviceGUID]).
+			                IsBase(_isBase);
+
+			deviceMVVM_List.GetAt(deviceGUID_ID_Map[deviceGUID]).
+			                IsOverride(_isOverride);
+
+			deviceMVVM_List.GetAt(deviceGUID_ID_Map[deviceGUID]).
+			                StatusError((_isBase || _isOverride) && deviceStatus != S_OK);
+		}
 	}
 }

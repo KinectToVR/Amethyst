@@ -41,6 +41,12 @@ public:
 		load_settings(); // Load settings
 	}
 
+	std::wstring getDeviceGUID() override
+	{
+		// This ID is unique to the official KV1 plugin!
+		return L"K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV1";
+	}
+
 	HANDLE kinectRGBStream = nullptr;
 	HANDLE kinectDepthStream = nullptr;
 	INuiSensor* kinectSensor = nullptr;

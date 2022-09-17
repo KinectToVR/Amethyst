@@ -1,0 +1,18 @@
+namespace Amethyst
+{
+	runtimeclass DeviceEntryView : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		DeviceEntryView(
+			String DeviceGUID,
+			String DisplayName,
+			Boolean IsBase,
+			Boolean IsOverride,
+			Boolean StatusError);
+
+		String DeviceGUID;
+		String DisplayName;
+		Boolean IsBase;
+		Boolean IsOverride;
+		Boolean StatusError;
+	}
+}

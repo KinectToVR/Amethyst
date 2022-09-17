@@ -1220,6 +1220,30 @@ namespace k2app::interfacing
 
 	namespace plugins
 	{
+		inline void plugins_outputInfoString(
+			const std::wstring& ws,
+			const std::wstring& device_guid)
+		{
+			LOG(INFO) << WStringToString(std::format(
+				L"[Message from device {}] {}", device_guid, ws));
+		}
+
+		inline void plugins_outputWarningString(
+			const std::wstring& ws,
+			const std::wstring& device_guid)
+		{
+			LOG(WARNING) << WStringToString(std::format(
+				L"[Message from device {}] {}", device_guid, ws));
+		}
+
+		inline void plugins_outputErrorString(
+			const std::wstring& ws,
+			const std::wstring& device_guid)
+		{
+			LOG(ERROR) << WStringToString(std::format(
+				L"[Message from device {}] {}", device_guid, ws));
+		}
+
 		inline Eigen::Vector3f plugins_getHMDPosition()
 		{
 			return vrHMDPose.first;
@@ -4433,4 +4457,29 @@ namespace k2app::interfacing
 
 	// Empty layout root for placeholders
 	inline AppInterface::AppLayoutRoot* emptyLayoutRoot;
+
+	// Find an object inside a vector
+	template <typename T>
+	bool VectorContains(const std::vector<T>& vector, const T& value)
+	{
+		return std::find(vector.begin(), vector.end(), value) != vector.end();
+	}
+}
+
+namespace TrackingDevices
+{
+	// A map of device GUIDs into their internal IDs
+	inline std::map<std::wstring, uint32_t> deviceGUID_ID_Map;
+
+	// List of the current MVVM device objects
+	inline winrt::Windows::Foundation::Collections::IObservableVector<
+		winrt::Amethyst::DeviceEntryView> deviceMVVM_List;
+
+	// Check if the device id is an override
+	inline bool IsAnOverride(const std::wstring& deviceGUID)
+	{
+		return k2app::interfacing::VectorContains(
+			k2app::K2Settings.overrideDeviceIDs,
+			deviceGUID_ID_Map[deviceGUID]);
+	}
 }

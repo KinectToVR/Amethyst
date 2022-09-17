@@ -30,8 +30,6 @@ namespace winrt::Amethyst::implementation
 		deviceStatusLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceStatusLabel());
 		errorWhatText = std::make_shared<Controls::TextBlock>(ErrorWhatText());
 		trackingDeviceErrorLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceErrorLabel());
-		baseDeviceName = std::make_shared<Controls::TextBlock>(BaseDeviceName());
-		overrideDeviceName = std::make_shared<Controls::TextBlock>(OverrideDeviceName());
 		overridesLabel = std::make_shared<Controls::TextBlock>(OverridesLabel());
 		jointBasisLabel = std::make_shared<Controls::TextBlock>(JointBasisLabel());
 
@@ -68,10 +66,19 @@ namespace winrt::Amethyst::implementation
 		selectedDeviceSettingsRootLayoutPanel = std::make_shared<Controls::StackPanel>(
 			SelectedDeviceSettingsRootLayoutPanel());
 
+		// Capture the current entry thread context
+		k2app::shared::DeviceEntryView::thisEntryContext = new apartment_context();
+
+		// Reset the MVVM vector
+		TrackingDevices::deviceMVVM_List =
+			multi_threaded_observable_vector<Amethyst::DeviceEntryView>();
+
 		// Add tracking devices here
 		for (const auto& device : TrackingDevices::TrackingDevicesVector)
 		{
 			std::wstring deviceName = L"[UNKNOWN]";
+			std::wstring deviceGUID = L"INVALID";
+			HRESULT deviceStatus = E_FAIL;
 
 			switch (device.index())
 			{
@@ -79,26 +86,49 @@ namespace winrt::Amethyst::implementation
 				{
 					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
 					deviceName = pDevice->getDeviceName();
+					deviceGUID = pDevice->getDeviceGUID();
+					deviceStatus = pDevice->getStatusResult();
 				}
 				break;
 			case 1:
 				{
 					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
 					deviceName = pDevice->getDeviceName();
+					deviceGUID = pDevice->getDeviceGUID();
+					deviceStatus = pDevice->getStatusResult();
 				}
 				break;
 			}
 
 			LOG(INFO) << "Appending " << WStringToString(deviceName) <<
+				WStringToString(std::format(L" (GUID: \"{}\") ", deviceGUID)) <<
 				" to UI Node's tracking devices' list...";
 
-			LOG(INFO) << "Creating \"" << WStringToString(deviceName) << "\" Root Node";
-			Controls::TreeViewNode item;
-			item.Content(box_value(deviceName));
+			LOG(INFO) << "Creating and appending \"" << WStringToString(deviceName) <<
+				WStringToString(std::format(L"\" (GUID: \"{}\") ", deviceGUID)) <<
+				" TreeViewItem Amethyst::DeviceEntryView container object...";
 
-			LOG(INFO) << "Appending \"" << WStringToString(deviceName) << "\" Root Node";
-			devicesTreeView.get()->RootNodes().Append(item);
+			const bool _isBase = TrackingDevices::deviceGUID_ID_Map[deviceGUID] == k2app::K2Settings.trackingDeviceID,
+			           _isOverride = TrackingDevices::IsAnOverride(deviceGUID);
+
+			TrackingDevices::deviceMVVM_List.Append(
+				winrt::make<DeviceEntryView>(
+					deviceGUID.c_str(), deviceName.c_str(),
+
+					// Check if the device is set as a base
+					_isBase,
+
+					// Try to find the device inside the overrides' vector
+					_isOverride,
+
+					// Pre-check device's status
+					(_isBase || _isOverride) && deviceStatus != S_OK));
 		}
+
+		LOG(INFO) << "Setting the devices' TreeView ItemSource to the created "
+			"Amethyst::DeviceEntryView MVVM object list...";
+		devicesTreeView.get()->ItemsSource(box_value(TrackingDevices::deviceMVVM_List));
+		devices_mvvm_setup_finished = true; // Mark as finished
 
 		// Set currently tracking device & selected device
 		LOG(INFO) << "Overwriting the devices TreeView selected item...";
@@ -143,8 +173,8 @@ namespace winrt::Amethyst::implementation
 
 		NavigationCacheMode(Navigation::NavigationCacheMode::Required);
 
-		LOG(INFO) << "Refreshing the current tracking deivce...";
-		TrackingDevices::devices_update_current();
+		// Refresh the device list MVVM
+		TrackingDevices::RefreshDevicesMVVMList();
 
 		LOG(INFO) << "Registering a detached binary semaphore reload handler for DevicesPage...";
 		std::thread([&, this]
@@ -196,8 +226,6 @@ namespace winrt::Amethyst::implementation
 
 						for (auto& expander : overrideSelectorExpanders)
 							overridesExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
-
-						TrackingDevices::devices_update_current();
 
 						DevicesPage_Loaded_Handler();
 					});
@@ -355,7 +383,7 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
-
+	
 	// Update the GeneralPage status
 	TrackingDevices::updateTrackingDeviceUI();
 	TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
@@ -448,15 +476,14 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
-
+	
 	// Deselect the device
 	k2app::K2Settings.overrideDeviceID = -1; // Only acceptable for an Override
 	k2app::K2Settings.overrideDeviceName = L"";
 	TrackingDevices::updateOverrideDeviceUI();
 
-	// Also update in the UI
-	overrideDeviceName.get()->Text(
-		k2app::interfacing::LocalizedResourceWString(L"DevicesPage", L"Titles/NoOverrides"));
+	// Refresh the device list MVVM
+	TrackingDevices::RefreshDevicesMVVMList();
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -634,7 +661,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	setAsBaseButton.get()->IsEnabled(true);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
 
-	overrideDeviceName.get()->Text(deviceName);
+	// Refresh the device list MVVM
+	TrackingDevices::RefreshDevicesMVVMList();
 
 	LOG(INFO) << "Changed the current tracking device (Override) to " << WStringToString(deviceName);
 
@@ -664,7 +692,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
-
+	
 	TrackingDevices::updateOverrideDeviceUI();
 
 	{
@@ -806,10 +834,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	setAsBaseButton.get()->IsEnabled(false);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
 
-	baseDeviceName.get()->Text(deviceName);
-	if (overrideDeviceName.get()->Text() == deviceName)
-		overrideDeviceName.get()->Text(
-			k2app::interfacing::LocalizedResourceWString(L"DevicesPage", L"Titles/NoOverrides"));
+	// Refresh the device list MVVM
+	TrackingDevices::RefreshDevicesMVVMList();
 
 	LOG(INFO) << "Changed the current tracking device (Base) to " << WStringToString(deviceName);
 
@@ -839,7 +865,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
-
+	
 	TrackingDevices::updateTrackingDeviceUI();
 
 	// This is here too cause an override might've became a base... -_-
@@ -915,18 +941,6 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 	Titles_Devices().Text(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/Devices"));
 
-	Titles_CurrentDevice().Text(
-		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/CurrentDevice"));
-
-	Titles_DeviceBase().Text(
-		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/DeviceBase"));
-
-	Titles_DeviceOverride().Text(
-		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/DeviceOverride"));
-
-	OverrideDeviceName().Text(
-		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/NoOverrides"));
-
 	Titles_DeviceStatus().Text(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/DeviceStatus"));
 
@@ -985,6 +999,15 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 	JointBasisLabel().Text(
 		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Titles/Joints/Assign"));
 
+	DeviceEntryView_Base_Text().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Badges/Devices/Base"));
+
+	DeviceEntryView_Override_Text().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Badges/Devices/Override"));
+
+	DeviceEntryView_Error_Text().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Badges/Devices/Error"));
+
 	DevicesListTeachingTip().Title(
 		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip8/Title"));
 	DevicesListTeachingTip().Subtitle(
@@ -1017,6 +1040,9 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 
 	// Notify of the setup's end
 	devices_tab_setup_finished = true;
+
+	// Refresh the device list MVVM
+	TrackingDevices::RefreshDevicesMVVMList();
 
 	// Run the on-selected routine
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
@@ -1209,7 +1235,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 					expander.get()->PushOverrideJoint(
 						k2app::interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
-				
+
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
 					// Push the name to all combos
@@ -1253,6 +1279,9 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
+
+	// Refresh the device list MVVM
+	TrackingDevices::RefreshDevicesMVVMList();
 
 	if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 	{
@@ -1538,9 +1567,9 @@ Amethyst::implementation::DevicesPage::TrackingDeviceTreeView_ItemInvoked(
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 
-	auto node = args.InvokedItem().as<Controls::TreeViewNode>();
-	std::wstring content = node.Content().as<hstring>().c_str();
-
+	const auto node = args.InvokedItem().as<Amethyst::DeviceEntryView>();
+	std::wstring content = node.DisplayName().c_str();
+	
 	for (size_t s_index = 0; s_index < TrackingDevices::TrackingDevicesVector.size(); s_index++)
 	{
 		std::wstring deviceName = L"[UNKNOWN]";
@@ -1827,6 +1856,9 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
+
+	// Refresh the device list MVVM
+	TrackingDevices::RefreshDevicesMVVMList();
 
 	if (selectedTrackingDeviceID == k2app::K2Settings.trackingDeviceID)
 	{

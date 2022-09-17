@@ -24,10 +24,16 @@
   <ItemGroup>
     <Midl Include="App.idl" />
     <Midl Include="MainWindow.idl" />
+    <Midl Include="DeviceEntryView.idl">
+      <Filter>MVVM\Models</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="DeviceEntryView.cpp">
+      <Filter>MVVM\Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -85,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="K2DeviceMath.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceEntryView.h">
+      <Filter>MVVM\Models</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +278,12 @@
     </Filter>
     <Filter Include="Assets\Sounds">
       <UniqueIdentifier>{81879332-1ac8-4f09-8d51-61731b39b77c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MVVM">
+      <UniqueIdentifier>{1176953b-651a-45ae-91b8-d08897d0b5ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MVVM\Models">
+      <UniqueIdentifier>{458168fc-b988-48fc-9dbe-d5d64397f589}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

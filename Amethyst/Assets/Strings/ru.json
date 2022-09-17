@@ -198,6 +198,10 @@
     "/DevicesPage/Titles/Set/Tracker": "Трекер:",
     "/DevicesPage/Titles/SetAsDevice": "Установить как устройство трекинга:",
 
+    "/DevicesPage/Badges/Devices/Base": "Base",
+    "/DevicesPage/Badges/Devices/Override": "Override",
+    "/DevicesPage/Badges/Devices/Error": "Error",
+
     "/InfoPage/AppCaption": "от группа K2VR",
     "/InfoPage/AppTitle": "Amethyst",
     "/InfoPage/Credits/Community": "И все остальные, кто помогал на этом пути.",
