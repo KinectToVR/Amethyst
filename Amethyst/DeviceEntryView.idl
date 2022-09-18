@@ -14,5 +14,7 @@ namespace Amethyst
 		Boolean IsBase;
 		Boolean IsOverride;
 		Boolean StatusError;
+
+		Double BoolToOpacity(Boolean value);
 	}
 }

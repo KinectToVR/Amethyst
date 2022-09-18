@@ -87,9 +87,6 @@ namespace TrackingDevices
 			k2app::shared::general::errorWhatText.get()->Text(split_status(device_status)[2]);
 		}
 
-		// Refresh the device list MVVM
-		RefreshDevicesMVVMList();
-
 		/* Update the device in devices tab */
 
 		k2app::shared::devices::smphSignalCurrentUpdate.release();
@@ -142,6 +139,9 @@ namespace TrackingDevices
 				settings_set_external_flip_is_enabled();
 			}
 		}
+
+		// Refresh the device list MVVM
+		RefreshDevicesMVVMList();
 	}
 
 	// Select proper tracking device in the UI
@@ -219,9 +219,6 @@ namespace TrackingDevices
 			k2app::shared::general::overrideDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 			k2app::shared::general::overrideErrorWhatText.get()->Text(split_status(device_status)[2]);
 
-			// Refresh the device list MVVM
-			RefreshDevicesMVVMList();
-
 			if (k2app::interfacing::currentPageTag == L"devices")
 			{
 				if (k2app::shared::devices::devicesTreeView.get() != nullptr &&
@@ -232,6 +229,9 @@ namespace TrackingDevices
 					k2app::interfacing::currentAppState = L"devices";
 			}
 		}
+
+		// Refresh the device list MVVM
+		RefreshDevicesMVVMList();
 	}
 
 	inline int32_t devices_override_joint_id(const int32_t& id)
@@ -560,6 +560,9 @@ namespace TrackingDevices
 		deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 		trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 		errorWhatText.get()->Text(split_status(device_status)[2]);
+
+		// Refresh the device list MVVM
+		RefreshDevicesMVVMList();
 
 		devices_signal_joints = true; // Change back
 	}

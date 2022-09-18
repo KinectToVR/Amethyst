@@ -471,7 +471,7 @@ namespace k2app::main
 								{
 									// Make actual changes
 									K2Settings.K2TrackersVector[tracker_index].data_isActive = false; // Deactivate
-									for (auto expander : shared::settings::jointExpanderVector)
+									for (const auto& expander : shared::settings::jointExpanderVector)
 										expander->UpdateIsActive();
 
 									// Do that on UI's background

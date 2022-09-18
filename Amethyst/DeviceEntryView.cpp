@@ -116,6 +116,11 @@ namespace winrt::Amethyst::implementation
 		}
 	}
 
+	double DeviceEntryView::BoolToOpacity(const bool& value)
+	{
+		return value;
+	}
+
 	event_token DeviceEntryView::PropertyChanged(
 		const Microsoft::UI::Xaml::Data::PropertyChangedEventHandler& handler)
 	{

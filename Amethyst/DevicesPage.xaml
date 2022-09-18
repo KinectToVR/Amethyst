@@ -66,10 +66,14 @@
                             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Border Height="20" CornerRadius="3" Padding="5,0"
                                         Margin="0,-15,15,0"
-                                        Visibility="{x:Bind IsBase, Mode=OneWay}"
+                                        Opacity="{x:Bind BoolToOpacity(IsBase), Mode=OneWay}"
                                         BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
                                         Background="{ThemeResource SystemFillColorAttentionBrush}"
                                         VerticalAlignment="Top" HorizontalAlignment="Right">
+                                    <Border.OpacityTransition>
+                                        <ScalarTransition/>
+                                    </Border.OpacityTransition>
+
                                     <TextBlock Text="{Binding ElementName=DeviceEntryView_Base_Text, Path=Text}"
                                                FontWeight="Medium" Margin="0,-2,0,0"
                                                Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
@@ -77,10 +81,14 @@
 
                                 <Border Height="20" CornerRadius="3" Padding="5,0"
                                         Margin="0,-15,15,0"
-                                        Visibility="{x:Bind IsOverride, Mode=OneWay}"
+                                        Opacity="{x:Bind BoolToOpacity(IsOverride), Mode=OneWay}"
                                         BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
                                         Background="{ThemeResource SystemFillColorAttentionBrush}"
                                         VerticalAlignment="Top" HorizontalAlignment="Right">
+                                    <Border.OpacityTransition>
+                                        <ScalarTransition/>
+                                    </Border.OpacityTransition>
+
                                     <TextBlock Text="{Binding ElementName=DeviceEntryView_Override_Text, Path=Text}"
                                                FontWeight="Medium" Margin="0,-2,0,0"
                                                Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
@@ -88,10 +96,14 @@
 
                                 <Border Height="20" CornerRadius="3" Padding="5,0"
                                         Margin="0,0,15,-18"
-                                        Visibility="{x:Bind StatusError, Mode=OneWay}"
+                                        Opacity="{x:Bind BoolToOpacity(StatusError), Mode=OneWay}"
                                         BorderBrush="{ThemeResource SystemFillColorCriticalBrush}"
                                         Background="{ThemeResource SystemFillColorCriticalBrush}"
                                         VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                    <Border.OpacityTransition>
+                                        <ScalarTransition/>
+                                    </Border.OpacityTransition>
+
                                     <TextBlock Text="{Binding ElementName=DeviceEntryView_Error_Text, Path=Text}"
                                                FontWeight="Medium" Margin="0,-2,0,0"
                                                Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />

@@ -481,10 +481,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	k2app::K2Settings.overrideDeviceID = -1; // Only acceptable for an Override
 	k2app::K2Settings.overrideDeviceName = L"";
 	TrackingDevices::updateOverrideDeviceUI();
-
-	// Refresh the device list MVVM
-	TrackingDevices::RefreshDevicesMVVMList();
-
+	
 	// Save settings
 	k2app::K2Settings.saveSettings();
 
@@ -660,10 +657,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	setAsOverrideButton.get()->IsEnabled(false);
 	setAsBaseButton.get()->IsEnabled(true);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
-
-	// Refresh the device list MVVM
-	TrackingDevices::RefreshDevicesMVVMList();
-
+	
 	LOG(INFO) << "Changed the current tracking device (Override) to " << WStringToString(deviceName);
 
 	overridesLabel.get()->Visibility(Visibility::Visible);
@@ -833,10 +827,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	setAsOverrideButton.get()->IsEnabled(false);
 	setAsBaseButton.get()->IsEnabled(false);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
-
-	// Refresh the device list MVVM
-	TrackingDevices::RefreshDevicesMVVMList();
-
+	
 	LOG(INFO) << "Changed the current tracking device (Base) to " << WStringToString(deviceName);
 
 	overridesLabel.get()->Visibility(Visibility::Collapsed);
@@ -1040,10 +1031,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 
 	// Notify of the setup's end
 	devices_tab_setup_finished = true;
-
-	// Refresh the device list MVVM
-	TrackingDevices::RefreshDevicesMVVMList();
-
+	
 	// Run the on-selected routine
 	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceID);
 

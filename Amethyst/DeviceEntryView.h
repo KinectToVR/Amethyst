@@ -25,6 +25,8 @@ namespace winrt::Amethyst::implementation
 		Windows::Foundation::IAsyncAction IsOverride(const bool& value);
 		Windows::Foundation::IAsyncAction StatusError(const bool& value);
 
+		double BoolToOpacity(const bool& value);
+
 		[[nodiscard]] event_token PropertyChanged(
 			const Microsoft::UI::Xaml::Data::PropertyChangedEventHandler& value);
 
