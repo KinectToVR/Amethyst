@@ -72,6 +72,7 @@
     "/GeneralPage/Captions/Tooltips/Orientation": "La rotation est en degrés.",
     "/GeneralPage/Captions/Tooltips/Position": "La position est en centimètres.",
     "/GeneralPage/Captions/VersionText": "Version d'Amethyst:",
+    "/GeneralPage/Captions/OverrideErrors": "You have additional device errors.\nClick here to view them now.",
     "/GeneralPage/Labels/Inferred": "Inféré",
     "/GeneralPage/Labels/Tracking": "Traqué",
     "/GeneralPage/Tips/TrackingFreeze/Buttons/Index": "B et les deux gâchettes",
@@ -201,6 +202,8 @@
     "/DevicesPage/Badges/Devices/Base": "Base",
     "/DevicesPage/Badges/Devices/Override": "Override",
     "/DevicesPage/Badges/Devices/Error": "Error",
+
+    "/DevicesPage/ToolTips/Overrides/Overlapping": "This joint is currently overiden by:\n{0}",
 
     "/InfoPage/AppCaption": "par K2VR Team",
     "/InfoPage/AppTitle": "Amethyst",

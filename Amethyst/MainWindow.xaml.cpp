@@ -1168,7 +1168,7 @@ namespace winrt::Amethyst::implementation
 
 					int returnCode = ktvr::K2InitError_Invalid;
 					std::wstring stat = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
-					std::wstring _name = L"E_UNKNOWN"; // Placeholder
+					std::wstring _guid = L"INVALID"; // Placeholder
 					bool blocks_flip = false, supports_math = true;
 
 					if (wcscmp(device_type.c_str(), L"SkeletonBasis") == 0 ||
@@ -1185,7 +1185,7 @@ namespace winrt::Amethyst::implementation
 
 							LOG(INFO) << "Device's GUID is: " << WStringToString(pDevice_GUID);
 
-							if (pDevice_GUID == L"INVALID" ||
+							if (pDevice_GUID.empty() || pDevice_GUID == L"INVALID" ||
 								TrackingDevices::deviceGUID_ID_Map.contains(pDevice_GUID))
 							{
 								LOG(INFO) << "Skipping device with invalid or duplicate GUID...";
@@ -1196,7 +1196,7 @@ namespace winrt::Amethyst::implementation
 
 							const uint32_t _last_device_index =
 								TrackingDevices::TrackingDevicesVector.size();
-							
+
 							LOG(INFO) << "Overriding device's helper functions...";
 
 							// Push helper functions to the device
@@ -1312,8 +1312,8 @@ namespace winrt::Amethyst::implementation
 							// Push the device to pointers' vector
 							TrackingDevices::TrackingDevicesVector.push_back(pDevice);
 
-							// Cache the name
-							_name = pDevice->getDeviceName();
+							// Cache the guid
+							_guid = pDevice_GUID;
 
 							// Create a layout root for the device and override
 							k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
@@ -1394,7 +1394,7 @@ namespace winrt::Amethyst::implementation
 
 							LOG(INFO) << "Device's GUID is: " << WStringToString(pDevice_GUID);
 
-							if (pDevice_GUID == L"INVALID" ||
+							if (pDevice_GUID.empty() || pDevice_GUID == L"INVALID" ||
 								TrackingDevices::deviceGUID_ID_Map.contains(pDevice_GUID))
 							{
 								LOG(INFO) << "Skipping device with invalid or duplicate GUID...";
@@ -1522,8 +1522,8 @@ namespace winrt::Amethyst::implementation
 							// Push the device to pointers' vector
 							TrackingDevices::TrackingDevicesVector.push_back(pDevice);
 
-							// Cache the name
-							_name = pDevice->getDeviceName();
+							// Cache the guid
+							_guid = pDevice_GUID;
 
 							// Create a layout root for the device and override
 							k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
@@ -1649,17 +1649,18 @@ namespace winrt::Amethyst::implementation
 								WStringToString(stat) << "\n]\n";
 
 							// Switch check the device name
-							if (_name == k2app::K2Settings.trackingDeviceName)
+							if (TrackingDevices::IsABase(_guid))
 							{
 								LOG(INFO) << "This device is the main device!";
-								k2app::K2Settings.trackingDeviceID =
-									TrackingDevices::TrackingDevicesVector.size() - 1;
+								k2app::K2Settings.trackingDeviceGUIDPair = {
+									_guid, TrackingDevices::TrackingDevicesVector.size() - 1
+								};
 							}
-							else if (_name == k2app::K2Settings.overrideDeviceName)
+							else if (TrackingDevices::IsAnOverride(_guid))
 							{
 								LOG(INFO) << "This device is an override device!";
-								k2app::K2Settings.overrideDeviceID =
-									TrackingDevices::TrackingDevicesVector.size() - 1;
+								k2app::K2Settings.overrideDeviceGUIDsMap.insert_or_assign(
+									_guid, TrackingDevices::TrackingDevicesVector.size() - 1);
 							}
 						}
 						break;
@@ -1693,15 +1694,19 @@ namespace winrt::Amethyst::implementation
 					// : Has been done at loading!
 
 					// Check the base device index
-					if (k2app::K2Settings.trackingDeviceID >= TrackingDevices::TrackingDevicesVector.size())
+					if (!TrackingDevices::deviceGUID_ID_Map.contains(
+						k2app::K2Settings.trackingDeviceGUIDPair.first) ||
+						k2app::K2Settings.trackingDeviceGUIDPair.second >= 
+						TrackingDevices::TrackingDevicesVector.size())
 					{
-						LOG(INFO) << "Previous tracking device ID was too big, it's been reset to 0";
-						k2app::K2Settings.trackingDeviceID = 0; // Select the first one
+						LOG(INFO) << "Previous tracking device ID was invalid, it's been reset to the first one!";
+						k2app::K2Settings.trackingDeviceGUIDPair = *TrackingDevices::deviceGUID_ID_Map.begin();
+						// Select the first one
 					}
 
 					// Init the device (base)
 					const auto& trackingDevice =
-						TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
+						TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceGUIDPair.second);
 					switch (trackingDevice.index())
 					{
 					case 0:
@@ -1732,11 +1737,6 @@ namespace winrt::Amethyst::implementation
 
 							// Init
 							std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->initialize();
-
-							// Backup the name
-							k2app::K2Settings.trackingDeviceName =
-								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
-								getDeviceName();
 						}
 						break;
 					case 1:
@@ -1763,44 +1763,59 @@ namespace winrt::Amethyst::implementation
 
 							// Init
 							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->initialize();
-
-							// Backup the name
-							k2app::K2Settings.trackingDeviceName =
-								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->getDeviceName();
 						}
 						break;
 					}
 
-					// Check the override device index
-					if (k2app::K2Settings.overrideDeviceID >= TrackingDevices::TrackingDevicesVector.size())
+					// Loop over all the override indexes and check them
+					for (auto& [_override_guid, _override_id] : k2app::K2Settings.overrideDeviceGUIDsMap)
 					{
-						LOG(INFO) << "Previous tracking device ID was too big, it's been reset to [none]";
-						k2app::K2Settings.overrideDeviceID = -1; // Select [none]
-						k2app::K2Settings.overrideDeviceName = L"";
-					}
-
-					// Init the device (override, optionally)
-					if (k2app::K2Settings.overrideDeviceID > -1 &&
-						k2app::K2Settings.overrideDeviceID != k2app::K2Settings.trackingDeviceID)
-					{
-						const auto& overrideDevice =
-							TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
-						switch (overrideDevice.index())
+						// Check the override device index
+						if (_override_id >= TrackingDevices::TrackingDevicesVector.size())
 						{
-						case 0:
-							// Kinect Basis
-							std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(overrideDevice)->initialize();
-							break;
-						case 1:
-							// Joints Basis
-							std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(overrideDevice)->initialize();
-							break;
+							LOG(INFO) << "Previous override device GUID/ID was too big, it's been reset to [none]";
+							k2app::K2Settings.overrideDeviceGUIDsMap.erase(_override_guid);
+						}
+
+						// Init the device (override, optionally)
+						if (TrackingDevices::deviceGUID_ID_Map.contains(_override_guid) &&
+							_override_guid != k2app::K2Settings.trackingDeviceGUIDPair.first)
+						{
+							const auto& overrideDevice =
+								TrackingDevices::TrackingDevicesVector.at(_override_id);
+							switch (overrideDevice.index())
+							{
+							case 0:
+								// Kinect Basis
+								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(overrideDevice)->initialize();
+								break;
+							case 1:
+								// Joints Basis
+								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(overrideDevice)->initialize();
+								break;
+							}
+						}
+						else
+						{
+							LOG(INFO) <<
+								"Previous override device GUID/ID was invalid or overlapping, it's been reset to [none]";
+							k2app::K2Settings.overrideDeviceGUIDsMap.erase(_override_guid);
 						}
 					}
-					else
+
+					// Loop over all the tracker indexes and check them
+					for (auto& _tracker_entry : k2app::K2Settings.K2TrackersVector)
 					{
-						k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
-						k2app::K2Settings.overrideDeviceName = L"";
+						if (!TrackingDevices::deviceGUID_ID_Map.contains(_tracker_entry.overrideGUID))
+						{
+							LOG(INFO) << std::format(
+								"Tracker \"{}\" override GUID/ID was invalid, it's been reset to [none]",
+								_tracker_entry.data_serial);
+
+							_tracker_entry.overrideGUID = L"";
+							_tracker_entry.isPositionOverridden = false;
+							_tracker_entry.isRotationOverridden = false;
+						}
 					}
 
 					// Second check and try after 3 seconds
@@ -1814,7 +1829,7 @@ namespace winrt::Amethyst::implementation
 						{
 							switch (const auto& _trackingDevice =
 									TrackingDevices::TrackingDevicesVector.at(
-										k2app::K2Settings.trackingDeviceID);
+										k2app::K2Settings.trackingDeviceGUIDPair.second);
 								_trackingDevice.index())
 							{
 							case 0:
@@ -1833,35 +1848,41 @@ namespace winrt::Amethyst::implementation
 								break;
 							}
 						}
-						// Override
-						if (k2app::K2Settings.overrideDeviceID > -1 &&
-							k2app::K2Settings.overrideDeviceID != k2app::K2Settings.trackingDeviceID)
+
+						// Loop over all the override indexes and check them
+						for (auto& [_override_guid, _override_id] : k2app::K2Settings.overrideDeviceGUIDsMap)
 						{
-							switch (const auto& _trackingDevice =
-									TrackingDevices::TrackingDevicesVector.at(
-										k2app::K2Settings.overrideDeviceID);
-								_trackingDevice.index())
+							// Check the override device index
+							if (_override_id >= TrackingDevices::TrackingDevicesVector.size())
 							{
-							case 0:
-								// Kinect Basis
-								if (!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
-									isInitialized())
-									std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_trackingDevice)->
-										initialize();
-								break;
-							case 1:
-								// Joints Basis
-								if (!std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
-									isInitialized())
-									std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_trackingDevice)->
-										initialize();
-								break;
+								LOG(INFO) << "Previous override device GUID/ID was too big, it's been reset to [none]";
+								k2app::K2Settings.overrideDeviceGUIDsMap.erase(_override_guid);
 							}
-						}
-						else
-						{
-							k2app::K2Settings.overrideDeviceID = -1; // Set to NONE
-							k2app::K2Settings.overrideDeviceName = L"";
+
+							// Init the device (override, optionally)
+							if (TrackingDevices::deviceGUID_ID_Map.contains(_override_guid) &&
+								_override_guid != k2app::K2Settings.trackingDeviceGUIDPair.first)
+							{
+								const auto& overrideDevice =
+									TrackingDevices::TrackingDevicesVector.at(_override_id);
+								switch (overrideDevice.index())
+								{
+								case 0:
+									// Kinect Basis
+									std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(overrideDevice)->initialize();
+									break;
+								case 1:
+									// Joints Basis
+									std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(overrideDevice)->initialize();
+									break;
+								}
+							}
+							else
+							{
+								LOG(INFO) <<
+									"Previous override device GUID/ID was invalid or overlapping, it's been reset to [none]";
+								k2app::K2Settings.overrideDeviceGUIDsMap.erase(_override_guid);
+							}
 						}
 					}).detach();
 

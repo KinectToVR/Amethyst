@@ -516,6 +516,7 @@ namespace k2app::interfacing
 
 	// Devices may request an explicit status refresh
 	inline bool statusUIRefreshRequested = false;
+	inline bool statusUIRefreshRequested_Urgent = false;
 
 	// Is NUX currently opened?
 	inline bool isNUXPending = false;
@@ -941,8 +942,6 @@ namespace k2app::interfacing
 
 					if (shared::general::errorWhatText.get() != nullptr &&
 						shared::general::errorWhatText.get()->Visibility() ==
-						winrt::Microsoft::UI::Xaml::Visibility::Visible ||
-						shared::general::overrideErrorWhatText.get()->Visibility() ==
 						winrt::Microsoft::UI::Xaml::Visibility::Visible)
 						playAppSound(sounds::AppSounds::Error);
 				});
@@ -4464,6 +4463,23 @@ namespace k2app::interfacing
 	{
 		return std::find(vector.begin(), vector.end(), value) != vector.end();
 	}
+
+	// Erase an object inside a vector, at index
+	template <typename T>
+	void VectorEraseAt(const std::vector<T>& vector, const uint32_t& index)
+	{
+		if (index < vector.size())
+			vector.erase(vector.begin() + index);
+	}
+
+	// Erase an object inside a vector
+	template <typename T>
+	void VectorEraseElement(const std::vector<T>& vector, const T& value)
+	{
+		if (const auto index = std::find(vector.begin(), vector.end(), value); 
+			index != vector.end())
+			vector.erase(vector.begin() + index);
+	}
 }
 
 namespace TrackingDevices
@@ -4476,10 +4492,14 @@ namespace TrackingDevices
 		winrt::Amethyst::DeviceEntryView> deviceMVVM_List;
 
 	// Check if the device id is an override
+	inline bool IsABase(const std::wstring& deviceGUID)
+	{
+		return k2app::K2Settings.trackingDeviceGUIDPair.first == deviceGUID;
+	}
+
+	// Check if the device id is an override
 	inline bool IsAnOverride(const std::wstring& deviceGUID)
 	{
-		return k2app::interfacing::VectorContains(
-			k2app::K2Settings.overrideDeviceIDs,
-			deviceGUID_ID_Map[deviceGUID]);
+		return k2app::K2Settings.overrideDeviceGUIDsMap.contains(deviceGUID);
 	}
 }

@@ -42,7 +42,7 @@ inline std::string WStringToString(const std::wstring& w_str)
 namespace ktvr
 {
 	// Interface Version
-	static const char* IAME_API_Devices_Version = "IAME_API_Version_015";
+	static const char* IAME_API_Devices_Version = "IAME_API_Version_016";
 
 	// Return messaging types
 	enum K2InitErrorType

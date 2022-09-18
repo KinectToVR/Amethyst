@@ -31,56 +31,46 @@ namespace TrackingDevices
 	inline auto getCurrentDevice()
 	{
 		// trackingDeviceID is always >= 0 anyway
-		return TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
-	}
-
-	// Extract the current device (variant of it)
-	inline auto getCurrentDevice(const uint32_t& id)
-	{
-		// trackingDeviceID is always >= 0 anyway
-		return TrackingDevicesVector.at(id);
-	}
-
-	// Extract the current device (variant of it)
-	inline auto getCurrentOverrideDevice()
-	{
-		// trackingDeviceID is always >= 0 anyway
-		return TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
+		return TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceGUIDPair.second);
 	}
 
 	// Extract the current device (variant of it)
 	inline std::pair<
 		bool, std::variant<
 			ktvr::K2TrackingDeviceBase_SkeletonBasis*,
-			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe()
+			ktvr::K2TrackingDeviceBase_JointsBasis*>> getOverrideDevice_Safe(
+		const std::wstring& guid)
 	{
-		bool _exists = k2app::K2Settings.overrideDeviceID >= 0 &&
-			TrackingDevicesVector.size() > k2app::K2Settings.overrideDeviceID;
-
 		// Assuming that the caller will test in pair.first is true,
 		// we can push the id0 device here as well if pair.first is gonna be false
-		uint32_t _deviceID = _exists ? k2app::K2Settings.overrideDeviceID : 0;
+		const uint32_t _deviceID = deviceGUID_ID_Map.contains(guid)
+			                           ? deviceGUID_ID_Map[guid]
+			                           : 0;
 
 		// trackingDeviceID is always >= 0 anyway
-		return std::make_pair(_exists,
+		return std::make_pair(deviceGUID_ID_Map.contains(guid),
 		                      TrackingDevicesVector.at(_deviceID));
 	}
 
-	// Extract the current device (variant of it)
-	inline std::pair<
-		bool, std::variant<
-			ktvr::K2TrackingDeviceBase_SkeletonBasis*,
-			ktvr::K2TrackingDeviceBase_JointsBasis*>> getCurrentOverrideDevice_Safe(const uint32_t& id)
+	inline std::wstring getDeviceNameFromGUID(const std::wstring& _guid)
 	{
-		bool _exists = TrackingDevicesVector.size() > id;
+		std::wstring deviceName = _guid;
 
-		// Assuming that the caller will test in pair.first is true,
-		// we can push the id0 device here as well if pair.first is gonna be false
-		uint32_t _deviceID = _exists ? id : 0;
+		if (const auto& device = getOverrideDevice_Safe(_guid);
+			device.first)
+			switch (device.second.index())
+			{
+			case 0:
+				deviceName = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
+					device.second)->getDeviceName();
+				break;
+			case 1:
+				deviceName = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
+					device.second)->getDeviceName();
+				break;
+			}
 
-		// trackingDeviceID is always >= 0 anyway
-		return std::make_pair(_exists,
-		                      TrackingDevicesVector.at(_deviceID));
+		return deviceName;
 	}
 
 	inline bool isExternalFlipSupportable()
@@ -97,26 +87,24 @@ namespace TrackingDevices
 		/* Now check if either waist tracker is overridden or disabled
 		 * And then search in OpenVR for a one with waist role */
 
-		const auto& overrideDevice =
-			getCurrentOverrideDevice_Safe();
-
 		// If we have an override and if it's actually affecting the waist rotation
-		if (overrideDevice.first &&
-			k2app::K2Settings.K2TrackersVector.at(0).data_isActive &&
-			k2app::K2Settings.K2TrackersVector.at(0).isRotationOverridden)
-		{
-			// If the override device is a kinect then it HAS NOT TO support flip
-			if (overrideDevice.second.index() == 0)
-				return !std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
-					overrideDevice.second)->isFlipSupported();
+		for (const auto& overrideDevice : k2app::K2Settings.overrideDeviceGUIDsMap)
+			if (k2app::K2Settings.K2TrackersVector.at(0).data_isActive &&
+				k2app::K2Settings.K2TrackersVector.at(0).isRotationOverridden)
+			{
+				// If the override device is a kinect then it HAS NOT TO support flip
+				if (TrackingDevicesVector[overrideDevice.second].index() == 0 &&
+					!std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
+						TrackingDevicesVector[overrideDevice.second])->isFlipSupported())
+					return true; // We're good good
 
-			// If the override device is a joints then it's always ok
-			if (overrideDevice.second.index() == 1)
-				return true; // We're good good
-		}
+				// If the override device is a joints then it's always ok
+				if (TrackingDevicesVector[overrideDevice.second].index() == 1)
+					return true; // We're good good
+			}
 
 		// If still not, then also check if the waist is disabled by any chance
-		else if (!k2app::K2Settings.K2TrackersVector.at(0).data_isActive)
+		if (!k2app::K2Settings.K2TrackersVector.at(0).data_isActive)
 			/* Here check if there's a proper waist tracker in steamvr to pull data from */
 			return k2app::interfacing::findVRTracker("waist").first; // .first is [Success?]
 
@@ -222,72 +210,58 @@ namespace TrackingDevices
 
 	inline void devices_check_override_ids(const uint32_t& id)
 	{
-		// Take down IDs if they're too big
-		if (const auto& device_pair = getCurrentOverrideDevice_Safe(id); device_pair.first)
+		// Do we need to save?
+		bool _settingsChangesMade = false;
+
+		// Check if all joints have valid IDs
+		if (const auto& device_pair = TrackingDevicesVector[id];
+			device_pair.index() == 1) // If Joints
 		{
-			// Do we need to save?
-			bool _settingsChangesMade = false;
+			// Note: num_joints should never be 0
+			const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
+				(device_pair)->getTrackedJoints().size();
 
-			// Check if all joints have valid IDs
-			if (device_pair.second.index() == 1) // If Joints
-			{
-				// Note: num_joints should never be 0
-				const auto num_joints = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
-					(device_pair.second)->getTrackedJoints().size();
-
-				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
-					if (tracker.positionOverrideJointID >= num_joints)
-					{
-						tracker.positionOverrideJointID = 0;
-						_settingsChangesMade = true;
-					}
-
-				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
-					if (tracker.rotationOverrideJointID >= num_joints)
-					{
-						tracker.rotationOverrideJointID = 0;
-						_settingsChangesMade = true;
-					}
-			}
-			else if (device_pair.second.index() == 0) // If Kinect
-			{
-				// Note: switch based on device characteristics
-				const auto characteristics = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>
-					(device_pair.second)->getDeviceCharacteristics();
-				uint32_t num_joints = -1; // To set later
-
-				if (characteristics == ktvr::K2_Character_Full)
-					num_joints = 8;
-				else if (characteristics == ktvr::K2_Character_Simple)
-					num_joints = 8;
-				else if (characteristics == ktvr::K2_Character_Basic)
-					num_joints = 3;
-
-				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
-					if (tracker.positionOverrideJointID >= num_joints)
-					{
-						tracker.positionOverrideJointID = 0;
-						_settingsChangesMade = true;
-					}
-
-				for (auto& tracker : k2app::K2Settings.K2TrackersVector)
-					if (tracker.rotationOverrideJointID >= num_joints)
-					{
-						tracker.rotationOverrideJointID = 0;
-						_settingsChangesMade = true;
-					}
-			}
-
-			// Save it (if needed)
-			if (_settingsChangesMade)
-				k2app::K2Settings.saveSettings();
+			for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+				if (tracker.overrideGUID == std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>
+					(device_pair)->getDeviceGUID() && tracker.overrideJointID >= num_joints)
+				{
+					tracker.overrideJointID = 0;
+					_settingsChangesMade = true;
+				}
 		}
+		else if (device_pair.index() == 0) // If Kinect
+		{
+			// Note: switch based on device characteristics
+			const auto characteristics = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>
+				(device_pair)->getDeviceCharacteristics();
+			uint32_t num_joints = -1; // To set later
+
+			if (characteristics == ktvr::K2_Character_Full)
+				num_joints = 8;
+			else if (characteristics == ktvr::K2_Character_Simple)
+				num_joints = 8;
+			else if (characteristics == ktvr::K2_Character_Basic)
+				num_joints = 3;
+
+			for (auto& tracker : k2app::K2Settings.K2TrackersVector)
+				if (tracker.overrideGUID == std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>
+					(device_pair)->getDeviceGUID() && tracker.overrideJointID >= num_joints)
+				{
+					tracker.overrideJointID = 0;
+					_settingsChangesMade = true;
+				}
+		}
+
+		// Save it (if needed)
+		if (_settingsChangesMade)
+			k2app::K2Settings.saveSettings();
 	}
 
-	inline void devices_check_base_ids(const uint32_t& id)
+	inline void devices_check_base_ids()
 	{
 		// Take down IDs if they're too big
-		if (const auto& device_pair = getCurrentDevice(id);
+		if (const auto& device_pair =
+				getCurrentDevice();
 			device_pair.index() == 1) // If Joints
 		{
 			// Note: num_joints should never be 0
@@ -373,7 +347,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			if (_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
 				_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_RightFoot)
 			{
-				// TODO HIDE OR DISABLE?
 				_ptr_software_orientation.get()->IsEnabled(enable);
 				_ptr_software_orientation_v2.get()->IsEnabled(enable);
 
@@ -759,7 +732,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			});
 
 			if (_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
-				_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_RightFoot) 
+				_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_RightFoot)
 			{
 				_ptr_software_orientation.get()->Visibility(Visibility::Visible);
 				_ptr_software_orientation_v2.get()->Visibility(Visibility::Visible);

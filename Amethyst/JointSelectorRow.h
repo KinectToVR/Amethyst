@@ -95,11 +95,35 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			}
 
 			// Check base IDs if wrong
-			TrackingDevices::devices_check_base_ids(k2app::K2Settings.trackingDeviceID);
+			TrackingDevices::devices_check_base_ids();
 			_ptr_tracker_combo.get()->SelectedIndex(_tracker_pointer->selectedTrackedJointID);
+
+			const bool _overriden_from_other_device =
+				(_tracker_pointer->isPositionOverridden || _tracker_pointer->isRotationOverridden) &&
+				!_tracker_pointer->overrideGUID.empty() &&
+				TrackingDevices::IsAnOverride(_tracker_pointer->overrideGUID);
+			
+			// Optionally show the overlapping badge
+			_ptr_other_badge->Opacity(
+				_overriden_from_other_device ? 1.0 : 0.0);
+
+			// Set the badge's tooltip
+			using namespace std::string_literals;
+			ToolTipService::SetToolTip(
+				*_ptr_other_badge,
+				_overriden_from_other_device
+					? box_value(k2app::interfacing::stringReplaceAll_R(
+						k2app::interfacing::LocalizedJSONString(
+							L"/DevicesPage/ToolTips/Overrides/Overlapping"),
+						L"{0}"s,
+						TrackingDevices::getDeviceNameFromGUID(_tracker_pointer->overrideGUID)))
+					: nullptr); // Either the default one or none
 		}
 
 		std::shared_ptr<Grid> Container() { return _ptr_container; }
+		std::shared_ptr<Grid> TrackerContainer() { return _ptr_tracker_container; }
+
+		std::shared_ptr<InfoBadge> Badge() { return _ptr_other_badge; }
 
 		std::shared_ptr<TextBlock> TrackedJointName() { return _ptr_title; }
 		std::shared_ptr<ComboBox> TrackerCombo() { return _ptr_tracker_combo; }
@@ -110,7 +134,10 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		k2app::K2AppTracker* _tracker_pointer;
 
 		// Underlying object shared pointer
-		std::shared_ptr<Grid> _ptr_container;
+		std::shared_ptr<Grid> _ptr_container, _ptr_tracker_container;
+
+		std::shared_ptr<InfoBadge> _ptr_other_badge;
+
 		std::shared_ptr<TextBlock> _ptr_title;
 		std::shared_ptr<ComboBox> _ptr_tracker_combo;
 
@@ -118,7 +145,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		void Create()
 		{
 			// Create the container grid
-			Grid _container;
+			Grid _container, _title_container;
+			InfoBadge _other_badge;
 
 			AppendGridStarsColumnMinWidthPixels(_container, 3, 80);
 			AppendGridStarColumn(_container);
@@ -152,8 +180,48 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_tracker_combo.PlaceholderText(k2app::interfacing::LocalizedResourceWString(
 				L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
 
+			// Create the overlap badge
+			_other_badge.Background(*k2app::shared::main::attentionBrush);
+			_other_badge.HorizontalAlignment(HorizontalAlignment::Right);
+			_other_badge.VerticalAlignment(VerticalAlignment::Center);
+
+			_other_badge.Margin({ .Right = -12, .Bottom = -10 });
+			_other_badge.Width(17);
+			_other_badge.Height(17);
+
+			_other_badge.Opacity(0.0);
+			_other_badge.OpacityTransition(ScalarTransition());
+
+			FontIconSource _icon;
+			_icon.Glyph(L"\uEDB1"); // Exclimation
+			_icon.Foreground(
+				Application::Current().Resources().TryLookup(
+					box_value(L"NoThemeColorSolidColorBrush"
+					)).as<Media::SolidColorBrush>());
+
+			_other_badge.IconSource(_icon);
+
+			// Push the title & badge to their container
+			_title_container.Children().Append(_title);
+			_title_container.Children().Append(_other_badge);
+
+			// Push the title container to the main container
+			Grid _inner_title_container;
+			_inner_title_container.HorizontalAlignment(HorizontalAlignment::Center);
+			_inner_title_container.VerticalAlignment(VerticalAlignment::Center);
+			_inner_title_container.Children().Append(_title_container);
+
+			_container.Children().Append(_inner_title_container);
+			_container.SetColumn(_inner_title_container, 0);
+
+			// Append all elements to the container
+			_container.Children().Append(_tracker_combo);
+			_container.SetColumn(_tracker_combo, 2);
+
 			// Back everything up
 			_ptr_container = std::make_shared<Grid>(_container);
+			_ptr_tracker_container = std::make_shared<Grid>(_title_container);
+			_ptr_other_badge = std::make_shared<InfoBadge>(_other_badge);
 			_ptr_title = std::make_shared<TextBlock>(_title);
 			_ptr_tracker_combo = std::make_shared<ComboBox>(_tracker_combo);
 
@@ -166,8 +234,10 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				       const SelectionChangedEventArgs& e) -> void
 				{
 					// Don't even try if we're not set up yet
-					if (!k2app::shared::devices::devices_tab_setup_finished)return;
-					
+					if (!k2app::shared::devices::devices_tab_setup_finished ||
+						k2app::shared::devices::devices_joints_setup_pending)
+						return;
+
 					if (_ptr_tracker_combo.get()->SelectedIndex() >= 0)
 						_tracker_pointer->selectedTrackedJointID = _ptr_tracker_combo.get()->SelectedIndex();
 					else
@@ -183,6 +253,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 							signalJoint(_tracker_pointer->selectedTrackedJointID);
 
 					// Save settings
+					k2app::interfacing::statusUIRefreshRequested_Urgent = true;
 					k2app::K2Settings.saveSettings();
 				});
 
@@ -197,16 +268,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				// Play a sound
 				playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 			});
-
-			// Append all elements to the container
-			_container.Children().Append(_title);
-			_container.Children().Append(_tracker_combo);
-
-			_container.SetColumn(_title, 0);
-			_container.SetRow(_title, 0);
-
-			_container.SetColumn(_tracker_combo, 2);
-			_container.SetRow(_tracker_combo, 0);
 		}
 	};
 }

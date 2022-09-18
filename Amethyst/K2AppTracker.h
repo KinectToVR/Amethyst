@@ -6,6 +6,7 @@
 
 #include <cereal/access.hpp>
 #include <cereal/types/vector.hpp>
+#include <cereal/types/map.hpp>
 #include <cereal/types/tuple.hpp>
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/utility.hpp>
@@ -475,8 +476,10 @@ namespace k2app
 		     isRotationOverridden = false;
 
 		// If the joint is overridden, overrides' ids
-		uint32_t positionOverrideJointID = 0,
-		         rotationOverrideJointID = 0;
+		uint32_t overrideJointID = 0;
+
+		// Override device's GUID
+		std::wstring overrideGUID;
 
 		// Tracker data (inherited)
 		std::string data_serial;
@@ -495,8 +498,8 @@ namespace k2app
 				CEREAL_NVP(selectedTrackedJointID),
 				CEREAL_NVP(isPositionOverridden),
 				CEREAL_NVP(isRotationOverridden),
-				CEREAL_NVP(positionOverrideJointID),
-				CEREAL_NVP(rotationOverrideJointID),
+				CEREAL_NVP(overrideJointID),
+				CEREAL_NVP(overrideGUID),
 				CEREAL_NVP(pose_position),
 				CEREAL_NVP(pose_orientation),
 				CEREAL_NVP(data_serial),
@@ -549,8 +552,8 @@ namespace k2app
 				selectedTrackedJointID == other.selectedTrackedJointID &&
 				isPositionOverridden == other.isPositionOverridden &&
 				isRotationOverridden == other.isRotationOverridden &&
-				positionOverrideJointID == other.positionOverrideJointID &&
-				rotationOverrideJointID == other.rotationOverrideJointID &&
+				overrideJointID == other.overrideJointID &&
+				overrideGUID == other.overrideGUID &&
 				// pose_position == other.pose_position &&          // Doesn't matter
 				// pose_orientation == other.pose_orientation &&    // Doesn't matter
 				data_serial == other.data_serial &&

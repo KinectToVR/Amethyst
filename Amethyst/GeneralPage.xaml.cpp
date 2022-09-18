@@ -91,10 +91,6 @@ namespace winrt::Amethyst::implementation
 		deviceStatusLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceStatusLabel());
 		errorWhatText = std::make_shared<Controls::TextBlock>(ErrorWhatText());
 		trackingDeviceErrorLabel = std::make_shared<Controls::TextBlock>(TrackingDeviceErrorLabel());
-		overrideDeviceNameLabel = std::make_shared<Controls::TextBlock>(SelectedOverrideDeviceNameLabel());
-		overrideDeviceStatusLabel = std::make_shared<Controls::TextBlock>(OverrideDeviceStatusLabel());
-		overrideErrorWhatText = std::make_shared<Controls::TextBlock>(OverrideErrorWhatText());
-		overrideDeviceErrorLabel = std::make_shared<Controls::TextBlock>(OverrideTrackingDeviceErrorLabel());
 		serverStatusLabel = std::make_shared<Controls::TextBlock>(ServerStatusLabel());
 		serverErrorLabel = std::make_shared<Controls::TextBlock>(ServerErrorLabel());
 		serverErrorWhatText = std::make_shared<Controls::TextBlock>(ServerErrorWhatText());
@@ -103,12 +99,11 @@ namespace winrt::Amethyst::implementation
 		offsetsControlHostGrid = std::make_shared<Controls::Grid>(OffsetsControlHostGrid());
 		errorButtonsGrid = std::make_shared<Controls::Grid>(ErrorButtonsGrid());
 		errorWhatGrid = std::make_shared<Controls::Grid>(ErrorWhatGrid());
-		overrideErrorButtonsGrid = std::make_shared<Controls::Grid>(OverrideErrorButtonsGrid());
-		overrideErrorWhatGrid = std::make_shared<Controls::Grid>(OverrideErrorWhatGrid());
 		serverErrorWhatGrid = std::make_shared<Controls::Grid>(ServerErrorWhatGrid());
 		serverErrorButtonsGrid = std::make_shared<Controls::Grid>(ServerErrorButtonsGrid());
 
 		toggleFreezeButton = std::make_shared<Controls::Primitives::ToggleButton>(ToggleTrackingButton());
+		overrideDeviceErrorsHyperlink = std::make_shared<Controls::HyperlinkButton>(OverrideDeviceErrorsHyperlink());
 
 		offsetsButton = std::make_shared<Controls::MenuFlyoutItem>(OffsetsButton());
 		freezeOnlyLowerToggle = std::make_shared<Controls::ToggleMenuFlyoutItem>(FreezeOnlyLowerToggle());
@@ -942,13 +937,8 @@ void Amethyst::implementation::GeneralPage::OpenDocsButton_Click(
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 
-	const auto _device_error_string = ErrorWhatGrid().Visibility() == Visibility::Collapsed
-		                                  ? TrackingDeviceErrorLabel().Text()
-		                                  : OverrideTrackingDeviceErrorLabel().Text();
-
-	const auto _device_name = ErrorWhatGrid().Visibility() == Visibility::Collapsed
-		                          ? SelectedDeviceNameLabel().Text()
-		                          : SelectedOverrideDeviceNameLabel().Text();
+	const auto _device_error_string = TrackingDeviceErrorLabel().Text();
+	const auto _device_name = SelectedDeviceNameLabel().Text();
 
 	if (_device_name == L"Xbox 360 Kinect")
 	{
@@ -1198,8 +1188,8 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	OpenDocsButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Help/Docs")));
 
-	Captions_OverrideDevice_Name().Text(
-		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/OverrideDevice/Name"));
+	OverrideDeviceErrorsHyperlink().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/OverrideErrors")));
 
 	Titles_Status().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Titles/Status"));
@@ -1558,25 +1548,25 @@ std::pair<bool, bool> IsJointUsedAsOverride(const uint32_t& joint)
 
 	// Scan for position overrides
 	for (const auto& _j_p : k2app::K2Settings.K2TrackersVector)
-		if (joint == _j_p.positionOverrideJointID)_o.first = true;
+		if (joint == _j_p.overrideJointID)_o.first = true;
 
 	// Scan for rotation overrides
 	for (const auto& _j_r : k2app::K2Settings.K2TrackersVector)
-		if (joint == _j_r.rotationOverrideJointID)_o.second = true;
+		if (joint == _j_r.overrideJointID)_o.second = true;
 
-	return (k2app::K2Settings.overrideDeviceID >= 0)
-		       ? _o
-		       : std::make_pair(false, false);
+	return (k2app::K2Settings.overrideDeviceGUIDsMap.empty())
+		       ? std::make_pair(false, false)
+		       : _o;
 }
 
 
 std::pair<bool, bool> IsJointOverriden(const uint32_t& joint)
 {
-	return (k2app::K2Settings.overrideDeviceID >= 0)
-		       ? std::make_pair(
+	return (k2app::K2Settings.overrideDeviceGUIDsMap.empty())
+		       ? std::make_pair(false, false)
+		       : std::make_pair(
 			       k2app::K2Settings.K2TrackersVector.at(joint).isPositionOverridden,
-			       k2app::K2Settings.K2TrackersVector.at(joint).isRotationOverridden)
-		       : std::make_pair(false, false);
+			       k2app::K2Settings.K2TrackersVector.at(joint).isRotationOverridden);
 }
 
 
@@ -1938,7 +1928,7 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 	}
 
 	// If no overrides
-	if (k2app::K2Settings.overrideDeviceID < 0)
+	if (k2app::K2Settings.overrideDeviceGUIDsMap.empty())
 	{
 		AutoCalibrationPane().Visibility(Visibility::Collapsed);
 		ManualCalibrationPane().Visibility(Visibility::Collapsed);
@@ -1961,6 +1951,8 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 	}
 	else
 	{
+		// TODO CALIBRATE ONE OF THE OVERRIDES
+
 		ChooseDeviceFlyout().ShowAt(CalibrationButton());
 
 		// Assume no head position providers
@@ -1997,17 +1989,17 @@ void Amethyst::implementation::GeneralPage::BaseCalibration_Click(
 	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 
 	// Eventually enable the auto calibration
-	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceID);
-	if (trackingDevice.index() == 0)
-	{
+	const auto& trackingDevice = 
+		TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceGUIDPair.second);
+	
 		// Kinect Basis
-		if (std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
+		if (trackingDevice.index() == 0 &&
+			std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 			getDeviceCharacteristics() == ktvr::K2_Character_Full)
 		{
 			AutoCalibrationButton().IsEnabled(true);
 			AutoCalibrationButtonDecorations().Opacity(1.0);
 		}
-	}
 
 	// Set the current device for scripts
 	general_current_calibrating_device = general_calibrating_device::K2_BaseDevice;
@@ -2038,18 +2030,20 @@ void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 
+	// TODO CALIBRATE ONE OF THE OVERRIDES
+
 	// Eventually enable the auto calibration
-	const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
-	if (trackingDevice.index() == 0)
-	{
-		// Kinect Basis
-		if (std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
+	const auto& trackingDevice =
+		TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceGUIDPair.second);
+
+	// Kinect Basis
+	if (trackingDevice.index() == 0 && 
+		std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 			getDeviceCharacteristics() == ktvr::K2_Character_Full)
 		{
 			AutoCalibrationButton().IsEnabled(true);
 			AutoCalibrationButtonDecorations().Opacity(1.0);
 		}
-	}
 
 	// Set the current device for scripts
 	general_current_calibrating_device = general_calibrating_device::K2_OverrideDevice;
@@ -2339,4 +2333,12 @@ void Amethyst::implementation::GeneralPage::FreezeOnlyLowerToggle_Click(
 	playAppSound(FreezeOnlyLowerToggle().IsChecked()
 		             ? k2app::interfacing::sounds::AppSounds::ToggleOn
 		             : k2app::interfacing::sounds::AppSounds::ToggleOff);
+}
+
+
+void Amethyst::implementation::GeneralPage::OverrideDeviceErrorsHyperlink_Click(
+	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+{
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
 }

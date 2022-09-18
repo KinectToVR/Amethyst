@@ -66,7 +66,7 @@
                             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Border Height="20" CornerRadius="3" Padding="5,0"
                                         Margin="0,-15,15,0"
-                                        Opacity="{x:Bind BoolToOpacity(IsBase), Mode=OneWay}"
+                                        Opacity="{x:Bind BoolToOpacity(IsBase), Mode=OneWay, FallbackValue=0.0}"
                                         BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
                                         Background="{ThemeResource SystemFillColorAttentionBrush}"
                                         VerticalAlignment="Top" HorizontalAlignment="Right">
@@ -81,7 +81,7 @@
 
                                 <Border Height="20" CornerRadius="3" Padding="5,0"
                                         Margin="0,-15,15,0"
-                                        Opacity="{x:Bind BoolToOpacity(IsOverride), Mode=OneWay}"
+                                        Opacity="{x:Bind BoolToOpacity(IsOverride), Mode=OneWay, FallbackValue=0.0}"
                                         BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
                                         Background="{ThemeResource SystemFillColorAttentionBrush}"
                                         VerticalAlignment="Top" HorizontalAlignment="Right">
@@ -96,7 +96,7 @@
 
                                 <Border Height="20" CornerRadius="3" Padding="5,0"
                                         Margin="0,0,15,-18"
-                                        Opacity="{x:Bind BoolToOpacity(StatusError), Mode=OneWay}"
+                                        Opacity="{x:Bind BoolToOpacity(StatusError), Mode=OneWay, FallbackValue=0.0}"
                                         BorderBrush="{ThemeResource SystemFillColorCriticalBrush}"
                                         Background="{ThemeResource SystemFillColorCriticalBrush}"
                                         VerticalAlignment="Bottom" HorizontalAlignment="Right">
@@ -109,8 +109,8 @@
                                                Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                 </Border>
 
-                                <TextBlock Text="{x:Bind DisplayName}"
-                                           ToolTipService.ToolTip="{x:Bind DeviceGUID}" />
+                                <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                           ToolTipService.ToolTip="{x:Bind DeviceGUID, Mode=OneWay}" />
                             </Grid>
                         </DataTemplate>
                     </TreeView.ItemTemplate>

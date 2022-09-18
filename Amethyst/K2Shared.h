@@ -132,10 +132,6 @@ namespace k2app::shared
 			deviceStatusLabel,
 			errorWhatText,
 			trackingDeviceErrorLabel,
-			overrideDeviceNameLabel,
-			overrideDeviceStatusLabel,
-			overrideErrorWhatText,
-			overrideDeviceErrorLabel,
 			serverStatusLabel,
 			serverErrorLabel,
 			serverErrorWhatText,
@@ -145,8 +141,6 @@ namespace k2app::shared
 			offsetsControlHostGrid,
 			errorButtonsGrid,
 			errorWhatGrid,
-			overrideErrorButtonsGrid,
-			overrideErrorWhatGrid,
 			serverErrorWhatGrid,
 			serverErrorButtonsGrid;
 
@@ -155,6 +149,9 @@ namespace k2app::shared
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>
 		freezeOnlyLowerToggle;
+
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::HyperlinkButton>
+		overrideDeviceErrorsHyperlink;
 	}
 
 	namespace settings
@@ -196,7 +193,7 @@ namespace k2app::shared
 	{
 		inline bool devices_tab_setup_finished = false, // On-load setup
 			devices_tab_re_setup_finished = false, // Other setup
-			devices_overrides_setup_pending = false, // Overrides
+			devices_joints_setup_pending = false, // Overrides
 			devices_signal_joints = true, // Optionally no signal
 			devices_mvvm_setup_finished = false; // MVVM setup done?
 
@@ -226,9 +223,8 @@ namespace k2app::shared
 
 		inline std::binary_semaphore smphSignalCurrentUpdate{0},
 		                             smphSignalStartMain{0};
-
-		inline uint32_t selectedTrackingDeviceID = 0;
-		inline std::wstring selectedTrackingDeviceName = L"";
+		
+		inline std::pair<std::wstring, uint32_t> selectedTrackingDeviceGUIDPair{L"", -1};
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ScrollViewer> devicesMainContentScrollViewer;
 

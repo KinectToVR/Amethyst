@@ -42,7 +42,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls::Helpers
 						cbox.get()->Items().Append(box_value(item));
 					}
 					else
-						// Push the item to the combobox
+					// Push the item to the combobox
 						cbox.get()->Items().Append(box_value(str));
 				}();
 			}
@@ -207,20 +207,48 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		// devices_select_combobox
 		void SelectOverrideJoints()
 		{
+			const bool _overriden_from_this_device =
+				(_tracker_pointer->isPositionOverridden || _tracker_pointer->isRotationOverridden) &&
+				_tracker_pointer->overrideGUID == k2app::shared::devices::selectedTrackingDeviceGUIDPair.first;
+
+			const bool _overriden_from_other_device =
+				(_tracker_pointer->isPositionOverridden || _tracker_pointer->isRotationOverridden) &&
+				!_tracker_pointer->overrideGUID.empty() &&
+				TrackingDevices::IsAnOverride(_tracker_pointer->overrideGUID) &&
+				_tracker_pointer->overrideGUID != k2app::shared::devices::selectedTrackingDeviceGUIDPair.first;
+
 			Helpers::SelectComboBoxItem_Safe(
 				_ptr_tracker_combo,
 				_tracker_pointer->data_isActive
-					? (_tracker_pointer->isPositionOverridden ||
-					   _tracker_pointer->isRotationOverridden
-						   ? _tracker_pointer->positionOverrideJointID + 1 // Omit "No Override"
+					? (_overriden_from_this_device
+						   ? _tracker_pointer->overrideJointID + 1 // Omit "No Override"
 						   : 0) // Display "No Override"
 					: -1); // Display "Joint Disabled"
+
+			// Optionally show the overlapping badge
+			_ptr_other_badge->Opacity(
+				_overriden_from_other_device ? 1.0 : 0.0);
+
+			// Set the badge's tooltip
+			using namespace std::string_literals;
+			ToolTipService::SetToolTip(
+				*_ptr_other_badge,
+				_overriden_from_other_device
+					? box_value(k2app::interfacing::stringReplaceAll_R(
+						k2app::interfacing::LocalizedJSONString(
+							L"/DevicesPage/ToolTips/Overrides/Overlapping"),
+						L"{0}"s, 
+						TrackingDevices::getDeviceNameFromGUID(_tracker_pointer->overrideGUID)))
+					: nullptr); // Either the default one or none
 		}
 
 		void UpdateOverrideToggles()
 		{
-			_ptr_override_position_switch.get()->IsOn(_tracker_pointer->isPositionOverridden);
-			_ptr_override_orientation_switch.get()->IsOn(_tracker_pointer->isRotationOverridden);
+			const bool _o_this_device =
+				_tracker_pointer->overrideGUID == k2app::shared::devices::selectedTrackingDeviceGUIDPair.first;
+
+			_ptr_override_position_switch.get()->IsOn(_o_this_device && _tracker_pointer->isPositionOverridden);
+			_ptr_override_orientation_switch.get()->IsOn(_o_this_device && _tracker_pointer->isRotationOverridden);
 		}
 
 		// devices_push_override_joints
@@ -240,6 +268,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 		std::shared_ptr<TextBlock> Title() { return _ptr_title; }
 
+		std::shared_ptr<InfoBadge> Badge() { return _ptr_other_badge; }
+
 		std::shared_ptr<ToggleSwitch> OverridePositionSwitch() { return _ptr_override_position_switch; }
 		std::shared_ptr<ToggleSwitch> OverrideOrientationSwitch() { return _ptr_override_orientation_switch; }
 
@@ -255,6 +285,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 		std::shared_ptr<TextBlock> _ptr_title;
 
+		std::shared_ptr<InfoBadge> _ptr_other_badge;
+
 		std::shared_ptr<ToggleSwitch> _ptr_override_position_switch,
 		                              _ptr_override_orientation_switch;
 
@@ -264,7 +296,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		void Create()
 		{
 			// Create the container grid
-			Grid _container;
+			Grid _container, _title_container;
 
 			AppendGridStarsColumnMinWidthPixels(_container, 3, 80);
 			AppendGridStarColumn(_container);
@@ -291,9 +323,40 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_title.VerticalAlignment(VerticalAlignment::Center);
 			_title.HorizontalTextAlignment(TextAlignment::Center);
 
-			// Push the title to the main container
-			_container.Children().Append(_title);
-			_container.SetColumn(_title, 0);
+			// Create the overlap badge
+			InfoBadge _other_badge;
+			_other_badge.Background(*k2app::shared::main::attentionBrush);
+			_other_badge.HorizontalAlignment(HorizontalAlignment::Right);
+			_other_badge.VerticalAlignment(VerticalAlignment::Center);
+
+			_other_badge.Margin({.Right = -12, .Bottom = -10});
+			_other_badge.Width(17);
+			_other_badge.Height(17);
+
+			_other_badge.Opacity(0.0);
+			_other_badge.OpacityTransition(ScalarTransition());
+
+			FontIconSource _icon;
+			_icon.Glyph(L"\uEDAD"); // Asterisk
+			_icon.Foreground(
+				Application::Current().Resources().TryLookup(
+					box_value(L"NoThemeColorSolidColorBrush"
+					)).as<Media::SolidColorBrush>());
+
+			_other_badge.IconSource(_icon);
+
+			// Push the title & badge to their container
+			_title_container.Children().Append(_title);
+			_title_container.Children().Append(_other_badge);
+
+			// Push the title container to the main container
+			Grid _inner_title_container;
+			_inner_title_container.HorizontalAlignment(HorizontalAlignment::Center);
+			_inner_title_container.VerticalAlignment(VerticalAlignment::Center);
+			_inner_title_container.Children().Append(_title_container);
+
+			_container.Children().Append(_inner_title_container);
+			_container.SetColumn(_inner_title_container, 0);
 
 			// Set up content combo
 			ComboBox _tracker_combo;
@@ -345,7 +408,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Back everything up
 			_ptr_container = std::make_shared<Grid>(_container);
+			_ptr_title_container = std::make_shared<Grid>(_title_container);
 			_ptr_title = std::make_shared<TextBlock>(_title);
+			_ptr_other_badge = std::make_shared<InfoBadge>(_other_badge);
 
 			_ptr_override_position_switch = std::make_shared<ToggleSwitch>(_override_position_switch);
 			_ptr_override_orientation_switch = std::make_shared<ToggleSwitch>(_override_orientation_switch);
@@ -359,17 +424,19 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					// Don't even try if we're not set up yet
 					if (!k2app::shared::devices::devices_tab_setup_finished ||
-						k2app::shared::devices::devices_overrides_setup_pending)
+						k2app::shared::devices::devices_joints_setup_pending)
 						return;
-					
+
 					// If the selected joint is valid
 					if (_ptr_tracker_combo.get()->SelectedIndex() > 0)
 					{
-						_tracker_pointer->positionOverrideJointID =
+						// Set the override polling joint ID
+						_tracker_pointer->overrideJointID =
 							_ptr_tracker_combo.get()->SelectedIndex() - 1; // minus the "off" item
 
-						_tracker_pointer->rotationOverrideJointID =
-							_ptr_tracker_combo.get()->SelectedIndex() - 1; // minus the "off" item
+						// Set the override polling device - the current one
+						_tracker_pointer->overrideGUID =
+							k2app::shared::devices::selectedTrackingDeviceGUIDPair.first;
 
 						// If we've disabled the both overrides, re-enable them
 						if (!_ptr_override_position_switch.get()->IsOn() &&
@@ -385,13 +452,15 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						}
 
 						// If we're using a joints device then also signal the joint
-						const auto& trackingDevicePair = TrackingDevices::getCurrentOverrideDevice_Safe();
+						const auto& trackingDevicePair =
+							TrackingDevices::getOverrideDevice_Safe(_tracker_pointer->overrideGUID);
+
 						if (trackingDevicePair.first && k2app::shared::devices::devices_signal_joints)
 							if (trackingDevicePair.second.index() == 1 &&
 								k2app::shared::devices::devices_tab_re_setup_finished)
 								// if JointsBasis & Setup Finished
 								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevicePair.second)->
-									signalJoint(_tracker_pointer->positionOverrideJointID);
+									signalJoint(_tracker_pointer->overrideJointID);
 					}
 					// If the selection is something else (manual)
 					else
@@ -405,6 +474,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					}
 
 					// Save settings
+					k2app::interfacing::statusUIRefreshRequested_Urgent = true;
 					k2app::K2Settings.saveSettings();
 				});
 
@@ -426,12 +496,14 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					// Don't even try if we're not set up yet
 					if (!k2app::shared::devices::devices_tab_setup_finished ||
-						k2app::shared::devices::devices_overrides_setup_pending)
+						k2app::shared::devices::devices_joints_setup_pending)
 						return;
-					
-					if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-							TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+
+					if (const auto& device_pair = TrackingDevices::getOverrideDevice_Safe(
+							_tracker_pointer->overrideGUID);
+						device_pair.first && device_pair.second.index() == 1 &&
+						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device_pair.second)->getTrackedJoints().
+						empty())
 					{
 						_ptr_override_position_switch.get()->IsOn(false);
 						k2app::shared::devices::noJointsFlyout.get()->ShowAt(*k2app::shared::devices::overridesLabel);
@@ -445,11 +517,18 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 					// Change the config
 					_tracker_pointer->isPositionOverridden = _ptr_override_position_switch.get()->IsOn();
+					_tracker_pointer->isRotationOverridden = _ptr_override_orientation_switch.get()->IsOn();
 
 					// If we've disabled the both overrides, show the "Disabled" text
 					if (!_ptr_override_position_switch.get()->IsOn() &&
 						!_ptr_override_orientation_switch.get()->IsOn())
+					{
+						// Reset the override polling joint ID
 						Helpers::SelectComboBoxItem_Safe(_ptr_tracker_combo, 0);
+
+						// Reset the override polling device - none
+						_tracker_pointer->overrideGUID = L"";
+					}
 
 					// Select the first valid item when turning the override on
 					if (_ptr_tracker_combo.get()->SelectedIndex() <= 0 &&
@@ -460,6 +539,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					k2app::interfacing::devices_check_disabled_joints();
 
 					// Save settings
+					k2app::interfacing::statusUIRefreshRequested_Urgent = true;
 					k2app::K2Settings.saveSettings();
 				});
 
@@ -469,12 +549,14 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					// Don't even try if we're not set up yet
 					if (!k2app::shared::devices::devices_tab_setup_finished ||
-						k2app::shared::devices::devices_overrides_setup_pending)
+						k2app::shared::devices::devices_joints_setup_pending)
 						return;
-					
-					if (TrackingDevices::getCurrentOverrideDevice().index() == 1 &&
-						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
-							TrackingDevices::getCurrentOverrideDevice())->getTrackedJoints().empty())
+
+					if (const auto& device_pair = TrackingDevices::getOverrideDevice_Safe(
+							_tracker_pointer->overrideGUID);
+						device_pair.first && device_pair.second.index() == 1 &&
+						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device_pair.second)->getTrackedJoints().
+						empty())
 					{
 						_ptr_override_orientation_switch.get()->IsOn(false);
 						k2app::shared::devices::noJointsFlyout.get()->ShowAt(*k2app::shared::devices::overridesLabel);
@@ -487,12 +569,19 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						             : k2app::interfacing::sounds::AppSounds::ToggleOff);
 
 					// Change the config
+					_tracker_pointer->isPositionOverridden = _ptr_override_position_switch.get()->IsOn();
 					_tracker_pointer->isRotationOverridden = _ptr_override_orientation_switch.get()->IsOn();
 
 					// If we've disabled the both overrides, show the "Disabled" text
 					if (!_ptr_override_position_switch.get()->IsOn() &&
 						!_ptr_override_orientation_switch.get()->IsOn())
+					{
+						// Reset the override polling joint ID
 						Helpers::SelectComboBoxItem_Safe(_ptr_tracker_combo, 0);
+
+						// Reset the override polling device - none
+						_tracker_pointer->overrideGUID = L"";
+					}
 
 					// Select the first valid item when turning the override on
 					if (_ptr_tracker_combo.get()->SelectedIndex() <= 0 &&
@@ -503,6 +592,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					k2app::interfacing::devices_check_disabled_joints();
 
 					// Save settings
+					k2app::interfacing::statusUIRefreshRequested_Urgent = true;
 					k2app::K2Settings.saveSettings();
 				});
 		}

@@ -72,6 +72,7 @@
     "/GeneralPage/Captions/Tooltips/Orientation": "Вращение измеряется в градусах.",
     "/GeneralPage/Captions/Tooltips/Position": "Положение измеряется в сантиметрах.",
     "/GeneralPage/Captions/VersionText": "Версия Amethyst:",
+    "/GeneralPage/Captions/OverrideErrors": "You have additional device errors.\nClick here to view them now.",
     "/GeneralPage/Labels/Inferred": "предположительно",
     "/GeneralPage/Labels/Tracking": "трекинг",
     "/GeneralPage/Tips/TrackingFreeze/Buttons/Index": "B, рукоятка и триггер",
@@ -201,6 +202,8 @@
     "/DevicesPage/Badges/Devices/Base": "Base",
     "/DevicesPage/Badges/Devices/Override": "Override",
     "/DevicesPage/Badges/Devices/Error": "Error",
+
+    "/DevicesPage/ToolTips/Overrides/Overlapping": "This joint is currently overiden by:\n{0}",
 
     "/InfoPage/AppCaption": "от группа K2VR",
     "/InfoPage/AppTitle": "Amethyst",

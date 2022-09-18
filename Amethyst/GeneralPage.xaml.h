@@ -113,7 +113,8 @@ namespace winrt::Amethyst::implementation
 		                                              const Windows::Foundation::IInspectable& args);
 		void StatusTeachingTip_ActionButtonClick(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
 		                                         const Windows::Foundation::IInspectable& args);
-		void FreezeOnlyLowerToggle_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void FreezeOnlyLowerToggle_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void OverrideDeviceErrorsHyperlink_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
 };
 }
 

@@ -10,8 +10,8 @@
 #include "JointSelectorRow.h"
 #include "JointSelectorExpander.h"
 
-#define __OVERRIDES_BEGIN_CHANGES k2app::shared::devices::devices_overrides_setup_pending = true;
-#define __OVERRIDES_END_CHANGES k2app::shared::devices::devices_overrides_setup_pending = false;
+#define __DEVICES_JOINTS_BEGIN_CHANGES k2app::shared::devices::devices_joints_setup_pending = true;
+#define __DEVICES_JOINTS_END_CHANGES k2app::shared::devices::devices_joints_setup_pending = false;
 
 // Forward declaration
 namespace winrt::Microsoft::UI::Xaml::Controls
@@ -53,57 +53,57 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 		void EraseComboItems()
 		{
-			__OVERRIDES_BEGIN_CHANGES
+			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
 				_row.get()->ClearOverrideCombos();
 
-			__OVERRIDES_END_CHANGES
+			__DEVICES_JOINTS_END_CHANGES
 		}
 
 		void SelectComboItems()
 		{
-			__OVERRIDES_BEGIN_CHANGES
+			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
 				_row.get()->SelectOverrideJoints();
 
-			__OVERRIDES_END_CHANGES
+			__DEVICES_JOINTS_END_CHANGES
 		}
 
 		void PushOverrideJoints(const std::optional<bool>& all = std::nullopt)
 		{
-			__OVERRIDES_BEGIN_CHANGES
+			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
 				_row.get()->UpdateOverrideJoints(all);
 
-			__OVERRIDES_END_CHANGES
+			__DEVICES_JOINTS_END_CHANGES
 		}
 
 		void PushOverrideJoint(const std::wstring& _string, const bool& secondary = false)
 		{
-			__OVERRIDES_BEGIN_CHANGES
+			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
 				_row.get()->UpdateOverrideJoints(_string, secondary);
 
-			__OVERRIDES_END_CHANGES
+			__DEVICES_JOINTS_END_CHANGES
 		}
 
 		void UpdateOverrideToggles()
 		{
-			__OVERRIDES_BEGIN_CHANGES
+			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
 				_row.get()->UpdateOverrideToggles();
 
-			__OVERRIDES_END_CHANGES
+			__DEVICES_JOINTS_END_CHANGES
 		}
 
 		void UpdateIsEnabled()
 		{
-			__OVERRIDES_BEGIN_CHANGES
+			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
 			{
@@ -132,14 +132,12 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				}
 			}
 
-			__OVERRIDES_END_CHANGES
+			__DEVICES_JOINTS_END_CHANGES
 		}
 
 		void ReAppendTrackers()
 		{
-			__OVERRIDES_BEGIN_CHANGES
-
-			k2app::shared::devices::devices_overrides_setup_pending = true;
+			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			EraseComboItems();
 
@@ -211,7 +209,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					}
 				}();
 
-			__OVERRIDES_END_CHANGES
+			__DEVICES_JOINTS_END_CHANGES
 		}
 
 		void SetVisibility(const Visibility& visibility)
@@ -469,7 +467,7 @@ namespace k2app::interfacing
 		// Ditch this if not loaded yet
 		if (jointsBasisExpanderHostStackPanel.get() == nullptr)return;
 
-		__OVERRIDES_BEGIN_CHANGES
+		__DEVICES_JOINTS_BEGIN_CHANGES
 
 		// Optionally fix combos for disabled trackers -> joint selectors for base
 		for (auto& expander : jointSelectorExpanders)
@@ -488,6 +486,6 @@ namespace k2app::interfacing
 		for (auto& expander : overrideSelectorExpanders)
 			expander.get()->UpdateIsEnabled();
 
-		__OVERRIDES_END_CHANGES
+		__DEVICES_JOINTS_END_CHANGES
 	}
 }

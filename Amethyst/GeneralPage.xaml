@@ -810,76 +810,11 @@
                                         VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
                             </Grid>
 
-                            <!--Override Status-->
+                            <!--Override Status Error-->
 
-                            <StackPanel Orientation="Horizontal" Margin="40,10,20,0"
-                                        Visibility="{Binding ElementName=SelectedOverrideDeviceNameLabel, 
-									Path=Visibility,TargetNullValue=Collapsed}">
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Name="Captions_OverrideDevice_Name" Margin="0,0,0,0"
-                                           Foreground="{ThemeResource ControlDisplayTextBrush}" />
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="[DUM_DEVICE]" Margin="5,0,0,0"
-                                           x:Name="SelectedOverrideDeviceNameLabel" />
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal" Margin="40,5,20,0"
-                                        Visibility="{Binding ElementName=SelectedOverrideDeviceNameLabel, 
-									Path=Visibility,TargetNullValue=Collapsed}">
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="{Binding ElementName=Captions_Device_Status, Path=Text}"
-                                           Margin="0,0,0,0"
-                                           Foreground="{ThemeResource ControlDisplayTextBrush}" />
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="OverrideDeviceStatusLabel" />
-                            </StackPanel>
-
-                            <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
-                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                  BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
-
-                                  Padding="0,0,5,10"
-                                  Width="440" Height="Auto" Margin="0,5,0,0" CornerRadius="4"
-                                  x:Name="OverrideErrorWhatGrid">
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                           Text="[DUM_STATUS_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
-                                           x:Name="OverrideTrackingDeviceErrorLabel"
-                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                           x:Name="OverrideErrorWhatText"
-                                           Margin="10,30,5,0" Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                           TextWrapping="WrapWholeWords">
-                                    <TextBlock.Text>
-                                        There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </Grid>
-
-                            <Grid Margin="0,12,0,0" x:Name="OverrideErrorButtonsGrid">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Button FontSize="15" x:Name="OverrideOpenDiscordButton"
-                                        Click="OpenDiscordButton_Click" Height="65"
-                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="{Binding ElementName=OpenDiscordButton, Path=Content}"
-                                        Margin="40,10,10,10" CornerRadius="4" Grid.Column="0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" />
-                                <Button FontSize="15" x:Name="OverrideOpenDocsButton"
-                                        Click="OpenDocsButton_Click" Height="65"
-                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="{Binding ElementName=OpenDocsButton, Path=Content}"
-                                        Margin="10,10,40,10" CornerRadius="4" Grid.Column="1"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
-
-                            </Grid>
-
+                            <HyperlinkButton x:Name="OverrideDeviceErrorsHyperlink" Margin="40,10,20,0"
+                                             HorizontalAlignment="Left" FontWeight="SemiBold"
+                                             Visibility="Collapsed" Click="OverrideDeviceErrorsHyperlink_Click" />
                         </StackPanel>
 
                         <Grid Height="60" VerticalAlignment="Bottom">
