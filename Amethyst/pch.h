@@ -99,6 +99,7 @@
 #include <tuple>
 #include <variant>
 
+#include <ranges>
 #include <filesystem>
 #include <concepts>
 

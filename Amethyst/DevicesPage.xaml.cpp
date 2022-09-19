@@ -12,7 +12,6 @@ using namespace k2app::shared::devices;
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 bool devices_loadedOnce = false;
-std::pair<std::wstring, uint32_t> _prev_device_guid_pair{ L"", -1 };
 
 namespace winrt::Amethyst::implementation
 {
@@ -136,7 +135,7 @@ namespace winrt::Amethyst::implementation
 			devicesTreeView.get()->RootNodes().GetAt(k2app::K2Settings.trackingDeviceGUIDPair.second));
 
 		selectedTrackingDeviceGUIDPair = k2app::K2Settings.trackingDeviceGUIDPair;
-		_prev_device_guid_pair = k2app::K2Settings.trackingDeviceGUIDPair;
+		previousSelectedTrackingDeviceGUIDPair = k2app::K2Settings.trackingDeviceGUIDPair;
 
 		// Set joint expanders up
 		LOG(INFO) << "Setting up joint selector expanders...";
@@ -151,7 +150,7 @@ namespace winrt::Amethyst::implementation
 		jointSelectorExpanders[2] = std::move(std::make_shared<Controls::JointSelectorExpander>(2));
 
 		LOG(INFO) << "Appending to the host panel...";
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 			jointsBasisExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
 
 		// Set override expanders up
@@ -167,7 +166,7 @@ namespace winrt::Amethyst::implementation
 		overrideSelectorExpanders[2] = std::move(std::make_shared<Controls::OverrideSelectorExpander>(2));
 
 		LOG(INFO) << "Appending to the host panel...";
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 			overridesExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
 
 		NavigationCacheMode(Navigation::NavigationCacheMode::Required);
@@ -202,7 +201,7 @@ namespace winrt::Amethyst::implementation
 
 						jointsBasisExpanderHostStackPanel->Children().Clear();
 
-						for (auto& expander : jointSelectorExpanders)
+						for (const auto& expander : jointSelectorExpanders)
 							jointsBasisExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
 
 						LOG(INFO) << "Rebuilding override selector expanders... this may take a while...";
@@ -223,7 +222,7 @@ namespace winrt::Amethyst::implementation
 
 						overridesExpanderHostStackPanel->Children().Clear();
 
-						for (auto& expander : overrideSelectorExpanders)
+						for (const auto& expander : overrideSelectorExpanders)
 							overridesExpanderHostStackPanel->Children().Append(*expander->ContainerExpander());
 
 						DevicesPage_Loaded_Handler();
@@ -247,8 +246,7 @@ void Amethyst::implementation::DevicesPage::ReconnectDeviceButton_Click(
 	TrackingDevices::devices_handle_refresh(true);
 
 	// Update the GeneralPage status
-	TrackingDevices::updateTrackingDeviceUI();
-	TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
+	TrackingDevices::updateTrackingDevicesUI();
 
 	// Reload the tracking device UI
 	ReloadSelectedDevice(true);
@@ -274,14 +272,14 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a SkeletonBasis device, so this should be hidden
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 		// For all override devices
 		{
-			for (auto& expander : overrideSelectorExpanders)
+			for (const auto& expander : overrideSelectorExpanders)
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
@@ -319,7 +317,7 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					TrackingDevices::IsABase(selectedTrackingDeviceGUIDPair.first))
@@ -334,7 +332,7 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 
 		// For all override devices
 		{
-			for (auto& expander : overrideSelectorExpanders)
+			for (const auto& expander : overrideSelectorExpanders)
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
@@ -384,8 +382,7 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	errorWhatText.get()->Text(split_status(device_status)[2]);
 	
 	// Update the GeneralPage status
-	TrackingDevices::updateTrackingDeviceUI();
-	TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
+	TrackingDevices::updateTrackingDevicesUI();
 
 	AlternativeConnectionOptionsFlyout().Hide();
 }
@@ -401,7 +398,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 	LOG(INFO) << "Now deselecting the tracking device...";
 
-	for (auto& expander : jointSelectorExpanders)
+	for (const auto& expander : jointSelectorExpanders)
 		expander.get()->SetVisibility(Visibility::Collapsed);
 
 	jointBasisLabel.get()->Visibility(Visibility::Collapsed);
@@ -412,7 +409,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	overridesLabel.get()->Visibility(Visibility::Collapsed);
 	deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 
-	for (auto& expander : overrideSelectorExpanders)
+	for (const auto& expander : overrideSelectorExpanders)
 		expander.get()->SetVisibility(Visibility::Collapsed);
 
 	if (trackingDevice.index() == 0)
@@ -479,7 +476,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	// Deselect the device
 	k2app::K2Settings.overrideDeviceGUIDsMap.erase(selectedTrackingDeviceGUIDPair.first);
 
-	TrackingDevices::updateOverrideDeviceUI();
+	TrackingDevices::updateTrackingDevicesUI();
 	
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -509,11 +506,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		// Also refresh joints
 
 		// Clear items
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 			expander.get()->ReAppendTrackers();
 
 		// Push the placeholder to all combos
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 			expander.get()->PushOverrideJoint(
 				k2app::interfacing::LocalizedResourceWString(
 					L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
@@ -523,19 +520,19 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		{
 		case ktvr::K2_Character_Basic:
 			{
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->PushOverrideJoints(false);
 			}
 			break;
 		case ktvr::K2_Character_Simple:
 			{
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->PushOverrideJoints();
 			}
 			break;
 		case ktvr::K2_Character_Full:
 			{
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->PushOverrideJoints();
 			}
 			break;
@@ -544,7 +541,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		// Try fix override IDs if wrong
 		TrackingDevices::devices_check_override_ids(selectedTrackingDeviceGUIDPair.second);
 
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 		{
 			// Select the first (or next, if exists) joint
 			// Set the placeholder text on disabled combos
@@ -558,7 +555,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a SkeletonBasis device, so this should be hidden
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
@@ -597,11 +594,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		// Also refresh joints
 
 		// Clear items
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 			expander.get()->ReAppendTrackers();
 
 		// Push the placeholder to all combos
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 			expander.get()->PushOverrideJoint(
 				k2app::interfacing::LocalizedResourceWString(
 					L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
@@ -609,13 +606,13 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		// Append all joints to all combos
 		for (auto& _joint : device->getTrackedJoints())
 			// Push the name to all combos
-			for (auto& expander : overrideSelectorExpanders)
+			for (const auto& expander : overrideSelectorExpanders)
 				expander.get()->PushOverrideJoint(_joint.getJointName());
 
 		// Try fix override IDs if wrong
 		TrackingDevices::devices_check_override_ids(selectedTrackingDeviceGUIDPair.second);
 
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 		{
 			// Select the first (or next, if exists) joint
 			// Set the placeholder text on disabled combos
@@ -629,7 +626,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected an override device, so this should be hidden
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
@@ -662,7 +659,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	overridesLabel.get()->Visibility(Visibility::Visible);
 	deselectDeviceButton.get()->Visibility(Visibility::Visible);
 
-	for (auto& expander : overrideSelectorExpanders)
+	for (const auto& expander : overrideSelectorExpanders)
 		expander.get()->SetVisibility(Visibility::Visible);
 
 	// Register and etc
@@ -686,7 +683,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
 	
-	TrackingDevices::updateOverrideDeviceUI();
+	TrackingDevices::updateTrackingDevicesUI();
 
 	{
 		// Remove the only one child of our outer main content grid
@@ -749,7 +746,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 		device_status = device->statusResultWString(device->getStatusResult());
 
 		// We've selected a SkeletonBasis device, so this should be hidden
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
@@ -790,7 +787,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 			k2app::K2Settings.overrideDeviceGUIDsMap.erase(selectedTrackingDeviceGUIDPair.first);
 
 		// Also refresh joints
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 		{
 			expander.get()->ReAppendTrackers(); // Refresh trackers/joints
 			expander.get()->SetVisibility(Visibility::Visible); // Set as visible
@@ -829,7 +826,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	overridesLabel.get()->Visibility(Visibility::Collapsed);
 	deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
 
-	for (auto& expander : overrideSelectorExpanders)
+	for (const auto& expander : overrideSelectorExpanders)
 		expander.get()->SetVisibility(Visibility::Collapsed);
 
 	// Register and etc
@@ -852,11 +849,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
-	
-	TrackingDevices::updateTrackingDeviceUI();
 
-	// This is here too cause an override might've became a base... -_-
-	TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
+	TrackingDevices::updateTrackingDevicesUI();
 
 	// If controls are set to be visible
 	if (jointSelectorExpanders[0].get()->ContainerExpander().get()->Visibility() == Visibility::Visible)
@@ -1037,7 +1031,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 
 	// Only if override -> select enabled combos
 	if (TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 			expander.get()->UpdateOverrideToggles();
 
 	if (trackingDevice.index() == 0)
@@ -1065,14 +1059,14 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 				: *k2app::interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a SkeletonBasis device, so this should be hidden
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 		// For all override devices
 		{
-			for (auto& expander : overrideSelectorExpanders)
+			for (const auto& expander : overrideSelectorExpanders)
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
@@ -1093,11 +1087,11 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 			if (TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
 			{
 				// Clear items
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
 
 				// Push the placeholder to all combos
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->PushOverrideJoint(
 						k2app::interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
@@ -1107,19 +1101,19 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 				{
 				case ktvr::K2_Character_Basic:
 					{
-						for (auto& expander : overrideSelectorExpanders)
+						for (const auto& expander : overrideSelectorExpanders)
 							expander.get()->PushOverrideJoints(false);
 					}
 					break;
 				case ktvr::K2_Character_Simple:
 					{
-						for (auto& expander : overrideSelectorExpanders)
+						for (const auto& expander : overrideSelectorExpanders)
 							expander.get()->PushOverrideJoints();
 					}
 					break;
 				case ktvr::K2_Character_Full:
 					{
-						for (auto& expander : overrideSelectorExpanders)
+						for (const auto& expander : overrideSelectorExpanders)
 							expander.get()->PushOverrideJoints();
 					}
 					break;
@@ -1128,7 +1122,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceGUIDPair.second);
 
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 				{
 					// Select the first (or next, if exists) joint
 					// Set the placeholder text on disabled combos
@@ -1169,7 +1163,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 
 		// For base joints devices
 		{
-			for (auto& expander : jointSelectorExpanders)
+			for (const auto& expander : jointSelectorExpanders)
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsABase(selectedTrackingDeviceGUIDPair.first))
@@ -1185,7 +1179,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 
 		// For all override devices
 		{
-			for (auto& expander : overrideSelectorExpanders)
+			for (const auto& expander : overrideSelectorExpanders)
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
@@ -1205,18 +1199,18 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 			// If we're reconnecting a base device, also refresh joints
 			if (TrackingDevices::IsABase(selectedTrackingDeviceGUIDPair.first))
 			{
-				for (auto& expander : jointSelectorExpanders)
+				for (const auto& expander : jointSelectorExpanders)
 					expander.get()->ReAppendTrackers();
 			}
 			// If we're reconnecting an override device, also refresh joints
 			else if (TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
 			{
 				// Clear items
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
 
 				// Push the placeholder to all combos
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->PushOverrideJoint(
 						k2app::interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
@@ -1224,14 +1218,14 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
 					// Push the name to all combos
-					for (auto& expander : overrideSelectorExpanders)
+					for (const auto& expander : overrideSelectorExpanders)
 						expander.get()->PushOverrideJoint(_joint.getJointName());
 
 
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceGUIDPair.second);
 
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 				{
 					// Select the first (or next, if exists) joint
 					// Set the placeholder text on disabled combos
@@ -1557,15 +1551,14 @@ Amethyst::implementation::DevicesPage::TrackingDeviceTreeView_ItemInvoked(
 		node.DeviceGUID().c_str(), TrackingDevices::deviceGUID_ID_Map[node.DeviceGUID().c_str()] };
 
 	// Reload the tracking device UI (no animations if unchanged)
-	ReloadSelectedDevice(selectedTrackingDeviceGUIDPair == _prev_device_guid_pair);
+	ReloadSelectedDevice(selectedTrackingDeviceGUIDPair == previousSelectedTrackingDeviceGUIDPair);
 
 	// Backup
-	_prev_device_guid_pair = selectedTrackingDeviceGUIDPair;
+	previousSelectedTrackingDeviceGUIDPair = selectedTrackingDeviceGUIDPair;
 }
 
 
-Windows::Foundation::IAsyncAction
-Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
+Windows::Foundation::IAsyncAction k2app::shared::devices::ReloadSelectedDevice(const bool& _manual)
 
 {
 	const auto& trackingDevice = 
@@ -1576,17 +1569,17 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 
 	// Collapse all joint expanders
 	if (!_manual)
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 			expander.get()->ContainerExpander().get()->IsExpanded(false);
 
 	// Collapse all override expanders
 	if (!_manual)
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 			expander.get()->ContainerExpander().get()->IsExpanded(false);
 
 	// Only if override -> select enabled combos
 	if (TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 			expander.get()->UpdateOverrideToggles();
 
 	if (trackingDevice.index() == 0)
@@ -1614,14 +1607,14 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 				: *k2app::interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a SkeletonBasis device, so this should be hidden
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 			expander.get()->SetVisibility(Visibility::Collapsed);
 
 		jointBasisLabel.get()->Visibility(Visibility::Collapsed);
 
 		// For all override devices
 		{
-			for (auto& expander : overrideSelectorExpanders)
+			for (const auto& expander : overrideSelectorExpanders)
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
@@ -1642,11 +1635,11 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 			if (TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
 			{
 				// Clear items
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
 
 				// Push the placeholder to all combos
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->PushOverrideJoint(
 						k2app::interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
@@ -1656,19 +1649,19 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 				{
 				case ktvr::K2_Character_Basic:
 					{
-						for (auto& expander : overrideSelectorExpanders)
+						for (const auto& expander : overrideSelectorExpanders)
 							expander.get()->PushOverrideJoints(false);
 					}
 					break;
 				case ktvr::K2_Character_Simple:
 					{
-						for (auto& expander : overrideSelectorExpanders)
+						for (const auto& expander : overrideSelectorExpanders)
 							expander.get()->PushOverrideJoints();
 					}
 					break;
 				case ktvr::K2_Character_Full:
 					{
-						for (auto& expander : overrideSelectorExpanders)
+						for (const auto& expander : overrideSelectorExpanders)
 							expander.get()->PushOverrideJoints();
 					}
 					break;
@@ -1677,7 +1670,7 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceGUIDPair.second);
 
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 				{
 					// Select the first (or next, if exists) joint
 					// Set the placeholder text on disabled combos
@@ -1718,7 +1711,7 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 
 		// For base joints devices
 		{
-			for (auto& expander : jointSelectorExpanders)
+			for (const auto& expander : jointSelectorExpanders)
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsABase(selectedTrackingDeviceGUIDPair.first))
@@ -1734,7 +1727,7 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 
 		// For all override devices
 		{
-			for (auto& expander : overrideSelectorExpanders)
+			for (const auto& expander : overrideSelectorExpanders)
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
@@ -1754,18 +1747,18 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 			// If we're reconnecting a base device, also refresh joints
 			if (TrackingDevices::IsABase(selectedTrackingDeviceGUIDPair.first))
 			{
-				for (auto& expander : jointSelectorExpanders)
+				for (const auto& expander : jointSelectorExpanders)
 					expander.get()->ReAppendTrackers();
 			}
 			// If we're reconnecting an override device, also refresh joints
 			else if (TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
 			{
 				// Clear items
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->ReAppendTrackers();
 
 				// Push the placeholder to all combos
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->PushOverrideJoint(
 						k2app::interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
@@ -1773,14 +1766,14 @@ Amethyst::implementation::DevicesPage::ReloadSelectedDevice(const bool& _manual)
 				// Append all joints to all combos
 				for (auto& _joint : device->getTrackedJoints())
 					// Push the name to all combos
-					for (auto& expander : overrideSelectorExpanders)
+					for (const auto& expander : overrideSelectorExpanders)
 						expander.get()->PushOverrideJoint(_joint.getJointName());
 
 
 				// Try fix override IDs if wrong
 				TrackingDevices::devices_check_override_ids(selectedTrackingDeviceGUIDPair.second);
 
-				for (auto& expander : overrideSelectorExpanders)
+				for (const auto& expander : overrideSelectorExpanders)
 				{
 					// Select the first (or next, if exists) joint
 					// Set the placeholder text on disabled combos

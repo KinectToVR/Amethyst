@@ -179,10 +179,10 @@
                                 <Grid>
 
                                     <MediaPlayerElement x:Name="CalibrationPreviewMediaElement"
-                                                        Stretch="UniformToFill" Margin="0,0,0,80" 
-                                                        HorizontalAlignment="Center" 
+                                                        Stretch="UniformToFill" Margin="0,0,0,80"
+                                                        HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
-                                                        HorizontalContentAlignment="Center" 
+                                                        HorizontalContentAlignment="Center"
                                                         VerticalContentAlignment="Center" />
 
                                     <Border Margin="0,0,0,0" Width="460" Height="80"
@@ -811,10 +811,18 @@
                             </Grid>
 
                             <!--Override Status Error-->
+                            <TextBlock x:Name="AdditionalDeviceErrorsHyperlink" 
+                                       Margin="40,10,20,0" HorizontalAlignment="Left" Visibility="Collapsed" 
+                                       Tapped="AdditionalDeviceErrorsHyperlink_Tapped" FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
-                            <HyperlinkButton x:Name="OverrideDeviceErrorsHyperlink" Margin="40,10,20,0"
-                                             HorizontalAlignment="Left" FontWeight="SemiBold"
-                                             Visibility="Collapsed" Click="OverrideDeviceErrorsHyperlink_Click" />
+                            <TextBlock x:Name="AdditionalDeviceErrorsHyperlink_Line2" 
+                                       Margin="40,2,20,0" HorizontalAlignment="Left" 
+                                       Visibility="{Binding ElementName=AdditionalDeviceErrorsHyperlink, 
+                                                    Path=Visibility, TargetNullValue=Collapsed}" 
+                                       Tapped="AdditionalDeviceErrorsHyperlink_Tapped" 
+                                       FontWeight="SemiBold" TextDecorations="Underline"
+                                       Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
                         </StackPanel>
 
                         <Grid Height="60" VerticalAlignment="Bottom">

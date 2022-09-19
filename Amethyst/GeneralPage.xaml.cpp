@@ -103,7 +103,7 @@ namespace winrt::Amethyst::implementation
 		serverErrorButtonsGrid = std::make_shared<Controls::Grid>(ServerErrorButtonsGrid());
 
 		toggleFreezeButton = std::make_shared<Controls::Primitives::ToggleButton>(ToggleTrackingButton());
-		overrideDeviceErrorsHyperlink = std::make_shared<Controls::HyperlinkButton>(OverrideDeviceErrorsHyperlink());
+		additionalDeviceErrorsHyperlink = std::make_shared<Controls::TextBlock>(AdditionalDeviceErrorsHyperlink());
 
 		offsetsButton = std::make_shared<Controls::MenuFlyoutItem>(OffsetsButton());
 		freezeOnlyLowerToggle = std::make_shared<Controls::ToggleMenuFlyoutItem>(FreezeOnlyLowerToggle());
@@ -1188,8 +1188,11 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	OpenDocsButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Help/Docs")));
 
-	OverrideDeviceErrorsHyperlink().Content(box_value(
-		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/OverrideErrors")));
+	AdditionalDeviceErrorsHyperlink().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/OtherErrors/Line1"));
+
+	AdditionalDeviceErrorsHyperlink_Line2().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/OtherErrors/Line2"));
 
 	Titles_Status().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Titles/Status"));
@@ -1319,8 +1322,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 
 	// Update things
 	k2app::interfacing::UpdateServerStatusUI();
-	TrackingDevices::updateTrackingDeviceUI();
-	TrackingDevices::updateOverrideDeviceUI();
+	TrackingDevices::updateTrackingDevicesUI();
 
 	// Notice that we're gonna change some values
 	pending_offsets_update = true;
@@ -1944,17 +1946,17 @@ void Amethyst::implementation::GeneralPage::BaseCalibration_Click(
 	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 
 	// Eventually enable the auto calibration
-	const auto& trackingDevice = 
+	const auto& trackingDevice =
 		TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceGUIDPair.second);
-	
-		// Kinect Basis
-		if (trackingDevice.index() == 0 &&
-			std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
-			getDeviceCharacteristics() == ktvr::K2_Character_Full)
-		{
-			AutoCalibrationButton().IsEnabled(true);
-			AutoCalibrationButtonDecorations().Opacity(1.0);
-		}
+
+	// Kinect Basis
+	if (trackingDevice.index() == 0 &&
+		std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
+		getDeviceCharacteristics() == ktvr::K2_Character_Full)
+	{
+		AutoCalibrationButton().IsEnabled(true);
+		AutoCalibrationButtonDecorations().Opacity(1.0);
+	}
 
 	// Set the current device for scripts
 	general_current_calibrating_device = general_calibrating_device::K2_BaseDevice;
@@ -1992,13 +1994,13 @@ void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
 		TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceGUIDPair.second);
 
 	// Kinect Basis
-	if (trackingDevice.index() == 0 && 
+	if (trackingDevice.index() == 0 &&
 		std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
-			getDeviceCharacteristics() == ktvr::K2_Character_Full)
-		{
-			AutoCalibrationButton().IsEnabled(true);
-			AutoCalibrationButtonDecorations().Opacity(1.0);
-		}
+		getDeviceCharacteristics() == ktvr::K2_Character_Full)
+	{
+		AutoCalibrationButton().IsEnabled(true);
+		AutoCalibrationButtonDecorations().Opacity(1.0);
+	}
 
 	// Set the current device for scripts
 	general_current_calibrating_device = general_calibrating_device::K2_OverrideDevice;
@@ -2291,9 +2293,8 @@ void Amethyst::implementation::GeneralPage::FreezeOnlyLowerToggle_Click(
 }
 
 
-void Amethyst::implementation::GeneralPage::OverrideDeviceErrorsHyperlink_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
+void Amethyst::implementation::GeneralPage::AdditionalDeviceErrorsHyperlink_Tapped(
+	const Windows::Foundation::IInspectable& sender, const Input::TappedRoutedEventArgs& e)
 {
-	// Play a sound
-	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+	k2app::shared::general::additionalDeviceErrorsHyperlink_TappedEvent();
 }

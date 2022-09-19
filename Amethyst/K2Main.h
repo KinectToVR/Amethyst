@@ -992,8 +992,7 @@ namespace k2app::main
 						}
 						else
 						{
-							TrackingDevices::updateTrackingDeviceUI();
-							TrackingDevices::updateOverrideDeviceUI(); // Auto-handles if none
+							TrackingDevices::updateTrackingDevicesUI();
 
 							if (shared::general::errorWhatGrid.get()->Visibility() ==
 								winrt::Microsoft::UI::Xaml::Visibility::Visible)

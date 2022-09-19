@@ -90,7 +90,9 @@ namespace TrackingDevices
 		// If we have an override and if it's actually affecting the waist rotation
 		for (const auto& overrideDevice : k2app::K2Settings.overrideDeviceGUIDsMap)
 			if (k2app::K2Settings.K2TrackersVector.at(0).data_isActive &&
-				k2app::K2Settings.K2TrackersVector.at(0).isRotationOverridden)
+				k2app::K2Settings.K2TrackersVector.at(0).isRotationOverridden &&
+				k2app::K2Settings.K2TrackersVector.at(0).overrideGUID ==
+				overrideDevice.first) // The device's GUID string
 			{
 				// If the override device is a kinect then it HAS NOT TO support flip
 				if (TrackingDevicesVector[overrideDevice.second].index() == 0 &&
@@ -351,7 +353,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				_ptr_software_orientation_v2.get()->IsEnabled(enable);
 
 				// Reset if selected and was turned off
-				for (auto tracker_p : _tracker_pointers)
+				for (const auto& tracker_p : _tracker_pointers)
 					if (!enable &&
 						(tracker_p->orientationTrackingOption == k2app::k2_SoftwareCalculatedRotation ||
 							tracker_p->orientationTrackingOption == k2app::k2_SoftwareCalculatedRotation_V2))
@@ -579,12 +581,12 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				[this](const Expander& sender,
 				       const ExpanderExpandingEventArgs& e) -> void
 				{
-					for (auto& expander : k2app::shared::settings::jointExpanderVector)
+					for (const auto& expander : k2app::shared::settings::jointExpanderVector)
 						if (expander->MainExpander().get() != nullptr &&
 							expander->MainExpander().get() != _ptr_main_expander.get())
 							expander->MainExpander().get()->IsExpanded(false);
 
-					for (auto tracker_p : _tracker_pointers)
+					for (const auto& tracker_p : _tracker_pointers)
 						tracker_p->data_isActive = _tracker_pointers[0]->data_isActive;
 
 					if (!_tracker_pointers[0]->data_isActive)
@@ -604,7 +606,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					if (!k2app::shared::settings::settings_localInitFinished)co_return;
 
 					// Make actual changes
-					for (auto tracker_p : _tracker_pointers)
+					for (const auto& tracker_p : _tracker_pointers)
 					{
 						tracker_p->data_isActive = _ptr_joint_switch.get()->IsOn();
 
@@ -680,7 +682,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					if (_ptr_position_combo.get()->SelectedIndex() < 0)
 						_ptr_position_combo.get()->SelectedItem(e.RemovedItems().GetAt(0));
 
-					for (auto tracker_p : _tracker_pointers)
+					for (const auto& tracker_p : _tracker_pointers)
 						tracker_p->positionTrackingFilterOption =
 							static_cast<k2app::JointPositionTrackingOption>(_ptr_position_combo.get()->SelectedIndex());
 
@@ -710,7 +712,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					if (_ptr_orientation_combo.get()->SelectedIndex() < 0)
 						_ptr_orientation_combo.get()->SelectedItem(e.RemovedItems().GetAt(0));
 
-					for (auto tracker_p : _tracker_pointers)
+					for (const auto& tracker_p : _tracker_pointers)
 						tracker_p->orientationTrackingOption =
 							static_cast<k2app::JointRotationTrackingOption>(_ptr_orientation_combo.get()->
 								SelectedIndex());

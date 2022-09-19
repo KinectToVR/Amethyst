@@ -1889,8 +1889,7 @@ namespace winrt::Amethyst::implementation
 					// Update the UI
 					k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue([&, this]
 					{
-						TrackingDevices::updateTrackingDeviceUI();
-						TrackingDevices::updateOverrideDeviceUI();
+						TrackingDevices::updateTrackingDevicesUI();
 					});
 				}
 				else // Log and exit, we have nothing to do

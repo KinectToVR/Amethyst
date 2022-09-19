@@ -21,23 +21,25 @@ namespace TrackingDevices
 	inline void RefreshDevicesMVVMList();
 
 	// Select proper tracking device in the UI
-	inline void updateTrackingDeviceUI()
+	inline void updateTrackingDevicesUI()
 	{
 		if (TrackingDevicesVector.size() < 1) return; // Just give up
 
 		// Get the current tracking device
-		auto& trackingDevice = TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceGUIDPair.second);
+		const auto& trackingDevice = TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceGUIDPair.second);
 
 		std::wstring deviceName = L"[UNKNOWN]"; // Dummy name
-		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?"; // Dummy status
-		bool _flip_enabled_backup = k2app::K2Settings.isFlipEnabled;
+		HRESULT device_status = E_FAIL;
+		std::wstring device_status_string = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?"; // Dummy status
+		const bool _flip_enabled_backup = k2app::K2Settings.isFlipEnabled;
 
 		if (trackingDevice.index() == 0)
 		{
 			// Kinect Basis
 			const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
-			device_status = device->statusResultWString(device->getStatusResult());
+			device_status = device->getStatusResult();
+			device_status_string = device->statusResultWString(device_status);
 			deviceName = device->getDeviceName();
 
 			// Optionally disable flip (used later, saved later)
@@ -48,7 +50,8 @@ namespace TrackingDevices
 			// Joints Basis
 			const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
-			device_status = device->statusResultWString(device->getStatusResult());
+			device_status = device->getStatusResult();
+			device_status_string = device->statusResultWString(device_status);
 			deviceName = device->getDeviceName();
 
 			// Disable flip (used later, saved later)
@@ -62,29 +65,138 @@ namespace TrackingDevices
 		/* Update the device in general tab */
 
 		// Update the status here
-		bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
+		bool base_status_ok = device_status == S_OK;
+		bool override_status_ok = true; // Assume success :)
+		std::pair<std::wstring, int32_t> devices_navigate_index{L"", -1};
+
+		// Loop over all the override indexes and check them
+		for (auto& [_override_guid, _override_id] : k2app::K2Settings.overrideDeviceGUIDsMap)
+			// Check the device status
+			if (deviceGUID_ID_Map.contains(_override_guid))
+			{
+				const auto& overrideDevice = TrackingDevicesVector.at(_override_id);
+				switch (overrideDevice.index())
+				{
+				case 0:
+					// Kinect Basis
+					if (std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(overrideDevice)->getStatusResult() != S_OK)
+					{
+						override_status_ok = false; // Failure!
+
+						// Overwrite the select index if not changed yet
+						if (devices_navigate_index.second < 0)
+							devices_navigate_index = {
+								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(overrideDevice)->getDeviceGUID(),
+								_override_id
+							};
+					}
+					break;
+				case 1:
+					// Joints Basis
+					if (std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(overrideDevice)->getStatusResult() != S_OK)
+					{
+						override_status_ok = false; // Failure!
+
+						// Overwrite the select index if not changed yet
+						if (devices_navigate_index.second < 0)
+							devices_navigate_index = {
+								std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(overrideDevice)->getDeviceGUID(),
+								_override_id
+							};
+					}
+					break;
+				}
+			}
+
+		k2app::shared::general::additionalDeviceErrorsHyperlink_TappedEvent =
+			[&, devices_navigate_index]()-> winrt::Windows::Foundation::IAsyncAction
+			{
+				// Play a sound
+				playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
+				// Navigate to the devices page
+				k2app::shared::main::mainNavigationView->SelectedItem(
+					k2app::shared::main::mainNavigationView->MenuItems().GetAt(2));
+				k2app::shared::main::NavView_Navigate(
+					L"devices", winrt::Microsoft::UI::Xaml::Media::Animation::EntranceNavigationTransitionInfo());
+
+				// Wait a bit
+				{
+					winrt::apartment_context ui_thread;
+					co_await winrt::resume_background();
+					Sleep(500);
+					co_await ui_thread;
+				}
+
+				// Should already be init-ed after 500ms, but check anyway
+				if (k2app::shared::devices::devicesTreeView.get() != nullptr
+					&& devices_navigate_index.second >= 0)
+				{
+					k2app::shared::devices::devicesTreeView.get()->SelectedNode(
+						k2app::shared::devices::devicesTreeView.get()->RootNodes().
+						                                        GetAt(devices_navigate_index.second));
+
+					// Backup
+					const bool _anim = devices_navigate_index.first ==
+						k2app::shared::devices::selectedTrackingDeviceGUIDPair.first;
+
+					// Overwrite the selected device
+					k2app::shared::devices::selectedTrackingDeviceGUIDPair = devices_navigate_index;
+
+					// Reload the tracking device UI (no animations if unchanged)
+					k2app::shared::devices::ReloadSelectedDevice(_anim);
+
+					// Backup
+					k2app::shared::devices::previousSelectedTrackingDeviceGUIDPair =
+						k2app::shared::devices::selectedTrackingDeviceGUIDPair;
+				}
+			};
+
 		using namespace winrt::Microsoft::UI::Xaml;
 
 		// Check with this one, should be the same for all anyway
 		if (k2app::shared::general::errorWhatText.get() != nullptr)
 		{
 			// Don't show device errors if we've got a server error
-			if (!k2app::interfacing::isServerDriverPresent)status_ok = true;
+			if (!k2app::interfacing::isServerDriverPresent)
+				base_status_ok = true; // Skip if the server's failed
 
+			// If the server driver's OK
 			k2app::shared::general::errorWhatText.get()->Visibility(
-				status_ok ? Visibility::Collapsed : Visibility::Visible);
+				base_status_ok ? Visibility::Collapsed : Visibility::Visible);
 			k2app::shared::general::errorWhatGrid.get()->Visibility(
-				status_ok ? Visibility::Collapsed : Visibility::Visible);
+				base_status_ok ? Visibility::Collapsed : Visibility::Visible);
 			k2app::shared::general::errorButtonsGrid.get()->Visibility(
-				status_ok ? Visibility::Collapsed : Visibility::Visible);
+				base_status_ok ? Visibility::Collapsed : Visibility::Visible);
 			k2app::shared::general::trackingDeviceErrorLabel.get()->Visibility(
-				status_ok ? Visibility::Collapsed : Visibility::Visible);
+				base_status_ok ? Visibility::Collapsed : Visibility::Visible);
 
 			// Split status and message by \n
 			k2app::shared::general::deviceNameLabel.get()->Text(deviceName);
-			k2app::shared::general::deviceStatusLabel.get()->Text(split_status(device_status)[0]);
-			k2app::shared::general::trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
-			k2app::shared::general::errorWhatText.get()->Text(split_status(device_status)[2]);
+			k2app::shared::general::deviceStatusLabel.get()->Text(split_status(device_status_string)[0]);
+			k2app::shared::general::trackingDeviceErrorLabel.get()->Text(split_status(device_status_string)[1]);
+			k2app::shared::general::errorWhatText.get()->Text(split_status(device_status_string)[2]);
+		}
+
+		// Check with this one, should be the same for all anyway
+		if (k2app::shared::general::additionalDeviceErrorsHyperlink.get() != nullptr)
+		{
+			// Show the 'additional errors' button if there are errors
+			k2app::shared::general::additionalDeviceErrorsHyperlink.get()->Visibility(
+				// Skip if the server driver's not present
+				(override_status_ok || !k2app::interfacing::isServerDriverPresent)
+					? Visibility::Collapsed
+					: Visibility::Visible);
+
+			// Set the app state (optionally)
+			if (k2app::interfacing::currentPageTag == L"devices")
+			{
+				if (k2app::shared::devices::devicesTreeView.get() != nullptr && override_status_ok &&
+					IsAnOverride(k2app::shared::devices::selectedTrackingDeviceGUIDPair.first))
+					k2app::interfacing::currentAppState = L"overrides";
+				else
+					k2app::interfacing::currentAppState = L"devices";
+			}
 		}
 
 		/* Update the device in devices tab */
@@ -105,7 +217,7 @@ namespace TrackingDevices
 				const bool _sup = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>
 					(trackingDevice)->isAppOrientationSupported();
 
-				for (auto expander : k2app::shared::settings::jointExpanderVector)
+				for (const auto& expander : k2app::shared::settings::jointExpanderVector)
 					expander->EnableSoftwareOrientation(_sup);
 
 				k2app::shared::settings::flipToggle.get()->IsEnabled(
@@ -120,13 +232,11 @@ namespace TrackingDevices
 					k2app::shared::settings::flipToggle.get()->IsEnabled()
 						? Visibility::Visible
 						: Visibility::Collapsed);
-
-				settings_set_external_flip_is_enabled();
 			}
 			else if (trackingDevice.index() == 1)
 			{
 				// Joints Basis
-				for (auto expander : k2app::shared::settings::jointExpanderVector)
+				for (const auto& expander : k2app::shared::settings::jointExpanderVector)
 					expander->EnableSoftwareOrientation(false);
 
 				k2app::shared::settings::flipToggle.get()->IsEnabled(false);
@@ -135,100 +245,10 @@ namespace TrackingDevices
 
 				// Hide the flip controls container
 				k2app::shared::settings::flipDropDownContainer.get()->Visibility(Visibility::Collapsed);
-
-				settings_set_external_flip_is_enabled();
 			}
+			// Update extflip
+			settings_set_external_flip_is_enabled();
 		}
-
-		// Refresh the device list MVVM
-		RefreshDevicesMVVMList();
-	}
-
-	// Select proper tracking device in the UI
-	inline void updateOverrideDeviceUI()
-	{
-		if (TrackingDevicesVector.size() < 1) return; // Just give up
-
-		//// Don't show ANYTHING if we 'ven 't selected an override device
-		//const bool _show = (k2app::K2Settings.overrideDeviceID >= 0) && (TrackingDevicesVector.size() >= 2);
-		//bool status_ok = false; // Assume failure :/
-
-		//std::wstring deviceName = L"[UNKNOWN]"; // Dummy name
-		//std::wstring device_status = L"E_UKNOWN\nWhat's happened here?"; // Dummy status
-
-		//if (_show)
-		//{
-		//	// Get the current tracking device
-		//	auto& overrideDevice = TrackingDevicesVector.at(k2app::K2Settings.overrideDeviceID);
-
-		//	if (overrideDevice.index() == 0)
-		//	{
-		//		// Kinect Basis
-		//		const auto device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(overrideDevice);
-
-		//		device_status = device->statusResultWString(device->getStatusResult());
-		//		deviceName = device->getDeviceName();
-		//	}
-		//	else if (overrideDevice.index() == 1)
-		//	{
-		//		// Joints Basis
-		//		const auto device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(overrideDevice);
-
-		//		device_status = device->statusResultWString(device->getStatusResult());
-		//		deviceName = device->getDeviceName();
-		//	}
-
-		//	status_ok = device_status.find(L"S_OK") != std::wstring::npos;
-		//}
-
-		///* Update the device in settings tab */
-
-		//settings_set_external_flip_is_enabled();
-
-		///* Update the device in general tab */
-
-		//// Check with this one, should be the same for all anyway
-		//if (k2app::shared::general::overrideErrorWhatText.get() != nullptr)
-		//{
-		//	// Update the status here
-		//	const bool base_status_ok = k2app::shared::general::errorWhatGrid.get()->Visibility() ==
-		//		winrt::Microsoft::UI::Xaml::Visibility::Collapsed;
-		//	using namespace winrt::Microsoft::UI::Xaml;
-
-		//	// Don't show device errors if we've got a server error or base error OR no o_device
-		//	if (!k2app::interfacing::isServerDriverPresent || !base_status_ok || !_show)status_ok = true;
-
-		//	// Don't show ANYTHING if we 'ven 't selected an override device
-		//	k2app::shared::general::overrideDeviceNameLabel.get()->Visibility(
-		//		_show ? Visibility::Visible : Visibility::Collapsed);
-		//	k2app::shared::general::overrideDeviceStatusLabel.get()->Visibility(
-		//		_show ? Visibility::Visible : Visibility::Collapsed);
-
-		//	k2app::shared::general::overrideErrorWhatText.get()->Visibility(
-		//		status_ok ? Visibility::Collapsed : Visibility::Visible);
-		//	k2app::shared::general::overrideErrorWhatGrid.get()->Visibility(
-		//		status_ok ? Visibility::Collapsed : Visibility::Visible);
-		//	k2app::shared::general::overrideErrorButtonsGrid.get()->Visibility(
-		//		status_ok ? Visibility::Collapsed : Visibility::Visible);
-		//	k2app::shared::general::overrideDeviceErrorLabel.get()->Visibility(
-		//		status_ok ? Visibility::Collapsed : Visibility::Visible);
-
-		//	// Split status and message by \n
-		//	k2app::shared::general::overrideDeviceNameLabel.get()->Text(deviceName);
-		//	k2app::shared::general::overrideDeviceStatusLabel.get()->Text(split_status(device_status)[0]);
-		//	k2app::shared::general::overrideDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
-		//	k2app::shared::general::overrideErrorWhatText.get()->Text(split_status(device_status)[2]);
-
-		//	if (k2app::interfacing::currentPageTag == L"devices")
-		//	{
-		//		if (k2app::shared::devices::devicesTreeView.get() != nullptr &&
-		//			k2app::shared::devices::selectedTrackingDeviceID ==
-		//			k2app::K2Settings.overrideDeviceID && status_ok)
-		//			k2app::interfacing::currentAppState = L"overrides";
-		//		else
-		//			k2app::interfacing::currentAppState = L"devices";
-		//	}
-		//}
 
 		// Refresh the device list MVVM
 		RefreshDevicesMVVMList();
@@ -544,7 +564,8 @@ namespace TrackingDevices
 	{
 		// Don't even try if not set up yet (or not on the right page)
 		if (!k2app::shared::devices::devices_mvvm_setup_finished
-			|| k2app::interfacing::currentPageTag != L"devices")return;
+			|| k2app::interfacing::currentPageTag != L"devices")
+			return;
 
 #ifdef _DEBUG
 		LOG(INFO) << "Refreshing the tracking devices' MVVM...";

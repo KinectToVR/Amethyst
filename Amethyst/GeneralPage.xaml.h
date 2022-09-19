@@ -83,7 +83,7 @@ namespace winrt::Amethyst::implementation
 		void DismissSetErrorButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                 const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ToggleTrackingButton_Click(const Windows::Foundation::IInspectable& sender,
-										const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		                                const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void CalibrationSelectView_PaneClosing(const Microsoft::UI::Xaml::Controls::SplitView& sender,
 		                                       const Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs
 		                                       & args);
@@ -113,9 +113,11 @@ namespace winrt::Amethyst::implementation
 		                                              const Windows::Foundation::IInspectable& args);
 		void StatusTeachingTip_ActionButtonClick(const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
 		                                         const Windows::Foundation::IInspectable& args);
-		void FreezeOnlyLowerToggle_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void OverrideDeviceErrorsHyperlink_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
-};
+		void FreezeOnlyLowerToggle_Click(const Windows::Foundation::IInspectable& sender,
+		                                 const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		void AdditionalDeviceErrorsHyperlink_Tapped(const Windows::Foundation::IInspectable& sender,
+		                                            const Microsoft::UI::Xaml::Input::TappedRoutedEventArgs& e);
+	};
 }
 
 namespace winrt::Amethyst::factory_implementation

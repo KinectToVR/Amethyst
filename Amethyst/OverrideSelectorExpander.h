@@ -470,7 +470,7 @@ namespace k2app::interfacing
 		__DEVICES_JOINTS_BEGIN_CHANGES
 
 		// Optionally fix combos for disabled trackers -> joint selectors for base
-		for (auto& expander : jointSelectorExpanders)
+		for (const auto& expander : jointSelectorExpanders)
 			for (std::shared_ptr<JointSelectorRow>& row : *expander.get()->JointSelectorRows())
 			{
 				Helpers::SetComboBoxIsEnabled_Safe(
@@ -483,7 +483,7 @@ namespace k2app::interfacing
 			}
 
 		// Optionally fix combos for disabled trackers -> joint selectors for override
-		for (auto& expander : overrideSelectorExpanders)
+		for (const auto& expander : overrideSelectorExpanders)
 			expander.get()->UpdateIsEnabled();
 
 		__DEVICES_JOINTS_END_CHANGES

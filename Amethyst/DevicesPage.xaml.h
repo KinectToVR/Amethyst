@@ -15,9 +15,7 @@ namespace winrt::Amethyst::implementation
 	struct DevicesPage : DevicesPageT<DevicesPage>
 	{
 		DevicesPage();
-
-		Windows::Foundation::IAsyncAction ReloadSelectedDevice(const bool& _manual = false);
-
+		
 		Windows::Foundation::IAsyncAction SetAsOverrideButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                                            const Microsoft::UI::Xaml::RoutedEventArgs&
 		                                                            e);

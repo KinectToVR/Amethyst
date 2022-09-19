@@ -150,8 +150,11 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>
 		freezeOnlyLowerToggle;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::HyperlinkButton>
-		overrideDeviceErrorsHyperlink;
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
+		additionalDeviceErrorsHyperlink;
+
+		inline std::function additionalDeviceErrorsHyperlink_TappedEvent =
+			[]()-> winrt::Windows::Foundation::IAsyncAction { co_return; };
 	}
 
 	namespace settings
@@ -192,10 +195,10 @@ namespace k2app::shared
 	namespace devices
 	{
 		inline bool devices_tab_setup_finished = false, // On-load setup
-			devices_tab_re_setup_finished = false, // Other setup
-			devices_joints_setup_pending = false, // Overrides
-			devices_signal_joints = true, // Optionally no signal
-			devices_mvvm_setup_finished = false; // MVVM setup done?
+		            devices_tab_re_setup_finished = false, // Other setup
+		            devices_joints_setup_pending = false, // Overrides
+		            devices_signal_joints = true, // Optionally no signal
+		            devices_mvvm_setup_finished = false; // MVVM setup done?
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TextBlock>
 			deviceNameLabel,
@@ -223,7 +226,8 @@ namespace k2app::shared
 
 		inline std::binary_semaphore smphSignalCurrentUpdate{0},
 		                             smphSignalStartMain{0};
-		
+
+		inline std::pair<std::wstring, uint32_t> previousSelectedTrackingDeviceGUIDPair{L"", -1};
 		inline std::pair<std::wstring, uint32_t> selectedTrackingDeviceGUIDPair{L"", -1};
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ScrollViewer> devicesMainContentScrollViewer;
@@ -239,6 +243,9 @@ namespace k2app::shared
 
 			jointsBasisExpanderHostStackPanel,
 			overridesExpanderHostStackPanel;
+
+		// Non-inline because it's defined somewhere else
+		winrt::Windows::Foundation::IAsyncAction ReloadSelectedDevice(const bool& _manual);
 	}
 
 	// (Only the first ones are needed)
