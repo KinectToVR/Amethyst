@@ -59,18 +59,19 @@ namespace k2app
 		uint32_t appSoundsVolume = 69; // Always 0<x<100
 
 		// Calibration - if we're calibrated
-		std::pair<bool, bool> isMatrixCalibrated{false, false};
+		std::map<std::wstring, bool> deviceMatricesCalibrated;
 
-		// Calibration matrices : Base, Override
-		std::pair<Eigen::Matrix<double, 3, 3>, Eigen::Matrix<double, 3, 3>> calibrationRotationMatrices;
-		std::pair<Eigen::Matrix<double, 1, 3>, Eigen::Matrix<double, 1, 3>> calibrationTranslationVectors;
-		std::pair<Eigen::Vector3d, Eigen::Vector3d> calibrationOrigins; // always 0,0,0 for auto
-		std::pair<double, double> calibrationYaws{0., 0.};
+		// Calibration matrices : GUID/Data
+		std::map<std::wstring, Eigen::Matrix<double, 3, 3>> deviceCalibrationRotationMatrices;
+		std::map<std::wstring, Eigen::Matrix<double, 1, 3>> deviceCalibrationTranslationVectors;
+		std::map<std::wstring, Eigen::Vector3d> deviceCalibrationOrigins; // always 0,0,0 for auto
+		std::map<std::wstring, double> deviceCalibrationYaws;
+
+		// Calibration helpers - calibration method: auto? : GUID/Data
+		std::map<std::wstring, bool> deviceAutoCalibration;
 
 		// Calibration helpers - points number
 		uint32_t calibrationPointsNumber = 3; // Always 3<=x<=5
-		// Calibration helpers - calibration method: auto?
-		std::pair<bool, bool> autoCalibration{false, false};
 
 		// Save the skeleton preview state
 		bool skeletonPreviewEnabled = true;
@@ -130,13 +131,13 @@ namespace k2app
 						CEREAL_NVP(autoSpawnEnabledJoints),
 						CEREAL_NVP(enableAppSounds),
 						CEREAL_NVP(appSoundsVolume),
-						CEREAL_NVP(isMatrixCalibrated),
-						CEREAL_NVP(calibrationRotationMatrices),
-						CEREAL_NVP(calibrationTranslationVectors),
-						CEREAL_NVP(calibrationOrigins),
-						CEREAL_NVP(calibrationYaws),
+						CEREAL_NVP(deviceMatricesCalibrated),
+						CEREAL_NVP(deviceCalibrationRotationMatrices),
+						CEREAL_NVP(deviceCalibrationTranslationVectors),
+						CEREAL_NVP(deviceCalibrationOrigins),
+						CEREAL_NVP(deviceCalibrationYaws),
 						CEREAL_NVP(calibrationPointsNumber),
-						CEREAL_NVP(autoCalibration),
+						CEREAL_NVP(deviceAutoCalibration),
 						CEREAL_NVP(skeletonPreviewEnabled),
 						CEREAL_NVP(forceSkeletonPreview),
 						CEREAL_NVP(freezeLowerOnly),
@@ -187,13 +188,13 @@ namespace k2app
 						CEREAL_NVP(autoSpawnEnabledJoints),
 						CEREAL_NVP(enableAppSounds),
 						CEREAL_NVP(appSoundsVolume),
-						CEREAL_NVP(isMatrixCalibrated),
-						CEREAL_NVP(calibrationRotationMatrices),
-						CEREAL_NVP(calibrationTranslationVectors),
-						CEREAL_NVP(calibrationOrigins),
-						CEREAL_NVP(calibrationYaws),
+						CEREAL_NVP(deviceMatricesCalibrated),
+						CEREAL_NVP(deviceCalibrationRotationMatrices),
+						CEREAL_NVP(deviceCalibrationTranslationVectors),
+						CEREAL_NVP(deviceCalibrationOrigins),
+						CEREAL_NVP(deviceCalibrationYaws),
 						CEREAL_NVP(calibrationPointsNumber),
-						CEREAL_NVP(autoCalibration),
+						CEREAL_NVP(deviceAutoCalibration),
 						CEREAL_NVP(skeletonPreviewEnabled),
 						CEREAL_NVP(forceSkeletonPreview),
 						CEREAL_NVP(freezeLowerOnly),
@@ -377,13 +378,13 @@ namespace k2app
 				autoSpawnEnabledJoints == other.autoSpawnEnabledJoints &&
 				enableAppSounds == other.enableAppSounds &&
 				appSoundsVolume == other.appSoundsVolume &&
-				isMatrixCalibrated == other.isMatrixCalibrated &&
-				calibrationRotationMatrices == other.calibrationRotationMatrices &&
-				calibrationTranslationVectors == other.calibrationTranslationVectors &&
-				calibrationOrigins == other.calibrationOrigins &&
-				calibrationYaws == other.calibrationYaws &&
+				deviceMatricesCalibrated == other.deviceMatricesCalibrated &&
+				deviceCalibrationRotationMatrices == other.deviceCalibrationRotationMatrices &&
+				deviceCalibrationTranslationVectors == other.deviceCalibrationTranslationVectors &&
+				deviceCalibrationOrigins == other.deviceCalibrationOrigins &&
+				deviceCalibrationYaws == other.deviceCalibrationYaws &&
 				calibrationPointsNumber == other.calibrationPointsNumber &&
-				autoCalibration == other.autoCalibration &&
+				deviceAutoCalibration == other.deviceAutoCalibration &&
 				skeletonPreviewEnabled == other.skeletonPreviewEnabled &&
 				forceSkeletonPreview == other.forceSkeletonPreview &&
 				freezeLowerOnly == other.freezeLowerOnly &&

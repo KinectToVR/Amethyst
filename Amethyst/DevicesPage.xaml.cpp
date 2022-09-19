@@ -380,7 +380,7 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
-	
+
 	// Update the GeneralPage status
 	TrackingDevices::updateTrackingDevicesUI();
 
@@ -472,12 +472,12 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
-	
+
 	// Deselect the device
 	k2app::K2Settings.overrideDeviceGUIDsMap.erase(selectedTrackingDeviceGUIDPair.first);
 
 	TrackingDevices::updateTrackingDevicesUI();
-	
+
 	// Save settings
 	k2app::K2Settings.saveSettings();
 
@@ -488,7 +488,7 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOverrideButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	const auto& trackingDevice = 
+	const auto& trackingDevice =
 		TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceGUIDPair.second);
 
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
@@ -653,7 +653,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	setAsOverrideButton.get()->IsEnabled(false);
 	setAsBaseButton.get()->IsEnabled(true);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
-	
+
 	LOG(INFO) << "Changed the current tracking device (Override) to " << WStringToString(deviceName);
 
 	overridesLabel.get()->Visibility(Visibility::Visible);
@@ -682,7 +682,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	deviceStatusLabel.get()->Text(split_status(device_status)[0]);
 	trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
 	errorWhatText.get()->Text(split_status(device_status)[2]);
-	
+
 	TrackingDevices::updateTrackingDevicesUI();
 
 	{
@@ -723,7 +723,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBaseButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	const auto& trackingDevice = 
+	const auto& trackingDevice =
 		TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceGUIDPair.second);
 
 	std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
@@ -820,7 +820,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	setAsOverrideButton.get()->IsEnabled(false);
 	setAsBaseButton.get()->IsEnabled(false);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
-	
+
 	LOG(INFO) << "Changed the current tracking device (Base) to " << WStringToString(deviceName);
 
 	overridesLabel.get()->Visibility(Visibility::Collapsed);
@@ -1021,9 +1021,9 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 
 	// Notify of the setup's end
 	devices_tab_setup_finished = true;
-	
+
 	// Run the on-selected routine
-	const auto& trackingDevice = 
+	const auto& trackingDevice =
 		TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceGUIDPair.second);
 
 	std::wstring deviceName = L"[UNKNOWN]";
@@ -1070,14 +1070,14 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			overridesLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 		}
 
 		// Set up combos if the device's OK
@@ -1167,8 +1167,8 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsABase(selectedTrackingDeviceGUIDPair.first))
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			jointBasisLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
@@ -1183,14 +1183,14 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 				expander.get()->SetVisibility(
 					(device_status.find(L"S_OK") != std::wstring::npos &&
 						TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
-					? Visibility::Visible
-					: Visibility::Collapsed);
+						? Visibility::Visible
+						: Visibility::Collapsed);
 
 			overridesLabel.get()->Visibility(
 				(device_status.find(L"S_OK") != std::wstring::npos &&
 					TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
-				? Visibility::Visible
-				: Visibility::Collapsed);
+					? Visibility::Visible
+					: Visibility::Collapsed);
 		}
 
 		// Set up combos if the device's OK
@@ -1548,7 +1548,8 @@ Amethyst::implementation::DevicesPage::TrackingDeviceTreeView_ItemInvoked(
 
 	const auto node = args.InvokedItem().as<Amethyst::DeviceEntryView>();
 	selectedTrackingDeviceGUIDPair = {
-		node.DeviceGUID().c_str(), TrackingDevices::deviceGUID_ID_Map[node.DeviceGUID().c_str()] };
+		node.DeviceGUID().c_str(), TrackingDevices::deviceGUID_ID_Map[node.DeviceGUID().c_str()]
+	};
 
 	// Reload the tracking device UI (no animations if unchanged)
 	ReloadSelectedDevice(selectedTrackingDeviceGUIDPair == previousSelectedTrackingDeviceGUIDPair);
@@ -1561,7 +1562,7 @@ Amethyst::implementation::DevicesPage::TrackingDeviceTreeView_ItemInvoked(
 Windows::Foundation::IAsyncAction k2app::shared::devices::ReloadSelectedDevice(const bool& _manual)
 
 {
-	const auto& trackingDevice = 
+	const auto& trackingDevice =
 		TrackingDevices::TrackingDevicesVector.at(selectedTrackingDeviceGUIDPair.second);
 
 	std::wstring deviceName = L"[UNKNOWN]";
@@ -1604,7 +1605,7 @@ Windows::Foundation::IAsyncAction k2app::shared::devices::ReloadSelectedDevice(c
 			device->isSettingsDaemonSupported()
 				? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
 					selectedTrackingDeviceGUIDPair.second)->Get()
-				: *k2app::interfacing::emptyLayoutRoot->Get());
+				: *interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a SkeletonBasis device, so this should be hidden
 		for (const auto& expander : jointSelectorExpanders)
@@ -1641,7 +1642,7 @@ Windows::Foundation::IAsyncAction k2app::shared::devices::ReloadSelectedDevice(c
 				// Push the placeholder to all combos
 				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->PushOverrideJoint(
-						k2app::interfacing::LocalizedResourceWString(
+						interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
 				// Append all joints to all combos, depend on characteristics
@@ -1704,7 +1705,7 @@ Windows::Foundation::IAsyncAction k2app::shared::devices::ReloadSelectedDevice(c
 			device->isSettingsDaemonSupported()
 				? *TrackingDevices::TrackingDevicesLayoutRootsVector.at(
 					selectedTrackingDeviceGUIDPair.second)->Get()
-				: *k2app::interfacing::emptyLayoutRoot->Get());
+				: *interfacing::emptyLayoutRoot->Get());
 
 		// We've selected a jointsbasis device, so this should be visible
 		//	at least when the device is online
@@ -1760,7 +1761,7 @@ Windows::Foundation::IAsyncAction k2app::shared::devices::ReloadSelectedDevice(c
 				// Push the placeholder to all combos
 				for (const auto& expander : overrideSelectorExpanders)
 					expander.get()->PushOverrideJoint(
-						k2app::interfacing::LocalizedResourceWString(
+						interfacing::LocalizedResourceWString(
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
 				// Append all joints to all combos
@@ -1787,7 +1788,7 @@ Windows::Foundation::IAsyncAction k2app::shared::devices::ReloadSelectedDevice(c
 	}
 
 	// Check if we've disabled any joints from spawning and disable they're mods
-	k2app::interfacing::devices_check_disabled_joints();
+	interfacing::devices_check_disabled_joints();
 
 	// Update the status here
 	const bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
@@ -1827,7 +1828,7 @@ Windows::Foundation::IAsyncAction k2app::shared::devices::ReloadSelectedDevice(c
 		deselectDeviceButton.get()->Visibility(Visibility::Visible);
 
 		if (status_ok)
-			k2app::interfacing::currentAppState = L"overrides";
+			interfacing::currentAppState = L"overrides";
 	}
 	else
 	{

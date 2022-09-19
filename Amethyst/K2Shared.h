@@ -3,6 +3,7 @@
 #include "K2Settings.h"
 
 #include "DeviceEntryView.h"
+#include "CalibrationDeviceEntryView.h"
 
 #include <codecvt>
 

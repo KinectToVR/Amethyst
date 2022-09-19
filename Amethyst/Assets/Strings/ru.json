@@ -44,6 +44,7 @@
     "/GeneralPage/Calibration/LabelsWhat/Triggers": "Подтвердить",
     "/GeneralPage/Calibration/Titles/Automatic": "Автоматически",
     "/GeneralPage/Calibration/Titles/Choose": "Выберите метод калибровки",
+    "/GeneralPage/Calibration/Titles/Device": "Choose a device to calibrate",
     "/GeneralPage/Calibration/Titles/Manual": "Вручную",
     "/GeneralPage/Calibration/Titles/Points": "Точки захвата:",
     "/GeneralPage/Captions/CalibrateOverrides": "У вас имеются переназначения трекеров.\nКакое устройство вы хотите откалибровать?",

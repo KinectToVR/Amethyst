@@ -13,11 +13,8 @@ using namespace k2app::shared::general;
 bool show_skeleton_previous = true,
      general_loadedOnce = false;
 
-enum class general_calibrating_device
-{
-	K2_BaseDevice,
-	K2_OverrideDevice
-} general_current_calibrating_device;
+// Which device is being calibrated ATM?
+std::wstring general_calibrating_device_guid;
 
 void skeleton_visibility_set_ui(const bool& v)
 {
@@ -287,37 +284,36 @@ void Amethyst::implementation::GeneralPage::CalibrationView_PaneClosing(
 }
 
 
-void Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
+void Amethyst::implementation::GeneralPage::DiscardCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	// Setup the calibration image : reset and stop
-	CalibrationPreviewMediaElement().MediaPlayer().Position(Windows::Foundation::TimeSpan::zero());
-	CalibrationPreviewMediaElement().MediaPlayer().Pause();
+	// Just exit
+	if (!CalibrationPending && !AutoCalibration_StillPending)
+	{
+		CalibrationDeviceSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+		CalibrationDeviceSelectView().IsPaneOpen(false);
 
-	AutoCalibrationPane().Visibility(Visibility::Visible);
-	ManualCalibrationPane().Visibility(Visibility::Collapsed);
+		CalibrationModeSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+		CalibrationModeSelectView().IsPaneOpen(false);
 
-	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
-	CalibrationRunningView().IsPaneOpen(true);
+		CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+		CalibrationRunningView().IsPaneOpen(false);
 
-	// Play a sound
-	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+		AllowNavigation(true);
 
-	k2app::interfacing::currentAppState = L"calibration_auto";
+		// Play a sound
+		playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 
-	CalibrationPointsNumberBox().IsEnabled(true);
-	CalibrationPointsNumberBox().Value(k2app::K2Settings.calibrationPointsNumber);
+		k2app::interfacing::currentAppState = L"general";
 
-	CalibrationInstructionsLabel().Text(
-		k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Calibration/Captions/Start"));
-	CalibrationCountdownLabel().Text(L"~");
-	DiscardAutoCalibrationButton().Content(box_value(
-		k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Buttons/Cancel")));
+		NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Captions/Preview/NoSkeletonText"));
 
-	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
-		L"GeneralPage", L"Captions/Preview/NoSkeletonTextCalibrating"));
+		k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
+		skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
+	}
+	// Begin abort
+	else CalibrationPending = false;
 }
 
 
@@ -344,29 +340,18 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 	// Ref current matrices to helper pointers
 	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.calibrationRotationMatrices.first
-			: &k2app::K2Settings.calibrationRotationMatrices.second;
+		&k2app::K2Settings.deviceCalibrationRotationMatrices[general_calibrating_device_guid];
 	Eigen::Matrix<double, 1, 3>* calibrationTranslation = // Translation
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.calibrationTranslationVectors.first
-			: &k2app::K2Settings.calibrationTranslationVectors.second;
+		&k2app::K2Settings.deviceCalibrationTranslationVectors[general_calibrating_device_guid];
 	Eigen::Vector3d* calibrationOrigin = // Origin
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.calibrationOrigins.first
-			: &k2app::K2Settings.calibrationOrigins.second;
+		&k2app::K2Settings.deviceCalibrationOrigins[general_calibrating_device_guid];
+
 	double* calibrationYaw = // Yaw
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.calibrationYaws.first
-			: &k2app::K2Settings.calibrationYaws.second;
+		&k2app::K2Settings.deviceCalibrationYaws[general_calibrating_device_guid];
 	bool* isMatrixCalibrated = // Are we calibrated?
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.isMatrixCalibrated.first
-			: &k2app::K2Settings.isMatrixCalibrated.second;
+		&k2app::K2Settings.deviceMatricesCalibrated[general_calibrating_device_guid];
 	bool* autoCalibration = // Which calibration method did we use
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.autoCalibration.first
-			: &k2app::K2Settings.autoCalibration.second;
+		&k2app::K2Settings.deviceAutoCalibration[general_calibrating_device_guid];
 
 	// Mark what are we doing
 	*autoCalibration = true;
@@ -444,10 +429,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 
 				vrHMDPositions.push_back(vrHMDPosition);
 				kinectHeadPositions.push_back(
-					(general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-						 ? k2app::interfacing::kinectHeadPosition.first
-						 : k2app::interfacing::kinectHeadPosition.second
-					).cast<double>());
+					k2app::interfacing::kinectHeadPosition[
+						general_calibrating_device_guid].cast<double>());
 			}
 			else if (i == 0)
 				CalibrationInstructionsLabel().Text(
@@ -571,8 +554,11 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 	}
 
 	// Exit the pane
-	CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
-	CalibrationSelectView().IsPaneOpen(false);
+	CalibrationDeviceSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+	CalibrationDeviceSelectView().IsPaneOpen(false);
+
+	CalibrationModeSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+	CalibrationModeSelectView().IsPaneOpen(false);
 
 	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 	CalibrationRunningView().IsPaneOpen(false);
@@ -591,265 +577,17 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 }
 
 
-void Amethyst::implementation::GeneralPage::DiscardCalibrationButton_Click(
+Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::AutoCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	// Just exit
-	if (!CalibrationPending && !AutoCalibration_StillPending)
-	{
-		CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
-		CalibrationSelectView().IsPaneOpen(false);
-
-		CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
-		CalibrationRunningView().IsPaneOpen(false);
-
-		AllowNavigation(true);
-
-		// Play a sound
-		playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
-
-		k2app::interfacing::currentAppState = L"general";
-
-		NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
-			L"GeneralPage", L"Captions/Preview/NoSkeletonText"));
-
-		k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
-		skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
-	}
-	// Begin abort
-	else CalibrationPending = false;
+	co_await ExecuteAutomaticCalibration();
 }
 
 
 Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ManualCalibrationButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	// Swap trigger/grip if we're on index or vive
-	char _controller_model[1024];
-	vr::VRSystem()->GetStringTrackedDeviceProperty(
-		vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
-			vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
-		vr::ETrackedDeviceProperty::Prop_ModelNumber_String, _controller_model, std::size(_controller_model));
-
-	// Set up as default (just in case)
-	LabelFineTuneVive().Visibility(Visibility::Collapsed);
-	LabelFineTuneNormal().Visibility(Visibility::Visible);
-
-	// Swap (optionally)
-	if (k2app::interfacing::findStringIC(_controller_model, "knuckles") ||
-		k2app::interfacing::findStringIC(_controller_model, "index") ||
-		k2app::interfacing::findStringIC(_controller_model, "vive"))
-	{
-		LabelFineTuneVive().Visibility(Visibility::Visible);
-		LabelFineTuneNormal().Visibility(Visibility::Collapsed);
-	}
-
-	// Set up panels
-	AutoCalibrationPane().Visibility(Visibility::Collapsed);
-	ManualCalibrationPane().Visibility(Visibility::Visible);
-
-	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
-	CalibrationRunningView().IsPaneOpen(true);
-
-	k2app::interfacing::currentAppState = L"calibration_manual";
-
-	// Set the [calibration pending] bool
-	CalibrationPending = true;
-
-	// Play a nice sound - starting
-	playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationStart);
-
-	// Ref current matrices to helper pointers
-	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.calibrationRotationMatrices.first
-			: &k2app::K2Settings.calibrationRotationMatrices.second;
-	Eigen::Matrix<double, 1, 3>* calibrationTranslation = // Translation
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.calibrationTranslationVectors.first
-			: &k2app::K2Settings.calibrationTranslationVectors.second;
-	Eigen::Vector3d* calibrationOrigin = // Origin
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.calibrationOrigins.first
-			: &k2app::K2Settings.calibrationOrigins.second;
-	double* calibrationYaw = // Yaw
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.calibrationYaws.first
-			: &k2app::K2Settings.calibrationYaws.second;
-	bool* isMatrixCalibrated = // Are we calibrated?
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.isMatrixCalibrated.first
-			: &k2app::K2Settings.isMatrixCalibrated.second;
-	bool* autoCalibration = // Which calibration method did we use
-		general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-			? &k2app::K2Settings.autoCalibration.first
-			: &k2app::K2Settings.autoCalibration.second;
-
-	// Mark what are we doing
-	*autoCalibration = false;
-
-	// Mark as calibrated for the preview
-	*isMatrixCalibrated = true;
-
-	// Set up (a lot of) helper variables
-	bool calibration_first_time = true;
-
-	Eigen::AngleAxisd rollAngle(0.f, Eigen::Vector3d::UnitZ());
-	Eigen::AngleAxisd yawAngle(0.f, Eigen::Vector3d::UnitY());
-	Eigen::AngleAxisd pitchAngle(0.f, Eigen::Vector3d::UnitX());
-	Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
-
-	Eigen::Matrix3d rotationMatrix = q.matrix();
-	double temp_yaw = 0, temp_pitch = 0;
-
-	// Copy the empty matrices to settings
-	*calibrationRotation = rotationMatrix;
-
-	// Loop over until finished
-	while (!k2app::interfacing::calibration_confirm)
-	{
-		// Wait for a mode switch
-		while (!k2app::interfacing::calibration_modeSwap && !k2app::interfacing::calibration_confirm)
-		{
-			const double _multiplexer = k2app::interfacing::calibration_fineTune ? .0015 : .015;
-
-			// Compute the translation delta for the current calibration frame
-			Eigen::Vector3d _currentCalibrationTranslation_new{
-				k2app::interfacing::calibration_joystick_positions[0][0], // Left X
-				k2app::interfacing::calibration_joystick_positions[1][1], // Right Y
-				-k2app::interfacing::calibration_joystick_positions[0][1] // Left Y (inv)
-			};
-
-			// Apply the multiplexer
-			_currentCalibrationTranslation_new = _currentCalibrationTranslation_new * _multiplexer;
-
-			// Un-rotate the translation (sometimes broken due to SteamVR playspace)
-			_currentCalibrationTranslation_new =
-				k2app::interfacing::vrPlayspaceOrientationQuaternion.cast<double>().inverse() *
-				_currentCalibrationTranslation_new;
-
-			// Apply to the global base
-			(*calibrationTranslation)(0) += _currentCalibrationTranslation_new(0);
-			(*calibrationTranslation)(1) += _currentCalibrationTranslation_new(1);
-			(*calibrationTranslation)(2) += _currentCalibrationTranslation_new(2);
-
-			// Sleep on UI
-			apartment_context ui_thread;
-			co_await resume_background();
-			Sleep(5);
-			co_await ui_thread;
-
-			// Exit if aborted
-			if (!CalibrationPending)break;
-		}
-
-		// Play mode swap sound
-		if (CalibrationPending && !k2app::interfacing::calibration_confirm)
-			playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationPointCaptured);
-
-		// Set up the calibration origin
-		if (calibration_first_time)
-			*calibrationOrigin = (
-				general_current_calibrating_device == general_calibrating_device::K2_BaseDevice
-					? k2app::interfacing::kinectWaistPosition.first
-					: k2app::interfacing::kinectWaistPosition.second
-			).cast<double>();
-
-		// Cache the calibration first_time
-		calibration_first_time = false;
-
-		// Sleep on UI -> wait for mode switch
-		{
-			apartment_context ui_thread;
-			co_await resume_background();
-			Sleep(300);
-			co_await ui_thread;
-		}
-
-		// Wait for a mode switch
-		while (!k2app::interfacing::calibration_modeSwap && !k2app::interfacing::calibration_confirm)
-		{
-			const double _multiplexer = k2app::interfacing::calibration_fineTune ? 0.1 : 1.0;
-
-			temp_yaw +=
-				(k2app::interfacing::calibration_joystick_positions[0][0] * 3.14159265358979323846 / 280.) *
-				_multiplexer; // Left X
-			temp_pitch +=
-				(k2app::interfacing::calibration_joystick_positions[1][1] * 3.14159265358979323846 / 280.) *
-				_multiplexer; // Right Y
-
-			Eigen::AngleAxisd rollAngle(0.f, Eigen::Vector3d::UnitZ());
-			Eigen::AngleAxisd yawAngle(temp_yaw, Eigen::Vector3d::UnitY());
-			Eigen::AngleAxisd pitchAngle(temp_pitch, Eigen::Vector3d::UnitX());
-			Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
-
-			Eigen::Matrix3d rotationMatrix = q.matrix();
-			*calibrationRotation = rotationMatrix;
-
-			*calibrationYaw = temp_yaw; // Note: radians
-
-			// Sleep on UI
-			apartment_context ui_thread;
-			co_await resume_background();
-			Sleep(5);
-			co_await ui_thread;
-
-			// Exit if aborted
-			if (!CalibrationPending)break;
-		}
-
-		// Sleep on UI -> wait for mode switch
-		{
-			apartment_context ui_thread;
-			co_await resume_background();
-			Sleep(300);
-			co_await ui_thread;
-		}
-
-		// Play mode swap sound
-		if (CalibrationPending && !k2app::interfacing::calibration_confirm)
-			playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationPointCaptured);
-
-		// Exit if aborted
-		if (!CalibrationPending)break;
-	}
-
-	// Reset by re-reading the settings if aborted
-	if (!CalibrationPending)
-	{
-		*isMatrixCalibrated = false;
-		k2app::K2Settings.readSettings();
-
-		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationAborted);
-	}
-	// Else save I guess
-	else
-	{
-		k2app::K2Settings.saveSettings();
-		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationComplete);
-
-		// Sleep on UI
-		apartment_context ui_thread;
-		co_await resume_background();
-		Sleep(1000); // Just right
-		co_await ui_thread;
-	}
-
-	// Exit the pane and reset
-	CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
-	CalibrationSelectView().IsPaneOpen(false);
-
-	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
-	CalibrationRunningView().IsPaneOpen(false);
-
-	AllowNavigation(true);
-	k2app::interfacing::currentAppState = L"general";
-
-	k2app::interfacing::calibration_confirm = false;
-
-	CalibrationPending = false; // We're finished
-	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
-	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
+	co_await ExecuteManualCalibration();
 }
 
 
@@ -1071,6 +809,9 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	Calibration_Titles_Choose().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Titles/Choose"));
 
+	Calibration_Titles_Device().Text(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Titles/Device"));
+
 	Calibration_Captions_Recommended().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Captions/Recommended"));
 
@@ -1087,6 +828,9 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Calibration/Captions/Manual"));
 
 	CancelCalibrationButton().Content(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Cancel")));
+
+	CancelCalibrationButton_Devices().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Cancel")));
 
 	Calibration_Headers_Automatic().Text(
@@ -1157,16 +901,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 
 	CalibrationButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Calibration/Begin")));
-
-	BaseCalibration().Content(box_value(
-		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Calibration/Base")));
-
-	OverrideCalibration().Content(box_value(
-		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Calibration/Override")));
-
-	Captions_CalibrateOverrides().Text(
-		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Captions/CalibrateOverrides"));
-
+	
 	OffsetsButton().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Offsets"));
 
@@ -1253,6 +988,15 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 
 	DismissSetErrorButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsPage/Buttons/Error/Dismiss")));
+
+	DeviceEntryView_Base_Text().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Badges/Devices/Base"));
+
+	DeviceEntryView_Override_Text().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Badges/Devices/Override"));
+
+	DeviceEntryView_Error_Text().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Badges/Devices/Error"));
 
 	ToggleTrackersTeachingTip().Title(
 		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip2/Title"));
@@ -1887,11 +1631,137 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 	// If no overrides
 	if (k2app::K2Settings.overrideDeviceGUIDsMap.empty())
 	{
+		// Show the calibration choose pane / calibration
 		AutoCalibrationPane().Visibility(Visibility::Collapsed);
 		ManualCalibrationPane().Visibility(Visibility::Collapsed);
 
-		CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
-		CalibrationSelectView().IsPaneOpen(true);
+		CalibrationDeviceSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+		CalibrationDeviceSelectView().IsPaneOpen(false);
+
+		CalibrationModeSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
+		CalibrationModeSelectView().IsPaneOpen(true);
+
+		CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+		CalibrationRunningView().IsPaneOpen(false);
+
+		AllowNavigation(false);
+
+		// Set the app state
+		k2app::interfacing::currentAppState = L"calibration";
+
+		// Set the calibration device
+		general_calibrating_device_guid = k2app::K2Settings.trackingDeviceGUIDPair.first;
+
+		show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
+		k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
+		skeleton_visibility_set_ui(true); // Change to show
+
+		// Play a sound
+		playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+
+		// If auto-calibration is not supported, proceed straight to manual
+		const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(
+			k2app::K2Settings.trackingDeviceGUIDPair.second);
+
+		if (trackingDevice.index() == 0 &&
+			std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
+			getDeviceCharacteristics() == ktvr::K2_Character_Full)
+		{
+			// Nothing, the selection pane will be shown
+		}
+		else
+		{
+			// Open the pane and start the calibration
+			ExecuteManualCalibration();
+		}
+	}
+	else
+	{
+		// Show the device selector pane
+		AutoCalibrationPane().Visibility(Visibility::Collapsed);
+		ManualCalibrationPane().Visibility(Visibility::Collapsed);
+
+		// Populate calibrate-able devices now
+		{
+			// Capture the current entry thread context
+			k2app::shared::CalibrationDeviceEntryView::thisEntryContext = new apartment_context();
+
+			// Reset the MVVM vector
+			auto calibrationDeviceMVVM_List =
+				multi_threaded_observable_vector<Amethyst::CalibrationDeviceEntryView>();
+
+			// Add tracking devices here
+			for (const auto& device : TrackingDevices::TrackingDevicesVector)
+			{
+				std::wstring deviceName = L"[UNKNOWN]";
+				std::wstring deviceGUID = L"INVALID";
+				HRESULT deviceStatus = E_FAIL;
+
+				switch (device.index())
+				{
+				case 0:
+				{
+					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
+					deviceName = pDevice->getDeviceName();
+					deviceGUID = pDevice->getDeviceGUID();
+					deviceStatus = pDevice->getStatusResult();
+				}
+				break;
+				case 1:
+				{
+					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
+					deviceName = pDevice->getDeviceName();
+					deviceGUID = pDevice->getDeviceGUID();
+					deviceStatus = pDevice->getStatusResult();
+				}
+				break;
+				}
+
+				const bool _isBase = TrackingDevices::IsABase(deviceGUID),
+					_isOverride = TrackingDevices::IsAnOverride(deviceGUID);
+
+				// Check the roles
+				if (!_isBase && !_isOverride) 
+				{
+					LOG(INFO) << "Device " << WStringToString(deviceName) <<
+						WStringToString(std::format(L" (GUID: \"{}\") ", deviceGUID)) <<
+						" is neither a base nor an override, skipping it!";
+					continue; // The next device
+				}
+
+				LOG(INFO) << "Appending " << WStringToString(deviceName) <<
+					WStringToString(std::format(L" (GUID: \"{}\") ", deviceGUID)) <<
+					" to Calibration UI Node's tracking devices' list...";
+
+				LOG(INFO) << "Creating and appending \"" << WStringToString(deviceName) <<
+					WStringToString(std::format(L"\" (GUID: \"{}\") ", deviceGUID)) <<
+					" TreeViewItem Amethyst::CalibrationDeviceEntryView container object...";
+
+				calibrationDeviceMVVM_List.Append(
+					winrt::make<CalibrationDeviceEntryView>(
+						deviceGUID.c_str(), deviceName.c_str(),
+
+						// Check if the device is set as a base
+						_isBase,
+
+						// Try to find the device inside the overrides' vector
+						_isOverride,
+
+						// Pre-check device's status
+						deviceStatus != S_OK));
+			}
+
+			LOG(INFO) << "Setting the calibration devices' TreeView ItemSource to the created "
+				"Amethyst::CalibrationDeviceEntryView MVVM object list...";
+			TrackingDeviceTreeView().ItemsSource(
+				box_value(calibrationDeviceMVVM_List));
+		}
+
+		CalibrationDeviceSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
+		CalibrationDeviceSelectView().IsPaneOpen(true);
+
+		CalibrationModeSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+		CalibrationModeSelectView().IsPaneOpen(false);
 
 		CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
 		CalibrationRunningView().IsPaneOpen(false);
@@ -1906,104 +1776,6 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 		// Play a sound
 		playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 	}
-	else
-	{
-		// TODO CALIBRATE ONE OF THE OVERRIDES
-
-		ChooseDeviceFlyout().ShowAt(CalibrationButton());
-
-		// Assume no head position providers
-		AutoCalibrationButton().IsEnabled(false);
-		AutoCalibrationButtonDecorations().Opacity(.5);
-
-		AllowNavigation(true);
-	}
-}
-
-
-void Amethyst::implementation::GeneralPage::BaseCalibration_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	ChooseDeviceFlyout().Hide();
-
-	AutoCalibrationPane().Visibility(Visibility::Collapsed);
-	ManualCalibrationPane().Visibility(Visibility::Collapsed);
-
-	CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
-	CalibrationSelectView().IsPaneOpen(true);
-
-	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
-	CalibrationRunningView().IsPaneOpen(false);
-
-	AllowNavigation(false);
-	k2app::interfacing::currentAppState = L"calibration";
-
-	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
-	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
-	skeleton_visibility_set_ui(true); // Change to show
-
-	// Play a sound
-	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
-
-	// Eventually enable the auto calibration
-	const auto& trackingDevice =
-		TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceGUIDPair.second);
-
-	// Kinect Basis
-	if (trackingDevice.index() == 0 &&
-		std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
-		getDeviceCharacteristics() == ktvr::K2_Character_Full)
-	{
-		AutoCalibrationButton().IsEnabled(true);
-		AutoCalibrationButtonDecorations().Opacity(1.0);
-	}
-
-	// Set the current device for scripts
-	general_current_calibrating_device = general_calibrating_device::K2_BaseDevice;
-}
-
-
-void Amethyst::implementation::GeneralPage::OverrideCalibration_Click(
-	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-{
-	ChooseDeviceFlyout().Hide();
-
-	AutoCalibrationPane().Visibility(Visibility::Collapsed);
-	ManualCalibrationPane().Visibility(Visibility::Collapsed);
-
-	CalibrationSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
-	CalibrationSelectView().IsPaneOpen(true);
-
-	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
-	CalibrationRunningView().IsPaneOpen(false);
-
-	AllowNavigation(false);
-	k2app::interfacing::currentAppState = L"calibration";
-
-	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
-	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
-	skeleton_visibility_set_ui(true); // Change to show
-
-	// Play a sound
-	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
-
-	// TODO CALIBRATE ONE OF THE OVERRIDES
-
-	// Eventually enable the auto calibration
-	const auto& trackingDevice =
-		TrackingDevices::TrackingDevicesVector.at(k2app::K2Settings.trackingDeviceGUIDPair.second);
-
-	// Kinect Basis
-	if (trackingDevice.index() == 0 &&
-		std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
-		getDeviceCharacteristics() == ktvr::K2_Character_Full)
-	{
-		AutoCalibrationButton().IsEnabled(true);
-		AutoCalibrationButtonDecorations().Opacity(1.0);
-	}
-
-	// Set the current device for scripts
-	general_current_calibrating_device = general_calibrating_device::K2_OverrideDevice;
 }
 
 
@@ -2088,7 +1860,15 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 }
 
 
-void Amethyst::implementation::GeneralPage::CalibrationSelectView_PaneClosing(
+void Amethyst::implementation::GeneralPage::CalibrationDeviceSelectView_PaneClosing(
+	const Controls::SplitView& sender,
+	const Controls::SplitViewPaneClosingEventArgs& args)
+{
+	args.Cancel(true);
+}
+
+
+void Amethyst::implementation::GeneralPage::CalibrationModeSelectView_PaneClosing(
 	const Controls::SplitView& sender,
 	const Controls::SplitViewPaneClosingEventArgs& args)
 {
@@ -2293,8 +2073,319 @@ void Amethyst::implementation::GeneralPage::FreezeOnlyLowerToggle_Click(
 }
 
 
-void Amethyst::implementation::GeneralPage::AdditionalDeviceErrorsHyperlink_Tapped(
+Windows::Foundation::IAsyncAction
+Amethyst::implementation::GeneralPage::AdditionalDeviceErrorsHyperlink_Tapped(
 	const Windows::Foundation::IInspectable& sender, const Input::TappedRoutedEventArgs& e)
 {
-	k2app::shared::general::additionalDeviceErrorsHyperlink_TappedEvent();
+	co_await additionalDeviceErrorsHyperlink_TappedEvent();
+}
+
+
+Windows::Foundation::IAsyncAction
+Amethyst::implementation::GeneralPage::TrackingDeviceTreeView_ItemInvoked(
+	const Controls::TreeView& sender,
+	const Controls::TreeViewItemInvokedEventArgs& args)
+{
+	if (!general_tab_setup_finished)
+		co_return; // Block dummy selects
+
+	const auto node = args.InvokedItem().as<Amethyst::CalibrationDeviceEntryView>();
+
+	// Show the calibration choose pane / calibration
+	AutoCalibrationPane().Visibility(Visibility::Collapsed);
+	ManualCalibrationPane().Visibility(Visibility::Collapsed);
+	
+	CalibrationModeSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
+	CalibrationModeSelectView().IsPaneOpen(true);
+
+	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+	CalibrationRunningView().IsPaneOpen(false);
+
+	AllowNavigation(false);
+
+	// Set the app state
+	k2app::interfacing::currentAppState = L"calibration";
+
+	// Set the calibration device
+	general_calibrating_device_guid = node.DeviceGUID().c_str();
+
+	show_skeleton_previous = k2app::K2Settings.skeletonPreviewEnabled; // Back up
+	k2app::K2Settings.skeletonPreviewEnabled = true; // Change to show
+	skeleton_visibility_set_ui(true); // Change to show
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+
+	// If auto-calibration is not supported, proceed straight to manual
+	const auto& trackingDevice =
+		TrackingDevices::TrackingDevicesVector.at(
+			TrackingDevices::deviceGUID_ID_Map[node.DeviceGUID().c_str()]);
+
+	if (trackingDevice.index() == 0 &&
+		std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
+		getDeviceCharacteristics() == ktvr::K2_Character_Full)
+	{
+		// Nothing, the selection pane will be shown
+	}
+	else
+	{
+		// Open the pane and start the calibration
+		ExecuteManualCalibration();
+	}
+}
+
+
+Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ExecuteAutomaticCalibration()
+{
+	// Setup the calibration image : reset and stop
+	CalibrationPreviewMediaElement().MediaPlayer().Position(Windows::Foundation::TimeSpan::zero());
+	CalibrationPreviewMediaElement().MediaPlayer().Pause();
+
+	AutoCalibrationPane().Visibility(Visibility::Visible);
+	ManualCalibrationPane().Visibility(Visibility::Collapsed);
+
+	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
+	CalibrationRunningView().IsPaneOpen(true);
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+
+	k2app::interfacing::currentAppState = L"calibration_auto";
+
+	CalibrationPointsNumberBox().IsEnabled(true);
+	CalibrationPointsNumberBox().Value(k2app::K2Settings.calibrationPointsNumber);
+
+	CalibrationInstructionsLabel().Text(
+		k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Calibration/Captions/Start"));
+	CalibrationCountdownLabel().Text(L"~");
+	DiscardAutoCalibrationButton().Content(box_value(
+		k2app::interfacing::LocalizedResourceWString(
+			L"GeneralPage", L"Buttons/Cancel")));
+
+	NoSkeletonTextNotice().Text(k2app::interfacing::LocalizedResourceWString(
+		L"GeneralPage", L"Captions/Preview/NoSkeletonTextCalibrating"));
+
+	co_return;
+}
+
+
+Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::ExecuteManualCalibration()
+{
+	// Swap trigger/grip if we're on index or vive
+	char _controller_model[1024];
+	vr::VRSystem()->GetStringTrackedDeviceProperty(
+		vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+			vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
+		vr::ETrackedDeviceProperty::Prop_ModelNumber_String, _controller_model, std::size(_controller_model));
+
+	// Set up as default (just in case)
+	LabelFineTuneVive().Visibility(Visibility::Collapsed);
+	LabelFineTuneNormal().Visibility(Visibility::Visible);
+
+	// Swap (optionally)
+	if (k2app::interfacing::findStringIC(_controller_model, "knuckles") ||
+		k2app::interfacing::findStringIC(_controller_model, "index") ||
+		k2app::interfacing::findStringIC(_controller_model, "vive"))
+	{
+		LabelFineTuneVive().Visibility(Visibility::Visible);
+		LabelFineTuneNormal().Visibility(Visibility::Collapsed);
+	}
+
+	// Set up panels
+	AutoCalibrationPane().Visibility(Visibility::Collapsed);
+	ManualCalibrationPane().Visibility(Visibility::Visible);
+
+	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
+	CalibrationRunningView().IsPaneOpen(true);
+
+	k2app::interfacing::currentAppState = L"calibration_manual";
+
+	// Set the [calibration pending] bool
+	CalibrationPending = true;
+
+	// Play a nice sound - starting
+	playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationStart);
+
+	// Ref current matrices to helper pointers
+	Eigen::Matrix<double, 3, 3>* calibrationRotation = // Rotation
+		&k2app::K2Settings.deviceCalibrationRotationMatrices[general_calibrating_device_guid];
+	Eigen::Matrix<double, 1, 3>* calibrationTranslation = // Translation
+		&k2app::K2Settings.deviceCalibrationTranslationVectors[general_calibrating_device_guid];
+	Eigen::Vector3d* calibrationOrigin = // Origin
+		&k2app::K2Settings.deviceCalibrationOrigins[general_calibrating_device_guid];
+
+	double* calibrationYaw = // Yaw
+		&k2app::K2Settings.deviceCalibrationYaws[general_calibrating_device_guid];
+	bool* isMatrixCalibrated = // Are we calibrated?
+		&k2app::K2Settings.deviceMatricesCalibrated[general_calibrating_device_guid];
+	bool* autoCalibration = // Which calibration method did we use
+		&k2app::K2Settings.deviceAutoCalibration[general_calibrating_device_guid];
+
+	// Mark what are we doing
+	*autoCalibration = false;
+
+	// Mark as calibrated for the preview
+	*isMatrixCalibrated = true;
+
+	// Set up (a lot of) helper variables
+	bool calibration_first_time = true;
+
+	Eigen::AngleAxisd rollAngle(0.f, Eigen::Vector3d::UnitZ());
+	Eigen::AngleAxisd yawAngle(0.f, Eigen::Vector3d::UnitY());
+	Eigen::AngleAxisd pitchAngle(0.f, Eigen::Vector3d::UnitX());
+	Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
+
+	Eigen::Matrix3d rotationMatrix = q.matrix();
+	double temp_yaw = 0, temp_pitch = 0;
+
+	// Copy the empty matrices to settings
+	*calibrationRotation = rotationMatrix;
+
+	// Loop over until finished
+	while (!k2app::interfacing::calibration_confirm)
+	{
+		// Wait for a mode switch
+		while (!k2app::interfacing::calibration_modeSwap && !k2app::interfacing::calibration_confirm)
+		{
+			const double _multiplexer = k2app::interfacing::calibration_fineTune ? .0015 : .015;
+
+			// Compute the translation delta for the current calibration frame
+			Eigen::Vector3d _currentCalibrationTranslation_new{
+				k2app::interfacing::calibration_joystick_positions[0][0], // Left X
+				k2app::interfacing::calibration_joystick_positions[1][1], // Right Y
+				-k2app::interfacing::calibration_joystick_positions[0][1] // Left Y (inv)
+			};
+
+			// Apply the multiplexer
+			_currentCalibrationTranslation_new = _currentCalibrationTranslation_new * _multiplexer;
+
+			// Un-rotate the translation (sometimes broken due to SteamVR playspace)
+			_currentCalibrationTranslation_new =
+				k2app::interfacing::vrPlayspaceOrientationQuaternion.cast<double>().inverse() *
+				_currentCalibrationTranslation_new;
+
+			// Apply to the global base
+			(*calibrationTranslation)(0) += _currentCalibrationTranslation_new(0);
+			(*calibrationTranslation)(1) += _currentCalibrationTranslation_new(1);
+			(*calibrationTranslation)(2) += _currentCalibrationTranslation_new(2);
+
+			// Sleep on UI
+			apartment_context ui_thread;
+			co_await resume_background();
+			Sleep(5);
+			co_await ui_thread;
+
+			// Exit if aborted
+			if (!CalibrationPending)break;
+		}
+
+		// Play mode swap sound
+		if (CalibrationPending && !k2app::interfacing::calibration_confirm)
+			playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationPointCaptured);
+
+		// Set up the calibration origin
+		if (calibration_first_time)
+			*calibrationOrigin =
+				k2app::interfacing::kinectWaistPosition[
+					general_calibrating_device_guid].cast<double>();
+
+		// Cache the calibration first_time
+		calibration_first_time = false;
+
+		// Sleep on UI -> wait for mode switch
+		{
+			apartment_context ui_thread;
+			co_await resume_background();
+			Sleep(300);
+			co_await ui_thread;
+		}
+
+		// Wait for a mode switch
+		while (!k2app::interfacing::calibration_modeSwap && !k2app::interfacing::calibration_confirm)
+		{
+			const double _multiplexer = k2app::interfacing::calibration_fineTune ? 0.1 : 1.0;
+
+			temp_yaw +=
+				(k2app::interfacing::calibration_joystick_positions[0][0] * 3.14159265358979323846 / 280.) *
+				_multiplexer; // Left X
+			temp_pitch +=
+				(k2app::interfacing::calibration_joystick_positions[1][1] * 3.14159265358979323846 / 280.) *
+				_multiplexer; // Right Y
+
+			Eigen::AngleAxisd rollAngle(0.f, Eigen::Vector3d::UnitZ());
+			Eigen::AngleAxisd yawAngle(temp_yaw, Eigen::Vector3d::UnitY());
+			Eigen::AngleAxisd pitchAngle(temp_pitch, Eigen::Vector3d::UnitX());
+			Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
+
+			Eigen::Matrix3d rotationMatrix = q.matrix();
+			*calibrationRotation = rotationMatrix;
+
+			*calibrationYaw = temp_yaw; // Note: radians
+
+			// Sleep on UI
+			apartment_context ui_thread;
+			co_await resume_background();
+			Sleep(5);
+			co_await ui_thread;
+
+			// Exit if aborted
+			if (!CalibrationPending)break;
+		}
+
+		// Sleep on UI -> wait for mode switch
+		{
+			apartment_context ui_thread;
+			co_await resume_background();
+			Sleep(300);
+			co_await ui_thread;
+		}
+
+		// Play mode swap sound
+		if (CalibrationPending && !k2app::interfacing::calibration_confirm)
+			playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationPointCaptured);
+
+		// Exit if aborted
+		if (!CalibrationPending)break;
+	}
+
+	// Reset by re-reading the settings if aborted
+	if (!CalibrationPending)
+	{
+		*isMatrixCalibrated = false;
+		k2app::K2Settings.readSettings();
+
+		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationAborted);
+	}
+	// Else save I guess
+	else
+	{
+		k2app::K2Settings.saveSettings();
+		playAppSound(k2app::interfacing::sounds::AppSounds::CalibrationComplete);
+
+		// Sleep on UI
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(1000); // Just right
+		co_await ui_thread;
+	}
+
+	// Exit the pane and reset
+	CalibrationDeviceSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+	CalibrationDeviceSelectView().IsPaneOpen(false);
+
+	CalibrationModeSelectView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+	CalibrationModeSelectView().IsPaneOpen(false);
+
+	CalibrationRunningView().DisplayMode(Controls::SplitViewDisplayMode::Overlay);
+	CalibrationRunningView().IsPaneOpen(false);
+
+	AllowNavigation(true);
+	k2app::interfacing::currentAppState = L"general";
+
+	k2app::interfacing::calibration_confirm = false;
+
+	CalibrationPending = false; // We're finished
+	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
+	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
 }

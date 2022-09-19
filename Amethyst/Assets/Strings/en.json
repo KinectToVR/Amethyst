@@ -44,6 +44,7 @@
     "/GeneralPage/Calibration/LabelsWhat/Triggers": "Confirm",
     "/GeneralPage/Calibration/Titles/Automatic": "Automatic",
     "/GeneralPage/Calibration/Titles/Choose": "Choose a calibration mode",
+    "/GeneralPage/Calibration/Titles/Device": "Choose a device to calibrate",
     "/GeneralPage/Calibration/Titles/Manual": "Manual",
     "/GeneralPage/Calibration/Titles/Points": "Capture Points:",
     "/GeneralPage/Captions/CalibrateOverrides": "You have tracking overrides set up.\nWhich device do you want to calibrate?",

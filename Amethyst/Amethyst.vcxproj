@@ -141,6 +141,7 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CalibrationDeviceEntryView.h" />
     <ClInclude Include="ConsolePage.xaml.h">
       <DependentUpon>ConsolePage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -209,6 +210,7 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CalibrationDeviceEntryView.cpp" />
     <ClCompile Include="ConsolePage.xaml.cpp">
       <DependentUpon>ConsolePage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -246,6 +248,7 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Midl>
+    <Midl Include="CalibrationDeviceEntryView.idl" />
     <Midl Include="ConsolePage.idl">
       <DependentUpon>ConsolePage.xaml</DependentUpon>
       <SubType>Code</SubType>

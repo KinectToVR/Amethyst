@@ -15,7 +15,7 @@ namespace winrt::Amethyst::implementation
 	struct DevicesPage : DevicesPageT<DevicesPage>
 	{
 		DevicesPage();
-		
+
 		Windows::Foundation::IAsyncAction SetAsOverrideButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                                            const Microsoft::UI::Xaml::RoutedEventArgs&
 		                                                            e);
@@ -54,7 +54,8 @@ namespace winrt::Amethyst::implementation
 		void DeviceControlsTeachingTip_ActionButtonClick(
 			const Microsoft::UI::Xaml::Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args);
 		Windows::Foundation::IAsyncAction TrackingDeviceTreeView_ItemInvoked(
-			winrt::Microsoft::UI::Xaml::Controls::TreeView const& sender, winrt::Microsoft::UI::Xaml::Controls::TreeViewItemInvokedEventArgs const& args);
+			const Microsoft::UI::Xaml::Controls::TreeView& sender,
+			const Microsoft::UI::Xaml::Controls::TreeViewItemInvokedEventArgs& args);
 	};
 }
 

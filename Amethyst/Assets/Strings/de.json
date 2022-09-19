@@ -44,6 +44,7 @@
     "/GeneralPage/Calibration/LabelsWhat/Triggers": "Bestätigen",
     "/GeneralPage/Calibration/Titles/Automatic": "Automatisch",
     "/GeneralPage/Calibration/Titles/Choose": "Wähle eine Kalibrierungsmethode",
+    "/GeneralPage/Calibration/Titles/Device": "Choose a device to calibrate",
     "/GeneralPage/Calibration/Titles/Manual": "Manuell",
     "/GeneralPage/Calibration/Titles/Points": "Erfassungspunkte:",
     "/GeneralPage/Captions/CalibrateOverrides": "Tracking-Overrides wurden gefunden.\nWelches Gerät sollte kalibriert werden?",

@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
+    mc:Ignorable="d" xmlns:local="using:Amethyst"
     Loaded="GeneralPage_Loaded"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     NavigationCacheMode="Required">
@@ -43,9 +43,465 @@
             </SplitView.Pane>
         </SplitView>
 
-        <SplitView Canvas.ZIndex="1" x:Name="CalibrationSelectView"
+        <SplitView Canvas.ZIndex="1" x:Name="CalibrationDeviceSelectView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-                   PaneClosing="CalibrationSelectView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
+                   PaneClosing="CalibrationDeviceSelectView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid x:Name="DeviceSelectionPane">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="Calibration_Titles_Device"
+                                   Margin="0,15,0,0" HorizontalAlignment="Center"
+                                   FontSize="26" VerticalAlignment="Center"
+                                   Style="{ThemeResource BaseTextBlockStyle}" />
+
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="40,10,30,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="50" />
+                            </Grid.RowDefinitions>
+
+                            <!--String copy resource-->
+                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Base_Text" />
+                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Override_Text" />
+                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Error_Text" />
+
+                            <TreeView x:Name="TrackingDeviceTreeView" CornerRadius="5"
+                                      VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+                                      
+                                      Grid.Row="0" FontSize="16" FontWeight="Bold"
+                                      CanReorderItems="False" CanDragItems="False" AllowDrop="False"
+
+                                      ItemInvoked="TrackingDeviceTreeView_ItemInvoked">
+
+                                <TreeView.ItemTemplate>
+                                    <DataTemplate x:DataType="local:CalibrationDeviceEntryView">
+
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                            <Border Height="20" CornerRadius="3" Padding="5,0"
+                                                    Margin="0,-15,15,0"
+                                                    Opacity="{x:Bind BoolToOpacity(IsBase), Mode=OneWay, FallbackValue=0.0}"
+                                                    BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
+                                                    Background="{ThemeResource SystemFillColorAttentionBrush}"
+                                                    VerticalAlignment="Top" HorizontalAlignment="Right">
+                                                <Border.OpacityTransition>
+                                                    <ScalarTransition />
+                                                </Border.OpacityTransition>
+
+                                                <TextBlock
+                                                    Text="{Binding ElementName=DeviceEntryView_Base_Text, Path=Text}"
+                                                    FontWeight="Medium" Margin="0,-2,0,0"
+                                                    Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                            </Border>
+
+                                            <Border Height="20" CornerRadius="3" Padding="5,0"
+                                                    Margin="0,-15,15,0"
+                                                    Opacity="{x:Bind BoolToOpacity(IsOverride), Mode=OneWay, FallbackValue=0.0}"
+                                                    BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
+                                                    Background="{ThemeResource SystemFillColorAttentionBrush}"
+                                                    VerticalAlignment="Top" HorizontalAlignment="Right">
+                                                <Border.OpacityTransition>
+                                                    <ScalarTransition />
+                                                </Border.OpacityTransition>
+
+                                                <TextBlock
+                                                    Text="{Binding ElementName=DeviceEntryView_Override_Text, Path=Text}"
+                                                    FontWeight="Medium" Margin="0,-2,0,0"
+                                                    Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                            </Border>
+
+                                            <Border Height="20" CornerRadius="3" Padding="5,0"
+                                                    Margin="0,0,15,-18"
+                                                    Opacity="{x:Bind BoolToOpacity(StatusError), Mode=OneWay, FallbackValue=0.0}"
+                                                    BorderBrush="{ThemeResource SystemFillColorCriticalBrush}"
+                                                    Background="{ThemeResource SystemFillColorCriticalBrush}"
+                                                    VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                                <Border.OpacityTransition>
+                                                    <ScalarTransition />
+                                                </Border.OpacityTransition>
+
+                                                <TextBlock
+                                                    Text="{Binding ElementName=DeviceEntryView_Error_Text, Path=Text}"
+                                                    FontWeight="Medium" Margin="0,-2,0,0"
+                                                    Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                            </Border>
+
+                                            <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                                       ToolTipService.ToolTip="{x:Bind DeviceGUID, Mode=OneWay}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </TreeView.ItemTemplate>
+
+                                <TreeView.Resources>
+                                    <!--Other resources, styles-->
+                                    <ResourceDictionary>
+                                        <ResourceDictionary.MergedDictionaries>
+                                            <ResourceDictionary>
+                                                <Thickness x:Key="TreeViewItemBorderThemeThickness">0</Thickness>
+                                                <Thickness x:Key="TreeViewItemPresenterMargin">4,10</Thickness>
+                                                <Thickness x:Key="TreeViewItemPresenterPadding">0,3,0,5</Thickness>
+                                                <Thickness x:Key="TreeViewItemMultiSelectSelectedItemBorderMargin">0</Thickness>
+                                                <x:Double x:Key="TreeViewItemMultiSelectCheckBoxMinHeight">62</x:Double>
+                                                <x:Double x:Key="TreeViewItemContentHeight">60</x:Double>
+
+                                                <SolidColorBrush
+                                                    x:Key="TreeViewItemSelectionIndicatorForegroundPointerOver"
+                                                    Color="{ThemeResource AccentFillColorDefaultBrush}" />
+                                                <SolidColorBrush
+                                                    x:Key="TreeViewItemSelectionIndicatorForegroundPressed"
+                                                    Color="{ThemeResource AccentFillColorDefaultBrush}" />
+                                                <SolidColorBrush
+                                                    x:Key="TreeViewItemSelectionIndicatorForegroundDisabled"
+                                                    Color="{ThemeResource TextFillColorDisabledBrush}" />
+
+                                                <Style TargetType="TreeViewItem">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="TreeViewItem">
+                                                                <Grid x:Name="ContentPresenterGrid"
+                                                                      Background="{TemplateBinding Background}"
+                                                                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                                      BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+                                                                      Margin="{ThemeResource TreeViewItemPresenterMargin}"
+                                                                      Padding="{ThemeResource TreeViewItemPresenterPadding}"
+                                                                      CornerRadius="{TemplateBinding CornerRadius}">
+
+                                                                    <Grid.BackgroundTransition>
+                                                                        <BrushTransition />
+                                                                    </Grid.BackgroundTransition>
+
+                                                                    <Grid Opacity="0.4"
+                                                                          Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                                                                          HorizontalAlignment="Stretch"
+                                                                          Canvas.ZIndex="-1"
+                                                                          VerticalAlignment="Stretch" Margin="-10">
+                                                                        <Grid.OpacityTransition>
+                                                                            <ScalarTransition />
+                                                                        </Grid.OpacityTransition>
+                                                                    </Grid>
+
+                                                                    <Grid
+                                                                        x:Name="SelectionIndicator"
+                                                                        Width="3" Height="32" Opacity="1"
+                                                                        Background="{ThemeResource TreeViewItemSelectionIndicatorForeground}"
+                                                                        HorizontalAlignment="Left"
+                                                                        VerticalAlignment="Center"
+                                                                        CornerRadius="2">
+
+                                                                        <Grid.BackgroundTransition>
+                                                                            <BrushTransition />
+                                                                        </Grid.BackgroundTransition>
+                                                                    </Grid>
+
+                                                                    <Grid
+                                                                        x:Name="MultiSelectGrid"
+                                                                        Margin="{ThemeResource TreeViewItemMultiSelectSelectedItemBorderMargin}"
+                                                                        Padding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.Indentation}"
+                                                                        BorderBrush="Transparent"
+                                                                        BorderThickness="{ThemeResource TreeViewItemBorderThemeThickness}"
+                                                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="Auto" />
+                                                                            <ColumnDefinition Width="Auto" />
+                                                                            <ColumnDefinition />
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <Grid.BackgroundTransition>
+                                                                            <BrushTransition />
+                                                                        </Grid.BackgroundTransition>
+
+                                                                        <Grid Grid.Column="0">
+                                                                            <CheckBox
+                                                                                x:Name="MultiSelectCheckBox"
+                                                                                Width="32"
+                                                                                MinWidth="32"
+                                                                                MinHeight="{ThemeResource TreeViewItemMultiSelectCheckBoxMinHeight}"
+                                                                                Margin="10,0,0,0"
+                                                                                VerticalAlignment="Center"
+                                                                                Visibility="Collapsed"
+                                                                                IsTabStop="False"
+                                                                                AutomationProperties.AccessibilityView="Raw" />
+                                                                            <Border
+                                                                                x:Name="MultiArrangeOverlayTextBorder"
+                                                                                Visibility="Collapsed"
+                                                                                IsHitTestVisible="False"
+                                                                                MinWidth="20"
+                                                                                Height="20"
+                                                                                VerticalAlignment="Center"
+                                                                                HorizontalAlignment="Center"
+                                                                                Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                                                                BorderThickness="1"
+                                                                                BorderBrush="{ThemeResource SystemControlBackgroundChromeWhiteBrush}"
+                                                                                CornerRadius="{ThemeResource ControlCornerRadius}">
+                                                                                <TextBlock
+                                                                                    x:Name="MultiArrangeOverlayText"
+                                                                                    Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.DragItemsCount}"
+                                                                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                                                                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                                                                                    IsHitTestVisible="False"
+                                                                                    VerticalAlignment="Center"
+                                                                                    HorizontalAlignment="Center"
+                                                                                    AutomationProperties.AccessibilityView="Raw" />
+                                                                            </Border>
+                                                                        </Grid>
+
+                                                                        <Grid
+                                                                            x:Name="ExpandCollapseChevron"
+                                                                            Grid.Column="1"
+                                                                            Padding="14,0"
+                                                                            Width="Auto"
+                                                                            Opacity="{TemplateBinding GlyphOpacity}"
+                                                                            Background="Transparent">
+                                                                            <TextBlock
+                                                                                x:Name="CollapsedGlyph"
+                                                                                Foreground="{TemplateBinding GlyphBrush}"
+                                                                                Width="12"
+                                                                                Height="12"
+                                                                                Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.CollapsedGlyphVisibility}"
+                                                                                FontSize="{TemplateBinding GlyphSize}"
+                                                                                Text="{TemplateBinding CollapsedGlyph}"
+                                                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                                                Padding="2"
+                                                                                VerticalAlignment="Center"
+                                                                                AutomationProperties.AccessibilityView="Raw"
+                                                                                IsTextScaleFactorEnabled="False"
+                                                                                IsHitTestVisible="False" />
+                                                                            <TextBlock
+                                                                                x:Name="ExpandedGlyph"
+                                                                                Foreground="{TemplateBinding GlyphBrush}"
+                                                                                Width="12"
+                                                                                Height="12"
+                                                                                Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.ExpandedGlyphVisibility}"
+                                                                                FontSize="{TemplateBinding GlyphSize}"
+                                                                                Text="{TemplateBinding ExpandedGlyph}"
+                                                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                                                Padding="2"
+                                                                                VerticalAlignment="Center"
+                                                                                AutomationProperties.AccessibilityView="Raw"
+                                                                                IsTextScaleFactorEnabled="False"
+                                                                                IsHitTestVisible="False" />
+                                                                        </Grid>
+
+                                                                        <ContentPresenter
+                                                                            x:Name="ContentPresenter"
+                                                                            Grid.Column="2" FontWeight="Bold"
+                                                                            FontSize="16"
+                                                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                            Content="{TemplateBinding Content}"
+                                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                            MinHeight="{ThemeResource TreeViewItemContentHeight}"
+                                                                            Margin="-10,0" />
+                                                                    </Grid>
+
+                                                                    <VisualStateManager.VisualStateGroups>
+                                                                        <VisualStateGroup x:Name="CommonStates">
+                                                                            <VisualState x:Name="Normal">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="Transparent" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="Transparent" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="PointerOver">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="Transparent" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushPointerOver}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="Pressed">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPressed}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="Transparent" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushPressed}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="Selected">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundSelected}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelected}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="{ThemeResource TreeViewItemSelectionIndicatorForeground}" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelected}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelected}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushSelected}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="Disabled">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="Transparent" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushDisabled}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="PointerOverSelected">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundSelectedPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="{ThemeResource TreeViewItemSelectionIndicatorForeground}" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushSelectedPointerOver}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="PressedSelected">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundSelectedPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPressed}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="{ThemeResource TreeViewItemSelectionIndicatorForeground}" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushSelectedPressed}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="SelectedDisabled">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundSelectedDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="Transparent" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushSelectedDisabled}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="ReorderedPlaceholder">
+                                                                                <Storyboard>
+                                                                                    <FadeOutThemeAnimation
+                                                                                        TargetName="MultiSelectGrid" />
+                                                                                </Storyboard>
+                                                                            </VisualState>
+                                                                        </VisualStateGroup>
+                                                                    </VisualStateManager.VisualStateGroups>
+
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+
+                                            </ResourceDictionary>
+                                        </ResourceDictionary.MergedDictionaries>
+                                    </ResourceDictionary>
+                                </TreeView.Resources>
+                            </TreeView>
+
+                            <Button x:Name="CancelCalibrationButton_Devices" Grid.Row="1"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
+                                    Height="50" Grid.Column="0" Width="170"
+                                    FontWeight="Medium" HorizontalAlignment="Right" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </SplitView.Pane>
+        </SplitView>
+
+        <SplitView Canvas.ZIndex="2" x:Name="CalibrationModeSelectView"
+                   PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                   PaneClosing="CalibrationModeSelectView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
                    CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
             <SplitView.Pane>
                 <Grid>
@@ -141,7 +597,7 @@
             </SplitView.Pane>
         </SplitView>
 
-        <SplitView Canvas.ZIndex="2" x:Name="CalibrationRunningView"
+        <SplitView Canvas.ZIndex="3" x:Name="CalibrationRunningView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                    PaneClosing="CalibrationRunningView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
                    CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
@@ -544,64 +1000,9 @@
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
                                 IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
                                 Margin="10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
+                                VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}"/>
 
-                            <FlyoutBase.AttachedFlyout>
-                                <Flyout x:Name="ChooseDeviceFlyout"
-                                        Opening="ToggleButtonFlyout_Opening"
-                                        Closing="ToggleButtonFlyout_Closing">
-                                    <Flyout.FlyoutPresenterStyle>
-                                        <Style TargetType="FlyoutPresenter">
-                                            <Setter Property="CornerRadius" Value="8" />
-                                            <Setter Property="Background"
-                                                    Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                                        </Style>
-                                    </Flyout.FlyoutPresenterStyle>
-
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
-
-                                        <Grid Grid.Row="1">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <Button FontSize="15" x:Name="BaseCalibration"
-                                                    Click="BaseCalibration_Click"
-                                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                    Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
-                                                    HorizontalAlignment="Stretch"
-                                                    VerticalAlignment="Stretch"
-                                                    Style="{ThemeResource AccentButtonStyle}" />
-                                            <Button FontSize="15" x:Name="OverrideCalibration"
-                                                    Click="OverrideCalibration_Click"
-                                                    VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                    Margin="0,10,5,0" CornerRadius="4" Grid.Column="0"
-                                                    HorizontalAlignment="Stretch"
-                                                    VerticalAlignment="Stretch" />
-
-                                        </Grid>
-
-                                        <TextBlock FontSize="15" HorizontalAlignment="Stretch"
-                                                   VerticalAlignment="Stretch"
-                                                   Grid.Row="0" FontWeight="SemiBold"
-                                                   Style="{ThemeResource BaseTextBlockStyle}"
-                                                   x:Name="Captions_CalibrateOverrides" />
-
-
-                                    </Grid>
-                                </Flyout>
-                            </FlyoutBase.AttachedFlyout>
-                        </Button>
-
-                        <ToggleButton Margin="10" CornerRadius="4" Grid.Column="1" x:Name="ToggleTrackingButton"
+                            <ToggleButton Margin="10" CornerRadius="4" Grid.Column="1" x:Name="ToggleTrackingButton"
                                       Click="ToggleTrackingButton_Click" FontWeight="SemiBold" IsTabStop="False"
                                       IsEnabled="{Binding ElementName=CalibrationButton,Path=IsEnabled, TargetNullValue=False}"
                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="16">
@@ -618,38 +1019,6 @@
                                     </TeachingTip.IconSource>
                                 </muxc:TeachingTip>
                             </ToggleButton.Resources>
-                            <!--<ToggleSplitButton.Flyout>
-                                <Flyout Placement="Bottom"
-                                    Opening="ToggleButtonFlyout_Opening"
-                                    Closing="ToggleButtonFlyout_Closing">
-                                    <Flyout.FlyoutPresenterStyle>
-                                        <Style TargetType="FlyoutPresenter">
-                                            <Setter Property="CornerRadius" Value="8" />
-                                            <Setter Property="Background"
-                                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                                        </Style>
-                                    </Flyout.FlyoutPresenterStyle>
-
-                                    <Grid Margin="0,0,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="9*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="Medium" Opacity="1"
-                                               
-                                               Margin="30,0,0,0"
-                                               Grid.Column="0" />
-                                        <CheckBox x:Name="FreezeOnlyLowerCheckBox"
-                                              Checked="FreezeOnlyLowerCheckBox_Checked"
-                                              Unchecked="FreezeOnlyLowerCheckBox_Unchecked"
-                                              HorizontalAlignment="Left" VerticalAlignment="Center"
-                                              MinWidth="0" MinHeight="0" Margin="0,2,0,0" IsChecked="False" />
-
-                                    </Grid>
-                                </Flyout>
-                            </ToggleSplitButton.Flyout>-->
                         </ToggleButton>
 
                         <Button FontWeight="SemiBold" VerticalAlignment="Stretch" Width="65" Height="65"
@@ -811,16 +1180,16 @@
                             </Grid>
 
                             <!--Override Status Error-->
-                            <TextBlock x:Name="AdditionalDeviceErrorsHyperlink" 
-                                       Margin="40,10,20,0" HorizontalAlignment="Left" Visibility="Collapsed" 
+                            <TextBlock x:Name="AdditionalDeviceErrorsHyperlink"
+                                       Margin="40,10,20,0" HorizontalAlignment="Left" Visibility="Collapsed"
                                        Tapped="AdditionalDeviceErrorsHyperlink_Tapped" FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
-                            <TextBlock x:Name="AdditionalDeviceErrorsHyperlink_Line2" 
-                                       Margin="40,2,20,0" HorizontalAlignment="Left" 
+                            <TextBlock x:Name="AdditionalDeviceErrorsHyperlink_Line2"
+                                       Margin="40,2,20,0" HorizontalAlignment="Left"
                                        Visibility="{Binding ElementName=AdditionalDeviceErrorsHyperlink, 
-                                                    Path=Visibility, TargetNullValue=Collapsed}" 
-                                       Tapped="AdditionalDeviceErrorsHyperlink_Tapped" 
+                                                    Path=Visibility, TargetNullValue=Collapsed}"
+                                       Tapped="AdditionalDeviceErrorsHyperlink_Tapped"
                                        FontWeight="SemiBold" TextDecorations="Underline"
                                        Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
                         </StackPanel>

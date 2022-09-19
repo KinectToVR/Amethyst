@@ -28,6 +28,9 @@ namespace winrt::Amethyst::implementation
 		// WinUI things
 		GeneralPage();
 
+		Windows::Foundation::IAsyncAction ExecuteManualCalibration();
+		Windows::Foundation::IAsyncAction ExecuteAutomaticCalibration();
+
 		void AllowNavigation(const bool& allow);
 
 		void OffsetsButton_Click(const Windows::Foundation::IInspectable& sender,
@@ -47,11 +50,12 @@ namespace winrt::Amethyst::implementation
 		void CalibrationView_PaneClosing(const Microsoft::UI::Xaml::Controls::SplitView& sender,
 		                                 const Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs&
 		                                 args);
-		void AutoCalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
-		                                 const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		Windows::Foundation::IAsyncAction ManualCalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
-		                                                                const
-		                                                                Microsoft::UI::Xaml::RoutedEventArgs& e);
+		Windows::Foundation::IAsyncAction AutoCalibrationButton_Click(
+			const Windows::Foundation::IInspectable& sender,
+			const Microsoft::UI::Xaml::RoutedEventArgs& e);
+		Windows::Foundation::IAsyncAction ManualCalibrationButton_Click(
+			const Windows::Foundation::IInspectable& sender,
+			const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		Windows::Foundation::IAsyncAction StartAutoCalibrationButton_Click(
 			const Windows::Foundation::IInspectable& sender,
 			const Microsoft::UI::Xaml::RoutedEventArgs& e);
@@ -74,17 +78,16 @@ namespace winrt::Amethyst::implementation
 		                                  const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void CalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
 		                             const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void BaseCalibration_Click(const Windows::Foundation::IInspectable& sender,
-		                           const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void OverrideCalibration_Click(const Windows::Foundation::IInspectable& sender,
-		                               const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ReRegisterButton_Click(const Windows::Foundation::IInspectable& sender,
 		                            const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DismissSetErrorButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                 const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ToggleTrackingButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void CalibrationSelectView_PaneClosing(const Microsoft::UI::Xaml::Controls::SplitView& sender,
+		void CalibrationDeviceSelectView_PaneClosing(const Microsoft::UI::Xaml::Controls::SplitView& sender,
+		                                       const Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs
+		                                       & args);
+		void CalibrationModeSelectView_PaneClosing(const Microsoft::UI::Xaml::Controls::SplitView& sender,
 		                                       const Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs
 		                                       & args);
 		void CalibrationRunningView_PaneClosing(const Microsoft::UI::Xaml::Controls::SplitView& sender,
@@ -115,8 +118,12 @@ namespace winrt::Amethyst::implementation
 		                                         const Windows::Foundation::IInspectable& args);
 		void FreezeOnlyLowerToggle_Click(const Windows::Foundation::IInspectable& sender,
 		                                 const Microsoft::UI::Xaml::RoutedEventArgs& e);
-		void AdditionalDeviceErrorsHyperlink_Tapped(const Windows::Foundation::IInspectable& sender,
-		                                            const Microsoft::UI::Xaml::Input::TappedRoutedEventArgs& e);
+		Windows::Foundation::IAsyncAction AdditionalDeviceErrorsHyperlink_Tapped(
+			const Windows::Foundation::IInspectable& sender,
+			const Microsoft::UI::Xaml::Input::TappedRoutedEventArgs& e);
+		Windows::Foundation::IAsyncAction TrackingDeviceTreeView_ItemInvoked(
+			const Microsoft::UI::Xaml::Controls::TreeView& sender,
+			const Microsoft::UI::Xaml::Controls::TreeViewItemInvokedEventArgs& args);
 	};
 }
 

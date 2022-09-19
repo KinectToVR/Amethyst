@@ -104,9 +104,10 @@ namespace k2app::interfacing
 	                        checkingUpdatesNow = false,
 	                        updatingNow = false;
 
-	inline std::pair<Eigen::Vector3f, Eigen::Vector3f> // Position helpers for k2 devices -> Base, Override
-		kinectHeadPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}, // But this one's kinect-only
-		kinectWaistPosition{Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0)}; // This one applies to both bases
+	// Position helpers for k2 devices -> GUID, Pose
+	inline std::map<std::wstring, Eigen::Vector3f>
+		kinectHeadPosition, // But this one's kinect-only
+		kinectWaistPosition; // This one applies to both bases
 
 	// OpenVR playspace position
 	inline Eigen::Vector3f vrPlayspaceTranslation = Eigen::Vector3f(0, 0, 0);
@@ -1169,25 +1170,21 @@ namespace k2app::interfacing
 	{
 		// Capture RAW HMD pose
 		{
-			vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
-			vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(vr::ETrackingUniverseOrigin::TrackingUniverseStanding, 0,
-			                                                devicePose,
-			                                                vr::k_unMaxTrackedDeviceCount);
+			vr::TrackedDevicePose_t devicePose[1]; // HMD only
+			vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(
+				vr::ETrackingUniverseOrigin::TrackingUniverseStanding, 0, devicePose, 1);
 
-			if (constexpr int HMD_INDEX = 0;
-				devicePose[HMD_INDEX].bPoseIsValid)
+			if (devicePose[0].bPoseIsValid && // A little guard
+				vr::VRSystem()->GetTrackedDeviceClass(0) == vr::TrackedDeviceClass_HMD)
 			{
-				if (vr::VRSystem()->GetTrackedDeviceClass(HMD_INDEX) == vr::TrackedDeviceClass_HMD)
-				{
-					// Extract pose from the returns
-					const auto hmdPose = devicePose[HMD_INDEX];
+				// Extract pose from the returns
+				const auto hmdPose = devicePose[0];
 
-					// Get pos & rot -> EigenUtils' gonna do this stuff for us
-					auto position = EigenUtils::p_cast_type<Eigen::Vector3f>(hmdPose.mDeviceToAbsoluteTracking);
-					auto quaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(hmdPose.mDeviceToAbsoluteTracking);
+				// Get pos & rot -> EigenUtils' gonna do this stuff for us
+				auto position = EigenUtils::p_cast_type<Eigen::Vector3f>(hmdPose.mDeviceToAbsoluteTracking);
+				auto quaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(hmdPose.mDeviceToAbsoluteTracking);
 
-					vrHMDPose = std::make_pair(position, quaternion);
-				}
+				vrHMDPose = std::make_pair(position, quaternion);
 			}
 		}
 
@@ -1217,7 +1214,7 @@ namespace k2app::interfacing
 		}
 	}
 
-	inline auto IsCurrentWindowActive() -> bool
+	inline bool IsCurrentWindowActive()
 	{
 		if (k2app::shared::main::thisAppWindowID == nullptr)
 			return true; // Give up k?
@@ -4505,7 +4502,7 @@ namespace k2app::interfacing
 	template <typename T>
 	void VectorEraseElement(const std::vector<T>& vector, const T& value)
 	{
-		if (const auto index = std::find(vector.begin(), vector.end(), value); 
+		if (const auto index = std::find(vector.begin(), vector.end(), value);
 			index != vector.end())
 			vector.erase(vector.begin() + index);
 	}

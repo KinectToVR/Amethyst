@@ -1,0 +1,20 @@
+namespace Amethyst
+{
+	runtimeclass CalibrationDeviceEntryView : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		CalibrationDeviceEntryView(
+			String DeviceGUID,
+			String DisplayName,
+			Boolean IsBase,
+			Boolean IsOverride,
+			Boolean StatusError);
+
+		String DeviceGUID;
+		String DisplayName;
+		Boolean IsBase;
+		Boolean IsOverride;
+		Boolean StatusError;
+
+		Double BoolToOpacity(Boolean value);
+	}
+}

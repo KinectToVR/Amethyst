@@ -71,7 +71,7 @@
                                         Background="{ThemeResource SystemFillColorAttentionBrush}"
                                         VerticalAlignment="Top" HorizontalAlignment="Right">
                                     <Border.OpacityTransition>
-                                        <ScalarTransition/>
+                                        <ScalarTransition />
                                     </Border.OpacityTransition>
 
                                     <TextBlock Text="{Binding ElementName=DeviceEntryView_Base_Text, Path=Text}"
@@ -86,7 +86,7 @@
                                         Background="{ThemeResource SystemFillColorAttentionBrush}"
                                         VerticalAlignment="Top" HorizontalAlignment="Right">
                                     <Border.OpacityTransition>
-                                        <ScalarTransition/>
+                                        <ScalarTransition />
                                     </Border.OpacityTransition>
 
                                     <TextBlock Text="{Binding ElementName=DeviceEntryView_Override_Text, Path=Text}"
@@ -101,7 +101,7 @@
                                         Background="{ThemeResource SystemFillColorCriticalBrush}"
                                         VerticalAlignment="Bottom" HorizontalAlignment="Right">
                                     <Border.OpacityTransition>
-                                        <ScalarTransition/>
+                                        <ScalarTransition />
                                     </Border.OpacityTransition>
 
                                     <TextBlock Text="{Binding ElementName=DeviceEntryView_Error_Text, Path=Text}"

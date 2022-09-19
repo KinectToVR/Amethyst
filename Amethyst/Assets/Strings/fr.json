@@ -44,6 +44,7 @@
     "/GeneralPage/Calibration/LabelsWhat/Triggers": "Confirmer",
     "/GeneralPage/Calibration/Titles/Automatic": "Automatique",
     "/GeneralPage/Calibration/Titles/Choose": "Choisissez un mode de calibration",
+    "/GeneralPage/Calibration/Titles/Device": "Choose a device to calibrate",
     "/GeneralPage/Calibration/Titles/Manual": "Manuelle",
     "/GeneralPage/Calibration/Titles/Points": "Points de calibration:",
     "/GeneralPage/Captions/CalibrateOverrides": "Vous avez un substitut d'activé, quel appareil voulez-vous calibrer?",
