@@ -1217,6 +1217,35 @@ namespace k2app::interfacing
 		}
 	}
 
+	inline auto IsCurrentWindowActive() -> bool
+	{
+		if (k2app::shared::main::thisAppWindowID == nullptr)
+			return true; // Give up k?
+
+		return GetActiveWindow() == k2app::shared::main::thisAppWindowID;
+	}
+
+	inline bool IsDashboardOpen()
+	{
+		// Check if we're running on null
+		char system_name[1024];
+		vr::VRSystem()->GetStringTrackedDeviceProperty(
+			vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_TrackingSystemName_String, system_name, 1024);
+
+		// Just return true for debug reasons
+		if (strcmp(system_name, "null") == 0)
+			return true;
+
+		// Also check if we're not idle / standby
+		const auto stat = vr::VRSystem()->GetTrackedDeviceActivityLevel(vr::k_unTrackedDeviceIndex_Hmd);
+		if (stat != vr::k_EDeviceActivityLevel_UserInteraction &&
+			stat != vr::k_EDeviceActivityLevel_UserInteraction_Timeout)
+			return false; // Standby - hide
+
+		// Check if the dashboard is open
+		return vr::VROverlay()->IsDashboardVisible();
+	}
+
 	namespace plugins
 	{
 		inline void plugins_outputInfoString(

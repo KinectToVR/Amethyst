@@ -406,6 +406,38 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_container.SetColumn(_override_orientation_switch, 6);
 			_container.SetRow(_override_orientation_switch, 0);
 
+			// Pre-setup : Toggles
+			{
+				const bool _o_this_device =
+					_tracker_pointer->overrideGUID == k2app::shared::devices::selectedTrackingDeviceGUIDPair.first;
+				_override_position_switch.IsOn(_o_this_device && _tracker_pointer->isPositionOverridden);
+				_override_orientation_switch.IsOn(_o_this_device && _tracker_pointer->isRotationOverridden);
+			}
+			// Pre-setup : Badge
+			{
+				const bool _overriden_from_other_device =
+					(_tracker_pointer->isPositionOverridden || _tracker_pointer->isRotationOverridden) &&
+					!_tracker_pointer->overrideGUID.empty() &&
+					TrackingDevices::IsAnOverride(_tracker_pointer->overrideGUID) &&
+					_tracker_pointer->overrideGUID != k2app::shared::devices::selectedTrackingDeviceGUIDPair.first;
+				
+				// Optionally show the overlapping badge
+				_other_badge.Opacity(
+					_overriden_from_other_device ? 1.0 : 0.0);
+
+				// Set the badge's tooltip
+				using namespace std::string_literals;
+				ToolTipService::SetToolTip(
+					_other_badge,
+					_overriden_from_other_device
+					? box_value(k2app::interfacing::stringReplaceAll_R(
+						k2app::interfacing::LocalizedJSONString(
+							L"/DevicesPage/ToolTips/Overrides/Overlapping"),
+						L"{0}"s,
+						TrackingDevices::getDeviceNameFromGUID(_tracker_pointer->overrideGUID)))
+					: nullptr); // Either the default one or none
+			}
+
 			// Back everything up
 			_ptr_container = std::make_shared<Grid>(_container);
 			_ptr_title_container = std::make_shared<Grid>(_title_container);

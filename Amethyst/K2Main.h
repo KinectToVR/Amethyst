@@ -259,7 +259,7 @@ namespace k2app::main
 		}
 
 		/* Update the override device here (optionally) */
-		for(const auto& override_id : K2Settings.overrideDeviceGUIDsMap | std::views::values)
+		for (const auto& override_id : K2Settings.overrideDeviceGUIDsMap | std::views::values)
 			switch (TrackingDevices::TrackingDevicesVector[override_id].index())
 			{
 			case 0:
@@ -1008,7 +1008,7 @@ namespace k2app::main
 				// Wait 14s until the next refresh (or until a request)
 					for (uint32_t i = 0; i < 8; i++)
 					{
-						for (int i = 0; i < 4; i++) 
+						for (int j = 0; j < 4; j++)
 						{
 							if (interfacing::statusUIRefreshRequested_Urgent)break;
 							std::this_thread::sleep_for(std::chrono::milliseconds(500));

@@ -1497,51 +1497,6 @@ void Amethyst::implementation::GeneralPage::sk_dot(
 }
 
 
-std::pair<HWND, hresult> GetHWNDFromWindow(const Window& window)
-{
-	HWND nativeWindow{nullptr};
-	hresult result = window.as<IWindowNative>()->get_WindowHandle(&nativeWindow);
-	return std::make_pair(nativeWindow, result);
-}
-
-
-bool IsCurrentWindowActive()
-{
-	if (k2app::shared::main::thisWindow.get() == nullptr)
-		return true; // Give up k?
-
-	if (const auto [h_handle, h_result] =
-			GetHWNDFromWindow(*k2app::shared::main::thisWindow);
-
-		h_result >= 0) // From winrt::check_hresult
-		return GetActiveWindow() == h_handle;
-
-	return true; // (else) Give up k?
-}
-
-
-bool IsDashboardOpen()
-{
-	// Check if we're running on null
-	char system_name[1024];
-	vr::VRSystem()->GetStringTrackedDeviceProperty(
-		vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_TrackingSystemName_String, system_name, 1024);
-
-	// Just return true for debug reasons
-	if (strcmp(system_name, "null") == 0)
-		return true;
-
-	// Also check if we're not idle / standby
-	const auto stat = vr::VRSystem()->GetTrackedDeviceActivityLevel(vr::k_unTrackedDeviceIndex_Hmd);
-	if (stat != vr::k_EDeviceActivityLevel_UserInteraction &&
-		stat != vr::k_EDeviceActivityLevel_UserInteraction_Timeout)
-		return false; // Standby - hide
-
-	// Check if the dashboard is open
-	return vr::VROverlay()->IsDashboardVisible();
-}
-
-
 std::pair<bool, bool> IsJointUsedAsOverride(const uint32_t& joint)
 {
 	std::pair _o{false, false};
@@ -1595,7 +1550,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 	timer.Tick([&, this](const IInspectable& sender, const IInspectable& e)
 	{
-		const bool isCurrentWindowActive = IsCurrentWindowActive();
+		const bool isCurrentWindowActive = k2app::interfacing::IsCurrentWindowActive();
 
 		if (isCurrentWindowActive_backup != isCurrentWindowActive &&
 			k2app::shared::main::appTitleLabel.get() != nullptr)
@@ -1623,7 +1578,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 		if (!k2app::K2Settings.forceSkeletonPreview)
 		{
 			// If the dashboard's closed
-			if (k2app::K2Settings.skeletonPreviewEnabled && !IsDashboardOpen())
+			if (k2app::K2Settings.skeletonPreviewEnabled && !k2app::interfacing::IsDashboardOpen())
 			{
 				// Hide the UI, only show that viewing is disabled
 				SkeletonDrawingCanvas().Opacity(0.0);
