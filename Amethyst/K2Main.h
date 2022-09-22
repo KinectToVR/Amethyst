@@ -450,9 +450,9 @@ namespace k2app::main
 					// Rescan controller ids
 					interfacing::vrControllerIndexes =
 						std::make_pair(vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
-							               vr::ETrackedControllerRole::TrackedControllerRole_RightHand),
+							               vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
 						               vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
-							               vr::ETrackedControllerRole::TrackedControllerRole_LeftHand));
+							               vr::ETrackedControllerRole::TrackedControllerRole_RightHand));
 				}).detach();
 
 			// Scan for already-added body trackers from other apps
@@ -1106,7 +1106,7 @@ namespace k2app::main
 					/* Check if we have vr framerate, not to divide by 0 and,
 						if there is no vr running on hmd / error, run at 60 fps*/
 					next_frame += std::chrono::nanoseconds(
-						static_cast<int>(1000000000. / vr_frame_rate));
+						static_cast<int>(1000000000.f / vr_frame_rate));
 
 					/* Update things here */
 
@@ -1135,10 +1135,11 @@ namespace k2app::main
 						if (server_loops >= 10000)
 						{
 							server_loops = 0; // Reset the counter
+							const auto fixed_duration = std::chrono::duration_cast<std::chrono::nanoseconds>(
+								std::chrono::high_resolution_clock::now() - loop_start_time).count();
+
 							LOG(INFO) << "10000 loops have passed: this loop took " << duration <<
-								"ns, the loop's time after time correction (sleep) is: " <<
-								std::chrono::duration_cast<std::chrono::nanoseconds>(
-									std::chrono::high_resolution_clock::now() - loop_start_time).count() << "ns";
+								"ns, the loop's time after time correction (sleep) is: " << fixed_duration << "ns";
 						}
 						else server_loops++;
 					}

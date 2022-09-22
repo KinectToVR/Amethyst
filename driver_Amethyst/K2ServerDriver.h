@@ -1,13 +1,9 @@
 #pragma once
 #include <iostream>
 #include <Windows.h>
-#include <optional>
 #include <chrono>
 #include "K2Tracker.h"
 #include <Amethyst_API.h>
-#include <semaphore>
-
-inline std::binary_semaphore smphFrameUpdate{0};
 
 class K2ServerDriver
 {

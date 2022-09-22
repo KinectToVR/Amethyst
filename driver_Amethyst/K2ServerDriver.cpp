@@ -102,9 +102,6 @@ int K2ServerDriver::init_ServerDriver(
 				{
 					while (_isActive)
 					{
-						// Wait for the loop start
-						smphFrameUpdate.acquire();
-
 						// Wait for the client to request a read
 						while (WaitForSingleObject(k2api_start_Semaphore, 15000L) != WAIT_OBJECT_0)
 						{

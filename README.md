@@ -1,6 +1,7 @@
 # **Amethyst**
 
-No one besides the team can read this anyway. Have fun, human
+## [FOR DOWNLOADS GO HERE](https://github.com/KinectToVR/Amethyst-Installer-Releases)
+## [DOCUMENTATION IS HERE](https://docs.k2vr.tech)
 
 ## **License**
 This project is licensed under the GNU GPL v3 License 

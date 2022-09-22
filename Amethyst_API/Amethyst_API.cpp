@@ -85,7 +85,8 @@ namespace ktvr
 		WaitForSingleObject(ame_api_to_semaphore, INFINITE);
 
 		// Here, write to the *to* pipe
-		HANDLE API_WriterPipe = CreateNamedPipeW(
+		const HANDLE API_WriterPipe =
+			CreateNamedPipeW(
 			ame_api_to_pipe_address.c_str(),
 			PIPE_ACCESS_INBOUND | PIPE_ACCESS_OUTBOUND,
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
@@ -123,8 +124,8 @@ namespace ktvr
 
 			// Here, read from the *from* pipe
 			// Create the pipe file
-			std::optional API_ReaderPipe = CreateFileW(
-				ame_api_from_pipe_address.c_str(),
+			const std::optional API_ReaderPipe = 
+				CreateFileW(ame_api_from_pipe_address.c_str(),
 				GENERIC_READ | GENERIC_WRITE,
 				0, nullptr, OPEN_EXISTING, 0, nullptr);
 
@@ -154,7 +155,7 @@ namespace ktvr
 
 			///// Receive the response via named pipe /////
 
-			return std::string(API_read_buffer); // Return only the reply
+			return { API_read_buffer }; // Return only the reply
 		}
 		// Unlock the semaphore after job done
 		ReleaseSemaphore(ame_api_to_semaphore, 1, nullptr);
@@ -171,7 +172,7 @@ namespace ktvr
 
 		// Send the message
 		send_message(message.SerializeAsString(), false);
-		return std::monostate();
+		return {};
 	}
 
 	K2ResponseMessage send_message_want_reply(K2Message message)
