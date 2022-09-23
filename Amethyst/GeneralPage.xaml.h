@@ -17,13 +17,13 @@ namespace winrt::Amethyst::implementation
 		bool CalibrationPending = false; // If we're running a calibration
 		bool AutoCalibration_StillPending = false; // If calibration panes are still opened
 
-		void sk_line(Microsoft::UI::Xaml::Shapes::Line& line, const std::array<Eigen::Vector3f, 25>& joints,
-		             const std::array<ktvr::ITrackedJointState, 25>& states,
+		void sk_line(Microsoft::UI::Xaml::Shapes::Line& line,
+		             std::array<ktvr::K2TrackedBaseJoint, 25> joints,
 		             const ktvr::ITrackedJointType& from, const ktvr::ITrackedJointType& to);
 
 		void sk_dot(Microsoft::UI::Xaml::Shapes::Ellipse& ellipse,
-		            const Eigen::Vector3f& joint,
-		            const ktvr::ITrackedJointState& state, const std::pair<bool, bool>& isOverridden);
+		            ktvr::K2TrackedBaseJoint joint,
+		            const std::pair<bool, bool>& isOverridden);
 
 		// WinUI things
 		GeneralPage();
@@ -85,11 +85,11 @@ namespace winrt::Amethyst::implementation
 		void ToggleTrackingButton_Click(const Windows::Foundation::IInspectable& sender,
 		                                const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void CalibrationDeviceSelectView_PaneClosing(const Microsoft::UI::Xaml::Controls::SplitView& sender,
-		                                       const Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs
-		                                       & args);
+		                                             const Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs
+		                                             & args);
 		void CalibrationModeSelectView_PaneClosing(const Microsoft::UI::Xaml::Controls::SplitView& sender,
-		                                       const Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs
-		                                       & args);
+		                                           const Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs
+		                                           & args);
 		void CalibrationRunningView_PaneClosing(const Microsoft::UI::Xaml::Controls::SplitView& sender,
 		                                        const
 		                                        Microsoft::UI::Xaml::Controls::SplitViewPaneClosingEventArgs&

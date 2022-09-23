@@ -2,6 +2,7 @@
 #include <Windows.h>
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <variant>
 #include <array>
@@ -42,7 +43,7 @@ inline std::string WStringToString(const std::wstring& w_str)
 namespace ktvr
 {
 	// Interface Version
-	static const char* IAME_API_Devices_Version = "IAME_API_Version_016";
+	static const char* IAME_API_Devices_Version = "IAME_API_Version_017";
 
 	// Return messaging types
 	enum K2InitErrorType
@@ -107,8 +108,102 @@ namespace ktvr
 		K2_Character_Full
 	};
 
-	// Tracking Device Joint class for client plugins
-	class K2TrackedJoint
+	// Tracking Device Joint class for client plugins : SkeletonBasis
+	class K2TrackedBaseJoint
+	{
+		// Named joint, provides pos, rot, state and ofc name
+	public:
+		K2TrackedBaseJoint()
+		{
+		}
+
+		K2TrackedBaseJoint(Eigen::Vector3f pos, Eigen::Quaternionf rot,
+		                   const ITrackedJointState& state) :
+			jointPosition{std::move(pos)},
+			jointOrientation{std::move(rot)},
+			trackingState{state}
+		{
+		}
+
+		Eigen::Vector3f getJointPosition() { return jointPosition; }
+		Eigen::Quaternionf getJointOrientation() { return jointOrientation; }
+
+		Eigen::Vector3f getJointVelocity() { return jointVelocity; }
+		Eigen::Vector3f getJointAcceleration() { return jointAcceleration; }
+
+		Eigen::Vector3f getJointAngularVelocity() { return jointAngularVelocity; }
+		Eigen::Vector3f getJointAngularAcceleration() { return jointAngularAcceleration; }
+
+		ITrackedJointState getTrackingState() { return trackingState; } // ITrackedJointState
+
+		// For servers!
+		void update(Eigen::Vector3f position,
+		            Eigen::Quaternionf orientation,
+		            const ITrackedJointState state)
+		{
+			jointPosition = std::move(position);
+			jointOrientation = std::move(orientation);
+			trackingState = state;
+		}
+
+		// For servers!
+		void update_position(Eigen::Vector3f position)
+		{
+			jointPosition = std::move(position);
+		}
+
+		// For servers!
+		void update_orientation(Eigen::Quaternionf orientation)
+		{
+			jointOrientation = std::move(orientation);
+		}
+
+		// For servers!
+		void getJointVelocity(Eigen::Vector3f velocity)
+		{
+			jointVelocity = std::move(velocity);
+		}
+
+		// For servers!
+		void getJointAcceleration(Eigen::Vector3f acceleration)
+		{
+			jointAcceleration = std::move(acceleration);
+		}
+
+		// For servers!
+		void getJointAngularVelocity(Eigen::Vector3f angularVelocity)
+		{
+			jointAngularVelocity = std::move(angularVelocity);
+		}
+
+		// For servers!
+		void getJointAngularAcceleration(Eigen::Vector3f angularAcceleration)
+		{
+			jointAngularAcceleration = std::move(angularAcceleration);
+		}
+
+		// For servers!
+		void update_state(const ITrackedJointState state)
+		{
+			trackingState = state;
+		}
+
+	protected:
+		// Tracker should be centered automatically
+		Eigen::Vector3f jointPosition = Eigen::Vector3f(0.f, 0.f, 0.f);
+		Eigen::Quaternionf jointOrientation = Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f);
+
+		Eigen::Vector3f jointVelocity = Eigen::Vector3f(0.f, 0.f, 0.f);
+		Eigen::Vector3f jointAcceleration = Eigen::Vector3f(0.f, 0.f, 0.f);
+
+		Eigen::Vector3f jointAngularVelocity = Eigen::Vector3f(0.f, 0.f, 0.f);
+		Eigen::Vector3f jointAngularAcceleration = Eigen::Vector3f(0.f, 0.f, 0.f);
+
+		ITrackedJointState trackingState = State_NotTracked;
+	};
+
+	// Tracking Device Joint class for client plugins : Extended
+	class K2TrackedJoint : public K2TrackedBaseJoint
 	{
 		// Named joint, provides pos, rot, state and ofc name
 	public:
@@ -116,45 +211,22 @@ namespace ktvr
 		{
 		}
 
-		K2TrackedJoint(std::wstring name) : jointName{std::move(name)}
+		explicit K2TrackedJoint(std::wstring name) : jointName{std::move(name)}
 		{
 		}
 
-		K2TrackedJoint(const Eigen::Vector3f& pos, const Eigen::Quaternionf& rot,
-		               const ITrackedJointState& state, const std::wstring& name) :
-			jointOrientation{rot}, jointPosition{pos},
-			trackingState{state}, jointName{name}
+		K2TrackedJoint(Eigen::Vector3f pos, Eigen::Quaternionf rot,
+		               const ITrackedJointState& state, std::wstring name) :
+			jointName{std::move(name)}
 		{
+			jointPosition = std::move(pos);
+			jointOrientation = std::move(rot);
+			trackingState = state;
 		}
 
 		std::wstring getJointName() { return jointName; } // Custom name
 
-		Eigen::Vector3f getJointPosition() { return jointPosition; }
-		Eigen::Quaternionf getJointOrientation() { return jointOrientation; }
-		ITrackedJointState getTrackingState() { return trackingState; } // ITrackedJointState
-
-		// For servers!
-		void update(Eigen::Vector3f position,
-		            Eigen::Quaternionf orientation,
-		            ITrackedJointState state)
-		{
-			jointPosition = position;
-			jointOrientation = orientation;
-			trackingState = state;
-		}
-
-		// For servers!
-		void update(ITrackedJointState state)
-		{
-			trackingState = state;
-		}
-
 	protected:
-		// Tracker should be centered automatically
-		Eigen::Quaternionf jointOrientation = Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f);
-		Eigen::Vector3f jointPosition = Eigen::Vector3f(0.f, 0.f, 0.f);
-		ITrackedJointState trackingState = State_NotTracked;
-
 		std::wstring jointName = L"Name not set";
 	};
 
@@ -718,9 +790,8 @@ namespace ktvr
 		// Return device's name (can repeat)
 		std::wstring getDeviceName() { return deviceName; } // Custom name
 
-		std::array<Eigen::Vector3f, 25> getJointPositions() { return jointPositions; }
-		std::array<Eigen::Quaternionf, 25> getJointOrientations() { return jointOrientations; }
-		std::array<ITrackedJointState, 25> getTrackingStates() { return trackingStates; }
+		// Joints' vector. You need to update appended joints in every update() call
+		std::array<K2TrackedBaseJoint, 25> getTrackedJoints() { return trackedJoints; }
 
 		// After init, this should always return true
 		[[nodiscard]] bool isInitialized() const { return initialized; }
@@ -751,6 +822,11 @@ namespace ktvr
 		// Should be set up at construction
 		// This will tell Amethyst to disable all position filters on joints managed by this plugin
 		[[nodiscard]] bool isPositionFilterBlockingEnabled() const { return Flags_BlocksPositionFiltering; }
+
+		// Should be set up at construction
+		// This will tell Amethyst not to auto-manage on joints managed by this plugin
+		// Includes: velocity, acceleration, angular velocity, angular acceleration
+		[[nodiscard]] bool isPhysicsOverrideEnabled() const { return Flags_OverridesJointPhysics; }
 
 		/* Helper functions which may be internally called by the device plugin */
 
@@ -886,63 +962,13 @@ namespace ktvr
 		// This will tell Amethyst to disable all position filters on joints managed by this plugin
 		bool Flags_BlocksPositionFiltering = false;
 
-		std::array<Eigen::Vector3f, 25> jointPositions = {
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f),
-			Eigen::Vector3f(0.f, 0.f, 0.f)
-		};
+		// Should be set up at construction
+		// This will tell Amethyst not to auto-manage on joints managed by this plugin
+		// Includes: velocity, acceleration, angular velocity, angular acceleration
+		bool Flags_OverridesJointPhysics = false;
 
-		std::array<Eigen::Quaternionf, 25> jointOrientations = {
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f),
-			Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f)
-		};
-
-		std::array<ITrackedJointState, 25> trackingStates = {}; // State_NotTracked
+		// The array of the device joints, mapped with ITrackedJointType
+		std::array<K2TrackedBaseJoint, 25> trackedJoints;
 
 		class FailedKinectInitialization : public std::exception
 		{
@@ -1022,6 +1048,11 @@ namespace ktvr
 		// Should be set up at construction
 		// This will tell Amethyst to disable all position filters on joints managed by this plugin
 		[[nodiscard]] bool isPositionFilterBlockingEnabled() const { return Flags_BlocksPositionFiltering; }
+
+		// Should be set up at construction
+		// This will tell Amethyst not to auto-manage on joints managed by this plugin
+		// Includes: velocity, acceleration, angular velocity, angular acceleration
+		[[nodiscard]] bool isPhysicsOverrideEnabled() const { return Flags_OverridesJointPhysics; }
 
 		/* Helper functions which may be internally called by the device plugin */
 
@@ -1120,7 +1151,6 @@ namespace ktvr
 		std::function<Interface::ProgressBar*()> CreateProgressBar;
 
 	protected:
-
 		// Return device's name (may repeat or overlap)
 		std::wstring deviceName = L"Name not set";
 
@@ -1146,7 +1176,12 @@ namespace ktvr
 		// Should be set up at construction
 		// This will tell Amethyst to disable all position filters on joints managed by this plugin
 		bool Flags_BlocksPositionFiltering = false;
-		
+
+		// Should be set up at construction
+		// This will tell Amethyst not to auto-manage on joints managed by this plugin
+		// Includes: velocity, acceleration, angular velocity, angular acceleration
+		bool Flags_OverridesJointPhysics = false;
+
 		std::vector<K2TrackedJoint> trackedJoints = {
 			K2TrackedJoint() // owo, wat's this?
 		};

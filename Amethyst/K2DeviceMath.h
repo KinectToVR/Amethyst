@@ -17,8 +17,7 @@ namespace TrackingDevices::Math
 		if (_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Full ||
 			_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
 		{
-			const auto _joints = _kinect->getJointPositions();
-			const auto _joint_states = _kinect->getTrackingStates();
+			auto _joints = _kinect->getTrackedJoints();
 
 			// Placeholders for mathbased rots
 			Eigen::Quaternionf calculatedLeftFootOrientation, calculatedRightFootOrientation;
@@ -26,34 +25,34 @@ namespace TrackingDevices::Math
 			// Capture needed joints' positions
 			Eigen::Vector3f forward(0, 0, 1),
 			                ankleLeftPose(
-				                _joints[ktvr::Joint_AnkleLeft].x(),
-				                _joints[ktvr::Joint_AnkleLeft].y(),
-				                _joints[ktvr::Joint_AnkleLeft].z()),
+				                _joints[ktvr::Joint_AnkleLeft].getJointPosition().x(),
+				                _joints[ktvr::Joint_AnkleLeft].getJointPosition().y(),
+				                _joints[ktvr::Joint_AnkleLeft].getJointPosition().z()),
 
 			                ankleRightPose(
-				                _joints[ktvr::Joint_AnkleRight].x(),
-				                _joints[ktvr::Joint_AnkleRight].y(),
-				                _joints[ktvr::Joint_AnkleRight].z()),
+				                _joints[ktvr::Joint_AnkleRight].getJointPosition().x(),
+								_joints[ktvr::Joint_AnkleRight].getJointPosition().y(),
+								_joints[ktvr::Joint_AnkleRight].getJointPosition().z()),
 
 			                footLeftPose(
-				                _joints[ktvr::Joint_FootLeft].x(),
-				                _joints[ktvr::Joint_FootLeft].y(),
-				                _joints[ktvr::Joint_FootLeft].z()),
+				                _joints[ktvr::Joint_FootLeft].getJointPosition().x(),
+								_joints[ktvr::Joint_FootLeft].getJointPosition().y(),
+								_joints[ktvr::Joint_FootLeft].getJointPosition().z()),
 
 			                footRightPose(
-				                _joints[ktvr::Joint_FootRight].x(),
-				                _joints[ktvr::Joint_FootRight].y(),
-				                _joints[ktvr::Joint_FootRight].z()),
+				                _joints[ktvr::Joint_FootRight].getJointPosition().x(),
+								_joints[ktvr::Joint_FootRight].getJointPosition().y(),
+								_joints[ktvr::Joint_FootRight].getJointPosition().z()),
 
 			                kneeLeftPose(
-				                _joints[ktvr::Joint_KneeLeft].x(),
-				                _joints[ktvr::Joint_KneeLeft].y(),
-				                _joints[ktvr::Joint_KneeLeft].z()),
+				                _joints[ktvr::Joint_KneeLeft].getJointPosition().x(),
+								_joints[ktvr::Joint_KneeLeft].getJointPosition().y(),
+								_joints[ktvr::Joint_KneeLeft].getJointPosition().z()),
 
 			                kneeRightPose(
-				                _joints[ktvr::Joint_KneeRight].x(),
-				                _joints[ktvr::Joint_KneeRight].y(),
-				                _joints[ktvr::Joint_KneeRight].z());
+				                _joints[ktvr::Joint_KneeRight].getJointPosition().x(),
+								_joints[ktvr::Joint_KneeRight].getJointPosition().y(),
+								_joints[ktvr::Joint_KneeRight].getJointPosition().z());
 
 			// Calculate euler yaw foot orientation, we'll need it later
 			Eigen::Vector3f
@@ -157,7 +156,7 @@ namespace TrackingDevices::Math
 					0.0, // right_knee_ori_full.z(), // actually 0.0 but okay
 					-right_knee_ori_full.y()));
 
-			if (_joint_states[ktvr::Joint_AnkleLeft] == ktvr::ITrackedJointState::State_Tracked)
+			if (_joints[ktvr::Joint_AnkleLeft].getTrackingState() == ktvr::ITrackedJointState::State_Tracked)
 				// All the rotations
 				calculatedLeftFootOrientation = leftFootPreFilteredQuaternion *
 					knee_ankleLeftOrientationQuaternion;
@@ -165,7 +164,7 @@ namespace TrackingDevices::Math
 				// Without the foot's yaw
 				calculatedLeftFootOrientation = knee_ankleLeftOrientationQuaternion;
 
-			if (_joint_states[ktvr::Joint_AnkleRight] == ktvr::ITrackedJointState::State_Tracked)
+			if (_joints[ktvr::Joint_AnkleRight].getTrackingState() == ktvr::ITrackedJointState::State_Tracked)
 				// All the rotations
 				calculatedRightFootOrientation = rightFootPreFilteredQuaternion *
 					knee_ankleRightOrientationQuaternion;
@@ -304,8 +303,7 @@ namespace TrackingDevices::Math
 			_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
 		{
 			// Get device joints and their states
-			const auto _joints = _kinect->getJointPositions();
-			const auto _joint_states = _kinect->getTrackingStates();
+			const auto _joints = _kinect->getTrackedJoints();
 
 			// Create placeholders for math-based rots
 			auto calculatedLeftFootOrientation = Eigen::Quaternionf(1, 0, 0, 0);

@@ -203,12 +203,15 @@ void KinectV2Handler::updateParseFrame()
 			/* Copy joint positions */
 			for (int j = 0; j < ktvr::Joint_Total; ++j)
 			{
-				//TrackingDeviceBase::jointPositions[j].w = 1.0f;
-				jointPositions[j].x() = joints[globalIndex[j]].Position.X;
-				jointPositions[j].y() = joints[globalIndex[j]].Position.Y;
-				jointPositions[j].z() = joints[globalIndex[j]].Position.Z;
+				trackedJoints[j].update_position(
+					{
+						joints[globalIndex[j]].Position.X,
+						joints[globalIndex[j]].Position.Y,
+						joints[globalIndex[j]].Position.Z
+					});
 
-				trackingStates[j] = static_cast<ktvr::ITrackedJointState>(joints[globalIndex[j]].TrackingState);
+				trackedJoints[j].update_state(
+					static_cast<ktvr::ITrackedJointState>(joints[globalIndex[j]].TrackingState));
 			}
 
 			/* Copy joint orientations */
@@ -220,14 +223,13 @@ void KinectV2Handler::updateParseFrame()
 					k == ktvr::Joint_KneeLeft || k == ktvr::Joint_KneeRight)
 					continue;
 
-				jointOrientations[k].w() = boneOrientations[globalIndex[k]].Orientation.
-				                                                            w;
-				jointOrientations[k].x() = boneOrientations[globalIndex[k]].Orientation.
-				                                                            x;
-				jointOrientations[k].y() = boneOrientations[globalIndex[k]].Orientation.
-				                                                            y;
-				jointOrientations[k].z() = boneOrientations[globalIndex[k]].Orientation.
-				                                                            z;
+				trackedJoints[k].update_orientation(
+					{
+						boneOrientations[globalIndex[k]].Orientation.w,
+						boneOrientations[globalIndex[k]].Orientation.x,
+						boneOrientations[globalIndex[k]].Orientation.y,
+						boneOrientations[globalIndex[k]].Orientation.z
+					});
 			}
 
 			/* Fix feet orientation */
@@ -241,8 +243,8 @@ void KinectV2Handler::updateParseFrame()
 			// to shake and express self greatness 
 			// (or just tracks every damn molecule which shakes due to the internal heat)
 
-			jointOrientations[ktvr::Joint_AnkleLeft] =
-				jointOrientations[ktvr::Joint_AnkleLeft].slerp(
+			trackedJoints[ktvr::Joint_AnkleLeft].update_orientation(
+				trackedJoints[ktvr::Joint_AnkleLeft].getJointOrientation().slerp(
 					0.3f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
 						Orientation.w,
@@ -255,10 +257,10 @@ void KinectV2Handler::updateParseFrame()
 					) *
 					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
 						* Eigen::AngleAxisf(_PI / 2.0, Eigen::Vector3f::UnitY())
-						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()))));
 
-			jointOrientations[ktvr::Joint_AnkleRight] =
-				jointOrientations[ktvr::Joint_AnkleRight].slerp(
+			trackedJoints[ktvr::Joint_AnkleRight].update_orientation(
+				trackedJoints[ktvr::Joint_AnkleRight].getJointOrientation().slerp(
 					0.3f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[
 							ktvr::Joint_AnkleRight]].Orientation.w,
@@ -271,10 +273,10 @@ void KinectV2Handler::updateParseFrame()
 					) *
 					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
 						* Eigen::AngleAxisf(-_PI / 2.0, Eigen::Vector3f::UnitY())
-						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()))));
 
-			jointOrientations[ktvr::Joint_KneeLeft] =
-				jointOrientations[ktvr::Joint_KneeLeft].slerp(
+			trackedJoints[ktvr::Joint_KneeLeft].update_orientation(
+				trackedJoints[ktvr::Joint_KneeLeft].getJointOrientation().slerp(
 					0.35f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
 						Orientation.w,
@@ -287,10 +289,10 @@ void KinectV2Handler::updateParseFrame()
 					) *
 					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
 						* Eigen::AngleAxisf(_PI / 3.0, Eigen::Vector3f::UnitY())
-						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()))));
 
-			jointOrientations[ktvr::Joint_KneeRight] =
-				jointOrientations[ktvr::Joint_KneeRight].slerp(
+			trackedJoints[ktvr::Joint_KneeRight].update_orientation(
+				trackedJoints[ktvr::Joint_KneeRight].getJointOrientation().slerp(
 					0.35f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[
 							ktvr::Joint_KneeRight]].Orientation.w,
@@ -303,10 +305,10 @@ void KinectV2Handler::updateParseFrame()
 					) *
 					Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
 						* Eigen::AngleAxisf(-_PI / 3.0, Eigen::Vector3f::UnitY())
-						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ())));
+						* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()))));
 
-			jointOrientations[ktvr::Joint_ElbowLeft] =
-				jointOrientations[ktvr::Joint_ElbowLeft].slerp(
+			trackedJoints[ktvr::Joint_ElbowLeft].update_orientation(
+				trackedJoints[ktvr::Joint_ElbowLeft].getJointOrientation().slerp(
 					0.35f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 						Orientation.w,
@@ -316,10 +318,10 @@ void KinectV2Handler::updateParseFrame()
 						Orientation.y,
 						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 						Orientation.z
-					));
+					)));
 
-			jointOrientations[ktvr::Joint_ElbowRight] =
-				jointOrientations[ktvr::Joint_ElbowRight].slerp(
+			trackedJoints[ktvr::Joint_ElbowRight].update_orientation(
+				trackedJoints[ktvr::Joint_ElbowRight].getJointOrientation().slerp(
 					0.35f, Eigen::Quaternionf(
 						boneOrientations[globalIndex[
 							ktvr::Joint_ElbowRight]].Orientation.w,
@@ -329,7 +331,7 @@ void KinectV2Handler::updateParseFrame()
 							ktvr::Joint_ElbowRight]].Orientation.y,
 						boneOrientations[globalIndex[
 							ktvr::Joint_ElbowRight]].Orientation.z
-					));
+					)));
 
 			newBodyFrameArrived = false;
 			break; // Only first skeleton

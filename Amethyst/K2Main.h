@@ -243,16 +243,18 @@ namespace k2app::main
 			{
 				const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
 				pDevice->update(); // Update the device
-				interfacing::kinectHeadPosition[pDevice->getDeviceGUID()] = pDevice->getJointPositions()[
-					ktvr::Joint_Head];
-				interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] = pDevice->getJointPositions()[
-					ktvr::Joint_SpineWaist];
+
+				interfacing::kinectHeadPosition[pDevice->getDeviceGUID()] =
+					pDevice->getTrackedJoints()[ktvr::Joint_Head].getJointPosition();
+				interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] =
+					pDevice->getTrackedJoints()[ktvr::Joint_SpineWaist].getJointPosition();
 			}
 			break;
 		case 1:
 			{
 				const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
 				pDevice->update(); // Update the device
+
 				if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
 					interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
 						K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
@@ -269,10 +271,11 @@ namespace k2app::main
 					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 						TrackingDevices::TrackingDevicesVector[override_id]);
 					pDevice->update(); // Update the device
-					interfacing::kinectHeadPosition[pDevice->getDeviceGUID()] = pDevice->getJointPositions()[
-						ktvr::Joint_Head];
-					interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] = pDevice->getJointPositions()[
-						ktvr::Joint_SpineWaist];
+
+					interfacing::kinectHeadPosition[pDevice->getDeviceGUID()] =
+						pDevice->getTrackedJoints()[ktvr::Joint_Head].getJointPosition();
+					interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] =
+						pDevice->getTrackedJoints()[ktvr::Joint_SpineWaist].getJointPosition();
 				}
 				break;
 			case 1:
@@ -280,6 +283,7 @@ namespace k2app::main
 					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
 						TrackingDevices::TrackingDevicesVector[override_id]);
 					pDevice->update(); // Update the device
+
 					if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
 						interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
 							K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
@@ -622,13 +626,15 @@ namespace k2app::main
 
 						                              // If flip
 						                              ? std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device)->
-						                              getJointOrientations()[
-							                              overrides::getFlippedJointType(
-								                              ITrackerType_Joint[tracker.base_tracker])].inverse()
+						                                getTrackedJoints()[
+							                                overrides::getFlippedJointType(
+								                                ITrackerType_Joint[tracker.base_tracker])].
+						                                getJointOrientation().inverse()
 
 						                              // If no flip
 						                              : std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device)->
-						                              getJointOrientations()[ITrackerType_Joint[tracker.base_tracker]]
+						                              getTrackedJoints()[ITrackerType_Joint[tracker.base_tracker]].
+						                              getJointOrientation()
 					                           )
 
 					                           // JointsBasis Device - select based on settings : index1
@@ -761,9 +767,9 @@ namespace k2app::main
 					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device);
 
 				for (auto& tracker : K2Settings.K2TrackersVector)
-					tracker.pose_position = _kinect->getJointPositions()[
+					tracker.pose_position = _kinect->getTrackedJoints()[
 						overrides::getFlippedJointType(
-							ITrackerType_Joint[tracker.base_tracker], base_flip)];
+							ITrackerType_Joint[tracker.base_tracker], base_flip)].getJointPosition();
 			}
 			else if (_device.index() == 1)
 			{
@@ -878,20 +884,20 @@ namespace k2app::main
 
 									   // If flip
 									   ? std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
-										   _device)->
-									   getJointOrientations()[
-										   overrides::getFlippedJointType(
-											   static_cast<ktvr::ITrackedJointType>(
-												   TrackingDevices::devices_override_joint_id(
-													   _override_id, tracker.overrideJointID)))].
-									   inverse() // (Inverted orientation - flipped)
+										     _device)->
+									     getTrackedJoints()[
+										     overrides::getFlippedJointType(
+											     static_cast<ktvr::ITrackedJointType>(
+												     TrackingDevices::devices_override_joint_id(
+													     _override_id, tracker.overrideJointID)))].
+									     getJointOrientation().inverse() // (Inverted orientation - flipped)
 
 									   // If no flip
 									   : std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 										   _device)->
-									   getJointOrientations()[
+									   getTrackedJoints()[
 										   TrackingDevices::devices_override_joint_id(
-											   _override_id, tracker.overrideJointID)]
+											   _override_id, tracker.overrideJointID)].getJointOrientation()
 								)
 
 								// JointsBasis Device - select based on settings : index1
@@ -991,11 +997,11 @@ namespace k2app::main
 						if (tracker.isPositionOverridden && // If an override is enabled
 							tracker.overrideGUID == _override_guid) // If it's from this device
 
-							tracker.pose_position = _kinect->getJointPositions()[
+							tracker.pose_position = _kinect->getTrackedJoints()[
 								overrides::getFlippedJointType(
 									static_cast<ktvr::ITrackedJointType>(
 										TrackingDevices::devices_override_joint_id(
-											_override_id, tracker.overrideJointID)), override_flip)];
+											_override_id, tracker.overrideJointID)), override_flip)].getJointPosition();
 				}
 				else if (_device.index() == 1)
 				{

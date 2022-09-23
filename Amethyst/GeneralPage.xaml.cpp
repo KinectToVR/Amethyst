@@ -901,7 +901,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 
 	CalibrationButton().Content(box_value(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Calibration/Begin")));
-	
+
 	OffsetsButton().Text(
 		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Buttons/Offsets"));
 
@@ -1125,8 +1125,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 
 void Amethyst::implementation::GeneralPage::sk_line(
 	Shapes::Line& line,
-	const std::array<Eigen::Vector3f, 25>& joints,
-	const std::array<ktvr::ITrackedJointState, 25>& states,
+	std::array<ktvr::K2TrackedBaseJoint, 25> joints,
 	const ktvr::ITrackedJointType& from,
 	const ktvr::ITrackedJointType& to)
 {
@@ -1144,13 +1143,23 @@ void Amethyst::implementation::GeneralPage::sk_line(
 	constexpr double s_normal_distance = 3;
 
 	// Compose perspective constants, make it 70%
-	const double s_from_multiply = .7 * (s_normal_distance / (joints[from].z() > 0. ? joints[from].z() : 3.)),
-	             s_to_multiply = .7 * (s_normal_distance / (joints[to].z() > 0. ? joints[to].z() : 3.));
+	const double
+		s_from_multiply = .7 *
+		(s_normal_distance /
+			(joints[from].getJointPosition().z() > 0.
+				 ? joints[from].getJointPosition().z()
+				 : 3.)),
+
+		s_to_multiply = .7 *
+		(s_normal_distance /
+			(joints[to].getJointPosition().z() > 0.
+				 ? joints[to].getJointPosition().z()
+				 : 3.));
 
 	line.StrokeThickness(5);
 
-	if (states[from] != ktvr::State_Tracked ||
-		states[to] != ktvr::State_Tracked)
+	if (joints[from].getTrackingState() != ktvr::State_Tracked ||
+		joints[to].getTrackingState() != ktvr::State_Tracked)
 		line.Stroke(*k2app::shared::main::attentionBrush);
 	else
 		line.Stroke(Media::SolidColorBrush(Windows::UI::Colors::White()));
@@ -1159,11 +1168,15 @@ void Amethyst::implementation::GeneralPage::sk_line(
 	const double s_scale_w = s_mat_width / s_mat_width_default,
 	             s_scale_h = s_mat_height / s_mat_height_default;
 
-	line.X1(joints[from].x() * 300. * std::min(s_scale_w, s_scale_h) * s_from_multiply + s_mat_width / 2.);
-	line.Y1(joints[from].y() * -300. * std::min(s_scale_w, s_scale_h) * s_from_multiply + s_mat_height / 3.);
+	line.X1(joints[from].getJointPosition().x() * 300. *
+		std::min(s_scale_w, s_scale_h) * s_from_multiply + s_mat_width / 2.);
+	line.Y1(joints[from].getJointPosition().y() * -300. *
+		std::min(s_scale_w, s_scale_h) * s_from_multiply + s_mat_height / 3.);
 
-	line.X2(joints[to].x() * 300. * std::min(s_scale_w, s_scale_h) * s_to_multiply + s_mat_width / 2.);
-	line.Y2(joints[to].y() * -300. * std::min(s_scale_w, s_scale_h) * s_to_multiply + s_mat_height / 3.);
+	line.X2(joints[to].getJointPosition().x() * 300. *
+		std::min(s_scale_w, s_scale_h) * s_to_multiply + s_mat_width / 2.);
+	line.Y2(joints[to].getJointPosition().y() * -300. *
+		std::min(s_scale_w, s_scale_h) * s_to_multiply + s_mat_height / 3.);
 
 	line.Visibility(Visibility::Visible);
 }
@@ -1172,8 +1185,7 @@ void Amethyst::implementation::GeneralPage::sk_line(
 // the tuple goes like <position, rotation>
 void Amethyst::implementation::GeneralPage::sk_dot(
 	Shapes::Ellipse& ellipse,
-	const Eigen::Vector3f& joint,
-	const ktvr::ITrackedJointState& state,
+	ktvr::K2TrackedBaseJoint joint,
 	const std::pair<bool, bool>& isOverridden)
 {
 	constexpr double s_mat_width_default = 700,
@@ -1192,7 +1204,11 @@ void Amethyst::implementation::GeneralPage::sk_dot(
 	constexpr double s_normal_distance = 3;
 
 	// Compose perspective constants, make it 70%
-	const double s_multiply = .7 * (s_normal_distance / (joint.z() > 0. ? joint.z() : 3.));
+	const double s_multiply =
+		.7 * (s_normal_distance /
+			(joint.getJointPosition().z() > 0.
+				 ? joint.getJointPosition().z()
+				 : 3.));
 
 	auto a = Media::AcrylicBrush();
 	auto ui = Windows::UI::ViewManagement::UISettings();
@@ -1203,7 +1219,7 @@ void Amethyst::implementation::GeneralPage::sk_dot(
 
 	a.TintColor(ui.GetColorValue(Windows::UI::ViewManagement::UIColorType::Accent));
 
-	if (state != ktvr::State_Tracked)
+	if (joint.getTrackingState() != ktvr::State_Tracked)
 	{
 		ellipse.Stroke(a);
 		ellipse.Fill(a);
@@ -1229,11 +1245,13 @@ void Amethyst::implementation::GeneralPage::sk_dot(
 	// Move the ellipse to the appropriate point
 	ellipse.Margin({
 		// Left
-		joint.x() * 300. * std::min(s_scale_w, s_scale_h) * s_multiply +
+		joint.getJointPosition().x() * 300. * 
+		std::min(s_scale_w, s_scale_h) * s_multiply +
 		s_mat_width / 2. - (s_ellipse_wh + s_ellipse_stroke) / 2.,
 
 		// Top
-		joint.y() * -300. * std::min(s_scale_w, s_scale_h) * s_multiply +
+		joint.getJointPosition().y() * -300. * 
+		std::min(s_scale_w, s_scale_h) * s_multiply +
 		s_mat_height / 3. - (s_ellipse_wh + s_ellipse_stroke) / 2.,
 
 		// Not used
@@ -1365,9 +1383,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 		case 0:
 			{
 				const auto& device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
-
-				const auto joints = device->getJointPositions();
-				const auto states = device->getTrackingStates();
+				const auto joints = device->getTrackedJoints();
 
 				StartAutoCalibrationButton().IsEnabled(
 					device->isSkeletonTracked() && !CalibrationPending && !AutoCalibration_StillPending);
@@ -1390,67 +1406,67 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 						// Draw the skeleton with from-to lines
 						// Head
-						sk_line(boneLines[0], joints, states, ktvr::Joint_Head, ktvr::Joint_Neck);
-						sk_line(boneLines[1], joints, states, ktvr::Joint_Neck, ktvr::Joint_SpineShoulder);
+						sk_line(boneLines[0], joints, ktvr::Joint_Head, ktvr::Joint_Neck);
+						sk_line(boneLines[1], joints, ktvr::Joint_Neck, ktvr::Joint_SpineShoulder);
 
 						// Upper left limb
-						sk_line(boneLines[2], joints, states, ktvr::Joint_SpineShoulder, ktvr::Joint_ShoulderLeft);
-						sk_line(boneLines[3], joints, states, ktvr::Joint_ShoulderLeft, ktvr::Joint_ElbowLeft);
-						sk_line(boneLines[4], joints, states, ktvr::Joint_ElbowLeft, ktvr::Joint_WristLeft);
-						sk_line(boneLines[5], joints, states, ktvr::Joint_WristLeft, ktvr::Joint_HandLeft);
-						sk_line(boneLines[6], joints, states, ktvr::Joint_HandLeft, ktvr::Joint_HandTipLeft);
-						sk_line(boneLines[7], joints, states, ktvr::Joint_HandLeft, ktvr::Joint_ThumbLeft);
+						sk_line(boneLines[2], joints, ktvr::Joint_SpineShoulder, ktvr::Joint_ShoulderLeft);
+						sk_line(boneLines[3], joints, ktvr::Joint_ShoulderLeft, ktvr::Joint_ElbowLeft);
+						sk_line(boneLines[4], joints, ktvr::Joint_ElbowLeft, ktvr::Joint_WristLeft);
+						sk_line(boneLines[5], joints, ktvr::Joint_WristLeft, ktvr::Joint_HandLeft);
+						sk_line(boneLines[6], joints, ktvr::Joint_HandLeft, ktvr::Joint_HandTipLeft);
+						sk_line(boneLines[7], joints, ktvr::Joint_HandLeft, ktvr::Joint_ThumbLeft);
 
 						// Upper right limb
-						sk_line(boneLines[8], joints, states, ktvr::Joint_SpineShoulder, ktvr::Joint_ShoulderRight);
-						sk_line(boneLines[9], joints, states, ktvr::Joint_ShoulderRight, ktvr::Joint_ElbowRight);
-						sk_line(boneLines[10], joints, states, ktvr::Joint_ElbowRight, ktvr::Joint_WristRight);
-						sk_line(boneLines[11], joints, states, ktvr::Joint_WristRight, ktvr::Joint_HandRight);
-						sk_line(boneLines[12], joints, states, ktvr::Joint_HandRight, ktvr::Joint_HandTipRight);
-						sk_line(boneLines[13], joints, states, ktvr::Joint_HandRight, ktvr::Joint_ThumbRight);
+						sk_line(boneLines[8], joints, ktvr::Joint_SpineShoulder, ktvr::Joint_ShoulderRight);
+						sk_line(boneLines[9], joints, ktvr::Joint_ShoulderRight, ktvr::Joint_ElbowRight);
+						sk_line(boneLines[10], joints, ktvr::Joint_ElbowRight, ktvr::Joint_WristRight);
+						sk_line(boneLines[11], joints, ktvr::Joint_WristRight, ktvr::Joint_HandRight);
+						sk_line(boneLines[12], joints, ktvr::Joint_HandRight, ktvr::Joint_HandTipRight);
+						sk_line(boneLines[13], joints, ktvr::Joint_HandRight, ktvr::Joint_ThumbRight);
 
 						// Spine
-						sk_line(boneLines[14], joints, states, ktvr::Joint_SpineShoulder, ktvr::Joint_SpineMiddle);
-						sk_line(boneLines[15], joints, states, ktvr::Joint_SpineMiddle, ktvr::Joint_SpineWaist);
+						sk_line(boneLines[14], joints, ktvr::Joint_SpineShoulder, ktvr::Joint_SpineMiddle);
+						sk_line(boneLines[15], joints, ktvr::Joint_SpineMiddle, ktvr::Joint_SpineWaist);
 
 						// Lower left limb
-						sk_line(boneLines[16], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_HipLeft);
-						sk_line(boneLines[17], joints, states, ktvr::Joint_HipLeft, ktvr::Joint_KneeLeft);
-						sk_line(boneLines[18], joints, states, ktvr::Joint_KneeLeft, ktvr::Joint_AnkleLeft);
-						sk_line(boneLines[19], joints, states, ktvr::Joint_AnkleLeft, ktvr::Joint_FootLeft);
+						sk_line(boneLines[16], joints, ktvr::Joint_SpineWaist, ktvr::Joint_HipLeft);
+						sk_line(boneLines[17], joints, ktvr::Joint_HipLeft, ktvr::Joint_KneeLeft);
+						sk_line(boneLines[18], joints, ktvr::Joint_KneeLeft, ktvr::Joint_AnkleLeft);
+						sk_line(boneLines[19], joints, ktvr::Joint_AnkleLeft, ktvr::Joint_FootLeft);
 
 						// Lower right limb
-						sk_line(boneLines[20], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_HipRight);
-						sk_line(boneLines[21], joints, states, ktvr::Joint_HipRight, ktvr::Joint_KneeRight);
-						sk_line(boneLines[22], joints, states, ktvr::Joint_KneeRight, ktvr::Joint_AnkleRight);
-						sk_line(boneLines[23], joints, states, ktvr::Joint_AnkleRight, ktvr::Joint_FootRight);
+						sk_line(boneLines[20], joints, ktvr::Joint_SpineWaist, ktvr::Joint_HipRight);
+						sk_line(boneLines[21], joints, ktvr::Joint_HipRight, ktvr::Joint_KneeRight);
+						sk_line(boneLines[22], joints, ktvr::Joint_KneeRight, ktvr::Joint_AnkleRight);
+						sk_line(boneLines[23], joints, ktvr::Joint_AnkleRight, ktvr::Joint_FootRight);
 
 						// Waist
-						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist],
+						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist],
 						       IsJointOverriden(0));
 
 						// Left Foot
-						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft],
+						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft],
 						       IsJointOverriden(1));
 
 						// Right Foot
-						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight],
+						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight],
 						       IsJointOverriden(2));
 
 						// Left Elbow
-						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft], states[ktvr::Joint_ElbowLeft],
+						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft],
 						       IsJointOverriden(3));
 
 						// Right Elbow
-						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight], states[ktvr::Joint_ElbowRight],
+						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight],
 						       IsJointOverriden(4));
 
 						// Left Knee
-						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft], states[ktvr::Joint_KneeLeft],
+						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft],
 						       IsJointOverriden(5));
 
 						// Right Knee
-						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight], states[ktvr::Joint_KneeRight],
+						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight],
 						       IsJointOverriden(6));
 					}
 					else if (device->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
@@ -1461,36 +1477,29 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 						// Draw the skeleton with from-to lines
 						// Head
-						sk_dot(jointDots[0], joints[ktvr::Joint_Head], states[ktvr::Joint_Head],
+						sk_dot(jointDots[0], joints[ktvr::Joint_Head],
 						       std::make_pair(false, false));
 
 						// Waist
-						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist],
-						       IsJointOverriden(0));
+						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], IsJointOverriden(0));
 
 						// Left Foot
-						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft],
-						       IsJointOverriden(1));
+						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], IsJointOverriden(1));
 
 						// Right Foot
-						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight],
-						       IsJointOverriden(2));
+						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], IsJointOverriden(2));
 
 						// Left Elbow
-						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft], states[ktvr::Joint_ElbowLeft],
-						       IsJointOverriden(3));
+						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft], IsJointOverriden(3));
 
 						// Right Elbow
-						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight], states[ktvr::Joint_ElbowRight],
-						       IsJointOverriden(4));
+						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight], IsJointOverriden(4));
 
 						// Left Knee
-						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft], states[ktvr::Joint_KneeLeft],
-						       IsJointOverriden(5));
+						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft], IsJointOverriden(5));
 
 						// Right Knee
-						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight], states[ktvr::Joint_KneeRight],
-						       IsJointOverriden(6));
+						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight], IsJointOverriden(6));
 
 						// Empty lines
 						boneLines[0] = Shapes::Line();
@@ -1513,14 +1522,14 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 						boneLines[17] = Shapes::Line();
 
 						// Lower left limb
-						sk_line(boneLines[18], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_KneeLeft);
-						sk_line(boneLines[19], joints, states, ktvr::Joint_KneeLeft, ktvr::Joint_AnkleLeft);
-						sk_line(boneLines[20], joints, states, ktvr::Joint_AnkleLeft, ktvr::Joint_FootLeft);
+						sk_line(boneLines[18], joints, ktvr::Joint_SpineWaist, ktvr::Joint_KneeLeft);
+						sk_line(boneLines[19], joints, ktvr::Joint_KneeLeft, ktvr::Joint_AnkleLeft);
+						sk_line(boneLines[20], joints, ktvr::Joint_AnkleLeft, ktvr::Joint_FootLeft);
 
 						// Lower right limb
-						sk_line(boneLines[21], joints, states, ktvr::Joint_SpineWaist, ktvr::Joint_KneeRight);
-						sk_line(boneLines[22], joints, states, ktvr::Joint_KneeRight, ktvr::Joint_AnkleRight);
-						sk_line(boneLines[23], joints, states, ktvr::Joint_AnkleRight, ktvr::Joint_FootRight);
+						sk_line(boneLines[21], joints, ktvr::Joint_SpineWaist, ktvr::Joint_KneeRight);
+						sk_line(boneLines[22], joints, ktvr::Joint_KneeRight, ktvr::Joint_AnkleRight);
+						sk_line(boneLines[23], joints, ktvr::Joint_AnkleRight, ktvr::Joint_FootRight);
 					}
 					else if (device->getDeviceCharacteristics() == ktvr::K2_Character_Basic)
 					{
@@ -1534,19 +1543,19 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 						// Draw the skeleton with from-to lines
 						// Head
-						sk_dot(jointDots[0], joints[ktvr::Joint_Head], states[ktvr::Joint_Head],
+						sk_dot(jointDots[0], joints[ktvr::Joint_Head],
 						       std::make_pair(false, false));
 
 						// Waist
-						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], states[ktvr::Joint_SpineWaist],
+						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist],
 						       IsJointOverriden(0));
 
 						// Left Foot
-						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], states[ktvr::Joint_AnkleLeft],
+						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft],
 						       IsJointOverriden(1));
 
 						// Right Foot
-						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], states[ktvr::Joint_AnkleRight],
+						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight],
 						       IsJointOverriden(2));
 					}
 				}
@@ -1562,7 +1571,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 		case 1:
 			{
 				const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
-				auto joints = device->getTrackedJoints();
+				const auto joints = device->getTrackedJoints();
 
 				StartAutoCalibrationButton().IsEnabled(
 					device->isSkeletonTracked() && !CalibrationPending && !AutoCalibration_StillPending);
@@ -1589,9 +1598,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 						// Get joints and draw points
 						for (uint32_t j = 0; j < std::min(static_cast<uint32_t>(joints.size()),
 						                                  static_cast<uint32_t>(ktvr::Joint_Total)); j++)
-							sk_dot(jointDots[j],
-							       joints.at(j).getJointPosition(),
-							       joints.at(j).getTrackingState(),
+							sk_dot(jointDots[j], joints.at(j),
 							       IsJointUsedAsOverride(j));
 					}
 				}
@@ -1700,28 +1707,28 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 				switch (device.index())
 				{
 				case 0:
-				{
-					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
-					deviceName = pDevice->getDeviceName();
-					deviceGUID = pDevice->getDeviceGUID();
-					deviceStatus = pDevice->getStatusResult();
-				}
-				break;
+					{
+						const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
+						deviceName = pDevice->getDeviceName();
+						deviceGUID = pDevice->getDeviceGUID();
+						deviceStatus = pDevice->getStatusResult();
+					}
+					break;
 				case 1:
-				{
-					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
-					deviceName = pDevice->getDeviceName();
-					deviceGUID = pDevice->getDeviceGUID();
-					deviceStatus = pDevice->getStatusResult();
-				}
-				break;
+					{
+						const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
+						deviceName = pDevice->getDeviceName();
+						deviceGUID = pDevice->getDeviceGUID();
+						deviceStatus = pDevice->getStatusResult();
+					}
+					break;
 				}
 
 				const bool _isBase = TrackingDevices::IsABase(deviceGUID),
-					_isOverride = TrackingDevices::IsAnOverride(deviceGUID);
+				           _isOverride = TrackingDevices::IsAnOverride(deviceGUID);
 
 				// Check the roles
-				if (!_isBase && !_isOverride) 
+				if (!_isBase && !_isOverride)
 				{
 					LOG(INFO) << "Device " << WStringToString(deviceName) <<
 						WStringToString(std::format(L" (GUID: \"{}\") ", deviceGUID)) <<
@@ -2094,7 +2101,7 @@ Amethyst::implementation::GeneralPage::TrackingDeviceTreeView_ItemInvoked(
 	// Show the calibration choose pane / calibration
 	AutoCalibrationPane().Visibility(Visibility::Collapsed);
 	ManualCalibrationPane().Visibility(Visibility::Collapsed);
-	
+
 	CalibrationModeSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 	CalibrationModeSelectView().IsPaneOpen(true);
 
