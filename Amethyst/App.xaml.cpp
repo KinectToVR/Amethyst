@@ -68,7 +68,7 @@ App::App()
 		LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n " <<
 			"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n " <<
 			"Logging will be shut down, re-initialized, and forwarded to \"" <<
-			WStringToString(ktvr::GetK2AppDataLogFileDir(L"Amethyst_")).c_str() << "*.log\"";
+			WStringToString(ktvr::GetK2AppDataLogFileDir(L"Amethyst", L"Amethyst_")).c_str() << "*.log\"";
 		google::ShutdownGoogleLogging();
 	}
 
@@ -78,7 +78,8 @@ App::App()
 	FLAGS_timestamp_in_logfile_name = true;
 
 	// Set up the logging directory
-	k2app::interfacing::thisLogDestination = ktvr::GetK2AppDataLogFileDir(L"Amethyst_");
+	k2app::interfacing::thisLogDestination =
+		ktvr::GetK2AppDataLogFileDir(L"Amethyst", L"Amethyst_");
 
 	// Init logging
 	google::InitGoogleLogging(WStringToString(
@@ -99,7 +100,9 @@ App::App()
 	LOG(INFO) << "Running at path: " << WStringToString(
 		k2app::interfacing::GetProgramLocation().parent_path().wstring());
 
-	if (const auto deducedLogName = getLastLogAdded(ktvr::GetK2AppDataLogFileDir(L"")).wstring();
+	if (const auto deducedLogName = getLastLogAdded(
+			ktvr::GetK2AppDataLogFileDir(
+				L"Amethyst", L"")).wstring();
 		!deducedLogName.empty())
 	{
 		LOG(INFO) << "The last added Amethyst log appears to be at: \"" <<

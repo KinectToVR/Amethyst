@@ -22,10 +22,15 @@ namespace ktvr
 	}
 
 	// Get file location in AppData
-	inline std::wstring GetK2AppDataLogFileDir(const std::wstring& relativeFilePath)
+	inline std::wstring GetK2AppDataLogFileDir(
+		const std::wstring& relativeFolderName,
+		const std::wstring& relativeFilePath)
 	{
-		CreateDirectory(std::wstring(std::wstring(_wgetenv(L"APPDATA")) +
-			                L"\\Amethyst\\logs\\").c_str(), nullptr);
-		return std::wstring(_wgetenv(L"APPDATA")) + L"\\Amethyst\\logs\\" + relativeFilePath;
+		CreateDirectory(
+			std::wstring(std::wstring(_wgetenv(L"APPDATA")) +
+				L"\\Amethyst\\logs\\" + relativeFolderName + L"\\").c_str(), nullptr);
+
+		return std::wstring(_wgetenv(L"APPDATA")) +
+			L"\\Amethyst\\logs\\" + relativeFolderName + L"\\" + relativeFilePath;
 	}
 }

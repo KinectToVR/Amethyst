@@ -124,6 +124,13 @@ namespace K2CrashHandler
                                 process.Refresh();
                         } while (!process.WaitForExit(3000));
 
+                        // Overwrite the _latest.log log file
+                        if (!string.IsNullOrEmpty(logFileLocation))
+                            File.Copy(logFileLocation,
+                                Path.Combine(
+                                    Directory.GetParent(logFileLocation).ToString(),
+                                    "_latest.log"), true);
+
                         // Handle normal exit
                         if (ProcessExitCode == 0)
                             Close(); // We're OK to exit

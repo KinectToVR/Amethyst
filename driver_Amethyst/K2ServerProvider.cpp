@@ -116,7 +116,7 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 		LOG(WARNING) << "Uh-Oh! It appears that google logging was set up previously from this caller.\n " <<
 			"Although, it appears GLog likes Amethyst more! (It said that itself, did you know?)\n " <<
 			"Logging will be shut down, re-initialized, and forwarded to \"" <<
-			WStringToString(ktvr::GetK2AppDataLogFileDir(L"Amethyst_VRDriver_")) << "*.log\"";
+			WStringToString(ktvr::GetK2AppDataLogFileDir(L"VRDriver", L"Amethyst_VRDriver_")) << "*.log\"";
 		google::ShutdownGoogleLogging();
 	}
 
@@ -126,7 +126,8 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 	FLAGS_timestamp_in_logfile_name = true;
 
 	// Set up the logging directory
-	const auto thisLogDestination = ktvr::GetK2AppDataLogFileDir(L"Amethyst_VRDriver_");
+	const auto thisLogDestination = 
+		ktvr::GetK2AppDataLogFileDir(L"VRDriver", L"Amethyst_VRDriver_");
 
 	// Init logging
 	google::InitGoogleLogging(WStringToString(thisLogDestination).c_str());
