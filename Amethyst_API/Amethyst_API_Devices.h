@@ -712,6 +712,7 @@ namespace ktvr
 		// Return device's globally unique ID
 		// Format: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 		// Type: wide string, const for each device
+		// Note: MUST NOT overlap or repeat between devices
 		virtual std::wstring getDeviceGUID() { return L"INVALID"; } // Override this!
 
 		// Return device's name (can repeat)
@@ -741,11 +742,15 @@ namespace ktvr
 
 		// Should be set up at construction
 		// Mark this as false ALSO if your device supports 360 tracking by itself
-		[[nodiscard]] bool isFlipSupported() const { return flipSupported; } // Flip block
+		[[nodiscard]] bool isFlipSupported() const { return Flags_FlipSupported; } // Flip block
 
 		// Should be set up at construction
 		// This will allow Amethyst to calculate rotations by itself, additionally
-		[[nodiscard]] bool isAppOrientationSupported() const { return appOrientationSupported; } // Math-based
+		[[nodiscard]] bool isAppOrientationSupported() const { return Flags_AppOrientationSupported; } // Math-based
+
+		// Should be set up at construction
+		// This will tell Amethyst to disable all position filters on joints managed by this plugin
+		[[nodiscard]] bool isPositionFilterBlockingEnabled() const { return Flags_BlocksPositionFiltering; }
 
 		/* Helper functions which may be internally called by the device plugin */
 
@@ -807,7 +812,7 @@ namespace ktvr
 		//       and may use the K2AppData from the Paths' header
 		// Tip: you can hide your device's settings by marking this as 'false',
 		//      and change it back to 'true' when you're ready
-		[[nodiscard]] bool isSettingsDaemonSupported() const { return settingsSupported; }
+		[[nodiscard]] bool isSettingsDaemonSupported() const { return Flags_SettingsSupported; }
 
 		/*
 		 * A pointer to the default layout root registered for the device.
@@ -847,15 +852,39 @@ namespace ktvr
 		ITrackingDeviceCharacteristics deviceCharacteristics =
 			K2_Character_Unknown;
 
+		// Return device's name (may repeat or overlap)
 		std::wstring deviceName = L"Name not set";
 
+		// After init, this should always return true
+		// (Unless the device isn't ready for some reason)
 		bool initialized = false;
+
+		// This should be updated on every frame,
+		// along with joint devices
+		// -> will lead to global tracking loss notification
+		//    if set to false at runtime somewhen
 		bool skeletonTracked = false;
 
-		bool settingsSupported = false;
+		// Should be set up at construction
+		// Mark this as false ALSO if your device supports 360 tracking by itself
+		bool Flags_FlipSupported = true;
 
-		bool flipSupported = true;
-		bool appOrientationSupported = true;
+		// Should be set up at construction
+		// This will allow Amethyst to calculate rotations by itself, additionally
+		bool Flags_AppOrientationSupported = true;
+
+		// To support settings daemon and register the layout root,
+		// the device must properly report it first
+		// -> will lead to showing an additional 'settings' button
+		// Note: each device has to save its settings independently
+		//       and may use the K2AppData from the Paths' header
+		// Tip: you can hide your device's settings by marking this as 'false',
+		//      and change it back to 'true' when you're ready
+		bool Flags_SettingsSupported = false;
+
+		// Should be set up at construction
+		// This will tell Amethyst to disable all position filters on joints managed by this plugin
+		bool Flags_BlocksPositionFiltering = false;
 
 		std::array<Eigen::Vector3f, 25> jointPositions = {
 			Eigen::Vector3f(0.f, 0.f, 0.f),
@@ -958,6 +987,7 @@ namespace ktvr
 		// Return device's globally unique ID
 		// Format: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 		// Type: wide string, const for each device
+		// Note: MUST NOT overlap or repeat between devices
 		virtual std::wstring getDeviceGUID() { return L"INVALID"; } // Override this!
 
 		// Return device's name (can repeat)
@@ -988,6 +1018,10 @@ namespace ktvr
 		// -> will lead to global tracking loss notification
 		//    if set to false at runtime somewhen
 		[[nodiscard]] bool isSkeletonTracked() const { return skeletonTracked; }
+
+		// Should be set up at construction
+		// This will tell Amethyst to disable all position filters on joints managed by this plugin
+		[[nodiscard]] bool isPositionFilterBlockingEnabled() const { return Flags_BlocksPositionFiltering; }
 
 		/* Helper functions which may be internally called by the device plugin */
 
@@ -1049,7 +1083,7 @@ namespace ktvr
 		//       and may use the K2AppData from the Paths' header
 		// Tip: you can hide your device's settings by marking this as 'false',
 		//      and change it back to 'true' when you're ready
-		[[nodiscard]] bool isSettingsDaemonSupported() const { return settingsSupported; }
+		[[nodiscard]] bool isSettingsDaemonSupported() const { return Flags_SettingsSupported; }
 
 		/*
 		 * A pointer to the default layout root registered for the device.
@@ -1086,13 +1120,33 @@ namespace ktvr
 		std::function<Interface::ProgressBar*()> CreateProgressBar;
 
 	protected:
+
+		// Return device's name (may repeat or overlap)
 		std::wstring deviceName = L"Name not set";
 
+		// After init, this should always return true
+		// (Unless the device isn't ready for some reason)
 		bool initialized = false;
+
+		// This should be updated on every frame,
+		// along with joint devices
+		// -> will lead to global tracking loss notification
+		//    if set to false at runtime somewhen
 		bool skeletonTracked = false;
 
-		bool settingsSupported = false;
+		// To support settings daemon and register the layout root,
+		// the device must properly report it first
+		// -> will lead to showing an additional 'settings' button
+		// Note: each device has to save its settings independently
+		//       and may use the K2AppData from the Paths' header
+		// Tip: you can hide your device's settings by marking this as 'false',
+		//      and change it back to 'true' when you're ready
+		bool Flags_SettingsSupported = false;
 
+		// Should be set up at construction
+		// This will tell Amethyst to disable all position filters on joints managed by this plugin
+		bool Flags_BlocksPositionFiltering = false;
+		
 		std::vector<K2TrackedJoint> trackedJoints = {
 			K2TrackedJoint() // owo, wat's this?
 		};

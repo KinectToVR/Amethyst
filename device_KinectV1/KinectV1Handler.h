@@ -33,11 +33,11 @@ public:
 		deviceName = L"Xbox 360 Kinect";
 		deviceCharacteristics = ktvr::K2_Character_Full;
 
-		flipSupported = true;
-		appOrientationSupported = true;
+		Flags_FlipSupported = true;
+		Flags_AppOrientationSupported = true;
 
 		// Mark that our device supports settings
-		settingsSupported = false; // 'false' until status OK
+		Flags_SettingsSupported = false; // 'false' until status OK
 		load_settings(); // Load settings
 	}
 

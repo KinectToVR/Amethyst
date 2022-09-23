@@ -8,7 +8,7 @@ HRESULT KinectV1Handler::getStatusResult()
 	if (kinectSensor)
 	{
 		const auto res = kinectSensor->NuiStatus();
-		settingsSupported = (res == S_OK);
+		Flags_SettingsSupported = (res == S_OK);
 		return res;
 	}
 	return E_NUI_NOTCONNECTED;
@@ -46,7 +46,7 @@ void KinectV1Handler::initialize()
 		LOG(INFO) << "Initializing: updated Kinect V1 status with: " <<
 			WStringToString(statusResultWString(getStatusResult()));
 
-		settingsSupported = (getStatusResult() == S_OK);
+		Flags_SettingsSupported = (getStatusResult() == S_OK);
 
 		if (getStatusResult() == S_OK)
 		{
@@ -66,7 +66,7 @@ void KinectV1Handler::shutdown()
 	try
 	{
 		LOG(INFO) << "Shutting down: Kinect V1 streams' termination pending...";
-		settingsSupported = false; // Hide
+		Flags_SettingsSupported = false; // Hide
 
 		// Shut down the sensor (Only NUI API)
 		if (kinectSensor) // Protect from null call

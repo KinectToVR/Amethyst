@@ -15,7 +15,7 @@ Eigen::Quaternionf PSMSToEigen(PSMQuatf q)
 
 HRESULT PSMoveServiceHandler::getStatusResult()
 {
-	settingsSupported = initialized && m_deviceUsable; // Just in case
+	Flags_SettingsSupported = initialized && m_deviceUsable; // Just in case
 
 	if (initialized)
 		return m_deviceUsable ? S_OK : E_PSMS_NO_JOINTS;
@@ -49,7 +49,7 @@ void PSMoveServiceHandler::initialize()
 		startup(); // Try start up
 
 		initialized = PSM_GetIsConnected();
-		settingsSupported = initialized && m_deviceUsable;
+		Flags_SettingsSupported = initialized && m_deviceUsable;
 		m_needsRefresh = true; // Refresh joints
 
 		LOG(INFO) << (initialized ? "PSMoveService init OK." : "PSMoveService is not running.");
@@ -96,7 +96,7 @@ void PSMoveServiceHandler::shutdown()
 		// No HMD data streams started
 
 		initialized = false;
-		settingsSupported = initialized && m_deviceUsable;
+		Flags_SettingsSupported = initialized && m_deviceUsable;
 
 		LOG(INFO) << "PSMoveService attempted shutdown with PSMResult: " <<
 			PSMResultToString(PSM_Shutdown());

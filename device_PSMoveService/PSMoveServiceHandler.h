@@ -31,7 +31,7 @@ public:
 		LOG(INFO) << "Constructing the PSMS Handler for JointsBasis K2TrackingDevice...";
 		
 		deviceName = L"PSMove Service";
-		settingsSupported = true; // Until the status is OK
+		Flags_SettingsSupported = true; // Until the status is OK
 
 		// Push the placeholders in
 		for (size_t i = 0; i < PSMOVESERVICE_MAX_CONTROLLER_COUNT; i++)
