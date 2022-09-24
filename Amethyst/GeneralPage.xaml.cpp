@@ -425,12 +425,12 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 			if (i == 1)
 			{
 				// Capture positions
-				vrHMDPosition = k2app::interfacing::plugins::plugins_getHMDPositionCalibrated().cast<double>();
+				vrHMDPosition = k2app::interfacing::plugins::plugins_getHMDPositionCalibrated();
 
 				vrHMDPositions.push_back(vrHMDPosition);
 				kinectHeadPositions.push_back(
 					k2app::interfacing::kinectHeadPosition[
-						general_calibrating_device_guid].cast<double>());
+						general_calibrating_device_guid]);
 			}
 			else if (i == 0)
 				CalibrationInstructionsLabel().Text(
@@ -1625,8 +1625,8 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 	{
 		const auto trackingOrigin = vr::VRSystem()->GetRawZeroPoseToStandingAbsoluteTrackingPose();
 
-		k2app::interfacing::vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
-		k2app::interfacing::vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(
+		k2app::interfacing::vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3d>(trackingOrigin);
+		k2app::interfacing::vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaterniond>(
 			trackingOrigin);
 
 		// Get current yaw angle
@@ -2269,7 +2269,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::Execute
 
 			// Un-rotate the translation (sometimes broken due to SteamVR playspace)
 			_currentCalibrationTranslation_new =
-				k2app::interfacing::vrPlayspaceOrientationQuaternion.cast<double>().inverse() *
+				k2app::interfacing::vrPlayspaceOrientationQuaternion.inverse() *
 				_currentCalibrationTranslation_new;
 
 			// Apply to the global base
@@ -2295,7 +2295,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::Execute
 		if (calibration_first_time)
 			*calibrationOrigin =
 				k2app::interfacing::kinectWaistPosition[
-					general_calibrating_device_guid].cast<double>();
+					general_calibrating_device_guid];
 
 		// Cache the calibration first_time
 		calibration_first_time = false;

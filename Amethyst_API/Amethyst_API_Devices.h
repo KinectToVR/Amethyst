@@ -117,7 +117,7 @@ namespace ktvr
 		{
 		}
 
-		K2TrackedBaseJoint(Eigen::Vector3f pos, Eigen::Quaternionf rot,
+		K2TrackedBaseJoint(Eigen::Vector3d pos, Eigen::Quaterniond rot,
 		                   const ITrackedJointState& state) :
 			jointPosition{std::move(pos)},
 			jointOrientation{std::move(rot)},
@@ -125,20 +125,20 @@ namespace ktvr
 		{
 		}
 
-		[[nodiscard]] Eigen::Vector3f getJointPosition() const { return jointPosition; }
-		[[nodiscard]] Eigen::Quaternionf getJointOrientation() const { return jointOrientation; }
+		[[nodiscard]] Eigen::Vector3d getJointPosition() const { return jointPosition; }
+		[[nodiscard]] Eigen::Quaterniond getJointOrientation() const { return jointOrientation; }
 
-		[[nodiscard]] Eigen::Vector3f getJointVelocity() const { return jointVelocity; }
-		[[nodiscard]] Eigen::Vector3f getJointAcceleration() const { return jointAcceleration; }
+		[[nodiscard]] Eigen::Vector3d getJointVelocity() const { return jointVelocity; }
+		[[nodiscard]] Eigen::Vector3d getJointAcceleration() const { return jointAcceleration; }
 
-		[[nodiscard]] Eigen::Vector3f getJointAngularVelocity() const { return jointAngularVelocity; }
-		[[nodiscard]] Eigen::Vector3f getJointAngularAcceleration() const { return jointAngularAcceleration; }
+		[[nodiscard]] Eigen::Vector3d getJointAngularVelocity() const { return jointAngularVelocity; }
+		[[nodiscard]] Eigen::Vector3d getJointAngularAcceleration() const { return jointAngularAcceleration; }
 
 		[[nodiscard]] ITrackedJointState getTrackingState() const { return trackingState; } // ITrackedJointState
 
 		// For servers!
-		void update(Eigen::Vector3f position,
-		            Eigen::Quaternionf orientation,
+		void update(Eigen::Vector3d position,
+		            Eigen::Quaterniond orientation,
 		            const ITrackedJointState state)
 		{
 			jointPosition = std::move(position);
@@ -146,12 +146,12 @@ namespace ktvr
 			trackingState = state;
 		}
 		// For servers!
-		void update(Eigen::Vector3f position,
-		            Eigen::Quaternionf orientation,
-					Eigen::Vector3f velocity,
-					Eigen::Vector3f acceleration,
-					Eigen::Vector3f angularVelocity,
-					Eigen::Vector3f angularAcceleration,
+		void update(Eigen::Vector3d position,
+		            Eigen::Quaterniond orientation,
+					Eigen::Vector3d velocity,
+					Eigen::Vector3d acceleration,
+					Eigen::Vector3d angularVelocity,
+					Eigen::Vector3d angularAcceleration,
 		            const ITrackedJointState state)
 		{
 			jointPosition = std::move(position);
@@ -166,37 +166,37 @@ namespace ktvr
 		}
 
 		// For servers!
-		void update_position(Eigen::Vector3f position)
+		void update_position(Eigen::Vector3d position)
 		{
 			jointPosition = std::move(position);
 		}
 
 		// For servers!
-		void update_orientation(Eigen::Quaternionf orientation)
+		void update_orientation(Eigen::Quaterniond orientation)
 		{
 			jointOrientation = std::move(orientation);
 		}
 
 		// For servers!
-		void getJointVelocity(Eigen::Vector3f velocity)
+		void getJointVelocity(Eigen::Vector3d velocity)
 		{
 			jointVelocity = std::move(velocity);
 		}
 
 		// For servers!
-		void getJointAcceleration(Eigen::Vector3f acceleration)
+		void getJointAcceleration(Eigen::Vector3d acceleration)
 		{
 			jointAcceleration = std::move(acceleration);
 		}
 
 		// For servers!
-		void getJointAngularVelocity(Eigen::Vector3f angularVelocity)
+		void getJointAngularVelocity(Eigen::Vector3d angularVelocity)
 		{
 			jointAngularVelocity = std::move(angularVelocity);
 		}
 
 		// For servers!
-		void getJointAngularAcceleration(Eigen::Vector3f angularAcceleration)
+		void getJointAngularAcceleration(Eigen::Vector3d angularAcceleration)
 		{
 			jointAngularAcceleration = std::move(angularAcceleration);
 		}
@@ -209,14 +209,14 @@ namespace ktvr
 
 	protected:
 		// Tracker should be centered automatically
-		Eigen::Vector3f jointPosition = Eigen::Vector3f(0.f, 0.f, 0.f);
-		Eigen::Quaternionf jointOrientation = Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f);
+		Eigen::Vector3d jointPosition = Eigen::Vector3d(0.f, 0.f, 0.f);
+		Eigen::Quaterniond jointOrientation = Eigen::Quaterniond(1.f, 0.f, 0.f, 0.f);
 
-		Eigen::Vector3f jointVelocity = Eigen::Vector3f(0.f, 0.f, 0.f);
-		Eigen::Vector3f jointAcceleration = Eigen::Vector3f(0.f, 0.f, 0.f);
+		Eigen::Vector3d jointVelocity = Eigen::Vector3d(0.f, 0.f, 0.f);
+		Eigen::Vector3d jointAcceleration = Eigen::Vector3d(0.f, 0.f, 0.f);
 
-		Eigen::Vector3f jointAngularVelocity = Eigen::Vector3f(0.f, 0.f, 0.f);
-		Eigen::Vector3f jointAngularAcceleration = Eigen::Vector3f(0.f, 0.f, 0.f);
+		Eigen::Vector3d jointAngularVelocity = Eigen::Vector3d(0.f, 0.f, 0.f);
+		Eigen::Vector3d jointAngularAcceleration = Eigen::Vector3d(0.f, 0.f, 0.f);
 
 		ITrackedJointState trackingState = State_NotTracked;
 	};
@@ -234,7 +234,7 @@ namespace ktvr
 		{
 		}
 
-		K2TrackedJoint(Eigen::Vector3f pos, Eigen::Quaternionf rot,
+		K2TrackedJoint(Eigen::Vector3d pos, Eigen::Quaterniond rot,
 		               const ITrackedJointState& state, std::wstring name) :
 			jointName{std::move(name)}
 		{
@@ -850,24 +850,24 @@ namespace ktvr
 		/* Helper functions which may be internally called by the device plugin */
 
 		// Get the raw openvr's HMD pose
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPose;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getHMDPose;
 		// Get the openvr's HMD pose, but un-wrapped aka "calibrated" using the vr room center
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPoseCalibrated;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getHMDPoseCalibrated;
 
 		// Get the raw openvr's left controller pose
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPose;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getLeftControllerPose;
 		// Get the openvr's left controller pose, but un-wrapped aka "calibrated" using the vr room center
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPoseCalibrated;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getLeftControllerPoseCalibrated;
 
 		// Get the raw openvr's right controller pose
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPose;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getRightControllerPose;
 		// Get the openvr's right controller pose, but un-wrapped aka "calibrated" using the vr room center
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPoseCalibrated;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getRightControllerPoseCalibrated;
 
 		// Get the HMD Yaw (exclusively)
-		std::function<float()> getHMDOrientationYaw;
+		std::function<double()> getHMDOrientationYaw;
 		// Get the HMD Yaw (exclusively), but un-wrapped aka "calibrated" using the vr room center
-		std::function<float()> getHMDOrientationYawCalibrated;
+		std::function<double()> getHMDOrientationYawCalibrated;
 
 		/*
 		 * Helper to get all joints' positions from the app,
@@ -1076,24 +1076,24 @@ namespace ktvr
 		/* Helper functions which may be internally called by the device plugin */
 
 		// Get the raw openvr's HMD pose
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPose;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getHMDPose;
 		// Get the openvr's HMD pose, but un-wrapped aka "calibrated" using the vr room center
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPoseCalibrated;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getHMDPoseCalibrated;
 
 		// Get the raw openvr's left controller pose
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPose;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getLeftControllerPose;
 		// Get the openvr's left controller pose, but un-wrapped aka "calibrated" using the vr room center
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPoseCalibrated;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getLeftControllerPoseCalibrated;
 
 		// Get the raw openvr's right controller pose
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPose;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getRightControllerPose;
 		// Get the openvr's right controller pose, but un-wrapped aka "calibrated" using the vr room center
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPoseCalibrated;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getRightControllerPoseCalibrated;
 
 		// Get the HMD Yaw (exclusively)
-		std::function<float()> getHMDOrientationYaw;
+		std::function<double()> getHMDOrientationYaw;
 		// Get the HMD Yaw (exclusively), but un-wrapped aka "calibrated" using the vr room center
-		std::function<float()> getHMDOrientationYawCalibrated;
+		std::function<double()> getHMDOrientationYawCalibrated;
 
 		/*
 		 * Helper to get all joints' positions from the app,
@@ -1230,24 +1230,24 @@ namespace ktvr
 		/* Helper functions which may be internally called by the device plugin */
 
 		// Get the raw openvr's HMD pose
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPose;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getHMDPose;
 		// Get the openvr's HMD pose, but un-wrapped aka "calibrated" using the vr room center
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getHMDPoseCalibrated;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getHMDPoseCalibrated;
 
 		// Get the raw openvr's left controller pose
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPose;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getLeftControllerPose;
 		// Get the openvr's left controller pose, but un-wrapped aka "calibrated" using the vr room center
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getLeftControllerPoseCalibrated;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getLeftControllerPoseCalibrated;
 
 		// Get the raw openvr's right controller pose
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPose;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getRightControllerPose;
 		// Get the openvr's right controller pose, but un-wrapped aka "calibrated" using the vr room center
-		std::function<std::pair<Eigen::Vector3f, Eigen::Quaternionf>()> getRightControllerPoseCalibrated;
+		std::function<std::pair<Eigen::Vector3d, Eigen::Quaterniond>()> getRightControllerPoseCalibrated;
 
 		// Get the HMD Yaw (exclusively)
-		std::function<float()> getHMDOrientationYaw;
+		std::function<double()> getHMDOrientationYaw;
 		// Get the HMD Yaw (exclusively), but un-wrapped aka "calibrated" using the vr room center
-		std::function<float()> getHMDOrientationYawCalibrated;
+		std::function<double()> getHMDOrientationYawCalibrated;
 
 		/*
 		 * Helper to get all joints' positions from the app,

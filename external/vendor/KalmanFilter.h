@@ -1,4 +1,4 @@
-/**
+﻿/**
 * Kalman filter header file.
 *
 * @author: Dhruv Shah, Hayk Martirosyan
@@ -7,14 +7,12 @@
 * https://github.com/PrieureDeSion/kalmanfilter-cpp
 */
 
-#include <Eigen/Dense>
-
 #pragma once
+#include "pch.h"
 
-class KalmanFilter {
-
+class KalmanFilter
+{
 public:
-
 	/**
 	* Create a Kalman filter with the specified matrices.
 	*   A - System dynamics matrix
@@ -71,8 +69,8 @@ public:
 	/**
 	* Initialize the filter with initial states as zero.
 	*/
-	void init() {
-
+	void init()
+	{
 		x_hat.setZero();
 		P = P0;
 		initialized = true;
@@ -81,8 +79,8 @@ public:
 	/**
 	* Initialize the filter with a guess for initial states.
 	*/
-	void init(const Eigen::VectorXd& x0) {
-
+	void init(const Eigen::VectorXd& x0)
+	{
 		x_hat = x0;
 		P = P0;
 		initialized = true;
@@ -91,8 +89,8 @@ public:
 	/**
 	* Update the prediction based on control input.
 	*/
-	void predict(const Eigen::VectorXd& u) {
-
+	void predict(const Eigen::VectorXd& u)
+	{
 		if (!initialized)
 			init();
 
@@ -103,8 +101,8 @@ public:
 	/**
 	* Update the estimated state based on measured values.
 	*/
-	void update(const Eigen::VectorXd& y) {
-
+	void update(const Eigen::VectorXd& y)
+	{
 		K = P * C.transpose() * (C * P * C.transpose() + R).inverse();
 		x_hat += K * (y - C * x_hat);
 		P = (I - K * C) * P;
@@ -113,16 +111,16 @@ public:
 	/**
 	* Update the dynamics matrix.
 	*/
-	void update_dynamics(const Eigen::MatrixXd A) {
-
+	void update_dynamics(const Eigen::MatrixXd A)
+	{
 		this->A = A;
 	}
 
 	/**
 	* Update the output matrix.
 	*/
-	void update_output(const Eigen::MatrixXd C) {
-
+	void update_output(const Eigen::MatrixXd C)
+	{
 		this->C = C;
 	}
 
@@ -132,7 +130,6 @@ public:
 	Eigen::VectorXd state() { return x_hat; };
 
 private:
-
 	// Matrices for computation
 	Eigen::MatrixXd A, B, C, Q, R, P, K, P0;
 

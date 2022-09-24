@@ -250,13 +250,13 @@ namespace k2app
 				kalmanFilter[i].update(y[i]);
 			}
 
-			kalmanPosition = Eigen::Vector3f(
+			kalmanPosition = Eigen::Vector3d(
 				kalmanFilter[0].state().x(),
 				kalmanFilter[1].state().x(),
 				kalmanFilter[2].state().x());
 
 			/* Update the LowPass filter */
-			lowPassPosition = Eigen::Vector3f(
+			lowPassPosition = Eigen::Vector3d(
 				lowPassFilter[0].update(pose_position.x()),
 				lowPassFilter[1].update(pose_position.y()),
 				lowPassFilter[2].update(pose_position.z()));
@@ -282,7 +282,7 @@ namespace k2app
 		// Get filtered data
 		// By default, the saved filter is selected,
 		// and to select it, the filter number must be < 0
-		[[nodiscard]] Eigen::Vector3f getFilteredPosition(int filter = -1) const
+		[[nodiscard]] Eigen::Vector3d getFilteredPosition(int filter = -1) const
 		{
 			int m_filter = filter;
 			if (filter < 0)
@@ -306,7 +306,7 @@ namespace k2app
 		// Get filtered data
 		// By default, the saved filter is selected,
 		// and to select it, the filter number must be < 0
-		[[nodiscard]] Eigen::Quaternionf getFilteredOrientation(int filter = -1) const
+		[[nodiscard]] Eigen::Quaterniond getFilteredOrientation(int filter = -1) const
 		{
 			int m_filter = filter;
 			if (filter < 0)
@@ -329,18 +329,18 @@ namespace k2app
 		// By default, the saved filter is selected,
 		// and to select it, the filter number must be < 0
 		// Additionally, this adds the offsets
-		[[nodiscard]] Eigen::Vector3f getFullPosition(int filter = -1) const
+		[[nodiscard]] Eigen::Vector3d getFullPosition(int filter = -1) const
 		{
-			return getFilteredPosition(filter) + positionOffset.cast<float>();
+			return getFilteredPosition(filter) + positionOffset;
 		}
 
 		// Get filtered data
 		// By default, the saved filter is selected,
 		// and to select it, the filter number must be < 0
 		// Additionally, this adds the offsets
-		[[nodiscard]] Eigen::Quaternionf getFullOrientation(int filter = -1) const
+		[[nodiscard]] Eigen::Quaterniond getFullOrientation(int filter = -1) const
 		{
-			return getFilteredOrientation(filter) * EigenUtils::EulersToQuat(orientationOffset.cast<float>());
+			return getFilteredOrientation(filter) * EigenUtils::EulersToQuat(orientationOffset);
 		}
 
 		// Get filtered data
@@ -348,63 +348,63 @@ namespace k2app
 		// and to select it, the filter number must be < 0
 		// Additionally, this adds the offsets
 		// Offset will be added after translation
-		[[nodiscard]] Eigen::Vector3f getFullCalibratedPosition
+		[[nodiscard]] Eigen::Vector3d getFullCalibratedPosition
 		(
-			Eigen::Matrix<float, 3, 3> rotationMatrix,
-			Eigen::Matrix<float, 3, 1> translationVector,
-			Eigen::Vector3f calibration_origin = Eigen::Vector3d::Zero(),
+			Eigen::Matrix<double, 3, 3> rotationMatrix,
+			Eigen::Matrix<double, 3, 1> translationVector,
+			Eigen::Vector3d calibration_origin = Eigen::Vector3d::Zero(),
 			int filter = -1
 		) const
 		{
 			// Construct the current pose
-			Eigen::Vector3f m_pose(
+			Eigen::Vector3d m_pose(
 				getFilteredPosition(filter).x(),
 				getFilteredPosition(filter).y(),
 				getFilteredPosition(filter).z()
 			);
 
 			// Construct the calibrated pose
-			Eigen::Matrix<float, 3, Eigen::Dynamic> m_pose_calibrated =
+			Eigen::Matrix<double, 3, Eigen::Dynamic> m_pose_calibrated =
 				(rotationMatrix * (m_pose - calibration_origin)).
 				colwise() + translationVector + calibration_origin;
 
 			// Construct the calibrated pose in eigen
-			Eigen::Vector3f calibrated_pose_gl(
+			Eigen::Vector3d calibrated_pose_gl(
 				m_pose_calibrated(0),
 				m_pose_calibrated(1),
 				m_pose_calibrated(2)
 			);
 
 			// Return the calibrated pose with offset
-			return calibrated_pose_gl + positionOffset.cast<float>();
+			return calibrated_pose_gl + positionOffset;
 		}
 		// Get filtered data
 		// By default, the saved filter is selected,
 		// and to select it, the filter number must be < 0
 		// Additionally, this adds the offsets
 		// Offset will be added after translation
-		[[nodiscard]] Eigen::Vector3f getCalibratedVector
+		[[nodiscard]] Eigen::Vector3d getCalibratedVector
 		(
-			Eigen::Vector3f vector,
-			Eigen::Matrix<float, 3, 3> rotationMatrix,
-			Eigen::Matrix<float, 3, 1> translationVector,
-			Eigen::Vector3f calibration_origin = Eigen::Vector3d::Zero()
+			Eigen::Vector3d vector,
+			Eigen::Matrix<double, 3, 3> rotationMatrix,
+			Eigen::Matrix<double, 3, 1> translationVector,
+			Eigen::Vector3d calibration_origin = Eigen::Vector3d::Zero()
 		) const
 		{
 			// Construct the calibrated pose
-			Eigen::Matrix<float, 3, Eigen::Dynamic> vector_calibrated =
+			Eigen::Matrix<double, 3, Eigen::Dynamic> vector_calibrated =
 				(rotationMatrix * (vector - calibration_origin)).
 				colwise() + translationVector + calibration_origin;
 
 			// Construct the calibrated pose in eigen
-			Eigen::Vector3f calibrated_vector_gl(
+			Eigen::Vector3d calibrated_vector_gl(
 				vector_calibrated(0),
 				vector_calibrated(1),
 				vector_calibrated(2)
 			);
 
 			// Return the calibrated pose with offset
-			return calibrated_vector_gl + positionOffset.cast<float>();
+			return calibrated_vector_gl + positionOffset;
 		}
 
 		// Get tracker base
@@ -414,9 +414,9 @@ namespace k2app
 		// Offsets are added inside called methods
 		[[nodiscard]] ktvr::K2TrackerBase getTrackerBase
 		(
-			Eigen::Matrix<float, 3, 3> rotationMatrix,
-			Eigen::Matrix<float, 3, 1> translationVector,
-			Eigen::Vector3f calibration_origin,
+			Eigen::Matrix<double, 3, 3> rotationMatrix,
+			Eigen::Matrix<double, 3, 1> translationVector,
+			Eigen::Vector3d calibration_origin,
 			int pos_filter = -1, int ori_filter = -1
 		) const
 		{
@@ -604,13 +604,13 @@ namespace k2app
 		bool m_use_own_physics = false;
 
 		// Tracker pose (inherited)
-		Eigen::Vector3f pose_position{0, 0, 0};
-		Eigen::Quaternionf pose_orientation{1, 0, 0, 0};
+		Eigen::Vector3d pose_position{0, 0, 0};
+		Eigen::Quaterniond pose_orientation{1, 0, 0, 0};
 
-		Eigen::Vector3f pose_velocity{0, 0, 0};
-		Eigen::Vector3f pose_acceleration{0, 0, 0};
-		Eigen::Vector3f pose_angularVelocity{0, 0, 0};
-		Eigen::Vector3f pose_angularAcceleration{0, 0, 0};
+		Eigen::Vector3d pose_velocity{0, 0, 0};
+		Eigen::Vector3d pose_acceleration{0, 0, 0};
+		Eigen::Vector3d pose_angularVelocity{0, 0, 0};
+		Eigen::Vector3d pose_angularAcceleration{0, 0, 0};
 
 		template <class Archive>
 		void serialize(Archive& archive)
@@ -644,17 +644,17 @@ namespace k2app
 		}
 
 		// Internal filters' datas
-		Eigen::Vector3f kalmanPosition = Eigen::Vector3f(0, 0, 0),
-		                lowPassPosition = Eigen::Vector3f(0, 0, 0),
-		                LERPPosition = Eigen::Vector3f(0, 0, 0);
+		Eigen::Vector3d kalmanPosition = Eigen::Vector3d(0, 0, 0),
+		                lowPassPosition = Eigen::Vector3d(0, 0, 0),
+		                LERPPosition = Eigen::Vector3d(0, 0, 0);
 
-		Eigen::Quaternionf SLERPOrientation = Eigen::Quaternionf(1, 0, 0, 0),
-		                   SLERPSlowOrientation = Eigen::Quaternionf(1, 0, 0, 0);
+		Eigen::Quaterniond SLERPOrientation = Eigen::Quaterniond(1, 0, 0, 0),
+		                   SLERPSlowOrientation = Eigen::Quaterniond(1, 0, 0, 0);
 
 		// LERP data's backup
-		Eigen::Vector3f lastLERPPosition = Eigen::Vector3f(0, 0, 0);
-		Eigen::Quaternionf lastSLERPOrientation = Eigen::Quaternionf(1, 0, 0, 0),
-		                   lastSLERPSlowOrientation = Eigen::Quaternionf(1, 0, 0, 0);
+		Eigen::Vector3d lastLERPPosition = Eigen::Vector3d(0, 0, 0);
+		Eigen::Quaterniond lastSLERPOrientation = Eigen::Quaterniond(1, 0, 0, 0),
+		                   lastSLERPSlowOrientation = Eigen::Quaterniond(1, 0, 0, 0);
 
 	private:
 		/* Position filters */

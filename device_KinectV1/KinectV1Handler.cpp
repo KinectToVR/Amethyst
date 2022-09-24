@@ -193,7 +193,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				trackedJoints[ktvr::Joint_AnkleLeft].update_orientation(
 					trackedJoints[ktvr::Joint_AnkleLeft].getJointOrientation().slerp(
-						0.3f, Eigen::Quaternionf(
+						0.3f, Eigen::Quaterniond(
 							boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
 							absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
@@ -206,7 +206,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				trackedJoints[ktvr::Joint_AnkleRight].update_orientation(
 					trackedJoints[ktvr::Joint_AnkleRight].getJointOrientation().slerp(
-						0.3f, Eigen::Quaternionf(
+						0.3f, Eigen::Quaterniond(
 							boneOrientations[globalIndex[
 								ktvr::Joint_AnkleRight]].absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[
@@ -219,7 +219,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				trackedJoints[ktvr::Joint_KneeLeft].update_orientation(
 					trackedJoints[ktvr::Joint_KneeLeft].getJointOrientation().slerp(
-						0.35f, Eigen::Quaternionf(
+						0.35f, Eigen::Quaterniond(
 							boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
 							absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
@@ -232,7 +232,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				trackedJoints[ktvr::Joint_KneeRight].update_orientation(
 					trackedJoints[ktvr::Joint_KneeRight].getJointOrientation().slerp(
-						0.35f, Eigen::Quaternionf(
+						0.35f, Eigen::Quaterniond(
 							boneOrientations[globalIndex[
 								ktvr::Joint_KneeRight]].absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[
@@ -245,7 +245,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				trackedJoints[ktvr::Joint_ElbowLeft].update_orientation(
 					trackedJoints[ktvr::Joint_ElbowLeft].getJointOrientation().slerp(
-						0.35f, Eigen::Quaternionf(
+						0.35f, Eigen::Quaterniond(
 							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 							absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
@@ -255,13 +255,13 @@ void KinectV1Handler::updateSkeletalData()
 							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 							absoluteRotation.rotationQuaternion.z
 						) *
-						Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-							* Eigen::AngleAxisf(-_PI / 2.0, Eigen::Vector3f::UnitY())
-							* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()))));
+						Eigen::Quaterniond(Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitX())
+							* Eigen::AngleAxisd(-_PI / 2.0, Eigen::Vector3d::UnitY())
+							* Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitZ()))));
 
 				trackedJoints[ktvr::Joint_ElbowRight].update_orientation(
 					trackedJoints[ktvr::Joint_ElbowRight].getJointOrientation().slerp(
-						0.35f, Eigen::Quaternionf(
+						0.35f, Eigen::Quaterniond(
 							boneOrientations[globalIndex[
 								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[
@@ -271,9 +271,9 @@ void KinectV1Handler::updateSkeletalData()
 							boneOrientations[globalIndex[
 								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.z
 						) *
-						Eigen::Quaternionf(Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitX())
-							* Eigen::AngleAxisf(_PI / 2.0, Eigen::Vector3f::UnitY())
-							* Eigen::AngleAxisf(0.f, Eigen::Vector3f::UnitZ()))));
+						Eigen::Quaterniond(Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitX())
+							* Eigen::AngleAxisd(_PI / 2.0, Eigen::Vector3d::UnitY())
+							* Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitZ()))));
 
 				break; // Only first skeleton
 			}

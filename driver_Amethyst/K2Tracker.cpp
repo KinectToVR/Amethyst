@@ -1,7 +1,9 @@
 #include "K2Tracker.h"
 #include <openvr_driver.h>
 #include <string>
+
 #include <Amethyst_API.h>
+#include <EigenUtils.h>
 
 K2Tracker::K2Tracker(const ktvr::K2TrackerBase& tracker_base)
 {
@@ -74,6 +76,15 @@ void K2Tracker::update()
 	}
 }
 
+// The previous frame time
+LONG64 m_previous_time;
+
+// The previous frame cached pose
+Eigen::Quaterniond m_previous_orientation;
+Eigen::Vector3d m_previous_position,
+                m_previous_pos_velocity,
+                m_previous_rot_velocity;
+
 void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 {
 	try
@@ -92,8 +103,11 @@ void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 		_pose.qRotation.z = pose.orientation().z();
 
 		// If the sender defines its own physics
-		if (pose.has_physics()) 
+		if (pose.has_physics())
 		{
+			// Get timestamp
+			const auto _time_now = AME_API_GET_TIMESTAMP_NOW;
+
 			// Velocity
 			_pose.vecVelocity[0] = pose.physics().velocity().x();
 			_pose.vecVelocity[1] = pose.physics().velocity().y();
@@ -113,11 +127,81 @@ void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 			_pose.vecAngularAcceleration[0] = pose.physics().angularacceleration().x();
 			_pose.vecAngularAcceleration[1] = pose.physics().angularacceleration().y();
 			_pose.vecAngularAcceleration[2] = pose.physics().angularacceleration().z();
+
+			// Backup Velocity
+			m_previous_pos_velocity = {
+				_pose.vecVelocity[0],
+				_pose.vecVelocity[1],
+				_pose.vecVelocity[2]
+			};
+			m_previous_rot_velocity = {
+				_pose.vecAngularVelocity[0],
+				_pose.vecAngularVelocity[1],
+				_pose.vecAngularVelocity[2]
+			};
+
+			// Backup frame time
+			m_previous_time = _time_now;
 		}
 		else
 		{
-			// TODO SELF-UPDATE PHYSICS
+			// Get timestamp
+			const auto _time_now = AME_API_GET_TIMESTAMP_NOW;
+
+			// Calculate Velocity
+			const auto _pos_velocity =
+				EigenUtils::lerp(
+					Eigen::Vector3d(
+						EigenUtils::p_cast_type<Eigen::Vector3d>(_pose) - m_previous_position /
+						static_cast<double>(_time_now - m_previous_time) / 1000000.),
+					m_previous_pos_velocity, .5f);
+
+			const auto _rot_velocity =
+				EigenUtils::lerp(
+					Eigen::Vector3d(
+						EigenUtils::QuatToEulers(m_previous_orientation.inverse() *
+							EigenUtils::p_cast_type<Eigen::Quaterniond>(_pose)) /
+						static_cast<double>(_time_now - m_previous_time) / 1000000.),
+					m_previous_rot_velocity, .5f);
+
+			// Calculate Acceleration
+			const auto _pos_acceleration =
+				_pos_velocity - m_previous_pos_velocity /
+				static_cast<double>(_time_now - m_previous_time) / 1000000.;
+
+			const auto _rot_acceleration =
+				_rot_velocity - m_previous_rot_velocity /
+				static_cast<double>(_time_now - m_previous_time) / 1000000.;
+
+			// Set the Velocity
+			_pose.vecVelocity[0] = _pos_velocity.x();
+			_pose.vecVelocity[1] = _pos_velocity.y();
+			_pose.vecVelocity[2] = _pos_velocity.z();
+
+			_pose.vecAngularVelocity[0] = _rot_velocity.x();
+			_pose.vecAngularVelocity[1] = _rot_velocity.y();
+			_pose.vecAngularVelocity[2] = _rot_velocity.z();
+
+			// Set the Acceleration
+			_pose.vecAcceleration[0] = _pos_acceleration.x();
+			_pose.vecAcceleration[1] = _pos_acceleration.y();
+			_pose.vecAcceleration[2] = _pos_acceleration.z();
+
+			_pose.vecAngularAcceleration[0] = _rot_acceleration.x();
+			_pose.vecAngularAcceleration[1] = _rot_acceleration.y();
+			_pose.vecAngularAcceleration[2] = _rot_acceleration.z();
+
+			// Backup Velocity
+			m_previous_pos_velocity = _pos_velocity;
+			m_previous_rot_velocity = _rot_velocity;
+
+			// Backup frame time
+			m_previous_time = _time_now;
 		}
+
+		// Backup poses
+		m_previous_position = EigenUtils::p_cast_type<Eigen::Vector3d>(_pose);
+		m_previous_orientation = EigenUtils::p_cast_type<Eigen::Quaterniond>(_pose);
 
 		// Automatically update the tracker when finished
 		update(); // called from this
@@ -313,9 +397,12 @@ ktvr::K2TrackerBase K2Tracker::getTrackerBase()
 	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_z(_pose.vecAngularVelocity[2]);
 
 	// Copy the Angular Acceleration
-	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_x(_pose.vecAngularAcceleration[0]);
-	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_y(_pose.vecAngularAcceleration[1]);
-	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_z(_pose.vecAngularAcceleration[2]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_x(
+		_pose.vecAngularAcceleration[0]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_y(
+		_pose.vecAngularAcceleration[1]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_z(
+		_pose.vecAngularAcceleration[2]);
 
 	// Return the base object
 	return _trackerBase;

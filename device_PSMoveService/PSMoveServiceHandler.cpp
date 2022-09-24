@@ -3,14 +3,14 @@
 
 #define M_PI_2 1.57079632679
 
-Eigen::Vector3f PSMSToEigen(PSMVector3f v)
+Eigen::Vector3d PSMSToEigen(PSMVector3f v)
 {
-	return .01 * Eigen::Vector3f(v.x, v.y, v.z);
+	return .01 * Eigen::Vector3d(v.x, v.y, v.z);
 }
 
-Eigen::Quaternionf PSMSToEigen(PSMQuatf q)
+Eigen::Quaterniond PSMSToEigen(PSMQuatf q)
 {
-	return Eigen::Quaternionf(q.w, q.x, q.y, q.z);
+	return { q.w, q.x, q.y, q.z };
 }
 
 HRESULT PSMoveServiceHandler::getStatusResult()

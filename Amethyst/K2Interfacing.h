@@ -105,16 +105,16 @@ namespace k2app::interfacing
 	                        updatingNow = false;
 
 	// Position helpers for k2 devices -> GUID, Pose
-	inline std::map<std::wstring, Eigen::Vector3f>
+	inline std::map<std::wstring, Eigen::Vector3d>
 		kinectHeadPosition, // But this one's kinect-only
 		kinectWaistPosition; // This one applies to both bases
 
 	// OpenVR playspace position
-	inline Eigen::Vector3f vrPlayspaceTranslation = Eigen::Vector3f(0, 0, 0);
+	inline Eigen::Vector3d vrPlayspaceTranslation = Eigen::Vector3d(0, 0, 0);
 
 	// OpenVR playspace rotation
 	inline float vrPlayspaceOrientation = 0.f; // Note: radians
-	inline Eigen::Quaternionf vrPlayspaceOrientationQuaternion{1, 0, 0, 0};
+	inline Eigen::Quaterniond vrPlayspaceOrientationQuaternion{1, 0, 0, 0};
 
 	// Current page string
 	inline std::wstring currentPageTag = L"general";
@@ -498,7 +498,7 @@ namespace k2app::interfacing
 	            calibration_fineTune;
 
 	// For manual calibration: L, R -> X, Y
-	inline std::array<std::array<float, 2>, 2>
+	inline std::array<std::array<double, 2>, 2>
 	calibration_joystick_positions;
 
 	// Check if we're currently scanning for trackers from other apps
@@ -524,10 +524,10 @@ namespace k2app::interfacing
 
 	// For App/Software Orientation filtering
 	// [0] - Left Foot, [1] - Right Foot
-	inline Eigen::Quaternionf yawFilteringQuaternion[2] =
+	inline Eigen::Quaterniond yawFilteringQuaternion[2] =
 	{
-		Eigen::Quaternionf(1, 0, 0, 0),
-		Eigen::Quaternionf(1, 0, 0, 0)
+		Eigen::Quaterniond(1, 0, 0, 0),
+		Eigen::Quaterniond(1, 0, 0, 0)
 	};
 
 	// Flip defines for the base device - iteration persistent
@@ -653,8 +653,8 @@ namespace k2app::interfacing
 		// Since we're ok, capture playspace details
 		const auto trackingOrigin = future_VRSystem.get()->GetRawZeroPoseToStandingAbsoluteTrackingPose();
 
-		vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
-		vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(trackingOrigin);
+		vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3d>(trackingOrigin);
+		vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaterniond>(trackingOrigin);
 
 		vrPlayspaceOrientation = EigenUtils::RotationProjectedYaw(
 			vrPlayspaceOrientationQuaternion); // Yaw angle
@@ -1029,7 +1029,7 @@ namespace k2app::interfacing
 	 * \_log Should we print logs? Default: no
 	 * \return <Position, Rotation>
 	 */
-	inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> getVRTrackerPoseCalibrated(
+	inline std::pair<Eigen::Vector3d, Eigen::Quaterniond> getVRTrackerPoseCalibrated(
 		const std::string& _name_contains, const bool _log = false)
 	{
 		vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
@@ -1046,16 +1046,16 @@ namespace k2app::interfacing
 
 			// Get pos & rot -> EigenUtils' gonna do this stuff for us
 			return std::make_pair(vrPlayspaceOrientationQuaternion.inverse() *
-			                      (EigenUtils::p_cast_type<Eigen::Vector3f>(waistPose.mDeviceToAbsoluteTracking) -
+			                      (EigenUtils::p_cast_type<Eigen::Vector3d>(waistPose.mDeviceToAbsoluteTracking) -
 				                      vrPlayspaceTranslation),
 			                      vrPlayspaceOrientationQuaternion.inverse() *
-			                      EigenUtils::p_cast_type<Eigen::Quaternionf>(waistPose.mDeviceToAbsoluteTracking));
+			                      EigenUtils::p_cast_type<Eigen::Quaterniond>(waistPose.mDeviceToAbsoluteTracking));
 		}
 
 		LOG_IF(WARNING, _log) <<
 			"Either waist tracker doesn't exist or its role hint (Prop_ControllerType_String) was invalid";
 
-		return std::make_pair(Eigen::Vector3f::Zero(), Eigen::Quaternionf(1, 0, 0, 0));
+		return std::make_pair(Eigen::Vector3d::Zero(), Eigen::Quaterniond(1, 0, 0, 0));
 	}
 
 	inline void UpdateServerStatusUI()
@@ -1127,39 +1127,13 @@ namespace k2app::interfacing
 			}
 		}
 	}
-
-	// Get the quaternion representing the rotation
-	inline Eigen::Quaternionf GetVRRotationFromMatrix(vr::HmdMatrix34_t matrix)
-	{
-		vr::HmdQuaternion_t q;
-
-		q.w = sqrt(fmax(0, 1 + matrix.m[0][0] + matrix.m[1][1] + matrix.m[2][2])) / 2;
-		q.x = sqrt(fmax(0, 1 + matrix.m[0][0] - matrix.m[1][1] - matrix.m[2][2])) / 2;
-		q.y = sqrt(fmax(0, 1 - matrix.m[0][0] + matrix.m[1][1] - matrix.m[2][2])) / 2;
-		q.z = sqrt(fmax(0, 1 - matrix.m[0][0] - matrix.m[1][1] + matrix.m[2][2])) / 2;
-		q.x = copysign(q.x, matrix.m[2][1] - matrix.m[1][2]);
-		q.y = copysign(q.y, matrix.m[0][2] - matrix.m[2][0]);
-		q.z = copysign(q.z, matrix.m[1][0] - matrix.m[0][1]);
-		return EigenUtils::p_cast_type<Eigen::Quaternionf>(q);
-	}
-
-	// Get the vector representing the position
-	inline Eigen::Vector3f GetVRPositionFromMatrix(vr::HmdMatrix34_t matrix)
-	{
-		vr::HmdVector3d_t v;
-
-		v.v[0] = matrix.m[0][3];
-		v.v[1] = matrix.m[1][3];
-		v.v[2] = matrix.m[2][3];
-		return EigenUtils::p_cast_type<Eigen::Vector3f>(v);
-	}
-
+	
 	// HMD pose in OpenVR
 	inline std::pair
 	vrHMDPose
 	{
-		Eigen::Vector3f(0.f, 0.f, 0.f), // Init as zero
-		Eigen::Quaternionf(1.f, 0.f, 0.f, 0.f) // Init as non-empty
+		Eigen::Vector3d(0.f, 0.f, 0.f), // Init as zero
+		Eigen::Quaterniond(1.f, 0.f, 0.f, 0.f) // Init as non-empty
 	};
 
 	// Update HMD pose from OpenVR -> called in K2Main
@@ -1176,9 +1150,9 @@ namespace k2app::interfacing
 
 				// Get pos & rot -> EigenUtils' gonna do this stuff for us
 				vrHMDPose = std::make_pair(
-					EigenUtils::p_cast_type<Eigen::Vector3f>(
+					EigenUtils::p_cast_type<Eigen::Vector3d>(
 						devicePose[0].mDeviceToAbsoluteTracking),
-					EigenUtils::p_cast_type<Eigen::Quaternionf>(
+					EigenUtils::p_cast_type<Eigen::Quaterniond>(
 						devicePose[0].mDeviceToAbsoluteTracking));
 		}
 
@@ -1186,8 +1160,8 @@ namespace k2app::interfacing
 		{
 			const auto trackingOrigin = vr::VRSystem()->GetRawZeroPoseToStandingAbsoluteTrackingPose();
 
-			vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3f>(trackingOrigin);
-			vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaternionf>(trackingOrigin);
+			vrPlayspaceTranslation = EigenUtils::p_cast_type<Eigen::Vector3d>(trackingOrigin);
+			vrPlayspaceOrientationQuaternion = EigenUtils::p_cast_type<Eigen::Quaterniond>(trackingOrigin);
 
 			// Get current yaw angle
 			vrPlayspaceOrientation =
@@ -1263,32 +1237,32 @@ namespace k2app::interfacing
 				L"[Message from device {}] {}", device_guid, ws));
 		}
 
-		inline Eigen::Vector3f plugins_getHMDPosition()
+		inline Eigen::Vector3d plugins_getHMDPosition()
 		{
 			return vrHMDPose.first;
 		}
 
-		inline Eigen::Vector3f plugins_getHMDPositionCalibrated()
+		inline Eigen::Vector3d plugins_getHMDPositionCalibrated()
 		{
 			return vrPlayspaceOrientationQuaternion.inverse() * (vrHMDPose.first - vrPlayspaceTranslation);
 		}
 
-		inline Eigen::Quaternionf plugins_getHMDOrientation()
+		inline Eigen::Quaterniond plugins_getHMDOrientation()
 		{
 			return vrHMDPose.second;
 		}
 
-		inline Eigen::Quaternionf plugins_getHMDOrientationCalibrated()
+		inline Eigen::Quaterniond plugins_getHMDOrientationCalibrated()
 		{
 			return vrPlayspaceOrientationQuaternion.inverse() * vrHMDPose.second;
 		}
 
-		inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> plugins_getHMDPose()
+		inline std::pair<Eigen::Vector3d, Eigen::Quaterniond> plugins_getHMDPose()
 		{
 			return std::make_pair(plugins_getHMDPosition(), plugins_getHMDOrientation());
 		}
 
-		inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> plugins_getHMDPoseCalibrated()
+		inline std::pair<Eigen::Vector3d, Eigen::Quaterniond> plugins_getHMDPoseCalibrated()
 		{
 			return std::make_pair(plugins_getHMDPositionCalibrated(), plugins_getHMDOrientationCalibrated());
 		}
@@ -1308,7 +1282,7 @@ namespace k2app::interfacing
 				vrPlayspaceOrientationQuaternion.inverse() * vrHMDPose.second);
 		}
 
-		inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> plugins_getLeftControllerPose()
+		inline std::pair<Eigen::Vector3d, Eigen::Quaterniond> plugins_getLeftControllerPose()
 		{
 			vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
 			vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(
@@ -1317,13 +1291,13 @@ namespace k2app::interfacing
 
 			// Get pos & rot -> EigenUtils' gonna do this stuff for us
 			return std::make_pair(
-				EigenUtils::p_cast_type<Eigen::Vector3f>(
+				EigenUtils::p_cast_type<Eigen::Vector3d>(
 					devicePose[vrControllerIndexes.first].mDeviceToAbsoluteTracking),
-				EigenUtils::p_cast_type<Eigen::Quaternionf>(
+				EigenUtils::p_cast_type<Eigen::Quaterniond>(
 					devicePose[vrControllerIndexes.first].mDeviceToAbsoluteTracking));
 		}
 
-		inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> plugins_getLeftControllerPoseCalibrated()
+		inline std::pair<Eigen::Vector3d, Eigen::Quaterniond> plugins_getLeftControllerPoseCalibrated()
 		{
 			vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
 			vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(
@@ -1333,14 +1307,14 @@ namespace k2app::interfacing
 			// Get pos & rot -> EigenUtils' gonna do this stuff for us
 			return std::make_pair(
 				vrPlayspaceOrientationQuaternion.inverse() *
-				(EigenUtils::p_cast_type<Eigen::Vector3f>(
+				(EigenUtils::p_cast_type<Eigen::Vector3d>(
 						devicePose[vrControllerIndexes.first].mDeviceToAbsoluteTracking) -
 					vrPlayspaceTranslation),
-				vrPlayspaceOrientationQuaternion.inverse() * EigenUtils::p_cast_type<Eigen::Quaternionf>(
+				vrPlayspaceOrientationQuaternion.inverse() * EigenUtils::p_cast_type<Eigen::Quaterniond>(
 					devicePose[vrControllerIndexes.first].mDeviceToAbsoluteTracking));
 		}
 
-		inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> plugins_getRightControllerPose()
+		inline std::pair<Eigen::Vector3d, Eigen::Quaterniond> plugins_getRightControllerPose()
 		{
 			vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
 			vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(
@@ -1349,13 +1323,13 @@ namespace k2app::interfacing
 
 			// Get pos & rot -> EigenUtils' gonna do this stuff for us
 			return std::make_pair(
-				EigenUtils::p_cast_type<Eigen::Vector3f>(
+				EigenUtils::p_cast_type<Eigen::Vector3d>(
 					devicePose[vrControllerIndexes.second].mDeviceToAbsoluteTracking),
-				EigenUtils::p_cast_type<Eigen::Quaternionf>(
+				EigenUtils::p_cast_type<Eigen::Quaterniond>(
 					devicePose[vrControllerIndexes.second].mDeviceToAbsoluteTracking));
 		}
 
-		inline std::pair<Eigen::Vector3f, Eigen::Quaternionf> plugins_getRightControllerPoseCalibrated()
+		inline std::pair<Eigen::Vector3d, Eigen::Quaterniond> plugins_getRightControllerPoseCalibrated()
 		{
 			vr::TrackedDevicePose_t devicePose[vr::k_unMaxTrackedDeviceCount];
 			vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(
@@ -1365,10 +1339,10 @@ namespace k2app::interfacing
 			// Get pos & rot -> EigenUtils' gonna do this stuff for us
 			return std::make_pair(
 				vrPlayspaceOrientationQuaternion.inverse() *
-				(EigenUtils::p_cast_type<Eigen::Vector3f>(
+				(EigenUtils::p_cast_type<Eigen::Vector3d>(
 						devicePose[vrControllerIndexes.second].mDeviceToAbsoluteTracking) -
 					vrPlayspaceTranslation),
-				vrPlayspaceOrientationQuaternion.inverse() * EigenUtils::p_cast_type<Eigen::Quaternionf>(
+				vrPlayspaceOrientationQuaternion.inverse() * EigenUtils::p_cast_type<Eigen::Quaterniond>(
 					devicePose[vrControllerIndexes.second].mDeviceToAbsoluteTracking));
 		}
 

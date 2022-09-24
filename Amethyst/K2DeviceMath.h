@@ -20,10 +20,10 @@ namespace TrackingDevices::Math
 			const auto& _joints = _kinect->getTrackedJoints();
 
 			// Placeholders for mathbased rots
-			Eigen::Quaternionf calculatedLeftFootOrientation, calculatedRightFootOrientation;
+			Eigen::Quaterniond calculatedLeftFootOrientation, calculatedRightFootOrientation;
 
 			// Capture needed joints' positions
-			Eigen::Vector3f forward(0, 0, 1),
+			Eigen::Vector3d forward(0, 0, 1),
 			                ankleLeftPose(
 				                _joints[ktvr::Joint_AnkleLeft].getJointPosition().x(),
 				                _joints[ktvr::Joint_AnkleLeft].getJointPosition().y(),
@@ -55,15 +55,15 @@ namespace TrackingDevices::Math
 								_joints[ktvr::Joint_KneeRight].getJointPosition().z());
 
 			// Calculate euler yaw foot orientation, we'll need it later
-			Eigen::Vector3f
+			Eigen::Vector3d
 				footLeftRawOrientation = EigenUtils::DirectionQuat(
-					Eigen::Vector3f(ankleLeftPose.x(), 0.f, ankleLeftPose.z()),
-					Eigen::Vector3f(footLeftPose.x(), 0.f, footLeftPose.z()),
+					Eigen::Vector3d(ankleLeftPose.x(), 0.f, ankleLeftPose.z()),
+					Eigen::Vector3d(footLeftPose.x(), 0.f, footLeftPose.z()),
 					forward).toRotationMatrix().eulerAngles(0, 1, 2),
 
 				footRightRawOrientation = EigenUtils::DirectionQuat(
-					Eigen::Vector3f(ankleRightPose.x(), 0.f, ankleRightPose.z()),
-					Eigen::Vector3f(footRightPose.x(), 0.f, footRightPose.z()),
+					Eigen::Vector3d(ankleRightPose.x(), 0.f, ankleRightPose.z()),
+					Eigen::Vector3d(footRightPose.x(), 0.f, footRightPose.z()),
 					forward).toRotationMatrix().eulerAngles(0, 1, 2);
 
 			// Flip the yaw around, without reversing it -> we need it basing to 0
@@ -99,7 +99,7 @@ namespace TrackingDevices::Math
 
 			// Construct a helpful offsetting quaternion from the stuff we got
 			// It's made like Quat->Eulers->Quat because we may need to adjust some things on-to-go
-			Eigen::Quaternionf
+			Eigen::Quaterniond
 				leftFootPreFilteredQuaternion = EigenUtils::EulersToQuat(footLeftRawOrientation),
 				// There is no X and Z anyway
 				rightFootPreFilteredQuaternion = EigenUtils::EulersToQuat(footRightRawOrientation);
@@ -114,7 +114,7 @@ namespace TrackingDevices::Math
 
 			// Calculate the knee-ankle orientation, aka "Tibia"
 			// We aren't disabling look-thorough yaw, since it'll be 0
-			Eigen::Quaternionf
+			Eigen::Quaterniond
 				knee_ankleLeftOrientationQuaternion = EigenUtils::DirectionQuat(
 					kneeLeftPose, ankleLeftPose, forward),
 				knee_ankleRightOrientationQuaternion = EigenUtils::DirectionQuat(
@@ -122,13 +122,13 @@ namespace TrackingDevices::Math
 
 			// The tuning quat
 			auto
-				tuneQuaternion_first = Eigen::Quaternionf(1, 0, 0, 0);
+				tuneQuaternion_first = Eigen::Quaterniond(1, 0, 0, 0);
 
 			// Now adjust some values like playspace yaw and pitch, additional rotations
 			// -> they're facing purely down and Z / Y are flipped
 			tuneQuaternion_first =
 				EigenUtils::EulersToQuat(
-					Eigen::Vector3f(
+					Eigen::Vector3d(
 						_PI / 5.f,
 						0.f,
 						0.f
@@ -139,19 +139,19 @@ namespace TrackingDevices::Math
 			knee_ankleRightOrientationQuaternion = tuneQuaternion_first * knee_ankleRightOrientationQuaternion;
 
 			// Grab original orientations and make them euler angles
-			Eigen::Vector3f left_knee_ori_full = EigenUtils::QuatToEulers(knee_ankleLeftOrientationQuaternion);
-			Eigen::Vector3f right_knee_ori_full =
+			Eigen::Vector3d left_knee_ori_full = EigenUtils::QuatToEulers(knee_ankleLeftOrientationQuaternion);
+			Eigen::Vector3d right_knee_ori_full =
 				EigenUtils::QuatToEulers(knee_ankleRightOrientationQuaternion);
 
 			// Try to fix yaw and roll mismatch, caused by XYZ XZY mismatch
 			knee_ankleLeftOrientationQuaternion = EigenUtils::EulersToQuat(
-				Eigen::Vector3f(
+				Eigen::Vector3d(
 					left_knee_ori_full.x() - _PI / 1.6f,
 					0.0, // left_knee_ori_full.z(), // actually 0.0 but okay
 					-left_knee_ori_full.y()));
 
 			knee_ankleRightOrientationQuaternion = EigenUtils::EulersToQuat(
-				Eigen::Vector3f(
+				Eigen::Vector3d(
 					right_knee_ori_full.x() - _PI / 1.6f,
 					0.0, // right_knee_ori_full.z(), // actually 0.0 but okay
 					-right_knee_ori_full.y()));
@@ -174,14 +174,14 @@ namespace TrackingDevices::Math
 
 			// The tuning quat
 			auto
-				leftFootFineTuneQuaternion = Eigen::Quaternionf(1, 0, 0, 0),
-				rightFootFineTuneQuaternion = Eigen::Quaternionf(1, 0, 0, 0);
+				leftFootFineTuneQuaternion = Eigen::Quaterniond(1, 0, 0, 0),
+				rightFootFineTuneQuaternion = Eigen::Quaterniond(1, 0, 0, 0);
 
 			// Now adjust some values like playspace yaw and pitch, additional rotations
 
 			leftFootFineTuneQuaternion =
 				EigenUtils::EulersToQuat( // Lift trackers up a bit
-					Eigen::Vector3f(
+					Eigen::Vector3d(
 						2.8623399733f, // this one's in radians alr
 						0.f, //glm::radians(KinectSettings::calibration_trackers_yaw),
 						0.f
@@ -189,7 +189,7 @@ namespace TrackingDevices::Math
 
 			rightFootFineTuneQuaternion =
 				EigenUtils::EulersToQuat( // Lift trackers up a bit
-					Eigen::Vector3f(
+					Eigen::Vector3d(
 						2.8623399733f, // this one's in radians alr
 						0.f, //glm::radians(KinectSettings::calibration_trackers_yaw),
 						0.f
@@ -221,7 +221,7 @@ namespace TrackingDevices::Math
 					// Apply fixes
 
 					// Grab original orientations and make them euler angles
-					Eigen::Vector3f left_ori_vector = EigenUtils::QuatToEulers(
+					Eigen::Vector3d left_ori_vector = EigenUtils::QuatToEulers(
 						K2Settings.K2TrackersVector[1].pose_orientation);
 
 					// Kind of a solution for flipping at too big X.
@@ -262,7 +262,7 @@ namespace TrackingDevices::Math
 					// Apply fixes
 
 					// Grab original orientations and make them euler angles
-					Eigen::Vector3f right_ori_vector = EigenUtils::QuatToEulers(
+					Eigen::Vector3d right_ori_vector = EigenUtils::QuatToEulers(
 						K2Settings.K2TrackersVector[2].pose_orientation);
 
 					// Kind of a solution for flipping at too big X.
@@ -306,8 +306,8 @@ namespace TrackingDevices::Math
 			const auto& _joints = _kinect->getTrackedJoints();
 
 			// Create placeholders for math-based rots
-			auto calculatedLeftFootOrientation = Eigen::Quaternionf(1, 0, 0, 0);
-			auto calculatedRightFootOrientation = Eigen::Quaternionf(1, 0, 0, 0);
+			auto calculatedLeftFootOrientation = Eigen::Quaterniond(1, 0, 0, 0);
+			auto calculatedRightFootOrientation = Eigen::Quaterniond(1, 0, 0, 0);
 
 
 			/*
@@ -352,7 +352,7 @@ namespace TrackingDevices::Math
 					// Apply fixes
 
 					// Grab original orientations and make them euler angles
-					Eigen::Vector3f left_ori_vector = EigenUtils::QuatToEulers(
+					Eigen::Vector3d left_ori_vector = EigenUtils::QuatToEulers(
 						K2Settings.K2TrackersVector[1].pose_orientation);
 
 					// Kind of a solution for flipping at too big X.
@@ -398,7 +398,7 @@ namespace TrackingDevices::Math
 					// Apply fixes
 
 					// Grab original orientations and make them euler angles
-					Eigen::Vector3f right_ori_vector = EigenUtils::QuatToEulers(
+					Eigen::Vector3d right_ori_vector = EigenUtils::QuatToEulers(
 						K2Settings.K2TrackersVector[2].pose_orientation);
 
 					// Kind of a solution for flipping at too big X.

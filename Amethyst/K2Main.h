@@ -377,11 +377,11 @@ namespace k2app::main
 								tracker.getTrackerBase
 								(
 									K2Settings.deviceCalibrationRotationMatrices[
-										K2Settings.trackingDeviceGUIDPair.first].cast<float>(),
+										K2Settings.trackingDeviceGUIDPair.first],
 									K2Settings.deviceCalibrationTranslationVectors[
-										K2Settings.trackingDeviceGUIDPair.first].cast<float>(),
+										K2Settings.trackingDeviceGUIDPair.first],
 									K2Settings.deviceCalibrationOrigins[
-										K2Settings.trackingDeviceGUIDPair.first].cast<float>(),
+										K2Settings.trackingDeviceGUIDPair.first],
 
 									tracker.positionTrackingFilterOption,
 									tracker.orientationTrackingFilterOption
@@ -405,11 +405,11 @@ namespace k2app::main
 								tracker.getTrackerBase
 								(
 									K2Settings.deviceCalibrationRotationMatrices[
-										tracker.overrideGUID].cast<float>(),
+										tracker.overrideGUID],
 									K2Settings.deviceCalibrationTranslationVectors[
-										tracker.overrideGUID].cast<float>(),
+										tracker.overrideGUID],
 									K2Settings.deviceCalibrationOrigins[
-										tracker.overrideGUID].cast<float>(),
+										tracker.overrideGUID],
 
 									tracker.positionTrackingFilterOption,
 									tracker.orientationTrackingFilterOption
@@ -645,11 +645,11 @@ namespace k2app::main
 				// Not the "calibrated" variant, as the fix will be applied after everything else
 				if (tracker.orientationTrackingOption == k2_FollowHMDRotation)
 					tracker.pose_orientation = EigenUtils::EulersToQuat(
-						Eigen::Vector3f(0, plugins::plugins_getHMDOrientationYaw(), 0));
+						Eigen::Vector3d(0, plugins::plugins_getHMDOrientationYaw(), 0));
 
 				// Optionally overwrite the rotation with NONE
 				if (tracker.orientationTrackingOption == k2_DisableJointRotation)
-					tracker.pose_orientation = Eigen::Quaternionf(1, 0, 0, 0);
+					tracker.pose_orientation = Eigen::Quaterniond(1, 0, 0, 0);
 			}
 
 			/*
@@ -689,8 +689,8 @@ namespace k2app::main
 			if (_device.index() == 0)
 			{
 				// Construct an offset quaternion with the calibration yaw
-				Eigen::Quaternionf yawFlipQuaternion =
-					EigenUtils::EulersToQuat(Eigen::Vector3f(0.f, _PI, 0.f)); // Just turn around the yaw
+				Eigen::Quaterniond yawFlipQuaternion =
+					EigenUtils::EulersToQuat(Eigen::Vector3d(0.f, _PI, 0.f)); // Just turn around the yaw
 
 				/*
 				 * Tweak the rotation a bit while we're in flip: mirror y and z
@@ -705,12 +705,12 @@ namespace k2app::main
 						{
 							// Remove the pitch angle
 							// Grab original orientations and make them euler angles
-							Eigen::Vector3f tracker_ori_with_yaw =
+							Eigen::Vector3d tracker_ori_with_yaw =
 								EigenUtils::QuatToEulers(tracker.pose_orientation);
 
 							// Remove pitch from eulers and apply to the parent
 							tracker.pose_orientation = EigenUtils::EulersToQuat(
-								Eigen::Vector3f(
+								Eigen::Vector3d(
 									tracker_ori_with_yaw.x(),
 									-tracker_ori_with_yaw.y(),
 									-tracker_ori_with_yaw.z()));
@@ -726,7 +726,7 @@ namespace k2app::main
 
 								tracker.pose_orientation =
 									K2Settings.deviceCalibrationRotationMatrices[
-										K2Settings.trackingDeviceGUIDPair.first].cast<float>() *
+										K2Settings.trackingDeviceGUIDPair.first] *
 									tracker.pose_orientation;
 						}
 				}
@@ -741,7 +741,7 @@ namespace k2app::main
 
 							tracker.pose_orientation =
 								K2Settings.deviceCalibrationRotationMatrices[
-									K2Settings.trackingDeviceGUIDPair.first].cast<float>() *
+									K2Settings.trackingDeviceGUIDPair.first] *
 								tracker.pose_orientation;
 				}
 			}
@@ -954,8 +954,8 @@ namespace k2app::main
 				if (_device.index() == 0)
 				{
 					// Construct an offset quaternion with the calibration yaw
-					Eigen::Quaternionf yawFlipQuaternion =
-						EigenUtils::EulersToQuat(Eigen::Vector3f(0.f, _PI, 0.f)); // Just turn around the yaw
+					Eigen::Quaterniond yawFlipQuaternion =
+						EigenUtils::EulersToQuat(Eigen::Vector3d(0.f, _PI, 0.f)); // Just turn around the yaw
 
 					/*
 					 * Tweak the rotation a bit while we're in flip: mirror y and z
@@ -974,12 +974,12 @@ namespace k2app::main
 							{
 								// Remove the pitch angle
 								// Grab original orientations and make them euler angles
-								Eigen::Vector3f tracker_ori_with_yaw =
+								Eigen::Vector3d tracker_ori_with_yaw =
 									EigenUtils::QuatToEulers(tracker.pose_orientation);
 
 								// Remove pitch from eulers and apply to the parent
 								tracker.pose_orientation = EigenUtils::EulersToQuat(
-									Eigen::Vector3f(
+									Eigen::Vector3d(
 										tracker_ori_with_yaw.x(),
 										-tracker_ori_with_yaw.y(),
 										-tracker_ori_with_yaw.z()));
@@ -991,7 +991,7 @@ namespace k2app::main
 								if (tracker.orientationTrackingOption != k2_DisableJointRotation &&
 									!K2Settings.deviceCalibrationRotationMatrices[_override_guid].isZero())
 									tracker.pose_orientation =
-										K2Settings.deviceCalibrationRotationMatrices[_override_guid].cast<float>() *
+										K2Settings.deviceCalibrationRotationMatrices[_override_guid] *
 										tracker.pose_orientation;
 							}
 					}
@@ -1008,7 +1008,7 @@ namespace k2app::main
 									_override_guid].isZero())
 
 								tracker.pose_orientation = K2Settings.deviceCalibrationRotationMatrices[
-										_override_guid].cast<float>() *
+										_override_guid] *
 									tracker.pose_orientation;
 				}
 

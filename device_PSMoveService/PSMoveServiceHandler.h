@@ -170,7 +170,7 @@ private:
 	struct MoveWrapper_PSM
 	{
 		PSMController* controller = nullptr;
-		Eigen::Quaternionf orientationOffset = Eigen::Quaternionf(1., 0., 0., 0.); // Recenter offset
+		Eigen::Quaterniond orientationOffset{ 1., 0., 0., 0. }; // Recenter offset
 		bool flashNow = false; // Signal
 	};
 

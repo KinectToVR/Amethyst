@@ -141,6 +141,9 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\external\vendor\EigenUtils.h" />
+    <ClInclude Include="..\external\vendor\KalmanFilter.h" />
+    <ClInclude Include="..\external\vendor\LowpassFilter.h" />
     <ClInclude Include="CalibrationDeviceEntryView.h" />
     <ClInclude Include="ConsolePage.xaml.h">
       <DependentUpon>ConsolePage.xaml</DependentUpon>
@@ -151,7 +154,6 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
       <DependentUpon>DevicesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="EigenUtils.h" />
     <ClInclude Include="GeneralPage.xaml.h">
       <DependentUpon>GeneralPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -170,8 +172,6 @@ xcopy /y /d /s /i "$(ProjectDir)Assets\Strings\*" "$(OutDir)Assets\Strings\"</Co
     <ClInclude Include="K2DeviceMath.h" />
     <ClInclude Include="K2Settings.h" />
     <ClInclude Include="K2Shared.h" />
-    <ClInclude Include="KalmanFilter.h" />
-    <ClInclude Include="LowpassFilter.h" />
     <ClInclude Include="OffsetsController.h" />
     <ClInclude Include="OffsetsPivotItem.h" />
     <ClInclude Include="OverrideSelectorExpander.h" />
