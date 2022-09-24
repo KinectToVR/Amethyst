@@ -65,13 +65,13 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040904b0"
+        BLOCK "000004b0"
         BEGIN
             VALUE "CompanyName", "K2VR Team"
-            VALUE "FileDescription", "Amethyst (Desktop)"
+            VALUE "FileDescription", "Amethyst"
             VALUE "FileVersion", "1.0.3.1"
             VALUE "InternalName", "Amethyst.exe"
-            VALUE "LegalCopyright", "Copyright (C) 2022"
+            VALUE "LegalCopyright", "Copyright © K2VR Team 2022"
             VALUE "OriginalFilename", "Amethyst.exe"
             VALUE "ProductName", "Amethyst"
             VALUE "ProductVersion", "1.0.3.1"
@@ -79,7 +79,7 @@ BEGIN
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x409, 1200
+        VALUE "Translation", 0x0, 1200
     END
 END
 

@@ -388,7 +388,7 @@ namespace K2CrashHandler
             var localAmethystDriverPath = "";
             for (var i = 0; i < 2; i++)
             {
-                // Double that to get Amethyst (Desktop) exe path
+                // Double that to get Amethyst exe path
                 if (doubleParentPath.Parent != null)
                     doubleParentPath = doubleParentPath.Parent;
 
