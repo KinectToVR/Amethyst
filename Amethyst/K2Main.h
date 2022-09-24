@@ -758,7 +758,7 @@ namespace k2app::main
 						vrPlayspaceOrientationQuaternion.inverse() * tracker.pose_orientation;
 
 			/*****************************************************************************************/
-			// Push RAW poses to trackers
+			// Push RAW poses and physics to trackers
 			/*****************************************************************************************/
 
 			if (_device.index() == 0)
@@ -766,19 +766,47 @@ namespace k2app::main
 				const auto& _kinect =
 					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device);
 
-				for (auto& tracker : K2Settings.K2TrackersVector)
-					tracker.pose_position = _kinect->getTrackedJoints()[
+				for (auto& tracker : K2Settings.K2TrackersVector) 
+				{
+					const auto& _joint = _kinect->getTrackedJoints()[
 						overrides::getFlippedJointType(
-							ITrackerType_Joint[tracker.base_tracker], base_flip)].getJointPosition();
+							ITrackerType_Joint[tracker.base_tracker], base_flip)];
+
+					tracker.pose_position = _joint.getJointPosition();
+					tracker.m_use_own_physics = _kinect->isPhysicsOverrideEnabled();
+
+					// If the device overrides physics
+					if (tracker.m_use_own_physics)
+					{
+						tracker.pose_velocity = _joint.getJointVelocity();
+						tracker.pose_acceleration = _joint.getJointAcceleration();
+						tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
+						tracker.pose_angularAcceleration = _joint.getJointAngularAcceleration();
+					}
+				}
 			}
 			else if (_device.index() == 1)
 			{
 				const auto& _joints =
 					std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_device);
 
-				for (auto& tracker : K2Settings.K2TrackersVector)
-					tracker.pose_position =
-						_joints->getTrackedJoints().at(tracker.selectedTrackedJointID).getJointPosition();
+				for (auto& tracker : K2Settings.K2TrackersVector) 
+				{
+					const auto& _joint = _joints->getTrackedJoints().at(
+						tracker.selectedTrackedJointID);
+
+					tracker.pose_position = _joint.getJointPosition();
+					tracker.m_use_own_physics = _joints->isPhysicsOverrideEnabled();
+
+					// If the device overrides physics
+					if (tracker.m_use_own_physics)
+					{
+						tracker.pose_velocity = _joint.getJointVelocity();
+						tracker.pose_acceleration = _joint.getJointAcceleration();
+						tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
+						tracker.pose_angularAcceleration = _joint.getJointAngularAcceleration();
+					}
+				}
 			}
 		}
 
@@ -985,7 +1013,7 @@ namespace k2app::main
 				}
 
 				/*****************************************************************************************/
-				// Push RAW poses to trackers
+				// Push RAW poses and physics to trackers
 				/*****************************************************************************************/
 
 				if (_device.index() == 0)
@@ -996,12 +1024,25 @@ namespace k2app::main
 					for (auto& tracker : K2Settings.K2TrackersVector)
 						if (tracker.isPositionOverridden && // If an override is enabled
 							tracker.overrideGUID == _override_guid) // If it's from this device
-
-							tracker.pose_position = _kinect->getTrackedJoints()[
+						{
+							const auto& _joint = _kinect->getTrackedJoints()[
 								overrides::getFlippedJointType(
 									static_cast<ktvr::ITrackedJointType>(
 										TrackingDevices::devices_override_joint_id(
-											_override_id, tracker.overrideJointID)), override_flip)].getJointPosition();
+											_override_id, tracker.overrideJointID)), override_flip)];
+
+							tracker.pose_position = _joint.getJointPosition();
+							tracker.m_use_own_physics = _kinect->isPhysicsOverrideEnabled();
+
+							// If the device overrides physics
+							if (tracker.m_use_own_physics)
+							{
+								tracker.pose_velocity = _joint.getJointVelocity();
+								tracker.pose_acceleration = _joint.getJointAcceleration();
+								tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
+								tracker.pose_angularAcceleration = _joint.getJointAngularAcceleration();
+							}
+						}
 				}
 				else if (_device.index() == 1)
 				{
@@ -1011,9 +1052,22 @@ namespace k2app::main
 					for (auto& tracker : K2Settings.K2TrackersVector)
 						if (tracker.isPositionOverridden && // If an override is enabled
 							tracker.overrideGUID == _override_guid) // If it's from this device
+						{
+							const auto& _joint = _joints->getTrackedJoints().at(
+								tracker.overrideJointID);
 
-							tracker.pose_position =
-								_joints->getTrackedJoints().at(tracker.overrideJointID).getJointPosition();
+							tracker.pose_position = _joint.getJointPosition();
+							tracker.m_use_own_physics = _joints->isPhysicsOverrideEnabled();
+
+							// If the device overrides physics
+							if (tracker.m_use_own_physics)
+							{
+								tracker.pose_velocity = _joint.getJointVelocity();
+								tracker.pose_acceleration = _joint.getJointAcceleration();
+								tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
+								tracker.pose_angularAcceleration = _joint.getJointAngularAcceleration();
+							}
+						}
 				}
 			}
 		}

@@ -604,7 +604,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 					L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
 		// Append all joints to all combos
-		for (auto& _joint : device->getTrackedJoints())
+		for (const auto& _joint : device->getTrackedJoints())
 			// Push the name to all combos
 			for (const auto& expander : overrideSelectorExpanders)
 				expander.get()->PushOverrideJoint(_joint.getJointName());
@@ -1216,7 +1216,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
 				// Append all joints to all combos
-				for (auto& _joint : device->getTrackedJoints())
+				for (const auto& _joint : device->getTrackedJoints())
 					// Push the name to all combos
 					for (const auto& expander : overrideSelectorExpanders)
 						expander.get()->PushOverrideJoint(_joint.getJointName());
@@ -1765,7 +1765,7 @@ Windows::Foundation::IAsyncAction k2app::shared::devices::ReloadSelectedDevice(c
 							L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
 				// Append all joints to all combos
-				for (auto& _joint : device->getTrackedJoints())
+				for (const auto& _joint : device->getTrackedJoints())
 					// Push the name to all combos
 					for (const auto& expander : overrideSelectorExpanders)
 						expander.get()->PushOverrideJoint(_joint.getJointName());

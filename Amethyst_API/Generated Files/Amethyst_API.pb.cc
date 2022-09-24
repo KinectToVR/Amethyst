@@ -57,12 +57,30 @@ struct K2Vector3DefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 K2Vector3DefaultTypeInternal _K2Vector3_default_instance_;
+PROTOBUF_CONSTEXPR K2TrackerPhysics::K2TrackerPhysics(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.velocity_)*/nullptr
+  , /*decltype(_impl_.acceleration_)*/nullptr
+  , /*decltype(_impl_.angularvelocity_)*/nullptr
+  , /*decltype(_impl_.angularacceleration_)*/nullptr} {}
+struct K2TrackerPhysicsDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR K2TrackerPhysicsDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~K2TrackerPhysicsDefaultTypeInternal() {}
+  union {
+    K2TrackerPhysics _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 K2TrackerPhysicsDefaultTypeInternal _K2TrackerPhysics_default_instance_;
 PROTOBUF_CONSTEXPR K2TrackerPose::K2TrackerPose(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
   , /*decltype(_impl_.orientation_)*/nullptr
-  , /*decltype(_impl_.position_)*/nullptr} {}
+  , /*decltype(_impl_.position_)*/nullptr
+  , /*decltype(_impl_.physics_)*/nullptr} {}
 struct K2TrackerPoseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR K2TrackerPoseDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -161,7 +179,7 @@ struct K2ResponseMessageDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 K2ResponseMessageDefaultTypeInternal _K2ResponseMessage_default_instance_;
 }  // namespace ktvr
-static ::_pb::Metadata file_level_metadata_Amethyst_5fAPI_2eproto[8];
+static ::_pb::Metadata file_level_metadata_Amethyst_5fAPI_2eproto[9];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Amethyst_5fAPI_2eproto[4];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Amethyst_5fAPI_2eproto = nullptr;
 
@@ -192,6 +210,20 @@ const uint32_t TableStruct_Amethyst_5fAPI_2eproto::offsets[] PROTOBUF_SECTION_VA
   0,
   1,
   2,
+  PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPhysics, _impl_._has_bits_),
+  PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPhysics, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPhysics, _impl_.velocity_),
+  PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPhysics, _impl_.acceleration_),
+  PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPhysics, _impl_.angularvelocity_),
+  PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPhysics, _impl_.angularacceleration_),
+  0,
+  1,
+  2,
+  3,
   PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPose, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPose, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -200,8 +232,10 @@ const uint32_t TableStruct_Amethyst_5fAPI_2eproto::offsets[] PROTOBUF_SECTION_VA
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPose, _impl_.orientation_),
   PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPose, _impl_.position_),
+  PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPose, _impl_.physics_),
   0,
   1,
+  2,
   PROTOBUF_FIELD_OFFSET(::ktvr::K2StatusPair, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::ktvr::K2StatusPair, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -282,17 +316,19 @@ const uint32_t TableStruct_Amethyst_5fAPI_2eproto::offsets[] PROTOBUF_SECTION_VA
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 10, -1, sizeof(::ktvr::K2Quaternion)},
   { 14, 23, -1, sizeof(::ktvr::K2Vector3)},
-  { 26, 34, -1, sizeof(::ktvr::K2TrackerPose)},
-  { 36, 44, -1, sizeof(::ktvr::K2StatusPair)},
-  { 46, 55, -1, sizeof(::ktvr::K2TrackerData)},
-  { 58, 67, -1, sizeof(::ktvr::K2TrackerBase)},
-  { 70, 85, -1, sizeof(::ktvr::K2Message)},
-  { 94, 106, -1, sizeof(::ktvr::K2ResponseMessage)},
+  { 26, 36, -1, sizeof(::ktvr::K2TrackerPhysics)},
+  { 40, 49, -1, sizeof(::ktvr::K2TrackerPose)},
+  { 52, 60, -1, sizeof(::ktvr::K2StatusPair)},
+  { 62, 71, -1, sizeof(::ktvr::K2TrackerData)},
+  { 74, 83, -1, sizeof(::ktvr::K2TrackerBase)},
+  { 86, 101, -1, sizeof(::ktvr::K2Message)},
+  { 110, 122, -1, sizeof(::ktvr::K2ResponseMessage)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
   &::ktvr::_K2Quaternion_default_instance_._instance,
   &::ktvr::_K2Vector3_default_instance_._instance,
+  &::ktvr::_K2TrackerPhysics_default_instance_._instance,
   &::ktvr::_K2TrackerPose_default_instance_._instance,
   &::ktvr::_K2StatusPair_default_instance_._instance,
   &::ktvr::_K2TrackerData_default_instance_._instance,
@@ -305,69 +341,74 @@ const char descriptor_table_protodef_Amethyst_5fAPI_2eproto[] PROTOBUF_SECTION_V
   "\n\022Amethyst_API.proto\022\004ktvr\"F\n\014K2Quaterni"
   "on\022\014\n\001w\030\001 \002(\001:\0011\022\014\n\001x\030\002 \002(\001:\0010\022\014\n\001y\030\003 \002("
   "\001:\0010\022\014\n\001z\030\004 \002(\001:\0010\"5\n\tK2Vector3\022\014\n\001x\030\001 \002"
-  "(\001:\0010\022\014\n\001y\030\002 \002(\001:\0010\022\014\n\001z\030\003 \002(\001:\0010\"[\n\rK2T"
-  "rackerPose\022\'\n\013orientation\030\001 \002(\0132\022.ktvr.K"
-  "2Quaternion\022!\n\010position\030\002 \002(\0132\017.ktvr.K2V"
-  "ector3\"J\n\014K2StatusPair\022#\n\007tracker\030\001 \002(\0162"
-  "\022.ktvr.ITrackerType\022\025\n\006status\030\002 \002(\010:\005fal"
-  "se\"j\n\rK2TrackerData\022\016\n\006serial\030\001 \002(\t\0220\n\004r"
-  "ole\030\002 \002(\0162\022.ktvr.ITrackerType:\016Tracker_H"
-  "anded\022\027\n\010isActive\030\003 \002(\010:\005false\"\212\001\n\rK2Tra"
-  "ckerBase\022!\n\004pose\030\001 \002(\0132\023.ktvr.K2TrackerP"
-  "ose\022!\n\004data\030\002 \002(\0132\023.ktvr.K2TrackerData\0223"
-  "\n\007tracker\030\003 \002(\0162\022.ktvr.ITrackerType:\016Tra"
-  "cker_Handed\"\350\002\n\tK2Message\022;\n\013messageType"
-  "\030\001 \002(\0162\023.ktvr.K2MessageType:\021K2Message_I"
-  "nvalid\022\033\n\020messageTimestamp\030\002 \002(\003:\0010\022!\n\026m"
-  "essageManualTimestamp\030\003 \002(\003:\0010\022.\n\021tracke"
-  "rBaseVector\030\004 \003(\0132\023.ktvr.K2TrackerBase\0221"
-  "\n\025trackerStatusesVector\030\005 \003(\0132\022.ktvr.K2S"
-  "tatusPair\0223\n\007tracker\030\006 \002(\0162\022.ktvr.ITrack"
-  "erType:\016Tracker_Handed\022\024\n\005state\030\007 \002(\010:\005f"
-  "alse\022\030\n\nwant_reply\030\010 \002(\010:\004true\022\026\n\016messag"
-  "e_string\030\t \002(\t\"\276\002\n\021K2ResponseMessage\022K\n\013"
-  "messageType\030\001 \002(\0162\033.ktvr.K2ResponseMessa"
-  "geType:\031K2ResponseMessage_Invalid\022\033\n\020mes"
-  "sageTimestamp\030\002 \002(\003:\0010\022!\n\026messageManualT"
-  "imestamp\030\003 \002(\003:\0010\0223\n\007tracker\030\004 \002(\0162\022.ktv"
-  "r.ITrackerType:\016Tracker_Handed\022O\n\006result"
-  "\030\005 \002(\0162\033.ktvr.K2ResponseMessageCode:\"K2R"
-  "esponseMessageCode_UnknownError\022\026\n\007succe"
-  "ss\030\006 \002(\010:\005false*\260\002\n\014ITrackerType\022\022\n\016Trac"
-  "ker_Handed\020\000\022\024\n\020Tracker_LeftFoot\020\001\022\025\n\021Tr"
-  "acker_RightFoot\020\002\022\030\n\024Tracker_LeftShoulde"
-  "r\020\003\022\031\n\025Tracker_RightShoulder\020\004\022\025\n\021Tracke"
-  "r_LeftElbow\020\005\022\026\n\022Tracker_RightElbow\020\006\022\024\n"
-  "\020Tracker_LeftKnee\020\007\022\025\n\021Tracker_RightKnee"
-  "\020\010\022\021\n\rTracker_Waist\020\t\022\021\n\rTracker_Chest\020\n"
-  "\022\022\n\016Tracker_Camera\020\013\022\024\n\020Tracker_Keyboard"
-  "\020\014*\235\002\n\rK2MessageType\022\025\n\021K2Message_Invali"
-  "d\020\000\022\035\n\031K2Message_SetTrackerState\020\001\022#\n\037K2"
-  "Message_SetTrackerStateVector\020\002\022\031\n\025K2Mes"
-  "sage_SetStateAll\020\003\022\037\n\033K2Message_UpdateTr"
-  "ackerPose\020\004\022%\n!K2Message_UpdateTrackerPo"
-  "seVector\020\005\022\034\n\030K2Message_RefreshTracker\020\006"
-  "\022\034\n\030K2Message_RequestRestart\020\007\022\022\n\016K2Mess"
-  "age_Ping\020\010*\220\001\n\025K2ResponseMessageType\022\035\n\031"
-  "K2ResponseMessage_Invalid\020\000\022\032\n\026K2Respons"
-  "eMessage_Role\020\001\022\035\n\031K2ResponseMessage_Suc"
-  "cess\020\002\022\035\n\031K2ResponseMessage_Tracker\020\003*\351\002"
-  "\n\025K2ResponseMessageCode\022#\n\037K2ResponseMes"
-  "sageCode_Exception\020\000\022&\n\"K2ResponseMessag"
-  "eCode_UnknownError\020\001\022!\n\035K2ResponseMessag"
-  "eCode_Invalid\020\002\022\034\n\030K2ResponseMessageCode"
-  "_OK\020\003\022%\n!K2ResponseMessageCode_SpawnFail"
-  "ed\020\004\022(\n$K2ResponseMessageCode_AlreadyPre"
-  "sent\020\005\022$\n K2ResponseMessageCode_BadReque"
-  "st\020\006\022&\n\"K2ResponseMessageCode_ParsingErr"
-  "or\020\007\022#\n\037K2ResponseMessageCode_BadSerial\020"
-  "\010"
+  "(\001:\0010\022\014\n\001y\030\002 \002(\001:\0010\022\014\n\001z\030\003 \002(\001:\0010\"\264\001\n\020K2"
+  "TrackerPhysics\022!\n\010velocity\030\001 \002(\0132\017.ktvr."
+  "K2Vector3\022%\n\014acceleration\030\002 \002(\0132\017.ktvr.K"
+  "2Vector3\022(\n\017angularVelocity\030\003 \002(\0132\017.ktvr"
+  ".K2Vector3\022,\n\023angularAcceleration\030\004 \002(\0132"
+  "\017.ktvr.K2Vector3\"\204\001\n\rK2TrackerPose\022\'\n\013or"
+  "ientation\030\001 \002(\0132\022.ktvr.K2Quaternion\022!\n\010p"
+  "osition\030\002 \002(\0132\017.ktvr.K2Vector3\022\'\n\007physic"
+  "s\030\003 \001(\0132\026.ktvr.K2TrackerPhysics\"J\n\014K2Sta"
+  "tusPair\022#\n\007tracker\030\001 \002(\0162\022.ktvr.ITracker"
+  "Type\022\025\n\006status\030\002 \002(\010:\005false\"j\n\rK2Tracker"
+  "Data\022\016\n\006serial\030\001 \002(\t\0220\n\004role\030\002 \002(\0162\022.ktv"
+  "r.ITrackerType:\016Tracker_Handed\022\027\n\010isActi"
+  "ve\030\003 \002(\010:\005false\"\212\001\n\rK2TrackerBase\022!\n\004pos"
+  "e\030\001 \002(\0132\023.ktvr.K2TrackerPose\022!\n\004data\030\002 \002"
+  "(\0132\023.ktvr.K2TrackerData\0223\n\007tracker\030\003 \002(\016"
+  "2\022.ktvr.ITrackerType:\016Tracker_Handed\"\350\002\n"
+  "\tK2Message\022;\n\013messageType\030\001 \002(\0162\023.ktvr.K"
+  "2MessageType:\021K2Message_Invalid\022\033\n\020messa"
+  "geTimestamp\030\002 \002(\003:\0010\022!\n\026messageManualTim"
+  "estamp\030\003 \002(\003:\0010\022.\n\021trackerBaseVector\030\004 \003"
+  "(\0132\023.ktvr.K2TrackerBase\0221\n\025trackerStatus"
+  "esVector\030\005 \003(\0132\022.ktvr.K2StatusPair\0223\n\007tr"
+  "acker\030\006 \002(\0162\022.ktvr.ITrackerType:\016Tracker"
+  "_Handed\022\024\n\005state\030\007 \002(\010:\005false\022\030\n\nwant_re"
+  "ply\030\010 \002(\010:\004true\022\026\n\016message_string\030\t \002(\t\""
+  "\276\002\n\021K2ResponseMessage\022K\n\013messageType\030\001 \002"
+  "(\0162\033.ktvr.K2ResponseMessageType:\031K2Respo"
+  "nseMessage_Invalid\022\033\n\020messageTimestamp\030\002"
+  " \002(\003:\0010\022!\n\026messageManualTimestamp\030\003 \002(\003:"
+  "\0010\0223\n\007tracker\030\004 \002(\0162\022.ktvr.ITrackerType:"
+  "\016Tracker_Handed\022O\n\006result\030\005 \002(\0162\033.ktvr.K"
+  "2ResponseMessageCode:\"K2ResponseMessageC"
+  "ode_UnknownError\022\026\n\007success\030\006 \002(\010:\005false"
+  "*\260\002\n\014ITrackerType\022\022\n\016Tracker_Handed\020\000\022\024\n"
+  "\020Tracker_LeftFoot\020\001\022\025\n\021Tracker_RightFoot"
+  "\020\002\022\030\n\024Tracker_LeftShoulder\020\003\022\031\n\025Tracker_"
+  "RightShoulder\020\004\022\025\n\021Tracker_LeftElbow\020\005\022\026"
+  "\n\022Tracker_RightElbow\020\006\022\024\n\020Tracker_LeftKn"
+  "ee\020\007\022\025\n\021Tracker_RightKnee\020\010\022\021\n\rTracker_W"
+  "aist\020\t\022\021\n\rTracker_Chest\020\n\022\022\n\016Tracker_Cam"
+  "era\020\013\022\024\n\020Tracker_Keyboard\020\014*\235\002\n\rK2Messag"
+  "eType\022\025\n\021K2Message_Invalid\020\000\022\035\n\031K2Messag"
+  "e_SetTrackerState\020\001\022#\n\037K2Message_SetTrac"
+  "kerStateVector\020\002\022\031\n\025K2Message_SetStateAl"
+  "l\020\003\022\037\n\033K2Message_UpdateTrackerPose\020\004\022%\n!"
+  "K2Message_UpdateTrackerPoseVector\020\005\022\034\n\030K"
+  "2Message_RefreshTracker\020\006\022\034\n\030K2Message_R"
+  "equestRestart\020\007\022\022\n\016K2Message_Ping\020\010*\220\001\n\025"
+  "K2ResponseMessageType\022\035\n\031K2ResponseMessa"
+  "ge_Invalid\020\000\022\032\n\026K2ResponseMessage_Role\020\001"
+  "\022\035\n\031K2ResponseMessage_Success\020\002\022\035\n\031K2Res"
+  "ponseMessage_Tracker\020\003*\351\002\n\025K2ResponseMes"
+  "sageCode\022#\n\037K2ResponseMessageCode_Except"
+  "ion\020\000\022&\n\"K2ResponseMessageCode_UnknownEr"
+  "ror\020\001\022!\n\035K2ResponseMessageCode_Invalid\020\002"
+  "\022\034\n\030K2ResponseMessageCode_OK\020\003\022%\n!K2Resp"
+  "onseMessageCode_SpawnFailed\020\004\022(\n$K2Respo"
+  "nseMessageCode_AlreadyPresent\020\005\022$\n K2Res"
+  "ponseMessageCode_BadRequest\020\006\022&\n\"K2Respo"
+  "nseMessageCode_ParsingError\020\007\022#\n\037K2Respo"
+  "nseMessageCode_BadSerial\020\010"
   ;
 static ::_pbi::once_flag descriptor_table_Amethyst_5fAPI_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Amethyst_5fAPI_2eproto = {
-    false, false, 2361, descriptor_table_protodef_Amethyst_5fAPI_2eproto,
+    false, false, 2586, descriptor_table_protodef_Amethyst_5fAPI_2eproto,
     "Amethyst_API.proto",
-    &descriptor_table_Amethyst_5fAPI_2eproto_once, nullptr, 0, 8,
+    &descriptor_table_Amethyst_5fAPI_2eproto_once, nullptr, 0, 9,
     schemas, file_default_instances, TableStruct_Amethyst_5fAPI_2eproto::offsets,
     file_level_metadata_Amethyst_5fAPI_2eproto, file_level_enum_descriptors_Amethyst_5fAPI_2eproto,
     file_level_service_descriptors_Amethyst_5fAPI_2eproto,
@@ -1068,6 +1109,399 @@ void K2Vector3::InternalSwap(K2Vector3* other) {
 
 // ===================================================================
 
+class K2TrackerPhysics::_Internal {
+ public:
+  using HasBits = decltype(std::declval<K2TrackerPhysics>()._impl_._has_bits_);
+  static const ::ktvr::K2Vector3& velocity(const K2TrackerPhysics* msg);
+  static void set_has_velocity(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static const ::ktvr::K2Vector3& acceleration(const K2TrackerPhysics* msg);
+  static void set_has_acceleration(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static const ::ktvr::K2Vector3& angularvelocity(const K2TrackerPhysics* msg);
+  static void set_has_angularvelocity(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+  static const ::ktvr::K2Vector3& angularacceleration(const K2TrackerPhysics* msg);
+  static void set_has_angularacceleration(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
+  static bool MissingRequiredFields(const HasBits& has_bits) {
+    return ((has_bits[0] & 0x0000000f) ^ 0x0000000f) != 0;
+  }
+};
+
+const ::ktvr::K2Vector3&
+K2TrackerPhysics::_Internal::velocity(const K2TrackerPhysics* msg) {
+  return *msg->_impl_.velocity_;
+}
+const ::ktvr::K2Vector3&
+K2TrackerPhysics::_Internal::acceleration(const K2TrackerPhysics* msg) {
+  return *msg->_impl_.acceleration_;
+}
+const ::ktvr::K2Vector3&
+K2TrackerPhysics::_Internal::angularvelocity(const K2TrackerPhysics* msg) {
+  return *msg->_impl_.angularvelocity_;
+}
+const ::ktvr::K2Vector3&
+K2TrackerPhysics::_Internal::angularacceleration(const K2TrackerPhysics* msg) {
+  return *msg->_impl_.angularacceleration_;
+}
+K2TrackerPhysics::K2TrackerPhysics(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:ktvr.K2TrackerPhysics)
+}
+K2TrackerPhysics::K2TrackerPhysics(const K2TrackerPhysics& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  K2TrackerPhysics* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.velocity_){nullptr}
+    , decltype(_impl_.acceleration_){nullptr}
+    , decltype(_impl_.angularvelocity_){nullptr}
+    , decltype(_impl_.angularacceleration_){nullptr}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_velocity()) {
+    _this->_impl_.velocity_ = new ::ktvr::K2Vector3(*from._impl_.velocity_);
+  }
+  if (from._internal_has_acceleration()) {
+    _this->_impl_.acceleration_ = new ::ktvr::K2Vector3(*from._impl_.acceleration_);
+  }
+  if (from._internal_has_angularvelocity()) {
+    _this->_impl_.angularvelocity_ = new ::ktvr::K2Vector3(*from._impl_.angularvelocity_);
+  }
+  if (from._internal_has_angularacceleration()) {
+    _this->_impl_.angularacceleration_ = new ::ktvr::K2Vector3(*from._impl_.angularacceleration_);
+  }
+  // @@protoc_insertion_point(copy_constructor:ktvr.K2TrackerPhysics)
+}
+
+inline void K2TrackerPhysics::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.velocity_){nullptr}
+    , decltype(_impl_.acceleration_){nullptr}
+    , decltype(_impl_.angularvelocity_){nullptr}
+    , decltype(_impl_.angularacceleration_){nullptr}
+  };
+}
+
+K2TrackerPhysics::~K2TrackerPhysics() {
+  // @@protoc_insertion_point(destructor:ktvr.K2TrackerPhysics)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void K2TrackerPhysics::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.velocity_;
+  if (this != internal_default_instance()) delete _impl_.acceleration_;
+  if (this != internal_default_instance()) delete _impl_.angularvelocity_;
+  if (this != internal_default_instance()) delete _impl_.angularacceleration_;
+}
+
+void K2TrackerPhysics::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void K2TrackerPhysics::Clear() {
+// @@protoc_insertion_point(message_clear_start:ktvr.K2TrackerPhysics)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
+    if (cached_has_bits & 0x00000001u) {
+      GOOGLE_DCHECK(_impl_.velocity_ != nullptr);
+      _impl_.velocity_->Clear();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      GOOGLE_DCHECK(_impl_.acceleration_ != nullptr);
+      _impl_.acceleration_->Clear();
+    }
+    if (cached_has_bits & 0x00000004u) {
+      GOOGLE_DCHECK(_impl_.angularvelocity_ != nullptr);
+      _impl_.angularvelocity_->Clear();
+    }
+    if (cached_has_bits & 0x00000008u) {
+      GOOGLE_DCHECK(_impl_.angularacceleration_ != nullptr);
+      _impl_.angularacceleration_->Clear();
+    }
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* K2TrackerPhysics::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // required .ktvr.K2Vector3 velocity = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_velocity(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // required .ktvr.K2Vector3 acceleration = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_acceleration(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // required .ktvr.K2Vector3 angularVelocity = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_angularvelocity(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // required .ktvr.K2Vector3 angularAcceleration = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          ptr = ctx->ParseMessage(_internal_mutable_angularacceleration(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _impl_._has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* K2TrackerPhysics::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:ktvr.K2TrackerPhysics)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  // required .ktvr.K2Vector3 velocity = 1;
+  if (cached_has_bits & 0x00000001u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, _Internal::velocity(this),
+        _Internal::velocity(this).GetCachedSize(), target, stream);
+  }
+
+  // required .ktvr.K2Vector3 acceleration = 2;
+  if (cached_has_bits & 0x00000002u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(2, _Internal::acceleration(this),
+        _Internal::acceleration(this).GetCachedSize(), target, stream);
+  }
+
+  // required .ktvr.K2Vector3 angularVelocity = 3;
+  if (cached_has_bits & 0x00000004u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, _Internal::angularvelocity(this),
+        _Internal::angularvelocity(this).GetCachedSize(), target, stream);
+  }
+
+  // required .ktvr.K2Vector3 angularAcceleration = 4;
+  if (cached_has_bits & 0x00000008u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(4, _Internal::angularacceleration(this),
+        _Internal::angularacceleration(this).GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:ktvr.K2TrackerPhysics)
+  return target;
+}
+
+size_t K2TrackerPhysics::RequiredFieldsByteSizeFallback() const {
+// @@protoc_insertion_point(required_fields_byte_size_fallback_start:ktvr.K2TrackerPhysics)
+  size_t total_size = 0;
+
+  if (_internal_has_velocity()) {
+    // required .ktvr.K2Vector3 velocity = 1;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.velocity_);
+  }
+
+  if (_internal_has_acceleration()) {
+    // required .ktvr.K2Vector3 acceleration = 2;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.acceleration_);
+  }
+
+  if (_internal_has_angularvelocity()) {
+    // required .ktvr.K2Vector3 angularVelocity = 3;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.angularvelocity_);
+  }
+
+  if (_internal_has_angularacceleration()) {
+    // required .ktvr.K2Vector3 angularAcceleration = 4;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.angularacceleration_);
+  }
+
+  return total_size;
+}
+size_t K2TrackerPhysics::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:ktvr.K2TrackerPhysics)
+  size_t total_size = 0;
+
+  if (((_impl_._has_bits_[0] & 0x0000000f) ^ 0x0000000f) == 0) {  // All required fields are present.
+    // required .ktvr.K2Vector3 velocity = 1;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.velocity_);
+
+    // required .ktvr.K2Vector3 acceleration = 2;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.acceleration_);
+
+    // required .ktvr.K2Vector3 angularVelocity = 3;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.angularvelocity_);
+
+    // required .ktvr.K2Vector3 angularAcceleration = 4;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.angularacceleration_);
+
+  } else {
+    total_size += RequiredFieldsByteSizeFallback();
+  }
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData K2TrackerPhysics::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    K2TrackerPhysics::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*K2TrackerPhysics::GetClassData() const { return &_class_data_; }
+
+
+void K2TrackerPhysics::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<K2TrackerPhysics*>(&to_msg);
+  auto& from = static_cast<const K2TrackerPhysics&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:ktvr.K2TrackerPhysics)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
+    if (cached_has_bits & 0x00000001u) {
+      _this->_internal_mutable_velocity()->::ktvr::K2Vector3::MergeFrom(
+          from._internal_velocity());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_internal_mutable_acceleration()->::ktvr::K2Vector3::MergeFrom(
+          from._internal_acceleration());
+    }
+    if (cached_has_bits & 0x00000004u) {
+      _this->_internal_mutable_angularvelocity()->::ktvr::K2Vector3::MergeFrom(
+          from._internal_angularvelocity());
+    }
+    if (cached_has_bits & 0x00000008u) {
+      _this->_internal_mutable_angularacceleration()->::ktvr::K2Vector3::MergeFrom(
+          from._internal_angularacceleration());
+    }
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void K2TrackerPhysics::CopyFrom(const K2TrackerPhysics& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:ktvr.K2TrackerPhysics)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool K2TrackerPhysics::IsInitialized() const {
+  if (_Internal::MissingRequiredFields(_impl_._has_bits_)) return false;
+  if (_internal_has_velocity()) {
+    if (!_impl_.velocity_->IsInitialized()) return false;
+  }
+  if (_internal_has_acceleration()) {
+    if (!_impl_.acceleration_->IsInitialized()) return false;
+  }
+  if (_internal_has_angularvelocity()) {
+    if (!_impl_.angularvelocity_->IsInitialized()) return false;
+  }
+  if (_internal_has_angularacceleration()) {
+    if (!_impl_.angularacceleration_->IsInitialized()) return false;
+  }
+  return true;
+}
+
+void K2TrackerPhysics::InternalSwap(K2TrackerPhysics* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(K2TrackerPhysics, _impl_.angularacceleration_)
+      + sizeof(K2TrackerPhysics::_impl_.angularacceleration_)
+      - PROTOBUF_FIELD_OFFSET(K2TrackerPhysics, _impl_.velocity_)>(
+          reinterpret_cast<char*>(&_impl_.velocity_),
+          reinterpret_cast<char*>(&other->_impl_.velocity_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata K2TrackerPhysics::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Amethyst_5fAPI_2eproto_getter, &descriptor_table_Amethyst_5fAPI_2eproto_once,
+      file_level_metadata_Amethyst_5fAPI_2eproto[2]);
+}
+
+// ===================================================================
+
 class K2TrackerPose::_Internal {
  public:
   using HasBits = decltype(std::declval<K2TrackerPose>()._impl_._has_bits_);
@@ -1078,6 +1512,10 @@ class K2TrackerPose::_Internal {
   static const ::ktvr::K2Vector3& position(const K2TrackerPose* msg);
   static void set_has_position(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
+  }
+  static const ::ktvr::K2TrackerPhysics& physics(const K2TrackerPose* msg);
+  static void set_has_physics(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
   }
   static bool MissingRequiredFields(const HasBits& has_bits) {
     return ((has_bits[0] & 0x00000003) ^ 0x00000003) != 0;
@@ -1092,6 +1530,10 @@ const ::ktvr::K2Vector3&
 K2TrackerPose::_Internal::position(const K2TrackerPose* msg) {
   return *msg->_impl_.position_;
 }
+const ::ktvr::K2TrackerPhysics&
+K2TrackerPose::_Internal::physics(const K2TrackerPose* msg) {
+  return *msg->_impl_.physics_;
+}
 K2TrackerPose::K2TrackerPose(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -1105,7 +1547,8 @@ K2TrackerPose::K2TrackerPose(const K2TrackerPose& from)
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
     , decltype(_impl_.orientation_){nullptr}
-    , decltype(_impl_.position_){nullptr}};
+    , decltype(_impl_.position_){nullptr}
+    , decltype(_impl_.physics_){nullptr}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   if (from._internal_has_orientation()) {
@@ -1113,6 +1556,9 @@ K2TrackerPose::K2TrackerPose(const K2TrackerPose& from)
   }
   if (from._internal_has_position()) {
     _this->_impl_.position_ = new ::ktvr::K2Vector3(*from._impl_.position_);
+  }
+  if (from._internal_has_physics()) {
+    _this->_impl_.physics_ = new ::ktvr::K2TrackerPhysics(*from._impl_.physics_);
   }
   // @@protoc_insertion_point(copy_constructor:ktvr.K2TrackerPose)
 }
@@ -1126,6 +1572,7 @@ inline void K2TrackerPose::SharedCtor(
     , /*decltype(_impl_._cached_size_)*/{}
     , decltype(_impl_.orientation_){nullptr}
     , decltype(_impl_.position_){nullptr}
+    , decltype(_impl_.physics_){nullptr}
   };
 }
 
@@ -1142,6 +1589,7 @@ inline void K2TrackerPose::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   if (this != internal_default_instance()) delete _impl_.orientation_;
   if (this != internal_default_instance()) delete _impl_.position_;
+  if (this != internal_default_instance()) delete _impl_.physics_;
 }
 
 void K2TrackerPose::SetCachedSize(int size) const {
@@ -1155,7 +1603,7 @@ void K2TrackerPose::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
+  if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
       GOOGLE_DCHECK(_impl_.orientation_ != nullptr);
       _impl_.orientation_->Clear();
@@ -1163,6 +1611,10 @@ void K2TrackerPose::Clear() {
     if (cached_has_bits & 0x00000002u) {
       GOOGLE_DCHECK(_impl_.position_ != nullptr);
       _impl_.position_->Clear();
+    }
+    if (cached_has_bits & 0x00000004u) {
+      GOOGLE_DCHECK(_impl_.physics_ != nullptr);
+      _impl_.physics_->Clear();
     }
   }
   _impl_._has_bits_.Clear();
@@ -1188,6 +1640,14 @@ const char* K2TrackerPose::_InternalParse(const char* ptr, ::_pbi::ParseContext*
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_position(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional .ktvr.K2TrackerPhysics physics = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_physics(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1235,6 +1695,13 @@ uint8_t* K2TrackerPose::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(2, _Internal::position(this),
         _Internal::position(this).GetCachedSize(), target, stream);
+  }
+
+  // optional .ktvr.K2TrackerPhysics physics = 3;
+  if (cached_has_bits & 0x00000004u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, _Internal::physics(this),
+        _Internal::physics(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1287,6 +1754,14 @@ size_t K2TrackerPose::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  // optional .ktvr.K2TrackerPhysics physics = 3;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000004u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.physics_);
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1306,7 +1781,7 @@ void K2TrackerPose::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   (void) cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
+  if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
       _this->_internal_mutable_orientation()->::ktvr::K2Quaternion::MergeFrom(
           from._internal_orientation());
@@ -1314,6 +1789,10 @@ void K2TrackerPose::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
     if (cached_has_bits & 0x00000002u) {
       _this->_internal_mutable_position()->::ktvr::K2Vector3::MergeFrom(
           from._internal_position());
+    }
+    if (cached_has_bits & 0x00000004u) {
+      _this->_internal_mutable_physics()->::ktvr::K2TrackerPhysics::MergeFrom(
+          from._internal_physics());
     }
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -1334,6 +1813,9 @@ bool K2TrackerPose::IsInitialized() const {
   if (_internal_has_position()) {
     if (!_impl_.position_->IsInitialized()) return false;
   }
+  if (_internal_has_physics()) {
+    if (!_impl_.physics_->IsInitialized()) return false;
+  }
   return true;
 }
 
@@ -1342,8 +1824,8 @@ void K2TrackerPose::InternalSwap(K2TrackerPose* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(K2TrackerPose, _impl_.position_)
-      + sizeof(K2TrackerPose::_impl_.position_)
+      PROTOBUF_FIELD_OFFSET(K2TrackerPose, _impl_.physics_)
+      + sizeof(K2TrackerPose::_impl_.physics_)
       - PROTOBUF_FIELD_OFFSET(K2TrackerPose, _impl_.orientation_)>(
           reinterpret_cast<char*>(&_impl_.orientation_),
           reinterpret_cast<char*>(&other->_impl_.orientation_));
@@ -1352,7 +1834,7 @@ void K2TrackerPose::InternalSwap(K2TrackerPose* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata K2TrackerPose::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Amethyst_5fAPI_2eproto_getter, &descriptor_table_Amethyst_5fAPI_2eproto_once,
-      file_level_metadata_Amethyst_5fAPI_2eproto[2]);
+      file_level_metadata_Amethyst_5fAPI_2eproto[3]);
 }
 
 // ===================================================================
@@ -1613,7 +2095,7 @@ void K2StatusPair::InternalSwap(K2StatusPair* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata K2StatusPair::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Amethyst_5fAPI_2eproto_getter, &descriptor_table_Amethyst_5fAPI_2eproto_once,
-      file_level_metadata_Amethyst_5fAPI_2eproto[3]);
+      file_level_metadata_Amethyst_5fAPI_2eproto[4]);
 }
 
 // ===================================================================
@@ -1938,7 +2420,7 @@ void K2TrackerData::InternalSwap(K2TrackerData* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata K2TrackerData::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Amethyst_5fAPI_2eproto_getter, &descriptor_table_Amethyst_5fAPI_2eproto_once,
-      file_level_metadata_Amethyst_5fAPI_2eproto[4]);
+      file_level_metadata_Amethyst_5fAPI_2eproto[5]);
 }
 
 // ===================================================================
@@ -2268,7 +2750,7 @@ void K2TrackerBase::InternalSwap(K2TrackerBase* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata K2TrackerBase::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Amethyst_5fAPI_2eproto_getter, &descriptor_table_Amethyst_5fAPI_2eproto_once,
-      file_level_metadata_Amethyst_5fAPI_2eproto[5]);
+      file_level_metadata_Amethyst_5fAPI_2eproto[6]);
 }
 
 // ===================================================================
@@ -2798,7 +3280,7 @@ void K2Message::InternalSwap(K2Message* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata K2Message::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Amethyst_5fAPI_2eproto_getter, &descriptor_table_Amethyst_5fAPI_2eproto_once,
-      file_level_metadata_Amethyst_5fAPI_2eproto[6]);
+      file_level_metadata_Amethyst_5fAPI_2eproto[7]);
 }
 
 // ===================================================================
@@ -3199,7 +3681,7 @@ void K2ResponseMessage::InternalSwap(K2ResponseMessage* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata K2ResponseMessage::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Amethyst_5fAPI_2eproto_getter, &descriptor_table_Amethyst_5fAPI_2eproto_once,
-      file_level_metadata_Amethyst_5fAPI_2eproto[7]);
+      file_level_metadata_Amethyst_5fAPI_2eproto[8]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -3212,6 +3694,10 @@ Arena::CreateMaybeMessage< ::ktvr::K2Quaternion >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::ktvr::K2Vector3*
 Arena::CreateMaybeMessage< ::ktvr::K2Vector3 >(Arena* arena) {
   return Arena::CreateMessageInternal< ::ktvr::K2Vector3 >(arena);
+}
+template<> PROTOBUF_NOINLINE ::ktvr::K2TrackerPhysics*
+Arena::CreateMaybeMessage< ::ktvr::K2TrackerPhysics >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::ktvr::K2TrackerPhysics >(arena);
 }
 template<> PROTOBUF_NOINLINE ::ktvr::K2TrackerPose*
 Arena::CreateMaybeMessage< ::ktvr::K2TrackerPose >(Arena* arena) {

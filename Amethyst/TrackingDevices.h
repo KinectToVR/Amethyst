@@ -494,7 +494,7 @@ namespace TrackingDevices
 								L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
 					// Append all joints to all combos
-					for (auto& _joint : device->getTrackedJoints())
+					for (const auto& _joint : device->getTrackedJoints())
 						// Push the name to all combos
 						for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
 							expander.get()->PushOverrideJoint(_joint.getJointName());

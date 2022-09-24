@@ -219,16 +219,16 @@ namespace k2app
 		const
 		{
 			return ktvr::K2TrackedJoint(pose_position, pose_orientation,
-			                            _state ? ktvr::State_Tracked : ktvr::State_NotTracked, 
-										StringToWString(_name));
+			                            _state ? ktvr::State_Tracked : ktvr::State_NotTracked,
+			                            StringToWString(_name));
 		}
 
 		ktvr::K2TrackedJoint getK2TrackedJoint()
 		const
 		{
 			return ktvr::K2TrackedJoint(pose_position, pose_orientation,
-			                            data_isActive ? ktvr::State_Tracked : ktvr::State_NotTracked, 
-										StringToWString(data_serial));
+			                            data_isActive ? ktvr::State_Tracked : ktvr::State_NotTracked,
+			                            StringToWString(data_serial));
 		}
 
 		// For internal filters
@@ -378,6 +378,34 @@ namespace k2app
 			// Return the calibrated pose with offset
 			return calibrated_pose_gl + positionOffset.cast<float>();
 		}
+		// Get filtered data
+		// By default, the saved filter is selected,
+		// and to select it, the filter number must be < 0
+		// Additionally, this adds the offsets
+		// Offset will be added after translation
+		[[nodiscard]] Eigen::Vector3f getCalibratedVector
+		(
+			Eigen::Vector3f vector,
+			Eigen::Matrix<float, 3, 3> rotationMatrix,
+			Eigen::Matrix<float, 3, 1> translationVector,
+			Eigen::Vector3f calibration_origin = Eigen::Vector3d::Zero()
+		) const
+		{
+			// Construct the calibrated pose
+			Eigen::Matrix<float, 3, Eigen::Dynamic> vector_calibrated =
+				(rotationMatrix * (vector - calibration_origin)).
+				colwise() + translationVector + calibration_origin;
+
+			// Construct the calibrated pose in eigen
+			Eigen::Vector3f calibrated_vector_gl(
+				vector_calibrated(0),
+				vector_calibrated(1),
+				vector_calibrated(2)
+			);
+
+			// Return the calibrated pose with offset
+			return calibrated_vector_gl + positionOffset.cast<float>();
+		}
 
 		// Get tracker base
 		// This is for updating the server with
@@ -401,21 +429,75 @@ namespace k2app
 			// Construct the return type
 			ktvr::K2TrackerBase tracker_base;
 
-			auto _full_orientation = getFullOrientation(ori_filter);
-			auto _full_position = not_calibrated
-				                      ? getFullPosition(pos_filter)
-				                      : getFullCalibratedPosition(
-					                      rotationMatrix, translationVector, calibration_origin, pos_filter);
+			const auto _full_orientation = 
+				getFullOrientation(ori_filter);
 
+			const auto _full_position =
+				not_calibrated
+					? getFullPosition(pos_filter)
+					: getFullCalibratedPosition(
+						rotationMatrix, translationVector, calibration_origin, pos_filter);
+
+			// Orientation
 			tracker_base.mutable_pose()->mutable_orientation()->set_w(_full_orientation.w());
 			tracker_base.mutable_pose()->mutable_orientation()->set_x(_full_orientation.x());
 			tracker_base.mutable_pose()->mutable_orientation()->set_y(_full_orientation.y());
 			tracker_base.mutable_pose()->mutable_orientation()->set_z(_full_orientation.z());
 
+			// Position
 			tracker_base.mutable_pose()->mutable_position()->set_x(_full_position.x());
 			tracker_base.mutable_pose()->mutable_position()->set_y(_full_position.y());
 			tracker_base.mutable_pose()->mutable_position()->set_z(_full_position.z());
 
+			// If physics are provided by the device
+			if (m_use_own_physics) 
+			{
+				const auto _full_velocity =
+					not_calibrated
+					? pose_velocity
+					: getCalibratedVector(
+						pose_velocity, rotationMatrix, translationVector, calibration_origin);
+
+				// Velocity
+				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_x(_full_velocity.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_y(_full_velocity.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_z(_full_velocity.z());
+
+				const auto _full_acceleration =
+					not_calibrated
+					? pose_acceleration
+					: getCalibratedVector(
+						pose_acceleration, rotationMatrix, translationVector, calibration_origin);
+
+				// Acceleration
+				tracker_base.mutable_pose()->mutable_physics()->mutable_acceleration()->set_x(_full_acceleration.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_acceleration()->set_y(_full_acceleration.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_acceleration()->set_z(_full_acceleration.z());
+
+				const auto _full_angularVelocity =
+					not_calibrated
+					? pose_angularVelocity
+					: getCalibratedVector(
+						pose_angularVelocity, rotationMatrix, translationVector, calibration_origin);
+
+				// Angular Velocity
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_x(_full_angularVelocity.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_y(_full_angularVelocity.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_z(_full_angularVelocity.z());
+
+				const auto _full_angularAcceleration =
+					not_calibrated
+					? pose_angularAcceleration
+					: getCalibratedVector(
+						pose_angularAcceleration, rotationMatrix, translationVector, calibration_origin);
+
+				// Angular Acceleration
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_x(_full_angularAcceleration.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_y(_full_angularAcceleration.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_z(_full_angularAcceleration.z());
+			}
+
+			// Data
 			tracker_base.mutable_data()->set_serial(data_serial);
 			tracker_base.mutable_data()->set_role(data_role);
 			tracker_base.mutable_data()->set_isactive(data_isActive);
@@ -436,21 +518,49 @@ namespace k2app
 			// Construct the return type
 			ktvr::K2TrackerBase tracker_base;
 
-			auto _full_orientation = getFullOrientation(ori_filter);
-			auto _full_position = getFullPosition(pos_filter);
+			const auto _full_orientation = getFullOrientation(ori_filter);
+			const auto _full_position = getFullPosition(pos_filter);
 
+			// Orientation
 			tracker_base.mutable_pose()->mutable_orientation()->set_w(_full_orientation.w());
 			tracker_base.mutable_pose()->mutable_orientation()->set_x(_full_orientation.x());
 			tracker_base.mutable_pose()->mutable_orientation()->set_y(_full_orientation.y());
 			tracker_base.mutable_pose()->mutable_orientation()->set_z(_full_orientation.z());
 
+			// Position
 			tracker_base.mutable_pose()->mutable_position()->set_x(_full_position.x());
 			tracker_base.mutable_pose()->mutable_position()->set_y(_full_position.y());
 			tracker_base.mutable_pose()->mutable_position()->set_z(_full_position.z());
 
+			// If physics are provided by the device
+			if (m_use_own_physics)
+			{
+				// Velocity
+				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_x(pose_velocity.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_y(pose_velocity.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_z(pose_velocity.z());
+				
+				// Acceleration
+				tracker_base.mutable_pose()->mutable_physics()->mutable_acceleration()->set_x(pose_acceleration.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_acceleration()->set_y(pose_acceleration.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_acceleration()->set_z(pose_acceleration.z());
+				
+				// Angular Velocity
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_x(pose_angularVelocity.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_y(pose_angularVelocity.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_z(pose_angularVelocity.z());
+				
+				// Angular Acceleration
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_x(pose_angularAcceleration.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_y(pose_angularAcceleration.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_z(pose_angularAcceleration.z());
+			}
+
+			// Data
 			tracker_base.mutable_data()->set_serial(data_serial);
 			tracker_base.mutable_data()->set_role(data_role);
 			tracker_base.mutable_data()->set_isactive(data_isActive);
+
 
 			// Add ID and return
 			tracker_base.set_tracker(base_tracker);
@@ -485,11 +595,22 @@ namespace k2app
 		std::string data_serial;
 		ktvr::ITrackerType data_role = ktvr::ITrackerType::Tracker_Handed;
 		ktvr::ITrackerType base_tracker = ktvr::ITrackerType::Tracker_Handed;
+
+		// Is this tracker enabled?
 		bool data_isActive = false;
+
+		// Does the host device override physics?
+		// Not saved, computed every loop
+		bool m_use_own_physics = false;
 
 		// Tracker pose (inherited)
 		Eigen::Vector3f pose_position{0, 0, 0};
 		Eigen::Quaternionf pose_orientation{1, 0, 0, 0};
+
+		Eigen::Vector3f pose_velocity{0, 0, 0};
+		Eigen::Vector3f pose_acceleration{0, 0, 0};
+		Eigen::Vector3f pose_angularVelocity{0, 0, 0};
+		Eigen::Vector3f pose_angularAcceleration{0, 0, 0};
 
 		template <class Archive>
 		void serialize(Archive& archive)
@@ -500,15 +621,23 @@ namespace k2app
 				CEREAL_NVP(isRotationOverridden),
 				CEREAL_NVP(overrideJointID),
 				CEREAL_NVP(overrideGUID),
+
 				CEREAL_NVP(pose_position),
 				CEREAL_NVP(pose_orientation),
+				CEREAL_NVP(pose_velocity),
+				CEREAL_NVP(pose_acceleration),
+				CEREAL_NVP(pose_angularVelocity),
+				CEREAL_NVP(pose_angularAcceleration),
+
 				CEREAL_NVP(data_serial),
 				CEREAL_NVP(data_role),
 				CEREAL_NVP(data_isActive),
 				CEREAL_NVP(base_tracker),
+
 				CEREAL_NVP(orientationTrackingOption),
 				CEREAL_NVP(orientationTrackingFilterOption),
 				CEREAL_NVP(positionTrackingFilterOption),
+
 				CEREAL_NVP(positionOffset),
 				CEREAL_NVP(orientationOffset)
 			);
@@ -568,7 +697,7 @@ namespace k2app
 		}
 
 	public:
-		friend auto operator==(const K2AppTracker& a, const K2AppTracker& b) -> bool
+		friend bool operator==(const K2AppTracker& a, const K2AppTracker& b)
 		{
 			return a.equals(b);
 		}

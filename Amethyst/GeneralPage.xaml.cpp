@@ -1383,7 +1383,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 		case 0:
 			{
 				const auto& device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
-				const auto joints = device->getTrackedJoints();
+				const auto& joints = device->getTrackedJoints();
 
 				StartAutoCalibrationButton().IsEnabled(
 					device->isSkeletonTracked() && !CalibrationPending && !AutoCalibration_StillPending);
@@ -1571,7 +1571,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 		case 1:
 			{
 				const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
-				const auto joints = device->getTrackedJoints();
+				const auto& joints = device->getTrackedJoints();
 
 				StartAutoCalibrationButton().IsEnabled(
 					device->isSkeletonTracked() && !CalibrationPending && !AutoCalibration_StillPending);

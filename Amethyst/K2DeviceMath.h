@@ -17,7 +17,7 @@ namespace TrackingDevices::Math
 		if (_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Full ||
 			_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
 		{
-			auto _joints = _kinect->getTrackedJoints();
+			const auto& _joints = _kinect->getTrackedJoints();
 
 			// Placeholders for mathbased rots
 			Eigen::Quaternionf calculatedLeftFootOrientation, calculatedRightFootOrientation;
@@ -303,7 +303,7 @@ namespace TrackingDevices::Math
 			_kinect->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
 		{
 			// Get device joints and their states
-			const auto _joints = _kinect->getTrackedJoints();
+			const auto& _joints = _kinect->getTrackedJoints();
 
 			// Create placeholders for math-based rots
 			auto calculatedLeftFootOrientation = Eigen::Quaternionf(1, 0, 0, 0);

@@ -14,18 +14,48 @@ K2Tracker::K2Tracker(const ktvr::K2TrackerBase& tracker_base)
 	_pose.result = vr::TrackingResult_Running_OK;
 	_pose.deviceIsConnected = tracker_base.data().isactive();
 
+	// OpenVR Space Calibration : done on client side
 	_pose.qWorldFromDriverRotation.w = 1;
 	_pose.qWorldFromDriverRotation.x = 0;
 	_pose.qWorldFromDriverRotation.y = 0;
 	_pose.qWorldFromDriverRotation.z = 0;
+
+	// OpenVR Driver Calibration : done on client side
 	_pose.qDriverFromHeadRotation.w = 1;
 	_pose.qDriverFromHeadRotation.x = 0;
 	_pose.qDriverFromHeadRotation.y = 0;
 	_pose.qDriverFromHeadRotation.z = 0;
 
+	// Position
 	_pose.vecPosition[0] = 0;
 	_pose.vecPosition[1] = 0;
 	_pose.vecPosition[2] = 0;
+
+	// Rotation
+	_pose.qRotation.w = 1;
+	_pose.qRotation.x = 0;
+	_pose.qRotation.y = 0;
+	_pose.qRotation.z = 0;
+
+	// Velocity
+	_pose.vecVelocity[0] = 0;
+	_pose.vecVelocity[1] = 0;
+	_pose.vecVelocity[2] = 0;
+
+	// Acceleration
+	_pose.vecAcceleration[0] = 0;
+	_pose.vecAcceleration[1] = 0;
+	_pose.vecAcceleration[2] = 0;
+
+	// Angular Velocity
+	_pose.vecAngularVelocity[0] = 0;
+	_pose.vecAngularVelocity[1] = 0;
+	_pose.vecAngularVelocity[2] = 0;
+
+	// Angular Acceleration
+	_pose.vecAngularAcceleration[0] = 0;
+	_pose.vecAngularAcceleration[1] = 0;
+	_pose.vecAngularAcceleration[2] = 0;
 }
 
 std::string K2Tracker::get_serial() const
@@ -48,15 +78,46 @@ void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 {
 	try
 	{
-		// Just copy the values
+		/* Just copy the values */
+
+		// Position
 		_pose.vecPosition[0] = pose.position().x();
 		_pose.vecPosition[1] = pose.position().y();
 		_pose.vecPosition[2] = pose.position().z();
 
+		// Rotation
 		_pose.qRotation.w = pose.orientation().w();
 		_pose.qRotation.x = pose.orientation().x();
 		_pose.qRotation.y = pose.orientation().y();
 		_pose.qRotation.z = pose.orientation().z();
+
+		// If the sender defines its own physics
+		if (pose.has_physics()) 
+		{
+			// Velocity
+			_pose.vecVelocity[0] = pose.physics().velocity().x();
+			_pose.vecVelocity[1] = pose.physics().velocity().y();
+			_pose.vecVelocity[2] = pose.physics().velocity().z();
+
+			// Acceleration
+			_pose.vecAcceleration[0] = pose.physics().acceleration().x();
+			_pose.vecAcceleration[1] = pose.physics().acceleration().y();
+			_pose.vecAcceleration[2] = pose.physics().acceleration().z();
+
+			// Angular Velocity
+			_pose.vecAngularVelocity[0] = pose.physics().angularvelocity().x();
+			_pose.vecAngularVelocity[1] = pose.physics().angularvelocity().y();
+			_pose.vecAngularVelocity[2] = pose.physics().angularvelocity().z();
+
+			// Angular Acceleration
+			_pose.vecAngularAcceleration[0] = pose.physics().angularacceleration().x();
+			_pose.vecAngularAcceleration[1] = pose.physics().angularacceleration().y();
+			_pose.vecAngularAcceleration[2] = pose.physics().angularacceleration().z();
+		}
+		else
+		{
+			// TODO SELF-UPDATE PHYSICS
+		}
 
 		// Automatically update the tracker when finished
 		update(); // called from this
@@ -220,21 +281,41 @@ vr::DriverPose_t K2Tracker::GetPose()
 
 ktvr::K2TrackerBase K2Tracker::getTrackerBase()
 {
-	// Copy the data
+	// Copy the Data
 	_trackerBase.mutable_data()->set_serial(_serial);
 	_trackerBase.mutable_data()->set_role(static_cast<ktvr::ITrackerType>(_role));
 	_trackerBase.mutable_data()->set_isactive(_active);
 
-	// Copy the position
+	// Copy the Position
 	_trackerBase.mutable_pose()->mutable_position()->set_x(_pose.vecPosition[0]);
 	_trackerBase.mutable_pose()->mutable_position()->set_y(_pose.vecPosition[1]);
 	_trackerBase.mutable_pose()->mutable_position()->set_z(_pose.vecPosition[2]);
 
-	// Copy the orientation
+	// Copy the Rotation
 	_trackerBase.mutable_pose()->mutable_orientation()->set_w(_pose.qRotation.w);
 	_trackerBase.mutable_pose()->mutable_orientation()->set_x(_pose.qRotation.x);
 	_trackerBase.mutable_pose()->mutable_orientation()->set_y(_pose.qRotation.y);
 	_trackerBase.mutable_pose()->mutable_orientation()->set_z(_pose.qRotation.z);
+
+	// Copy the Velocity
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_velocity()->set_x(_pose.vecVelocity[0]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_velocity()->set_y(_pose.vecVelocity[1]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_velocity()->set_z(_pose.vecVelocity[2]);
+
+	// Copy the Acceleration
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_acceleration()->set_x(_pose.vecAcceleration[0]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_acceleration()->set_y(_pose.vecAcceleration[1]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_acceleration()->set_z(_pose.vecAcceleration[2]);
+
+	// Copy the Angular Velocity
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_x(_pose.vecAngularVelocity[0]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_y(_pose.vecAngularVelocity[1]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_z(_pose.vecAngularVelocity[2]);
+
+	// Copy the Angular Acceleration
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_x(_pose.vecAngularAcceleration[0]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_y(_pose.vecAngularAcceleration[1]);
+	_trackerBase.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_z(_pose.vecAngularAcceleration[2]);
 
 	// Return the base object
 	return _trackerBase;

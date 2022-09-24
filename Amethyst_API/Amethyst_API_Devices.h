@@ -125,16 +125,16 @@ namespace ktvr
 		{
 		}
 
-		Eigen::Vector3f getJointPosition() { return jointPosition; }
-		Eigen::Quaternionf getJointOrientation() { return jointOrientation; }
+		[[nodiscard]] Eigen::Vector3f getJointPosition() const { return jointPosition; }
+		[[nodiscard]] Eigen::Quaternionf getJointOrientation() const { return jointOrientation; }
 
-		Eigen::Vector3f getJointVelocity() { return jointVelocity; }
-		Eigen::Vector3f getJointAcceleration() { return jointAcceleration; }
+		[[nodiscard]] Eigen::Vector3f getJointVelocity() const { return jointVelocity; }
+		[[nodiscard]] Eigen::Vector3f getJointAcceleration() const { return jointAcceleration; }
 
-		Eigen::Vector3f getJointAngularVelocity() { return jointAngularVelocity; }
-		Eigen::Vector3f getJointAngularAcceleration() { return jointAngularAcceleration; }
+		[[nodiscard]] Eigen::Vector3f getJointAngularVelocity() const { return jointAngularVelocity; }
+		[[nodiscard]] Eigen::Vector3f getJointAngularAcceleration() const { return jointAngularAcceleration; }
 
-		ITrackedJointState getTrackingState() { return trackingState; } // ITrackedJointState
+		[[nodiscard]] ITrackedJointState getTrackingState() const { return trackingState; } // ITrackedJointState
 
 		// For servers!
 		void update(Eigen::Vector3f position,
@@ -143,6 +143,25 @@ namespace ktvr
 		{
 			jointPosition = std::move(position);
 			jointOrientation = std::move(orientation);
+			trackingState = state;
+		}
+		// For servers!
+		void update(Eigen::Vector3f position,
+		            Eigen::Quaternionf orientation,
+					Eigen::Vector3f velocity,
+					Eigen::Vector3f acceleration,
+					Eigen::Vector3f angularVelocity,
+					Eigen::Vector3f angularAcceleration,
+		            const ITrackedJointState state)
+		{
+			jointPosition = std::move(position);
+			jointOrientation = std::move(orientation);
+
+			jointVelocity = std::move(velocity);
+			jointAcceleration = std::move(acceleration);
+			jointAngularVelocity = std::move(angularVelocity);
+			jointAngularAcceleration = std::move(angularAcceleration);
+
 			trackingState = state;
 		}
 
@@ -224,7 +243,7 @@ namespace ktvr
 			trackingState = state;
 		}
 
-		std::wstring getJointName() { return jointName; } // Custom name
+		[[nodiscard]] std::wstring getJointName() const { return jointName; } // Custom name
 
 	protected:
 		std::wstring jointName = L"Name not set";

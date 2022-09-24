@@ -34,10 +34,21 @@ message K2Vector3
   required double z = 3 [default = 0];
 }
 
+message K2TrackerPhysics
+{
+	required K2Vector3 velocity = 1;
+	required K2Vector3 acceleration = 2;
+
+	required K2Vector3 angularVelocity = 3;
+	required K2Vector3 angularAcceleration = 4;
+}
+
 message K2TrackerPose
 {
   required K2Quaternion orientation = 1;
   required K2Vector3 position = 2;
+
+  optional K2TrackerPhysics physics = 3;
 }
 
 message K2StatusPair

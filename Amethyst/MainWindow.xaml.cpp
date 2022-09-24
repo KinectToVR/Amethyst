@@ -1169,7 +1169,9 @@ namespace winrt::Amethyst::implementation
 					int returnCode = ktvr::K2InitError_Invalid;
 					std::wstring stat = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 					std::wstring _guid = L"INVALID"; // Placeholder
-					bool blocks_flip = false, supports_math = true;
+
+					bool blocks_flip = false, supports_math = false,
+						 blocks_filter = false, provides_physics = false;
 
 					if (wcscmp(device_type.c_str(), L"SkeletonBasis") == 0 ||
 						wcscmp(device_type.c_str(), L"KinectBasis") == 0)
@@ -1379,6 +1381,8 @@ namespace winrt::Amethyst::implementation
 
 							blocks_flip = !pDevice->isFlipSupported();
 							supports_math = pDevice->isAppOrientationSupported();
+							blocks_filter = pDevice->isPositionFilterBlockingEnabled();
+							provides_physics = pDevice->isPhysicsOverrideEnabled();
 						}
 					}
 					else if (wcscmp(device_type.c_str(), L"JointsBasis") == 0)
@@ -1589,6 +1593,8 @@ namespace winrt::Amethyst::implementation
 
 							blocks_flip = true; // Always the same for JointsBasis
 							supports_math = false; // Always the same for JointsBasis
+							blocks_filter = pDevice->isPositionFilterBlockingEnabled();
+							provides_physics = pDevice->isPhysicsOverrideEnabled();
 						}
 					}
 					else if (wcscmp(device_type.c_str(), L"Spectator") == 0)
@@ -1641,6 +1647,8 @@ namespace winrt::Amethyst::implementation
 								"\n - type: " << WStringToString(device_type) <<
 								"\n - blocks flip: " << blocks_flip <<
 								"\n - supports math-based orientation: " << supports_math <<
+								"\n - blocks position filters: " << blocks_filter <<
+								"\n - provides own physics: " << provides_physics <<
 
 								"\nat index " <<
 								TrackingDevices::TrackingDevicesVector.size() - 1;

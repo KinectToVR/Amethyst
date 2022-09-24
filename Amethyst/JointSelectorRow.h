@@ -72,7 +72,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				// Try to push all available joints in
 				// Append all joints to all combos
 				// (this weird shit is an unwrapper for __try)
-				for (auto& _joint : device->getTrackedJoints())
+				for (const auto& _joint : device->getTrackedJoints())
 					// Push the name to the combo
 					[&, this]
 					{

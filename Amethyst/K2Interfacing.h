@@ -4484,4 +4484,12 @@ namespace TrackingDevices
 	{
 		return k2app::K2Settings.overrideDeviceGUIDsMap.contains(deviceGUID);
 	}
+
+	// Get managing device GUID by tracker
+	inline std::wstring GetManagingDevice(const k2app::K2AppTracker& tracker)
+	{
+		return (tracker.isPositionOverridden || tracker.isRotationOverridden)
+			       ? tracker.overrideGUID
+			       : k2app::K2Settings.trackingDeviceGUIDPair.first;
+	}
 }
