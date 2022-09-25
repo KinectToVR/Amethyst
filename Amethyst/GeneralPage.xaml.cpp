@@ -1477,8 +1477,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 						// Draw the skeleton with from-to lines
 						// Head
-						sk_dot(jointDots[0], joints[ktvr::Joint_Head],
-						       std::make_pair(false, false));
+						sk_dot(jointDots[0], joints[ktvr::Joint_Head], {false, false});
 
 						// Waist
 						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], IsJointOverriden(0));
@@ -1543,8 +1542,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 						// Draw the skeleton with from-to lines
 						// Head
-						sk_dot(jointDots[0], joints[ktvr::Joint_Head],
-						       std::make_pair(false, false));
+						sk_dot(jointDots[0], joints[ktvr::Joint_Head], {false, false});
 
 						// Waist
 						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist],

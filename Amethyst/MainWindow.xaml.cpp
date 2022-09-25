@@ -251,16 +251,13 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::executeU
 		k2app::interfacing::updateOnClosed = false; // Don't re-do
 		exit(0); // Should get caught by the exit handler
 	}
-	else
-	{
-		// Play a sound
-		playAppSound(k2app::interfacing::sounds::AppSounds::Error);
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Error);
 
-		UpdatePendingFlyoutProgressBar.ShowError(true);
-		UpdatePendingFlyoutStatusContent().Text(
-			k2app::interfacing::LocalizedJSONString(
-				L"/SharedStrings/Updates/Statuses/Error"));
-	}
+	UpdatePendingFlyoutProgressBar.ShowError(true);
+	UpdatePendingFlyoutStatusContent().Text(
+		k2app::interfacing::LocalizedJSONString(
+			L"/SharedStrings/Updates/Statuses/Error"));
 
 	// Sleep on UI (Non-blocking)
 	{
@@ -839,16 +836,11 @@ namespace winrt::Amethyst::implementation
 				k2app::shared::main::thisResourceManager.get()->CreateResourceContext());
 
 		LOG(INFO) << "Pushing control pages to window...";
-		k2app::shared::main::m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
-			(L"general", winrt::xaml_typename<GeneralPage>()));
-		k2app::shared::main::m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
-			(L"settings", winrt::xaml_typename<SettingsPage>()));
-		k2app::shared::main::m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
-			(L"devices", winrt::xaml_typename<DevicesPage>()));
-		k2app::shared::main::m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
-			(L"info", winrt::xaml_typename<InfoPage>()));
-		k2app::shared::main::m_pages.push_back(std::make_pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>
-			(L"console", winrt::xaml_typename<ConsolePage>()));
+		k2app::shared::main::m_pages.push_back({L"general", winrt::xaml_typename<GeneralPage>()});
+		k2app::shared::main::m_pages.push_back({L"settings", winrt::xaml_typename<SettingsPage>()});
+		k2app::shared::main::m_pages.push_back({L"devices", winrt::xaml_typename<DevicesPage>()});
+		k2app::shared::main::m_pages.push_back({L"info", winrt::xaml_typename<InfoPage>()});
+		k2app::shared::main::m_pages.push_back({L"console", winrt::xaml_typename<ConsolePage>()});
 
 		LOG(INFO) << "Registering a detached binary semaphore reload handler for MainWindow...";
 		std::thread([&, this]
@@ -1062,76 +1054,182 @@ namespace winrt::Amethyst::implementation
 		// Scan for tracking devices
 		std::thread([&]
 			{
-				LOG(INFO) << "Searching for tracking devices...";
+				LOG(INFO) << "Searching for local tracking devices...";
 				LOG(INFO) << "Current path is: " << WStringToString(
 					k2app::interfacing::GetProgramLocation().parent_path().wstring());
 
-				const auto devices_iterator = std::filesystem::directory_iterator(
-					k2app::interfacing::GetProgramLocation().parent_path() / "devices");
+				// Create a vector of device folders
+				std::vector<std::filesystem::path> devices_roots;
 
-				if (!exists(k2app::interfacing::GetProgramLocation().parent_path() / "devices"))
+				// Copy local device entries
+				std::ranges::copy(std::filesystem::directory_iterator(
+					                  k2app::interfacing::GetProgramLocation().parent_path() / "devices"),
+				                  std::back_inserter(devices_roots));
+
+				// Commented out - uglyfies the file
+
+				//// Set up runtime directory
+				//try
+				//{
+				//	LOG(INFO) << "Setting up the Amethyst runtime property...";
+
+				//		// Load the JSON source into buffer
+				//		std::wifstream wif(ktvr::GetK2AppDataFileDir(L"amethystpaths.k2path"));
+				//		wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+				//		std::wstringstream wss;
+				//		wss << wif.rdbuf();
+
+				//		// Parse the loaded json
+				//		const auto json_root = Windows::Data::Json::JsonObject::Parse(wss.str());
+				//		json_root.Insert(L"runtime", // Set the runtime directory
+				//			Windows::Data::Json::JsonValue::CreateStringValue(
+				//			k2app::interfacing::GetProgramLocation().parent_path().wstring().c_str()));
+
+				//		// Output beck to the file
+				//		if (std::wofstream wof(ktvr::GetK2AppDataFileDir(L"amethystpaths.k2path"));
+				//			!wof.fail())
+				//		{
+				//			// Set the encoding
+				//			wof.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+
+				//			// Write to the file
+				//			wof << json_root.ToString().c_str();
+				//			wof.close();
+				//		}
+				//}
+				//catch (const hresult_error& ex)
+				//{
+				//	LOG(ERROR) << "Checking for external devices has failed, an exception occurred."
+				//		<< " Message: " << WStringToString(ex.message().c_str());
+				//}
+
+				// Scan for external devices
+				try
+				{
+					LOG(INFO) << "Searching for external tracking devices...";
+					if (std::filesystem::exists(ktvr::GetK2AppDataFileDir(L"amethystpaths.k2path")))
+					{
+						// Load the JSON source into buffer
+						std::wifstream wif(ktvr::GetK2AppDataFileDir(L"amethystpaths.k2path"));
+						wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+						std::wstringstream wss;
+						wss << wif.rdbuf();
+
+						// Parse the loaded json
+						const auto json_root = Windows::Data::Json::JsonObject::Parse(wss.str());
+
+						// Loop over all the external devices and append
+						if (json_root.HasKey(L"external_devices"))
+							for (auto _device_entry : json_root.GetNamedArray(L"external_devices"))
+								devices_roots.push_back(_device_entry.GetString().c_str());
+
+						else
+							LOG(INFO) << "No external devices found! Checking the local ones now...";
+					}
+					else
+						LOG(INFO) << "No \"amethystpaths.k2path\" found! Assuming no external devices...";
+				}
+				catch (const hresult_error& ex)
+				{
+					LOG(ERROR) << "Checking for external devices has failed, an exception occurred."
+						<< " Message: " << WStringToString(ex.message().c_str());
+				}
+
+				// Check if there's any devices actually
+				if (devices_roots.empty())
 				{
 					LOG(ERROR) << "No tracking devices (K2Devices) found :/";
 					k2app::interfacing::_fail(-12);
 				}
 
-				for (const auto& entry : devices_iterator)
+				// Loop over all the device roots
+				for (const auto& entry : devices_roots)
 				{
-					if (!exists(entry.path() / "device.k2devicemanifest"))
+					// Log the device folder
+					LOG(INFO) << "Found a device folder at path: \"" <<
+						WStringToString(entry.wstring()) << "\"!";
+
+					// Check if the device folder exists
+					if (!exists(entry))
 					{
-						LOG(ERROR) << WStringToString(entry.path().stem().wstring()) <<
+						LOG(INFO) << "Device folder at path: \"" <<
+							WStringToString(entry.wstring()) << "\""
+							" doesn't exist, skipping it!";
+						continue;
+					}
+
+					// Check if there's a device manifest
+					if (!exists(entry / "device.k2devicemanifest"))
+					{
+						LOG(ERROR) << WStringToString(entry.stem().wstring()) <<
 							"'s manifest has not been not found :/";
 						continue;
 					}
 
-					// Load the JSON source into buffer
-					std::wifstream wif(entry.path() / L"device.k2devicemanifest");
-					wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
-					std::wstringstream wss;
-					wss << wif.rdbuf();
-
-					// Parse the loaded json
-					const auto json_root = Windows::Data::Json::JsonObject::Parse(wss.str());
-
-					if (!json_root.HasKey(L"device_name") || !json_root.HasKey(L"device_type"))
+					// Parse the device manifest
+					std::filesystem::path deviceDllPath;
+					std::wstring device_name, device_type;
+					try
 					{
-						LOG(ERROR) << WStringToString(entry.path().stem().wstring()) <<
-							"'s manifest was invalid!";
-						continue;
+						// Load the JSON source into buffer
+						std::wifstream wif(entry / L"device.k2devicemanifest");
+						wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+						std::wstringstream wss;
+						wss << wif.rdbuf();
+
+						// Parse the loaded json
+						const auto json_root = Windows::Data::Json::JsonObject::Parse(wss.str());
+
+						if (!json_root.HasKey(L"device_name") || !json_root.HasKey(L"device_type"))
+						{
+							LOG(ERROR) << WStringToString(entry.stem().wstring()) <<
+								"'s manifest was invalid!";
+							continue;
+						}
+
+						// Compose manifest properties
+						device_name = json_root.GetNamedString(L"device_name").c_str();
+						device_type = json_root.GetNamedString(L"device_type").c_str();
+
+						LOG(INFO) << "Found a tracking device with name: " <<
+							WStringToString(device_name);
+
+						// Compose device desired dll path
+						deviceDllPath = entry / L"bin" / L"win64" /
+							(L"device_" + device_name + L".dll");
+
+						// Give up if the dll isn't there
+						if (!exists(deviceDllPath))
+						{
+							LOG(ERROR) << "Device's driver dll (bin/win64/device_[device].dll) was not found!";
+							continue;
+						}
+
+						LOG(INFO) << "Found the device's driver dll, now checking dependencies...";
+						bool _found = true; // assume success
+
+						// Check if all the dependency dlls exist
+						if (json_root.HasKey(L"linked_dll_path"))
+							for (auto dll_entry : json_root.GetNamedArray(L"linked_dll_path"))
+								if (!std::filesystem::exists(dll_entry.GetString().c_str()))
+								{
+									_found = false; // Mark as failed
+									LOG(ERROR) << "Linked dll not found at path: " <<
+										WStringToString(dll_entry.GetString().c_str());
+								}
+
+						// Else continue
+						if (!_found)
+						{
+							LOG(ERROR) << "Device's dependency dll (external linked dll) was not found!";
+							continue;
+						}
 					}
-
-					std::wstring device_name = json_root.GetNamedString(L"device_name").c_str(),
-					             device_type = json_root.GetNamedString(L"device_type").c_str();
-
-					LOG(INFO) << "Found tracking device with:\n - name: " << WStringToString(device_name);
-
-					auto deviceDllPath = entry.path() / L"bin" / L"win64" /
-						(L"device_" + device_name + L".dll");
-
-					if (!exists(deviceDllPath))
+					catch (const hresult_error& ex)
 					{
-						LOG(ERROR) << "Device's driver dll (bin/win64/device_[device].dll) was not found!";
-						continue;
-					}
-
-					LOG(INFO) << "Found the device's driver dll, now checking dependencies...";
-
-					bool _found = true; // assume success
-
-					// Check for deez dlls
-					if (json_root.HasKey(L"linked_dll_path"))
-						for (auto dll_entry : json_root.GetNamedArray(L"linked_dll_path"))
-							if (!std::filesystem::exists(dll_entry.GetString().c_str()))
-							{
-								_found = false; // Mark as failed
-								LOG(ERROR) << "Linked dll not found at path: " <<
-									WStringToString(dll_entry.GetString().c_str());
-							}
-
-					// Else continue
-					if (!_found)
-					{
-						LOG(ERROR) << "Device's dependency dll (external linked dll) was not found!";
+						LOG(ERROR) << "Parsing \"" << WStringToString(entry.wstring()) <<
+							"\"'s manifest has thrown a hresult_error exception :/";
+						LOG(ERROR) << " Message: " << WStringToString(ex.message().c_str());
 						continue;
 					}
 
@@ -1144,12 +1242,14 @@ namespace winrt::Amethyst::implementation
 					                                            LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR |
 					                                            LOAD_LIBRARY_SEARCH_SYSTEM32);
 
+					// Check if the library's loaded correctly
 					if (hLibraryInstance == nullptr)
 					{
 						LOG(ERROR) << "There was an error linking with the device library!";
 						continue;
 					}
 
+					// Create a device factory to call
 					auto hDeviceFactory = reinterpret_cast<TrackingDevices::TrackingDeviceBaseFactory>(
 						GetProcAddress(hLibraryInstance, "TrackingDeviceBaseFactory"));
 
@@ -1166,13 +1266,16 @@ namespace winrt::Amethyst::implementation
 
 					LOG(INFO) << "Device library loaded, now checking interface...";
 
+					// Compose the device
 					int returnCode = ktvr::K2InitError_Invalid;
 					std::wstring stat = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 					std::wstring _guid = L"INVALID"; // Placeholder
 
+					// Compose the device properties
 					bool blocks_flip = false, supports_math = false,
-						 blocks_filter = false, provides_physics = false;
+					     blocks_filter = false, provides_physics = false;
 
+					// Load and parse the device based on its internal type
 					if (wcscmp(device_type.c_str(), L"SkeletonBasis") == 0 ||
 						wcscmp(device_type.c_str(), L"KinectBasis") == 0)
 					{
@@ -1295,19 +1398,21 @@ namespace winrt::Amethyst::implementation
 
 							// Push the device's GUID---ID map
 							TrackingDevices::deviceGUID_ID_Map.insert(
-								std::make_pair(pDevice_GUID, _last_device_index));
+								{pDevice_GUID, _last_device_index});
 
 							LOG(INFO) <<
 								"Creating device's default root language resource context...";
 							TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
-								push_back(std::make_pair(Windows::Data::Json::JsonObject(),
-								                         entry.path() / L"resources" / L"Strings"));
+								push_back({
+									Windows::Data::Json::JsonObject(),
+									entry / L"resources" / L"Strings"
+								});
 							// Empty for now
 
 							LOG(INFO) <<
 								"Registering device's default root language resource context...";
 							k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
-								entry.path() / L"resources" / L"Strings",
+								entry / L"resources" / L"Strings",
 								_last_device_index); // Now either empty or ok
 							LOG(INFO) << "Appending the device to the global registry...";
 
@@ -1506,19 +1611,21 @@ namespace winrt::Amethyst::implementation
 
 							// Push the device's GUID---ID map
 							TrackingDevices::deviceGUID_ID_Map.insert(
-								std::make_pair(pDevice_GUID, _last_device_index));
+								{pDevice_GUID, _last_device_index});
 
 							LOG(INFO) <<
 								"Creating device's default root language resource context...";
 							TrackingDevices::TrackingDevicesLocalizationResourcesRootsVector.
-								push_back(std::make_pair(Windows::Data::Json::JsonObject(),
-								                         entry.path() / L"resources" / L"Strings"));
+								push_back({
+									Windows::Data::Json::JsonObject(),
+									entry / L"resources" / L"Strings"
+								});
 							// Empty for now
 
 							LOG(INFO) <<
 								"Registering device's default root language resource context...";
 							k2app::interfacing::plugins::plugins_setLocalizationResourcesRoot(
-								entry.path() / L"resources" / L"Strings",
+								entry / L"resources" / L"Strings",
 								_last_device_index); // Now either empty or ok
 
 							LOG(INFO) << "Appending the device to the global registry...";
@@ -1638,6 +1745,7 @@ namespace winrt::Amethyst::implementation
 						}
 					}
 
+					// Parse the return code
 					switch (returnCode)
 					{
 					case ktvr::K2InitError_None:
@@ -1684,7 +1792,8 @@ namespace winrt::Amethyst::implementation
 					case ktvr::K2InitError_Invalid:
 						{
 							LOG(ERROR) <<
-								"Device either didn't give any return code or it's factory malfunctioned. You can only cry about it...";
+								"Device either didn't give any return code or it's factory has malfunctioned. "
+								"You can only cry about it...";
 						}
 						break;
 					}
@@ -1703,8 +1812,8 @@ namespace winrt::Amethyst::implementation
 
 					// Check the base device index
 					if (!TrackingDevices::deviceGUID_ID_Map.contains(
-						k2app::K2Settings.trackingDeviceGUIDPair.first) ||
-						k2app::K2Settings.trackingDeviceGUIDPair.second >= 
+							k2app::K2Settings.trackingDeviceGUIDPair.first) ||
+						k2app::K2Settings.trackingDeviceGUIDPair.second >=
 						TrackingDevices::TrackingDevicesVector.size())
 					{
 						LOG(INFO) << "Previous tracking device ID was invalid, it's been reset to the first one!";
@@ -2330,6 +2439,15 @@ void k2app::interfacing::handle_app_exit(const uint32_t& p_sleep_millis)
 			}();
 		}
 	}();
+
+	// Unlock the crash file
+	if (crashFileHandle != nullptr) 
+	{
+		// Unlock the file first
+		CloseHandle(crashFileHandle);
+		DeleteFile(
+			(GetProgramLocation().parent_path() / ".crash").wstring().c_str());
+	}
 
 	// We've (mostly) done what we had to
 	isExitHandled = true;

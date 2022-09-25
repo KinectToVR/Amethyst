@@ -438,7 +438,7 @@ namespace k2app::main
 					for (const auto& tracker : K2Settings.K2TrackersVector)
 						if (tracker.data_isActive)
 							k2_tracker_statuses.push_back(
-								std::make_pair(tracker.base_tracker, interfacing::K2AppTrackersInitialized));
+								{tracker.base_tracker, interfacing::K2AppTrackersInitialized});
 
 					// try 3 times cause why not
 					for (int i = 0; i < 3; i++)
@@ -452,11 +452,13 @@ namespace k2app::main
 					}
 
 					// Rescan controller ids
-					interfacing::vrControllerIndexes =
-						std::make_pair(vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
-							               vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
-						               vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
-							               vr::ETrackedControllerRole::TrackedControllerRole_RightHand));
+					interfacing::vrControllerIndexes = {
+						vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+							vr::ETrackedControllerRole::TrackedControllerRole_LeftHand),
+
+						vr::VRSystem()->GetTrackedDeviceIndexForControllerRole(
+							vr::ETrackedControllerRole::TrackedControllerRole_RightHand)
+					};
 				}).detach();
 
 			// Scan for already-added body trackers from other apps
@@ -766,7 +768,7 @@ namespace k2app::main
 				const auto& _kinect =
 					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(_device);
 
-				for (auto& tracker : K2Settings.K2TrackersVector) 
+				for (auto& tracker : K2Settings.K2TrackersVector)
 				{
 					const auto& _joint = _kinect->getTrackedJoints()[
 						overrides::getFlippedJointType(
@@ -790,7 +792,7 @@ namespace k2app::main
 				const auto& _joints =
 					std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(_device);
 
-				for (auto& tracker : K2Settings.K2TrackersVector) 
+				for (auto& tracker : K2Settings.K2TrackersVector)
 				{
 					const auto& _joint = _joints->getTrackedJoints().at(
 						tracker.selectedTrackedJointID);

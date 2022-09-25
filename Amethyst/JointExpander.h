@@ -48,8 +48,10 @@ namespace TrackingDevices
 			                           : 0;
 
 		// trackingDeviceID is always >= 0 anyway
-		return std::make_pair(deviceGUID_ID_Map.contains(guid),
-		                      TrackingDevicesVector.at(_deviceID));
+		return {
+			deviceGUID_ID_Map.contains(guid),
+			TrackingDevicesVector.at(_deviceID)
+		};
 	}
 
 	inline std::wstring getDeviceNameFromGUID(const std::wstring& _guid)

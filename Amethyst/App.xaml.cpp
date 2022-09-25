@@ -61,6 +61,12 @@ App::App()
 	Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode(
 		Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize);
 
+	// Create an empty file for checking for crashes
+	k2app::interfacing::crashFileHandle = CreateFile(
+		(k2app::interfacing::GetProgramLocation().parent_path() / ".crash").wstring().c_str(),
+		GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 
+		FILE_ATTRIBUTE_NORMAL, nullptr);
+
 	// If logging was set up by some other thing / assembly,
 	// "peacefully" ask it to exit and note that 
 	if (google::IsGoogleLoggingInitialized())
@@ -93,6 +99,9 @@ App::App()
 	                          WStringToString(k2app::interfacing::thisLogDestination).c_str());
 
 	google::SetLogFilenameExtension(".log");
+
+	// Delete _latest.log as it's not the latest one now
+	std::filesystem::remove(ktvr::GetK2AppDataLogFileDir(L"Amethyst", L"_latest.log"));
 
 	// Log the current Amethyst version
 	LOG(INFO) << "Amethyst version: " << k2app::interfacing::K2InternalVersion;

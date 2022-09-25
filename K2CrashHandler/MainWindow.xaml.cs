@@ -135,6 +135,16 @@ namespace K2CrashHandler
                         if (ProcessExitCode == 0)
                             Close(); // We're OK to exit
 
+                        // Don't handle post-exit crashes
+                        if (!File.Exists(
+                                Path.Combine(
+                                    Directory.GetParent(
+                                        Directory.GetParent(
+                                            Assembly.GetExecutingAssembly().Location
+                                        ).ToString()).ToString(),
+                                    ".crash")))
+                            Close(); // We're OK to exit
+
                         // Parse the exit code into strings
                         handlerTitle = LangResString("Title/Crash");
                         primaryButtonText = LangResString("PrimaryButton/Crash/Default");
