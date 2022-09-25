@@ -1,7 +1,8 @@
 # **Amethyst**
 
-## [FOR DOWNLOADS GO HERE](https://github.com/KinectToVR/Amethyst-Installer-Releases)
-## [DOCUMENTATION IS HERE](https://docs.k2vr.tech)
+[<img style="width:300px; height:auto;" src="https://user-images.githubusercontent.com/8508676/189486639-7a845f9a-2ac9-4271-a67f-b2c087eaea07.png">](https://github.com/KinectToVR/Amethyst-Installer-Releases/releases/latest/download/Amethyst-Installer.exe)  
+**Click above to download! ([Download/start errors](https://download.getaughip.com/bill-gates.png))**  
+**[Check out this repo for manual setup instructions](https://github.com/KinectToVR/Amethyst-Releases)**  
 
 ## **License**
 This project is licensed under the GNU GPL v3 License 
