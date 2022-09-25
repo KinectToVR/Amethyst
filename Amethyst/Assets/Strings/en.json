@@ -119,6 +119,7 @@
     "/SettingsPage/Filters/Position/LERP": "Linear Interpolation",
     "/SettingsPage/Filters/Position/LowPass": "Low Pass Filter",
     "/SettingsPage/Filters/Position/Off": "Disable Filter",
+    "/SettingsPage/Filters/Managed": "Managed by '{0}'",
     "/SettingsPage/ReManifest/Error/NotFound": "Amethyst vr manifest couldn't be installed.\nPlease check if it exists at the root (.exe) path.",
     "/SettingsPage/ReManifest/Error/Other": "Amethyst vr manifest couldn't be installed.\nPlease check SteamVR logs and consider reporting it.",
     "/SettingsPage/ReRegister/Error/NotFound": "Amethyst crash handler executable was not found.\nIt's needed for the reregistration, please check if it's there.",

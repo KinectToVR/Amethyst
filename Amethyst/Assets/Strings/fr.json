@@ -119,6 +119,7 @@
     "/SettingsPage/Filters/Position/LERP": "Interpolation Linéaire",
     "/SettingsPage/Filters/Position/LowPass": "Filtre passe-bas",
     "/SettingsPage/Filters/Position/Off": "Désactiver le filtre",
+    "/SettingsPage/Filters/Managed": "Managed by '{0}'",
     "/SettingsPage/ReManifest/Error/NotFound": "Le manifest n'a pu être installé.\nAssurez-vous qu'il existe dans le dossier où se trouve Amethyst.exe",
     "/SettingsPage/ReManifest/Error/Other": "Le manifest n'a pu être installé.\nVérifiez les logs de SteamVR et considérez rapporter le bug.",
     "/SettingsPage/ReRegister/Error/NotFound": "L'éxécutable du Crash Handler pour Amethyst n'a pas été\ntrouvé. Il est nécessaire pour ré-inscrire l'extension. Vérifiez qu'il est présent.",

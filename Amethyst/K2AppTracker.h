@@ -288,6 +288,9 @@ namespace k2app
 			if (filter < 0)
 				m_filter = positionTrackingFilterOption;
 
+			if (m_no_position_filtering_requested)
+				m_filter = k2_NoPositionTrackingFilter;
+
 			switch (m_filter)
 			{
 			default:
@@ -602,6 +605,9 @@ namespace k2app
 		// Does the host device override physics?
 		// Not saved, computed every loop
 		bool m_use_own_physics = false;
+
+		// Does the managing device request no pos filtering?
+		bool m_no_position_filtering_requested = false;
 
 		// Tracker pose (inherited)
 		Eigen::Vector3d pose_position{0, 0, 0};

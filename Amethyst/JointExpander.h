@@ -342,6 +342,44 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			}
 			else
 				_ptr_main_expander->IsEnabled(true);
+
+			// Update the filter block (optional)
+			std::wstring _placeholder_string;
+			{
+				std::wstring _managing_device_name;
+				switch (const auto& device = TrackingDevices::TrackingDevicesVector[
+					TrackingDevices::deviceGUID_ID_Map[
+						TrackingDevices::GetManagingDevice(*_tracker_pointers[0])]];
+				device.index())
+				{
+				case 0:
+					_managing_device_name =
+						std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device)->getDeviceName();
+					break;
+				case 1:
+					_managing_device_name =
+						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device)->getDeviceName();
+					break;
+				}
+
+				using namespace std::string_literals;
+				_placeholder_string =
+					k2app::interfacing::stringReplaceAll_R(
+						k2app::interfacing::LocalizedResourceWString(
+							L"SettingsPage", L"Filters/Managed"), L"{0}"s,
+						_managing_device_name);
+			}
+
+			// Set up a placeholder
+			_ptr_position_combo->PlaceholderText(_placeholder_string.c_str());
+			_ptr_position_combo->IsEnabled(!_tracker_pointers[0]->m_no_position_filtering_requested);
+
+			// Set up selected items
+			_ptr_orientation_combo->SelectedIndex(_tracker_pointers[0]->orientationTrackingOption);
+			_ptr_position_combo->SelectedIndex(
+				_tracker_pointers[0]->m_no_position_filtering_requested
+				? -1 // Select the pre-applied placeholder
+				: _tracker_pointers[0]->positionTrackingFilterOption);
 		}
 
 		// Set mathbased to enable/disable
@@ -575,10 +613,44 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_ptr_position_combo = std::make_shared<ComboBox>(_position_combo);
 			_ptr_orientation_combo = std::make_shared<ComboBox>(_orientation_combo);
 
-			// Set up some signals
-			_position_combo.SelectedIndex(_tracker_pointers[0]->positionTrackingFilterOption);
-			_orientation_combo.SelectedIndex(_tracker_pointers[0]->orientationTrackingOption);
+			std::wstring _placeholder_string;
+			{
+				std::wstring _managing_device_name;
+				switch (const auto& device = TrackingDevices::TrackingDevicesVector[
+						TrackingDevices::deviceGUID_ID_Map[
+							TrackingDevices::GetManagingDevice(*_tracker_pointers[0])]];
+					device.index())
+				{
+				case 0:
+					_managing_device_name =
+						std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device)->getDeviceName();
+					break;
+				case 1:
+					_managing_device_name =
+						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device)->getDeviceName();
+					break;
+				}
 
+				using namespace std::string_literals;
+				_placeholder_string =
+					k2app::interfacing::stringReplaceAll_R(
+						k2app::interfacing::LocalizedResourceWString(
+							L"SettingsPage", L"Filters/Managed"), L"{0}"s,
+						_managing_device_name);
+			}
+
+			// Set up a placeholder
+			_position_combo.PlaceholderText(_placeholder_string.c_str());
+			_position_combo.IsEnabled(!_tracker_pointers[0]->m_no_position_filtering_requested);
+
+			// Set up selected items
+			_orientation_combo.SelectedIndex(_tracker_pointers[0]->orientationTrackingOption);
+			_position_combo.SelectedIndex(
+				_tracker_pointers[0]->m_no_position_filtering_requested
+					? -1 // Select the pre-applied placeholder
+					: _tracker_pointers[0]->positionTrackingFilterOption);
+
+			// Set up some signals
 			_main_expander.Expanding(
 				[this](const Expander& sender,
 				       const ExpanderExpandingEventArgs& e) -> void

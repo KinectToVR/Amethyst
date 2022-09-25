@@ -119,6 +119,7 @@
     "/SettingsPage/Filters/Position/LERP": "Линейная интерполяция (Linear)",
     "/SettingsPage/Filters/Position/LowPass": "Фильтрация низких частот (Low Pass)",
     "/SettingsPage/Filters/Position/Off": "Отключить фильтрацию",
+    "/SettingsPage/Filters/Managed": "Managed by '{0}'",
     "/SettingsPage/ReManifest/Error/NotFound": "Невозможно установить манифест Amethyst VR.\nУбедитесь, что он существует в корневом (.exe) пути.",
     "/SettingsPage/ReManifest/Error/Other": "Невозможно установить манифест Amethyst VR.\nПроверьте журнал событий для SteamVR и сообщите об этом нам.",
     "/SettingsPage/ReRegister/Error/NotFound": "Исполняемый файл обработчика ошибок (Crash Handler) Amethyst не найден.\nОн необходим для перерегистрации, пожалуйста, убедитесь, что он установлен.",

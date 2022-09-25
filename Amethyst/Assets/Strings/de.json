@@ -119,6 +119,7 @@
     "/SettingsPage/Filters/Position/LERP": "Lineare Interpolation",
     "/SettingsPage/Filters/Position/LowPass": "Tiefpass (Low Pass) Filter",
     "/SettingsPage/Filters/Position/Off": "Filter deaktivieren",
+    "/SettingsPage/Filters/Managed": "Managed by '{0}'",
     "/SettingsPage/ReManifest/Error/NotFound": "Amethysts VR-Manifest konnte nicht installiert werden.\nÜberprüfe ob es im Stammverzeichnis (.exe) vorhanden ist.",
     "/SettingsPage/ReManifest/Error/Other": "Amethysts VR-Manifest konnte nicht installiert werden.\nÜberprüfe die SteamVR-Protokolle und melde es im Amethyst-Team.",
     "/SettingsPage/ReRegister/Error/NotFound": "Die ausführbare Amethyst-Crash-Handler-Datei wurde nicht gefunden.\nSie wird für die Registrierung benötigt. Überprüfe, ob sie vorhanden ist.",

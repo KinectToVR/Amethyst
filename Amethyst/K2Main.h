@@ -776,6 +776,8 @@ namespace k2app::main
 
 					tracker.pose_position = _joint.getJointPosition();
 					tracker.m_use_own_physics = _kinect->isPhysicsOverrideEnabled();
+					tracker.m_no_position_filtering_requested =
+						_kinect->isPositionFilterBlockingEnabled();
 
 					// If the device overrides physics
 					if (tracker.m_use_own_physics)
@@ -799,6 +801,8 @@ namespace k2app::main
 
 					tracker.pose_position = _joint.getJointPosition();
 					tracker.m_use_own_physics = _joints->isPhysicsOverrideEnabled();
+					tracker.m_no_position_filtering_requested =
+						_joints->isPositionFilterBlockingEnabled();
 
 					// If the device overrides physics
 					if (tracker.m_use_own_physics)
@@ -1035,6 +1039,8 @@ namespace k2app::main
 
 							tracker.pose_position = _joint.getJointPosition();
 							tracker.m_use_own_physics = _kinect->isPhysicsOverrideEnabled();
+							tracker.m_no_position_filtering_requested =
+								_kinect->isPositionFilterBlockingEnabled();
 
 							// If the device overrides physics
 							if (tracker.m_use_own_physics)
@@ -1060,6 +1066,8 @@ namespace k2app::main
 
 							tracker.pose_position = _joint.getJointPosition();
 							tracker.m_use_own_physics = _joints->isPhysicsOverrideEnabled();
+							tracker.m_no_position_filtering_requested =
+								_joints->isPositionFilterBlockingEnabled();
 
 							// If the device overrides physics
 							if (tracker.m_use_own_physics)
