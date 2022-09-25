@@ -87,6 +87,16 @@
                              PlacementMargin="0,29,-8,0"
                              Style="{ThemeResource BigTeachingTipStyle}"
                              IsLightDismissEnabled="True" />
+
+                <TeachingTip x:Name="ReloadTeachingTip"
+                             Title="/RELOAD"
+                             Subtitle="/TEXT"
+                             PreferredPlacement="TopRight"
+                             PlacementMargin="0,29,-8,0"
+                             CloseButtonContent="/RESTART"
+                             CloseButtonClick="ReloadTeachingTip_CloseButtonClick"
+                             Style="{ThemeResource BigTeachingTipStyle}"
+                             IsLightDismissEnabled="True" />
             </Grid.Resources>
         </Grid>
 

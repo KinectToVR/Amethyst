@@ -694,9 +694,15 @@ namespace winrt::Amethyst::implementation
 			LOG(INFO) << "You're using Windows 10, bruh... Amethyst won't have cool Mica effects";
 		}
 
+		// Capture the current thread
+		k2app::shared::main::thisEntryContext = new apartment_context();
+
 		// Cache needed UI elements
 		k2app::shared::teaching_tips::main::initializerTeachingTip =
 			std::make_shared<Controls::TeachingTip>(InitializerTeachingTip());
+
+		k2app::shared::teaching_tips::main::reloadTeachingTip =
+			std::make_shared<Controls::TeachingTip>(ReloadTeachingTip());
 
 		k2app::shared::main::mainNavigationView = std::make_shared<Controls::NavigationView>(NavView());
 
@@ -2008,6 +2014,117 @@ namespace winrt::Amethyst::implementation
 					{
 						TrackingDevices::updateTrackingDevicesUI();
 					});
+
+					// Setup device change watchdog : local devices
+					std::thread([&, this]() -> Windows::Foundation::IAsyncAction
+					{
+						const std::filesystem::path devices_folder_path =
+							k2app::interfacing::GetProgramLocation().parent_path() / "devices";
+						
+						if (!exists(devices_folder_path))
+							co_return; // Give up on trying
+
+						HANDLE ChangeHandle = FindFirstChangeNotification(
+							devices_folder_path.wstring().c_str(),
+							FALSE, FILE_NOTIFY_CHANGE_LAST_WRITE);
+						
+						while (true)
+							if (WaitForSingleObject(ChangeHandle, INFINITE) == WAIT_OBJECT_0)
+							{
+								// Capture the current thread
+								apartment_context ui_thread;
+
+								// Change the thread to the UI one
+								LOG(INFO) << "Changing the apartment thread context to the constructor thread...";
+								co_await *k2app::shared::main::thisEntryContext;
+
+								// Show the reload tip
+								k2app::shared::teaching_tips::main::reloadTeachingTip->IsOpen(true);
+								co_await ui_thread;
+
+								// Wait for the next change
+								FindNextChangeNotification(ChangeHandle);
+							}
+							else co_return;
+					}).detach();
+
+					// Setup device change watchdog : external devices
+					std::thread([&, this]() -> Windows::Foundation::IAsyncAction
+					{
+						const std::filesystem::path devices_paths_manifest_path =
+							ktvr::GetK2AppDataFileDir(L"");
+
+						if (!exists(devices_paths_manifest_path))
+							co_return; // Give up on trying
+
+						const HANDLE file = CreateFile(
+							devices_paths_manifest_path.c_str(),
+							FILE_LIST_DIRECTORY,
+							FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+							nullptr, OPEN_ALWAYS,
+							FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+							nullptr);
+
+						if (file == INVALID_HANDLE_VALUE)
+							co_return; // Give up on trying
+						
+						OVERLAPPED overlapped{};
+						overlapped.hEvent = CreateEvent(nullptr, FALSE, 0, nullptr);
+
+						uint8_t change_buf[1024]{};
+						ReadDirectoryChangesW(
+							file, change_buf, 1024, TRUE,
+							FILE_NOTIFY_CHANGE_FILE_NAME |
+							FILE_NOTIFY_CHANGE_DIR_NAME |
+							FILE_NOTIFY_CHANGE_LAST_WRITE,
+							nullptr, &overlapped, nullptr);
+
+						while (true)
+							if (WaitForSingleObject(overlapped.hEvent, INFINITE) == WAIT_OBJECT_0)
+							{
+								DWORD bytes_transferred;
+								GetOverlappedResult(file, &overlapped, &bytes_transferred, FALSE);
+
+								FILE_NOTIFY_INFORMATION* event = (FILE_NOTIFY_INFORMATION*)change_buf;
+
+								// Parse all events
+								while (true)
+								{
+									// Parse only valid events
+									if (std::wstring(event->FileName).find(L"amethystpaths.k2path") 
+										!= std::wstring::npos &&
+										event->Action == FILE_ACTION_MODIFIED)
+									{
+										// Capture the current thread
+										apartment_context ui_thread;
+
+										// Change the thread to the UI one
+										LOG(INFO) << "Changing the apartment thread context to the constructor thread...";
+										co_await *k2app::shared::main::thisEntryContext;
+
+										// Show the reload tip
+										k2app::shared::teaching_tips::main::reloadTeachingTip->IsOpen(true);
+										co_await ui_thread;
+									}
+
+									// Are there more events to handle?
+									if (event->NextEntryOffset)
+										*reinterpret_cast<uint8_t**>(&event) +=
+										event->NextEntryOffset;
+
+									else break;
+								}
+
+								// Queue the next event
+								ReadDirectoryChangesW(
+									file, change_buf, 1024, TRUE,
+									FILE_NOTIFY_CHANGE_FILE_NAME |
+									FILE_NOTIFY_CHANGE_DIR_NAME |
+									FILE_NOTIFY_CHANGE_LAST_WRITE,
+									nullptr, &overlapped, nullptr);
+							}
+							else co_return;
+					}).detach();
 				}
 				else // Log and exit, we have nothing to do
 				{
@@ -2441,7 +2558,7 @@ void k2app::interfacing::handle_app_exit(const uint32_t& p_sleep_millis)
 	}();
 
 	// Unlock the crash file
-	if (crashFileHandle != nullptr) 
+	if (crashFileHandle != nullptr)
 	{
 		// Unlock the file first
 		CloseHandle(crashFileHandle);
@@ -2942,6 +3059,13 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 	ShutdownTeachingTip().Subtitle(
 		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip0/Content"));
 
+	ReloadTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Devices/Reload/Title"));
+	ReloadTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Devices/Reload/Content"));
+	ReloadTeachingTip().CloseButtonContent(box_value(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Devices/Reload/Restart")));
+
 	InitializerTeachingTip().Title(
 		k2app::interfacing::LocalizedJSONString(L"/NUX/Tip1/Title"));
 	InitializerTeachingTip().Subtitle(
@@ -3089,4 +3213,76 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::MainWindow::XMainGri
 	NavViewOkashiButtonLabel().RequestedTheme(interfacing::actualTheme);
 	UpdateIconText().RequestedTheme(interfacing::actualTheme);
 	PreviewBadgeLabel().RequestedTheme(interfacing::actualTheme);
+}
+
+
+Windows::Foundation::IAsyncAction
+Amethyst::implementation::MainWindow::ReloadTeachingTip_CloseButtonClick(
+	const Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args)
+{
+	LOG(INFO) << "Reload has been invoked: turning trackers off...";
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Invoke);
+
+	// Mark trackers as inactive
+	k2app::interfacing::K2AppTrackersInitialized = false;
+	if (k2app::shared::general::toggleTrackersButton.get() != nullptr)
+		k2app::shared::general::toggleTrackersButton->IsChecked(false);
+
+	LOG(INFO) << "Reload has been invoked: setting up exit flags...";
+
+	// Mark exiting as true
+	k2app::interfacing::isExitingNow = true;
+
+	{
+		// Sleep a bit
+		apartment_context ui_thread;
+		co_await resume_background();
+		Sleep(50);
+		co_await ui_thread;
+	}
+
+	/* Restart app */
+
+	// Literals
+	using namespace std::string_literals;
+
+	LOG(INFO) << "Reload has been invoked: trying to restart the app...";
+
+	// If we've found who asked
+	if (exists(k2app::interfacing::GetProgramLocation()))
+	{
+		// Log the caller
+		LOG(INFO) << "The current caller process is: " +
+			WStringToString(k2app::interfacing::GetProgramLocation().wstring());
+
+		// Exit the app
+		LOG(INFO) << "Exiting in 500ms...";
+
+		// Don't execute the exit routine
+		k2app::interfacing::isExitHandled = true;
+
+		// Handle a typical app exit
+		apartment_context ui_thread;
+		co_await resume_background();
+		k2app::interfacing::handle_app_exit(500);
+		co_await ui_thread;
+
+		// Restart and exit with code 0
+		CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		ShellExecute(nullptr, nullptr,
+		             k2app::interfacing::GetProgramLocation().wstring().c_str(),
+		             nullptr, nullptr, SW_SHOWDEFAULT);
+
+		exit(0);
+	}
+	LOG(ERROR) << "App will not be restarted due to caller process identification error.";
+	k2app::interfacing::ShowToast(
+		k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed/Title"),
+		k2app::interfacing::LocalizedResourceWString(L"SharedStrings", L"Toasts/RestartFailed"));
+
+	k2app::interfacing::ShowVRToast(
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Toasts/RestartFailed/Title"),
+		k2app::interfacing::LocalizedJSONString(L"/SharedStrings/Toasts/RestartFailed"));
 }

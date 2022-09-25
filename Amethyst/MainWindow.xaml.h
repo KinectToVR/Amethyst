@@ -95,6 +95,9 @@ namespace winrt::Amethyst::implementation
 		void XMainGrid_Loaded(const Windows::Foundation::IInspectable& sender,
 		                      const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		Windows::Foundation::IAsyncAction XMainGrid_Loaded_Handler();
+		Windows::Foundation::IAsyncAction ReloadTeachingTip_CloseButtonClick(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+			const Windows::Foundation::IInspectable& args);
 	};
 }
 

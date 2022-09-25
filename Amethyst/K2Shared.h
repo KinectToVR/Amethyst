@@ -79,6 +79,8 @@ namespace k2app::shared
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Media::SolidColorBrush>
 			attentionBrush, neutralBrush;
 
+		inline winrt::apartment_context* thisEntryContext;
+
 		namespace navigation_items
 		{
 			/*inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Canvas>
@@ -255,7 +257,7 @@ namespace k2app::shared
 		namespace main
 		{
 			inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TeachingTip>
-			initializerTeachingTip;
+			initializerTeachingTip, reloadTeachingTip;
 		}
 
 		namespace general

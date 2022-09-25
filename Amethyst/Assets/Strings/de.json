@@ -208,6 +208,10 @@
 
     "/DevicesPage/ToolTips/Overrides/Overlapping": "This joint is currently overiden by:\n{0}",
 
+    "/DevicesPage/Devices/Reload/Title": "Device configuration has changed!",
+    "/DevicesPage/Devices/Reload/Content": "A new device plugin has been added or removed.\nAmethyst must be restarted for these changes to take effect.\n\nWould you like to restart Amethyst now?",
+    "/DevicesPage/Devices/Reload/Restart": "Restart Amethyst",
+
     "/InfoPage/AppCaption": "by K2VR Team",
     "/InfoPage/AppTitle": "Amethyst",
     "/InfoPage/Credits/Community": "Und allen anderen, die uns auf unserem Weg geholfen haben.",

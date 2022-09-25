@@ -64,7 +64,7 @@ App::App()
 	// Create an empty file for checking for crashes
 	k2app::interfacing::crashFileHandle = CreateFile(
 		(k2app::interfacing::GetProgramLocation().parent_path() / ".crash").wstring().c_str(),
-		GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 
+		GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL, nullptr);
 
 	// If logging was set up by some other thing / assembly,
@@ -128,11 +128,13 @@ App::App()
 	// Load the language resources
 	LOG(INFO) << "Now reading resource settings...";
 
+	// Load app UI strings
 	try
 	{
 		k2app::interfacing::LoadJSONStringResources_English();
 		k2app::interfacing::LoadJSONStringResources(k2app::K2Settings.appLanguage);
 
+		// Setup string hot reload watchdog
 		std::thread([&, this]
 		{
 			const std::filesystem::path resource_path =
@@ -152,7 +154,6 @@ App::App()
 				FALSE, FILE_NOTIFY_CHANGE_LAST_WRITE);
 
 			while (true)
-			{
 				if (WaitForSingleObject(ChangeHandle, INFINITE) == WAIT_OBJECT_0)
 				{
 					// Reload
@@ -175,7 +176,6 @@ App::App()
 					FindNextChangeNotification(ChangeHandle);
 				}
 				else return;
-			}
 		}).detach();
 	}
 	catch (...)
