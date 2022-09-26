@@ -177,7 +177,9 @@ namespace TrackingDevices
 			k2app::shared::general::trackingDeviceErrorLabel.get()->Text(split_status(device_status_string)[1]);
 			k2app::shared::general::errorWhatText.get()->Text(split_status(device_status_string)[2]);
 
-			// TODO DIM THE CALIBRATION BUTTON IF NOT OKAY
+			// Dim the calibration button if can't calibrate right now
+			k2app::shared::general::calibrationButton.get()->Opacity(
+				base_status_ok ? 1.0 : 0.5); // Dim at 0.5 on errors
 		}
 
 		// Check with this one, should be the same for all anyway
@@ -364,7 +366,8 @@ namespace TrackingDevices
 		const auto& trackingDevice =
 			TrackingDevicesVector.at(k2app::shared::devices::selectedTrackingDeviceGUIDPair.second);
 
-		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
+		HRESULT device_status = E_FAIL; // Assume failure for now
+		std::wstring device_status_string = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
 		LOG(INFO) << "Now " << (reconnect ? "reconnecting and refreshing" : "refreshing") <<
 			" the tracking device at index " << k2app::shared::devices::selectedTrackingDeviceGUIDPair.second << "...";
 
@@ -375,7 +378,9 @@ namespace TrackingDevices
 				std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
 			if (reconnect) device->initialize();
-			device_status = device->statusResultWString(device->getStatusResult());
+
+			device_status = device->getStatusResult();
+			device_status_string = device->statusResultWString(device_status);
 
 			// Update the device name
 			k2app::shared::devices::deviceNameLabel.get()->Text(device->getDeviceName());
@@ -391,20 +396,20 @@ namespace TrackingDevices
 			     k2app::shared::devices::overrideSelectorExpanders)
 				// Collapse on fails & non-overrides
 				expander.get()->SetVisibility(
-					device_status.find(L"S_OK") != std::wstring::npos &&
+					device_status == S_OK &&
 					IsAnOverride(device->getDeviceGUID())
 						? Visibility::Visible
 						: Visibility::Collapsed);
 
 			// Collapse on fails & non-overrides
 			k2app::shared::devices::overridesLabel.get()->Visibility(
-				device_status.find(L"S_OK") != std::wstring::npos &&
+				device_status == S_OK &&
 				IsAnOverride(device->getDeviceGUID())
 					? Visibility::Visible
 					: Visibility::Collapsed);
 
 			// Set up combos if the device's OK
-			if (device_status.find(L"S_OK") != std::wstring::npos)
+			if (device_status == S_OK)
 			{
 				// If we're reconnecting an override device, also refresh joints
 				if (IsAnOverride(k2app::shared::devices::selectedTrackingDeviceGUIDPair.first))
@@ -478,7 +483,9 @@ namespace TrackingDevices
 				std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
 			if (reconnect) device->initialize();
-			device_status = device->statusResultWString(device->getStatusResult());
+
+			device_status = device->getStatusResult();
+			device_status_string = device->statusResultWString(device_status);
 
 			// Update the device name
 			k2app::shared::devices::deviceNameLabel.get()->Text(device->getDeviceName());
@@ -487,13 +494,13 @@ namespace TrackingDevices
 			//	at least when the device is online
 			for (auto& expander : k2app::shared::devices::jointSelectorExpanders)
 				expander.get()->SetVisibility(
-					(device_status.find(L"S_OK") != std::wstring::npos &&
+					(device_status == S_OK &&
 						IsABase(k2app::shared::devices::selectedTrackingDeviceGUIDPair.first))
 						? Visibility::Visible
 						: Visibility::Collapsed);
 
 			k2app::shared::devices::jointBasisLabel.get()->Visibility(
-				(device_status.find(L"S_OK") != std::wstring::npos &&
+				(device_status == S_OK &&
 					IsABase(k2app::shared::devices::selectedTrackingDeviceGUIDPair.first))
 					? Visibility::Visible
 					: Visibility::Collapsed);
@@ -503,20 +510,20 @@ namespace TrackingDevices
 			     k2app::shared::devices::overrideSelectorExpanders)
 				// Collapse on fails & non-overrides
 				expander.get()->SetVisibility(
-					device_status.find(L"S_OK") != std::wstring::npos &&
+					device_status == S_OK &&
 					IsAnOverride(device->getDeviceGUID())
 						? Visibility::Visible
 						: Visibility::Collapsed);
 
 			// Collapse on fails & non-overrides
 			k2app::shared::devices::overridesLabel.get()->Visibility(
-				device_status.find(L"S_OK") != std::wstring::npos &&
+				device_status == S_OK &&
 				IsAnOverride(device->getDeviceGUID())
 					? Visibility::Visible
 					: Visibility::Collapsed);
 
 			// Set up combos if the device's OK
-			if (device_status.find(L"S_OK") != std::wstring::npos)
+			if (device_status == S_OK)
 			{
 				// If we're reconnecting a base device, also refresh joints
 				if (IsABase(k2app::shared::devices::selectedTrackingDeviceGUIDPair.first))
@@ -581,22 +588,20 @@ namespace TrackingDevices
 		/* Update local statuses */
 
 		// Update the status here
-		const bool status_ok = device_status.find(L"S_OK") != std::wstring::npos;
-
 		k2app::shared::devices::errorWhatText.get()->Visibility(
-			status_ok ? Visibility::Collapsed : Visibility::Visible);
+			device_status == S_OK ? Visibility::Collapsed : Visibility::Visible);
 		k2app::shared::devices::deviceErrorGrid.get()->Visibility(
-			status_ok ? Visibility::Collapsed : Visibility::Visible);
+			device_status == S_OK ? Visibility::Collapsed : Visibility::Visible);
 		k2app::shared::devices::trackingDeviceErrorLabel.get()->Visibility(
-			status_ok ? Visibility::Collapsed : Visibility::Visible);
+			device_status == S_OK ? Visibility::Collapsed : Visibility::Visible);
 
 		k2app::shared::devices::trackingDeviceChangePanel.get()->Visibility(
-			status_ok ? Visibility::Visible : Visibility::Collapsed);
+			device_status == S_OK ? Visibility::Visible : Visibility::Collapsed);
 
 		// Split status and message by \n
-		k2app::shared::devices::deviceStatusLabel.get()->Text(split_status(device_status)[0]);
-		k2app::shared::devices::trackingDeviceErrorLabel.get()->Text(split_status(device_status)[1]);
-		k2app::shared::devices::errorWhatText.get()->Text(split_status(device_status)[2]);
+		k2app::shared::devices::deviceStatusLabel.get()->Text(split_status(device_status_string)[0]);
+		k2app::shared::devices::trackingDeviceErrorLabel.get()->Text(split_status(device_status_string)[1]);
+		k2app::shared::devices::errorWhatText.get()->Text(split_status(device_status_string)[2]);
 
 		// Refresh the device list MVVM
 		RefreshDevicesMVVMList();

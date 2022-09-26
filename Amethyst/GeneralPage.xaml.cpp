@@ -1636,7 +1636,39 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 	// If no overrides
 	if (k2app::K2Settings.overrideDeviceGUIDsMap.empty())
 	{
-		// TODO SHOW A TIP AND GIVE UP IF NOT CONNECTED
+		// Get our current device
+		const auto& trackingDevice = 
+			TrackingDevices::TrackingDevicesVector.at(
+			k2app::K2Settings.trackingDeviceGUIDPair.second);
+
+		HRESULT device_status = E_FAIL;
+		switch (trackingDevice.index())
+		{
+		// SkeletonBasis
+		case 0:
+			device_status = std::get<0>(trackingDevice)->getStatusResult();
+			break;
+
+		// JointsBasis
+		case 1:
+			device_status = std::get<1>(trackingDevice)->getStatusResult();
+			break;
+		}
+
+		// If the status isn't OK, cry about it
+		if (device_status != S_OK)
+		{
+			// Set the correct target
+			NoCalibrationTeachingTip().Target(DeviceTitleContainer());
+
+			// Hide the tail and open the tip
+			NoCalibrationTeachingTip().TailVisibility(
+				Controls::TeachingTipTailVisibility::Collapsed);
+			NoCalibrationTeachingTip().IsOpen(true);
+
+			// Give up
+			return;
+		}
 
 		// Show the calibration choose pane / calibration
 		AutoCalibrationPane().Visibility(Visibility::Collapsed);
@@ -1667,15 +1699,13 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 		playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 
 		// If auto-calibration is not supported, proceed straight to manual
-		const auto& trackingDevice = TrackingDevices::TrackingDevicesVector.at(
-			k2app::K2Settings.trackingDeviceGUIDPair.second);
 
-		if (trackingDevice.index() == 0 &&
-			std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
-			getDeviceCharacteristics() == ktvr::K2_Character_Full)
+		// SkeletonBasis
+		if (trackingDevice.index() == 0)
 		{
 			// Nothing, the selection pane will be shown
 		}
+		// JointsBasis
 		else
 		{
 			// Open the pane and start the calibration
@@ -1687,6 +1717,8 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 		// Show the device selector pane
 		AutoCalibrationPane().Visibility(Visibility::Collapsed);
 		ManualCalibrationPane().Visibility(Visibility::Collapsed);
+
+		bool _can_proceed = false;
 
 		// Populate calibrate-able devices now
 		{
@@ -1756,6 +1788,10 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 
 						// Pre-check device's status
 						deviceStatus != S_OK));
+
+				// If the device's OK
+				if (deviceStatus) // One-way assignment
+					_can_proceed = true;
 			}
 
 			LOG(INFO) << "Setting the calibration devices' TreeView ItemSource to the created "
@@ -1764,7 +1800,22 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 				box_value(calibrationDeviceMVVM_List));
 		}
 
-		// TODO CHECK IF AT LEAST 1 DEVICE IS OKAY
+		// If at least 1 status isn't OK, cry about it
+		if (!_can_proceed)
+		{
+			// Set the correct target
+			NoCalibrationTeachingTip().Target(DeviceTitleContainer());
+
+			// Hide the tail and open the tip
+			NoCalibrationTeachingTip().TailVisibility(
+				Controls::TeachingTipTailVisibility::Collapsed);
+			NoCalibrationTeachingTip().IsOpen(true);
+
+			// Give up
+			return;
+		}
+
+		// Clse proceed to calibration device pick
 		CalibrationDeviceSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 		CalibrationDeviceSelectView().IsPaneOpen(true);
 
@@ -2145,12 +2196,12 @@ Amethyst::implementation::GeneralPage::TrackingDeviceTreeView_ItemInvoked(
 		TrackingDevices::TrackingDevicesVector.at(
 			TrackingDevices::deviceGUID_ID_Map[node.DeviceGUID().c_str()]);
 
-	if (trackingDevice.index() == 0 &&
-		std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
-		getDeviceCharacteristics() == ktvr::K2_Character_Full)
+	// SkeletonBasis
+	if (trackingDevice.index() == 0)
 	{
 		// Nothing, the selection pane will be shown
 	}
+	// JointsBasis
 	else
 	{
 		// Open the pane and start the calibration
