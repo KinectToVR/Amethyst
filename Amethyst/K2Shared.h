@@ -220,7 +220,9 @@ namespace k2app::shared
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TreeView> devicesTreeView;
 
-		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Flyout> noJointsFlyout;
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Flyout>
+			noJointsFlyout,
+			setDeviceTypeFlyout;
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Button>
 			setAsOverrideButton,
@@ -248,7 +250,8 @@ namespace k2app::shared
 			overridesExpanderHostStackPanel;
 
 		// Non-inline because it's defined somewhere else
-		winrt::Windows::Foundation::IAsyncAction ReloadSelectedDevice(const bool& _manual);
+		winrt::Windows::Foundation::IAsyncAction ReloadSelectedDevice(
+			const bool& _manual, const bool& _reconnect = false);
 	}
 
 	// (Only the first ones are needed)

@@ -39,7 +39,9 @@ namespace winrt::Amethyst::implementation
 		selectedDeviceSettingsHostContainer = std::make_shared<Controls::Grid>(SelectedDeviceSettingsHostContainer());
 
 		devicesTreeView = std::make_shared<Controls::TreeView>(TrackingDeviceTreeView());
+
 		noJointsFlyout = std::make_shared<Controls::Flyout>(NoJointsFlyout());
+		setDeviceTypeFlyout = std::make_shared<Controls::Flyout>(SetDeviceTypeFlyout());
 
 		k2app::shared::teaching_tips::devices::devicesListTeachingTip =
 			std::make_shared<Controls::TeachingTip>(DevicesListTeachingTip());
@@ -339,12 +341,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 
 	LOG(INFO) << "Changed the current tracking device (Override) to " << 
 		WStringToString(selectedTrackingDeviceGUIDPair.first);
-	
-	// Update the status here
-	TrackingDevices::devices_handle_refresh(false);
 
-	// Update GeneralPage status
-	TrackingDevices::updateTrackingDevicesUI();
+	// Update the status here
+	ReloadSelectedDevice(true);
 
 	// Animate adding the expanders
 	{
@@ -580,45 +579,8 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 	// Notify of the setup's end
 	devices_tab_setup_finished = true;
 	
-	// Check if we've disabled any joints from spawning and disable their mods
-	k2app::interfacing::devices_check_disabled_joints();
-	
-	// Update the status here
-	TrackingDevices::devices_handle_refresh(false);
-
-	// Update GeneralPage status
-	TrackingDevices::updateTrackingDevicesUI();
-
-	// Refresh the device list MVVM
-	TrackingDevices::RefreshDevicesMVVMList();
-
-	if (TrackingDevices::IsABase(selectedTrackingDeviceGUIDPair.first))
-	{
-		LOG(INFO) << "Selected a base";
-		setAsOverrideButton.get()->IsEnabled(false);
-		setAsBaseButton.get()->IsEnabled(false);
-
-		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
-	}
-	else if (TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
-	{
-		LOG(INFO) << "Selected an override";
-		setAsOverrideButton.get()->IsEnabled(false);
-		setAsBaseButton.get()->IsEnabled(true);
-
-		deselectDeviceButton.get()->Visibility(Visibility::Visible);
-	}
-	else
-	{
-		LOG(INFO) << "Selected a [none]";
-		setAsOverrideButton.get()->IsEnabled(true);
-		setAsBaseButton.get()->IsEnabled(true);
-
-		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
-	}
-
-	LOG(INFO) << "Changed the currently selected device to " << 
-		WStringToString(selectedTrackingDeviceGUIDPair.first);
+	// Reconnect and update the status here
+	ReloadSelectedDevice(true, true);
 
 	// Now we're good
 	devices_tab_re_setup_finished = true;
@@ -891,7 +853,8 @@ Amethyst::implementation::DevicesPage::TrackingDeviceTreeView_ItemInvoked(
 
 
 Windows::Foundation::IAsyncAction
-k2app::shared::devices::ReloadSelectedDevice(const bool& _manual)
+k2app::shared::devices::ReloadSelectedDevice(
+	const bool& _manual, const bool& _reconnect)
 {
 	// Collapse all joint expanders
 	if (!_manual)
@@ -907,7 +870,7 @@ k2app::shared::devices::ReloadSelectedDevice(const bool& _manual)
 	interfacing::devices_check_disabled_joints();
 	
 	// Update the status here
-	TrackingDevices::devices_handle_refresh(false);
+	TrackingDevices::devices_handle_refresh(_reconnect);
 
 	// Update GeneralPage status
 	TrackingDevices::updateTrackingDevicesUI();
@@ -915,6 +878,7 @@ k2app::shared::devices::ReloadSelectedDevice(const bool& _manual)
 	// Refresh the device list MVVM
 	TrackingDevices::RefreshDevicesMVVMList();
 
+	setDeviceTypeFlyout->Hide();
 	if (TrackingDevices::IsABase(selectedTrackingDeviceGUIDPair.first))
 	{
 		LOG(INFO) << "Selected a base";
