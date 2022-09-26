@@ -1636,6 +1636,8 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 	// If no overrides
 	if (k2app::K2Settings.overrideDeviceGUIDsMap.empty())
 	{
+		// TODO SHOW A TIP AND GIVE UP IF NOT CONNECTED
+
 		// Show the calibration choose pane / calibration
 		AutoCalibrationPane().Visibility(Visibility::Collapsed);
 		ManualCalibrationPane().Visibility(Visibility::Collapsed);
@@ -1762,6 +1764,7 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 				box_value(calibrationDeviceMVVM_List));
 		}
 
+		// TODO CHECK IF AT LEAST 1 DEVICE IS OKAY
 		CalibrationDeviceSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 		CalibrationDeviceSelectView().IsPaneOpen(true);
 
@@ -2095,6 +2098,22 @@ Amethyst::implementation::GeneralPage::TrackingDeviceTreeView_ItemInvoked(
 		co_return; // Block dummy selects
 
 	const auto node = args.InvokedItem().as<Amethyst::CalibrationDeviceEntryView>();
+
+	// Block erred device selects
+	if (node.StatusError())
+	{
+		// Set the correct target
+		NoCalibrationTeachingTip().Target(TrackingDeviceTreeView().
+			ContainerFromItem(args.InvokedItem()).as<Microsoft::UI::Xaml::FrameworkElement>());
+
+		// Hide the tail and open the tip
+		NoCalibrationTeachingTip().TailVisibility(
+			Controls::TeachingTipTailVisibility::Collapsed);
+		NoCalibrationTeachingTip().IsOpen(true);
+
+		// Give up
+		co_return;
+	}
 
 	// Show the calibration choose pane / calibration
 	AutoCalibrationPane().Visibility(Visibility::Collapsed);

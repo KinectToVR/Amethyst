@@ -121,6 +121,11 @@ namespace winrt::Amethyst::implementation
 		return value;
 	}
 
+	double CalibrationDeviceEntryView::ErrorToOpacity(const bool& value)
+	{
+		return value ? 0.5 : 1.0; // Dim on errors
+	}
+
 	event_token CalibrationDeviceEntryView::PropertyChanged(
 		const Microsoft::UI::Xaml::Data::PropertyChangedEventHandler& handler)
 	{

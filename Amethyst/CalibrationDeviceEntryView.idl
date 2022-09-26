@@ -16,5 +16,6 @@ namespace Amethyst
 		Boolean StatusError;
 
 		Double BoolToOpacity(Boolean value);
+		Double ErrorToOpacity(Boolean value);
 	}
 }

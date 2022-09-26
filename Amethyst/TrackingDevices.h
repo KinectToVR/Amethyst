@@ -176,6 +176,8 @@ namespace TrackingDevices
 			k2app::shared::general::deviceStatusLabel.get()->Text(split_status(device_status_string)[0]);
 			k2app::shared::general::trackingDeviceErrorLabel.get()->Text(split_status(device_status_string)[1]);
 			k2app::shared::general::errorWhatText.get()->Text(split_status(device_status_string)[2]);
+
+			// TODO DIM THE CALIBRATION BUTTON IF NOT OKAY
 		}
 
 		// Check with this one, should be the same for all anyway
@@ -369,16 +371,37 @@ namespace TrackingDevices
 		if (trackingDevice.index() == 0)
 		{
 			// Kinect Basis
-			const auto& device = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
+			const auto& device =
+				std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice);
 
 			if (reconnect) device->initialize();
 			device_status = device->statusResultWString(device->getStatusResult());
+
+			// Update the device name
+			k2app::shared::devices::deviceNameLabel.get()->Text(device->getDeviceName());
 
 			// We've selected a SkeletonBasis device, so this should be hidden
 			for (auto& expander : k2app::shared::devices::jointSelectorExpanders)
 				expander.get()->SetVisibility(Visibility::Collapsed);
 
 			k2app::shared::devices::jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+
+			// Show / Hide the override expanders
+			for (auto& expander :
+			     k2app::shared::devices::overrideSelectorExpanders)
+				// Collapse on fails & non-overrides
+				expander.get()->SetVisibility(
+					device_status.find(L"S_OK") != std::wstring::npos &&
+					IsAnOverride(device->getDeviceGUID())
+						? Visibility::Visible
+						: Visibility::Collapsed);
+
+			// Collapse on fails & non-overrides
+			k2app::shared::devices::overridesLabel.get()->Visibility(
+				device_status.find(L"S_OK") != std::wstring::npos &&
+				IsAnOverride(device->getDeviceGUID())
+					? Visibility::Visible
+					: Visibility::Collapsed);
 
 			// Set up combos if the device's OK
 			if (device_status.find(L"S_OK") != std::wstring::npos)
@@ -434,7 +457,7 @@ namespace TrackingDevices
 				}
 			}
 
-			// Show / Hide device settings button
+			// Show / Hide device settings
 			k2app::shared::devices::selectedDeviceSettingsHostContainer.get()->Visibility(
 				device->isSettingsDaemonSupported()
 					? Visibility::Visible
@@ -451,10 +474,14 @@ namespace TrackingDevices
 		else if (trackingDevice.index() == 1)
 		{
 			// Joints Basis
-			const auto& device = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
+			const auto& device =
+				std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice);
 
-			if (reconnect)device->initialize();
+			if (reconnect) device->initialize();
 			device_status = device->statusResultWString(device->getStatusResult());
+
+			// Update the device name
+			k2app::shared::devices::deviceNameLabel.get()->Text(device->getDeviceName());
 
 			// We've selected a jointsbasis device, so this should be visible
 			//	at least when the device is online
@@ -471,6 +498,23 @@ namespace TrackingDevices
 					? Visibility::Visible
 					: Visibility::Collapsed);
 
+			// Show / Hide the override expanders
+			for (auto& expander :
+			     k2app::shared::devices::overrideSelectorExpanders)
+				// Collapse on fails & non-overrides
+				expander.get()->SetVisibility(
+					device_status.find(L"S_OK") != std::wstring::npos &&
+					IsAnOverride(device->getDeviceGUID())
+						? Visibility::Visible
+						: Visibility::Collapsed);
+
+			// Collapse on fails & non-overrides
+			k2app::shared::devices::overridesLabel.get()->Visibility(
+				device_status.find(L"S_OK") != std::wstring::npos &&
+				IsAnOverride(device->getDeviceGUID())
+					? Visibility::Visible
+					: Visibility::Collapsed);
+
 			// Set up combos if the device's OK
 			if (device_status.find(L"S_OK") != std::wstring::npos)
 			{
@@ -480,6 +524,7 @@ namespace TrackingDevices
 					for (auto& expander : k2app::shared::devices::jointSelectorExpanders)
 						expander.get()->ReAppendTrackers();
 				}
+
 				// If we're reconnecting an override device, also refresh joints
 				else if (IsAnOverride(k2app::shared::devices::selectedTrackingDeviceGUIDPair.first))
 				{
@@ -515,7 +560,7 @@ namespace TrackingDevices
 				}
 			}
 
-			// Show / Hide device settings button
+			// Show / Hide device settings
 			k2app::shared::devices::selectedDeviceSettingsHostContainer.get()->Visibility(
 				device->isSettingsDaemonSupported()
 					? Visibility::Visible
