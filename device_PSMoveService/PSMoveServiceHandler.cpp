@@ -361,7 +361,7 @@ void PSMoveServiceHandler::processKeyInputs()
 			wrapper.controller->ControllerType != PSMController_Virtual)
 			continue; // Skip other types cuz no input otr whatever
 
-		auto& controller = wrapper.controller->ControllerState.PSMoveState;
+		const auto& controller = wrapper.controller->ControllerState.PSMoveState;
 
 		const bool bStartRealignHMDTriggered = (controller.StartButton == PSMButtonState_PRESSED
 			|| controller.StartButton == PSMButtonState_DOWN) && (controller.SelectButton == PSMButtonState_PRESSED

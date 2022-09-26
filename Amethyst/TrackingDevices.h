@@ -361,7 +361,7 @@ namespace TrackingDevices
 
 		k2app::shared::devices::devices_signal_joints = false; // Don't signal on status refresh
 
-		auto& trackingDevice =
+		const auto& trackingDevice =
 			TrackingDevicesVector.at(k2app::shared::devices::selectedTrackingDeviceGUIDPair.second);
 
 		std::wstring device_status = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
