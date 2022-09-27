@@ -580,7 +580,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 	devices_tab_setup_finished = true;
 	
 	// Reconnect and update the status here
-	ReloadSelectedDevice(true, true);
+	ReloadSelectedDevice(true);
 
 	// Now we're good
 	devices_tab_re_setup_finished = true;

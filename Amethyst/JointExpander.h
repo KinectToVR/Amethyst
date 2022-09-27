@@ -67,7 +67,7 @@ namespace TrackingDevices
 					device.second)->getDeviceName();
 				break;
 			case 1:
-				deviceName = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
+				deviceName = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
 					device.second)->getDeviceName();
 				break;
 			}

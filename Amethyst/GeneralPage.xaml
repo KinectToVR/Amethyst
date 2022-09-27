@@ -16,7 +16,7 @@
                      Title="[CONTENT NOT SET]"
                      Subtitle="[CONTENT NOT SET]">
             <TeachingTip.IconSource>
-                <FontIconSource Glyph="&#xE946;" />
+                <FontIconSource Glyph="&#xE7BA;" />
             </TeachingTip.IconSource>
         </TeachingTip>
     </Page.Resources>
