@@ -1669,6 +1669,9 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 			// Hide the tail and open the tip
 			NoCalibrationTeachingTip().TailVisibility(
 				Controls::TeachingTipTailVisibility::Collapsed);
+			NoCalibrationTeachingTip().PreferredPlacement(
+				Controls::TeachingTipPlacementMode::Top);
+
 			NoCalibrationTeachingTip().IsOpen(true);
 
 			// Give up
@@ -1794,8 +1797,8 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 						// Pre-check device's status
 						deviceStatus != S_OK));
 
-				// If the device's OK
-				if (deviceStatus) // One-way assignment
+				// If the device's OK (at least one)
+				if (deviceStatus == S_OK) // One-way assignment
 					_can_proceed = true;
 			}
 
@@ -1810,6 +1813,8 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 		{
 			// Set the correct target
 			NoCalibrationTeachingTip().Target(DeviceTitleContainer());
+			NoCalibrationTeachingTip().PreferredPlacement(
+				Controls::TeachingTipPlacementMode::Top);
 
 			// Hide the tail and open the tip
 			NoCalibrationTeachingTip().TailVisibility(
@@ -1820,7 +1825,7 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 			return;
 		}
 
-		// Clse proceed to calibration device pick
+		// Else proceed to calibration device pick
 		CalibrationDeviceSelectView().DisplayMode(Controls::SplitViewDisplayMode::Inline);
 		CalibrationDeviceSelectView().IsPaneOpen(true);
 
@@ -2165,6 +2170,9 @@ Amethyst::implementation::GeneralPage::TrackingDeviceTreeView_ItemInvoked(
 		// Hide the tail and open the tip
 		NoCalibrationTeachingTip().TailVisibility(
 			Controls::TeachingTipTailVisibility::Collapsed);
+		NoCalibrationTeachingTip().PreferredPlacement(
+			Controls::TeachingTipPlacementMode::Bottom);
+
 		NoCalibrationTeachingTip().IsOpen(true);
 
 		// Give up

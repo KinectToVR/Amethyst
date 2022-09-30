@@ -11,7 +11,7 @@
 
     <Page.Resources>
         <TeachingTip x:Name="NoCalibrationTeachingTip"
-                     PreferredPlacement="Bottom"
+                     PreferredPlacement="Top"
                      IsLightDismissEnabled="True"
                      Title="[CONTENT NOT SET]"
                      Subtitle="[CONTENT NOT SET]">
