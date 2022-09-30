@@ -1025,6 +1025,11 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	StatusTeachingTip().ActionButtonContent(
 		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
 
+	NoCalibrationTeachingTip().Title(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Tips/NoCalibration/Header"));
+	NoCalibrationTeachingTip().Subtitle(
+		k2app::interfacing::LocalizedJSONString(L"/GeneralPage/Tips/NoCalibration/Footer"));
+
 	// Start the main loop since we're done with basic setup
 	k2app::shared::devices::smphSignalStartMain.release();
 

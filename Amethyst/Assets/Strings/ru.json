@@ -83,6 +83,8 @@
     "/GeneralPage/Tips/TrackingFreeze/Buttons/WMR": "кнопка меню, рукоятка и триггер",
     "/GeneralPage/Tips/TrackingFreeze/Footer": "Эту привязку можно изменить в настройках входа SteamVR.",
     "/GeneralPage/Tips/TrackingFreeze/Header": "Вы также можете переключить заморозку трекера во время нахождения в VR, нажав {0} на левом контроллере.",
+    "/GeneralPage/Tips/NoCalibration/Footer": "You're unable to calibrate this device because it's not working properly.\nPlease make sure it's connected and working properly.",
+    "/GeneralPage/Tips/NoCalibration/Header": "This device can't be calibrated right now!",
     "/GeneralPage/Titles/Device": "Устройство",
     "/GeneralPage/Titles/Status": "Статус",
     "/GeneralPage/Titles/Trackers": "Трекеры",

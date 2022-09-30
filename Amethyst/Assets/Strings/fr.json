@@ -83,6 +83,8 @@
     "/GeneralPage/Tips/TrackingFreeze/Buttons/WMR": "le bouton \"Menu\", la gâchette et le bouton du coté",
     "/GeneralPage/Tips/TrackingFreeze/Footer": "La combinaison peut être changée dans les options de SteamVR.",
     "/GeneralPage/Tips/TrackingFreeze/Header": "Vous pouvez aussi activer/désactiver cette fonction en appuyant sur {0} sur la manette gauche.",
+    "/GeneralPage/Tips/NoCalibration/Footer": "You're unable to calibrate this device because it's not working properly.\nPlease make sure it's connected and working properly.",
+    "/GeneralPage/Tips/NoCalibration/Header": "This device can't be calibrated right now!",
     "/GeneralPage/Titles/Device": "Appareil",
     "/GeneralPage/Titles/Status": "Statut",
     "/GeneralPage/Titles/Trackers": "Trackers",

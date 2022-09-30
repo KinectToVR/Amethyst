@@ -83,6 +83,8 @@
     "/GeneralPage/Tips/TrackingFreeze/Buttons/WMR": "die Menütaste, Grip und Trigger",
     "/GeneralPage/Tips/TrackingFreeze/Footer": "Die Tastenbelegung kann in den SteamVR-Eingabeeinstellungen geändert werden.",
     "/GeneralPage/Tips/TrackingFreeze/Header": "Man kann das Einfrieren der Tracker in VR umschalten, indem man {0} auf dem linken Controller drückt.",
+    "/GeneralPage/Tips/NoCalibration/Footer": "You're unable to calibrate this device because it's not working properly.\nPlease make sure it's connected and working properly.",
+    "/GeneralPage/Tips/NoCalibration/Header": "This device can't be calibrated right now!",
     "/GeneralPage/Titles/Device": "Gerät",
     "/GeneralPage/Titles/Status": "Status",
     "/GeneralPage/Titles/Trackers": "Tracker",
