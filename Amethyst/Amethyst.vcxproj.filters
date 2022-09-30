@@ -25,17 +25,21 @@
     <Midl Include="App.idl" />
     <Midl Include="MainWindow.idl" />
     <Midl Include="DeviceEntryView.idl">
-      <Filter>MVVM\Models</Filter>
+      <Filter>MVVM\Devices %28List%29</Filter>
     </Midl>
-    <Midl Include="CalibrationDeviceEntryView.idl" />
+    <Midl Include="CalibrationDeviceEntryView.idl">
+      <Filter>MVVM\Calibration</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="DeviceEntryView.cpp">
-      <Filter>MVVM\Models</Filter>
+      <Filter>MVVM\Devices %28List%29</Filter>
     </ClCompile>
-    <ClCompile Include="CalibrationDeviceEntryView.cpp" />
+    <ClCompile Include="CalibrationDeviceEntryView.cpp">
+      <Filter>MVVM\Calibration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -85,10 +89,6 @@
     <ClInclude Include="K2DeviceMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceEntryView.h">
-      <Filter>MVVM\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="CalibrationDeviceEntryView.h" />
     <ClInclude Include="..\external\vendor\EigenUtils.h">
       <Filter>Header Files\Vendor Files</Filter>
     </ClInclude>
@@ -97,6 +97,12 @@
     </ClInclude>
     <ClInclude Include="..\external\vendor\LowpassFilter.h">
       <Filter>Header Files\Vendor Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceEntryView.h">
+      <Filter>MVVM\Devices %28List%29</Filter>
+    </ClInclude>
+    <ClInclude Include="CalibrationDeviceEntryView.h">
+      <Filter>MVVM\Calibration</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -285,11 +291,17 @@
     <Filter Include="MVVM">
       <UniqueIdentifier>{1176953b-651a-45ae-91b8-d08897d0b5ad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MVVM\Models">
-      <UniqueIdentifier>{458168fc-b988-48fc-9dbe-d5d64397f589}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Vendor Files">
       <UniqueIdentifier>{e999f062-3d8f-477f-af9e-551ce781d26f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MVVM\Calibration">
+      <UniqueIdentifier>{3dfec5f2-d381-4b75-9f0b-fc62a121a5a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MVVM\Devices %28List%29">
+      <UniqueIdentifier>{cd6db647-f01b-46cf-99fd-34121bd9c381}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MVVM\Devices %28Manager%29">
+      <UniqueIdentifier>{a1a195ae-ac4e-4018-92ad-70d12867b1b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

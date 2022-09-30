@@ -9,6 +9,18 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     NavigationCacheMode="Required">
 
+    <Page.Resources>
+        <TeachingTip x:Name="NoCalibrationTeachingTip"
+                     PreferredPlacement="Top"
+                     IsLightDismissEnabled="True"
+                     Title="[CONTENT NOT SET]"
+                     Subtitle="[CONTENT NOT SET]">
+            <TeachingTip.IconSource>
+                <FontIconSource Glyph="&#xE7BA;" />
+            </TeachingTip.IconSource>
+        </TeachingTip>
+    </Page.Resources>
+
     <Grid Background="Transparent">
         <SplitView Canvas.ZIndex="1" x:Name="OffsetsView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
@@ -72,17 +84,21 @@
                             <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Error_Text" />
 
                             <TreeView x:Name="TrackingDeviceTreeView" CornerRadius="5"
-                                      VerticalAlignment="Top" HorizontalAlignment="Stretch" 
-                                      
+                                      VerticalAlignment="Top" HorizontalAlignment="Stretch"
+
                                       Grid.Row="0" FontSize="16" FontWeight="Bold"
-                                      CanReorderItems="False" CanDragItems="False" AllowDrop="False"
+                                      CanReorderItems="False" CanDragItems="False"
+
+                                      SelectionMode="None" AllowDrop="False"
 
                                       ItemInvoked="TrackingDeviceTreeView_ItemInvoked">
 
                                 <TreeView.ItemTemplate>
                                     <DataTemplate x:DataType="local:CalibrationDeviceEntryView">
 
-                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                              Opacity="{x:Bind ErrorToOpacity(StatusError), Mode=OneWay}">
+
                                             <Border Height="20" CornerRadius="3" Padding="5,0"
                                                     Margin="0,-15,15,0"
                                                     Opacity="{x:Bind BoolToOpacity(IsBase), Mode=OneWay, FallbackValue=0.0}"
@@ -1000,9 +1016,9 @@
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
                                 IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
                                 Margin="10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}"/>
+                                VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
 
-                            <ToggleButton Margin="10" CornerRadius="4" Grid.Column="1" x:Name="ToggleTrackingButton"
+                        <ToggleButton Margin="10" CornerRadius="4" Grid.Column="1" x:Name="ToggleTrackingButton"
                                       Click="ToggleTrackingButton_Click" FontWeight="SemiBold" IsTabStop="False"
                                       IsEnabled="{Binding ElementName=CalibrationButton,Path=IsEnabled, TargetNullValue=False}"
                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="16">
