@@ -83,7 +83,7 @@
     "/GeneralPage/Tips/TrackingFreeze/Buttons/WMR": "the Menu Button, Grip and Trigger",
     "/GeneralPage/Tips/TrackingFreeze/Footer": "This binding can be changed within SteamVR input settings.",
     "/GeneralPage/Tips/TrackingFreeze/Header": "You can also toggle tracker freeze while in VR! \nPress {0} on your left controller.",
-    "/GeneralPage/Tips/NoCalibration/Footer": "You're unable to calibrate this device because it's not working properly.\nPlease make sure it's connected and working properly.",
+    "/GeneralPage/Tips/NoCalibration/Footer": "Device you're trying to calibrate is reporting a status error.\nPlease make sure it's connected and working properly.",
     "/GeneralPage/Tips/NoCalibration/Header": "This device can't be calibrated right now!",
     "/GeneralPage/Titles/Device": "Device",
     "/GeneralPage/Titles/Status": "Status",
