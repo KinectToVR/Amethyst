@@ -1016,7 +1016,11 @@
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
                                 IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
                                 Margin="10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
+                                VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
+                            <Button.OpacityTransition>
+                                <ScalarTransition />
+                            </Button.OpacityTransition>
+                        </Button>
 
                         <ToggleButton Margin="10" CornerRadius="4" Grid.Column="1" x:Name="ToggleTrackingButton"
                                       Click="ToggleTrackingButton_Click" FontWeight="SemiBold" IsTabStop="False"
