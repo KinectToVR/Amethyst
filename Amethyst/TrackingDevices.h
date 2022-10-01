@@ -179,8 +179,11 @@ namespace TrackingDevices
 
 			// Dim the calibration button if can't calibrate right now
 			k2app::shared::general::calibrationButton.get()->Opacity(
-				(!k2app::K2Settings.overrideDeviceGUIDsMap.empty() // Don't dim if we have overrides
-					|| base_status_ok) ? 1.0 : 0.5); // Dim at 0.5 on base-device-only errors
+				(!k2app::shared::general::calibrationButton.get()->IsEnabled() // Don't dim if disabled
+					|| !k2app::K2Settings.overrideDeviceGUIDsMap.empty() // Don't dim if we have overrides
+					|| base_status_ok)
+					? 1.0 // We're fine if any of the upper conditions is met
+					: 0.5); // Dim at 0.5 on base-device-only errors
 		}
 
 		// Check with this one, should be the same for all anyway
