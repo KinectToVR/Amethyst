@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <ranges>
 
 #include "K2DeviceMath.h"
@@ -242,7 +242,9 @@ namespace k2app::main
 		case 0:
 			{
 				const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
-				pDevice->update(); // Update the device
+
+				if (!pDevice->isSelfUpdateEnabled())
+					pDevice->update(); // Update the device
 
 				interfacing::kinectHeadPosition[pDevice->getDeviceGUID()] =
 					pDevice->getTrackedJoints()[ktvr::Joint_Head].getJointPosition();
@@ -253,7 +255,9 @@ namespace k2app::main
 		case 1:
 			{
 				const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
-				pDevice->update(); // Update the device
+
+				if (!pDevice->isSelfUpdateEnabled())
+					pDevice->update(); // Update the device
 
 				if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
 					interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
@@ -270,7 +274,9 @@ namespace k2app::main
 				{
 					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(
 						TrackingDevices::TrackingDevicesVector[override_id]);
-					pDevice->update(); // Update the device
+
+					if (!pDevice->isSelfUpdateEnabled())
+						pDevice->update(); // Update the device
 
 					interfacing::kinectHeadPosition[pDevice->getDeviceGUID()] =
 						pDevice->getTrackedJoints()[ktvr::Joint_Head].getJointPosition();
@@ -282,7 +288,9 @@ namespace k2app::main
 				{
 					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(
 						TrackingDevices::TrackingDevicesVector[override_id]);
-					pDevice->update(); // Update the device
+
+					if (!pDevice->isSelfUpdateEnabled())
+						pDevice->update(); // Update the device
 
 					if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
 						interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(

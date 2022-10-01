@@ -15,10 +15,6 @@
 #include "Amethyst_API_Devices.h"
 #include "Amethyst_API_Paths.h"
 
-#define AME_API_GET_TIMESTAMP_NOW \
-	std::chrono::time_point_cast<std::chrono::microseconds>	\
-	(std::chrono::system_clock::now()).time_since_epoch().count()
-
 namespace ktvr
 {
 	// Interface Version

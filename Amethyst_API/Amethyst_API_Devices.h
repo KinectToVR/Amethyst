@@ -11,6 +11,10 @@
 
 #include <Eigen/Dense>
 
+#define AME_API_GET_TIMESTAMP_NOW \
+	std::chrono::time_point_cast<std::chrono::microseconds>	\
+	(std::chrono::system_clock::now()).time_since_epoch().count()
+
 /*
  * AME_API Devices
  *
@@ -123,6 +127,7 @@ namespace ktvr
 			jointOrientation{std::move(rot)},
 			trackingState{state}
 		{
+			positionTimestamp = AME_API_GET_TIMESTAMP_NOW;
 		}
 
 		[[nodiscard]] Eigen::Vector3d getJointPosition() const { return jointPosition; }
@@ -135,6 +140,7 @@ namespace ktvr
 		[[nodiscard]] Eigen::Vector3d getJointAngularAcceleration() const { return jointAngularAcceleration; }
 
 		[[nodiscard]] ITrackedJointState getTrackingState() const { return trackingState; } // ITrackedJointState
+		[[nodiscard]] long long getPositionTimestamp() const { return positionTimestamp; }
 
 		// For servers!
 		void update(Eigen::Vector3d position,
@@ -144,7 +150,11 @@ namespace ktvr
 			jointPosition = std::move(position);
 			jointOrientation = std::move(orientation);
 			trackingState = state;
+
+			// Update pose timestamp
+			positionTimestamp = AME_API_GET_TIMESTAMP_NOW;
 		}
+
 		// For servers!
 		void update(Eigen::Vector3d position,
 		            Eigen::Quaterniond orientation,
@@ -163,12 +173,18 @@ namespace ktvr
 			jointAngularAcceleration = std::move(angularAcceleration);
 
 			trackingState = state;
+
+			// Update pose timestamp
+			positionTimestamp = AME_API_GET_TIMESTAMP_NOW;
 		}
 
 		// For servers!
 		void update_position(Eigen::Vector3d position)
 		{
 			jointPosition = std::move(position);
+
+			// Update pose timestamp
+			positionTimestamp = AME_API_GET_TIMESTAMP_NOW;
 		}
 
 		// For servers!
@@ -209,16 +225,17 @@ namespace ktvr
 
 	protected:
 		// Tracker should be centered automatically
-		Eigen::Vector3d jointPosition = Eigen::Vector3d(0.f, 0.f, 0.f);
-		Eigen::Quaterniond jointOrientation = Eigen::Quaterniond(1.f, 0.f, 0.f, 0.f);
+		Eigen::Vector3d jointPosition = Eigen::Vector3d(0., 0., 0.);
+		Eigen::Quaterniond jointOrientation = Eigen::Quaterniond(1., 0., 0., 0.);
 
-		Eigen::Vector3d jointVelocity = Eigen::Vector3d(0.f, 0.f, 0.f);
-		Eigen::Vector3d jointAcceleration = Eigen::Vector3d(0.f, 0.f, 0.f);
+		Eigen::Vector3d jointVelocity = Eigen::Vector3d(0., 0., 0.);
+		Eigen::Vector3d jointAcceleration = Eigen::Vector3d(0., 0., 0.);
 
-		Eigen::Vector3d jointAngularVelocity = Eigen::Vector3d(0.f, 0.f, 0.f);
-		Eigen::Vector3d jointAngularAcceleration = Eigen::Vector3d(0.f, 0.f, 0.f);
+		Eigen::Vector3d jointAngularVelocity = Eigen::Vector3d(0., 0., 0.);
+		Eigen::Vector3d jointAngularAcceleration = Eigen::Vector3d(0., 0., 0.);
 
 		ITrackedJointState trackingState = State_NotTracked;
+		long long positionTimestamp = 0;
 	};
 
 	// Tracking Device Joint class for client plugins : Extended
@@ -847,6 +864,11 @@ namespace ktvr
 		// Includes: velocity, acceleration, angular velocity, angular acceleration
 		[[nodiscard]] bool isPhysicsOverrideEnabled() const { return Flags_OverridesJointPhysics; }
 
+		// Should be set up at construction
+		// This will tell Amethyst not to auto-update this device
+		// You should register some timer to update your device yourself
+		[[nodiscard]] bool isSelfUpdateEnabled() const { return Flags_ForceSelfUpdate; }
+
 		/* Helper functions which may be internally called by the device plugin */
 
 		// Get the raw openvr's HMD pose
@@ -986,6 +1008,11 @@ namespace ktvr
 		// Includes: velocity, acceleration, angular velocity, angular acceleration
 		bool Flags_OverridesJointPhysics = false;
 
+		// Should be set up at construction
+		// This will tell Amethyst not to auto-update this device
+		// You should register some timer to update your device yourself
+		bool Flags_ForceSelfUpdate = false;
+
 		// The array of the device joints, mapped with ITrackedJointType
 		std::array<K2TrackedBaseJoint, 25> trackedJoints;
 
@@ -1072,6 +1099,11 @@ namespace ktvr
 		// This will tell Amethyst not to auto-manage on joints managed by this plugin
 		// Includes: velocity, acceleration, angular velocity, angular acceleration
 		[[nodiscard]] bool isPhysicsOverrideEnabled() const { return Flags_OverridesJointPhysics; }
+
+		// Should be set up at construction
+		// This will tell Amethyst not to auto-update this device
+		// You should register some timer to update your device yourself
+		[[nodiscard]] bool isSelfUpdateEnabled() const { return Flags_ForceSelfUpdate; }
 
 		/* Helper functions which may be internally called by the device plugin */
 
@@ -1200,6 +1232,11 @@ namespace ktvr
 		// This will tell Amethyst not to auto-manage on joints managed by this plugin
 		// Includes: velocity, acceleration, angular velocity, angular acceleration
 		bool Flags_OverridesJointPhysics = false;
+
+		// Should be set up at construction
+		// This will tell Amethyst not to auto-update this device
+		// You should register some timer to update your device yourself
+		bool Flags_ForceSelfUpdate = false;
 
 		std::vector<K2TrackedJoint> trackedJoints = {
 			K2TrackedJoint() // owo, wat's this?
