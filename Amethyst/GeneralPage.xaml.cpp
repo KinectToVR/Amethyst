@@ -2375,7 +2375,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::Execute
 		// Set up the calibration origin
 		if (calibration_first_time)
 			*calibrationOrigin =
-				k2app::interfacing::kinectWaistPosition[
+				k2app::interfacing::deviceRelativeTransformOrigin[
 					general_calibrating_device_guid];
 
 		// Cache the calibration first_time

@@ -110,7 +110,7 @@ namespace k2app::interfacing
 	// Position helpers for k2 devices -> GUID, Pose
 	inline std::map<std::wstring, Eigen::Vector3d>
 		kinectHeadPosition, // But this one's kinect-only
-		kinectWaistPosition; // This one applies to both bases
+		deviceRelativeTransformOrigin; // This one applies to both
 
 	// OpenVR playspace position
 	inline Eigen::Vector3d vrPlayspaceTranslation = Eigen::Vector3d(0, 0, 0);

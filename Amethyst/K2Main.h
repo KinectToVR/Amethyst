@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <ranges>
 
 #include "K2DeviceMath.h"
@@ -248,7 +248,7 @@ namespace k2app::main
 
 				interfacing::kinectHeadPosition[pDevice->getDeviceGUID()] =
 					pDevice->getTrackedJoints()[ktvr::Joint_Head].getJointPosition();
-				interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] =
+				interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] =
 					pDevice->getTrackedJoints()[ktvr::Joint_SpineWaist].getJointPosition();
 			}
 			break;
@@ -260,7 +260,7 @@ namespace k2app::main
 					pDevice->update(); // Update the device
 
 				if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
-					interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
+					interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
 						K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
 			}
 			break;
@@ -280,7 +280,7 @@ namespace k2app::main
 
 					interfacing::kinectHeadPosition[pDevice->getDeviceGUID()] =
 						pDevice->getTrackedJoints()[ktvr::Joint_Head].getJointPosition();
-					interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] =
+					interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] =
 						pDevice->getTrackedJoints()[ktvr::Joint_SpineWaist].getJointPosition();
 				}
 				break;
@@ -293,7 +293,7 @@ namespace k2app::main
 						pDevice->update(); // Update the device
 
 					if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
-						interfacing::kinectWaistPosition[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
+						interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
 							K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
 				}
 				break;
