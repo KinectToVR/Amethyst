@@ -220,6 +220,8 @@ namespace k2app::shared
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TreeView> devicesTreeView;
 
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ItemsRepeater> pluginsItemsRepeater;
+
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Flyout>
 			noJointsFlyout,
 			setDeviceTypeFlyout;
