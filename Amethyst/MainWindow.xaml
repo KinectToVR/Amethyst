@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="Amethyst.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -69,6 +69,7 @@
 
             <Grid.Resources>
                 <TeachingTip x:Name="InitializerTeachingTip"
+                             Canvas.ZIndex="100"
                              Title="/WELCOME"
                              Subtitle="/TEXT"
                              PreferredPlacement="Top"
@@ -81,6 +82,7 @@
                              CloseButtonClick="InitializerTeachingTip_CloseButtonClick" />
 
                 <TeachingTip x:Name="ShutdownTeachingTip"
+                             Canvas.ZIndex="100"
                              Title="/SHUTDOWN"
                              Subtitle="/TEXT"
                              PreferredPlacement="TopRight"
@@ -89,6 +91,7 @@
                              IsLightDismissEnabled="True" />
 
                 <TeachingTip x:Name="ReloadTeachingTip"
+                             Canvas.ZIndex="100"
                              Title="/RELOAD"
                              Subtitle="/TEXT"
                              PreferredPlacement="TopRight"
