@@ -1,0 +1,26 @@
+namespace Amethyst
+{
+	runtimeclass PluginEntryView : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		PluginEntryView(
+			String DisplayName,
+			String DeviceGUID,
+			String ErrorText,
+			String Location,
+			Boolean IsLoaded,
+			Boolean LoadError);
+
+		String DisplayName;
+		String DeviceGUID;
+		String ErrorText;
+		String Location;
+		Boolean IsLoaded;
+		Boolean LoadError;
+
+		String TrimString(String value, UInt64 chars);
+		String JSONString(String key);
+
+		Boolean InvertBoolean(Boolean value);
+		Microsoft.UI.Xaml.Input.TappedEventHandler OpenDevicePath();
+	}
+}

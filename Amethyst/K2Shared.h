@@ -220,6 +220,8 @@ namespace k2app::shared
 
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::TreeView> devicesTreeView;
 
+		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::ItemsRepeater> pluginsItemsRepeater;
+
 		inline std::shared_ptr<winrt::Microsoft::UI::Xaml::Controls::Flyout>
 			noJointsFlyout,
 			setDeviceTypeFlyout;
@@ -334,7 +336,7 @@ namespace k2app::interfacing
 			const auto json_object = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
 
 			// Check if the resource root is fine
-			if (json_object.Size() <= 0)
+			if (!json_object || json_object.Size() <= 0)
 			{
 				LOG(ERROR) << "The current language enumeration resource root is empty!"
 					"App interface will be broken!";
@@ -416,7 +418,7 @@ namespace k2app::interfacing
 			m_local_resources = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
 
 			// Check if the resource root is fine
-			if (m_local_resources.Size() <= 0)
+			if (!m_local_resources || m_local_resources.Size() <= 0)
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
 
 			else
@@ -471,7 +473,7 @@ namespace k2app::interfacing
 			m_english_resources = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
 
 			// Check if the resource root is fine
-			if (m_english_resources.Size() <= 0)
+			if (!m_english_resources || m_english_resources.Size() <= 0)
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
 
 			else
@@ -495,7 +497,7 @@ namespace k2app::interfacing
 		try
 		{
 			// Check if the resource root is fine
-			if (m_local_resources.Size() <= 0)
+			if (!m_local_resources || m_local_resources.Size() <= 0)
 			{
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
 				return resource_key; // Just give up
@@ -527,7 +529,7 @@ namespace k2app::interfacing
 		try
 		{
 			// Check if the resource root is fine
-			if (m_english_resources.Size() <= 0)
+			if (!m_english_resources || m_english_resources.Size() <= 0)
 			{
 				LOG(ERROR) << "The current EN resource root is empty! App interface will be broken!";
 				return resource_key; // Just give up
@@ -567,4 +569,31 @@ namespace TrackingDevices
 	inline std::vector<std::pair<
 		winrt::Windows::Data::Json::JsonObject, std::filesystem::path>>
 	TrackingDevicesLocalizationResourcesRootsVector;
+
+	// Enumeration of all possible (probable) plugin load types
+	enum PluginLoadError
+	{
+		Unknown, // We literally don't know what's happened
+		NoError, // Everything's fine, celebration time!
+		LoadingSkipped, // This device is disabled by the user
+		NoDeviceFolder, // No device folder w/ files found
+		NoDeviceManifest, // No manifest found / wrong path
+		InvalidDeviceManifest, // Manifest invalid : name/path
+		NoDeviceDll, // Device dll not found at proper path
+		NoDeviceDependencyDll, // Dep dll/s not found or invalid
+		ManifestParsingException, // Manifest parsing exception
+		DeviceDllLinkError, // Could not link for some reason
+		WrongInterface, // Linking factory returned null pointer
+		BadOrDuplicateGUID, // Empty/Bad/Duplicate device GUID
+		MismatchedAPIVersion, // Older or newer API (still load-able)
+		InvalidFactory // Device factory just gave up, now cry
+	};
+
+	// Written to at the first plugin load
+	inline std::vector<std::tuple<
+		std::wstring, // Name
+		std::wstring, // GUID
+		PluginLoadError, // Status
+		std::wstring // Location
+		>> LoadAttemptedTrackingDevicesVector;
 }

@@ -39,6 +39,7 @@ namespace winrt::Amethyst::implementation
 		selectedDeviceSettingsHostContainer = std::make_shared<Controls::Grid>(SelectedDeviceSettingsHostContainer());
 
 		devicesTreeView = std::make_shared<Controls::TreeView>(TrackingDeviceTreeView());
+		pluginsItemsRepeater = std::make_shared<Controls::ItemsRepeater>(PluginsItemsRepeater());
 
 		noJointsFlyout = std::make_shared<Controls::Flyout>(NoJointsFlyout());
 		setDeviceTypeFlyout = std::make_shared<Controls::Flyout>(SetDeviceTypeFlyout());
@@ -70,66 +71,69 @@ namespace winrt::Amethyst::implementation
 		// Capture the current entry thread context
 		k2app::shared::DeviceEntryView::thisEntryContext = new apartment_context();
 
-		// Reset the MVVM vector
-		TrackingDevices::deviceMVVM_List =
-			multi_threaded_observable_vector<Amethyst::DeviceEntryView>();
-
-		// Add tracking devices here
-		for (const auto& device : TrackingDevices::TrackingDevicesVector)
+		// Append all the general devices
 		{
-			std::wstring deviceName = L"[UNKNOWN]";
-			std::wstring deviceGUID = L"INVALID";
-			HRESULT deviceStatus = E_FAIL;
+			// Reset the MVVM vector
+			TrackingDevices::deviceMVVM_List =
+				multi_threaded_observable_vector<Amethyst::DeviceEntryView>();
 
-			switch (device.index())
+			// Add tracking devices here
+			for (const auto& device : TrackingDevices::TrackingDevicesVector)
 			{
-			case 0:
+				std::wstring deviceName = L"[UNKNOWN]";
+				std::wstring deviceGUID = L"INVALID";
+				HRESULT deviceStatus = E_FAIL;
+
+				switch (device.index())
 				{
-					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
-					deviceName = pDevice->getDeviceName();
-					deviceGUID = pDevice->getDeviceGUID();
-					deviceStatus = pDevice->getStatusResult();
+				case 0:
+					{
+						const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(device);
+						deviceName = pDevice->getDeviceName();
+						deviceGUID = pDevice->getDeviceGUID();
+						deviceStatus = pDevice->getStatusResult();
+					}
+					break;
+				case 1:
+					{
+						const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
+						deviceName = pDevice->getDeviceName();
+						deviceGUID = pDevice->getDeviceGUID();
+						deviceStatus = pDevice->getStatusResult();
+					}
+					break;
 				}
-				break;
-			case 1:
-				{
-					const auto& pDevice = std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device);
-					deviceName = pDevice->getDeviceName();
-					deviceGUID = pDevice->getDeviceGUID();
-					deviceStatus = pDevice->getStatusResult();
-				}
-				break;
+
+				LOG(INFO) << "Appending " << WStringToString(deviceName) <<
+					WStringToString(std::format(L" (GUID: \"{}\") ", deviceGUID)) <<
+					" to UI Node's tracking devices' list...";
+
+				LOG(INFO) << "Creating and appending \"" << WStringToString(deviceName) <<
+					WStringToString(std::format(L"\" (GUID: \"{}\") ", deviceGUID)) <<
+					" TreeViewItem Amethyst::DeviceEntryView container object...";
+
+				const bool _isBase = TrackingDevices::IsABase(deviceGUID),
+				           _isOverride = TrackingDevices::IsAnOverride(deviceGUID);
+
+				TrackingDevices::deviceMVVM_List.Append(
+					winrt::make<DeviceEntryView>(
+						deviceGUID.c_str(), deviceName.c_str(),
+
+						// Check if the device is set as a base
+						_isBase,
+
+						// Try to find the device inside the overrides' vector
+						_isOverride,
+
+						// Pre-check device's status
+						(_isBase || _isOverride) && deviceStatus != S_OK));
 			}
 
-			LOG(INFO) << "Appending " << WStringToString(deviceName) <<
-				WStringToString(std::format(L" (GUID: \"{}\") ", deviceGUID)) <<
-				" to UI Node's tracking devices' list...";
-
-			LOG(INFO) << "Creating and appending \"" << WStringToString(deviceName) <<
-				WStringToString(std::format(L"\" (GUID: \"{}\") ", deviceGUID)) <<
-				" TreeViewItem Amethyst::DeviceEntryView container object...";
-
-			const bool _isBase = TrackingDevices::IsABase(deviceGUID),
-			           _isOverride = TrackingDevices::IsAnOverride(deviceGUID);
-
-			TrackingDevices::deviceMVVM_List.Append(
-				winrt::make<DeviceEntryView>(
-					deviceGUID.c_str(), deviceName.c_str(),
-
-					// Check if the device is set as a base
-					_isBase,
-
-					// Try to find the device inside the overrides' vector
-					_isOverride,
-
-					// Pre-check device's status
-					(_isBase || _isOverride) && deviceStatus != S_OK));
+			LOG(INFO) << "Setting the devices' TreeView ItemSource to the created "
+				"Amethyst::DeviceEntryView MVVM object list...";
+			devicesTreeView.get()->ItemsSource(box_value(TrackingDevices::deviceMVVM_List));
+			devices_mvvm_setup_finished = true; // Mark as finished
 		}
-
-		LOG(INFO) << "Setting the devices' TreeView ItemSource to the created "
-			"Amethyst::DeviceEntryView MVVM object list...";
-		devicesTreeView.get()->ItemsSource(box_value(TrackingDevices::deviceMVVM_List));
-		devices_mvvm_setup_finished = true; // Mark as finished
 
 		// Set currently tracking device & selected device
 		LOG(INFO) << "Overwriting the devices TreeView selected item...";
@@ -262,8 +266,8 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	LOG(INFO) << "Now disconnecting the tracking device...";
 
 	if (const auto& trackingDevice =
-		TrackingDevices::TrackingDevicesVector.at(
-			selectedTrackingDeviceGUIDPair.second);
+			TrackingDevices::TrackingDevicesVector.at(
+				selectedTrackingDeviceGUIDPair.second);
 		trackingDevice.index() == 0)
 		// Kinect Basis
 		std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->shutdown();
@@ -271,7 +275,7 @@ void Amethyst::implementation::DevicesPage::DisconnectDeviceButton_Click(
 	else if (trackingDevice.index() == 1)
 		// Joints Basis
 		std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(trackingDevice)->shutdown();
-	
+
 	// Update the status here
 	TrackingDevices::devices_handle_refresh(false);
 
@@ -287,11 +291,11 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 	const RoutedEventArgs& e)
 {
 	LOG(INFO) << "Now deselecting the tracking device...";
-	
+
 	setAsOverrideButton.get()->IsEnabled(true);
 	setAsBaseButton.get()->IsEnabled(true);
 	deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
-	
+
 	// Deselect the device
 	k2app::K2Settings.overrideDeviceGUIDsMap.erase(
 		selectedTrackingDeviceGUIDPair.first);
@@ -312,9 +316,9 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOverrideButton_Click(
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
-	if (const auto& trackingDevice = 
-		TrackingDevices::TrackingDevicesVector.at(
-		selectedTrackingDeviceGUIDPair.second);
+	if (const auto& trackingDevice =
+			TrackingDevices::TrackingDevicesVector.at(
+				selectedTrackingDeviceGUIDPair.second);
 
 		// JointsBasis
 		trackingDevice.index() == 1 &&
@@ -339,7 +343,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	setAsBaseButton.get()->IsEnabled(true);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
 
-	LOG(INFO) << "Changed the current tracking device (Override) to " << 
+	LOG(INFO) << "Changed the current tracking device (Override) to " <<
 		WStringToString(selectedTrackingDeviceGUIDPair.first);
 
 	// Update the status here
@@ -365,7 +369,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 		// Re-add the child for it to play our funky transition
 		// (Though it's not the same as before...)
 		devicesOverridesSelectorStackPanelOuter.get()->
-		Children().Append(*devicesOverridesSelectorStackPanelInner);
+		                                        Children().Append(*devicesOverridesSelectorStackPanelInner);
 	}
 
 	// Save settings
@@ -385,8 +389,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
 {
 	if (const auto& trackingDevice =
-		TrackingDevices::TrackingDevicesVector.at(
-			selectedTrackingDeviceGUIDPair.second);
+			TrackingDevices::TrackingDevicesVector.at(
+				selectedTrackingDeviceGUIDPair.second);
 
 		// JointsBasis
 		trackingDevice.index() == 1 &&
@@ -406,7 +410,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	// Remove an override if exists and overlaps
 	if (TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
 		k2app::K2Settings.overrideDeviceGUIDsMap.erase(selectedTrackingDeviceGUIDPair.first);
-		
+
 	// Update the status here
 	ReloadSelectedDevice(true);
 
@@ -573,12 +577,65 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 	DeviceControlsTeachingTip().ActionButtonContent(
 		box_value(k2app::interfacing::LocalizedJSONString(L"/NUX/Prev")));
 
+	Manage_Device_Plugins_Open().Content(
+		box_value(k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Devices/Manager/Open")));
+	Manage_Device_Plugins_Title().Text(
+		k2app::interfacing::LocalizedJSONString(L"/DevicesPage/Devices/Manager/Title"));
+
+	// Append plugin manager devices
+	{
+		// Create the MVVM vector
+		auto pluginMVVMList =
+			multi_threaded_observable_vector<Amethyst::PluginEntryView>();
+
+		// Add tracking plugins here
+		for (const auto& plugin :
+			TrackingDevices::LoadAttemptedTrackingDevicesVector)
+		{
+			LOG(INFO) << "Appending " << WStringToString(std::get<0>(plugin)) <<
+				WStringToString(std::format(L" (GUID: \"{}\") ", std::get<1>(plugin))) <<
+				" to UI Node's plugins' list...";
+
+			LOG(INFO) << "Creating and appending \"" << WStringToString(std::get<0>(plugin)) <<
+				WStringToString(std::format(L"\" (GUID: \"{}\") ", std::get<1>(plugin))) <<
+				" TreeViewItem Amethyst::PluginEntryView container object...";
+			
+			pluginMVVMList.Append(
+				winrt::make<PluginEntryView>(
+					// Get the device name
+					std::get<0>(plugin).c_str(),
+
+					// Get the device GUID
+					std::get<1>(plugin).c_str(),
+
+					// Get a msg string for this status
+					k2app::interfacing::LocalizedJSONString(
+						L"/DevicesPage/Devices/Manager/Labels/" +
+						std::to_wstring(std::get<2>(plugin))).c_str(),
+
+					// Plugin (desired) location
+					std::get<3>(plugin).c_str(),
+
+					// If the plugin has been loaded (properly)
+					TrackingDevices::deviceGUID_ID_Map.contains(std::get<1>(plugin)),
+
+					// If there was any error loading the plugin
+					std::get<2>(plugin) != TrackingDevices::NoError &&
+					std::get<2>(plugin) != TrackingDevices::LoadingSkipped
+					));
+		}
+
+		LOG(INFO) << "Setting the devices' ItemRepeater ItemSource to the created "
+			"Amethyst::PluginEntryView MVVM object list...";
+		pluginsItemsRepeater.get()->ItemsSource(box_value(pluginMVVMList));
+	}
+
 	// Reset
 	devices_tab_re_setup_finished = false;
 
 	// Notify of the setup's end
 	devices_tab_setup_finished = true;
-	
+
 	// Reconnect and update the status here
 	ReloadSelectedDevice(true);
 
@@ -868,7 +925,7 @@ k2app::shared::devices::ReloadSelectedDevice(
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	interfacing::devices_check_disabled_joints();
-	
+
 	// Update the status here
 	TrackingDevices::devices_handle_refresh(_reconnect);
 
@@ -931,7 +988,7 @@ k2app::shared::devices::ReloadSelectedDevice(
 	}
 
 	devices_signal_joints = true; // Change back
-	LOG(INFO) << "Changed the currently selected device to " << 
+	LOG(INFO) << "Changed the currently selected device to " <<
 		WStringToString(selectedTrackingDeviceGUIDPair.first);
 
 	// Remove the transition
@@ -941,4 +998,33 @@ k2app::shared::devices::ReloadSelectedDevice(
 	co_await ui_thread;
 
 	devicesMainContentGridInner.get()->Transitions().Clear();
+}
+
+void Amethyst::implementation::DevicesPage::PluginManagerFlyout_Opening(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
+{
+	k2app::shared::main::interfaceBlockerGrid->Opacity(0.35);
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
+
+	k2app::interfacing::isNUXPending = true;
+
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
+}
+
+
+void Amethyst::implementation::DevicesPage::PluginManagerFlyout_Closing(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
+{
+	// Play a sound
+	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+}
+
+void Amethyst::implementation::DevicesPage::PluginManagerFlyout_Closed(
+	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
+{
+	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
+
+	k2app::interfacing::isNUXPending = false;
 }

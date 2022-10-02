@@ -30,6 +30,9 @@
     <Midl Include="CalibrationDeviceEntryView.idl">
       <Filter>MVVM\Calibration</Filter>
     </Midl>
+    <Midl Include="PluginEntryView.idl">
+      <Filter>MVVM\Devices %28Manager%29</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -39,6 +42,9 @@
     </ClCompile>
     <ClCompile Include="CalibrationDeviceEntryView.cpp">
       <Filter>MVVM\Calibration</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginEntryView.cpp">
+      <Filter>MVVM\Devices %28Manager%29</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="CalibrationDeviceEntryView.h">
       <Filter>MVVM\Calibration</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginEntryView.h">
+      <Filter>MVVM\Devices %28Manager%29</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

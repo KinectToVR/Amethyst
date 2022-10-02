@@ -10,6 +10,8 @@
 #include "OverrideSelectorRow.h"
 #include "OverrideSelectorExpander.h"
 
+#include "PluginEntryView.h"
+
 namespace winrt::Amethyst::implementation
 {
 	struct DevicesPage : DevicesPageT<DevicesPage>
@@ -56,6 +58,16 @@ namespace winrt::Amethyst::implementation
 		Windows::Foundation::IAsyncAction TrackingDeviceTreeView_ItemInvoked(
 			const Microsoft::UI::Xaml::Controls::TreeView& sender,
 			const Microsoft::UI::Xaml::Controls::TreeViewItemInvokedEventArgs& args);
+
+		void PluginManagerFlyout_Opening(
+			const Windows::Foundation::IInspectable& sender,
+			const Windows::Foundation::IInspectable& e);
+		void PluginManagerFlyout_Closing(
+			const Windows::Foundation::IInspectable& sender,
+			const Windows::Foundation::IInspectable& e);
+		void PluginManagerFlyout_Closed(
+			const Windows::Foundation::IInspectable& sender,
+			const Windows::Foundation::IInspectable& e);
 	};
 }
 

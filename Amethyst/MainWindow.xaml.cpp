@@ -1161,6 +1161,15 @@ namespace winrt::Amethyst::implementation
 						LOG(INFO) << "Device folder at path: \"" <<
 							WStringToString(entry.wstring()) << "\""
 							" doesn't exist, skipping it!";
+
+						TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+							{
+								std::format(L"[{}]", entry.stem().wstring()),
+								L"", // No GUID yet
+								TrackingDevices::NoDeviceFolder,
+								entry.wstring()
+							}
+						);
 						continue;
 					}
 
@@ -1169,6 +1178,15 @@ namespace winrt::Amethyst::implementation
 					{
 						LOG(ERROR) << WStringToString(entry.stem().wstring()) <<
 							"'s manifest has not been not found :/";
+
+						TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+							{
+								std::format(L"[{}]", entry.stem().wstring()),
+								L"", // No GUID yet
+								TrackingDevices::NoDeviceManifest,
+								entry.wstring()
+							}
+						);
 						continue;
 					}
 
@@ -1190,6 +1208,15 @@ namespace winrt::Amethyst::implementation
 						{
 							LOG(ERROR) << WStringToString(entry.stem().wstring()) <<
 								"'s manifest was invalid!";
+
+							TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+								{
+									std::format(L"[{}]", entry.stem().wstring()),
+									L"", // No GUID yet
+									TrackingDevices::InvalidDeviceManifest,
+									entry.wstring()
+								}
+							);
 							continue;
 						}
 
@@ -1208,6 +1235,15 @@ namespace winrt::Amethyst::implementation
 						if (!exists(deviceDllPath))
 						{
 							LOG(ERROR) << "Device's driver dll (bin/win64/device_[device].dll) was not found!";
+
+							TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+								{
+									std::format(L"[{}]", entry.stem().wstring()),
+									L"", // No GUID yet
+									TrackingDevices::NoDeviceDll,
+									entry.wstring()
+								}
+							);
 							continue;
 						}
 
@@ -1228,6 +1264,15 @@ namespace winrt::Amethyst::implementation
 						if (!_found)
 						{
 							LOG(ERROR) << "Device's dependency dll (external linked dll) was not found!";
+
+							TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+								{
+									std::format(L"[{}]", entry.stem().wstring()),
+									L"", // No GUID yet
+									TrackingDevices::NoDeviceDependencyDll,
+									entry.wstring()
+								}
+							);
 							continue;
 						}
 					}
@@ -1236,22 +1281,42 @@ namespace winrt::Amethyst::implementation
 						LOG(ERROR) << "Parsing \"" << WStringToString(entry.wstring()) <<
 							"\"'s manifest has thrown a hresult_error exception :/";
 						LOG(ERROR) << " Message: " << WStringToString(ex.message().c_str());
+
+						TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+							{
+								std::format(L"[{}]", entry.stem().wstring()),
+								L"", // No GUID yet
+								TrackingDevices::ManifestParsingException,
+								entry.wstring()
+							}
+						);
 						continue;
 					}
 
 					LOG(INFO) << "Found the device's dependency dll, now loading...";
 
 					// Get a handle to the DLL module.
-					HINSTANCE hLibraryInstance = LoadLibraryExW(deviceDllPath.wstring().c_str(), nullptr,
-					                                            LOAD_LIBRARY_SEARCH_DEFAULT_DIRS |
-					                                            // Add device's folder to dll search path
-					                                            LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR |
-					                                            LOAD_LIBRARY_SEARCH_SYSTEM32);
+					HINSTANCE hLibraryInstance =
+						LoadLibraryExW(
+							deviceDllPath.wstring().c_str(), nullptr,
+							LOAD_LIBRARY_SEARCH_DEFAULT_DIRS |
+							// Add device's folder to dll search path
+							LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR |
+							LOAD_LIBRARY_SEARCH_SYSTEM32);
 
 					// Check if the library's loaded correctly
 					if (hLibraryInstance == nullptr)
 					{
 						LOG(ERROR) << "There was an error linking with the device library!";
+
+						TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+							{
+								std::format(L"[{}]", entry.stem().wstring()),
+								L"", // No GUID yet
+								TrackingDevices::DeviceDllLinkError,
+								entry.wstring()
+							}
+						);
 						continue;
 					}
 
@@ -1267,6 +1332,15 @@ namespace winrt::Amethyst::implementation
 							ktvr::IAME_API_Version << ", it's probably outdated.";
 
 						LOG(ERROR) << "OR: there was an error calling the device factory...";
+
+						TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+							{
+								std::format(L"[{}]", entry.stem().wstring()),
+								L"", // No GUID yet
+								TrackingDevices::WrongInterface,
+								entry.wstring()
+							}
+						);
 						continue;
 					}
 
@@ -1275,7 +1349,9 @@ namespace winrt::Amethyst::implementation
 					// Compose the device
 					int returnCode = ktvr::K2InitError_Invalid;
 					std::wstring stat = L"Something's wrong!\nE_UKNOWN\nWhat's happened here?";
+
 					std::wstring _guid = L"INVALID"; // Placeholder
+					std::wstring _name = L"INVALID"; // Placeholder
 
 					// Compose the device properties
 					bool blocks_flip = false, supports_math = false,
@@ -1293,13 +1369,41 @@ namespace winrt::Amethyst::implementation
 						{
 							LOG(INFO) << "Interface version OK, now checking its GUID...";
 							const auto pDevice_GUID = pDevice->getDeviceGUID();
+							_name = pDevice->getDeviceName();
 
 							LOG(INFO) << "Device's GUID is: " << WStringToString(pDevice_GUID);
 
+							// Skip duplicates
 							if (pDevice_GUID.empty() || pDevice_GUID == L"INVALID" ||
 								TrackingDevices::deviceGUID_ID_Map.contains(pDevice_GUID))
 							{
 								LOG(INFO) << "Skipping device with invalid or duplicate GUID...";
+
+								TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+									{
+										pDevice->getDeviceName(),
+										pDevice_GUID,
+										TrackingDevices::BadOrDuplicateGUID,
+										entry.wstring()
+									}
+								);
+								continue;
+							}
+
+							// Skip disabled ones
+							if (k2app::K2Settings.disabledDevicesGuidSet.contains(pDevice_GUID))
+							{
+								LOG(INFO) << "Skipping disabled device (disabled by GUID)...";
+								LOG(INFO) << "Skipped GUID: " << WStringToString(pDevice_GUID);
+
+								TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+									{
+										pDevice->getDeviceName(),
+										pDevice_GUID,
+										TrackingDevices::LoadingSkipped,
+										entry.wstring()
+									}
+								);
 								continue;
 							}
 
@@ -1506,13 +1610,41 @@ namespace winrt::Amethyst::implementation
 						{
 							LOG(INFO) << "Interface version OK, now checking its GUID...";
 							const auto pDevice_GUID = pDevice->getDeviceGUID();
+							_name = pDevice->getDeviceName();
 
 							LOG(INFO) << "Device's GUID is: " << WStringToString(pDevice_GUID);
 
+							// Skip duplicates
 							if (pDevice_GUID.empty() || pDevice_GUID == L"INVALID" ||
 								TrackingDevices::deviceGUID_ID_Map.contains(pDevice_GUID))
 							{
 								LOG(INFO) << "Skipping device with invalid or duplicate GUID...";
+
+								TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+									{
+										pDevice->getDeviceName(),
+										pDevice_GUID,
+										TrackingDevices::BadOrDuplicateGUID,
+										entry.wstring()
+									}
+								);
+								continue;
+							}
+
+							// Skip disabled ones
+							if (k2app::K2Settings.disabledDevicesGuidSet.contains(pDevice_GUID))
+							{
+								LOG(INFO) << "Skipping disabled device (disabled by GUID)...";
+								LOG(INFO) << "Skipped GUID: " << WStringToString(pDevice_GUID);
+
+								TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+									{
+										pDevice->getDeviceName(),
+										pDevice_GUID,
+										TrackingDevices::LoadingSkipped,
+										entry.wstring()
+									}
+								);
 								continue;
 							}
 
@@ -1758,6 +1890,7 @@ namespace winrt::Amethyst::implementation
 						{
 							LOG(INFO) << "Registered tracking device with:"
 								"\n - name: " << WStringToString(device_name) <<
+								"\n - display name: " << WStringToString(_name) <<
 								"\n - type: " << WStringToString(device_type) <<
 								"\n - blocks flip: " << blocks_flip <<
 								"\n - supports math-based orientation: " << supports_math <<
@@ -1784,6 +1917,16 @@ namespace winrt::Amethyst::implementation
 								k2app::K2Settings.overrideDeviceGUIDsMap.insert_or_assign(
 									_guid, TrackingDevices::TrackingDevicesVector.size() - 1);
 							}
+
+							// Append to the global registry
+							TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+								{
+									_name,
+									_guid,
+									TrackingDevices::NoError,
+									entry.wstring()
+								}
+							);
 						}
 						break;
 					case ktvr::K2InitError_BadInterface:
@@ -1793,13 +1936,32 @@ namespace winrt::Amethyst::implementation
 								<<
 								ktvr::IAME_API_Version <<
 								", it's probably outdated.";
+
+							TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+								{
+									std::format(L"[{}]", device_name),
+									_guid,
+									TrackingDevices::MismatchedAPIVersion,
+									entry.wstring()
+								}
+							);
 						}
 						break;
 					case ktvr::K2InitError_Invalid:
+					default:
 						{
 							LOG(ERROR) <<
-								"Device either didn't give any return code or it's factory has malfunctioned. "
+								"Device either didn't give any return code or its factory has malfunctioned. "
 								"You can only cry about it...";
+
+							TrackingDevices::LoadAttemptedTrackingDevicesVector.push_back(
+								{
+									std::format(L"[{}]", device_name),
+									_guid,
+									TrackingDevices::InvalidFactory,
+									entry.wstring()
+								}
+							);
 						}
 						break;
 					}
@@ -2020,14 +2182,14 @@ namespace winrt::Amethyst::implementation
 					{
 						const std::filesystem::path devices_folder_path =
 							k2app::interfacing::GetProgramLocation().parent_path() / "devices";
-						
+
 						if (!exists(devices_folder_path))
 							co_return; // Give up on trying
 
 						HANDLE ChangeHandle = FindFirstChangeNotification(
 							devices_folder_path.wstring().c_str(),
 							FALSE, FILE_NOTIFY_CHANGE_LAST_WRITE);
-						
+
 						while (true)
 							if (WaitForSingleObject(ChangeHandle, INFINITE) == WAIT_OBJECT_0)
 							{
@@ -2067,7 +2229,7 @@ namespace winrt::Amethyst::implementation
 
 						if (file == INVALID_HANDLE_VALUE)
 							co_return; // Give up on trying
-						
+
 						OVERLAPPED overlapped{};
 						overlapped.hEvent = CreateEvent(nullptr, FALSE, 0, nullptr);
 
@@ -2085,13 +2247,13 @@ namespace winrt::Amethyst::implementation
 								DWORD bytes_transferred;
 								GetOverlappedResult(file, &overlapped, &bytes_transferred, FALSE);
 
-								FILE_NOTIFY_INFORMATION* event = (FILE_NOTIFY_INFORMATION*)change_buf;
+								auto event = (FILE_NOTIFY_INFORMATION*)change_buf;
 
 								// Parse all events
 								while (true)
 								{
 									// Parse only valid events
-									if (std::wstring(event->FileName).find(L"amethystpaths.k2path") 
+									if (std::wstring(event->FileName).find(L"amethystpaths.k2path")
 										!= std::wstring::npos &&
 										event->Action == FILE_ACTION_MODIFIED)
 									{
@@ -2099,7 +2261,8 @@ namespace winrt::Amethyst::implementation
 										apartment_context ui_thread;
 
 										// Change the thread to the UI one
-										LOG(INFO) << "Changing the apartment thread context to the constructor thread...";
+										LOG(INFO) <<
+											"Changing the apartment thread context to the constructor thread...";
 										co_await *k2app::shared::main::thisEntryContext;
 
 										// Show the reload tip
@@ -2110,7 +2273,7 @@ namespace winrt::Amethyst::implementation
 									// Are there more events to handle?
 									if (event->NextEntryOffset)
 										*reinterpret_cast<uint8_t**>(&event) +=
-										event->NextEntryOffset;
+											event->NextEntryOffset;
 
 									else break;
 								}

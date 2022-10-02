@@ -93,6 +93,9 @@ namespace k2app
 		// Already shown toasts vector
 		std::vector<std::wstring> shownToastsGuidVector;
 
+		// Disabled (by the user) devices set
+		std::set<std::wstring> disabledDevicesGuidSet;
+
 		// If the first-launch guide's been shown
 		bool firstTimeTourShown = false;
 
@@ -142,6 +145,7 @@ namespace k2app
 						CEREAL_NVP(forceSkeletonPreview),
 						CEREAL_NVP(freezeLowerOnly),
 						CEREAL_NVP(shownToastsGuidVector),
+						CEREAL_NVP(disabledDevicesGuidSet),
 						CEREAL_NVP(teachingTipShown_Freeze),
 						CEREAL_NVP(teachingTipShown_Flip),
 						CEREAL_NVP(firstTimeTourShown),
@@ -199,6 +203,7 @@ namespace k2app
 						CEREAL_NVP(forceSkeletonPreview),
 						CEREAL_NVP(freezeLowerOnly),
 						CEREAL_NVP(shownToastsGuidVector),
+						CEREAL_NVP(disabledDevicesGuidSet),
 						CEREAL_NVP(teachingTipShown_Freeze),
 						CEREAL_NVP(teachingTipShown_Flip),
 						CEREAL_NVP(firstTimeTourShown),
@@ -389,6 +394,7 @@ namespace k2app
 				forceSkeletonPreview == other.forceSkeletonPreview &&
 				freezeLowerOnly == other.freezeLowerOnly &&
 				shownToastsGuidVector == other.shownToastsGuidVector &&
+				disabledDevicesGuidSet == other.disabledDevicesGuidSet &&
 				teachingTipShown_Freeze == other.teachingTipShown_Freeze &&
 				teachingTipShown_Flip == other.teachingTipShown_Flip &&
 				firstTimeTourShown == other.firstTimeTourShown &&

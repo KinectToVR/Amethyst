@@ -43,15 +43,21 @@ namespace k2app::main
 					shared::general::general_tab_setup_finished = false; // Boiler
 					shared::general::toggleFreezeButton.get()->IsChecked(isTrackingFrozen);
 					shared::general::toggleFreezeButton.get()->Content(isTrackingFrozen
-						                                                   ? winrt::box_value(L"Unfreeze")
-						                                                   : winrt::box_value(L"Freeze"));
+						? winrt::box_value(
+							LocalizedResourceWString(
+								L"GeneralPage",
+								L"Buttons/Skeleton/Unfreeze"))
+						: winrt::box_value(
+							LocalizedResourceWString(
+								L"GeneralPage",
+								L"Buttons/Skeleton/Freeze")));
 					shared::general::general_tab_setup_finished = true; // Boiler end
 				}
 			});
 
 			{
 				auto _header = LocalizedJSONString(
-					L"/GeneralPage/Tips/TrackingFreeze/Header");
+					L"/GeneralPage/Tips/TrackingFreeze/Header_Short");
 
 				// Change the tip depending on the currently connected controllers
 				char _controller_model[1024];
@@ -89,11 +95,11 @@ namespace k2app::main
 						                 L"GeneralPage",
 						                 L"Tips/TrackingFreeze/Buttons/Oculus"));
 
-				stringReplaceAll(_header,
-				                 L"also toggle tracker freeze while in VR"s, L"toggle it"s);
-
-				ShowVRToast(std::wstring(L"Tracking Freeze ") +
-				            (isTrackingFrozen ? L"enabled!" : L"disabled!"), _header);
+				ShowVRToast(isTrackingFrozen
+					            ? LocalizedJSONString(
+						            L"/GeneralPage/Tips/TrackingFreeze/Toast_Enabled")
+					            : LocalizedJSONString(
+						            L"/GeneralPage/Tips/TrackingFreeze/Toast_Disabled"), _header);
 			}
 		}
 
@@ -138,7 +144,7 @@ namespace k2app::main
 
 			{
 				auto _header = LocalizedJSONString(
-					L"/SettingsPage/Tips/FlipToggle/Header");
+					L"/SettingsPage/Tips/FlipToggle/Header_Short");
 
 				// Change the tip depending on the currently connected controllers
 				char _controller_model[1024];
@@ -175,12 +181,12 @@ namespace k2app::main
 					                 LocalizedResourceWString(
 						                 L"SettingsPage",
 						                 L"Tips/FlipToggle/Buttons/Oculus"));
-
-				stringReplaceAll(_header,
-				                 L"also toggle skeleton flip while in VR"s, L"toggle it"s);
-
-				ShowVRToast(std::wstring(L"Skeleton Flip ") +
-				            (K2Settings.isFlipEnabled ? L"enabled!" : L"disabled!"), _header);
+				
+				ShowVRToast(K2Settings.isFlipEnabled
+					? LocalizedJSONString(
+						L"/SettingsPage/Tips/FlipToggle/Toast_Enabled")
+					: LocalizedJSONString(
+						L"/SettingsPage/Tips/FlipToggle/Toast_Disabled"), _header);
 			}
 		}
 
@@ -260,8 +266,9 @@ namespace k2app::main
 					pDevice->update(); // Update the device
 
 				if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
-					interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
-						K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
+					interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().
+						at(
+							K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
 			}
 			break;
 		}
@@ -293,8 +300,9 @@ namespace k2app::main
 						pDevice->update(); // Update the device
 
 					if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
-						interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
-							K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
+						interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] = pDevice->
+							getTrackedJoints().at(
+								K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
 				}
 				break;
 			}
