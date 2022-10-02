@@ -334,7 +334,7 @@ namespace k2app::interfacing
 			const auto json_object = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
 
 			// Check if the resource root is fine
-			if (json_object.Size() <= 0)
+			if (!json_object || json_object.Size() <= 0)
 			{
 				LOG(ERROR) << "The current language enumeration resource root is empty!"
 					"App interface will be broken!";
@@ -416,7 +416,7 @@ namespace k2app::interfacing
 			m_local_resources = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
 
 			// Check if the resource root is fine
-			if (m_local_resources.Size() <= 0)
+			if (!m_local_resources || m_local_resources.Size() <= 0)
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
 
 			else
@@ -471,7 +471,7 @@ namespace k2app::interfacing
 			m_english_resources = winrt::Windows::Data::Json::JsonObject::Parse(wss.str());
 
 			// Check if the resource root is fine
-			if (m_english_resources.Size() <= 0)
+			if (!m_english_resources || m_english_resources.Size() <= 0)
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
 
 			else
@@ -495,7 +495,7 @@ namespace k2app::interfacing
 		try
 		{
 			// Check if the resource root is fine
-			if (m_local_resources.Size() <= 0)
+			if (!m_local_resources || m_local_resources.Size() <= 0)
 			{
 				LOG(ERROR) << "The current resource root is empty! App interface will be broken!";
 				return resource_key; // Just give up
@@ -527,7 +527,7 @@ namespace k2app::interfacing
 		try
 		{
 			// Check if the resource root is fine
-			if (m_english_resources.Size() <= 0)
+			if (!m_english_resources || m_english_resources.Size() <= 0)
 			{
 				LOG(ERROR) << "The current EN resource root is empty! App interface will be broken!";
 				return resource_key; // Just give up
