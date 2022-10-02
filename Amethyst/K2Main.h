@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <ranges>
 
 #include "K2DeviceMath.h"
@@ -266,8 +266,9 @@ namespace k2app::main
 					pDevice->update(); // Update the device
 
 				if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
-					interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
-						K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
+					interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().
+						at(
+							K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
 			}
 			break;
 		}
@@ -299,8 +300,9 @@ namespace k2app::main
 						pDevice->update(); // Update the device
 
 					if (K2Settings.K2TrackersVector[0].selectedTrackedJointID < pDevice->getTrackedJoints().size())
-						interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] = pDevice->getTrackedJoints().at(
-							K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
+						interfacing::deviceRelativeTransformOrigin[pDevice->getDeviceGUID()] = pDevice->
+							getTrackedJoints().at(
+								K2Settings.K2TrackersVector[0].selectedTrackedJointID).getJointPosition();
 				}
 				break;
 			}
