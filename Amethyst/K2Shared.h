@@ -567,4 +567,31 @@ namespace TrackingDevices
 	inline std::vector<std::pair<
 		winrt::Windows::Data::Json::JsonObject, std::filesystem::path>>
 	TrackingDevicesLocalizationResourcesRootsVector;
+
+	// Enumeration of all possible (probable) plugin load types
+	enum PluginLoadError
+	{
+		Unknown, // We literally don't know what's happened
+		NoError, // Everything's fine, celebration time!
+		LoadingSkipped, // This device is disabled by the user
+		NoDeviceFolder, // No device folder w/ files found
+		NoDeviceManifest, // No manifest found / wrong path
+		InvalidDeviceManifest, // Manifest invalid : name/path
+		NoDeviceDll, // Device dll not found at proper path
+		NoDeviceDependencyDll, // Dep dll/s not found or invalid
+		ManifestParsingException, // Manifest parsing exception
+		DeviceDllLinkError, // Could not link for some reason
+		WrongInterface, // Linking factory returned null pointer
+		BadOrDuplicateGUID, // Empty/Bad/Duplicate device GUID
+		MismatchedAPIVersion, // Older or newer API (still load-able)
+		InvalidFactory // Device factory just gave up, now cry
+	};
+
+	// Written to at the first plugin load
+	inline std::vector<std::tuple<
+		std::wstring, // Name
+		std::wstring, // GUID
+		PluginLoadError, // Status
+		std::wstring // Location
+		>> LoadAttemptedTrackingDevicesVector;
 }
