@@ -1,4 +1,9 @@
 ## **Build Amethyst**
+Precautions:
+ - If you've <32GB RAM, don't even try (or create a giant pagefile)
+ - Don't build Amethyst on `Debug` configuration (it's gonna crash)
+ - Building on SSD is about 5-8x faster than on HDD!
+
 You'll need:
  - The ```Amethyst``` repo cloned somewhere and ```cd```'d into
  - (For building plugins) Kinect SDK 1.8 & 2.0 installed and in PATH
