@@ -414,6 +414,10 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	// Update the status here
 	ReloadSelectedDevice(true);
 
+	SetDeviceTypeFlyout().Hide(); // Hide the flyout
+	LOG(INFO) << "Changed the current tracking device (Base) to " <<
+		WStringToString(selectedTrackingDeviceGUIDPair.first);
+
 	// Animate adding the expanders
 	{
 		// Remove the only one child of our outer main content grid
@@ -797,6 +801,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::DeviceC
 void Amethyst::implementation::DevicesPage::ButtonFlyout_Opening(
 	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
+	LOG(INFO) << "Device assignment flyout opening...";
+
 	// Play a sound
 	playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 }
@@ -806,8 +812,11 @@ void Amethyst::implementation::DevicesPage::ButtonFlyout_Closing(
 	const Controls::Primitives::FlyoutBase& sender,
 	const Controls::Primitives::FlyoutBaseClosingEventArgs& args)
 {
+	LOG(INFO) << "Device assignment flyout closing...";
+
 	// Play a sound
-	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+	if (devices_signal_joints)
+		playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 }
 
 
@@ -934,8 +943,7 @@ k2app::shared::devices::ReloadSelectedDevice(
 
 	// Refresh the device list MVVM
 	TrackingDevices::RefreshDevicesMVVMList();
-
-	setDeviceTypeFlyout->Hide();
+	
 	if (TrackingDevices::IsABase(selectedTrackingDeviceGUIDPair.first))
 	{
 		LOG(INFO) << "Selected a base";
@@ -1016,13 +1024,18 @@ void Amethyst::implementation::DevicesPage::PluginManagerFlyout_Opening(
 void Amethyst::implementation::DevicesPage::PluginManagerFlyout_Closing(
 	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
+	LOG(INFO) << "Manager flyout closing...";
+
 	// Play a sound
-	playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
+	if (devices_signal_joints)
+		playAppSound(k2app::interfacing::sounds::AppSounds::Hide);
 }
 
 void Amethyst::implementation::DevicesPage::PluginManagerFlyout_Closed(
 	const Windows::Foundation::IInspectable& sender, const Windows::Foundation::IInspectable& e)
 {
+	LOG(INFO) << "Manager flyout closed!";
+
 	k2app::shared::main::interfaceBlockerGrid->Opacity(0.0);
 	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
 

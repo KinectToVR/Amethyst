@@ -122,26 +122,28 @@ namespace winrt::Amethyst::implementation
 
 		LOG(INFO) << "Appending the new expanders to the UI Node";
 
-		int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
-		for (auto& expander : jointExpanderVector)
 		{
-			// Append the expander
-			jointExpanderHostStackPanel->Children().Append(*expander->Container());
-
-			// Append the separator (optionally)
-			if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+			int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
+			for (const auto& expander : jointExpanderVector)
 			{
-				auto separator = Controls::MenuFlyoutSeparator();
-				separator.Margin({10, 10, 10, 0});
+				// Append the expander
+				jointExpanderHostStackPanel->Children().Append(*expander->Container());
 
-				Media::Animation::TransitionCollection c_transition_collection;
-				c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
-				separator.Transitions(c_transition_collection);
+				// Append the separator (optionally)
+				if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+				{
+					auto separator = Controls::MenuFlyoutSeparator();
+					separator.Margin({ 10, 10, 10, 0 });
 
-				jointExpanderHostStackPanel->Children().Append(separator);
-				_expander_number = 1;
+					Media::Animation::TransitionCollection c_transition_collection;
+					c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
+					separator.Transitions(c_transition_collection);
+
+					jointExpanderHostStackPanel->Children().Append(separator);
+					_expander_number = 1;
+				}
+				else _expander_number++;
 			}
-			else _expander_number++;
 		}
 
 		LOG(INFO) << "Registering a detached binary semaphore reload handler for SettingsPage...";
@@ -212,26 +214,28 @@ namespace winrt::Amethyst::implementation
 
 						LOG(INFO) << "Appending the new expanders to the UI Node";
 
-						int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
-						for (auto expander : jointExpanderVector)
 						{
-							// Append the expander
-							jointExpanderHostStackPanel->Children().Append(*expander->Container());
-
-							// Append the separator (optionally)
-							if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+							int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
+							for (const auto& expander : jointExpanderVector)
 							{
-								auto separator = Controls::MenuFlyoutSeparator();
-								separator.Margin({10, 10, 10, 0});
+								// Append the expander
+								jointExpanderHostStackPanel->Children().Append(*expander->Container());
 
-								Media::Animation::TransitionCollection c_transition_collection;
-								c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
-								separator.Transitions(c_transition_collection);
+								// Append the separator (optionally)
+								if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+								{
+									auto separator = Controls::MenuFlyoutSeparator();
+									separator.Margin({ 10, 10, 10, 0 });
 
-								jointExpanderHostStackPanel->Children().Append(separator);
-								_expander_number = 1;
+									Media::Animation::TransitionCollection c_transition_collection;
+									c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
+									separator.Transitions(c_transition_collection);
+
+									jointExpanderHostStackPanel->Children().Append(separator);
+									_expander_number = 1;
+								}
+								else _expander_number++;
 							}
-							else _expander_number++;
 						}
 
 						if (const auto& trackingDevice = TrackingDevices::getCurrentDevice();
@@ -241,7 +245,7 @@ namespace winrt::Amethyst::implementation
 							const bool _sup = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 								isAppOrientationSupported();
 
-							for (auto expander : jointExpanderVector)
+							for (const auto& expander : jointExpanderVector)
 								expander->EnableSoftwareOrientation(_sup);
 
 							flipToggle.get()->IsEnabled(
@@ -261,7 +265,7 @@ namespace winrt::Amethyst::implementation
 						else if (trackingDevice.index() == 1)
 						{
 							// Joints Basis
-							for (auto expander : jointExpanderVector)
+							for (const auto& expander : jointExpanderVector)
 								expander->EnableSoftwareOrientation(false);
 
 							flipToggle.get()->IsEnabled(false);
@@ -275,7 +279,7 @@ namespace winrt::Amethyst::implementation
 						}
 
 						// Load the tracker configuration
-						for (auto expander : jointExpanderVector)
+						for (const auto& expander : jointExpanderVector)
 							expander->UpdateIsActive();
 
 						// Enable/Disable combos
@@ -664,7 +668,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 
 	// Push all the found languages
 	if (exists(k2app::interfacing::GetProgramLocation().parent_path() / "Assets" / "Strings"))
-		for (auto entry : std::filesystem::directory_iterator(
+		for (const auto& entry : std::filesystem::directory_iterator(
 			     k2app::interfacing::GetProgramLocation().parent_path() / "Assets" / "Strings"))
 		{
 			if (entry.path().stem().wstring() == L"locales")continue;
@@ -716,7 +720,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 		const bool _sup = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 			isAppOrientationSupported();
 
-		for (auto expander : jointExpanderVector)
+		for (const auto& expander : jointExpanderVector)
 			expander->EnableSoftwareOrientation(_sup);
 
 		flipToggle.get()->IsEnabled(
@@ -736,7 +740,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 	else if (trackingDevice.index() == 1)
 	{
 		// Joints Basis
-		for (auto expander : jointExpanderVector)
+		for (const auto& expander : jointExpanderVector)
 			expander->EnableSoftwareOrientation(false);
 
 		flipToggle.get()->IsEnabled(false);
@@ -750,7 +754,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 	}
 
 	// Load the tracker configuration
-	for (auto expander : jointExpanderVector)
+	for (const auto& expander : jointExpanderVector)
 		expander->UpdateIsActive();
 
 	// Load auto-spawn and sounds config
@@ -956,6 +960,8 @@ void Amethyst::implementation::SettingsPage::FlipToggle_Toggled(
 				L"Tips/FlipToggle/Footer").c_str());
 
 		ToggleFlipTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+
+		k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
 		ToggleFlipTeachingTip().IsOpen(true);
 
 		k2app::K2Settings.teachingTipShown_Flip = true;
@@ -1290,26 +1296,28 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 				LOG(INFO) << "Appending the new expanders to the UI Node";
 
-				int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
-				for (auto expander : jointExpanderVector)
 				{
-					// Append the expander
-					jointExpanderHostStackPanel->Children().Append(*expander->Container());
-
-					// Append the separator (optionally)
-					if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+					int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
+					for (const auto& expander : jointExpanderVector)
 					{
-						auto separator = Controls::MenuFlyoutSeparator();
-						separator.Margin({10, 10, 10, 0});
+						// Append the expander
+						jointExpanderHostStackPanel->Children().Append(*expander->Container());
 
-						Media::Animation::TransitionCollection c_transition_collection;
-						c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
-						separator.Transitions(c_transition_collection);
+						// Append the separator (optionally)
+						if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+						{
+							auto separator = Controls::MenuFlyoutSeparator();
+							separator.Margin({ 10, 10, 10, 0 });
 
-						jointExpanderHostStackPanel->Children().Append(separator);
-						_expander_number = 1;
+							Media::Animation::TransitionCollection c_transition_collection;
+							c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
+							separator.Transitions(c_transition_collection);
+
+							jointExpanderHostStackPanel->Children().Append(separator);
+							_expander_number = 1;
+						}
+						else _expander_number++;
 					}
-					else _expander_number++;
 				}
 
 				if (const auto& trackingDevice = TrackingDevices::getCurrentDevice();
@@ -1319,7 +1327,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					const bool _sup = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 						isAppOrientationSupported();
 
-					for (auto expander : jointExpanderVector)
+					for (const auto& expander : jointExpanderVector)
 						expander->EnableSoftwareOrientation(_sup);
 
 					flipToggle.get()->IsEnabled(
@@ -1339,7 +1347,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				else if (trackingDevice.index() == 1)
 				{
 					// Joints Basis
-					for (auto expander : jointExpanderVector)
+					for (const auto& expander : jointExpanderVector)
 						expander->EnableSoftwareOrientation(false);
 
 					flipToggle.get()->IsEnabled(false);
@@ -1353,7 +1361,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				}
 
 				// Load the tracker configuration
-				for (auto expander : jointExpanderVector)
+				for (const auto& expander : jointExpanderVector)
 					expander->UpdateIsActive();
 
 				// Enable/Disable combos
@@ -1466,26 +1474,28 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 			LOG(INFO) << "Appending the new expanders to the UI Node";
 
-			int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
-			for (auto expander : jointExpanderVector)
 			{
-				// Append the expander
-				jointExpanderHostStackPanel->Children().Append(*expander->Container());
-
-				// Append the separator (optionally)
-				if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+				int _expander_number = (k2app::K2Settings.useTrackerPairs ? 1 : 2); // For separators
+				for (const auto& expander : jointExpanderVector)
 				{
-					auto separator = Controls::MenuFlyoutSeparator();
-					separator.Margin({10, 10, 10, 0});
+					// Append the expander
+					jointExpanderHostStackPanel->Children().Append(*expander->Container());
 
-					Media::Animation::TransitionCollection c_transition_collection;
-					c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
-					separator.Transitions(c_transition_collection);
+					// Append the separator (optionally)
+					if (_expander_number >= 2 && jointExpanderVector.back() != expander)
+					{
+						auto separator = Controls::MenuFlyoutSeparator();
+						separator.Margin({ 10, 10, 10, 0 });
 
-					jointExpanderHostStackPanel->Children().Append(separator);
-					_expander_number = 1;
+						Media::Animation::TransitionCollection c_transition_collection;
+						c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
+						separator.Transitions(c_transition_collection);
+
+						jointExpanderHostStackPanel->Children().Append(separator);
+						_expander_number = 1;
+					}
+					else _expander_number++;
 				}
-				else _expander_number++;
 			}
 
 			if (const auto& trackingDevice = TrackingDevices::getCurrentDevice();
@@ -1495,7 +1505,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				const bool _sup = std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->
 					isAppOrientationSupported();
 
-				for (auto expander : jointExpanderVector)
+				for (const auto& expander : jointExpanderVector)
 					expander->EnableSoftwareOrientation(_sup);
 
 				flipToggle.get()->IsEnabled(
@@ -1515,7 +1525,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 			else if (trackingDevice.index() == 1)
 			{
 				// Joints Basis
-				for (auto expander : jointExpanderVector)
+				for (const auto& expander : jointExpanderVector)
 					expander->EnableSoftwareOrientation(false);
 
 				flipToggle.get()->IsEnabled(false);
@@ -1529,7 +1539,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 			}
 
 			// Load the tracker configuration
-			for (auto expander : jointExpanderVector)
+			for (const auto& expander : jointExpanderVector)
 				expander->UpdateIsActive();
 
 			// Enable/Disable combos
@@ -1905,4 +1915,12 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AutoSt
 	AddTrackersTeachingTip().TailVisibility(
 		Controls::TeachingTipTailVisibility::Collapsed);
 	AddTrackersTeachingTip().IsOpen(true);
+}
+
+
+void winrt::Amethyst::implementation::SettingsPage::ToggleFlipTeachingTip_Closed(
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, 
+	winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+{
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
 }

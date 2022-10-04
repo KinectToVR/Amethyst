@@ -1250,12 +1250,12 @@ void Amethyst::implementation::GeneralPage::sk_dot(
 	// Move the ellipse to the appropriate point
 	ellipse.Margin({
 		// Left
-		joint.getJointPosition().x() * 300. * 
+		joint.getJointPosition().x() * 300. *
 		std::min(s_scale_w, s_scale_h) * s_multiply +
 		s_mat_width / 2. - (s_ellipse_wh + s_ellipse_stroke) / 2.,
 
 		// Top
-		joint.getJointPosition().y() * -300. * 
+		joint.getJointPosition().y() * -300. *
 		std::min(s_scale_w, s_scale_h) * s_multiply +
 		s_mat_height / 3. - (s_ellipse_wh + s_ellipse_stroke) / 2.,
 
@@ -1642,9 +1642,9 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 	if (k2app::K2Settings.overrideDeviceGUIDsMap.empty())
 	{
 		// Get our current device
-		const auto& trackingDevice = 
+		const auto& trackingDevice =
 			TrackingDevices::TrackingDevicesVector.at(
-			k2app::K2Settings.trackingDeviceGUIDPair.second);
+				k2app::K2Settings.trackingDeviceGUIDPair.second);
 
 		HRESULT device_status = E_FAIL;
 		switch (trackingDevice.index())
@@ -1672,8 +1672,11 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 			NoCalibrationTeachingTip().PreferredPlacement(
 				Controls::TeachingTipPlacementMode::Top);
 
+			k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
 			NoCalibrationTeachingTip().IsOpen(true);
 
+			Sleep(300);
+			
 			// Give up
 			return;
 		}
@@ -1819,8 +1822,12 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 			// Hide the tail and open the tip
 			NoCalibrationTeachingTip().TailVisibility(
 				Controls::TeachingTipTailVisibility::Collapsed);
+
+			k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
 			NoCalibrationTeachingTip().IsOpen(true);
 
+			Sleep(300);
+			
 			// Give up
 			return;
 		}
@@ -1921,6 +1928,8 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 				L"Tips/TrackingFreeze/Footer").c_str());
 
 		FreezeTrackingTeachingTip().TailVisibility(Controls::TeachingTipTailVisibility::Collapsed);
+
+		k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
 		FreezeTrackingTeachingTip().IsOpen(true);
 
 		k2app::K2Settings.teachingTipShown_Freeze = true;
@@ -2165,7 +2174,8 @@ Amethyst::implementation::GeneralPage::TrackingDeviceTreeView_ItemInvoked(
 	{
 		// Set the correct target
 		NoCalibrationTeachingTip().Target(TrackingDeviceTreeView().
-			ContainerFromItem(args.InvokedItem()).as<Microsoft::UI::Xaml::FrameworkElement>());
+		                                  ContainerFromItem(args.InvokedItem()).as<
+			                                  Microsoft::UI::Xaml::FrameworkElement>());
 
 		// Hide the tail and open the tip
 		NoCalibrationTeachingTip().TailVisibility(
@@ -2173,8 +2183,11 @@ Amethyst::implementation::GeneralPage::TrackingDeviceTreeView_ItemInvoked(
 		NoCalibrationTeachingTip().PreferredPlacement(
 			Controls::TeachingTipPlacementMode::Bottom);
 
+		k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(true);
 		NoCalibrationTeachingTip().IsOpen(true);
 
+		Sleep(300);
+		
 		// Give up
 		co_return;
 	}
@@ -2476,4 +2489,12 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::Execute
 	CalibrationPending = false; // We're finished
 	k2app::K2Settings.skeletonPreviewEnabled = show_skeleton_previous; // Change to whatever
 	skeleton_visibility_set_ui(show_skeleton_previous); // Change to whatever
+}
+
+
+void Amethyst::implementation::GeneralPage::NoCalibrationTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
+{
+	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
 }

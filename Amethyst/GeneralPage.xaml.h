@@ -77,7 +77,7 @@ namespace winrt::Amethyst::implementation
 		void SkeletonDrawingCanvas_Loaded(const Windows::Foundation::IInspectable& sender,
 		                                  const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void CalibrationButton_Click(const Windows::Foundation::IInspectable& sender,
-		                             const Microsoft::UI::Xaml::RoutedEventArgs& e);
+									 const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void ReRegisterButton_Click(const Windows::Foundation::IInspectable& sender,
 		                            const Microsoft::UI::Xaml::RoutedEventArgs& e);
 		void DismissSetErrorButton_Click(const Windows::Foundation::IInspectable& sender,
@@ -124,7 +124,10 @@ namespace winrt::Amethyst::implementation
 		Windows::Foundation::IAsyncAction TrackingDeviceTreeView_ItemInvoked(
 			const Microsoft::UI::Xaml::Controls::TreeView& sender,
 			const Microsoft::UI::Xaml::Controls::TreeViewItemInvokedEventArgs& args);
-	};
+		void NoCalibrationTeachingTip_Closed(
+			const Microsoft::UI::Xaml::Controls::TeachingTip& sender, 
+			const Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args);
+};
 }
 
 namespace winrt::Amethyst::factory_implementation

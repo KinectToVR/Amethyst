@@ -216,6 +216,7 @@
                                           HorizontalAlignment="Right">
                                 <ToggleSwitch.Resources>
                                     <muxc:TeachingTip x:Name="ToggleFlipTeachingTip"
+                                                      Closed="ToggleFlipTeachingTip_Closed"
                                                       Target="{Binding ElementName=FlipToggleDummyGrid}"
                                                       PreferredPlacement="Bottom"
                                                       IsLightDismissEnabled="True"

@@ -96,6 +96,7 @@ namespace winrt::Amethyst::implementation
 			const Windows::Foundation::IInspectable& args);
 		winrt::Windows::Foundation::IAsyncAction AddTrackersTeachingTip_ActionButtonClick(
 			const Microsoft::UI::Xaml::Controls::TeachingTip& sender, const Windows::Foundation::IInspectable& args);
+		void ToggleFlipTeachingTip_Closed(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args);
 	};
 }
 

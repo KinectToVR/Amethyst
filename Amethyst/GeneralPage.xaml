@@ -11,6 +11,7 @@
 
     <Page.Resources>
         <TeachingTip x:Name="NoCalibrationTeachingTip"
+                     Closed="NoCalibrationTeachingTip_Closed"
                      PreferredPlacement="Top"
                      IsLightDismissEnabled="True"
                      Title="[CONTENT NOT SET]"
@@ -1029,6 +1030,7 @@
 
                             <ToggleButton.Resources>
                                 <muxc:TeachingTip x:Name="FreezeTrackingTeachingTip"
+                                                  Closed="NoCalibrationTeachingTip_Closed"
                                                   Target="{Binding ElementName=ToggleTrackingButton}"
                                                   PreferredPlacement="Top"
                                                   IsLightDismissEnabled="True"

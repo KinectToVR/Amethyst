@@ -59,13 +59,18 @@
               Canvas.ZIndex="1" IsHitTestVisible="False" />
 
         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+              x:Name="InterfaceDimGrid"
               Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-              x:Name="InterfaceBlockerGrid" Opacity="0.0"
+              Opacity="{Binding ElementName=InterfaceBlockerGrid, Path=Opacity}"
               Canvas.ZIndex="1" IsHitTestVisible="False">
-
             <Grid.OpacityTransition>
                 <ScalarTransition />
             </Grid.OpacityTransition>
+        </Grid>
+
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+              x:Name="InterfaceBlockerGrid" Opacity="0.0"
+              Canvas.ZIndex="1" IsHitTestVisible="False">
 
             <Grid.Resources>
                 <TeachingTip x:Name="InitializerTeachingTip"
