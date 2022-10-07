@@ -41,3 +41,5 @@ x86/
 *.sln.docstates
 
 Amethyst/Amethyst.aps
+
+external/protobuf/out/

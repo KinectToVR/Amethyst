@@ -506,8 +506,13 @@ namespace k2app
 			tracker_base.mutable_data()->set_role(data_role);
 			tracker_base.mutable_data()->set_isactive(data_isActive);
 
-			// Add ID and return
+			// Add ID
 			tracker_base.set_tracker(base_tracker);
+
+			// Add timestamps and return
+			tracker_base.mutable_pose()->set_posetimestamp(pose_poseTimestamp);
+			tracker_base.mutable_pose()->set_previousposetimestamp(pose_previousPoseTimestamp);
+
 			return tracker_base;
 		}
 
@@ -565,9 +570,13 @@ namespace k2app
 			tracker_base.mutable_data()->set_role(data_role);
 			tracker_base.mutable_data()->set_isactive(data_isActive);
 
-
-			// Add ID and return
+			// Add ID
 			tracker_base.set_tracker(base_tracker);
+
+			// Add timestamps and return
+			tracker_base.mutable_pose()->set_posetimestamp(pose_poseTimestamp);
+			tracker_base.mutable_pose()->set_previousposetimestamp(pose_previousPoseTimestamp);
+
 			return tracker_base;
 		}
 
@@ -619,6 +628,9 @@ namespace k2app
 		Eigen::Vector3d pose_angularVelocity{0, 0, 0};
 		Eigen::Vector3d pose_angularAcceleration{0, 0, 0};
 
+		long long pose_poseTimestamp = 0;
+		long long pose_previousPoseTimestamp = 0;
+
 		template <class Archive>
 		void serialize(Archive& archive)
 		{
@@ -635,6 +647,9 @@ namespace k2app
 				CEREAL_NVP(pose_acceleration),
 				CEREAL_NVP(pose_angularVelocity),
 				CEREAL_NVP(pose_angularAcceleration),
+
+				CEREAL_NVP(pose_poseTimestamp),
+				CEREAL_NVP(pose_previousPoseTimestamp),
 
 				CEREAL_NVP(data_serial),
 				CEREAL_NVP(data_role),

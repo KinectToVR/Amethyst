@@ -790,6 +790,9 @@ namespace k2app::main
 						overrides::getFlippedJointType(
 							ITrackerType_Joint[tracker.base_tracker], base_flip)];
 
+					tracker.pose_poseTimestamp = _joint.getPoseTimestamp();
+					tracker.pose_previousPoseTimestamp = _joint.getPreviousPoseTimestamp();
+
 					tracker.pose_position = _joint.getJointPosition();
 					tracker.m_use_own_physics = _kinect->isPhysicsOverrideEnabled();
 					tracker.m_no_position_filtering_requested =
@@ -814,6 +817,9 @@ namespace k2app::main
 				{
 					const auto& _joint = _joints->getTrackedJoints().at(
 						tracker.selectedTrackedJointID);
+
+					tracker.pose_poseTimestamp = _joint.getPoseTimestamp();
+					tracker.pose_previousPoseTimestamp = _joint.getPreviousPoseTimestamp();
 
 					tracker.pose_position = _joint.getJointPosition();
 					tracker.m_use_own_physics = _joints->isPhysicsOverrideEnabled();
@@ -1053,6 +1059,9 @@ namespace k2app::main
 										TrackingDevices::devices_override_joint_id(
 											_override_id, tracker.overrideJointID)), override_flip)];
 
+							tracker.pose_poseTimestamp = _joint.getPoseTimestamp();
+							tracker.pose_previousPoseTimestamp = _joint.getPreviousPoseTimestamp();
+
 							tracker.pose_position = _joint.getJointPosition();
 							tracker.m_use_own_physics = _kinect->isPhysicsOverrideEnabled();
 							tracker.m_no_position_filtering_requested =
@@ -1079,6 +1088,9 @@ namespace k2app::main
 						{
 							const auto& _joint = _joints->getTrackedJoints().at(
 								tracker.overrideJointID);
+
+							tracker.pose_poseTimestamp = _joint.getPoseTimestamp();
+							tracker.pose_previousPoseTimestamp = _joint.getPreviousPoseTimestamp();
 
 							tracker.pose_position = _joint.getJointPosition();
 							tracker.m_use_own_physics = _joints->isPhysicsOverrideEnabled();

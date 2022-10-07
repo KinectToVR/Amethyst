@@ -76,9 +76,6 @@ void K2Tracker::update()
 	}
 }
 
-// The previous frame time
-LONG64 m_previous_time;
-
 // The previous frame cached pose
 Eigen::Quaterniond m_previous_orientation;
 Eigen::Vector3d m_previous_position,
@@ -105,9 +102,6 @@ void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 		// If the sender defines its own physics
 		if (pose.has_physics())
 		{
-			// Get timestamp
-			const auto _time_now = AME_API_GET_TIMESTAMP_NOW;
-
 			// Velocity
 			_pose.vecVelocity[0] = pose.physics().velocity().x();
 			_pose.vecVelocity[1] = pose.physics().velocity().y();
@@ -139,21 +133,15 @@ void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 				_pose.vecAngularVelocity[1],
 				_pose.vecAngularVelocity[2]
 			};
-
-			// Backup frame time
-			m_previous_time = _time_now;
 		}
 		else
 		{
-			// Get timestamp
-			const auto _time_now = AME_API_GET_TIMESTAMP_NOW;
-
 			// Calculate Velocity
 			const auto _pos_velocity =
 				EigenUtils::lerp(
 					Eigen::Vector3d(
 						EigenUtils::p_cast_type<Eigen::Vector3d>(_pose) - m_previous_position /
-						static_cast<double>(_time_now - m_previous_time) / 1000000.),
+						static_cast<double>(pose.posetimestamp() - pose.previousposetimestamp()) * 0.000001),
 					m_previous_pos_velocity, .5f);
 
 			const auto _rot_velocity =
@@ -161,17 +149,17 @@ void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 					Eigen::Vector3d(
 						EigenUtils::QuatToEulers(m_previous_orientation.inverse() *
 							EigenUtils::p_cast_type<Eigen::Quaterniond>(_pose)) /
-						static_cast<double>(_time_now - m_previous_time) / 1000000.),
+						static_cast<double>(pose.posetimestamp() - pose.previousposetimestamp()) * 0.000001),
 					m_previous_rot_velocity, .5f);
 
 			// Calculate Acceleration
 			const auto _pos_acceleration =
 				_pos_velocity - m_previous_pos_velocity /
-				static_cast<double>(_time_now - m_previous_time) / 1000000.;
+				static_cast<double>(pose.posetimestamp() - pose.previousposetimestamp()) * 0.000001;
 
 			const auto _rot_acceleration =
 				_rot_velocity - m_previous_rot_velocity /
-				static_cast<double>(_time_now - m_previous_time) / 1000000.;
+				static_cast<double>(pose.posetimestamp() - pose.previousposetimestamp()) * 0.000001;
 
 			// Set the Velocity
 			_pose.vecVelocity[0] = _pos_velocity.x();
@@ -194,9 +182,6 @@ void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 			// Backup Velocity
 			m_previous_pos_velocity = _pos_velocity;
 			m_previous_rot_velocity = _rot_velocity;
-
-			// Backup frame time
-			m_previous_time = _time_now;
 		}
 
 		// Backup poses
