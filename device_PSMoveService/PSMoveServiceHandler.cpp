@@ -10,7 +10,7 @@ Eigen::Vector3d PSMSToEigen(PSMVector3f v)
 
 Eigen::Quaterniond PSMSToEigen(PSMQuatf q)
 {
-	return { q.w, q.x, q.y, q.z };
+	return {q.w, q.x, q.y, q.z};
 }
 
 HRESULT PSMoveServiceHandler::getStatusResult()
@@ -331,7 +331,7 @@ void PSMoveServiceHandler::rebuildControllerList()
 			break;
 		}
 
-		LOG(INFO) << "Controller ID : " << controllerList.controller_id[cntlr_ix] << 
+		LOG(INFO) << "Controller ID : " << controllerList.controller_id[cntlr_ix] <<
 			" is a " << WStringToString(controller_type);
 
 		using namespace std::literals;
@@ -376,10 +376,19 @@ void PSMoveServiceHandler::processKeyInputs()
 
 		// Update joint's position
 		trackedJoints.at(wrapper.controller->ControllerID).
-		              update(PSMSToEigen(controller.Pose.Position),
-		                     wrapper.orientationOffset.inverse() * PSMSToEigen(controller.Pose.Orientation),
-		                     // Recenter (offset)
-		                     ktvr::State_Tracked);
+		              update(
+			              // Pose : [pos, ori]
+			              PSMSToEigen(controller.Pose.Position),
+			              wrapper.orientationOffset.inverse() * PSMSToEigen(controller.Pose.Orientation),
+
+			              // Physics : [v, a, ang_v, ang_a] : [cm]->[m] (1/100)
+			              PSMSToEigen(controller.PhysicsData.LinearVelocityCmPerSec) * 0.01,
+			              PSMSToEigen(controller.PhysicsData.LinearAccelerationCmPerSecSqr) * 0.01,
+						  PSMSToEigen(controller.PhysicsData.AngularVelocityRadPerSec) * 0.01,
+						  PSMSToEigen(controller.PhysicsData.AngularAccelerationRadPerSecSqr) * 0.01,
+
+			              // Recenter (offset)
+			              ktvr::State_Tracked);
 
 		// Optionally signal the joint
 		if (wrapper.flashNow)
