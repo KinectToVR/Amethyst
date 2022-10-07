@@ -17,12 +17,13 @@ public:
 	{
 		//KinectV2Handler::initialize();
 		LOG(INFO) << "Constructing the Kinect V2 (XBONE) Handler for SkeletonBasis K2TrackingDevice...";
-		
+
 		deviceName = L"Xbox One Kinect";
 		deviceCharacteristics = ktvr::K2_Character_Full;
 
 		Flags_FlipSupported = true;
 		Flags_AppOrientationSupported = true;
+		Flags_ForceSelfUpdate = true;
 	}
 
 	std::wstring getDeviceGUID() override
@@ -73,6 +74,15 @@ private:
 
 	WAITABLE_HANDLE h_bodyFrameEvent;
 	bool newBodyFrameArrived = false;
+
+	// For self-updating
+	std::unique_ptr<std::thread> m_updater_thread;
+	// The self-updater thread
+	void updater()
+	{
+		// Auto-handles failures & etc
+		while (true)update();
+	}
 
 	/* For translating Kinect joint enumeration to K2 space */
 	int globalIndex[25] = {3, 2, 20, 4, 5, 6, 7, 21, 22, 8, 9, 10, 11, 23, 24, 1, 0, 12, 13, 14, 15, 16, 17, 18, 19};

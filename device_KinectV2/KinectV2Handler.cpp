@@ -45,16 +45,16 @@ void KinectV2Handler::initialize()
 	try
 	{
 		initialized = initKinect();
-
 		LOG(INFO) << "Initializing: updated Kinect V2 status with: " <<
 			WStringToString(statusResultWString(getStatusResult()));
-
-		// initializeColor();
-		// Commented both image frames out, as most people use the kinect for skeletal data
-		// Updating all of the arrays uses a shit ton of CPU, but then again, it's still WIP
-		// initializeDepth();
+		
 		initializeSkeleton();
 		if (!initialized) throw FailedKinectInitialization;
+
+		// Recreate the updater thread
+		if (!m_updater_thread)
+			m_updater_thread.reset(new std::thread(
+				&KinectV2Handler::updater, this));
 	}
 	catch (std::exception& e)
 	{
@@ -113,43 +113,23 @@ void KinectV2Handler::update()
 		{
 			// NEW ARRIVED FRAMES ------------------------
 			MSG msg;
-			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) // Unneccesary?
-			{
+			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) // Unnecessary?
 				DispatchMessage(&msg);
-			}
 
 			if (h_bodyFrameEvent)
-			{
-				//printf("Kinect Event ID: %d\n" ,(int)h_bodyFrameEvent);
-
-				//now check for IR Events
-				HANDLE handles[] = {reinterpret_cast<HANDLE>(h_bodyFrameEvent)};
-				// , reinterpret_cast<HANDLE>(ke.hMSEvent)		};
-
-				switch (MsgWaitForMultipleObjects(_countof(handles), handles, false, 0, QS_ALLINPUT))
+				if (HANDLE handles[] = {reinterpret_cast<HANDLE>(h_bodyFrameEvent)};
+					// Wait for a frame to arrive, give up after >3s of nothing
+					MsgWaitForMultipleObjects(_countof(handles), handles,
+					                          false, 3000, QS_ALLINPUT) == WAIT_OBJECT_0)
 				{
-				case WAIT_OBJECT_0:
+					IBodyFrameArrivedEventArgs* pArgs = nullptr;
+					if (bodyFrameReader &&
+						SUCCEEDED(bodyFrameReader->GetFrameArrivedEventData(h_bodyFrameEvent, &pArgs)))
 					{
-						IBodyFrameArrivedEventArgs* pArgs = nullptr;
-						//printf("Body Frame Event Signaled.\n");
-
-						if (bodyFrameReader)
-						{
-							HRESULT hr = bodyFrameReader->GetFrameArrivedEventData(h_bodyFrameEvent, &pArgs);
-							//printf("Retreive Frame Arrive Event Data -HR: %d\n", hr);
-
-							if (SUCCEEDED(hr))
-							{
-								//printf("Retreived Frame Arrived Event Data\n");
-								onBodyFrameArrived(*bodyFrameReader, *pArgs);
-								pArgs->Release();
-								//printf("Frame Arrived Event Data Released\n");
-							}
-						}
+						onBodyFrameArrived(*bodyFrameReader, *pArgs);
+						pArgs->Release(); // Release the frame
 					}
-					break;
 				}
-			}
 		}
 	}
 }
@@ -164,14 +144,10 @@ void KinectV2Handler::updateSkeletalData()
 	if (bodyFrameReader)
 	{
 		IBodyFrame* bodyFrame = nullptr;
-		HRESULT frameReceived = bodyFrameReader->AcquireLatestFrame(&bodyFrame);
-		if (FAILED(frameReceived))
-		{
-			if (frameReceived == E_PENDING)
-			{
-				// LOG(INFO) << "Could not retrieve skeleton frame, stuck pending...";
-			}
-		}
+		const HRESULT frameReceived = bodyFrameReader->AcquireLatestFrame(&bodyFrame);
+		if (FAILED(frameReceived) && frameReceived == E_PENDING)
+			LOG(WARNING) << "[KinectV2 Device] Could not retrieve skeleton frame, stuck pending...";
+
 		//IBodyFrameReference* frameRef = nullptr;
 		//multiFrame->get_BodyFrameReference(&frameRef);
 		//frameRef->AcquireFrame(&bodyFrame);
@@ -190,15 +166,16 @@ void KinectV2Handler::updateSkeletalData()
 
 void KinectV2Handler::updateParseFrame()
 {
-	for (int i = 0; i < BODY_COUNT; i++)
+	for (const auto& kinect_bodies : kinectBodies)
 	{
-		if (kinectBodies[i])
-			kinectBodies[i]->get_IsTracked(&isTracking);
+		if (kinect_bodies)
+			kinect_bodies->get_IsTracked(&isTracking);
+
 		if (isTracking)
 		{
 			skeletonTracked = true;
-			kinectBodies[i]->GetJoints(JointType_Count, joints);
-			kinectBodies[i]->GetJointOrientations(JointType_Count, boneOrientations);
+			kinect_bodies->GetJoints(JointType_Count, joints);
+			kinect_bodies->GetJointOrientations(JointType_Count, boneOrientations);
 
 			/* Copy joint positions */
 			for (int j = 0; j < ktvr::Joint_Total; ++j)
@@ -245,7 +222,7 @@ void KinectV2Handler::updateParseFrame()
 
 			trackedJoints[ktvr::Joint_AnkleLeft].update_orientation(
 				trackedJoints[ktvr::Joint_AnkleLeft].getJointOrientation().slerp(
-					0.3f, Eigen::Quaterniond(
+					0.3, Eigen::Quaterniond(
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
 						Orientation.w,
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
@@ -255,13 +232,13 @@ void KinectV2Handler::updateParseFrame()
 						boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
 						Orientation.z
 					) *
-					Eigen::Quaterniond(Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitX())
-						* Eigen::AngleAxisd(_PI / 2.0, Eigen::Vector3d::UnitY())
-						* Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitZ()))));
+					Eigen::Quaterniond(Eigen::AngleAxisd(0., Eigen::Vector3d::UnitX())
+						* Eigen::AngleAxisd(_PI / 2., Eigen::Vector3d::UnitY())
+						* Eigen::AngleAxisd(0., Eigen::Vector3d::UnitZ()))));
 
 			trackedJoints[ktvr::Joint_AnkleRight].update_orientation(
 				trackedJoints[ktvr::Joint_AnkleRight].getJointOrientation().slerp(
-					0.3f, Eigen::Quaterniond(
+					0.3, Eigen::Quaterniond(
 						boneOrientations[globalIndex[
 							ktvr::Joint_AnkleRight]].Orientation.w,
 						boneOrientations[globalIndex[
@@ -271,13 +248,13 @@ void KinectV2Handler::updateParseFrame()
 						boneOrientations[globalIndex[
 							ktvr::Joint_AnkleRight]].Orientation.z
 					) *
-					Eigen::Quaterniond(Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitX())
-						* Eigen::AngleAxisd(-_PI / 2.0, Eigen::Vector3d::UnitY())
-						* Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitZ()))));
+					Eigen::Quaterniond(Eigen::AngleAxisd(0., Eigen::Vector3d::UnitX())
+						* Eigen::AngleAxisd(-_PI / 2., Eigen::Vector3d::UnitY())
+						* Eigen::AngleAxisd(0., Eigen::Vector3d::UnitZ()))));
 
 			trackedJoints[ktvr::Joint_KneeLeft].update_orientation(
 				trackedJoints[ktvr::Joint_KneeLeft].getJointOrientation().slerp(
-					0.35f, Eigen::Quaterniond(
+					0.35, Eigen::Quaterniond(
 						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
 						Orientation.w,
 						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
@@ -287,13 +264,13 @@ void KinectV2Handler::updateParseFrame()
 						boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
 						Orientation.z
 					) *
-					Eigen::Quaterniond(Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitX())
-						* Eigen::AngleAxisd(_PI / 3.0, Eigen::Vector3d::UnitY())
-						* Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitZ()))));
+					Eigen::Quaterniond(Eigen::AngleAxisd(0., Eigen::Vector3d::UnitX())
+						* Eigen::AngleAxisd(_PI / 3., Eigen::Vector3d::UnitY())
+						* Eigen::AngleAxisd(0., Eigen::Vector3d::UnitZ()))));
 
 			trackedJoints[ktvr::Joint_KneeRight].update_orientation(
 				trackedJoints[ktvr::Joint_KneeRight].getJointOrientation().slerp(
-					0.35f, Eigen::Quaterniond(
+					0.35, Eigen::Quaterniond(
 						boneOrientations[globalIndex[
 							ktvr::Joint_KneeRight]].Orientation.w,
 						boneOrientations[globalIndex[
@@ -303,13 +280,13 @@ void KinectV2Handler::updateParseFrame()
 						boneOrientations[globalIndex[
 							ktvr::Joint_KneeRight]].Orientation.z
 					) *
-					Eigen::Quaterniond(Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitX())
-						* Eigen::AngleAxisd(-_PI / 3.0, Eigen::Vector3d::UnitY())
-						* Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitZ()))));
+					Eigen::Quaterniond(Eigen::AngleAxisd(0., Eigen::Vector3d::UnitX())
+						* Eigen::AngleAxisd(-_PI / 3., Eigen::Vector3d::UnitY())
+						* Eigen::AngleAxisd(0., Eigen::Vector3d::UnitZ()))));
 
 			trackedJoints[ktvr::Joint_ElbowLeft].update_orientation(
 				trackedJoints[ktvr::Joint_ElbowLeft].getJointOrientation().slerp(
-					0.35f, Eigen::Quaterniond(
+					0.35, Eigen::Quaterniond(
 						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 						Orientation.w,
 						boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
@@ -322,7 +299,7 @@ void KinectV2Handler::updateParseFrame()
 
 			trackedJoints[ktvr::Joint_ElbowRight].update_orientation(
 				trackedJoints[ktvr::Joint_ElbowRight].getJointOrientation().slerp(
-					0.35f, Eigen::Quaterniond(
+					0.35, Eigen::Quaterniond(
 						boneOrientations[globalIndex[
 							ktvr::Joint_ElbowRight]].Orientation.w,
 						boneOrientations[globalIndex[
@@ -355,8 +332,9 @@ bool KinectV2Handler::initKinect()
 		//    | FrameSourceTypes::FrameSourceTypes_Color,
 		//   &frameReader);
 		//return frameReader;
-		std::this_thread::sleep_for(std::chrono::seconds(2));
+
 		// Necessary to allow kinect to become available behind the scenes
+		std::this_thread::sleep_for(std::chrono::seconds(2));
 
 		BOOLEAN available = false;
 		kinectSensor->get_IsAvailable(&available);
