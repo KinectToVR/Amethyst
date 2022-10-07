@@ -323,9 +323,6 @@
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="Amethyst.rc" />
   </ItemGroup>
   <ItemGroup>
@@ -383,5 +380,8 @@
     <Media Include="Assets\CalibrationDirections.mp4">
       <Filter>Assets</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
