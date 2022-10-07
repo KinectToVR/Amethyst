@@ -47,7 +47,7 @@ inline std::string WStringToString(const std::wstring& w_str)
 namespace ktvr
 {
 	// Interface Version
-	static const char* IAME_API_Devices_Version = "IAME_API_Version_017";
+	static const char* IAME_API_Devices_Version = "IAME_API_Version_018";
 
 	// Return messaging types
 	enum K2InitErrorType
@@ -127,7 +127,9 @@ namespace ktvr
 			jointOrientation{std::move(rot)},
 			trackingState{state}
 		{
-			positionTimestamp = AME_API_GET_TIMESTAMP_NOW;
+			// Init timestamp creation
+			previousPoseTimestamp = AME_API_GET_TIMESTAMP_NOW;
+			poseTimestamp = AME_API_GET_TIMESTAMP_NOW;
 		}
 
 		[[nodiscard]] Eigen::Vector3d getJointPosition() const { return jointPosition; }
@@ -140,7 +142,9 @@ namespace ktvr
 		[[nodiscard]] Eigen::Vector3d getJointAngularAcceleration() const { return jointAngularAcceleration; }
 
 		[[nodiscard]] ITrackedJointState getTrackingState() const { return trackingState; } // ITrackedJointState
-		[[nodiscard]] long long getPositionTimestamp() const { return positionTimestamp; }
+
+		[[nodiscard]] long long getPoseTimestamp() const { return poseTimestamp; }
+		[[nodiscard]] long long getPreviousPoseTimestamp() const { return previousPoseTimestamp; }
 
 		// For servers!
 		void update(Eigen::Vector3d position,
@@ -152,7 +156,8 @@ namespace ktvr
 			trackingState = state;
 
 			// Update pose timestamp
-			positionTimestamp = AME_API_GET_TIMESTAMP_NOW;
+			previousPoseTimestamp = poseTimestamp;
+			poseTimestamp = AME_API_GET_TIMESTAMP_NOW;
 		}
 
 		// For servers!
@@ -175,7 +180,8 @@ namespace ktvr
 			trackingState = state;
 
 			// Update pose timestamp
-			positionTimestamp = AME_API_GET_TIMESTAMP_NOW;
+			previousPoseTimestamp = poseTimestamp;
+			poseTimestamp = AME_API_GET_TIMESTAMP_NOW;
 		}
 
 		// For servers!
@@ -184,7 +190,8 @@ namespace ktvr
 			jointPosition = std::move(position);
 
 			// Update pose timestamp
-			positionTimestamp = AME_API_GET_TIMESTAMP_NOW;
+			previousPoseTimestamp = poseTimestamp;
+			poseTimestamp = AME_API_GET_TIMESTAMP_NOW;
 		}
 
 		// For servers!
@@ -235,7 +242,8 @@ namespace ktvr
 		Eigen::Vector3d jointAngularAcceleration = Eigen::Vector3d(0., 0., 0.);
 
 		ITrackedJointState trackingState = State_NotTracked;
-		long long positionTimestamp = 0;
+		long long poseTimestamp = 0;
+		long long previousPoseTimestamp = 0;
 	};
 
 	// Tracking Device Joint class for client plugins : Extended
