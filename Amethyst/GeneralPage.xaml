@@ -26,7 +26,7 @@
         <SplitView Canvas.ZIndex="1" x:Name="OffsetsView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                    PaneClosing="OffsetsView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
-                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
             <SplitView.Pane>
 
                 <Grid Margin="40,10" x:Name="OffsetsControlHostGrid">
@@ -59,7 +59,7 @@
         <SplitView Canvas.ZIndex="1" x:Name="CalibrationDeviceSelectView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                    PaneClosing="CalibrationDeviceSelectView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
-                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
             <SplitView.Pane>
                 <Grid>
                     <Grid x:Name="DeviceSelectionPane">
@@ -519,7 +519,7 @@
         <SplitView Canvas.ZIndex="2" x:Name="CalibrationModeSelectView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                    PaneClosing="CalibrationModeSelectView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
-                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
             <SplitView.Pane>
                 <Grid>
                     <Grid x:Name="CalibrationSelectionPane">
@@ -617,7 +617,7 @@
         <SplitView Canvas.ZIndex="3" x:Name="CalibrationRunningView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                    PaneClosing="CalibrationRunningView_PaneClosing" IsPaneOpen="False" OpenPaneLength="520"
-                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10">
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
             <SplitView.Pane>
                 <Grid>
                     <Grid x:Name="AutoCalibrationPane">
