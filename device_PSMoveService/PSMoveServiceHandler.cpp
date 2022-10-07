@@ -178,7 +178,7 @@ bool PSMoveServiceHandler::startup()
 		LOG(INFO) << "Controller List has been rebuilt.";
 
 		// Register as listener and start stream for each controller
-		unsigned int data_stream_flags =
+		constexpr unsigned int data_stream_flags =
 			PSMStreamFlags_includePositionData |
 			PSMStreamFlags_includePhysicsData |
 			PSMStreamFlags_includeCalibratedSensorData |
@@ -204,8 +204,8 @@ bool PSMoveServiceHandler::startup()
 			v_controllers.clear(); // All old controllers must be gone
 			for (int i = 0; i < controllerList.count; ++i)
 			{
-				auto controller = PSM_GetController(controllerList.controller_id[i]);
-				// Check that it's actually a Psmove/Virtual, as there could be dualshock's connected
+				const auto controller = PSM_GetController(controllerList.controller_id[i]);
+				// Check that it's actually a PSMove/Virtual, as there could be dualshock's connected
 
 				if (controller->ControllerType == PSMController_Move ||
 					controller->ControllerType == PSMController_Virtual)
@@ -261,7 +261,7 @@ void PSMoveServiceHandler::rebuildPSMoveLists()
 	{
 		m_needsRefresh = false; // Uncheck
 
-		unsigned int data_stream_flags =
+		constexpr unsigned int data_stream_flags =
 			PSMStreamFlags_includePositionData |
 			PSMStreamFlags_includePhysicsData |
 			PSMStreamFlags_includeCalibratedSensorData |
@@ -353,7 +353,7 @@ void PSMoveServiceHandler::rebuildControllerList()
 
 void PSMoveServiceHandler::processKeyInputs()
 {
-	if (controllerList.count < 1 || v_controllers.size() < 1) { return; }
+	if (controllerList.count < 1 || v_controllers.empty()) { return; }
 
 	for (MoveWrapper_PSM& wrapper : v_controllers)
 	{
@@ -362,14 +362,10 @@ void PSMoveServiceHandler::processKeyInputs()
 			continue; // Skip other types cuz no input otr whatever
 
 		const auto& controller = wrapper.controller->ControllerState.PSMoveState;
-
 		const bool bStartRealignHMDTriggered = (controller.StartButton == PSMButtonState_PRESSED
 			|| controller.StartButton == PSMButtonState_DOWN) && (controller.SelectButton == PSMButtonState_PRESSED
 			|| controller.SelectButton == PSMButtonState_DOWN);
-
-		const bool bStartVRRatioCalibrationTriggered = (controller.CrossButton == PSMButtonState_PRESSED) &&
-			(controller.CircleButton == PSMButtonState_PRESSED);
-
+		
 		// Recenter (capture)
 		if (controller.SelectButton == PSMButtonState_PRESSED)
 			wrapper.orientationOffset = PSMSToEigen(controller.Pose.Orientation);
@@ -384,8 +380,8 @@ void PSMoveServiceHandler::processKeyInputs()
 			              // Physics : [v, a, ang_v, ang_a] : [cm]->[m] (1/100)
 			              PSMSToEigen(controller.PhysicsData.LinearVelocityCmPerSec) * 0.01,
 			              PSMSToEigen(controller.PhysicsData.LinearAccelerationCmPerSecSqr) * 0.01,
-						  PSMSToEigen(controller.PhysicsData.AngularVelocityRadPerSec) * 0.01,
-						  PSMSToEigen(controller.PhysicsData.AngularAccelerationRadPerSecSqr) * 0.01,
+			              PSMSToEigen(controller.PhysicsData.AngularVelocityRadPerSec) * 0.01,
+			              PSMSToEigen(controller.PhysicsData.AngularAccelerationRadPerSecSqr) * 0.01,
 
 			              // Recenter (offset)
 			              ktvr::State_Tracked);
@@ -394,7 +390,7 @@ void PSMoveServiceHandler::processKeyInputs()
 		if (wrapper.flashNow)
 		{
 			// Vibrate the controller to signal selection
-			std::thread([&, this](uint32_t id)
+			std::thread([&, this](const uint32_t id)
 			            {
 				            PSM_SetControllerRumble(id, PSMControllerRumbleChannel_All, 0.7);
 				            std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -406,39 +402,12 @@ void PSMoveServiceHandler::processKeyInputs()
 
 		if (bStartRealignHMDTriggered)
 		{
-			PSMVector3f controllerBallPointedUpEuler = {static_cast<float>(M_PI_2), 0.0f, 0.0f};
-
-			PSMQuatf controllerBallPointedUpQuat = PSM_QuatfCreateFromAngles(&controllerBallPointedUpEuler);
-
-			PSM_ResetControllerOrientationAsync(wrapper.controller->ControllerID, &controllerBallPointedUpQuat,
-			                                    nullptr);
-		}
-		bool enabledRatioCalibration = false;
-		if (bStartVRRatioCalibrationTriggered && enabledRatioCalibration)
-		{
-			static bool zeroCalibrationAttempted = false;
-			static PSMVector3f zeroPos = {0, 0, 0};
-			static PSMVector3f endPos = {0, 0, 0};
-			static const double calibrationDistance = 20; // centimeters, real life distance expected
-
-			if (zeroCalibrationAttempted)
-			{
-				endPos = controller.Pose.Position;
-				zeroCalibrationAttempted = false;
-
-				auto zeroToEndVector = PSM_Vector3fSubtract(&endPos, &zeroPos);
-				double length = PSM_Vector3fLength(&zeroToEndVector);
-				finalPSMoveScale = calibrationDistance / length;
-				LOG(INFO) << "Set PSMove Scale Factor to " << finalPSMoveScale;
-
-				zeroPos = {0, 0, 0};
-				endPos = {0, 0, 0};
-			}
-			else
-			{
-				zeroPos = controller.Pose.Position;
-				zeroCalibrationAttempted = true;
-			}
+			PSMVector3f controllerBallPointedUpEuler =
+				{static_cast<float>(M_PI_2), 0.0f, 0.0f};
+			PSMQuatf controllerBallPointedUpQuat =
+				PSM_QuatfCreateFromAngles(&controllerBallPointedUpEuler);
+			PSM_ResetControllerOrientationAsync(
+				wrapper.controller->ControllerID, &controllerBallPointedUpQuat, nullptr);
 		}
 	}
 }
