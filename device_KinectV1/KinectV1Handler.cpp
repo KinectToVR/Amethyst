@@ -55,6 +55,11 @@ void KinectV1Handler::initialize()
 		}
 
 		if (!initialized) throw FailedKinectInitialization;
+
+		// Recreate the updater thread
+		if (!m_updater_thread)
+			m_updater_thread.reset(new std::thread(
+				&KinectV1Handler::updater, this));
 	}
 	catch (std::exception& e)
 	{
@@ -98,14 +103,9 @@ void KinectV1Handler::shutdown()
 
 void KinectV1Handler::update()
 {
-	if (isInitialized())
-	{
-		HRESULT kinectStatus = kinectSensor->NuiStatus();
-		if (kinectStatus == S_OK) // Update only if sensor works
-		{
-			updateSkeletalData();
-		}
-	}
+	// Update (only if the sensor is on and its status is ok)
+	if (isInitialized() && kinectSensor->NuiStatus() == S_OK)
+		updateSkeletalData();
 }
 
 bool KinectV1Handler::initKinect()
@@ -139,35 +139,33 @@ void KinectV1Handler::releaseKinectFrame(NUI_IMAGE_FRAME& imageFrame, HANDLE& rg
 
 void KinectV1Handler::updateSkeletalData()
 {
-	if (kinectSensor->NuiSkeletonGetNextFrame(0, &skeletonFrame) >= 0)
-	{
-		for (int i = 0; i < NUI_SKELETON_COUNT; ++i)
+	// Wait for a frame to arrive, give up after >3s of nothing
+	if (kinectSensor->NuiSkeletonGetNextFrame(3000, &skeletonFrame) >= 0)
+		for (auto& i : skeletonFrame.SkeletonData)
 		{
-			NUI_SKELETON_TRACKING_STATE trackingState = skeletonFrame.SkeletonData[i].eTrackingState;
-
-			if (NUI_SKELETON_TRACKED == trackingState)
+			if (NUI_SKELETON_TRACKED == i.eTrackingState)
 			{
 				skeletonTracked = true; // We've got it!
+
 				/* Copy joint positions */
 				for (int j = 0; j < ktvr::Joint_Total; ++j)
 				{
-					//TrackingDeviceBase::jointPositions[j].w() = skeletonFrame.SkeletonData[i].SkeletonPositions[globalIndex[j]].w;
 					trackedJoints[j].update_position(
 						{
-							skeletonFrame.SkeletonData[i].SkeletonPositions[globalIndex[j]].x,
-							skeletonFrame.SkeletonData[i].SkeletonPositions[globalIndex[j]].y,
-							skeletonFrame.SkeletonData[i].SkeletonPositions[globalIndex[j]].z
+							i.SkeletonPositions[globalIndex[j]].x,
+							i.SkeletonPositions[globalIndex[j]].y,
+							i.SkeletonPositions[globalIndex[j]].z
 						});
 
 					trackedJoints[j].update_state(
 						static_cast<ktvr::ITrackedJointState>(
-							skeletonFrame.SkeletonData[i].
+							i.
 							eSkeletonPositionTrackingState
 							[globalIndex[j]]));
 				}
 
 				// Calculate bone orientations (deprecated, may be replaced later)
-				NuiSkeletonCalculateBoneOrientations(&skeletonFrame.SkeletonData[i], boneOrientations);
+				NuiSkeletonCalculateBoneOrientations(&i, boneOrientations);
 
 				/* Copy joint orientations */
 				for (int k = 0; k < ktvr::Joint_Total; ++k)
@@ -193,7 +191,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				trackedJoints[ktvr::Joint_AnkleLeft].update_orientation(
 					trackedJoints[ktvr::Joint_AnkleLeft].getJointOrientation().slerp(
-						0.3f, Eigen::Quaterniond(
+						0.3, Eigen::Quaterniond(
 							boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
 							absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[ktvr::Joint_AnkleLeft]].
@@ -206,7 +204,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				trackedJoints[ktvr::Joint_AnkleRight].update_orientation(
 					trackedJoints[ktvr::Joint_AnkleRight].getJointOrientation().slerp(
-						0.3f, Eigen::Quaterniond(
+						0.3, Eigen::Quaterniond(
 							boneOrientations[globalIndex[
 								ktvr::Joint_AnkleRight]].absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[
@@ -219,7 +217,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				trackedJoints[ktvr::Joint_KneeLeft].update_orientation(
 					trackedJoints[ktvr::Joint_KneeLeft].getJointOrientation().slerp(
-						0.35f, Eigen::Quaterniond(
+						0.35, Eigen::Quaterniond(
 							boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
 							absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[ktvr::Joint_KneeLeft]].
@@ -232,7 +230,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				trackedJoints[ktvr::Joint_KneeRight].update_orientation(
 					trackedJoints[ktvr::Joint_KneeRight].getJointOrientation().slerp(
-						0.35f, Eigen::Quaterniond(
+						0.35, Eigen::Quaterniond(
 							boneOrientations[globalIndex[
 								ktvr::Joint_KneeRight]].absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[
@@ -245,7 +243,7 @@ void KinectV1Handler::updateSkeletalData()
 
 				trackedJoints[ktvr::Joint_ElbowLeft].update_orientation(
 					trackedJoints[ktvr::Joint_ElbowLeft].getJointOrientation().slerp(
-						0.35f, Eigen::Quaterniond(
+						0.35, Eigen::Quaterniond(
 							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 							absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
@@ -255,13 +253,13 @@ void KinectV1Handler::updateSkeletalData()
 							boneOrientations[globalIndex[ktvr::Joint_ElbowLeft]].
 							absoluteRotation.rotationQuaternion.z
 						) *
-						Eigen::Quaterniond(Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitX())
-							* Eigen::AngleAxisd(-_PI / 2.0, Eigen::Vector3d::UnitY())
-							* Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitZ()))));
+						Eigen::Quaterniond(Eigen::AngleAxisd(0., Eigen::Vector3d::UnitX())
+							* Eigen::AngleAxisd(-_PI / 2., Eigen::Vector3d::UnitY())
+							* Eigen::AngleAxisd(0., Eigen::Vector3d::UnitZ()))));
 
 				trackedJoints[ktvr::Joint_ElbowRight].update_orientation(
 					trackedJoints[ktvr::Joint_ElbowRight].getJointOrientation().slerp(
-						0.35f, Eigen::Quaterniond(
+						0.35, Eigen::Quaterniond(
 							boneOrientations[globalIndex[
 								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.w,
 							boneOrientations[globalIndex[
@@ -271,13 +269,12 @@ void KinectV1Handler::updateSkeletalData()
 							boneOrientations[globalIndex[
 								ktvr::Joint_ElbowRight]].absoluteRotation.rotationQuaternion.z
 						) *
-						Eigen::Quaterniond(Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitX())
-							* Eigen::AngleAxisd(_PI / 2.0, Eigen::Vector3d::UnitY())
-							* Eigen::AngleAxisd(0.f, Eigen::Vector3d::UnitZ()))));
+						Eigen::Quaterniond(Eigen::AngleAxisd(0., Eigen::Vector3d::UnitX())
+							* Eigen::AngleAxisd(_PI / 2., Eigen::Vector3d::UnitY())
+							* Eigen::AngleAxisd(0., Eigen::Vector3d::UnitZ()))));
 
 				break; // Only first skeleton
 			}
 			skeletonTracked = false;
 		}
-	}
 }

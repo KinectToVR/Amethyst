@@ -35,6 +35,7 @@ public:
 
 		Flags_FlipSupported = true;
 		Flags_AppOrientationSupported = true;
+		Flags_ForceSelfUpdate = true;
 
 		// Mark that our device supports settings
 		Flags_SettingsSupported = false; // 'false' until status OK
@@ -179,6 +180,15 @@ private:
 	void releaseKinectFrame(NUI_IMAGE_FRAME& imageFrame, HANDLE& rgbStream, INuiSensor*& sensor);
 
 	void updateSkeletalData();
+
+	// For self-updating
+	std::unique_ptr<std::thread> m_updater_thread;
+	// The self-updater thread
+	void updater()
+	{
+		// Auto-handles failures & etc
+		while (true)update();
+	}
 
 	/* For translating Kinect joint enumeration to K2 space */
 	int globalIndex[25] = {3, 2, 2, 4, 5, 6, 7, 7, 7, 8, 9, 10, 11, 11, 11, 1, 0, 12, 13, 14, 15, 16, 17, 18, 19};
