@@ -41,7 +41,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		void ReReadOffsets()
 		{
 			for (const auto& _item : _offsetsPivotItems)
-				_item.get()->ReReadOffsets(); // NumberBoxes are guarded inside anyway
+				_item->ReReadOffsets(); // NumberBoxes are guarded inside anyway
 		}
 
 		void ReAppendTrackerPivots()
@@ -56,7 +56,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					[&, this]
 					{
-						_ptr_container.get()->Items().Clear();
+						_ptr_container->Items().Clear();
 					}();
 				}
 				__except (EXCEPTION_EXECUTE_HANDLER)
@@ -80,7 +80,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					{
 						[&, this]
 						{
-							_ptr_container.get()->Items().Append(*(_item)->Container());
+							_ptr_container->Items().Append(*(_item)->Container());
 						}();
 					}
 					__except (EXCEPTION_EXECUTE_HANDLER)

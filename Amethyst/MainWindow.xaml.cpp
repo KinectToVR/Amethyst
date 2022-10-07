@@ -828,7 +828,7 @@ namespace winrt::Amethyst::implementation
 				std::make_shared<AppNotificationManager>(AppNotificationManager::Default());
 
 			LOG(INFO) << "Registering the notification manager...";
-			k2app::shared::main::thisNotificationManager.get()->Register();
+			k2app::shared::main::thisNotificationManager->Register();
 		}
 
 		LOG(INFO) << "Creating and registering the default resource manager...";
@@ -839,7 +839,7 @@ namespace winrt::Amethyst::implementation
 		LOG(INFO) << "Creating and registering the default resource context...";
 		k2app::shared::main::thisResourceContext =
 			std::make_shared<Microsoft::Windows::ApplicationModel::Resources::ResourceContext>(
-				k2app::shared::main::thisResourceManager.get()->CreateResourceContext());
+				k2app::shared::main::thisResourceManager->CreateResourceContext());
 
 		LOG(INFO) << "Pushing control pages to window...";
 		k2app::shared::main::m_pages.push_back({L"general", winrt::xaml_typename<GeneralPage>()});
@@ -1000,10 +1000,10 @@ namespace winrt::Amethyst::implementation
 				}
 
 				// Cleanup event handler
-				k2app::shared::main::thisNotificationManager.get()->NotificationInvoked(notification_token);
+				k2app::shared::main::thisNotificationManager->NotificationInvoked(notification_token);
 
 				// Call Unregister() before exiting main so that subsequent invocations will launch a new process
-				k2app::shared::main::thisNotificationManager.get()->Unregister();
+				k2app::shared::main::thisNotificationManager->Unregister();
 
 				// Flush the log cleaner
 				google::FlushLogFiles(google::GLOG_INFO);
@@ -1533,7 +1533,7 @@ namespace winrt::Amethyst::implementation
 							_guid = pDevice_GUID;
 
 							// Create a layout root for the device and override
-							k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
+							k2app::shared::main::thisDispatcherQueue->TryEnqueue(
 								[_last_device_index, this]
 								{
 									LOG(INFO) << "Registering device[" << _last_device_index <<
@@ -1775,7 +1775,7 @@ namespace winrt::Amethyst::implementation
 							_guid = pDevice_GUID;
 
 							// Create a layout root for the device and override
-							k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue(
+							k2app::shared::main::thisDispatcherQueue->TryEnqueue(
 								[_last_device_index, this]
 								{
 									LOG(INFO) << "Registering device[" << _last_device_index <<
@@ -2172,7 +2172,7 @@ namespace winrt::Amethyst::implementation
 					}).detach();
 
 					// Update the UI
-					k2app::shared::main::thisDispatcherQueue.get()->TryEnqueue([&, this]
+					k2app::shared::main::thisDispatcherQueue->TryEnqueue([&, this]
 					{
 						TrackingDevices::updateTrackingDevicesUI();
 					});
@@ -2968,7 +2968,7 @@ void Amethyst::implementation::MainWindow::HelpFlyoutDocsButton_Click(
 		k2app::shared::main::NavView_Navigate(L"general", Media::Animation::EntranceNavigationTransitionInfo());
 
 		// Hide the okashi tab
-		k2app::shared::main::consoleItem.get()->Visibility(Visibility::Collapsed);
+		k2app::shared::main::consoleItem->Visibility(Visibility::Collapsed);
 	}
 }
 

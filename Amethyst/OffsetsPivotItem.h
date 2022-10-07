@@ -33,7 +33,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					{{0, 2}, {1, 1}, {2, 0}};
 
 				// Update backend offsets with new values DO NOT SAVE
-				_ptr_orientation_control_boxes[index].get()->Value(
+				_ptr_orientation_control_boxes[index]->Value(
 					static_cast<int>(round(radiansToDegrees(
 						_tracker_pointer->orientationOffset(_xyz_zyx_map[index])))));
 			}
@@ -42,7 +42,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			for (uint32_t index = 0; index < 3; index++)
 			{
 				// XYZ
-				_ptr_position_control_boxes[index].get()->Value(
+				_ptr_position_control_boxes[index]->Value(
 					static_cast<int>(_tracker_pointer->positionOffset[index] * 100.0));
 			}
 
@@ -278,7 +278,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			for (uint32_t index = 0; index < 3; index++)
 			{
 				// ZYX
-				_ptr_orientation_control_boxes[index].get()->ValueChanged(
+				_ptr_orientation_control_boxes[index]->ValueChanged(
 					[index, this](const winrt::Windows::Foundation::IInspectable& sender,
 					              const NumberBoxValueChangedEventArgs& e) -> void
 					{
@@ -312,7 +312,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			for (uint32_t index = 0; index < 3; index++)
 			{
 				// XYZ
-				_ptr_position_control_boxes[index].get()->ValueChanged(
+				_ptr_position_control_boxes[index]->ValueChanged(
 					[index, this](const winrt::Windows::Foundation::IInspectable& sender,
 					              const NumberBoxValueChangedEventArgs& e) -> void
 					{

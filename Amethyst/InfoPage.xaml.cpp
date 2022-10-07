@@ -53,7 +53,7 @@ namespace winrt::Amethyst::implementation
 		// Play a sound
 		playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 
-		k2app::shared::main::consoleItem.get()->Visibility(Visibility::Visible);
+		k2app::shared::main::consoleItem->Visibility(Visibility::Visible);
 	}
 }
 

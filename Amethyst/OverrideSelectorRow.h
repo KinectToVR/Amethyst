@@ -39,11 +39,11 @@ namespace winrt::Microsoft::UI::Xaml::Controls::Helpers
 						item.Opacity(0.7);
 
 						// Push the item to the combobox
-						cbox.get()->Items().Append(box_value(item));
+						cbox->Items().Append(box_value(item));
 					}
 					else
 					// Push the item to the combobox
-						cbox.get()->Items().Append(box_value(str));
+						cbox->Items().Append(box_value(str));
 				}();
 			}
 			__except (EXCEPTION_EXECUTE_HANDLER)
@@ -124,7 +124,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls::Helpers
 				[&]
 				{
 					// Clear the combobox
-					cbox.get()->Items().Clear();
+					cbox->Items().Clear();
 				}();
 			}
 			__except (EXCEPTION_EXECUTE_HANDLER)
@@ -146,7 +146,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls::Helpers
 		{
 			__try
 			{
-				cbox.get()->SelectedIndex(index);
+				cbox->SelectedIndex(index);
 			}
 			__except (EXCEPTION_EXECUTE_HANDLER)
 			{
@@ -166,7 +166,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls::Helpers
 		{
 			__try
 			{
-				cbox.get()->IsEnabled(enabled);
+				cbox->IsEnabled(enabled);
 			}
 			__except (EXCEPTION_EXECUTE_HANDLER)
 			{
@@ -247,8 +247,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			const bool _o_this_device =
 				_tracker_pointer->overrideGUID == k2app::shared::devices::selectedTrackingDeviceGUIDPair.first;
 
-			_ptr_override_position_switch.get()->IsOn(_o_this_device && _tracker_pointer->isPositionOverridden);
-			_ptr_override_orientation_switch.get()->IsOn(_o_this_device && _tracker_pointer->isRotationOverridden);
+			_ptr_override_position_switch->IsOn(_o_this_device && _tracker_pointer->isPositionOverridden);
+			_ptr_override_orientation_switch->IsOn(_o_this_device && _tracker_pointer->isRotationOverridden);
 		}
 
 		// devices_push_override_joints
@@ -460,19 +460,19 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						return;
 
 					// If the selected joint is valid
-					if (_ptr_tracker_combo.get()->SelectedIndex() > 0)
+					if (_ptr_tracker_combo->SelectedIndex() > 0)
 					{
 						// Set the override polling joint ID
 						_tracker_pointer->overrideJointID =
-							_ptr_tracker_combo.get()->SelectedIndex() - 1; // minus the "off" item
+							_ptr_tracker_combo->SelectedIndex() - 1; // minus the "off" item
 
 						// Set the override polling device - the current one
 						_tracker_pointer->overrideGUID =
 							k2app::shared::devices::selectedTrackingDeviceGUIDPair.first;
 
 						// If we've disabled the both overrides, re-enable them
-						if (!_ptr_override_position_switch.get()->IsOn() &&
-							!_ptr_override_orientation_switch.get()->IsOn())
+						if (!_ptr_override_position_switch->IsOn() &&
+							!_ptr_override_orientation_switch->IsOn())
 						{
 							// Toggle the switches on
 							OverridePositionSwitch()->IsOn(true);
@@ -498,7 +498,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					else
 					{
 						// Disable the override
-						_ptr_tracker_combo.get()->SelectedIndex(0);
+						_ptr_tracker_combo->SelectedIndex(0);
 
 						// Disable the override, should auto-handle
 						OverridePositionSwitch()->IsOn(false);
@@ -537,23 +537,23 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device_pair.second)->getTrackedJoints().
 						empty())
 					{
-						_ptr_override_position_switch.get()->IsOn(false);
-						k2app::shared::devices::noJointsFlyout.get()->ShowAt(*k2app::shared::devices::overridesLabel);
+						_ptr_override_position_switch->IsOn(false);
+						k2app::shared::devices::noJointsFlyout->ShowAt(*k2app::shared::devices::overridesLabel);
 						return; // Don't set up any overrides (yet)
 					}
 
 					// Play a sound
-					playAppSound(_ptr_override_position_switch.get()->IsOn()
+					playAppSound(_ptr_override_position_switch->IsOn()
 						             ? k2app::interfacing::sounds::AppSounds::ToggleOn
 						             : k2app::interfacing::sounds::AppSounds::ToggleOff);
 
 					// Change the config
-					_tracker_pointer->isPositionOverridden = _ptr_override_position_switch.get()->IsOn();
-					_tracker_pointer->isRotationOverridden = _ptr_override_orientation_switch.get()->IsOn();
+					_tracker_pointer->isPositionOverridden = _ptr_override_position_switch->IsOn();
+					_tracker_pointer->isRotationOverridden = _ptr_override_orientation_switch->IsOn();
 
 					// If we've disabled the both overrides, show the "Disabled" text
-					if (!_ptr_override_position_switch.get()->IsOn() &&
-						!_ptr_override_orientation_switch.get()->IsOn())
+					if (!_ptr_override_position_switch->IsOn() &&
+						!_ptr_override_orientation_switch->IsOn())
 					{
 						// Reset the override polling joint ID
 						Helpers::SelectComboBoxItem_Safe(_ptr_tracker_combo, 0);
@@ -563,8 +563,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					}
 
 					// Select the first valid item when turning the override on
-					if (_ptr_tracker_combo.get()->SelectedIndex() <= 0 &&
-						_ptr_override_position_switch.get()->IsOn())
+					if (_ptr_tracker_combo->SelectedIndex() <= 0 &&
+						_ptr_override_position_switch->IsOn())
 						Helpers::SelectComboBoxItem_Safe(_ptr_tracker_combo, 1);
 
 					// Check for errors and disable combos
@@ -590,23 +590,23 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						std::get<ktvr::K2TrackingDeviceBase_JointsBasis*>(device_pair.second)->getTrackedJoints().
 						empty())
 					{
-						_ptr_override_orientation_switch.get()->IsOn(false);
-						k2app::shared::devices::noJointsFlyout.get()->ShowAt(*k2app::shared::devices::overridesLabel);
+						_ptr_override_orientation_switch->IsOn(false);
+						k2app::shared::devices::noJointsFlyout->ShowAt(*k2app::shared::devices::overridesLabel);
 						return; // Don't set up any overrides (yet)
 					}
 
 					// Play a sound
-					playAppSound(_ptr_override_orientation_switch.get()->IsOn()
+					playAppSound(_ptr_override_orientation_switch->IsOn()
 						             ? k2app::interfacing::sounds::AppSounds::ToggleOn
 						             : k2app::interfacing::sounds::AppSounds::ToggleOff);
 
 					// Change the config
-					_tracker_pointer->isPositionOverridden = _ptr_override_position_switch.get()->IsOn();
-					_tracker_pointer->isRotationOverridden = _ptr_override_orientation_switch.get()->IsOn();
+					_tracker_pointer->isPositionOverridden = _ptr_override_position_switch->IsOn();
+					_tracker_pointer->isRotationOverridden = _ptr_override_orientation_switch->IsOn();
 
 					// If we've disabled the both overrides, show the "Disabled" text
-					if (!_ptr_override_position_switch.get()->IsOn() &&
-						!_ptr_override_orientation_switch.get()->IsOn())
+					if (!_ptr_override_position_switch->IsOn() &&
+						!_ptr_override_orientation_switch->IsOn())
 					{
 						// Reset the override polling joint ID
 						Helpers::SelectComboBoxItem_Safe(_ptr_tracker_combo, 0);
@@ -616,8 +616,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					}
 
 					// Select the first valid item when turning the override on
-					if (_ptr_tracker_combo.get()->SelectedIndex() <= 0 &&
-						_ptr_override_orientation_switch.get()->IsOn())
+					if (_ptr_tracker_combo->SelectedIndex() <= 0 &&
+						_ptr_override_orientation_switch->IsOn())
 						Helpers::SelectComboBoxItem_Safe(_ptr_tracker_combo, 1);
 
 					// Check for errors and disable combos

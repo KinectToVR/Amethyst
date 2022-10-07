@@ -131,14 +131,14 @@ namespace winrt::Amethyst::implementation
 
 			LOG(INFO) << "Setting the devices' TreeView ItemSource to the created "
 				"Amethyst::DeviceEntryView MVVM object list...";
-			devicesTreeView.get()->ItemsSource(box_value(TrackingDevices::deviceMVVM_List));
+			devicesTreeView->ItemsSource(box_value(TrackingDevices::deviceMVVM_List));
 			devices_mvvm_setup_finished = true; // Mark as finished
 		}
 
 		// Set currently tracking device & selected device
 		LOG(INFO) << "Overwriting the devices TreeView selected item...";
-		devicesTreeView.get()->SelectedNode(
-			devicesTreeView.get()->RootNodes().GetAt(k2app::K2Settings.trackingDeviceGUIDPair.second));
+		devicesTreeView->SelectedNode(
+			devicesTreeView->RootNodes().GetAt(k2app::K2Settings.trackingDeviceGUIDPair.second));
 
 		selectedTrackingDeviceGUIDPair = k2app::K2Settings.trackingDeviceGUIDPair;
 		previousSelectedTrackingDeviceGUIDPair = k2app::K2Settings.trackingDeviceGUIDPair;
@@ -292,9 +292,9 @@ void Amethyst::implementation::DevicesPage::DeselectDeviceButton_Click(
 {
 	LOG(INFO) << "Now deselecting the tracking device...";
 
-	setAsOverrideButton.get()->IsEnabled(true);
-	setAsBaseButton.get()->IsEnabled(true);
-	deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
+	setAsOverrideButton->IsEnabled(true);
+	setAsBaseButton->IsEnabled(true);
+	deselectDeviceButton->Visibility(Visibility::Collapsed);
 
 	// Deselect the device
 	k2app::K2Settings.overrideDeviceGUIDsMap.erase(
@@ -339,8 +339,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	k2app::interfacing::devices_check_disabled_joints();
 
 	/* Update local statuses */
-	setAsOverrideButton.get()->IsEnabled(false);
-	setAsBaseButton.get()->IsEnabled(true);
+	setAsOverrideButton->IsEnabled(false);
+	setAsBaseButton->IsEnabled(true);
 	SetDeviceTypeFlyout().Hide(); // Hide the flyout
 
 	LOG(INFO) << "Changed the current tracking device (Override) to " <<
@@ -353,12 +353,12 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	{
 		// Remove the only one child of our outer main content grid
 		// (What a bestiality it is to do that!!1)
-		devicesOverridesSelectorStackPanelOuter.get()->Children().RemoveAtEnd();
+		devicesOverridesSelectorStackPanelOuter->Children().RemoveAtEnd();
 
 		Media::Animation::EntranceThemeTransition t;
 		t.IsStaggeringEnabled(true);
 
-		devicesOverridesSelectorStackPanelInner.get()->Transitions().Append(t);
+		devicesOverridesSelectorStackPanelInner->Transitions().Append(t);
 
 		// Sleep peacefully pretending that noting happened
 		apartment_context ui_thread;
@@ -368,8 +368,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 
 		// Re-add the child for it to play our funky transition
 		// (Though it's not the same as before...)
-		devicesOverridesSelectorStackPanelOuter.get()->
-		                                        Children().Append(*devicesOverridesSelectorStackPanelInner);
+		devicesOverridesSelectorStackPanelOuter->Children().Append(
+			*devicesOverridesSelectorStackPanelInner);
 	}
 
 	// Save settings
@@ -381,7 +381,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsOv
 	Sleep(100);
 	co_await ui_thread;
 
-	devicesOverridesSelectorStackPanelInner.get()->Transitions().Clear();
+	devicesOverridesSelectorStackPanelInner->Transitions().Clear();
 }
 
 
@@ -422,12 +422,12 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	{
 		// Remove the only one child of our outer main content grid
 		// (What a bestiality it is to do that!!1)
-		devicesJointsBasisSelectorStackPanelOuter.get()->Children().RemoveAtEnd();
+		devicesJointsBasisSelectorStackPanelOuter->Children().RemoveAtEnd();
 
 		Media::Animation::EntranceThemeTransition t;
 		t.IsStaggeringEnabled(true);
 
-		devicesJointsBasisSelectorStackPanelInner.get()->Transitions().Append(t);
+		devicesJointsBasisSelectorStackPanelInner->Transitions().Append(t);
 
 		// Sleep peacefully pretending that noting happened
 		apartment_context ui_thread;
@@ -437,7 +437,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 
 		// Re-add the child for it to play our funky transition
 		// (Though it's not the same as before...)
-		devicesJointsBasisSelectorStackPanelOuter.get()->Children().
+		devicesJointsBasisSelectorStackPanelOuter->Children().
 		                                          Append(*devicesJointsBasisSelectorStackPanelInner);
 	}
 
@@ -450,7 +450,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::DevicesPage::SetAsBa
 	Sleep(100);
 	co_await ui_thread;
 
-	devicesJointsBasisSelectorStackPanelInner.get()->Transitions().Clear();
+	devicesJointsBasisSelectorStackPanelInner->Transitions().Clear();
 }
 
 
@@ -631,7 +631,7 @@ void Amethyst::implementation::DevicesPage::DevicesPage_Loaded_Handler()
 
 		LOG(INFO) << "Setting the devices' ItemRepeater ItemSource to the created "
 			"Amethyst::PluginEntryView MVVM object list...";
-		pluginsItemsRepeater.get()->ItemsSource(box_value(pluginMVVMList));
+		pluginsItemsRepeater->ItemsSource(box_value(pluginMVVMList));
 	}
 
 	// Reset
@@ -925,12 +925,12 @@ k2app::shared::devices::ReloadSelectedDevice(
 	// Collapse all joint expanders
 	if (!_manual)
 		for (const auto& expander : jointSelectorExpanders)
-			expander.get()->ContainerExpander().get()->IsExpanded(false);
+			expander->ContainerExpander()->IsExpanded(false);
 
 	// Collapse all override expanders
 	if (!_manual)
 		for (const auto& expander : overrideSelectorExpanders)
-			expander.get()->ContainerExpander().get()->IsExpanded(false);
+			expander->ContainerExpander()->IsExpanded(false);
 
 	// Check if we've disabled any joints from spawning and disable their mods
 	interfacing::devices_check_disabled_joints();
@@ -947,41 +947,41 @@ k2app::shared::devices::ReloadSelectedDevice(
 	if (TrackingDevices::IsABase(selectedTrackingDeviceGUIDPair.first))
 	{
 		LOG(INFO) << "Selected a base";
-		setAsOverrideButton.get()->IsEnabled(false);
-		setAsBaseButton.get()->IsEnabled(false);
+		setAsOverrideButton->IsEnabled(false);
+		setAsBaseButton->IsEnabled(false);
 
-		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
+		deselectDeviceButton->Visibility(Visibility::Collapsed);
 	}
 	else if (TrackingDevices::IsAnOverride(selectedTrackingDeviceGUIDPair.first))
 	{
 		LOG(INFO) << "Selected an override";
-		setAsOverrideButton.get()->IsEnabled(false);
-		setAsBaseButton.get()->IsEnabled(true);
+		setAsOverrideButton->IsEnabled(false);
+		setAsBaseButton->IsEnabled(true);
 
-		deselectDeviceButton.get()->Visibility(Visibility::Visible);
+		deselectDeviceButton->Visibility(Visibility::Visible);
 
-		if (deviceErrorGrid.get()->Visibility() != Visibility::Visible)
+		if (deviceErrorGrid->Visibility() != Visibility::Visible)
 			interfacing::currentAppState = L"overrides";
 	}
 	else
 	{
 		LOG(INFO) << "Selected a [none]";
-		setAsOverrideButton.get()->IsEnabled(true);
-		setAsBaseButton.get()->IsEnabled(true);
+		setAsOverrideButton->IsEnabled(true);
+		setAsBaseButton->IsEnabled(true);
 
-		deselectDeviceButton.get()->Visibility(Visibility::Collapsed);
+		deselectDeviceButton->Visibility(Visibility::Collapsed);
 	}
 
 	if (!_manual)
 	{
 		// Remove the only one child of our outer main content grid
 		// (What a bestiality it is to do that!!1)
-		devicesMainContentGridOuter.get()->Children().RemoveAtEnd();
+		devicesMainContentGridOuter->Children().RemoveAtEnd();
 
 		Media::Animation::EntranceThemeTransition t;
 		t.IsStaggeringEnabled(true);
 
-		devicesMainContentGridInner.get()->Transitions().Append(t);
+		devicesMainContentGridInner->Transitions().Append(t);
 
 		// Sleep peacefully pretending that noting happened
 		apartment_context ui_thread;
@@ -991,7 +991,7 @@ k2app::shared::devices::ReloadSelectedDevice(
 
 		// Re-add the child for it to play our funky transition
 		// (Though it's not the same as before...)
-		devicesMainContentGridOuter.get()->Children().
+		devicesMainContentGridOuter->Children().
 		                            Append(*devicesMainContentGridInner);
 	}
 
@@ -1005,7 +1005,7 @@ k2app::shared::devices::ReloadSelectedDevice(
 	Sleep(100);
 	co_await ui_thread;
 
-	devicesMainContentGridInner.get()->Transitions().Clear();
+	devicesMainContentGridInner->Transitions().Clear();
 }
 
 void Amethyst::implementation::DevicesPage::PluginManagerFlyout_Opening(

@@ -19,8 +19,8 @@ std::wstring general_calibrating_device_guid;
 void skeleton_visibility_set_ui(const bool& v)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
-	skeletonToggleButton.get()->IsChecked(v);
-	skeletonToggleButton.get()->Content(box_value(v
+	skeletonToggleButton->IsChecked(v);
+	skeletonToggleButton->Content(box_value(v
 		                                              ? box_value(
 			                                              k2app::interfacing::LocalizedResourceWString(
 				                                              L"GeneralPage",
@@ -30,14 +30,14 @@ void skeleton_visibility_set_ui(const bool& v)
 				                                              L"GeneralPage",
 				                                              L"Buttons/Skeleton/Show"))));
 
-	forceRenderCheckBox.get()->IsEnabled(v);
-	forceRenderText.get()->Opacity(v ? 1.0 : 0.5);
+	forceRenderCheckBox->IsEnabled(v);
+	forceRenderText->Opacity(v ? 1.0 : 0.5);
 }
 
 void skeleton_force_set_ui(const bool& v)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
-	forceRenderCheckBox.get()->IsChecked(v);
+	forceRenderCheckBox->IsChecked(v);
 }
 
 std::wstring points_format(std::wstring fmt,
@@ -113,8 +113,8 @@ namespace winrt::Amethyst::implementation
 		// Create and push the offsets controller
 		offsetsController = std::move(std::make_shared<Controls::OffsetsController>());
 
-		offsetsControlHostGrid.get()->Children().Append(*offsetsController->Container());
-		offsetsControlHostGrid.get()->SetRow(*offsetsController->Container(), 0);
+		offsetsControlHostGrid->Children().Append(*offsetsController->Container());
+		offsetsControlHostGrid->SetRow(*offsetsController->Container(), 0);
 
 		offsetsController->ReAppendTrackerPivots();
 
@@ -178,9 +178,9 @@ void Amethyst::implementation::GeneralPage::SkeletonToggleButton_Click(
 	const Controls::SplitButtonClickEventArgs& e)
 {
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
-	k2app::K2Settings.skeletonPreviewEnabled = skeletonToggleButton.get()->IsChecked();
+	k2app::K2Settings.skeletonPreviewEnabled = skeletonToggleButton->IsChecked();
 
-	skeletonToggleButton.get()->Content(
+	skeletonToggleButton->Content(
 		k2app::K2Settings.skeletonPreviewEnabled
 			? box_value(k2app::interfacing::LocalizedResourceWString(
 				L"GeneralPage", L"Buttons/Skeleton/Hide"))
@@ -192,10 +192,10 @@ void Amethyst::implementation::GeneralPage::SkeletonToggleButton_Click(
 		             ? k2app::interfacing::sounds::AppSounds::ToggleOn
 		             : k2app::interfacing::sounds::AppSounds::ToggleOff);
 
-	forceRenderCheckBox.get()->IsEnabled(
-		skeletonToggleButton.get()->IsChecked());
-	forceRenderText.get()->Opacity(
-		skeletonToggleButton.get()->IsChecked() ? 1.0 : 0.5);
+	forceRenderCheckBox->IsEnabled(
+		skeletonToggleButton->IsChecked());
+	forceRenderText->Opacity(
+		skeletonToggleButton->IsChecked() ? 1.0 : 0.5);
 
 	k2app::K2Settings.saveSettings();
 }
@@ -1035,7 +1035,7 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 
 	// Update the internal version
 	if (versionLabel.get() != nullptr)
-		versionLabel.get()->Text(
+		versionLabel->Text(
 			L"v" + StringToWString(k2app::interfacing::K2InternalVersion));
 
 	// Try auto-spawning trackers if stated so
@@ -1090,8 +1090,8 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	skeleton_force_set_ui(k2app::K2Settings.forceSkeletonPreview);
 
 	// Setup the freeze button
-	toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
-	toggleFreezeButton.get()->Content(k2app::interfacing::isTrackingFrozen
+	toggleFreezeButton->IsChecked(k2app::interfacing::isTrackingFrozen);
+	toggleFreezeButton->Content(k2app::interfacing::isTrackingFrozen
 		                                  ? box_value(
 			                                  k2app::interfacing::LocalizedResourceWString(
 				                                  L"GeneralPage",
@@ -1104,16 +1104,16 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	// Set up the co/re/disconnect button
 	if (!k2app::interfacing::K2AppTrackersSpawned)
 	{
-		toggleTrackersButton.get()->Content(box_value(
+		toggleTrackersButton->Content(box_value(
 			k2app::interfacing::LocalizedResourceWString(
 				L"GeneralPage", L"Buttons/TrackersToggle/Connect")));
 
-		toggleTrackersButton.get()->IsChecked(false);
+		toggleTrackersButton->IsChecked(false);
 	}
 	else
 	{
-		toggleTrackersButton.get()->IsChecked(k2app::interfacing::K2AppTrackersInitialized);
-		toggleTrackersButton.get()->Content(k2app::interfacing::K2AppTrackersInitialized
+		toggleTrackersButton->IsChecked(k2app::interfacing::K2AppTrackersInitialized);
+		toggleTrackersButton->Content(k2app::interfacing::K2AppTrackersInitialized
 			                                    ? box_value(
 				                                    k2app::interfacing::LocalizedResourceWString(
 					                                    L"GeneralPage",
@@ -1324,7 +1324,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 		if (isCurrentWindowActive_backup != isCurrentWindowActive &&
 			k2app::shared::main::appTitleLabel.get() != nullptr)
 		{
-			k2app::shared::main::appTitleLabel.get()->Opacity(isCurrentWindowActive ? 1.0 : 0.5);
+			k2app::shared::main::appTitleLabel->Opacity(isCurrentWindowActive ? 1.0 : 0.5);
 			isCurrentWindowActive_backup = isCurrentWindowActive;
 		}
 
@@ -1860,8 +1860,8 @@ void Amethyst::implementation::GeneralPage::ToggleTrackingButton_Click(
 {
 	k2app::interfacing::isTrackingFrozen = !k2app::interfacing::isTrackingFrozen;
 
-	toggleFreezeButton.get()->IsChecked(k2app::interfacing::isTrackingFrozen);
-	toggleFreezeButton.get()->Content(
+	toggleFreezeButton->IsChecked(k2app::interfacing::isTrackingFrozen);
+	toggleFreezeButton->Content(
 		k2app::interfacing::isTrackingFrozen
 			? box_value(
 				k2app::interfacing::LocalizedResourceWString(

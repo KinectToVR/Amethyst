@@ -57,7 +57,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					[&, this]
 					{
-						_ptr_container_panel.get()->Children().Clear();
+						_ptr_container_panel->Children().Clear();
 					}();
 				}
 				__except (EXCEPTION_EXECUTE_HANDLER)
@@ -77,7 +77,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					[&, this]
 					{
-						_ptr_container_panel.get()->Children().Append(*_ptr_header);
+						_ptr_container_panel->Children().Append(*_ptr_header);
 					}();
 				}
 				__except (EXCEPTION_EXECUTE_HANDLER)
@@ -102,7 +102,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					{
 						[&, this]
 						{
-							_ptr_container_panel.get()->Children().Append(*_row->Container());
+							_ptr_container_panel->Children().Append(*_row->Container());
 						}();
 					}
 					__except (EXCEPTION_EXECUTE_HANDLER)
@@ -291,17 +291,17 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_ptr_header = std::make_shared<Grid>(_header);
 
 			// Set up some signals
-			_ptr_container_expander.get()->Expanding(
+			_ptr_container_expander->Expanding(
 				[this](const Expander& sender,
 				       const ExpanderExpandingEventArgs& e) -> void
 				{
 					for (auto& expander : k2app::shared::devices::jointSelectorExpanders)
-						if (expander.get()->ContainerExpander().get() != nullptr &&
-							expander.get()->ContainerExpander().get() != _ptr_container_expander.get())
-							expander.get()->ContainerExpander().get()->IsExpanded(false);
+						if (expander->ContainerExpander().get() != nullptr &&
+							expander->ContainerExpander().get() != _ptr_container_expander.get())
+							expander->ContainerExpander()->IsExpanded(false);
 				});
 
-			_ptr_container_expander.get()->Expanding([&](const auto&, const auto&)
+			_ptr_container_expander->Expanding([&](const auto&, const auto&)
 			{
 				// Don't react to pre-init signals
 				if (!k2app::shared::devices::devices_tab_setup_finished)return;
@@ -310,7 +310,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 			});
 
-			_ptr_container_expander.get()->Collapsed([&](const auto&, const auto&)
+			_ptr_container_expander->Collapsed([&](const auto&, const auto&)
 			{
 				// Don't react to pre-init signals
 				if (!k2app::shared::devices::devices_tab_setup_finished)return;

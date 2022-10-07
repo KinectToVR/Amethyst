@@ -132,8 +132,8 @@ namespace TrackingDevices
 				if (k2app::shared::devices::devicesTreeView.get() != nullptr
 					&& devices_navigate_index.second >= 0)
 				{
-					k2app::shared::devices::devicesTreeView.get()->SelectedNode(
-						k2app::shared::devices::devicesTreeView.get()->RootNodes().
+					k2app::shared::devices::devicesTreeView->SelectedNode(
+						k2app::shared::devices::devicesTreeView->RootNodes().
 						                                        GetAt(devices_navigate_index.second));
 
 					// Backup
@@ -162,24 +162,24 @@ namespace TrackingDevices
 				base_status_ok = true; // Skip if the server's failed
 
 			// If the server driver's OK
-			k2app::shared::general::errorWhatText.get()->Visibility(
+			k2app::shared::general::errorWhatText->Visibility(
 				base_status_ok ? Visibility::Collapsed : Visibility::Visible);
-			k2app::shared::general::errorWhatGrid.get()->Visibility(
+			k2app::shared::general::errorWhatGrid->Visibility(
 				base_status_ok ? Visibility::Collapsed : Visibility::Visible);
-			k2app::shared::general::errorButtonsGrid.get()->Visibility(
+			k2app::shared::general::errorButtonsGrid->Visibility(
 				base_status_ok ? Visibility::Collapsed : Visibility::Visible);
-			k2app::shared::general::trackingDeviceErrorLabel.get()->Visibility(
+			k2app::shared::general::trackingDeviceErrorLabel->Visibility(
 				base_status_ok ? Visibility::Collapsed : Visibility::Visible);
 
 			// Split status and message by \n
-			k2app::shared::general::deviceNameLabel.get()->Text(deviceName);
-			k2app::shared::general::deviceStatusLabel.get()->Text(split_status(device_status_string)[0]);
-			k2app::shared::general::trackingDeviceErrorLabel.get()->Text(split_status(device_status_string)[1]);
-			k2app::shared::general::errorWhatText.get()->Text(split_status(device_status_string)[2]);
+			k2app::shared::general::deviceNameLabel->Text(deviceName);
+			k2app::shared::general::deviceStatusLabel->Text(split_status(device_status_string)[0]);
+			k2app::shared::general::trackingDeviceErrorLabel->Text(split_status(device_status_string)[1]);
+			k2app::shared::general::errorWhatText->Text(split_status(device_status_string)[2]);
 
 			// Dim the calibration button if can't calibrate right now
-			k2app::shared::general::calibrationButton.get()->Opacity(
-				(!k2app::shared::general::calibrationButton.get()->IsEnabled() // Don't dim if disabled
+			k2app::shared::general::calibrationButton->Opacity(
+				(!k2app::shared::general::calibrationButton->IsEnabled() // Don't dim if disabled
 					|| !k2app::K2Settings.overrideDeviceGUIDsMap.empty() // Don't dim if we have overrides
 					|| base_status_ok)
 					? 1.0 // We're fine if any of the upper conditions is met
@@ -190,7 +190,7 @@ namespace TrackingDevices
 		if (k2app::shared::general::additionalDeviceErrorsHyperlink.get() != nullptr)
 		{
 			// Show the 'additional errors' button if there are errors
-			k2app::shared::general::additionalDeviceErrorsHyperlink.get()->Visibility(
+			k2app::shared::general::additionalDeviceErrorsHyperlink->Visibility(
 				// Skip if the server driver's not present
 				(override_status_ok || !k2app::interfacing::isServerDriverPresent)
 					? Visibility::Collapsed
@@ -216,7 +216,7 @@ namespace TrackingDevices
 		if (k2app::shared::settings::flipDropDown.get() != nullptr)
 		{
 			// Overwritten a bit earlier
-			k2app::shared::settings::flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);
+			k2app::shared::settings::flipToggle->IsOn(k2app::K2Settings.isFlipEnabled);
 
 			// Enable/disable mathbased & flip elements
 			if (trackingDevice.index() == 0)
@@ -228,16 +228,16 @@ namespace TrackingDevices
 				for (const auto& expander : k2app::shared::settings::jointExpanderVector)
 					expander->EnableSoftwareOrientation(_sup);
 
-				k2app::shared::settings::flipToggle.get()->IsEnabled(
+				k2app::shared::settings::flipToggle->IsEnabled(
 					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
-				k2app::shared::settings::flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
+				k2app::shared::settings::flipDropDown->IsEnabled(k2app::K2Settings.isFlipEnabled &&
 					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
-				k2app::shared::settings::flipDropDownGrid.get()->Opacity(
-					k2app::shared::settings::flipToggle.get()->IsEnabled() ? 1 : 0.5);
+				k2app::shared::settings::flipDropDownGrid->Opacity(
+					k2app::shared::settings::flipToggle->IsEnabled() ? 1 : 0.5);
 
 				// Hide/Show the flip controls container
-				k2app::shared::settings::flipDropDownContainer.get()->Visibility(
-					k2app::shared::settings::flipToggle.get()->IsEnabled()
+				k2app::shared::settings::flipDropDownContainer->Visibility(
+					k2app::shared::settings::flipToggle->IsEnabled()
 						? Visibility::Visible
 						: Visibility::Collapsed);
 			}
@@ -247,12 +247,12 @@ namespace TrackingDevices
 				for (const auto& expander : k2app::shared::settings::jointExpanderVector)
 					expander->EnableSoftwareOrientation(false);
 
-				k2app::shared::settings::flipToggle.get()->IsEnabled(false);
-				k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
-				k2app::shared::settings::flipDropDownGrid.get()->Opacity(0.5);
+				k2app::shared::settings::flipToggle->IsEnabled(false);
+				k2app::shared::settings::flipDropDown->IsEnabled(false);
+				k2app::shared::settings::flipDropDownGrid->Opacity(0.5);
 
 				// Hide the flip controls container
-				k2app::shared::settings::flipDropDownContainer.get()->Visibility(Visibility::Collapsed);
+				k2app::shared::settings::flipDropDownContainer->Visibility(Visibility::Collapsed);
 			}
 			// Update extflip
 			settings_set_external_flip_is_enabled();
@@ -387,26 +387,26 @@ namespace TrackingDevices
 			device_status_string = device->statusResultWString(device_status);
 
 			// Update the device name
-			k2app::shared::devices::deviceNameLabel.get()->Text(device->getDeviceName());
+			k2app::shared::devices::deviceNameLabel->Text(device->getDeviceName());
 
 			// We've selected a SkeletonBasis device, so this should be hidden
 			for (auto& expander : k2app::shared::devices::jointSelectorExpanders)
-				expander.get()->SetVisibility(Visibility::Collapsed);
+				expander->SetVisibility(Visibility::Collapsed);
 
-			k2app::shared::devices::jointBasisLabel.get()->Visibility(Visibility::Collapsed);
+			k2app::shared::devices::jointBasisLabel->Visibility(Visibility::Collapsed);
 
 			// Show / Hide the override expanders
 			for (auto& expander :
 			     k2app::shared::devices::overrideSelectorExpanders)
 				// Collapse on fails & non-overrides
-				expander.get()->SetVisibility(
+				expander->SetVisibility(
 					device_status == S_OK &&
 					IsAnOverride(device->getDeviceGUID())
 						? Visibility::Visible
 						: Visibility::Collapsed);
 
 			// Collapse on fails & non-overrides
-			k2app::shared::devices::overridesLabel.get()->Visibility(
+			k2app::shared::devices::overridesLabel->Visibility(
 				device_status == S_OK &&
 				IsAnOverride(device->getDeviceGUID())
 					? Visibility::Visible
@@ -420,11 +420,11 @@ namespace TrackingDevices
 				{
 					// Clear items
 					for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
-						expander.get()->ReAppendTrackers();
+						expander->ReAppendTrackers();
 
 					// Push the placeholder to all combos
 					for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
-						expander.get()->PushOverrideJoint(
+						expander->PushOverrideJoint(
 							k2app::interfacing::LocalizedResourceWString(
 								L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
@@ -434,19 +434,19 @@ namespace TrackingDevices
 					case ktvr::K2_Character_Basic:
 						{
 							for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
-								expander.get()->PushOverrideJoints(false);
+								expander->PushOverrideJoints(false);
 						}
 						break;
 					case ktvr::K2_Character_Simple:
 						{
 							for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
-								expander.get()->PushOverrideJoints();
+								expander->PushOverrideJoints();
 						}
 						break;
 					case ktvr::K2_Character_Full:
 						{
 							for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
-								expander.get()->PushOverrideJoints();
+								expander->PushOverrideJoints();
 						}
 						break;
 					}
@@ -458,23 +458,23 @@ namespace TrackingDevices
 					{
 						// Select the first (or next, if exists) joint
 						// Set the placeholder text on disabled combos
-						expander.get()->SelectComboItems();
+						expander->SelectComboItems();
 
 						// Select enabled overrides
-						expander.get()->UpdateOverrideToggles();
+						expander->UpdateOverrideToggles();
 					}
 				}
 			}
 
 			// Show / Hide device settings
-			k2app::shared::devices::selectedDeviceSettingsHostContainer.get()->Visibility(
+			k2app::shared::devices::selectedDeviceSettingsHostContainer->Visibility(
 				device->isSettingsDaemonSupported()
 					? Visibility::Visible
 					: Visibility::Collapsed);
 
 			// Append device settings / placeholder layout
-			k2app::shared::devices::selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
-			k2app::shared::devices::selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			k2app::shared::devices::selectedDeviceSettingsRootLayoutPanel->Children().Clear();
+			k2app::shared::devices::selectedDeviceSettingsRootLayoutPanel->Children().Append(
 				device->isSettingsDaemonSupported()
 					? *TrackingDevicesLayoutRootsVector.at(
 						k2app::shared::devices::selectedTrackingDeviceGUIDPair.second)->Get()
@@ -492,18 +492,18 @@ namespace TrackingDevices
 			device_status_string = device->statusResultWString(device_status);
 
 			// Update the device name
-			k2app::shared::devices::deviceNameLabel.get()->Text(device->getDeviceName());
+			k2app::shared::devices::deviceNameLabel->Text(device->getDeviceName());
 
 			// We've selected a jointsbasis device, so this should be visible
 			//	at least when the device is online
 			for (auto& expander : k2app::shared::devices::jointSelectorExpanders)
-				expander.get()->SetVisibility(
+				expander->SetVisibility(
 					(device_status == S_OK &&
 						IsABase(k2app::shared::devices::selectedTrackingDeviceGUIDPair.first))
 						? Visibility::Visible
 						: Visibility::Collapsed);
 
-			k2app::shared::devices::jointBasisLabel.get()->Visibility(
+			k2app::shared::devices::jointBasisLabel->Visibility(
 				(device_status == S_OK &&
 					IsABase(k2app::shared::devices::selectedTrackingDeviceGUIDPair.first))
 					? Visibility::Visible
@@ -513,14 +513,14 @@ namespace TrackingDevices
 			for (auto& expander :
 			     k2app::shared::devices::overrideSelectorExpanders)
 				// Collapse on fails & non-overrides
-				expander.get()->SetVisibility(
+				expander->SetVisibility(
 					device_status == S_OK &&
 					IsAnOverride(device->getDeviceGUID())
 						? Visibility::Visible
 						: Visibility::Collapsed);
 
 			// Collapse on fails & non-overrides
-			k2app::shared::devices::overridesLabel.get()->Visibility(
+			k2app::shared::devices::overridesLabel->Visibility(
 				device_status == S_OK &&
 				IsAnOverride(device->getDeviceGUID())
 					? Visibility::Visible
@@ -533,7 +533,7 @@ namespace TrackingDevices
 				if (IsABase(k2app::shared::devices::selectedTrackingDeviceGUIDPair.first))
 				{
 					for (auto& expander : k2app::shared::devices::jointSelectorExpanders)
-						expander.get()->ReAppendTrackers();
+						expander->ReAppendTrackers();
 				}
 
 				// If we're reconnecting an override device, also refresh joints
@@ -541,11 +541,11 @@ namespace TrackingDevices
 				{
 					// Clear items
 					for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
-						expander.get()->ReAppendTrackers();
+						expander->ReAppendTrackers();
 
 					// Push the placeholder to all combos
 					for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
-						expander.get()->PushOverrideJoint(
+						expander->PushOverrideJoint(
 							k2app::interfacing::LocalizedResourceWString(
 								L"DevicesPage", L"Placeholders/Overrides/NoOverride/PlaceholderText"), true);
 
@@ -553,7 +553,7 @@ namespace TrackingDevices
 					for (const auto& _joint : device->getTrackedJoints())
 						// Push the name to all combos
 						for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
-							expander.get()->PushOverrideJoint(_joint.getJointName());
+							expander->PushOverrideJoint(_joint.getJointName());
 
 
 					// Try fix override IDs if wrong
@@ -563,23 +563,23 @@ namespace TrackingDevices
 					{
 						// Select the first (or next, if exists) joint
 						// Set the placeholder text on disabled combos
-						expander.get()->SelectComboItems();
+						expander->SelectComboItems();
 
 						// Select enabled overrides
-						expander.get()->UpdateOverrideToggles();
+						expander->UpdateOverrideToggles();
 					}
 				}
 			}
 
 			// Show / Hide device settings
-			k2app::shared::devices::selectedDeviceSettingsHostContainer.get()->Visibility(
+			k2app::shared::devices::selectedDeviceSettingsHostContainer->Visibility(
 				device->isSettingsDaemonSupported()
 					? Visibility::Visible
 					: Visibility::Collapsed);
 
 			// Append device settings / placeholder layout
-			k2app::shared::devices::selectedDeviceSettingsRootLayoutPanel.get()->Children().Clear();
-			k2app::shared::devices::selectedDeviceSettingsRootLayoutPanel.get()->Children().Append(
+			k2app::shared::devices::selectedDeviceSettingsRootLayoutPanel->Children().Clear();
+			k2app::shared::devices::selectedDeviceSettingsRootLayoutPanel->Children().Append(
 				device->isSettingsDaemonSupported()
 					? *TrackingDevicesLayoutRootsVector.at(
 						k2app::shared::devices::selectedTrackingDeviceGUIDPair.second)->Get()
@@ -592,20 +592,20 @@ namespace TrackingDevices
 		/* Update local statuses */
 
 		// Update the status here
-		k2app::shared::devices::errorWhatText.get()->Visibility(
+		k2app::shared::devices::errorWhatText->Visibility(
 			device_status == S_OK ? Visibility::Collapsed : Visibility::Visible);
-		k2app::shared::devices::deviceErrorGrid.get()->Visibility(
+		k2app::shared::devices::deviceErrorGrid->Visibility(
 			device_status == S_OK ? Visibility::Collapsed : Visibility::Visible);
-		k2app::shared::devices::trackingDeviceErrorLabel.get()->Visibility(
+		k2app::shared::devices::trackingDeviceErrorLabel->Visibility(
 			device_status == S_OK ? Visibility::Collapsed : Visibility::Visible);
 
-		k2app::shared::devices::trackingDeviceChangePanel.get()->Visibility(
+		k2app::shared::devices::trackingDeviceChangePanel->Visibility(
 			device_status == S_OK ? Visibility::Visible : Visibility::Collapsed);
 
 		// Split status and message by \n
-		k2app::shared::devices::deviceStatusLabel.get()->Text(split_status(device_status_string)[0]);
-		k2app::shared::devices::trackingDeviceErrorLabel.get()->Text(split_status(device_status_string)[1]);
-		k2app::shared::devices::errorWhatText.get()->Text(split_status(device_status_string)[2]);
+		k2app::shared::devices::deviceStatusLabel->Text(split_status(device_status_string)[0]);
+		k2app::shared::devices::trackingDeviceErrorLabel->Text(split_status(device_status_string)[1]);
+		k2app::shared::devices::errorWhatText->Text(split_status(device_status_string)[2]);
 
 		// Refresh the device list MVVM
 		RefreshDevicesMVVMList();

@@ -125,31 +125,31 @@ namespace TrackingDevices
 		if (isExternalFlipSupportable() && k2app::K2Settings.isFlipEnabled &&
 			k2app::K2Settings.isExternalFlipEnabled)
 		{
-			k2app::shared::settings::externalFlipStatusLabel.get()->Text(
+			k2app::shared::settings::externalFlipStatusLabel->Text(
 				k2app::interfacing::LocalizedResourceWString(
 					L"SettingsPage", L"Captions/ExtFlipStatus/Active"));
 
-			k2app::shared::settings::externalFlipStatusStackPanel.get()->Visibility(
+			k2app::shared::settings::externalFlipStatusStackPanel->Visibility(
 				winrt::Microsoft::UI::Xaml::Visibility::Visible);
 		}
 		// No tracker detected
 		else if (k2app::K2Settings.isExternalFlipEnabled)
 		{
-			k2app::shared::settings::externalFlipStatusLabel.get()->Text(
+			k2app::shared::settings::externalFlipStatusLabel->Text(
 				k2app::interfacing::LocalizedResourceWString(
 					L"SettingsPage", L"Captions/ExtFlipStatus/NoTracker"));
 
-			k2app::shared::settings::externalFlipStatusStackPanel.get()->Visibility(
+			k2app::shared::settings::externalFlipStatusStackPanel->Visibility(
 				winrt::Microsoft::UI::Xaml::Visibility::Visible);
 		}
 		// Disabled by the user
 		else
 		{
-			k2app::shared::settings::externalFlipStatusLabel.get()->Text(
+			k2app::shared::settings::externalFlipStatusLabel->Text(
 				k2app::interfacing::LocalizedResourceWString(
 					L"SettingsPage", L"Captions/ExtFlipStatus/Disabled"));
 
-			k2app::shared::settings::externalFlipStatusStackPanel.get()->Visibility(
+			k2app::shared::settings::externalFlipStatusStackPanel->Visibility(
 				winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
 		}
 	}
@@ -165,11 +165,11 @@ namespace TrackingDevices
 		// Flip
 		if (!k2app::K2Settings.isFlipEnabled)
 		{
-			k2app::shared::settings::flipDropDown.get()->IsEnabled(false);
-			k2app::shared::settings::flipDropDown.get()->IsExpanded(false);
+			k2app::shared::settings::flipDropDown->IsEnabled(false);
+			k2app::shared::settings::flipDropDown->IsExpanded(false);
 		}
 		else
-			k2app::shared::settings::flipDropDown.get()->IsEnabled(true);
+			k2app::shared::settings::flipDropDown->IsEnabled(true);
 	}
 
 	inline void settings_trackersConfigChanged(const bool& showToasts = true)
@@ -184,7 +184,7 @@ namespace TrackingDevices
 		if (k2app::interfacing::K2AppTrackersSpawned)
 		{
 			if (k2app::shared::settings::restartButton.get() != nullptr && showToasts)
-				if (!k2app::shared::settings::restartButton.get()->IsEnabled())
+				if (!k2app::shared::settings::restartButton->IsEnabled())
 				{
 					k2app::interfacing::ShowToast(
 						k2app::interfacing::LocalizedResourceWString(
@@ -202,7 +202,7 @@ namespace TrackingDevices
 
 			// Compare with saved settings and unlock the restart
 			if (k2app::shared::settings::restartButton.get() != nullptr)
-				k2app::shared::settings::restartButton.get()->IsEnabled(true);
+				k2app::shared::settings::restartButton->IsEnabled(true);
 		}
 
 		// Enable/Disable combos
@@ -332,7 +332,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 		// by the switch's toggle handler
 		void UpdateIsActive()
 		{
-			_ptr_joint_switch.get()->IsOn(
+			_ptr_joint_switch->IsOn(
 				_tracker_pointers[0]->data_isActive);
 
 			if (!_tracker_pointers[0]->data_isActive)
@@ -389,8 +389,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			if (_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
 				_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_RightFoot)
 			{
-				_ptr_software_orientation.get()->IsEnabled(enable);
-				_ptr_software_orientation_v2.get()->IsEnabled(enable);
+				_ptr_software_orientation->IsEnabled(enable);
+				_ptr_software_orientation_v2->IsEnabled(enable);
 
 				// Reset if selected and was turned off
 				for (const auto& tracker_p : _tracker_pointers)
@@ -399,7 +399,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 							tracker_p->orientationTrackingOption == k2app::k2_SoftwareCalculatedRotation_V2))
 					{
 						tracker_p->orientationTrackingOption = k2app::k2_DeviceInferredRotation;
-						_ptr_orientation_combo.get()->SelectedIndex(k2app::k2_DeviceInferredRotation);
+						_ptr_orientation_combo->SelectedIndex(k2app::k2_DeviceInferredRotation);
 					}
 			}
 		}
@@ -658,7 +658,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					for (const auto& expander : k2app::shared::settings::jointExpanderVector)
 						if (expander->MainExpander().get() != nullptr &&
 							expander->MainExpander().get() != _ptr_main_expander.get())
-							expander->MainExpander().get()->IsExpanded(false);
+							expander->MainExpander()->IsExpanded(false);
 
 					for (const auto& tracker_p : _tracker_pointers)
 						tracker_p->data_isActive = _tracker_pointers[0]->data_isActive;
@@ -682,7 +682,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Make actual changes
 					for (const auto& tracker_p : _tracker_pointers)
 					{
-						tracker_p->data_isActive = _ptr_joint_switch.get()->IsOn();
+						tracker_p->data_isActive = _ptr_joint_switch->IsOn();
 
 						// Do that on UI's background
 						apartment_context _ui_thread;
@@ -719,7 +719,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					k2app::K2Settings.saveSettings();
 
 					// Play a sound
-					playAppSound(_ptr_joint_switch.get()->IsOn()
+					playAppSound(_ptr_joint_switch->IsOn()
 						             ? k2app::interfacing::sounds::AppSounds::ToggleOn
 						             : k2app::interfacing::sounds::AppSounds::ToggleOff);
 
@@ -735,7 +735,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						LOG(WARNING) << "All trackers have been disabled, force-enabling the waist tracker!";
 
 						// Enable the wiast tracker (no need to worry about the dispatcher, we're already inside)
-						k2app::shared::settings::jointExpanderVector.front()->JointSwitch().get()->IsOn(true);
+						k2app::shared::settings::jointExpanderVector.front()->JointSwitch()->IsOn(true);
 
 						// Save settings
 						k2app::K2Settings.saveSettings();
@@ -753,12 +753,12 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)return;
 
-					if (_ptr_position_combo.get()->SelectedIndex() < 0)
-						_ptr_position_combo.get()->SelectedItem(e.RemovedItems().GetAt(0));
+					if (_ptr_position_combo->SelectedIndex() < 0)
+						_ptr_position_combo->SelectedItem(e.RemovedItems().GetAt(0));
 
 					for (const auto& tracker_p : _tracker_pointers)
 						tracker_p->positionTrackingFilterOption =
-							static_cast<k2app::JointPositionTrackingOption>(_ptr_position_combo.get()->SelectedIndex());
+							static_cast<k2app::JointPositionTrackingOption>(_ptr_position_combo->SelectedIndex());
 
 					// Save settings
 					k2app::K2Settings.saveSettings();
@@ -783,12 +783,12 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					// Don't react to pre-init signals
 					if (!k2app::shared::settings::settings_localInitFinished)return;
 
-					if (_ptr_orientation_combo.get()->SelectedIndex() < 0)
-						_ptr_orientation_combo.get()->SelectedItem(e.RemovedItems().GetAt(0));
+					if (_ptr_orientation_combo->SelectedIndex() < 0)
+						_ptr_orientation_combo->SelectedItem(e.RemovedItems().GetAt(0));
 
 					for (const auto& tracker_p : _tracker_pointers)
 						tracker_p->orientationTrackingOption =
-							static_cast<k2app::JointRotationTrackingOption>(_ptr_orientation_combo.get()->
+							static_cast<k2app::JointRotationTrackingOption>(_ptr_orientation_combo->
 								SelectedIndex());
 
 					// Save settings
@@ -810,8 +810,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			if (_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_LeftFoot ||
 				_tracker_pointers[0]->base_tracker == ktvr::ITrackerType::Tracker_RightFoot)
 			{
-				_ptr_software_orientation.get()->Visibility(Visibility::Visible);
-				_ptr_software_orientation_v2.get()->Visibility(Visibility::Visible);
+				_ptr_software_orientation->Visibility(Visibility::Visible);
+				_ptr_software_orientation_v2->Visibility(Visibility::Visible);
 			}
 
 			_ptr_main_expander->Expanding([&](const auto&, const auto&)

@@ -56,7 +56,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
-				_row.get()->ClearOverrideCombos();
+				_row->ClearOverrideCombos();
 
 			__DEVICES_JOINTS_END_CHANGES
 		}
@@ -66,7 +66,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
-				_row.get()->SelectOverrideJoints();
+				_row->SelectOverrideJoints();
 
 			__DEVICES_JOINTS_END_CHANGES
 		}
@@ -76,7 +76,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
-				_row.get()->UpdateOverrideJoints(all);
+				_row->UpdateOverrideJoints(all);
 
 			__DEVICES_JOINTS_END_CHANGES
 		}
@@ -86,7 +86,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
-				_row.get()->UpdateOverrideJoints(_string, secondary);
+				_row->UpdateOverrideJoints(_string, secondary);
 
 			__DEVICES_JOINTS_END_CHANGES
 		}
@@ -96,7 +96,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			__DEVICES_JOINTS_BEGIN_CHANGES
 
 			for (const auto& _row : _overrideSelectorRows)
-				_row.get()->UpdateOverrideToggles();
+				_row->UpdateOverrideToggles();
 
 			__DEVICES_JOINTS_END_CHANGES
 		}
@@ -107,28 +107,28 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			for (const auto& _row : _overrideSelectorRows)
 			{
-				_row.get()->TrackerCombo().get()->IsEnabled(
-					_row.get()->Tracker()->data_isActive); // Is tracker ON?
+				_row->TrackerCombo()->IsEnabled(
+					_row->Tracker()->data_isActive); // Is tracker ON?
 
-				_row.get()->OverridePositionSwitch().get()->IsEnabled(
-					_row.get()->Tracker()->data_isActive); // Is tracker ON?
+				_row->OverridePositionSwitch()->IsEnabled(
+					_row->Tracker()->data_isActive); // Is tracker ON?
 
-				_row.get()->OverrideOrientationSwitch().get()->IsEnabled(
-					_row.get()->Tracker()->data_isActive); // Is tracker ON?
+				_row->OverrideOrientationSwitch()->IsEnabled(
+					_row->Tracker()->data_isActive); // Is tracker ON?
 
 				// Change the placeholder to 'Joint Disabled'
-				_row.get()->TrackerCombo().get()->PlaceholderText(
+				_row->TrackerCombo()->PlaceholderText(
 					k2app::interfacing::LocalizedResourceWString(
 						L"DevicesPage", L"Placeholders/Joints/Disabled/PlaceholderText"));
 
 				// Optionally show the placeholder
-				if (!_row.get()->Tracker()->data_isActive)
+				if (!_row->Tracker()->data_isActive)
 				{
-					_row.get()->OverridePositionSwitch().get()->IsOn(false);
-					_row.get()->OverrideOrientationSwitch().get()->IsOn(false);
+					_row->OverridePositionSwitch()->IsOn(false);
+					_row->OverrideOrientationSwitch()->IsOn(false);
 
 					// Show the placeholder
-					_row.get()->TrackerCombo().get()->SelectedIndex(-1);
+					_row->TrackerCombo()->SelectedIndex(-1);
 				}
 			}
 
@@ -152,7 +152,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					[&, this]
 					{
-						_ptr_container_panel.get()->Children().Clear();
+						_ptr_container_panel->Children().Clear();
 					}();
 				}
 				__except (EXCEPTION_EXECUTE_HANDLER)
@@ -172,7 +172,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				{
 					[&, this]
 					{
-						_ptr_container_panel.get()->Children().Append(*_ptr_header);
+						_ptr_container_panel->Children().Append(*_ptr_header);
 					}();
 				}
 				__except (EXCEPTION_EXECUTE_HANDLER)
@@ -197,7 +197,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					{
 						[&, this]
 						{
-							_ptr_container_panel.get()->Children().Append(*_row.get()->Container());
+							_ptr_container_panel->Children().Append(*_row->Container());
 						}();
 					}
 					__except (EXCEPTION_EXECUTE_HANDLER)
@@ -420,17 +420,17 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_ptr_header = std::make_shared<Grid>(_header);
 
 			// Set up some signals
-			_ptr_container_expander.get()->Expanding(
+			_ptr_container_expander->Expanding(
 				[this](const Expander& sender,
 				       const ExpanderExpandingEventArgs& e) -> void
 				{
 					for (auto& expander : k2app::shared::devices::overrideSelectorExpanders)
 						if (expander->ContainerExpander().get() != nullptr &&
 							expander->ContainerExpander().get() != _ptr_container_expander.get())
-							expander->ContainerExpander().get()->IsExpanded(false);
+							expander->ContainerExpander()->IsExpanded(false);
 				});
 
-			_ptr_container_expander.get()->Expanding([&](const auto&, const auto&)
+			_ptr_container_expander->Expanding([&](const auto&, const auto&)
 			{
 				// Don't react to pre-init signals
 				if (!k2app::shared::devices::devices_tab_setup_finished)return;
@@ -439,7 +439,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				playAppSound(k2app::interfacing::sounds::AppSounds::Show);
 			});
 
-			_ptr_container_expander.get()->Collapsed([&](const auto&, const auto&)
+			_ptr_container_expander->Collapsed([&](const auto&, const auto&)
 			{
 				// Don't react to pre-init signals
 				if (!k2app::shared::devices::devices_tab_setup_finished)return;
@@ -471,20 +471,20 @@ namespace k2app::interfacing
 
 		// Optionally fix combos for disabled trackers -> joint selectors for base
 		for (const auto& expander : jointSelectorExpanders)
-			for (std::shared_ptr<JointSelectorRow>& row : *expander.get()->JointSelectorRows())
+			for (std::shared_ptr<JointSelectorRow>& row : *expander->JointSelectorRows())
 			{
 				Helpers::SetComboBoxIsEnabled_Safe(
-					row.get()->TrackerCombo(),
-					row.get()->Tracker()->data_isActive);
+					row->TrackerCombo(),
+					row->Tracker()->data_isActive);
 
-				if (!row.get()->Tracker()->data_isActive)
+				if (!row->Tracker()->data_isActive)
 					Helpers::SelectComboBoxItem_Safe(
-						row.get()->TrackerCombo(), -1); // Placeholder
+						row->TrackerCombo(), -1); // Placeholder
 			}
 
 		// Optionally fix combos for disabled trackers -> joint selectors for override
 		for (const auto& expander : overrideSelectorExpanders)
-			expander.get()->UpdateIsEnabled();
+			expander->UpdateIsEnabled();
 
 		__DEVICES_JOINTS_END_CHANGES
 	}

@@ -21,7 +21,7 @@ void settings_safe_clear(const std::shared_ptr<Controls::StackPanel>& panel)
 		{
 			[&]
 			{
-				panel.get()->Children().Clear();
+				panel->Children().Clear();
 			}();
 		}
 		__except (EXCEPTION_EXECUTE_HANDLER)
@@ -248,15 +248,15 @@ namespace winrt::Amethyst::implementation
 							for (const auto& expander : jointExpanderVector)
 								expander->EnableSoftwareOrientation(_sup);
 
-							flipToggle.get()->IsEnabled(
+							flipToggle->IsEnabled(
 								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
-							flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
+							flipDropDown->IsEnabled(k2app::K2Settings.isFlipEnabled &&
 								std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
-							flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
+							flipDropDownGrid->Opacity(flipToggle->IsEnabled() ? 1 : 0.5);
 
 							// Hide/Show the flip controls container
-							flipDropDownContainer.get()->Visibility(
-								flipToggle.get()->IsEnabled()
+							flipDropDownContainer->Visibility(
+								flipToggle->IsEnabled()
 									? Visibility::Visible
 									: Visibility::Collapsed);
 
@@ -268,12 +268,12 @@ namespace winrt::Amethyst::implementation
 							for (const auto& expander : jointExpanderVector)
 								expander->EnableSoftwareOrientation(false);
 
-							flipToggle.get()->IsEnabled(false);
-							flipDropDown.get()->IsEnabled(false);
-							flipDropDownGrid.get()->Opacity(0.5);
+							flipToggle->IsEnabled(false);
+							flipDropDown->IsEnabled(false);
+							flipDropDownGrid->Opacity(0.5);
 
 							// Hide the flip controls container
-							flipDropDownContainer.get()->Visibility(Visibility::Collapsed);
+							flipDropDownContainer->Visibility(Visibility::Collapsed);
 
 							TrackingDevices::settings_set_external_flip_is_enabled();
 						}
@@ -710,8 +710,8 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 		ForeignLangGrid().Visibility(Visibility::Visible);
 
 	// Select saved flip, position and rotation options
-	flipToggle.get()->IsOn(k2app::K2Settings.isFlipEnabled);
-	externalFlipCheckBox.get()->IsChecked(k2app::K2Settings.isExternalFlipEnabled);
+	flipToggle->IsOn(k2app::K2Settings.isFlipEnabled);
+	externalFlipCheckBox->IsChecked(k2app::K2Settings.isExternalFlipEnabled);
 
 	if (const auto& trackingDevice = TrackingDevices::getCurrentDevice();
 		trackingDevice.index() == 0)
@@ -723,15 +723,15 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 		for (const auto& expander : jointExpanderVector)
 			expander->EnableSoftwareOrientation(_sup);
 
-		flipToggle.get()->IsEnabled(
+		flipToggle->IsEnabled(
 			std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
-		flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
+		flipDropDown->IsEnabled(k2app::K2Settings.isFlipEnabled &&
 			std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
-		flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
+		flipDropDownGrid->Opacity(flipToggle->IsEnabled() ? 1 : 0.5);
 
 		// Hide/Show the flip controls container
-		flipDropDownContainer.get()->Visibility(
-			flipToggle.get()->IsEnabled()
+		flipDropDownContainer->Visibility(
+			flipToggle->IsEnabled()
 				? Visibility::Visible
 				: Visibility::Collapsed);
 
@@ -743,12 +743,12 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 		for (const auto& expander : jointExpanderVector)
 			expander->EnableSoftwareOrientation(false);
 
-		flipToggle.get()->IsEnabled(false);
-		flipDropDown.get()->IsEnabled(false);
-		flipDropDownGrid.get()->Opacity(0.5);
+		flipToggle->IsEnabled(false);
+		flipDropDown->IsEnabled(false);
+		flipDropDownGrid->Opacity(0.5);
 
 		// Hide the flip controls container
-		flipDropDownContainer.get()->Visibility(Visibility::Collapsed);
+		flipDropDownContainer->Visibility(Visibility::Collapsed);
 
 		TrackingDevices::settings_set_external_flip_is_enabled();
 	}
@@ -760,7 +760,7 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 	// Load auto-spawn and sounds config
 	autoSpawnCheckbox->IsChecked(k2app::K2Settings.autoSpawnEnabledJoints);
 	enableSoundsCheckbox->IsChecked(k2app::K2Settings.enableAppSounds);
-	soundsVolumeSlider.get()->Value(k2app::K2Settings.appSoundsVolume);
+	soundsVolumeSlider->Value(k2app::K2Settings.appSoundsVolume);
 
 	// Enable/Disable Ext/Flip
 	TrackingDevices::settings_set_external_flip_is_enabled();
@@ -846,7 +846,7 @@ void Amethyst::implementation::SettingsPage::SoundsVolumeSlider_ValueChanged(
 
 	// Change sounds level
 	k2app::K2Settings.appSoundsVolume =
-		k2app::shared::settings::soundsVolumeSlider.get()->Value();
+		k2app::shared::settings::soundsVolumeSlider->Value();
 
 	// Save settings
 	k2app::K2Settings.saveSettings();
@@ -1330,15 +1330,15 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					for (const auto& expander : jointExpanderVector)
 						expander->EnableSoftwareOrientation(_sup);
 
-					flipToggle.get()->IsEnabled(
+					flipToggle->IsEnabled(
 						std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
-					flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
+					flipDropDown->IsEnabled(k2app::K2Settings.isFlipEnabled &&
 						std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
-					flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
+					flipDropDownGrid->Opacity(flipToggle->IsEnabled() ? 1 : 0.5);
 
 					// Hide/Show the flip controls container
-					flipDropDownContainer.get()->Visibility(
-						flipToggle.get()->IsEnabled()
+					flipDropDownContainer->Visibility(
+						flipToggle->IsEnabled()
 							? Visibility::Visible
 							: Visibility::Collapsed);
 
@@ -1350,12 +1350,12 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					for (const auto& expander : jointExpanderVector)
 						expander->EnableSoftwareOrientation(false);
 
-					flipToggle.get()->IsEnabled(false);
-					flipDropDown.get()->IsEnabled(false);
-					flipDropDownGrid.get()->Opacity(0.5);
+					flipToggle->IsEnabled(false);
+					flipDropDown->IsEnabled(false);
+					flipDropDownGrid->Opacity(0.5);
 
 					// Hide the flip controls container
-					flipDropDownContainer.get()->Visibility(Visibility::Collapsed);
+					flipDropDownContainer->Visibility(Visibility::Collapsed);
 
 					TrackingDevices::settings_set_external_flip_is_enabled();
 				}
@@ -1395,7 +1395,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					LOG(WARNING) << "All trackers have been disabled, force-enabling the waist tracker!";
 
 					// Enable the wiast tracker (no need to worry about the dispatcher, we're already inside)
-					jointExpanderVector.front()->JointSwitch().get()->IsOn(true);
+					jointExpanderVector.front()->JointSwitch()->IsOn(true);
 
 					// Save settings
 					k2app::K2Settings.saveSettings();
@@ -1508,15 +1508,15 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				for (const auto& expander : jointExpanderVector)
 					expander->EnableSoftwareOrientation(_sup);
 
-				flipToggle.get()->IsEnabled(
+				flipToggle->IsEnabled(
 					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
-				flipDropDown.get()->IsEnabled(k2app::K2Settings.isFlipEnabled &&
+				flipDropDown->IsEnabled(k2app::K2Settings.isFlipEnabled &&
 					std::get<ktvr::K2TrackingDeviceBase_SkeletonBasis*>(trackingDevice)->isFlipSupported());
-				flipDropDownGrid.get()->Opacity(flipToggle.get()->IsEnabled() ? 1 : 0.5);
+				flipDropDownGrid->Opacity(flipToggle->IsEnabled() ? 1 : 0.5);
 
 				// Hide/Show the flip controls container
-				flipDropDownContainer.get()->Visibility(
-					flipToggle.get()->IsEnabled()
+				flipDropDownContainer->Visibility(
+					flipToggle->IsEnabled()
 						? Visibility::Visible
 						: Visibility::Collapsed);
 
@@ -1528,12 +1528,12 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 				for (const auto& expander : jointExpanderVector)
 					expander->EnableSoftwareOrientation(false);
 
-				flipToggle.get()->IsEnabled(false);
-				flipDropDown.get()->IsEnabled(false);
-				flipDropDownGrid.get()->Opacity(0.5);
+				flipToggle->IsEnabled(false);
+				flipDropDown->IsEnabled(false);
+				flipDropDownGrid->Opacity(0.5);
 
 				// Hide the flip controls container
-				flipDropDownContainer.get()->Visibility(Visibility::Collapsed);
+				flipDropDownContainer->Visibility(Visibility::Collapsed);
 
 				TrackingDevices::settings_set_external_flip_is_enabled();
 			}

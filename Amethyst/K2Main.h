@@ -36,13 +36,13 @@ namespace k2app::main
 			// Play a Sound and Update UI
 			playAppSound(isTrackingFrozen ? sounds::AppSounds::ToggleOff : sounds::AppSounds::ToggleOn);
 
-			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
+			shared::main::thisDispatcherQueue->TryEnqueue([&]
 			{
 				if (shared::general::toggleFreezeButton.get() != nullptr)
 				{
 					shared::general::general_tab_setup_finished = false; // Boiler
-					shared::general::toggleFreezeButton.get()->IsChecked(isTrackingFrozen);
-					shared::general::toggleFreezeButton.get()->Content(isTrackingFrozen
+					shared::general::toggleFreezeButton->IsChecked(isTrackingFrozen);
+					shared::general::toggleFreezeButton->Content(isTrackingFrozen
 						? winrt::box_value(
 							LocalizedResourceWString(
 								L"GeneralPage",
@@ -132,12 +132,12 @@ namespace k2app::main
 				             ? sounds::AppSounds::ToggleOn
 				             : sounds::AppSounds::ToggleOff);
 
-			shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
+			shared::main::thisDispatcherQueue->TryEnqueue([&]
 			{
 				if (shared::settings::flipToggle.get() != nullptr)
 				{
 					shared::settings::settings_localInitFinished = false; // Boiler
-					shared::settings::flipToggle.get()->IsOn(K2Settings.isFlipEnabled);
+					shared::settings::flipToggle->IsOn(K2Settings.isFlipEnabled);
 					shared::settings::settings_localInitFinished = true; // Boiler end
 				}
 			});
@@ -487,7 +487,7 @@ namespace k2app::main
 				// Run the worker (if applicable)
 				if (K2Settings.checkForOverlappingTrackers &&
 					!interfacing::isAlreadyAddedTrackersScanRunning)
-					shared::main::thisDispatcherQueue.get()->TryEnqueue(
+					shared::main::thisDispatcherQueue->TryEnqueue(
 						[&]()-> winrt::Windows::Foundation::IAsyncAction
 						{
 							using namespace winrt;
@@ -1119,7 +1119,7 @@ namespace k2app::main
 					_refresh_running = true;
 
 					// Parse the request - update
-					shared::main::thisDispatcherQueue.get()->TryEnqueue([&]
+					shared::main::thisDispatcherQueue->TryEnqueue([&]
 					{
 						interfacing::statusUIRefreshRequested = false;
 						interfacing::statusUIRefreshRequested_Urgent = false;
@@ -1130,7 +1130,7 @@ namespace k2app::main
 						{
 							TrackingDevices::devices_handle_refresh(false);
 
-							if (shared::devices::deviceErrorGrid.get()->Visibility() ==
+							if (shared::devices::deviceErrorGrid->Visibility() ==
 								winrt::Microsoft::UI::Xaml::Visibility::Visible)
 								interfacing::statusUIRefreshRequested = true; // Redo
 						}
@@ -1138,7 +1138,7 @@ namespace k2app::main
 						{
 							TrackingDevices::updateTrackingDevicesUI();
 
-							if (shared::general::errorWhatGrid.get()->Visibility() ==
+							if (shared::general::errorWhatGrid->Visibility() ==
 								winrt::Microsoft::UI::Xaml::Visibility::Visible)
 								interfacing::statusUIRefreshRequested = true; // Redo
 						}

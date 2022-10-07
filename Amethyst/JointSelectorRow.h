@@ -57,7 +57,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 					{
 						[&, this]
 						{
-							_ptr_tracker_combo.get()->Items().Clear();
+							_ptr_tracker_combo->Items().Clear();
 						}();
 					}
 					__except (EXCEPTION_EXECUTE_HANDLER)
@@ -80,7 +80,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						{
 							[&, this]
 							{
-								_ptr_tracker_combo.get()->Items().Append(
+								_ptr_tracker_combo->Items().Append(
 									box_value(_joint.getJointName()));
 							}();
 						}
@@ -96,7 +96,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 
 			// Check base IDs if wrong
 			TrackingDevices::devices_check_base_ids();
-			_ptr_tracker_combo.get()->SelectedIndex(_tracker_pointer->selectedTrackedJointID);
+			_ptr_tracker_combo->SelectedIndex(_tracker_pointer->selectedTrackedJointID);
 
 			const bool _overriden_from_other_device =
 				(_tracker_pointer->isPositionOverridden || _tracker_pointer->isRotationOverridden) &&
@@ -238,10 +238,10 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 						k2app::shared::devices::devices_joints_setup_pending)
 						return;
 
-					if (_ptr_tracker_combo.get()->SelectedIndex() >= 0)
-						_tracker_pointer->selectedTrackedJointID = _ptr_tracker_combo.get()->SelectedIndex();
+					if (_ptr_tracker_combo->SelectedIndex() >= 0)
+						_tracker_pointer->selectedTrackedJointID = _ptr_tracker_combo->SelectedIndex();
 					else
-						_ptr_tracker_combo.get()->SelectedItem(e.RemovedItems().GetAt(0));
+						_ptr_tracker_combo->SelectedItem(e.RemovedItems().GetAt(0));
 
 					// If we're using a joints device then also signal the joint
 					const auto& trackingDevice = TrackingDevices::getCurrentDevice();
