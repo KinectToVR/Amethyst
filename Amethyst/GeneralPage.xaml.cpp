@@ -1265,36 +1265,6 @@ void Amethyst::implementation::GeneralPage::sk_dot(
 	ellipse.Visibility(Visibility::Visible);
 }
 
-
-std::pair<bool, bool> IsJointUsedAsOverride(const uint32_t& joint)
-{
-	std::pair _o{false, false};
-
-	// Scan for position overrides
-	for (const auto& _j_p : k2app::K2Settings.K2TrackersVector)
-		if (joint == _j_p.overrideJointID)_o.first = true;
-
-	// Scan for rotation overrides
-	for (const auto& _j_r : k2app::K2Settings.K2TrackersVector)
-		if (joint == _j_r.overrideJointID)_o.second = true;
-
-	return (k2app::K2Settings.overrideDeviceGUIDsMap.empty())
-		       ? std::make_pair(false, false)
-		       : _o;
-}
-
-
-std::pair<bool, bool> IsJointOverriden(const uint32_t& joint)
-{
-	return k2app::K2Settings.overrideDeviceGUIDsMap.contains(
-		       k2app::K2Settings.K2TrackersVector.at(joint).overrideGUID)
-		       ? std::make_pair(
-			       k2app::K2Settings.K2TrackersVector.at(joint).isPositionOverridden,
-			       k2app::K2Settings.K2TrackersVector.at(joint).isRotationOverridden)
-		       : std::make_pair(false, false);
-}
-
-
 bool isCurrentWindowActive_backup = false;
 
 void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
@@ -1449,31 +1419,31 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 						// Waist
 						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist],
-						       IsJointOverriden(0));
+						       TrackingDevices::IsJointOverriden(0));
 
 						// Left Foot
 						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft],
-						       IsJointOverriden(1));
+						       TrackingDevices::IsJointOverriden(1));
 
 						// Right Foot
 						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight],
-						       IsJointOverriden(2));
+						       TrackingDevices::IsJointOverriden(2));
 
 						// Left Elbow
 						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft],
-						       IsJointOverriden(3));
+						       TrackingDevices::IsJointOverriden(3));
 
 						// Right Elbow
 						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight],
-						       IsJointOverriden(4));
+						       TrackingDevices::IsJointOverriden(4));
 
 						// Left Knee
 						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft],
-						       IsJointOverriden(5));
+						       TrackingDevices::IsJointOverriden(5));
 
 						// Right Knee
 						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight],
-						       IsJointOverriden(6));
+						       TrackingDevices::IsJointOverriden(6));
 					}
 					else if (device->getDeviceCharacteristics() == ktvr::K2_Character_Simple)
 					{
@@ -1486,25 +1456,25 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 						sk_dot(jointDots[0], joints[ktvr::Joint_Head], {false, false});
 
 						// Waist
-						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], IsJointOverriden(0));
+						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist], TrackingDevices::IsJointOverriden(0));
 
 						// Left Foot
-						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], IsJointOverriden(1));
+						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft], TrackingDevices::IsJointOverriden(1));
 
 						// Right Foot
-						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], IsJointOverriden(2));
+						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight], TrackingDevices::IsJointOverriden(2));
 
 						// Left Elbow
-						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft], IsJointOverriden(3));
+						sk_dot(jointDots[4], joints[ktvr::Joint_ElbowLeft], TrackingDevices::IsJointOverriden(3));
 
 						// Right Elbow
-						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight], IsJointOverriden(4));
+						sk_dot(jointDots[5], joints[ktvr::Joint_ElbowRight], TrackingDevices::IsJointOverriden(4));
 
 						// Left Knee
-						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft], IsJointOverriden(5));
+						sk_dot(jointDots[6], joints[ktvr::Joint_KneeLeft], TrackingDevices::IsJointOverriden(5));
 
 						// Right Knee
-						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight], IsJointOverriden(6));
+						sk_dot(jointDots[7], joints[ktvr::Joint_KneeRight], TrackingDevices::IsJointOverriden(6));
 
 						// Empty lines
 						boneLines[0] = Shapes::Line();
@@ -1552,15 +1522,15 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 
 						// Waist
 						sk_dot(jointDots[1], joints[ktvr::Joint_SpineWaist],
-						       IsJointOverriden(0));
+						       TrackingDevices::IsJointOverriden(0));
 
 						// Left Foot
 						sk_dot(jointDots[2], joints[ktvr::Joint_AnkleLeft],
-						       IsJointOverriden(1));
+						       TrackingDevices::IsJointOverriden(1));
 
 						// Right Foot
 						sk_dot(jointDots[3], joints[ktvr::Joint_AnkleRight],
-						       IsJointOverriden(2));
+						       TrackingDevices::IsJointOverriden(2));
 					}
 				}
 				else
@@ -1603,7 +1573,7 @@ void Amethyst::implementation::GeneralPage::SkeletonDrawingCanvas_Loaded(
 						for (uint32_t j = 0; j < std::min(static_cast<uint32_t>(joints.size()),
 						                                  static_cast<uint32_t>(ktvr::Joint_Total)); j++)
 							sk_dot(jointDots[j], joints.at(j),
-							       IsJointUsedAsOverride(j));
+								TrackingDevices::IsJointUsedAsOverride(j));
 					}
 				}
 				else

@@ -667,4 +667,32 @@ namespace TrackingDevices
 			                StatusError((_isBase || _isOverride) && deviceStatus != S_OK);
 		}
 	}
+
+	inline std::pair<bool, bool> IsJointUsedAsOverride(const uint32_t& joint)
+	{
+		std::pair _o{ false, false };
+
+		// Scan for position overrides
+		for (const auto& _j_p : k2app::K2Settings.K2TrackersVector)
+			if (joint == _j_p.overrideJointID)_o.first = true;
+
+		// Scan for rotation overrides
+		for (const auto& _j_r : k2app::K2Settings.K2TrackersVector)
+			if (joint == _j_r.overrideJointID)_o.second = true;
+
+		return (k2app::K2Settings.overrideDeviceGUIDsMap.empty())
+			? std::make_pair(false, false)
+			: _o;
+	}
+
+
+	inline std::pair<bool, bool> IsJointOverriden(const uint32_t& joint)
+	{
+		return k2app::K2Settings.overrideDeviceGUIDsMap.contains(
+			k2app::K2Settings.K2TrackersVector.at(joint).overrideGUID)
+			? std::make_pair(
+				k2app::K2Settings.K2TrackersVector.at(joint).isPositionOverridden,
+				k2app::K2Settings.K2TrackersVector.at(joint).isRotationOverridden)
+			: std::make_pair(false, false);
+	}
 }
