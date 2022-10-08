@@ -21,14 +21,14 @@ void skeleton_visibility_set_ui(const bool& v)
 	if (!general_tab_setup_finished)return; // Don't even care if we're not set up yet
 	skeletonToggleButton->IsChecked(v);
 	skeletonToggleButton->Content(box_value(v
-		                                              ? box_value(
-			                                              k2app::interfacing::LocalizedResourceWString(
-				                                              L"GeneralPage",
-				                                              L"Buttons/Skeleton/Hide"))
-		                                              : box_value(
-			                                              k2app::interfacing::LocalizedResourceWString(
-				                                              L"GeneralPage",
-				                                              L"Buttons/Skeleton/Show"))));
+		                                        ? box_value(
+			                                        k2app::interfacing::LocalizedResourceWString(
+				                                        L"GeneralPage",
+				                                        L"Buttons/Skeleton/Hide"))
+		                                        : box_value(
+			                                        k2app::interfacing::LocalizedResourceWString(
+				                                        L"GeneralPage",
+				                                        L"Buttons/Skeleton/Show"))));
 
 	forceRenderCheckBox->IsEnabled(v);
 	forceRenderText->Opacity(v ? 1.0 : 0.5);
@@ -1092,14 +1092,14 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	// Setup the freeze button
 	toggleFreezeButton->IsChecked(k2app::interfacing::isTrackingFrozen);
 	toggleFreezeButton->Content(k2app::interfacing::isTrackingFrozen
-		                                  ? box_value(
-			                                  k2app::interfacing::LocalizedResourceWString(
-				                                  L"GeneralPage",
-				                                  L"Buttons/Skeleton/Unfreeze"))
-		                                  : box_value(
-			                                  k2app::interfacing::LocalizedResourceWString(
-				                                  L"GeneralPage",
-				                                  L"Buttons/Skeleton/Freeze")));
+		                            ? box_value(
+			                            k2app::interfacing::LocalizedResourceWString(
+				                            L"GeneralPage",
+				                            L"Buttons/Skeleton/Unfreeze"))
+		                            : box_value(
+			                            k2app::interfacing::LocalizedResourceWString(
+				                            L"GeneralPage",
+				                            L"Buttons/Skeleton/Freeze")));
 
 	// Set up the co/re/disconnect button
 	if (!k2app::interfacing::K2AppTrackersSpawned)
@@ -1114,14 +1114,14 @@ void Amethyst::implementation::GeneralPage::GeneralPage_Loaded_Handler()
 	{
 		toggleTrackersButton->IsChecked(k2app::interfacing::K2AppTrackersInitialized);
 		toggleTrackersButton->Content(k2app::interfacing::K2AppTrackersInitialized
-			                                    ? box_value(
-				                                    k2app::interfacing::LocalizedResourceWString(
-					                                    L"GeneralPage",
-					                                    L"Buttons/TrackersToggle/Disconnect"))
-			                                    : box_value(
-				                                    k2app::interfacing::LocalizedResourceWString(
-					                                    L"GeneralPage",
-					                                    L"Buttons/TrackersToggle/Reconnect")));
+			                              ? box_value(
+				                              k2app::interfacing::LocalizedResourceWString(
+					                              L"GeneralPage",
+					                              L"Buttons/TrackersToggle/Disconnect"))
+			                              : box_value(
+				                              k2app::interfacing::LocalizedResourceWString(
+					                              L"GeneralPage",
+					                              L"Buttons/TrackersToggle/Reconnect")));
 	}
 
 	freezeOnlyLowerToggle->IsChecked(k2app::K2Settings.freezeLowerOnly);
@@ -1286,11 +1286,12 @@ std::pair<bool, bool> IsJointUsedAsOverride(const uint32_t& joint)
 
 std::pair<bool, bool> IsJointOverriden(const uint32_t& joint)
 {
-	return (k2app::K2Settings.overrideDeviceGUIDsMap.empty())
-		       ? std::make_pair(false, false)
-		       : std::make_pair(
+	return k2app::K2Settings.overrideDeviceGUIDsMap.contains(
+		       k2app::K2Settings.K2TrackersVector.at(joint).overrideGUID)
+		       ? std::make_pair(
 			       k2app::K2Settings.K2TrackersVector.at(joint).isPositionOverridden,
-			       k2app::K2Settings.K2TrackersVector.at(joint).isRotationOverridden);
+			       k2app::K2Settings.K2TrackersVector.at(joint).isRotationOverridden)
+		       : std::make_pair(false, false);
 }
 
 
@@ -1676,7 +1677,7 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 			NoCalibrationTeachingTip().IsOpen(true);
 
 			Sleep(300);
-			
+
 			// Give up
 			return;
 		}
@@ -1827,7 +1828,7 @@ void Amethyst::implementation::GeneralPage::CalibrationButton_Click(
 			NoCalibrationTeachingTip().IsOpen(true);
 
 			Sleep(300);
-			
+
 			// Give up
 			return;
 		}
@@ -2187,7 +2188,7 @@ Amethyst::implementation::GeneralPage::TrackingDeviceTreeView_ItemInvoked(
 		NoCalibrationTeachingTip().IsOpen(true);
 
 		Sleep(300);
-		
+
 		// Give up
 		co_return;
 	}

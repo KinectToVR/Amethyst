@@ -361,7 +361,7 @@ namespace k2app
 		) const
 		{
 			// Construct the current pose
-			Eigen::Vector3d m_pose(
+			const Eigen::Vector3d m_pose(
 				getFilteredPosition(filter).x(),
 				getFilteredPosition(filter).y(),
 				getFilteredPosition(filter).z()
@@ -373,7 +373,7 @@ namespace k2app
 				colwise() + translationVector + calibration_origin;
 
 			// Construct the calibrated pose in eigen
-			Eigen::Vector3d calibrated_pose_gl(
+			const Eigen::Vector3d calibrated_pose_gl(
 				m_pose_calibrated(0),
 				m_pose_calibrated(1),
 				m_pose_calibrated(2)
@@ -401,7 +401,7 @@ namespace k2app
 				colwise() + translationVector + calibration_origin;
 
 			// Construct the calibrated pose in eigen
-			Eigen::Vector3d calibrated_vector_gl(
+			const Eigen::Vector3d calibrated_vector_gl(
 				vector_calibrated(0),
 				vector_calibrated(1),
 				vector_calibrated(2)

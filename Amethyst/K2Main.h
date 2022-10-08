@@ -383,8 +383,9 @@ namespace k2app::main
 					// If the tracker is off
 					if (!tracker.data_isActive) continue;
 
-					// If not overridden by second device
-					if (!tracker.isPositionOverridden || K2Settings.overrideDeviceGUIDsMap.empty())
+					// If overridden by second device
+					if (tracker.isPositionOverridden && 
+						K2Settings.overrideDeviceGUIDsMap.contains(tracker.overrideGUID))
 					{
 						if (K2Settings.deviceMatricesCalibrated[
 							K2Settings.trackingDeviceGUIDPair.first])
@@ -393,11 +394,11 @@ namespace k2app::main
 								tracker.getTrackerBase
 								(
 									K2Settings.deviceCalibrationRotationMatrices[
-										K2Settings.trackingDeviceGUIDPair.first],
+										tracker.overrideGUID],
 									K2Settings.deviceCalibrationTranslationVectors[
-										K2Settings.trackingDeviceGUIDPair.first],
+										tracker.overrideGUID],
 									K2Settings.deviceCalibrationOrigins[
-										K2Settings.trackingDeviceGUIDPair.first],
+										tracker.overrideGUID],
 
 									tracker.positionTrackingFilterOption,
 									tracker.orientationTrackingFilterOption
@@ -411,7 +412,7 @@ namespace k2app::main
 								));
 					}
 
-					// If overriden by another device
+					// If not overriden by another device
 					else
 					{
 						if (K2Settings.deviceMatricesCalibrated[
@@ -421,11 +422,11 @@ namespace k2app::main
 								tracker.getTrackerBase
 								(
 									K2Settings.deviceCalibrationRotationMatrices[
-										tracker.overrideGUID],
+										K2Settings.trackingDeviceGUIDPair.first],
 									K2Settings.deviceCalibrationTranslationVectors[
-										tracker.overrideGUID],
+										K2Settings.trackingDeviceGUIDPair.first],
 									K2Settings.deviceCalibrationOrigins[
-										tracker.overrideGUID],
+										K2Settings.trackingDeviceGUIDPair.first],
 
 									tracker.positionTrackingFilterOption,
 									tracker.orientationTrackingFilterOption
