@@ -319,37 +319,9 @@ namespace TrackingDevices::Math
 			auto calculatedLeftFootOrientation = Eigen::Quaterniond(1, 0, 0, 0);
 			auto calculatedRightFootOrientation = Eigen::Quaterniond(1, 0, 0, 0);
 
-
-			/*
-			 * Calculate orientations here
-			 *
-			 * Cache them to [calculatedLeftFootOrientation, calculatedRightFootOrientation]
-			 * and later push to the upper (tracker) scope, using the selectors below
-			 *
-			 * Device-provided joints and their states are in [_joints, _joint_states]
-			 *
-			 * This function is already registered for running from K2Main.h
-			 * when [tracker].orientationTrackingOption == k2_SoftwareCalculatedRotation_V2
-			 *
-			 */
-
-
 			// Check if the tracking is valid
 			if (_kinect->isSkeletonTracked())
 			{
-				// @TODO: Add biasing from head / waist
-
-				// 0 is always going to be the waist
-				bool isWaistOverriden = TrackingDevices::IsJointOverriden(0).second;
-
-				Eigen::Vector3d waistRotation = (Eigen::Vector3d)(
-					// a unit forward vector multiplied with rotation will give us the waist's forward direction in vector form
-					k2app::K2Settings.K2TrackersVector[0].getFullOrientation(k2_NoOrientationTrackingFilter) * Eigen::Vector3d(0, 0, 1));
-				
-				// @HACK: Computes the inverse of the calibration matrix for the waist's device
-				// Ideally we should only compute the inverse during initialisation or calibration time
-				auto inverseCalibrationMatrix = K2Settings.deviceCalibrationRotationMatrices[K2Settings.K2TrackersVector[0].overrideGUID].inverse();
-
 				// The improved approach for fixing foot rotation on the Xbox One Kinect
 				// 
 				// Thigh rotation is copied onto the foot, this is due to the fact that more often than not, the thigh
@@ -364,10 +336,6 @@ namespace TrackingDevices::Math
 
 					// Normalize the direction to have a length of 1
 					legsDir.normalize();
-
-					// @TODO: Apply cross product
-
-					// Eigen::Vector3f left_ori_vector = EigenUtils::QuatToEulers();
 
 					// tend towards 0 below the fog threshold
 					// Remove the pitch entirely if within the fog area
@@ -399,8 +367,6 @@ namespace TrackingDevices::Math
 
 					// Normalize the direction to have a length of 1
 					legsDir.normalize();
-
-					// Eigen::Vector3f left_ori_vector = EigenUtils::QuatToEulers();
 
 					// tend towards 0 below the fog threshold
 					// Remove the pitch entirely if within the fog area
