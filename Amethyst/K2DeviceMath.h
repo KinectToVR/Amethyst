@@ -4,6 +4,16 @@
 
 namespace TrackingDevices::Math
 {
+
+	// The upper bound of the fog volume along the y-axis (height)
+	// This defines how far up the fog extends from the floor plane
+	// This is hard coded because all V2 sensors are the same (afaik, I don't know if the fog height changes depending on room conditions though)
+	constexpr double SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD = 0.4;
+
+	inline double Lerp(double from, double to, const double delta) {
+		return from * (1 - delta) + to * delta;
+	}
+
 	// Calculate the math-based orientation
 	// Take the device pointer as the input
 	// Output to K2Settings.K2TrackersVector[L:0 | R:1]
@@ -309,25 +319,78 @@ namespace TrackingDevices::Math
 			auto calculatedLeftFootOrientation = Eigen::Quaterniond(1, 0, 0, 0);
 			auto calculatedRightFootOrientation = Eigen::Quaterniond(1, 0, 0, 0);
 
-
-			/*
-			 * Calculate orientations here
-			 *
-			 * Cache them to [calculatedLeftFootOrientation, calculatedRightFootOrientation]
-			 * and later push to the upper (tracker) scope, using the selectors below
-			 *
-			 * Device-provided joints and their states are in [_joints, _joint_states]
-			 *
-			 * This function is already registered for running from K2Main.h
-			 * when [tracker].orientationTrackingOption == k2_SoftwareCalculatedRotation_V2
-			 *
-			 */
-
-
 			// Check if the tracking is valid
 			if (_kinect->isSkeletonTracked())
 			{
-				/* Here the actual result is being applied, either to only one or both trackers */
+				// The improved approach for fixing foot rotation on the Xbox One Kinect
+				// 
+				// Thigh rotation is copied onto the foot, this is due to the fact that more often than not, the thigh
+				// is facing the same direction as your foot. Given the foot is an unreliable mess due to the fog on
+				// the Xbox One Kinect, 
+				// 
+				// The ankle position is stable though, so we can use it.
+				{
+					Eigen::Vector3d legsDir =
+						_joints[base_flip ? ktvr::ITrackedJointType::Joint_KneeRight : ktvr::ITrackedJointType::Joint_KneeLeft].getJointPosition()
+						- _joints[base_flip ? ktvr::ITrackedJointType::Joint_AnkleRight : ktvr::ITrackedJointType::Joint_AnkleLeft].getJointPosition();
+
+					// Normalize the direction to have a length of 1
+					legsDir.normalize();
+
+					// tend towards 0 below the fog threshold
+					// Remove the pitch entirely if within the fog area
+					legsDir.y() =
+						// smoothly interpolate between 0 and y^2 if below fog threshold
+						Lerp(
+							legsDir.y(),
+							// from 0 to y^2 (where 1 is fog threshold)
+							Lerp(0.0,
+								legsDir.y() * legsDir.y(),
+								// such that we remap the y direction relative to the threshold between 0 and 1
+								std::max(std::min(SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD, legsDir.y()), 0.0) / SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD),
+					
+							// from 0.8 * fog threshold to 1.2 * fog threshold
+							std::min(1.0, std::max(0.0, 0.4 * SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD * legsDir.y() - 0.8 * SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD)));
+
+					// Normalize the direction to have a length of 1
+					legsDir.normalize();
+
+					Eigen::Vector3d from = Eigen::Vector3d::UnitX();
+					Eigen::Vector3d base = Eigen::Vector3d::UnitX();
+
+					calculatedLeftFootOrientation = EigenUtils::DirectionQuat(from, legsDir, base);
+				}
+				{
+					Eigen::Vector3d legsDir =
+						_joints[base_flip ? ktvr::ITrackedJointType::Joint_KneeLeft : ktvr::ITrackedJointType::Joint_KneeRight].getJointPosition()
+						- _joints[base_flip ? ktvr::ITrackedJointType::Joint_AnkleLeft : ktvr::ITrackedJointType::Joint_AnkleRight].getJointPosition();
+
+					// Normalize the direction to have a length of 1
+					legsDir.normalize();
+
+					// tend towards 0 below the fog threshold
+					// Remove the pitch entirely if within the fog area
+					legsDir.y() =
+						// smoothly interpolate between 0 and y^2 if below fog threshold
+						Lerp(
+							legsDir.y(),
+							// from 0 to y^2 (where 1 is fog threshold)
+							Lerp(0.0,
+								legsDir.y() * legsDir.y(),
+								// such that we remap the y direction relative to the threshold between 0 and 1
+								std::max(std::min(SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD, legsDir.y()), 0.0) / SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD),
+
+							// from 0.8 * fog threshold to 1.2 * fog threshold
+							std::min(1.0, std::max(0.0, 0.4 * SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD * legsDir.y() - 0.8 * SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD)));
+
+					// Normalize the direction to have a length of 1
+					legsDir.normalize();
+
+					Eigen::Vector3d from = Eigen::Vector3d::UnitX();
+					Eigen::Vector3d base = Eigen::Vector3d::UnitX();
+
+					calculatedRightFootOrientation = EigenUtils::DirectionQuat(from, legsDir, base);
+				}
 
 				// Calculate the Left Foot?
 				if (K2Settings.K2TrackersVector[1].orientationTrackingOption == k2_SoftwareCalculatedRotation_V2)
@@ -336,43 +399,10 @@ namespace TrackingDevices::Math
 					K2Settings.K2TrackersVector[1].pose_orientation =
 						base_flip
 							// If flip
-							? ktvr::quaternion_normal(
-								calculatedRightFootOrientation).
-							inverse()
+							? ktvr::quaternion_normal(calculatedRightFootOrientation).inverse()
 
 							// If no flip
-							: ktvr::quaternion_normal(
-								calculatedLeftFootOrientation);
-
-					// Standard math-based pushes some fixes here
-					// Feel free to uncomment if you even need them
-					// (Or just fix the fixes and remove em in both...)
-
-					/*
-					// Apply fixes
-
-					// Grab original orientations and make them euler angles
-					Eigen::Vector3d left_ori_vector = EigenUtils::QuatToEulers(
-						K2Settings.K2TrackersVector[1].pose_orientation);
-
-					// Kind of a solution for flipping at too big X.
-					// Found out during testing,
-					// no other known mathematical reason (maybe except gimbal lock)
-					
-					// ------------------------------------------
-					if (left_ori_vector.y() <= 0.f
-						&& left_ori_vector.y() >= -1.f
-
-						&& left_ori_vector.z() <= -1.f
-						&& left_ori_vector.z() >= -_PI)
-
-						left_ori_vector.y() += -_PI;
-					// ------------------------------------------
-
-					// Apply to the base
-					K2Settings.K2TrackersVector[1].pose_orientation =
-						EigenUtils::EulersToQuat(left_ori_vector);
-					*/
+							: ktvr::quaternion_normal(calculatedLeftFootOrientation);
 				}
 
 				// Calculate the Right Foot?
@@ -382,43 +412,10 @@ namespace TrackingDevices::Math
 					K2Settings.K2TrackersVector[2].pose_orientation =
 						base_flip
 							// If flip
-							? ktvr::quaternion_normal(
-								calculatedLeftFootOrientation).
-							inverse()
+							? ktvr::quaternion_normal(calculatedLeftFootOrientation).inverse()
 
 							// If no flip
-							: ktvr::quaternion_normal(
-								calculatedRightFootOrientation);
-
-					// Standard math-based pushes some fixes here
-					// Feel free to uncomment if you even need them
-					// (Or just fix the fixes and remove em in both...)
-
-					/*
-					// Apply fixes
-
-					// Grab original orientations and make them euler angles
-					Eigen::Vector3d right_ori_vector = EigenUtils::QuatToEulers(
-						K2Settings.K2TrackersVector[2].pose_orientation);
-
-					// Kind of a solution for flipping at too big X.
-					// Found out during testing,
-					// no other known mathematical reason (maybe except gimbal lock)
-
-					// ------------------------------------------
-					if (right_ori_vector.y() <= 0.f
-						&& right_ori_vector.y() >= -1.f
-
-						&& right_ori_vector.z() <= -1.f
-						&& right_ori_vector.z() >= -_PI)
-
-						right_ori_vector.y() += -_PI;
-					// ------------------------------------------
-
-					// Apply to the base
-					K2Settings.K2TrackersVector[2].pose_orientation =
-						EigenUtils::EulersToQuat(right_ori_vector);
-					*/
+							: ktvr::quaternion_normal(calculatedRightFootOrientation);
 				}
 			}
 		}
