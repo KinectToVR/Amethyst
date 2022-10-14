@@ -438,6 +438,13 @@
                                                  x:Name="Captions_Orientation_Explanations_MathBased" />
                                             <LineBreak /><LineBreak />
 
+                                            <Run x:Name="Captions_Orientation_Names_MathBasedV2" />
+                                            <LineBreak />
+
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Name="Captions_Orientation_Explanations_MathBasedV2" />
+                                            <LineBreak /><LineBreak />
+
                                             <Run x:Name="Captions_Orientation_Names_HMD" />
                                             <LineBreak />
 

@@ -345,9 +345,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 		&k2app::K2Settings.deviceCalibrationTranslationVectors[general_calibrating_device_guid];
 	Eigen::Vector3d* calibrationOrigin = // Origin
 		&k2app::K2Settings.deviceCalibrationOrigins[general_calibrating_device_guid];
-
-	double* calibrationYaw = // Yaw
-		&k2app::K2Settings.deviceCalibrationYaws[general_calibrating_device_guid];
+	
 	bool* isMatrixCalibrated = // Are we calibrated?
 		&k2app::K2Settings.deviceMatricesCalibrated[general_calibrating_device_guid];
 	bool* autoCalibration = // Which calibration method did we use
@@ -482,25 +480,25 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 			kinectPoints(2, i_point) = kinectHeadPositions.at(i_point).z();
 			if (!CalibrationPending) break;
 		}
-
-		EigenUtils::PointSet A = kinectPoints, B = vrPoints;
+		
 		const auto [return_Rotation, return_Translation] =
-			EigenUtils::rigid_transform_3D(A, B); // MVP Korejan
+			EigenUtils::rigid_transform_3D(kinectPoints, vrPoints); // MVP Korejan
 
 		LOG(INFO) <<
-			"Head points\n" << A <<
-			"\nSteamvr points\n" << B <<
+			"Head points\n" << kinectPoints <<
+			"\nSteamVR points\n" << vrPoints <<
 			"\nTranslation\n" << return_Translation <<
 			"\nRotation\n" << return_Rotation;
 
-		EigenUtils::PointSet B2 = (return_Rotation * A).colwise() + return_Translation;
+		const EigenUtils::PointSet resultPoints = 
+			(return_Rotation * kinectPoints).colwise() + return_Translation;
 
-		EigenUtils::PointSet err = B2 - B;
+		EigenUtils::PointSet err = resultPoints - vrPoints;
 		err = err.cwiseProduct(err);
 
 		std::cout <<
-			"Original points\n" << B <<
-			"\nMy result\n" << B2;
+			"Original points\n" << vrPoints <<
+			"\nMy result\n" << resultPoints;
 
 		*calibrationRotation = return_Rotation;
 		*calibrationTranslation = return_Translation;
@@ -508,15 +506,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::StartAu
 		LOG(INFO) << "Retrieved playspace rotation [eulers, radians]: ";
 		LOG(INFO) << return_Rotation.eulerAngles(0, 1, 2);
 
-		Eigen::Vector3d projected_Rotation =
-			EigenUtils::RotationProjectedEulerAngles(return_Rotation);
-
-		LOG(INFO) << "Retrieved/Projected playspace rotation [eulers, radians]: ";
-		LOG(INFO) << projected_Rotation;
-
-		*calibrationYaw = projected_Rotation.y(); // Note: radians
 		*calibrationOrigin = Eigen::Vector3d(0, 0, 0);
-
 		*isMatrixCalibrated = true;
 
 		// Settings will be saved below
@@ -2286,9 +2276,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::Execute
 		&k2app::K2Settings.deviceCalibrationTranslationVectors[general_calibrating_device_guid];
 	Eigen::Vector3d* calibrationOrigin = // Origin
 		&k2app::K2Settings.deviceCalibrationOrigins[general_calibrating_device_guid];
-
-	double* calibrationYaw = // Yaw
-		&k2app::K2Settings.deviceCalibrationYaws[general_calibrating_device_guid];
+	
 	bool* isMatrixCalibrated = // Are we calibrated?
 		&k2app::K2Settings.deviceMatricesCalibrated[general_calibrating_device_guid];
 	bool* autoCalibration = // Which calibration method did we use
@@ -2392,9 +2380,7 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::GeneralPage::Execute
 
 			Eigen::Matrix3d rotationMatrix = q.matrix();
 			*calibrationRotation = rotationMatrix;
-
-			*calibrationYaw = temp_yaw; // Note: radians
-
+			
 			// Sleep on UI
 			apartment_context ui_thread;
 			co_await resume_background();

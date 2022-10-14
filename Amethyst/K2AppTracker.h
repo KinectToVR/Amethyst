@@ -101,6 +101,8 @@ namespace k2app
 		k2_PositionTrackingFilter_Lowpass,
 		// Extended Kalman
 		k2_PositionTrackingFilter_Kalman,
+		// Hekky^ pose prediction
+		k2_PositionTrackingFilter_Prediction,
 		// Filter Off
 		k2_NoPositionTrackingFilter
 	};
@@ -216,16 +218,15 @@ namespace k2app
 			_lerp_const = m_lerp_const;
 		}
 
-		ktvr::K2TrackedJoint getK2TrackedJoint(const bool& _state, const std::string& _name)
-		const
+		auto getK2TrackedJoint(const bool& _state, const std::string& _name)
+		const -> ktvr::K2TrackedJoint
 		{
 			return ktvr::K2TrackedJoint(pose_position, pose_orientation,
 			                            _state ? ktvr::State_Tracked : ktvr::State_NotTracked,
 			                            StringToWString(_name));
 		}
 
-		ktvr::K2TrackedJoint getK2TrackedJoint()
-		const
+		auto getK2TrackedJoint() const -> ktvr::K2TrackedJoint
 		{
 			return ktvr::K2TrackedJoint(pose_position, pose_orientation,
 			                            data_isActive ? ktvr::State_Tracked : ktvr::State_NotTracked,
@@ -237,7 +238,9 @@ namespace k2app
 		{
 			/* Update the Kalman filter */
 			Eigen::VectorXd y[3] = {
-				                Eigen::VectorXd(1), Eigen::VectorXd(1), Eigen::VectorXd(1)
+				                Eigen::VectorXd(1),
+				                Eigen::VectorXd(1),
+				                Eigen::VectorXd(1)
 			                }, u(1); // c == 1
 
 			y[0] << pose_position.x();
@@ -265,6 +268,16 @@ namespace k2app
 			/* Update the LERP (mix) filter */
 			LERPPosition = EigenUtils::lerp(lastLERPPosition, pose_position, _lerp_const);
 			lastLERPPosition = LERPPosition; // Backup the position
+
+			/* Update the pose prediction filter */
+			predictedPosition = pose_position;
+
+			/* Notes for `k2_PositionTrackingFilter_Prediction\\predictedPosition` impl:
+			 *
+			 * - if you need timestamps, you're gonna need to manage them manually (sorry)
+			 * - you may want to create your own filter class and put it in `[repo]/external/vendor/`, like lowpass and kalman filters
+			 * - the tracker class will auto-manage your filter, just output the final position to the `predictedPosition` variable
+			 */
 		}
 
 		void updateOrientationFilters()
@@ -302,6 +315,8 @@ namespace k2app
 				return lowPassPosition;
 			case k2_PositionTrackingFilter_Kalman:
 				return kalmanPosition;
+			case k2_PositionTrackingFilter_Prediction:
+				return predictedPosition;
 			case k2_NoPositionTrackingFilter:
 				return pose_position;
 			}
@@ -382,6 +397,7 @@ namespace k2app
 			// Return the calibrated pose with offset
 			return calibrated_pose_gl + positionOffset;
 		}
+
 		// Get filtered data
 		// By default, the saved filter is selected,
 		// and to select it, the filter number must be < 0
@@ -433,7 +449,7 @@ namespace k2app
 			// Construct the return type
 			ktvr::K2TrackerBase tracker_base;
 
-			const auto _full_orientation = 
+			const auto _full_orientation =
 				getFullOrientation(ori_filter);
 
 			const auto _full_position =
@@ -454,13 +470,13 @@ namespace k2app
 			tracker_base.mutable_pose()->mutable_position()->set_z(_full_position.z());
 
 			// If physics are provided by the device
-			if (m_use_own_physics) 
+			if (m_use_own_physics)
 			{
 				const auto _full_velocity =
 					not_calibrated
-					? pose_velocity
-					: getCalibratedVector(
-						pose_velocity, rotationMatrix, translationVector, calibration_origin);
+						? pose_velocity
+						: getCalibratedVector(
+							pose_velocity, rotationMatrix, translationVector, calibration_origin);
 
 				// Velocity
 				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_x(_full_velocity.x());
@@ -469,9 +485,9 @@ namespace k2app
 
 				const auto _full_acceleration =
 					not_calibrated
-					? pose_acceleration
-					: getCalibratedVector(
-						pose_acceleration, rotationMatrix, translationVector, calibration_origin);
+						? pose_acceleration
+						: getCalibratedVector(
+							pose_acceleration, rotationMatrix, translationVector, calibration_origin);
 
 				// Acceleration
 				tracker_base.mutable_pose()->mutable_physics()->mutable_acceleration()->set_x(_full_acceleration.x());
@@ -480,25 +496,31 @@ namespace k2app
 
 				const auto _full_angularVelocity =
 					not_calibrated
-					? pose_angularVelocity
-					: getCalibratedVector(
-						pose_angularVelocity, rotationMatrix, translationVector, calibration_origin);
+						? pose_angularVelocity
+						: getCalibratedVector(
+							pose_angularVelocity, rotationMatrix, translationVector, calibration_origin);
 
 				// Angular Velocity
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_x(_full_angularVelocity.x());
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_y(_full_angularVelocity.y());
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_z(_full_angularVelocity.z());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_x(
+					_full_angularVelocity.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_y(
+					_full_angularVelocity.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_z(
+					_full_angularVelocity.z());
 
 				const auto _full_angularAcceleration =
 					not_calibrated
-					? pose_angularAcceleration
-					: getCalibratedVector(
-						pose_angularAcceleration, rotationMatrix, translationVector, calibration_origin);
+						? pose_angularAcceleration
+						: getCalibratedVector(
+							pose_angularAcceleration, rotationMatrix, translationVector, calibration_origin);
 
 				// Angular Acceleration
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_x(_full_angularAcceleration.x());
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_y(_full_angularAcceleration.y());
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_z(_full_angularAcceleration.z());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_x(
+					_full_angularAcceleration.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_y(
+					_full_angularAcceleration.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_z(
+					_full_angularAcceleration.z());
 			}
 
 			// Data
@@ -548,21 +570,27 @@ namespace k2app
 				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_x(pose_velocity.x());
 				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_y(pose_velocity.y());
 				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_z(pose_velocity.z());
-				
+
 				// Acceleration
 				tracker_base.mutable_pose()->mutable_physics()->mutable_acceleration()->set_x(pose_acceleration.x());
 				tracker_base.mutable_pose()->mutable_physics()->mutable_acceleration()->set_y(pose_acceleration.y());
 				tracker_base.mutable_pose()->mutable_physics()->mutable_acceleration()->set_z(pose_acceleration.z());
-				
+
 				// Angular Velocity
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_x(pose_angularVelocity.x());
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_y(pose_angularVelocity.y());
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_z(pose_angularVelocity.z());
-				
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_x(
+					pose_angularVelocity.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_y(
+					pose_angularVelocity.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularvelocity()->set_z(
+					pose_angularVelocity.z());
+
 				// Angular Acceleration
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_x(pose_angularAcceleration.x());
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_y(pose_angularAcceleration.y());
-				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_z(pose_angularAcceleration.z());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_x(
+					pose_angularAcceleration.x());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_y(
+					pose_angularAcceleration.y());
+				tracker_base.mutable_pose()->mutable_physics()->mutable_angularacceleration()->set_z(
+					pose_angularAcceleration.z());
 			}
 
 			// Data
@@ -668,7 +696,8 @@ namespace k2app
 		// Internal filters' datas
 		Eigen::Vector3d kalmanPosition = Eigen::Vector3d(0, 0, 0),
 		                lowPassPosition = Eigen::Vector3d(0, 0, 0),
-		                LERPPosition = Eigen::Vector3d(0, 0, 0);
+		                LERPPosition = Eigen::Vector3d(0, 0, 0),
+		                predictedPosition = Eigen::Vector3d(0, 0, 0);
 
 		Eigen::Quaterniond SLERPOrientation = Eigen::Quaterniond(1, 0, 0, 0),
 		                   SLERPSlowOrientation = Eigen::Quaterniond(1, 0, 0, 0);

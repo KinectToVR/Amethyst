@@ -43,14 +43,14 @@ namespace k2app::main
 					shared::general::general_tab_setup_finished = false; // Boiler
 					shared::general::toggleFreezeButton->IsChecked(isTrackingFrozen);
 					shared::general::toggleFreezeButton->Content(isTrackingFrozen
-						? winrt::box_value(
-							LocalizedResourceWString(
-								L"GeneralPage",
-								L"Buttons/Skeleton/Unfreeze"))
-						: winrt::box_value(
-							LocalizedResourceWString(
-								L"GeneralPage",
-								L"Buttons/Skeleton/Freeze")));
+						                                             ? winrt::box_value(
+							                                             LocalizedResourceWString(
+								                                             L"GeneralPage",
+								                                             L"Buttons/Skeleton/Unfreeze"))
+						                                             : winrt::box_value(
+							                                             LocalizedResourceWString(
+								                                             L"GeneralPage",
+								                                             L"Buttons/Skeleton/Freeze")));
 					shared::general::general_tab_setup_finished = true; // Boiler end
 				}
 			});
@@ -181,12 +181,12 @@ namespace k2app::main
 					                 LocalizedResourceWString(
 						                 L"SettingsPage",
 						                 L"Tips/FlipToggle/Buttons/Oculus"));
-				
+
 				ShowVRToast(K2Settings.isFlipEnabled
-					? LocalizedJSONString(
-						L"/SettingsPage/Tips/FlipToggle/Toast_Enabled")
-					: LocalizedJSONString(
-						L"/SettingsPage/Tips/FlipToggle/Toast_Disabled"), _header);
+					            ? LocalizedJSONString(
+						            L"/SettingsPage/Tips/FlipToggle/Toast_Enabled")
+					            : LocalizedJSONString(
+						            L"/SettingsPage/Tips/FlipToggle/Toast_Disabled"), _header);
 			}
 		}
 
@@ -384,7 +384,7 @@ namespace k2app::main
 					if (!tracker.data_isActive) continue;
 
 					// If overridden by second device
-					if (tracker.isPositionOverridden && 
+					if (tracker.isPositionOverridden &&
 						K2Settings.overrideDeviceGUIDsMap.contains(tracker.overrideGUID))
 					{
 						if (K2Settings.deviceMatricesCalibrated[
@@ -573,62 +573,64 @@ namespace k2app::main
 		 * depending on calibration val and configuration
 		 */
 
-		// Get current yaw angle
-		const double _yaw =
-			plugins::plugins_getHMDOrientationYawCalibrated();
-
 		/*
 		 * Calculate ALL poses for the base (first) device here
 		 */
+
+		// We can precompute the threshold as a dot product value
+		// as the dot product is also defined as |a||b|cos(x)
+		// and since we're using unit vectors... |a||b| = 1
+		constexpr double FLIP_THRESHOLD = 0.4226182; // cos(65°)
 
 		// Base device
 		{
 			// Get the currently tracking device
 			const auto& _device = TrackingDevices::getCurrentDevice();
 
-			// Compose the yaw neutral and current
-			const double _neutral_yaw =
-				(K2Settings.isFlipEnabled && K2Settings.isExternalFlipEnabled)
-					? K2Settings.externalFlipCalibrationYaw // Ext
-					: K2Settings.deviceCalibrationYaws[
-						K2Settings.trackingDeviceGUIDPair.first]; // Default
+			const bool _ext_flip =
+				K2Settings.isFlipEnabled &&
+				K2Settings.isExternalFlipEnabled;
 
-			double _current_yaw = _yaw; // Default - HMD
-			if (K2Settings.isFlipEnabled && K2Settings.isExternalFlipEnabled)
-			{
-				// If the extflip is from Amethyst
-				if (K2Settings.K2TrackersVector[0].data_isActive &&
-					K2Settings.K2TrackersVector[0].isRotationOverridden)
-				{
-					_current_yaw =
-						EigenUtils::RotationProjectedYaw( // Overriden tracker
-							vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
-							K2Settings.K2TrackersVector[0].pose_orientation); // Raw orientation
-				}
-				// If it's from an external tracker
-				else
-				{
-					_current_yaw =
-						EigenUtils::RotationProjectedYaw( // External tracker
-							getVRTrackerPoseCalibrated("waist").second);
-				}
-			}
+			const bool _ext_flip_internal =
+				K2Settings.K2TrackersVector[0].data_isActive &&
+				K2Settings.K2TrackersVector[0].isRotationOverridden;
 
 			// Compose flip
-			const double _facing = EigenUtils::RotationProjectedYaw(
-				EigenUtils::QuaternionFromYaw<double>(_neutral_yaw).inverse() *
-				EigenUtils::QuaternionFromYaw<double>(_current_yaw));
+			const auto _dot_facing =
+				EigenUtils::NormalizedRotationVectorDot(
 
-			// Note: we use -180+180 (but in radians)
-			if (_facing <= (25 * _PI / 180.0) &&
-				_facing >= (-25 * _PI / 180.0))
-				base_flip = false;
-			if (_facing >= (155 * _PI / 180.0) ||
-				_facing <= (-155 * _PI / 180.0))
-				base_flip = true;
+					// Check for external-flip
+					_ext_flip
 
-			// Overwrite flip value depending on device & settings
-			// index() check should've already been done by the app tho
+						// Check for internal overrides
+						? (_ext_flip_internal
+
+							   // Overriden internal amethyst tracker
+							   ? vrPlayspaceOrientationQuaternion.inverse() *
+							   K2Settings.K2TrackersVector[0].pose_orientation
+
+							   // External VR waist tracker
+							   : getVRTrackerPoseCalibrated("waist").second)
+
+						// Default: VR HMD orientation
+						: vrHMDPose.second,
+
+					// Check for external-flip
+					_ext_flip
+
+						// If ExtFlip is enabled compare to its calibration
+						? K2Settings.externalFlipCalibrationMatrix
+
+						// Default: use the default calibration rotation
+						: K2Settings.deviceCalibrationRotationMatrices[
+							K2Settings.trackingDeviceGUIDPair.first]);
+
+			// Not in transition angle area, can compute
+			if (std::abs(_dot_facing) >= FLIP_THRESHOLD)
+				base_flip = _dot_facing < 0.;
+
+			// Overwrite flip value depending on the device & settings
+			// (Device type check should have already been done tho...)
 			if (!K2Settings.isFlipEnabled || _device.index() == 1)base_flip = false;
 
 			/*

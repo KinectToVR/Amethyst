@@ -199,6 +199,65 @@ namespace EigenUtils
 		return RotationProjectedEulerAngles(rotation).y(); // Yaw angle
 	}
 
+	/// <summary>
+	/// Construct a projected 2d dot product full quaternion / rotation matrix
+	/// </summary>
+	/// <typeparam name="Derived">The return type, float/double/...</typeparam>
+	/// <param name="rotation_from">The base rotation</param>
+	/// <param name="rotation_to">The child rotation</param>
+	/// <returns>
+	/// Dot product (from 2 normalized vectors) from 2 provided rotations
+	///	You can use basically any Eigen rotation data type
+	/// </returns>
+	template <typename Derived_R1, typename Derived_R2>
+	typename Derived_R1::Scalar NormalizedRotationVectorDot(
+		const Derived_R1& rotation_from, const Derived_R2& rotation_to)
+	{
+		// Create a typedef outta the container scalar type
+		using vector3 = Eigen::Vector3<typename Derived_R1::Scalar>;
+
+		/* Convert from matrices to directional vectors */
+
+		// Probably the orientation of the VR HMD -> vector
+		vector3 from_vector = rotation_from * vector3(0, 0, 1);
+		// Probably the calibration rotation -> vector
+		vector3 to_vector = rotation_to * vector3(0, 0, 1);
+
+		// Cancel the y component
+		// Ignore the pitch and roll components of the R,
+		// as we only care about the yaw (+y) component
+		from_vector.y() = 0.;
+		to_vector.y() = 0.;
+
+		// Since we removed the entire y component
+		// The vectors won't be unit length,
+		// so we must normalize them to unit length
+		// as those have some really nice properties
+		// (we can take some advantages of, ofc)
+		from_vector.normalize();
+		to_vector.normalize();
+
+		/*
+		 * Note:
+		 *
+		 * A dot product's properties are as follows
+		 *     (when using two unit vectors, which is our case):
+		 *
+		 * Whenever the two vectors are pointing at the same direction
+		 *     (i.e. ↑ ↑ ) the dot product is +1
+		 *
+		 * Whenever the two vectors are pointing away from each other
+		 *     (i.e. ↑ ↓ ) the dot product is -1
+		 *
+		 * Whenever the two vectors are perpendicular to one another
+		 *     (i.e. → ↑ ) the dot product is 0
+		 */
+
+		// Now we have transformed the rotations ->
+		// we can compute the dot product outta them
+		return from_vector.dot(to_vector); // return
+	}
+
 	/**
 	* \brief This template will let us convert between different types
 	* \tparam Ret What type should be returned from function
@@ -207,16 +266,16 @@ namespace EigenUtils
 	* \return Returns 'in' converted to 'ret' return type
 	*/
 	template <typename Ret, class T>
-	auto p_cast_type(const T& in) -> Ret
+	Ret p_cast_type(const T& in)
 	{
 		/* If somehow same */
 		if constexpr (std::is_same_v<Ret, T>) return in;
 
-		/* To OpenVR HmdVector3d_t */
+			/* To OpenVR HmdVector3d_t */
 		else if constexpr (std::is_same_v<Ret, vr::HmdVector3d_t> && std::is_same_v<T, vr::HmdMatrix34_t>)
-			return { in.m[0][3], in.m[1][3], in.m[2][3] };
+			return {in.m[0][3], in.m[1][3], in.m[2][3]};
 
-		/* From OpenVR Matrix to OpenVR Quaternion */
+			/* From OpenVR Matrix to OpenVR Quaternion */
 		else if constexpr (std::is_same_v<Ret, vr::HmdQuaternion_t> && std::is_same_v<T, vr::HmdMatrix34_t>)
 		{
 			vr::HmdQuaternion_t q{
@@ -233,36 +292,43 @@ namespace EigenUtils
 		}
 
 		/* To Eigen Quaternion */
-		else if constexpr (std::is_same_v<T, vr::HmdQuaternion_t> && std::is_same_v<Ret, Eigen::Quaternion<typename Ret::Scalar>>)
-			return { in.w, in.x, in.y, in.z };
+		else if constexpr (std::is_same_v<T, vr::HmdQuaternion_t> && std::is_same_v<
+			Ret, Eigen::Quaternion<typename Ret::Scalar>>)
+			return {in.w, in.x, in.y, in.z};
 
-		/* To Eigen Vector3 */
-		else if constexpr (std::is_same_v<T, vr::HmdVector3d_t> && std::is_same_v<Ret, Eigen::Vector3<typename Ret::Scalar>>)
-			return { in.v[0], in.v[1], in.v[2] };
+			/* To Eigen Vector3 */
+		else if constexpr (std::is_same_v<T, vr::HmdVector3d_t> && std::is_same_v<
+			Ret, Eigen::Vector3<typename Ret::Scalar>>)
+			return {in.v[0], in.v[1], in.v[2]};
 
-		else if constexpr (std::is_same_v<T, vr::HmdMatrix34_t> && std::is_same_v<Ret, Eigen::Vector3<typename Ret::Scalar>>)
-			return { in.m[0][3], in.m[1][3], in.m[2][3] };
+		else if constexpr (std::is_same_v<T, vr::HmdMatrix34_t> && std::is_same_v<
+			Ret, Eigen::Vector3<typename Ret::Scalar>>)
+			return {in.m[0][3], in.m[1][3], in.m[2][3]};
 
-		/* From OpenVR Matrix to Eigen Quaternion */
-		else if constexpr (std::is_same_v<T, vr::HmdMatrix34_t> && std::is_same_v<Ret, Eigen::Quaternion<typename Ret::Scalar>>)
+			/* From OpenVR Matrix to Eigen Quaternion */
+		else if constexpr (std::is_same_v<T, vr::HmdMatrix34_t> && std::is_same_v<
+			Ret, Eigen::Quaternion<typename Ret::Scalar>>)
 			return p_cast_type<Eigen::Quaternion<typename Ret::Scalar>>(p_cast_type<vr::HmdQuaternion_t>(in));
 
-		/* To Eigen Quaternion */
-		else if constexpr (std::is_same_v<T, vr::DriverPose_t> && std::is_same_v<Ret, Eigen::Quaternion<typename Ret::Scalar>>)
-			return { in.qRotation.w, in.qRotation.x, in.qRotation.y, in.qRotation.z };
+			/* To Eigen Quaternion */
+		else if constexpr (std::is_same_v<T, vr::DriverPose_t> && std::is_same_v<
+			Ret, Eigen::Quaternion<typename Ret::Scalar>>)
+			return {in.qRotation.w, in.qRotation.x, in.qRotation.y, in.qRotation.z};
 
-		/* To Eigen Vector3 */
-		else if constexpr (std::is_same_v<T, vr::DriverPose_t> && std::is_same_v<Ret, Eigen::Vector3<typename Ret::Scalar>>)
-			return { in.vecPosition[0], in.vecPosition[1], in.vecPosition[2] };
+			/* To Eigen Vector3 */
+		else if constexpr (std::is_same_v<T, vr::DriverPose_t> && std::is_same_v<
+			Ret, Eigen::Vector3<typename Ret::Scalar>>)
+			return {in.vecPosition[0], in.vecPosition[1], in.vecPosition[2]};
 
-		/* To OpenVR Quaternion */
-		else if constexpr (std::is_same_v<Ret, vr::HmdQuaternion_t> && std::is_same_v<T, Eigen::Quaternion<typename T::Scalar>>)
-			return { in.w(), in.x(), in.y(), in.z() };
+			/* To OpenVR Quaternion */
+		else if constexpr (std::is_same_v<Ret, vr::HmdQuaternion_t> && std::is_same_v<
+			T, Eigen::Quaternion<typename T::Scalar>>)
+			return {in.w(), in.x(), in.y(), in.z()};
 
-		/* To OpenVR HmdVector3d_t */
-		else if constexpr (std::is_same_v<Ret, vr::HmdVector3d_t> && std::is_same_v<T, Eigen::Vector3<typename T::Scalar>>)
-			return { in.x(), in.y(), in.z() };
-
+			/* To OpenVR HmdVector3d_t */
+		else if constexpr (std::is_same_v<Ret, vr::HmdVector3d_t> && std::is_same_v<
+			T, Eigen::Vector3<typename T::Scalar>>)
+			return {in.x(), in.y(), in.z()};
 	}
 
 	using PointSet = Eigen::Matrix<double, 3, Eigen::Dynamic>;

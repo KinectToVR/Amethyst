@@ -65,7 +65,6 @@ namespace k2app
 		std::map<std::wstring, Eigen::Matrix<double, 3, 3>> deviceCalibrationRotationMatrices;
 		std::map<std::wstring, Eigen::Matrix<double, 1, 3>> deviceCalibrationTranslationVectors;
 		std::map<std::wstring, Eigen::Vector3d> deviceCalibrationOrigins; // always 0,0,0 for auto
-		std::map<std::wstring, double> deviceCalibrationYaws;
 
 		// Calibration helpers - calibration method: auto? : GUID/Data
 		std::map<std::wstring, bool> deviceAutoCalibration;
@@ -79,7 +78,7 @@ namespace k2app
 		bool forceSkeletonPreview = false;
 
 		// External flip device's calibration yaw
-		double externalFlipCalibrationYaw = 0.;
+		Eigen::Matrix<double, 3, 3> externalFlipCalibrationMatrix;
 
 		// If we wanna freeze only lower body trackers or all
 		bool freezeLowerOnly = false;
@@ -130,7 +129,7 @@ namespace k2app
 						CEREAL_NVP(overrideDeviceGUIDsMap),
 						CEREAL_NVP(isFlipEnabled),
 						CEREAL_NVP(isExternalFlipEnabled),
-						CEREAL_NVP(externalFlipCalibrationYaw),
+						CEREAL_NVP(externalFlipCalibrationMatrix),
 						CEREAL_NVP(autoSpawnEnabledJoints),
 						CEREAL_NVP(enableAppSounds),
 						CEREAL_NVP(appSoundsVolume),
@@ -138,7 +137,6 @@ namespace k2app
 						CEREAL_NVP(deviceCalibrationRotationMatrices),
 						CEREAL_NVP(deviceCalibrationTranslationVectors),
 						CEREAL_NVP(deviceCalibrationOrigins),
-						CEREAL_NVP(deviceCalibrationYaws),
 						CEREAL_NVP(calibrationPointsNumber),
 						CEREAL_NVP(deviceAutoCalibration),
 						CEREAL_NVP(skeletonPreviewEnabled),
@@ -188,7 +186,7 @@ namespace k2app
 						CEREAL_NVP(overrideDeviceGUIDsMap),
 						CEREAL_NVP(isFlipEnabled),
 						CEREAL_NVP(isExternalFlipEnabled),
-						CEREAL_NVP(externalFlipCalibrationYaw),
+						CEREAL_NVP(externalFlipCalibrationMatrix),
 						CEREAL_NVP(autoSpawnEnabledJoints),
 						CEREAL_NVP(enableAppSounds),
 						CEREAL_NVP(appSoundsVolume),
@@ -196,7 +194,6 @@ namespace k2app
 						CEREAL_NVP(deviceCalibrationRotationMatrices),
 						CEREAL_NVP(deviceCalibrationTranslationVectors),
 						CEREAL_NVP(deviceCalibrationOrigins),
-						CEREAL_NVP(deviceCalibrationYaws),
 						CEREAL_NVP(calibrationPointsNumber),
 						CEREAL_NVP(deviceAutoCalibration),
 						CEREAL_NVP(skeletonPreviewEnabled),
@@ -379,7 +376,7 @@ namespace k2app
 				overrideDeviceGUIDsMap == other.overrideDeviceGUIDsMap &&
 				isFlipEnabled == other.isFlipEnabled &&
 				isExternalFlipEnabled == other.isExternalFlipEnabled &&
-				externalFlipCalibrationYaw == other.externalFlipCalibrationYaw &&
+				externalFlipCalibrationMatrix == other.externalFlipCalibrationMatrix &&
 				autoSpawnEnabledJoints == other.autoSpawnEnabledJoints &&
 				enableAppSounds == other.enableAppSounds &&
 				appSoundsVolume == other.appSoundsVolume &&
@@ -387,7 +384,6 @@ namespace k2app
 				deviceCalibrationRotationMatrices == other.deviceCalibrationRotationMatrices &&
 				deviceCalibrationTranslationVectors == other.deviceCalibrationTranslationVectors &&
 				deviceCalibrationOrigins == other.deviceCalibrationOrigins &&
-				deviceCalibrationYaws == other.deviceCalibrationYaws &&
 				calibrationPointsNumber == other.calibrationPointsNumber &&
 				deviceAutoCalibration == other.deviceAutoCalibration &&
 				skeletonPreviewEnabled == other.skeletonPreviewEnabled &&

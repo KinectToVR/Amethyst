@@ -133,7 +133,7 @@ namespace winrt::Amethyst::implementation
 				if (_expander_number >= 2 && jointExpanderVector.back() != expander)
 				{
 					auto separator = Controls::MenuFlyoutSeparator();
-					separator.Margin({ 10, 10, 10, 0 });
+					separator.Margin({10, 10, 10, 0});
 
 					Media::Animation::TransitionCollection c_transition_collection;
 					c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
@@ -225,7 +225,7 @@ namespace winrt::Amethyst::implementation
 								if (_expander_number >= 2 && jointExpanderVector.back() != expander)
 								{
 									auto separator = Controls::MenuFlyoutSeparator();
-									separator.Margin({ 10, 10, 10, 0 });
+									separator.Margin({10, 10, 10, 0});
 
 									Media::Animation::TransitionCollection c_transition_collection;
 									c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
@@ -388,7 +388,8 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 	if (exists(k2app::interfacing::GetProgramLocation()))
 	{
 		// Log the caller
-		LOG(INFO) << "The current caller process is: " + WStringToString(k2app::interfacing::GetProgramLocation().wstring());
+		LOG(INFO) << "The current caller process is: " + WStringToString(
+			k2app::interfacing::GetProgramLocation().wstring());
 
 		// Exit the app
 		LOG(INFO) << "Configuration has been reset, exiting in 500ms...";
@@ -404,9 +405,9 @@ Amethyst::implementation::SettingsPage::ResetButton_Click(
 
 		// Restart and exit with code 0
 		CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		ShellExecute(nullptr, nullptr, 
-			k2app::interfacing::GetProgramLocation().wstring().c_str(), 
-			nullptr, nullptr, SW_SHOWDEFAULT);
+		ShellExecute(nullptr, nullptr,
+		             k2app::interfacing::GetProgramLocation().wstring().c_str(),
+		             nullptr, nullptr, SW_SHOWDEFAULT);
 
 		exit(0);
 	}
@@ -572,6 +573,12 @@ void Amethyst::implementation::SettingsPage::SettingsPage_Loaded_Handler()
 
 	Captions_Orientation_Explanations_MathBased().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Explanations/MathBased"));
+
+	Captions_Orientation_Names_MathBasedV2().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Names/MathBasedV2"));
+
+	Captions_Orientation_Explanations_MathBasedV2().Text(
+		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Explanations/MathBasedV2"));
 
 	Captions_Orientation_Names_HMD().Text(
 		k2app::interfacing::LocalizedJSONString(L"/SettingsLearn/Captions/Orientation/Names/HMD"));
@@ -857,26 +864,22 @@ void Amethyst::implementation::SettingsPage::CalibrateExternalFlipMenuFlyoutItem
 	const Windows::Foundation::IInspectable& sender,
 	const RoutedEventArgs& e)
 {
-	// Get current yaw angle
-
 	// If the extflip is from Amethyst
 	if (k2app::K2Settings.K2TrackersVector[0].isRotationOverridden)
-	{
-		k2app::K2Settings.externalFlipCalibrationYaw =
-			EigenUtils::RotationProjectedYaw( // Overriden tracker
-				k2app::interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
-				k2app::K2Settings.K2TrackersVector[0].pose_orientation); // Raw orientation
-	}
-	// If it's from an external tracker
-	else
-	{
-		k2app::K2Settings.externalFlipCalibrationYaw =
-			EigenUtils::RotationProjectedYaw( // External tracker
-				k2app::interfacing::getVRTrackerPoseCalibrated("waist").second);
-	}
+		k2app::K2Settings.externalFlipCalibrationMatrix =
+			// Overriden tracker
+			k2app::interfacing::vrPlayspaceOrientationQuaternion.inverse() * // VR space offset
+			k2app::K2Settings.K2TrackersVector[0].pose_orientation; // Raw orientation
 
-	LOG(INFO) << "Captured yaw for external flip: " <<
-		radiansToDegrees(k2app::K2Settings.externalFlipCalibrationYaw) << "rad";
+		// If it's from an external tracker
+	else
+		k2app::K2Settings.externalFlipCalibrationMatrix =
+			// External tracker
+			k2app::interfacing::getVRTrackerPoseCalibrated("waist").second;
+
+	LOG(INFO) << "Captured orientation for external flip: " <<
+		k2app::K2Settings.externalFlipCalibrationMatrix;
+
 	k2app::K2Settings.saveSettings();
 }
 
@@ -1067,9 +1070,9 @@ void Amethyst::implementation::SettingsPage::ReRegisterButton_Click(
 		std::thread([]
 		{
 			ShellExecute(nullptr, L"open",
-			              (k2app::interfacing::GetProgramLocation().parent_path() / 
-							  L"K2CrashHandler" / L"K2CrashHandler.exe ")
-			              .wstring().c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
+			             (k2app::interfacing::GetProgramLocation().parent_path() /
+				             L"K2CrashHandler" / L"K2CrashHandler.exe ")
+			             .wstring().c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 		}).detach();
 	}
 	else
@@ -1307,7 +1310,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 						if (_expander_number >= 2 && jointExpanderVector.back() != expander)
 						{
 							auto separator = Controls::MenuFlyoutSeparator();
-							separator.Margin({ 10, 10, 10, 0 });
+							separator.Margin({10, 10, 10, 0});
 
 							Media::Animation::TransitionCollection c_transition_collection;
 							c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
@@ -1485,7 +1488,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 					if (_expander_number >= 2 && jointExpanderVector.back() != expander)
 					{
 						auto separator = Controls::MenuFlyoutSeparator();
-						separator.Margin({ 10, 10, 10, 0 });
+						separator.Margin({10, 10, 10, 0});
 
 						Media::Animation::TransitionCollection c_transition_collection;
 						c_transition_collection.Append(Media::Animation::RepositionThemeTransition());
@@ -1919,8 +1922,8 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AutoSt
 
 
 void winrt::Amethyst::implementation::SettingsPage::ToggleFlipTeachingTip_Closed(
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, 
-	winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs const& args)
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
+	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
 {
 	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
 }

@@ -515,19 +515,22 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_position_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 
 			// Set up (content caption / pos)'s items
-			ComboBoxItem _lerp, _low_pass, _kalman, _pos_off;
+			ComboBoxItem _lerp, _low_pass, _kalman, _predict, _pos_off;
 			_lerp.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Position/LERP")));
 			_low_pass.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Position/LowPass")));
 			_kalman.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Position/Kalman")));
+			_predict.Content(box_value(k2app::interfacing::LocalizedResourceWString(
+				L"SettingsPage", L"Filters/Position/Prediction")));
 			_pos_off.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Position/Off")));
 
 			_position_combo.Items().Append(_lerp);
 			_position_combo.Items().Append(_low_pass);
 			_position_combo.Items().Append(_kalman);
+			_position_combo.Items().Append(_predict);
 			_position_combo.Items().Append(_pos_off);
 
 			_position_combo.SelectedIndex(0);
@@ -554,7 +557,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_software.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Orientation/MathBased")));
 			_software_v2.Content(box_value(k2app::interfacing::LocalizedResourceWString(
-				L"SettingsPage", L"Filters/Orientation/MathBased") + L" (V2)"));
+				L"SettingsPage", L"Filters/Orientation/MathBasedV2")));
 
 			_hmd.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Orientation/HMD")));
