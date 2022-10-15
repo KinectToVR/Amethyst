@@ -95,24 +95,27 @@ App::App()
 	google::EnableLogCleaner(7);
 
 	// Log everything >=INFO to same file
-	google::SetLogDestination(google::GLOG_INFO,
-	                          WStringToString(k2app::interfacing::thisLogDestination).c_str());
+	google::SetLogDestination(
+		google::GLOG_INFO, WStringToString(
+			k2app::interfacing::thisLogDestination).c_str());
 
 	google::SetLogFilenameExtension(".log");
 
 	// Delete _latest.log as it's not the latest one now
-	std::filesystem::remove(ktvr::GetK2AppDataLogFileDir(L"Amethyst", L"_latest.log"));
+	std::filesystem::remove(ktvr::GetK2AppDataLogFileDir(
+		L"Amethyst", L"_latest.log"));
 
 	// Log the current Amethyst version
 	LOG(INFO) << "Amethyst version: " << k2app::interfacing::K2InternalVersion;
+	google::FlushLogFiles(google::GLOG_INFO); // Flush manually
 
 	LOG(INFO) << "Running at path: " << WStringToString(
 		k2app::interfacing::GetProgramLocation().parent_path().wstring());
 
 	if (const auto deducedLogName = getLastLogAdded(
 			ktvr::GetK2AppDataLogFileDir(
-				L"Amethyst", L"")).wstring();
-		!deducedLogName.empty())
+				L"Amethyst", L""));
+		!deducedLogName.empty() && exists(deducedLogName))
 	{
 		LOG(INFO) << "The last added Amethyst log appears to be at: \"" <<
 			WStringToString(deducedLogName) << "\"!";

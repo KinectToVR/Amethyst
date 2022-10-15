@@ -14,8 +14,8 @@ namespace k2app::interfacing
 
 	inline std::wstring GetK2AppTempDir()
 	{
-		CreateDirectory(std::wstring(std::wstring(_wgetenv(L"TEMP")) +
-			L"\\Amethyst\\").c_str(), nullptr);
+		std::filesystem::create_directories(
+			std::wstring(_wgetenv(L"TEMP")) + L"\\Amethyst\\");
 		return std::wstring(_wgetenv(L"TEMP")) + L"\\Amethyst";
 	}
 }
