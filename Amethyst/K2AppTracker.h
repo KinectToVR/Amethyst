@@ -280,6 +280,7 @@ namespace k2app
 			 */
 		}
 
+		// Update orientation filters
 		void updateOrientationFilters()
 		{
 			// ik that's a bunch of normalizations but we really em, weird things happen sometimes
@@ -291,6 +292,25 @@ namespace k2app
 			/* Update the Slower SLERP filter */
 			SLERPSlowOrientation = lastSLERPSlowOrientation.normalized().slerp(0.15, pose_orientation.normalized());
 			lastSLERPSlowOrientation = pose_orientation.normalized(); // Backup the orientation
+		}
+
+		// Update the internal physics components,
+		// not called if the managing device overrides physics
+		void updateInternalPhysics()
+		{
+			// Timestamps
+			//pose_poseTimestamp;
+			//pose_previousPoseTimestamp;
+
+			// Physics components to update
+			//pose_velocity;
+			//pose_angularVelocity;
+			//pose_acceleration;
+			//pose_angularAcceleration;
+
+			// Called after all orientation&pose composes,
+			// MUST YIELD UNCALIBRATED-SPACE COMPONENTS
+			// (which get calibrated at getTrackerBase())
 		}
 
 		// Get filtered data
@@ -469,8 +489,7 @@ namespace k2app
 			tracker_base.mutable_pose()->mutable_position()->set_y(_full_position.y());
 			tracker_base.mutable_pose()->mutable_position()->set_z(_full_position.z());
 
-			// If physics are provided by the device
-			if (m_use_own_physics)
+			// Physics
 			{
 				const auto _full_velocity =
 					not_calibrated
@@ -563,8 +582,7 @@ namespace k2app
 			tracker_base.mutable_pose()->mutable_position()->set_y(_full_position.y());
 			tracker_base.mutable_pose()->mutable_position()->set_z(_full_position.z());
 
-			// If physics are provided by the device
-			if (m_use_own_physics)
+			// Physics
 			{
 				// Velocity
 				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_x(pose_velocity.x());
@@ -639,11 +657,7 @@ namespace k2app
 
 		// Is this tracker enabled?
 		bool data_isActive = false;
-
-		// Does the host device override physics?
-		// Not saved, computed every loop
-		bool m_use_own_physics = false;
-
+		
 		// Does the managing device request no pos filtering?
 		bool m_no_position_filtering_requested = false;
 

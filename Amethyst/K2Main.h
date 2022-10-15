@@ -779,7 +779,7 @@ namespace k2app::main
 						vrPlayspaceOrientationQuaternion.inverse() * tracker.pose_orientation;
 
 			/*****************************************************************************************/
-			// Push RAW poses and physics to trackers
+			// Push RAW poses and physics to trackers, update physics
 			/*****************************************************************************************/
 
 			if (_device.index() == 0)
@@ -797,18 +797,21 @@ namespace k2app::main
 					tracker.pose_previousPoseTimestamp = _joint.getPreviousPoseTimestamp();
 
 					tracker.pose_position = _joint.getJointPosition();
-					tracker.m_use_own_physics = _kinect->isPhysicsOverrideEnabled();
 					tracker.m_no_position_filtering_requested =
 						_kinect->isPositionFilterBlockingEnabled();
 
 					// If the device overrides physics
-					if (tracker.m_use_own_physics)
+					if (_kinect->isPhysicsOverrideEnabled())
 					{
 						tracker.pose_velocity = _joint.getJointVelocity();
 						tracker.pose_acceleration = _joint.getJointAcceleration();
 						tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
 						tracker.pose_angularAcceleration = _joint.getJointAngularAcceleration();
 					}
+					// If not and the tracker is not overriden
+					else if (!tracker.isPositionOverridden ||
+						!K2Settings.overrideDeviceGUIDsMap.contains(tracker.overrideGUID))
+						tracker.updateInternalPhysics();
 				}
 			}
 			else if (_device.index() == 1)
@@ -825,18 +828,21 @@ namespace k2app::main
 					tracker.pose_previousPoseTimestamp = _joint.getPreviousPoseTimestamp();
 
 					tracker.pose_position = _joint.getJointPosition();
-					tracker.m_use_own_physics = _joints->isPhysicsOverrideEnabled();
 					tracker.m_no_position_filtering_requested =
 						_joints->isPositionFilterBlockingEnabled();
 
 					// If the device overrides physics
-					if (tracker.m_use_own_physics)
+					if (_joints->isPhysicsOverrideEnabled())
 					{
 						tracker.pose_velocity = _joint.getJointVelocity();
 						tracker.pose_acceleration = _joint.getJointAcceleration();
 						tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
 						tracker.pose_angularAcceleration = _joint.getJointAngularAcceleration();
 					}
+					// If not and the tracker is not overriden
+					else if (!tracker.isPositionOverridden ||
+						!K2Settings.overrideDeviceGUIDsMap.contains(tracker.overrideGUID))
+						tracker.updateInternalPhysics();
 				}
 			}
 		}
@@ -1044,7 +1050,7 @@ namespace k2app::main
 				}
 
 				/*****************************************************************************************/
-				// Push RAW poses and physics to trackers
+				// Push RAW poses and physics to trackers, update physics
 				/*****************************************************************************************/
 
 				if (_device.index() == 0)
@@ -1066,18 +1072,18 @@ namespace k2app::main
 							tracker.pose_previousPoseTimestamp = _joint.getPreviousPoseTimestamp();
 
 							tracker.pose_position = _joint.getJointPosition();
-							tracker.m_use_own_physics = _kinect->isPhysicsOverrideEnabled();
 							tracker.m_no_position_filtering_requested =
 								_kinect->isPositionFilterBlockingEnabled();
 
 							// If the device overrides physics
-							if (tracker.m_use_own_physics)
+							if (_kinect->isPhysicsOverrideEnabled())
 							{
 								tracker.pose_velocity = _joint.getJointVelocity();
 								tracker.pose_acceleration = _joint.getJointAcceleration();
 								tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
 								tracker.pose_angularAcceleration = _joint.getJointAngularAcceleration();
 							}
+							else tracker.updateInternalPhysics();
 						}
 				}
 				else if (_device.index() == 1)
@@ -1096,18 +1102,18 @@ namespace k2app::main
 							tracker.pose_previousPoseTimestamp = _joint.getPreviousPoseTimestamp();
 
 							tracker.pose_position = _joint.getJointPosition();
-							tracker.m_use_own_physics = _joints->isPhysicsOverrideEnabled();
 							tracker.m_no_position_filtering_requested =
 								_joints->isPositionFilterBlockingEnabled();
 
 							// If the device overrides physics
-							if (tracker.m_use_own_physics)
+							if (_joints->isPhysicsOverrideEnabled())
 							{
 								tracker.pose_velocity = _joint.getJointVelocity();
 								tracker.pose_acceleration = _joint.getJointAcceleration();
 								tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
 								tracker.pose_angularAcceleration = _joint.getJointAngularAcceleration();
 							}
+							else tracker.updateInternalPhysics();
 						}
 				}
 			}

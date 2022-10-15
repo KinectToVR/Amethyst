@@ -76,12 +76,6 @@ void K2Tracker::update()
 	}
 }
 
-// The previous frame cached pose
-Eigen::Quaterniond m_previous_orientation;
-Eigen::Vector3d m_previous_position,
-                m_previous_pos_velocity,
-                m_previous_rot_velocity;
-
 void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 {
 	try
@@ -121,72 +115,7 @@ void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 			_pose.vecAngularAcceleration[0] = pose.physics().angularacceleration().x();
 			_pose.vecAngularAcceleration[1] = pose.physics().angularacceleration().y();
 			_pose.vecAngularAcceleration[2] = pose.physics().angularacceleration().z();
-
-			// Backup Velocity
-			m_previous_pos_velocity = {
-				_pose.vecVelocity[0],
-				_pose.vecVelocity[1],
-				_pose.vecVelocity[2]
-			};
-			m_previous_rot_velocity = {
-				_pose.vecAngularVelocity[0],
-				_pose.vecAngularVelocity[1],
-				_pose.vecAngularVelocity[2]
-			};
 		}
-		else
-		{
-			// Calculate Velocity
-			const auto _pos_velocity =
-				EigenUtils::lerp(
-					Eigen::Vector3d(
-						EigenUtils::p_cast_type<Eigen::Vector3d>(_pose) - m_previous_position /
-						static_cast<double>(pose.posetimestamp() - pose.previousposetimestamp()) * 0.000001),
-					m_previous_pos_velocity, .5f);
-
-			const auto _rot_velocity =
-				EigenUtils::lerp(
-					Eigen::Vector3d(
-						EigenUtils::QuatToEulers(m_previous_orientation.inverse() *
-							EigenUtils::p_cast_type<Eigen::Quaterniond>(_pose)) /
-						static_cast<double>(pose.posetimestamp() - pose.previousposetimestamp()) * 0.000001),
-					m_previous_rot_velocity, .5f);
-
-			// Calculate Acceleration
-			const auto _pos_acceleration =
-				_pos_velocity - m_previous_pos_velocity /
-				static_cast<double>(pose.posetimestamp() - pose.previousposetimestamp()) * 0.000001;
-
-			const auto _rot_acceleration =
-				_rot_velocity - m_previous_rot_velocity /
-				static_cast<double>(pose.posetimestamp() - pose.previousposetimestamp()) * 0.000001;
-
-			// Set the Velocity
-			_pose.vecVelocity[0] = _pos_velocity.x();
-			_pose.vecVelocity[1] = _pos_velocity.y();
-			_pose.vecVelocity[2] = _pos_velocity.z();
-
-			_pose.vecAngularVelocity[0] = _rot_velocity.x();
-			_pose.vecAngularVelocity[1] = _rot_velocity.y();
-			_pose.vecAngularVelocity[2] = _rot_velocity.z();
-
-			// Set the Acceleration
-			_pose.vecAcceleration[0] = _pos_acceleration.x();
-			_pose.vecAcceleration[1] = _pos_acceleration.y();
-			_pose.vecAcceleration[2] = _pos_acceleration.z();
-
-			_pose.vecAngularAcceleration[0] = _rot_acceleration.x();
-			_pose.vecAngularAcceleration[1] = _rot_acceleration.y();
-			_pose.vecAngularAcceleration[2] = _rot_acceleration.z();
-
-			// Backup Velocity
-			m_previous_pos_velocity = _pos_velocity;
-			m_previous_rot_velocity = _rot_velocity;
-		}
-
-		// Backup poses
-		m_previous_position = EigenUtils::p_cast_type<Eigen::Vector3d>(_pose);
-		m_previous_orientation = EigenUtils::p_cast_type<Eigen::Quaterniond>(_pose);
 
 		// Automatically update the tracker when finished
 		update(); // called from this
