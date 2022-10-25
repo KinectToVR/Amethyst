@@ -218,15 +218,15 @@ namespace k2app
 			_lerp_const = m_lerp_const;
 		}
 
-		auto getK2TrackedJoint(const bool& _state, const std::string& _name)
-		const -> ktvr::K2TrackedJoint
+		[[nodiscard]] ktvr::K2TrackedJoint getK2TrackedJoint(const bool& _state, const std::string& _name)
+		const
 		{
 			return ktvr::K2TrackedJoint(pose_position, pose_orientation,
 			                            _state ? ktvr::State_Tracked : ktvr::State_NotTracked,
 			                            StringToWString(_name));
 		}
 
-		auto getK2TrackedJoint() const -> ktvr::K2TrackedJoint
+		[[nodiscard]] ktvr::K2TrackedJoint getK2TrackedJoint() const
 		{
 			return ktvr::K2TrackedJoint(pose_position, pose_orientation,
 			                            data_isActive ? ktvr::State_Tracked : ktvr::State_NotTracked,
@@ -301,6 +301,12 @@ namespace k2app
 			// Timestamps
 			//pose_poseTimestamp;
 			//pose_previousPoseTimestamp;
+
+			// Pose components
+			//pose_position
+			//pose_previousPosition
+			//pose_orientation
+			//pose_previousOrientation
 
 			// Physics components to update
 			//pose_velocity;
@@ -382,11 +388,7 @@ namespace k2app
 			return getFilteredOrientation(filter) * EigenUtils::EulersToQuat(orientationOffset);
 		}
 
-		// Get filtered data
-		// By default, the saved filter is selected,
-		// and to select it, the filter number must be < 0
-		// Additionally, this adds the offsets
-		// Offset will be added after translation
+		// Get calibrated position, w/ offsets & filters
 		[[nodiscard]] Eigen::Vector3d getFullCalibratedPosition
 		(
 			Eigen::Matrix<double, 3, 3> rotationMatrix,
@@ -395,16 +397,10 @@ namespace k2app
 			int filter = -1
 		) const
 		{
-			// Construct the current pose
-			const Eigen::Vector3d m_pose(
-				getFilteredPosition(filter).x(),
-				getFilteredPosition(filter).y(),
-				getFilteredPosition(filter).z()
-			);
-
 			// Construct the calibrated pose
 			Eigen::Matrix<double, 3, Eigen::Dynamic> m_pose_calibrated =
-				(rotationMatrix * (m_pose - calibration_origin)).
+				(rotationMatrix *
+					(getFilteredPosition(filter) - calibration_origin)).
 				colwise() + translationVector + calibration_origin;
 
 			// Construct the calibrated pose in eigen
@@ -416,6 +412,27 @@ namespace k2app
 
 			// Return the calibrated pose with offset
 			return calibrated_pose_gl + positionOffset;
+		}
+
+		// Get calibrated orientation, w/ offsets & filters
+		[[nodiscard]] Eigen::Quaterniond getFullCalibratedOrientation
+		(
+			Eigen::Matrix<double, 3, 3> rotationMatrix, int filter = -1
+		) const
+		{
+			// Construct the calibrated orientation
+			Eigen::Quaterniond m_orientation =
+				getFilteredOrientation(filter);
+
+			// Construct the calibrated orientation in eigen
+			// Note: Apply calibration only in some cases
+			if (orientationTrackingOption != k2_DisableJointRotation &&
+				orientationTrackingOption != k2_FollowHMDRotation)
+				m_orientation = rotationMatrix * m_orientation;
+
+			// Return the calibrated orientation with offset
+			return EigenUtils::EulersToQuat(orientationOffset) *
+				m_orientation; // Offset the orientation
 		}
 
 		// Get filtered data
@@ -470,7 +487,10 @@ namespace k2app
 			ktvr::K2TrackerBase tracker_base;
 
 			const auto _full_orientation =
-				getFullOrientation(ori_filter);
+				not_calibrated
+					? getFullOrientation(ori_filter)
+					: getFullCalibratedOrientation(
+						rotationMatrix, ori_filter);
 
 			const auto _full_position =
 				not_calibrated
@@ -547,13 +567,8 @@ namespace k2app
 			tracker_base.mutable_data()->set_role(data_role);
 			tracker_base.mutable_data()->set_isactive(data_isActive);
 
-			// Add ID
+			// Add ID and return
 			tracker_base.set_tracker(base_tracker);
-
-			// Add timestamps and return
-			tracker_base.mutable_pose()->set_posetimestamp(pose_poseTimestamp);
-			tracker_base.mutable_pose()->set_previousposetimestamp(pose_previousPoseTimestamp);
-
 			return tracker_base;
 		}
 
@@ -616,13 +631,8 @@ namespace k2app
 			tracker_base.mutable_data()->set_role(data_role);
 			tracker_base.mutable_data()->set_isactive(data_isActive);
 
-			// Add ID
+			// Add ID and return
 			tracker_base.set_tracker(base_tracker);
-
-			// Add timestamps and return
-			tracker_base.mutable_pose()->set_posetimestamp(pose_poseTimestamp);
-			tracker_base.mutable_pose()->set_previousposetimestamp(pose_previousPoseTimestamp);
-
 			return tracker_base;
 		}
 
@@ -657,13 +667,16 @@ namespace k2app
 
 		// Is this tracker enabled?
 		bool data_isActive = false;
-		
+
 		// Does the managing device request no pos filtering?
 		bool m_no_position_filtering_requested = false;
 
 		// Tracker pose (inherited)
 		Eigen::Vector3d pose_position{0, 0, 0};
 		Eigen::Quaterniond pose_orientation{1, 0, 0, 0};
+
+		Eigen::Vector3d pose_previousPosition{0, 0, 0};
+		Eigen::Quaterniond pose_previousOrientation{1, 0, 0, 0};
 
 		Eigen::Vector3d pose_velocity{0, 0, 0};
 		Eigen::Vector3d pose_acceleration{0, 0, 0};
@@ -685,6 +698,9 @@ namespace k2app
 
 				CEREAL_NVP(pose_position),
 				CEREAL_NVP(pose_orientation),
+				CEREAL_NVP(pose_previousPosition),
+				CEREAL_NVP(pose_previousOrientation),
+
 				CEREAL_NVP(pose_velocity),
 				CEREAL_NVP(pose_acceleration),
 				CEREAL_NVP(pose_angularVelocity),
@@ -750,6 +766,8 @@ namespace k2app
 				overrideGUID == other.overrideGUID &&
 				// pose_position == other.pose_position &&          // Doesn't matter
 				// pose_orientation == other.pose_orientation &&    // Doesn't matter
+				// pose_previousPosition == other.pose_previousPosition &&          // Doesn't matter
+				// pose_previousOrientation == other.pose_previousOrientation &&    // Doesn't matter
 				data_serial == other.data_serial &&
 				data_role == other.data_role &&
 				data_isActive == other.data_isActive &&
