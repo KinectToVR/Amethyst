@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <ranges>
 
 #include "K2DeviceMath.h"
@@ -613,7 +613,7 @@ namespace k2app::main
 							   : getVRTrackerPoseCalibrated("waist").second)
 
 						// Default: VR HMD orientation
-						: vrHMDPose.second,
+						: plugins::plugins_getHMDOrientationCalibrated(),
 
 					// Check for external-flip
 					_ext_flip
