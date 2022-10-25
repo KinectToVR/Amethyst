@@ -974,8 +974,6 @@ class KTVR_API K2TrackerPose final :
     kOrientationFieldNumber = 1,
     kPositionFieldNumber = 2,
     kPhysicsFieldNumber = 3,
-    kPoseTimestampFieldNumber = 4,
-    kPreviousPoseTimestampFieldNumber = 5,
   };
   // required .ktvr.K2Quaternion orientation = 1;
   bool has_orientation() const;
@@ -1031,32 +1029,6 @@ class KTVR_API K2TrackerPose final :
       ::ktvr::K2TrackerPhysics* physics);
   ::ktvr::K2TrackerPhysics* unsafe_arena_release_physics();
 
-  // required uint64 poseTimestamp = 4;
-  bool has_posetimestamp() const;
-  private:
-  bool _internal_has_posetimestamp() const;
-  public:
-  void clear_posetimestamp();
-  uint64_t posetimestamp() const;
-  void set_posetimestamp(uint64_t value);
-  private:
-  uint64_t _internal_posetimestamp() const;
-  void _internal_set_posetimestamp(uint64_t value);
-  public:
-
-  // required uint64 previousPoseTimestamp = 5;
-  bool has_previousposetimestamp() const;
-  private:
-  bool _internal_has_previousposetimestamp() const;
-  public:
-  void clear_previousposetimestamp();
-  uint64_t previousposetimestamp() const;
-  void set_previousposetimestamp(uint64_t value);
-  private:
-  uint64_t _internal_previousposetimestamp() const;
-  void _internal_set_previousposetimestamp(uint64_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:ktvr.K2TrackerPose)
  private:
   class _Internal;
@@ -1073,8 +1045,6 @@ class KTVR_API K2TrackerPose final :
     ::ktvr::K2Quaternion* orientation_;
     ::ktvr::K2Vector3* position_;
     ::ktvr::K2TrackerPhysics* physics_;
-    uint64_t posetimestamp_;
-    uint64_t previousposetimestamp_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_Amethyst_5fAPI_2eproto;
@@ -3041,62 +3011,6 @@ inline void K2TrackerPose::set_allocated_physics(::ktvr::K2TrackerPhysics* physi
   }
   _impl_.physics_ = physics;
   // @@protoc_insertion_point(field_set_allocated:ktvr.K2TrackerPose.physics)
-}
-
-// required uint64 poseTimestamp = 4;
-inline bool K2TrackerPose::_internal_has_posetimestamp() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
-  return value;
-}
-inline bool K2TrackerPose::has_posetimestamp() const {
-  return _internal_has_posetimestamp();
-}
-inline void K2TrackerPose::clear_posetimestamp() {
-  _impl_.posetimestamp_ = uint64_t{0u};
-  _impl_._has_bits_[0] &= ~0x00000008u;
-}
-inline uint64_t K2TrackerPose::_internal_posetimestamp() const {
-  return _impl_.posetimestamp_;
-}
-inline uint64_t K2TrackerPose::posetimestamp() const {
-  // @@protoc_insertion_point(field_get:ktvr.K2TrackerPose.poseTimestamp)
-  return _internal_posetimestamp();
-}
-inline void K2TrackerPose::_internal_set_posetimestamp(uint64_t value) {
-  _impl_._has_bits_[0] |= 0x00000008u;
-  _impl_.posetimestamp_ = value;
-}
-inline void K2TrackerPose::set_posetimestamp(uint64_t value) {
-  _internal_set_posetimestamp(value);
-  // @@protoc_insertion_point(field_set:ktvr.K2TrackerPose.poseTimestamp)
-}
-
-// required uint64 previousPoseTimestamp = 5;
-inline bool K2TrackerPose::_internal_has_previousposetimestamp() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
-  return value;
-}
-inline bool K2TrackerPose::has_previousposetimestamp() const {
-  return _internal_has_previousposetimestamp();
-}
-inline void K2TrackerPose::clear_previousposetimestamp() {
-  _impl_.previousposetimestamp_ = uint64_t{0u};
-  _impl_._has_bits_[0] &= ~0x00000010u;
-}
-inline uint64_t K2TrackerPose::_internal_previousposetimestamp() const {
-  return _impl_.previousposetimestamp_;
-}
-inline uint64_t K2TrackerPose::previousposetimestamp() const {
-  // @@protoc_insertion_point(field_get:ktvr.K2TrackerPose.previousPoseTimestamp)
-  return _internal_previousposetimestamp();
-}
-inline void K2TrackerPose::_internal_set_previousposetimestamp(uint64_t value) {
-  _impl_._has_bits_[0] |= 0x00000010u;
-  _impl_.previousposetimestamp_ = value;
-}
-inline void K2TrackerPose::set_previousposetimestamp(uint64_t value) {
-  _internal_set_previousposetimestamp(value);
-  // @@protoc_insertion_point(field_set:ktvr.K2TrackerPose.previousPoseTimestamp)
 }
 
 // -------------------------------------------------------------------

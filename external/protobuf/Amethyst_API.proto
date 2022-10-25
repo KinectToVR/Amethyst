@@ -49,9 +49,6 @@ message K2TrackerPose
   required K2Vector3 position = 2;
 
   optional K2TrackerPhysics physics = 3;
-  
-  required uint64 poseTimestamp = 4;
-  required uint64 previousPoseTimestamp = 5;
 }
 
 message K2StatusPair

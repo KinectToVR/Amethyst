@@ -80,9 +80,7 @@ PROTOBUF_CONSTEXPR K2TrackerPose::K2TrackerPose(
   , /*decltype(_impl_._cached_size_)*/{}
   , /*decltype(_impl_.orientation_)*/nullptr
   , /*decltype(_impl_.position_)*/nullptr
-  , /*decltype(_impl_.physics_)*/nullptr
-  , /*decltype(_impl_.posetimestamp_)*/uint64_t{0u}
-  , /*decltype(_impl_.previousposetimestamp_)*/uint64_t{0u}} {}
+  , /*decltype(_impl_.physics_)*/nullptr} {}
 struct K2TrackerPoseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR K2TrackerPoseDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -235,13 +233,9 @@ const uint32_t TableStruct_Amethyst_5fAPI_2eproto::offsets[] PROTOBUF_SECTION_VA
   PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPose, _impl_.orientation_),
   PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPose, _impl_.position_),
   PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPose, _impl_.physics_),
-  PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPose, _impl_.posetimestamp_),
-  PROTOBUF_FIELD_OFFSET(::ktvr::K2TrackerPose, _impl_.previousposetimestamp_),
   0,
   1,
   2,
-  3,
-  4,
   PROTOBUF_FIELD_OFFSET(::ktvr::K2StatusPair, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::ktvr::K2StatusPair, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -323,12 +317,12 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 0, 10, -1, sizeof(::ktvr::K2Quaternion)},
   { 14, 23, -1, sizeof(::ktvr::K2Vector3)},
   { 26, 36, -1, sizeof(::ktvr::K2TrackerPhysics)},
-  { 40, 51, -1, sizeof(::ktvr::K2TrackerPose)},
-  { 56, 64, -1, sizeof(::ktvr::K2StatusPair)},
-  { 66, 75, -1, sizeof(::ktvr::K2TrackerData)},
-  { 78, 87, -1, sizeof(::ktvr::K2TrackerBase)},
-  { 90, 105, -1, sizeof(::ktvr::K2Message)},
-  { 114, 126, -1, sizeof(::ktvr::K2ResponseMessage)},
+  { 40, 49, -1, sizeof(::ktvr::K2TrackerPose)},
+  { 52, 60, -1, sizeof(::ktvr::K2StatusPair)},
+  { 62, 71, -1, sizeof(::ktvr::K2TrackerData)},
+  { 74, 83, -1, sizeof(::ktvr::K2TrackerBase)},
+  { 86, 101, -1, sizeof(::ktvr::K2Message)},
+  { 110, 122, -1, sizeof(::ktvr::K2ResponseMessage)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -352,68 +346,67 @@ const char descriptor_table_protodef_Amethyst_5fAPI_2eproto[] PROTOBUF_SECTION_V
   "K2Vector3\022%\n\014acceleration\030\002 \002(\0132\017.ktvr.K"
   "2Vector3\022(\n\017angularVelocity\030\003 \002(\0132\017.ktvr"
   ".K2Vector3\022,\n\023angularAcceleration\030\004 \002(\0132"
-  "\017.ktvr.K2Vector3\"\272\001\n\rK2TrackerPose\022\'\n\013or"
+  "\017.ktvr.K2Vector3\"\204\001\n\rK2TrackerPose\022\'\n\013or"
   "ientation\030\001 \002(\0132\022.ktvr.K2Quaternion\022!\n\010p"
   "osition\030\002 \002(\0132\017.ktvr.K2Vector3\022\'\n\007physic"
-  "s\030\003 \001(\0132\026.ktvr.K2TrackerPhysics\022\025\n\rposeT"
-  "imestamp\030\004 \002(\004\022\035\n\025previousPoseTimestamp\030"
-  "\005 \002(\004\"J\n\014K2StatusPair\022#\n\007tracker\030\001 \002(\0162\022"
-  ".ktvr.ITrackerType\022\025\n\006status\030\002 \002(\010:\005fals"
-  "e\"j\n\rK2TrackerData\022\016\n\006serial\030\001 \002(\t\0220\n\004ro"
-  "le\030\002 \002(\0162\022.ktvr.ITrackerType:\016Tracker_Ha"
-  "nded\022\027\n\010isActive\030\003 \002(\010:\005false\"\212\001\n\rK2Trac"
-  "kerBase\022!\n\004pose\030\001 \002(\0132\023.ktvr.K2TrackerPo"
-  "se\022!\n\004data\030\002 \002(\0132\023.ktvr.K2TrackerData\0223\n"
-  "\007tracker\030\003 \002(\0162\022.ktvr.ITrackerType:\016Trac"
-  "ker_Handed\"\350\002\n\tK2Message\022;\n\013messageType\030"
-  "\001 \002(\0162\023.ktvr.K2MessageType:\021K2Message_In"
-  "valid\022\033\n\020messageTimestamp\030\002 \002(\003:\0010\022!\n\026me"
-  "ssageManualTimestamp\030\003 \002(\003:\0010\022.\n\021tracker"
-  "BaseVector\030\004 \003(\0132\023.ktvr.K2TrackerBase\0221\n"
-  "\025trackerStatusesVector\030\005 \003(\0132\022.ktvr.K2St"
-  "atusPair\0223\n\007tracker\030\006 \002(\0162\022.ktvr.ITracke"
-  "rType:\016Tracker_Handed\022\024\n\005state\030\007 \002(\010:\005fa"
-  "lse\022\030\n\nwant_reply\030\010 \002(\010:\004true\022\026\n\016message"
-  "_string\030\t \002(\t\"\276\002\n\021K2ResponseMessage\022K\n\013m"
-  "essageType\030\001 \002(\0162\033.ktvr.K2ResponseMessag"
-  "eType:\031K2ResponseMessage_Invalid\022\033\n\020mess"
-  "ageTimestamp\030\002 \002(\003:\0010\022!\n\026messageManualTi"
-  "mestamp\030\003 \002(\003:\0010\0223\n\007tracker\030\004 \002(\0162\022.ktvr"
-  ".ITrackerType:\016Tracker_Handed\022O\n\006result\030"
-  "\005 \002(\0162\033.ktvr.K2ResponseMessageCode:\"K2Re"
-  "sponseMessageCode_UnknownError\022\026\n\007succes"
-  "s\030\006 \002(\010:\005false*\260\002\n\014ITrackerType\022\022\n\016Track"
-  "er_Handed\020\000\022\024\n\020Tracker_LeftFoot\020\001\022\025\n\021Tra"
-  "cker_RightFoot\020\002\022\030\n\024Tracker_LeftShoulder"
-  "\020\003\022\031\n\025Tracker_RightShoulder\020\004\022\025\n\021Tracker"
-  "_LeftElbow\020\005\022\026\n\022Tracker_RightElbow\020\006\022\024\n\020"
-  "Tracker_LeftKnee\020\007\022\025\n\021Tracker_RightKnee\020"
-  "\010\022\021\n\rTracker_Waist\020\t\022\021\n\rTracker_Chest\020\n\022"
-  "\022\n\016Tracker_Camera\020\013\022\024\n\020Tracker_Keyboard\020"
-  "\014*\235\002\n\rK2MessageType\022\025\n\021K2Message_Invalid"
-  "\020\000\022\035\n\031K2Message_SetTrackerState\020\001\022#\n\037K2M"
-  "essage_SetTrackerStateVector\020\002\022\031\n\025K2Mess"
-  "age_SetStateAll\020\003\022\037\n\033K2Message_UpdateTra"
-  "ckerPose\020\004\022%\n!K2Message_UpdateTrackerPos"
-  "eVector\020\005\022\034\n\030K2Message_RefreshTracker\020\006\022"
-  "\034\n\030K2Message_RequestRestart\020\007\022\022\n\016K2Messa"
-  "ge_Ping\020\010*\220\001\n\025K2ResponseMessageType\022\035\n\031K"
-  "2ResponseMessage_Invalid\020\000\022\032\n\026K2Response"
-  "Message_Role\020\001\022\035\n\031K2ResponseMessage_Succ"
-  "ess\020\002\022\035\n\031K2ResponseMessage_Tracker\020\003*\351\002\n"
-  "\025K2ResponseMessageCode\022#\n\037K2ResponseMess"
-  "ageCode_Exception\020\000\022&\n\"K2ResponseMessage"
-  "Code_UnknownError\020\001\022!\n\035K2ResponseMessage"
-  "Code_Invalid\020\002\022\034\n\030K2ResponseMessageCode_"
-  "OK\020\003\022%\n!K2ResponseMessageCode_SpawnFaile"
-  "d\020\004\022(\n$K2ResponseMessageCode_AlreadyPres"
-  "ent\020\005\022$\n K2ResponseMessageCode_BadReques"
-  "t\020\006\022&\n\"K2ResponseMessageCode_ParsingErro"
-  "r\020\007\022#\n\037K2ResponseMessageCode_BadSerial\020\010"
+  "s\030\003 \001(\0132\026.ktvr.K2TrackerPhysics\"J\n\014K2Sta"
+  "tusPair\022#\n\007tracker\030\001 \002(\0162\022.ktvr.ITracker"
+  "Type\022\025\n\006status\030\002 \002(\010:\005false\"j\n\rK2Tracker"
+  "Data\022\016\n\006serial\030\001 \002(\t\0220\n\004role\030\002 \002(\0162\022.ktv"
+  "r.ITrackerType:\016Tracker_Handed\022\027\n\010isActi"
+  "ve\030\003 \002(\010:\005false\"\212\001\n\rK2TrackerBase\022!\n\004pos"
+  "e\030\001 \002(\0132\023.ktvr.K2TrackerPose\022!\n\004data\030\002 \002"
+  "(\0132\023.ktvr.K2TrackerData\0223\n\007tracker\030\003 \002(\016"
+  "2\022.ktvr.ITrackerType:\016Tracker_Handed\"\350\002\n"
+  "\tK2Message\022;\n\013messageType\030\001 \002(\0162\023.ktvr.K"
+  "2MessageType:\021K2Message_Invalid\022\033\n\020messa"
+  "geTimestamp\030\002 \002(\003:\0010\022!\n\026messageManualTim"
+  "estamp\030\003 \002(\003:\0010\022.\n\021trackerBaseVector\030\004 \003"
+  "(\0132\023.ktvr.K2TrackerBase\0221\n\025trackerStatus"
+  "esVector\030\005 \003(\0132\022.ktvr.K2StatusPair\0223\n\007tr"
+  "acker\030\006 \002(\0162\022.ktvr.ITrackerType:\016Tracker"
+  "_Handed\022\024\n\005state\030\007 \002(\010:\005false\022\030\n\nwant_re"
+  "ply\030\010 \002(\010:\004true\022\026\n\016message_string\030\t \002(\t\""
+  "\276\002\n\021K2ResponseMessage\022K\n\013messageType\030\001 \002"
+  "(\0162\033.ktvr.K2ResponseMessageType:\031K2Respo"
+  "nseMessage_Invalid\022\033\n\020messageTimestamp\030\002"
+  " \002(\003:\0010\022!\n\026messageManualTimestamp\030\003 \002(\003:"
+  "\0010\0223\n\007tracker\030\004 \002(\0162\022.ktvr.ITrackerType:"
+  "\016Tracker_Handed\022O\n\006result\030\005 \002(\0162\033.ktvr.K"
+  "2ResponseMessageCode:\"K2ResponseMessageC"
+  "ode_UnknownError\022\026\n\007success\030\006 \002(\010:\005false"
+  "*\260\002\n\014ITrackerType\022\022\n\016Tracker_Handed\020\000\022\024\n"
+  "\020Tracker_LeftFoot\020\001\022\025\n\021Tracker_RightFoot"
+  "\020\002\022\030\n\024Tracker_LeftShoulder\020\003\022\031\n\025Tracker_"
+  "RightShoulder\020\004\022\025\n\021Tracker_LeftElbow\020\005\022\026"
+  "\n\022Tracker_RightElbow\020\006\022\024\n\020Tracker_LeftKn"
+  "ee\020\007\022\025\n\021Tracker_RightKnee\020\010\022\021\n\rTracker_W"
+  "aist\020\t\022\021\n\rTracker_Chest\020\n\022\022\n\016Tracker_Cam"
+  "era\020\013\022\024\n\020Tracker_Keyboard\020\014*\235\002\n\rK2Messag"
+  "eType\022\025\n\021K2Message_Invalid\020\000\022\035\n\031K2Messag"
+  "e_SetTrackerState\020\001\022#\n\037K2Message_SetTrac"
+  "kerStateVector\020\002\022\031\n\025K2Message_SetStateAl"
+  "l\020\003\022\037\n\033K2Message_UpdateTrackerPose\020\004\022%\n!"
+  "K2Message_UpdateTrackerPoseVector\020\005\022\034\n\030K"
+  "2Message_RefreshTracker\020\006\022\034\n\030K2Message_R"
+  "equestRestart\020\007\022\022\n\016K2Message_Ping\020\010*\220\001\n\025"
+  "K2ResponseMessageType\022\035\n\031K2ResponseMessa"
+  "ge_Invalid\020\000\022\032\n\026K2ResponseMessage_Role\020\001"
+  "\022\035\n\031K2ResponseMessage_Success\020\002\022\035\n\031K2Res"
+  "ponseMessage_Tracker\020\003*\351\002\n\025K2ResponseMes"
+  "sageCode\022#\n\037K2ResponseMessageCode_Except"
+  "ion\020\000\022&\n\"K2ResponseMessageCode_UnknownEr"
+  "ror\020\001\022!\n\035K2ResponseMessageCode_Invalid\020\002"
+  "\022\034\n\030K2ResponseMessageCode_OK\020\003\022%\n!K2Resp"
+  "onseMessageCode_SpawnFailed\020\004\022(\n$K2Respo"
+  "nseMessageCode_AlreadyPresent\020\005\022$\n K2Res"
+  "ponseMessageCode_BadRequest\020\006\022&\n\"K2Respo"
+  "nseMessageCode_ParsingError\020\007\022#\n\037K2Respo"
+  "nseMessageCode_BadSerial\020\010"
   ;
 static ::_pbi::once_flag descriptor_table_Amethyst_5fAPI_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Amethyst_5fAPI_2eproto = {
-    false, false, 2640, descriptor_table_protodef_Amethyst_5fAPI_2eproto,
+    false, false, 2586, descriptor_table_protodef_Amethyst_5fAPI_2eproto,
     "Amethyst_API.proto",
     &descriptor_table_Amethyst_5fAPI_2eproto_once, nullptr, 0, 9,
     schemas, file_default_instances, TableStruct_Amethyst_5fAPI_2eproto::offsets,
@@ -1524,14 +1517,8 @@ class K2TrackerPose::_Internal {
   static void set_has_physics(HasBits* has_bits) {
     (*has_bits)[0] |= 4u;
   }
-  static void set_has_posetimestamp(HasBits* has_bits) {
-    (*has_bits)[0] |= 8u;
-  }
-  static void set_has_previousposetimestamp(HasBits* has_bits) {
-    (*has_bits)[0] |= 16u;
-  }
   static bool MissingRequiredFields(const HasBits& has_bits) {
-    return ((has_bits[0] & 0x0000001b) ^ 0x0000001b) != 0;
+    return ((has_bits[0] & 0x00000003) ^ 0x00000003) != 0;
   }
 };
 
@@ -1561,9 +1548,7 @@ K2TrackerPose::K2TrackerPose(const K2TrackerPose& from)
     , /*decltype(_impl_._cached_size_)*/{}
     , decltype(_impl_.orientation_){nullptr}
     , decltype(_impl_.position_){nullptr}
-    , decltype(_impl_.physics_){nullptr}
-    , decltype(_impl_.posetimestamp_){}
-    , decltype(_impl_.previousposetimestamp_){}};
+    , decltype(_impl_.physics_){nullptr}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   if (from._internal_has_orientation()) {
@@ -1575,9 +1560,6 @@ K2TrackerPose::K2TrackerPose(const K2TrackerPose& from)
   if (from._internal_has_physics()) {
     _this->_impl_.physics_ = new ::ktvr::K2TrackerPhysics(*from._impl_.physics_);
   }
-  ::memcpy(&_impl_.posetimestamp_, &from._impl_.posetimestamp_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.previousposetimestamp_) -
-    reinterpret_cast<char*>(&_impl_.posetimestamp_)) + sizeof(_impl_.previousposetimestamp_));
   // @@protoc_insertion_point(copy_constructor:ktvr.K2TrackerPose)
 }
 
@@ -1591,8 +1573,6 @@ inline void K2TrackerPose::SharedCtor(
     , decltype(_impl_.orientation_){nullptr}
     , decltype(_impl_.position_){nullptr}
     , decltype(_impl_.physics_){nullptr}
-    , decltype(_impl_.posetimestamp_){uint64_t{0u}}
-    , decltype(_impl_.previousposetimestamp_){uint64_t{0u}}
   };
 }
 
@@ -1637,11 +1617,6 @@ void K2TrackerPose::Clear() {
       _impl_.physics_->Clear();
     }
   }
-  if (cached_has_bits & 0x00000018u) {
-    ::memset(&_impl_.posetimestamp_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&_impl_.previousposetimestamp_) -
-        reinterpret_cast<char*>(&_impl_.posetimestamp_)) + sizeof(_impl_.previousposetimestamp_));
-  }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -1673,24 +1648,6 @@ const char* K2TrackerPose::_InternalParse(const char* ptr, ::_pbi::ParseContext*
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_physics(), ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // required uint64 poseTimestamp = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
-          _Internal::set_has_posetimestamp(&has_bits);
-          _impl_.posetimestamp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // required uint64 previousPoseTimestamp = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
-          _Internal::set_has_previousposetimestamp(&has_bits);
-          _impl_.previousposetimestamp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1747,18 +1704,6 @@ uint8_t* K2TrackerPose::_InternalSerialize(
         _Internal::physics(this).GetCachedSize(), target, stream);
   }
 
-  // required uint64 poseTimestamp = 4;
-  if (cached_has_bits & 0x00000008u) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(4, this->_internal_posetimestamp(), target);
-  }
-
-  // required uint64 previousPoseTimestamp = 5;
-  if (cached_has_bits & 0x00000010u) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(5, this->_internal_previousposetimestamp(), target);
-  }
-
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1785,23 +1730,13 @@ size_t K2TrackerPose::RequiredFieldsByteSizeFallback() const {
         *_impl_.position_);
   }
 
-  if (_internal_has_posetimestamp()) {
-    // required uint64 poseTimestamp = 4;
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_posetimestamp());
-  }
-
-  if (_internal_has_previousposetimestamp()) {
-    // required uint64 previousPoseTimestamp = 5;
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_previousposetimestamp());
-  }
-
   return total_size;
 }
 size_t K2TrackerPose::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:ktvr.K2TrackerPose)
   size_t total_size = 0;
 
-  if (((_impl_._has_bits_[0] & 0x0000001b) ^ 0x0000001b) == 0) {  // All required fields are present.
+  if (((_impl_._has_bits_[0] & 0x00000003) ^ 0x00000003) == 0) {  // All required fields are present.
     // required .ktvr.K2Quaternion orientation = 1;
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -1811,12 +1746,6 @@ size_t K2TrackerPose::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *_impl_.position_);
-
-    // required uint64 poseTimestamp = 4;
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_posetimestamp());
-
-    // required uint64 previousPoseTimestamp = 5;
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_previousposetimestamp());
 
   } else {
     total_size += RequiredFieldsByteSizeFallback();
@@ -1852,7 +1781,7 @@ void K2TrackerPose::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   (void) cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
       _this->_internal_mutable_orientation()->::ktvr::K2Quaternion::MergeFrom(
           from._internal_orientation());
@@ -1865,13 +1794,6 @@ void K2TrackerPose::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
       _this->_internal_mutable_physics()->::ktvr::K2TrackerPhysics::MergeFrom(
           from._internal_physics());
     }
-    if (cached_has_bits & 0x00000008u) {
-      _this->_impl_.posetimestamp_ = from._impl_.posetimestamp_;
-    }
-    if (cached_has_bits & 0x00000010u) {
-      _this->_impl_.previousposetimestamp_ = from._impl_.previousposetimestamp_;
-    }
-    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1902,8 +1824,8 @@ void K2TrackerPose::InternalSwap(K2TrackerPose* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(K2TrackerPose, _impl_.previousposetimestamp_)
-      + sizeof(K2TrackerPose::_impl_.previousposetimestamp_)
+      PROTOBUF_FIELD_OFFSET(K2TrackerPose, _impl_.physics_)
+      + sizeof(K2TrackerPose::_impl_.physics_)
       - PROTOBUF_FIELD_OFFSET(K2TrackerPose, _impl_.orientation_)>(
           reinterpret_cast<char*>(&_impl_.orientation_),
           reinterpret_cast<char*>(&other->_impl_.orientation_));
