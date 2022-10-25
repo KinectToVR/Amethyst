@@ -47,7 +47,7 @@ inline std::string WStringToString(const std::wstring& w_str)
 namespace ktvr
 {
 	// Interface Version
-	static const char* IAME_API_Devices_Version = "IAME_API_Version_018";
+	static const char* IAME_API_Devices_Version = "IAME_API_Version_019";
 
 	// Return messaging types
 	enum K2InitErrorType
@@ -135,6 +135,9 @@ namespace ktvr
 		[[nodiscard]] Eigen::Vector3d getJointPosition() const { return jointPosition; }
 		[[nodiscard]] Eigen::Quaterniond getJointOrientation() const { return jointOrientation; }
 
+		[[nodiscard]] Eigen::Vector3d getPreviousJointPosition() const { return previousJointPosition; }
+		[[nodiscard]] Eigen::Quaterniond getPreviousJointOrientation() const { return previousJointOrientation; }
+
 		[[nodiscard]] Eigen::Vector3d getJointVelocity() const { return jointVelocity; }
 		[[nodiscard]] Eigen::Vector3d getJointAcceleration() const { return jointAcceleration; }
 
@@ -151,8 +154,12 @@ namespace ktvr
 		            Eigen::Quaterniond orientation,
 		            const ITrackedJointState state)
 		{
+			previousJointPosition = jointPosition;
+			previousJointOrientation = jointOrientation;
+
 			jointPosition = std::move(position);
 			jointOrientation = std::move(orientation);
+
 			trackingState = state;
 
 			// Update pose timestamp
@@ -169,6 +176,9 @@ namespace ktvr
 					Eigen::Vector3d angularAcceleration,
 		            const ITrackedJointState state)
 		{
+			previousJointPosition = jointPosition;
+			previousJointOrientation = jointOrientation;
+
 			jointPosition = std::move(position);
 			jointOrientation = std::move(orientation);
 
@@ -187,6 +197,7 @@ namespace ktvr
 		// For servers!
 		void update_position(Eigen::Vector3d position)
 		{
+			previousJointPosition = jointPosition;
 			jointPosition = std::move(position);
 
 			// Update pose timestamp
@@ -197,6 +208,7 @@ namespace ktvr
 		// For servers!
 		void update_orientation(Eigen::Quaterniond orientation)
 		{
+			previousJointOrientation = jointOrientation;
 			jointOrientation = std::move(orientation);
 		}
 
@@ -235,6 +247,9 @@ namespace ktvr
 		Eigen::Vector3d jointPosition = Eigen::Vector3d(0., 0., 0.);
 		Eigen::Quaterniond jointOrientation = Eigen::Quaterniond(1., 0., 0., 0.);
 
+		Eigen::Vector3d previousJointPosition = Eigen::Vector3d(0., 0., 0.);
+		Eigen::Quaterniond previousJointOrientation = Eigen::Quaterniond(1., 0., 0., 0.);
+
 		Eigen::Vector3d jointVelocity = Eigen::Vector3d(0., 0., 0.);
 		Eigen::Vector3d jointAcceleration = Eigen::Vector3d(0., 0., 0.);
 
@@ -242,6 +257,7 @@ namespace ktvr
 		Eigen::Vector3d jointAngularAcceleration = Eigen::Vector3d(0., 0., 0.);
 
 		ITrackedJointState trackingState = State_NotTracked;
+
 		long long poseTimestamp = 0;
 		long long previousPoseTimestamp = 0;
 	};
