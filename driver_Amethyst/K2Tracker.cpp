@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "K2Tracker.h"
 #include <openvr_driver.h>
 #include <string>

@@ -1,7 +1,12 @@
-﻿#include <filesystem>
-#include <iostream>
+﻿#include "pch.h"
+
 #include <Windows.h>
+#include <shellapi.h>
+
+#include <filesystem>
+#include <iostream>
 #include <thread>
+
 #include <openvr_driver.h>
 #include "K2Tracker.h"
 #include "K2ServerDriver.h"
@@ -21,15 +26,15 @@ namespace k2_driver
 		vr::EVRInitError Init(vr::IVRDriverContext* pDriverContext) override
 		{
 			// NOTE 1: use the driver context. Sets up a big set of globals
-			VR_INIT_SERVER_DRIVER_CONTEXT(pDriverContext);
+			VR_INIT_SERVER_DRIVER_CONTEXT(pDriverContext)
 			LOG(INFO) << "Driver context init success";
 
 			// Initialize communication with K2API
-			const int initCode = m_ServerDriver.init_ServerDriver(); // Default IPC addresses
+			const int init_code = m_ServerDriver.init_server_driver(); // Default IPC addresses
 			LOG(INFO) << "Driver's IPC server init code: " +
-				std::to_string(initCode);
+				std::to_string(init_code);
 
-			if (initCode == 0)
+			if (init_code == 0)
 			{
 				LOG(INFO) << "OpenVR ServerDriver init success";
 				return vr::VRInitError_None;
@@ -42,7 +47,7 @@ namespace k2_driver
 		void Cleanup() override
 		{
 			LOG(INFO) << "Cleaning up...";
-			m_ServerDriver.setActive(false);
+			m_ServerDriver.kill_server_driver();
 		}
 
 		const char* const* GetInterfaceVersions() override
@@ -170,7 +175,7 @@ extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* pInterfaceNa
 		{
 			std::thread([CHandlerPath]
 			{
-				ShellExecuteW(nullptr, L"open",
+				ShellExecute(nullptr, L"open",
 				              CHandlerPath.wstring().c_str(), L"vr_elevated", nullptr, SW_SHOWDEFAULT);
 			}).detach();
 		}

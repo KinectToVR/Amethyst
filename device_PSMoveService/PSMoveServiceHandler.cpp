@@ -335,8 +335,8 @@ void PSMoveServiceHandler::rebuildControllerList()
 			" is a " << WStringToString(controller_type);
 
 		using namespace std::literals;
-		trackedJoints.push_back(ktvr::K2TrackedJoint( // Add the controller to K2App's vector
-			controller_type + L" "s + std::to_wstring(controllerList.controller_id[cntlr_ix])));
+		trackedJoints.emplace_back( // Add the controller to K2App's vector
+			controller_type + L" "s + std::to_wstring(controllerList.controller_id[cntlr_ix]));
 	}
 
 	// If there are no real joints, push PSMS_MAX_JOINTS placeholders
@@ -346,7 +346,7 @@ void PSMoveServiceHandler::rebuildControllerList()
 	{
 		m_deviceUsable = false;
 		for (size_t i = 0; i < PSMOVESERVICE_MAX_CONTROLLER_COUNT; i++)
-			trackedJoints.push_back(ktvr::K2TrackedJoint(L"INVALID " + std::to_wstring(i)));
+			trackedJoints.emplace_back(L"INVALID " + std::to_wstring(i));
 	}
 	else m_deviceUsable = true;
 }

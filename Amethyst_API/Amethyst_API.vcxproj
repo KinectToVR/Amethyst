@@ -68,7 +68,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\protobuf\src;$(SolutionDir)external\Kinect;$(SolutionDir)external\openvr\headers;$(SolutionDir)external\eigen;$(SolutionDir)external\vendor;$(ProjectDir)Generated Files;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\Kinect;$(SolutionDir)external\openvr\headers;$(SolutionDir)external\vendor;$(ProjectDir)Generated Files;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -119,6 +119,7 @@
     <ClInclude Include="Amethyst_API.h" />
     <ClInclude Include="Amethyst_API_Devices.h" />
     <ClInclude Include="Amethyst_API_Paths.h" />
+    <ClInclude Include="Generated Files\Amethyst_API.grpc.pb.h" />
     <ClInclude Include="Generated Files\Amethyst_API.pb.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
@@ -126,6 +127,7 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Amethyst_API.cpp" />
+    <ClCompile Include="Generated Files\Amethyst_API.grpc.pb.cc" />
     <ClCompile Include="Generated Files\Amethyst_API.pb.cc" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

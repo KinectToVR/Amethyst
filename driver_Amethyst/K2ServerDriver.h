@@ -1,34 +1,22 @@
 #pragma once
-#include <iostream>
-#include <Windows.h>
-#include <chrono>
-#include "K2Tracker.h"
-#include <Amethyst_API.h>
+#include "K2DriverService.h"
 
 class K2ServerDriver
 {
 public:
-	// Parse a message from K2API
-	void parse_message(const ktvr::K2Message& message);
-	bool _isActive = false; // Server status
+	// Initialize the service object
+	[[nodiscard]] int init_server_driver(const int& port = 50051);
 
-	// IPC things to work properly
-	//Global Handle for Semaphore
-	HANDLE k2api_to_Semaphore,
-	       k2api_from_Semaphore,
-	       k2api_start_Semaphore;
-
-	[[nodiscard]] int init_ServerDriver(
-		const std::wstring& ame_api_to_pipe = ktvr::ame_api_to_pipe_address,
-		const std::wstring& ame_api_from_pipe = ktvr::ame_api_from_pipe_address,
-		const std::wstring& ame_api_to_sem = ktvr::ame_api_to_semaphore_address,
-		const std::wstring& ame_api_from_sem = ktvr::ame_api_from_semaphore_address,
-		const std::wstring& ame_api_start_sem = ktvr::ame_api_start_semaphore_address);
-	void setActive(bool m_isActive) { _isActive = m_isActive; }
-
-	// Value should not be discarded, it'd be useless
-	[[nodiscard]] bool isActive() const { return _isActive; }
-
+	// Shutdown the service object
+	void kill_server_driver() const;
+	
 	// Tracker vector
-	std::vector<K2Tracker> trackerVector;
+	std::vector<K2Tracker> tracker_vector;
+
+private:
+	// The gRPC handler service
+	K2DriverService service_;
+
+	// The gRPC handler server
+	std::unique_ptr<grpc::Server> server_;
 };

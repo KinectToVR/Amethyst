@@ -45,6 +45,9 @@
     <ClInclude Include="Generated Files\Amethyst_API.pb.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="Generated Files\Amethyst_API.grpc.pb.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -57,6 +60,9 @@
       <Filter>API Files</Filter>
     </ClCompile>
     <ClCompile Include="Generated Files\Amethyst_API.pb.cc">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated Files\Amethyst_API.grpc.pb.cc">
       <Filter>Generated Files</Filter>
     </ClCompile>
   </ItemGroup>
