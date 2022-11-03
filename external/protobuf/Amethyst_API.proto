@@ -1,6 +1,46 @@
-syntax = "proto2";
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.k2vr.amethyst.api.driver";
+option java_outer_classname = "AmethystAPIProto";
+option objc_class_prefix = "AMEAPI";
+
+import "google/protobuf/empty.proto";
 
 package ktvr;
+
+service IK2DriverService
+{
+  // Note: 'state' becomes a 'success' check on return
+  rpc SetTrackerStateVector (stream ServiceRequest) returns (stream Service_TrackerStatePair) {}
+  rpc UpdateTrackerVector (stream ServiceRequest) returns (stream Service_TrackerStatePair) {}
+  rpc RefreshTrackerPoseVector (stream ServiceRequest) returns (stream Service_TrackerStatePair) {}
+  rpc RequestVRRestart (ServiceRequest) returns (Service_TrackerStatePair) {}
+  rpc PingDriverService (google.protobuf.Empty) returns (PingRequest) {}
+}
+
+message ServiceRequest
+{
+  oneof value_oneof
+  {
+    Service_TrackerStatePair trackerStateTuple = 1;
+    K2TrackerBase trackerBase = 2; // For update/refresh
+    string message = 3; // For OpenVR restart requests
+  }
+
+  bool want_reply = 4;
+}
+
+message PingRequest
+{
+  int64 received_timestamp = 1;
+}
+
+message Service_TrackerStatePair
+{
+  ITrackerType trackerType = 1;
+  bool state = 2;
+}
 
 enum ITrackerType
 {  
@@ -21,149 +61,47 @@ enum ITrackerType
 
 message K2Quaternion
 {
-  required double w = 1 [default = 1];
-  required double x = 2 [default = 0];
-  required double y = 3 [default = 0];
-  required double z = 4 [default = 0];
+  double w = 1;
+  double x = 2;
+  double y = 3;
+  double z = 4;
 }
 
 message K2Vector3
 {
-  required double x = 1 [default = 0];
-  required double y = 2 [default = 0];
-  required double z = 3 [default = 0];
+  double x = 1;
+  double y = 2;
+  double z = 3;
 }
 
 message K2TrackerPhysics
 {
-	required K2Vector3 velocity = 1;
-	required K2Vector3 acceleration = 2;
+	K2Vector3 velocity = 1;
+	K2Vector3 acceleration = 2;
 
-	required K2Vector3 angularVelocity = 3;
-	required K2Vector3 angularAcceleration = 4;
+	K2Vector3 angularVelocity = 3;
+	K2Vector3 angularAcceleration = 4;
 }
 
 message K2TrackerPose
 {
-  required K2Quaternion orientation = 1;
-  required K2Vector3 position = 2;
+  K2Quaternion orientation = 1;
+  K2Vector3 position = 2;
 
   optional K2TrackerPhysics physics = 3;
 }
 
-message K2StatusPair
-{
-  required ITrackerType tracker = 1;
-  required bool status = 2 [default = false];
-}
-
 message K2TrackerData
 {
-  required string serial = 1;
-  required ITrackerType role = 2 [default = Tracker_Handed];
-  required bool isActive = 3 [default = false];
+  string serial = 1;
+  ITrackerType role = 2;
+  bool isActive = 3;
 }
 
 // K2Tracker base
 message K2TrackerBase
 {
-  required K2TrackerPose pose = 1;
-  required K2TrackerData data = 2;
-  required ITrackerType tracker = 3 [default = Tracker_Handed];
-}
-
-// K2API messaging types
-enum K2MessageType
-{
-  // Default
-  K2Message_Invalid = 0;
-  // State
-  K2Message_SetTrackerState = 1;
-  // State but multiple at once
-  K2Message_SetTrackerStateVector = 2;
-  // Set all trackers' state
-  K2Message_SetStateAll = 3;
-  // Update
-  K2Message_UpdateTrackerPose = 4;
-  // Update but multiple at once
-  K2Message_UpdateTrackerPoseVector = 5;
-  // Refresh tracker pose
-  K2Message_RefreshTracker = 6;
-  // Request a restart
-  K2Message_RequestRestart = 7;
-  // Test message
-  K2Message_Ping = 8;
-};
-
-// K2API response messaging types
-enum K2ResponseMessageType
-{
-  // Default
-  K2ResponseMessage_Invalid = 0;
-  // Just the role
-  K2ResponseMessage_Role = 1;
-  // State success, type only for ping
-  K2ResponseMessage_Success = 2;
-  // Tracker object
-  K2ResponseMessage_Tracker = 3;
-};
-
-// Return messaging types
-enum K2ResponseMessageCode
-{
-  K2ResponseMessageCode_Exception = 0;
-  // Exception occurred
-  K2ResponseMessageCode_UnknownError = 1;
-  // IDK
-  K2ResponseMessageCode_Invalid = 2;
-  // Default Invalid
-  K2ResponseMessageCode_OK = 3;
-  // Default OK
-  K2ResponseMessageCode_SpawnFailed = 4;
-  // Spawn failed, exception
-  K2ResponseMessageCode_AlreadyPresent = 5;
-  // Serial already present
-  K2ResponseMessageCode_BadRequest = 6;
-  // Unknown message type, wrong ID
-  K2ResponseMessageCode_ParsingError = 7;
-  // Global parsing exception
-  K2ResponseMessageCode_BadSerial = 8;
-};
-
-message K2Message 
-{
-  // Message type, assume fail
-  required K2MessageType messageType = 1 [default = K2Message_Invalid];
-
-  // Message timestamp when sent
-  required int64 messageTimestamp = 2 [default = 0];
-  // This one's for mid-events
-  required int64 messageManualTimestamp = 3 [default = 0];
-
-  // Objects, parsing depends on type
-  repeated K2TrackerBase trackerBaseVector = 4;
-  repeated K2StatusPair trackerStatusesVector = 5;
-
-  // Rest objects, depends on the message type too
-  required ITrackerType tracker = 6 [default = Tracker_Handed];
-
-  required bool state = 7 [default = false]; // Tracker state
-  required bool want_reply = 8 [default = true]; // Reply?
-  required string message_string = 9; // Placeholder for custom messages
-}
-
-message K2ResponseMessage
-{
-  // Message type, assume fail
-  required K2ResponseMessageType messageType = 1 [default = K2ResponseMessage_Invalid];
-
-  // Message timestamp when sent
-  required int64 messageTimestamp = 2 [default = 0];
-  // This one's for mid-events
-  required int64 messageManualTimestamp = 3 [default = 0];
-
-  // Rest objects, depends on the message type too
-  required ITrackerType tracker = 4 [default = Tracker_Handed];
-  required K2ResponseMessageCode result = 5 [default = K2ResponseMessageCode_UnknownError];
-  required bool success = 6 [default = false];
+  K2TrackerPose pose = 1;
+  K2TrackerData data = 2;
+  ITrackerType tracker = 3;
 }

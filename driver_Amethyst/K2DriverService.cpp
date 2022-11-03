@@ -2,21 +2,22 @@
 
 #include "K2DriverService.h"
 
-grpc::Status K2DriverService::set_tracker_state_vector(
-	grpc::ServerContext* context, grpc::ServerReader<ktvr::ServiceRequest>* reader,
-	ktvr::K2ResponseMessage* reply, const bool& want_reply) const
+grpc::Status K2DriverService::SetTrackerStateVector(
+	grpc::ServerContext* context, grpc::ServerReaderWriter<
+		ktvr::Service_TrackerStatePair, ktvr::ServiceRequest>* stream)
 {
 	// Create a stub message object
 	ktvr::ServiceRequest request;
 
 	// Parse all incoming state sets
-	while (reader->Read(&request))
+	while (stream->Read(&request))
 	{
 		// Sanity check
 		if (!request.has_trackerstatetuple())
 		{
 			LOG(ERROR) << "Couldn't update multiple trackers, bases are empty.";
-			if (want_reply) reply->set_success(false);
+			if (request.want_reply())
+				stream->Write(ktvr::Service_TrackerStatePair(0, false));
 			continue; // Process the next message (...or at least try to)
 		}
 
@@ -28,11 +29,10 @@ grpc::Status K2DriverService::set_tracker_state_vector(
 			LOG(INFO) << "Tracker autospawn exception! Serial: " << ptr_tracker->get_serial();
 
 			// Compose the reply (if applies)
-			if (want_reply)
-			{
-				reply->set_result(ktvr::K2ResponseMessageCode::K2ResponseMessageCode_SpawnFailed);
-				reply->set_success(false); // Oof we didn't make it
-			}
+			if (request.want_reply()) // Oof we didn't make it
+				stream->Write(ktvr::Service_TrackerStatePair(
+					request.trackerstatetuple().trackertype(), false));
+
 			continue; // Give up for now, the tracker has failed to spawn (or add to OpenVR...)
 		}
 
@@ -45,31 +45,30 @@ grpc::Status K2DriverService::set_tracker_state_vector(
 		ptr_tracker->update();
 
 		// Compose the reply (if applies)
-		if (want_reply)
-		{
-			reply->set_tracker(request.trackerstatetuple().trackertype());
-			reply->set_success(true); // Winning it, yay!
-		}
+		if (request.want_reply()) // Winning it, yay!
+			stream->Write(ktvr::Service_TrackerStatePair(
+				request.trackerstatetuple().trackertype(), true));
 	}
 
 	return grpc::Status::OK;
 }
 
-grpc::Status K2DriverService::update_tracker_vector(
-	grpc::ServerContext* context, grpc::ServerReader<ktvr::ServiceRequest>* reader,
-	ktvr::K2ResponseMessage* reply, const bool& want_reply) const
+grpc::Status K2DriverService::UpdateTrackerVector(
+	grpc::ServerContext* context, grpc::ServerReaderWriter<
+		ktvr::Service_TrackerStatePair, ktvr::ServiceRequest>* stream)
 {
 	// Create a stub message object
 	ktvr::ServiceRequest request;
 
 	// Parse all incoming pose sets
-	while (reader->Read(&request))
+	while (stream->Read(&request))
 	{
 		// Sanity check
 		if (!request.has_trackerbase())
 		{
 			LOG(ERROR) << "Couldn't update multiple trackers, bases are empty.";
-			if (want_reply) reply->set_success(false);
+			if (request.want_reply())
+				stream->Write(ktvr::Service_TrackerStatePair(0, false));
 			continue; // Process the next message (...or at least try to)
 		}
 
@@ -78,31 +77,30 @@ grpc::Status K2DriverService::update_tracker_vector(
 		                   .set_pose(request.trackerbase().pose());
 
 		// Compose the reply (if applies)
-		if (want_reply)
-		{
-			reply->set_tracker(request.trackerstatetuple().trackertype());
-			reply->set_success(true); // Winning it, yay!
-		}
+		if (request.want_reply()) // Winning it, yay!
+			stream->Write(ktvr::Service_TrackerStatePair(
+				request.trackerstatetuple().trackertype(), true));
 	}
 
 	return grpc::Status::OK;
 }
 
-grpc::Status K2DriverService::refresh_tracker_pose_vector(
-	grpc::ServerContext* context, grpc::ServerReader<ktvr::ServiceRequest>* reader,
-	ktvr::K2ResponseMessage* reply, const bool& want_reply) const
+grpc::Status K2DriverService::RefreshTrackerPoseVector(
+	grpc::ServerContext* context, grpc::ServerReaderWriter<
+		ktvr::Service_TrackerStatePair, ktvr::ServiceRequest>* stream)
 {
 	// Create a stub message object
 	ktvr::ServiceRequest request;
 
 	// Parse all incoming refresh requests
-	while (reader->Read(&request))
+	while (stream->Read(&request))
 	{
 		// Sanity check
 		if (!request.has_trackerstatetuple())
 		{
 			LOG(ERROR) << "Couldn't refresh multiple trackers, bases are empty.";
-			if (want_reply) reply->set_success(false);
+			if (request.want_reply())
+				stream->Write(ktvr::Service_TrackerStatePair(0, false));
 			continue; // Process the next message (...or at least try to)
 		}
 
@@ -110,25 +108,23 @@ grpc::Status K2DriverService::refresh_tracker_pose_vector(
 		ptr_tracker_vector_->at(request.trackerbase().tracker()).update();
 
 		// Compose the reply (if applies)
-		if (want_reply)
-		{
-			reply->set_tracker(request.trackerstatetuple().trackertype());
-			reply->set_success(true); // Winning it, yay!
-		}
+		if (request.want_reply()) // Winning it, yay!
+			stream->Write(ktvr::Service_TrackerStatePair(
+				request.trackerstatetuple().trackertype(), true));
 	}
 
 	return grpc::Status::OK;
 }
 
-grpc::Status K2DriverService::request_vr_restart(
+grpc::Status K2DriverService::RequestVRRestart(
 	grpc::ServerContext* context, const ktvr::ServiceRequest* request,
-	ktvr::K2ResponseMessage* reply, const bool& want_reply) const
+	ktvr::Service_TrackerStatePair* response)
 {
 	// Sanity check
 	if (!request->has_message() || request->message().empty())
 	{
 		LOG(ERROR) << "Couldn't request a reboot. The reason string is empty.";
-		if (want_reply) reply->set_success(false);
+		if (request->want_reply()) response->set_state(false);
 		return grpc::Status::OK;
 	}
 
@@ -139,6 +135,15 @@ grpc::Status K2DriverService::request_vr_restart(
 		"vrstartup.exe", "", "");
 
 	// Compose the reply (if applies)
-	if (want_reply) reply->set_success(true);
+	if (request->want_reply())response->set_state(true);
+	return grpc::Status::OK; // Winning it, yay!
+}
+
+grpc::Status K2DriverService::PingDriverService(
+	grpc::ServerContext* context, const google::protobuf::Empty* request,
+	ktvr::PingRequest* response)
+{
+	// Perform the request
+	response->set_received_timestamp(AME_API_GET_TIMESTAMP_NOW);
 	return grpc::Status::OK; // Winning it, yay!
 }

@@ -5,7 +5,7 @@ class K2ServerDriver
 {
 public:
 	// Initialize the service object
-	[[nodiscard]] int init_server_driver(const int& port = 50051);
+	[[nodiscard]] int init_server_driver(const int& port = 7135);
 
 	// Shutdown the service object
 	void kill_server_driver() const;

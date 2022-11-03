@@ -31,7 +31,7 @@ inline std::wstring StringToWString(const std::string& str)
 {
 	const int count = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), nullptr, 0);
 	std::wstring w_str(count, 0);
-	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), &w_str[0], count);
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), w_str.data(), count);
 	return w_str;
 }
 
@@ -40,14 +40,14 @@ inline std::string WStringToString(const std::wstring& w_str)
 {
 	const int count = WideCharToMultiByte(CP_UTF8, 0, w_str.c_str(), w_str.length(), nullptr, 0, nullptr, nullptr);
 	std::string str(count, 0);
-	WideCharToMultiByte(CP_UTF8, 0, w_str.c_str(), -1, &str[0], count, nullptr, nullptr);
+	WideCharToMultiByte(CP_UTF8, 0, w_str.c_str(), -1, str.data(), count, nullptr, nullptr);
 	return str;
 }
 
 namespace ktvr
 {
 	// Interface Version
-	static const char* IAME_API_Devices_Version = "IAME_API_Version_019";
+	static const char* IAME_API_Devices_Version = "IAME_API_Version_020";
 
 	// Return messaging types
 	enum K2InitErrorType

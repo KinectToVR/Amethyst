@@ -24,22 +24,32 @@ int K2ServerDriver::init_server_driver(const int& port)
 
 	try
 	{
+		// Define RPC builder changes
+		grpc::EnableDefaultHealthCheckService(true);
+
 		// Start the RPC server
 		grpc::ServerBuilder builder;
 
 		// Listen on the given address without any authentication mechanism.
 		// Register "service_" as the instance through which we'll communicate with
 		// clients. In this case it corresponds to a *synchronous* service.
-		builder.AddListeningPort(std::format("0.0.0.0:{}", port), grpc::InsecureServerCredentials());
-		builder.RegisterService(&service_); // Register the synchronous service
+		builder.AddListeningPort(std::format("localhost:{}", port), grpc::InsecureServerCredentials());
+		builder.AddChannelArgument(GRPC_ARG_KEEPALIVE_TIME_MS, 7200000);
+		builder.AddChannelArgument(GRPC_ARG_KEEPALIVE_TIMEOUT_MS, 20000);
+		builder.AddChannelArgument(GRPC_ARG_KEEPALIVE_PERMIT_WITHOUT_CALLS, 1);
+		builder.AddChannelArgument(GRPC_ARG_HTTP2_MIN_RECV_PING_INTERVAL_WITHOUT_DATA_MS, 300000);
+		builder.AddChannelArgument(GRPC_ARG_HTTP2_MIN_SENT_PING_INTERVAL_WITHOUT_DATA_MS, 10000);
 
+		service_.TrackerVector(tracker_vector); // Register the tracker vector
+		builder.RegisterService(&service_); // Register the synchronous service
+		
 		// Finally assemble the server.
 		if (server_ = builder.BuildAndStart(); server_ == nullptr)
 		{
 			LOG(ERROR) << "Failed to build the RPC server due to unknown reasons!";
 			return 1; // Anything besides 0 means a failure
 		}
-		LOG(INFO) << std::format("Server listening on 0.0.0.0:{}", port);
+		LOG(INFO) << std::format("Server listening on localhost:{}", port);
 
 		// Wait for the server to exit
 		std::thread([this]

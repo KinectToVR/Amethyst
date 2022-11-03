@@ -198,7 +198,7 @@ namespace k2app::interfacing
 			arg.find(L"focus_trackers") != std::wstring::npos)
 		{
 			shared::main::thisDispatcherQueue->TryEnqueue([&]()
-			-> winrt::Windows::Foundation::IAsyncAction
+				-> winrt::Windows::Foundation::IAsyncAction
 				{
 					// Bring Amethyst to front
 					SetActiveWindow(shared::main::thisAppWindowID);
@@ -238,7 +238,7 @@ namespace k2app::interfacing
 		else if (arg.find(L"focus_restart") != std::wstring::npos)
 		{
 			shared::main::thisDispatcherQueue->TryEnqueue([&]()
-			-> winrt::Windows::Foundation::IAsyncAction
+				-> winrt::Windows::Foundation::IAsyncAction
 				{
 					// Bring Amethyst to front
 					SetActiveWindow(shared::main::thisAppWindowID);
@@ -566,9 +566,10 @@ namespace k2app::interfacing
 			if (!k2_tracker_statuses.empty())
 				for (int i = 0; i < 3; i++)
 				{
-					// Update status in server
-					spawned.push_back(
-						ktvr::update_tracker_state_vector<true>(k2_tracker_statuses).success());
+					// Update tracker statuses in the server
+					for (const auto& result : ktvr::update_tracker_state_vector<true>(k2_tracker_statuses) |
+					     std::views::values) // Slice by values (only use the success? property)
+						spawned.push_back(result); // Push back the message call result, sleep a bit before proceeding
 					std::this_thread::sleep_for(std::chrono::milliseconds(15));
 				}
 
@@ -762,36 +763,23 @@ namespace k2app::interfacing
 			try
 			{
 				// Send a ping message and capture the data
-				const auto [test_response, send_time, full_time] = ktvr::test_connection();
+				const auto [success, send_time,
+					receive_time, full_time] = ktvr::test_connection();
 
 				// Dump data to variables
 				pingTime = full_time;
-				parsingTime = // Subtract message creation (got) time and send time
-					test_response.messagemanualtimestamp() - test_response.messagetimestamp();
+				parsingTime = receive_time - send_time;
 
 				// Log ?success
 				LOG(INFO) <<
 					"Connection test has ended, [result: " <<
-					(test_response.success() ? "success" : "fail") <<
-					"], response code: " << test_response.result();
+					(success ? "success" : "fail") << "]";
 
 				// Log some data if needed
-				LOG(INFO) <<
-					"\nTested ping time: " << full_time << " [micros], "
-
-					<< "call time: " <<
-					// Subtract message creation (got) time and send time
-					test_response.messagemanualtimestamp() - send_time
-					<< " [micros], " <<
-
-					"\nparsing time: " <<
-					parsingTime // Just look at the k2api
-					<< " [micros], "
-
-					"flight-back time: " <<
-					// Subtract message creation (got) time and send time
-					AME_API_GET_TIMESTAMP_NOW - test_response.messagemanualtimestamp()
-					<< " [micros]";
+				LOG(INFO) << "\n" <<
+					"Tested ping time: " << pingTime << " [micros], " <<
+					"call/parsing time: " << parsingTime << " [micros], " <<
+					"flight-back time: " << AME_API_GET_TIMESTAMP_NOW - receive_time << " [micros]";
 
 				// Release
 				pingCheckingThreadsNumber = std::clamp(
@@ -799,7 +787,7 @@ namespace k2app::interfacing
 					static_cast<int>(maxPingCheckingThreads) + 1);
 
 				// Return the result
-				return test_response.success();
+				return success;
 			}
 			catch (const std::exception& e)
 			{
@@ -935,7 +923,7 @@ namespace k2app::interfacing
 
 		else
 			shared::main::thisDispatcherQueue->TryEnqueue([&]()
-			-> winrt::Windows::Foundation::IAsyncAction
+				-> winrt::Windows::Foundation::IAsyncAction
 				{
 					// Sleep a bit before checking
 					winrt::apartment_context ui_thread;
@@ -1192,10 +1180,10 @@ namespace k2app::interfacing
 
 	inline bool IsCurrentWindowActive()
 	{
-		if (k2app::shared::main::thisAppWindowID == nullptr)
+		if (shared::main::thisAppWindowID == nullptr)
 			return true; // Give up k?
 
-		return GetActiveWindow() == k2app::shared::main::thisAppWindowID;
+		return GetActiveWindow() == shared::main::thisAppWindowID;
 	}
 
 	inline bool IsDashboardOpen()
@@ -1852,7 +1840,7 @@ namespace k2app::interfacing
 				const std::function
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const RoutedEventArgs& e) ->
-					void
+						void
 					{
 						if (OnClick) // Check if not null
 							OnClick(this);
@@ -2009,7 +1997,7 @@ namespace k2app::interfacing
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const Controls::NumberBoxValueChangedEventArgs
 					                     & e) ->
-					void
+						void
 					{
 						if (OnValueChanged) // Check if not null
 							OnValueChanged(this, static_cast<int>(e.NewValue()));
@@ -2208,7 +2196,7 @@ namespace k2app::interfacing
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const Controls::SelectionChangedEventArgs
 					                     & e) ->
-					void
+						void
 					{
 						if (OnSelectionChanged) // Check if not null
 							OnSelectionChanged(this, _ptr_combo_box->SelectedIndex());
@@ -2363,7 +2351,7 @@ namespace k2app::interfacing
 				const std::function
 					_n_callback_checked = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                             const RoutedEventArgs& e) ->
-					void
+						void
 					{
 						if (OnChecked) // Check if not null
 							OnChecked(this);
@@ -2376,7 +2364,7 @@ namespace k2app::interfacing
 				const std::function
 					_n_callback_unchecked = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                               const RoutedEventArgs& e) ->
-					void
+						void
 					{
 						if (OnUnchecked) // Check if not null
 							OnUnchecked(this);
@@ -2525,7 +2513,7 @@ namespace k2app::interfacing
 				const std::function
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const RoutedEventArgs& e) ->
-					void
+						void
 					{
 						// Check which handler to raise
 						if (this->Get()->IsOn())
@@ -2664,7 +2652,7 @@ namespace k2app::interfacing
 				const std::function
 					_n_callback = [this](const winrt::Windows::Foundation::IInspectable& sender,
 					                     const Input::KeyRoutedEventArgs& e) ->
-					void
+						void
 					{
 						if (e.Key() == winrt::Windows::System::VirtualKey::Enter)
 							OnEnterKeyDown(this);

@@ -1,16 +1,5 @@
 #pragma once
-#include <iostream>
-#include <Windows.h>
-#include <vector>
-#include <random>
-#include <sstream>
-#include <iomanip>
-#include <string>
-#include <chrono>
-#include <cmath>
-#include <optional>
-
-#include "Amethyst_API.pb.h"
+#include <pch.h>
 
 #include "Amethyst_API_Devices.h"
 #include "Amethyst_API_Paths.h"
@@ -18,7 +7,7 @@
 namespace ktvr
 {
 	// Interface Version
-	static const char* IAME_API_Version = "IAME_API_Version_019";
+	static const char* IAME_API_Version = "IAME_API_Version_020";
 
 	// Check Eigen quaternions
 	template <typename _Scalar>
@@ -52,7 +41,7 @@ namespace ktvr
 			std::isnormal(q.x()) ? q.x() : 0.f,
 			std::isnormal(q.y()) ? q.y() : 0.f,
 			std::isnormal(q.z()) ? q.z() : 0.f
-			);
+		);
 	}
 
 	// Check Eigen Vectors
@@ -63,136 +52,50 @@ namespace ktvr
 			std::isnormal(v.x()) ? v.x() : 0.f,
 			std::isnormal(v.y()) ? v.y() : 0.f,
 			std::isnormal(v.z()) ? v.z() : 0.f
-			);
+		);
 	}
 
 	/// <summary>
-	/// AME_API Semaphore handles for WINAPI calls
+	/// AME_API Server handles for RPC calls
 	/// </summary>
-	inline HANDLE ame_api_to_semaphore,
-	              ame_api_from_semaphore,
-	              ame_api_start_semaphore;
+	static inline std::unique_ptr<IK2DriverService::Stub> stub;
+	static inline std::shared_ptr<grpc::Channel> channel;
+	
+	/**
+	 * \brief Connects socket object to selected port, AME uses 7135
+	 * \return 0: OK, -1: Exception, -2: Channel fail, -3: Stub failure
+	 */
+	KTVR_API int init_ame_api(const int& port = 7135) noexcept;
 
-	/// <summary>
-	/// AME_API's last error string, check for empty
-	/// </summary>
-	inline std::string ame_api_last_error;
+	KTVR_API std::vector<std::pair<ITrackerType, bool>>
+	update_tracker_state_vector_r(const std::vector<std::pair<ITrackerType, bool>>&) noexcept;
+	KTVR_API std::monostate
+	update_tracker_state_vector_n(const std::vector<std::pair<ITrackerType, bool>>&) noexcept;
 
-	/// <summary>
-	/// Get AME_API's last error string
-	/// </summary>
-	inline std::string GetLastError() { return ame_api_last_error; }
+	KTVR_API std::vector<std::pair<ITrackerType, bool>>
+	update_tracker_vector_r(const std::vector<K2TrackerBase>&) noexcept;
+	KTVR_API std::monostate
+	update_tracker_vector_n(const std::vector<K2TrackerBase>&) noexcept;
 
-	/// <summary>
-	/// AME_API Pipe handle addresses for WINAPI calls
-	/// </summary>
-	inline std::wstring
-		ame_api_to_pipe_address = L"\\\\.\\pipe\\ame_api_amethyst_to_pipe" + StringToWString(IAME_API_Version),
-		ame_api_from_pipe_address = L"\\\\.\\pipe\\ame_api_amethyst_from_pipe" + StringToWString(IAME_API_Version),
-		ame_api_to_semaphore_address = L"Global\\ame_api_amethyst_to_semaphore" + StringToWString(IAME_API_Version),
-		ame_api_from_semaphore_address = L"Global\\ame_api_amethyst_from_semaphore" + StringToWString(IAME_API_Version),
-		ame_api_start_semaphore_address = L"Global\\ame_api_amethyst_start_semaphore" + StringToWString(
-			IAME_API_Version);
+	KTVR_API std::vector<std::pair<ITrackerType, bool>>
+	refresh_tracker_pose_vector_r(const std::vector<ITrackerType>&) noexcept;
+	KTVR_API std::monostate
+	refresh_tracker_pose_vector_n(const std::vector<ITrackerType>&) noexcept;
+
+	KTVR_API std::pair<ITrackerType, bool> request_vr_restart_r(const std::string&) noexcept;
+	KTVR_API std::monostate request_vr_restart_n(const std::string&) noexcept;
 
 	/**
-	 * \brief Connects socket object to selected port, K2 uses 7135
-	 * \return Returns 0 for success and -1 for failure
+	 * \brief Update trackers' state in SteamVR driver
+	 * \param status_pairs New statuses for trackers
+	 * \return Returns tracker role / success?
 	 */
-	KTVR_API int init_ame_api(
-		const std::wstring& k2_to_pipe = ame_api_to_pipe_address,
-		const std::wstring& k2_from_pipe = ame_api_from_pipe_address,
-		const std::wstring& k2_to_sem = ame_api_to_semaphore_address,
-		const std::wstring& k2_from_sem = ame_api_from_semaphore_address,
-		const std::wstring& k2_start_sem = ame_api_start_semaphore_address) noexcept;
-
-	/**
-	 * \brief Disconnects socket object from port
-	 * \return Returns 0 for success and -1 for failure
-	 */
-	KTVR_API int close_ame_api() noexcept;
-
-	/**
-	 * \brief Send message and get a server reply, there is no need to decode return
-	 * \param data String which is to be sent
-	 * \param want_reply Check if the client wants a reply
-	 * \return Returns server's reply to the message
-	 */
-	KTVR_API std::string send_message(const std::string& data, bool want_reply = true) noexcept(false);
-
-	// External functions for the template below
-	KTVR_API std::monostate send_message_no_reply(K2Message message);
-	KTVR_API K2ResponseMessage send_message_want_reply(K2Message message);
-
-	/**
-	 * \brief Send message and get a server reply
-	 * \param message Message which is to be sent
-	 * \argument want_reply Check if the client wants a reply
-	 * \return Returns server's reply to the message
-	 */
-	template <bool want_reply = true>
-	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
-	send_message(K2Message message) noexcept(false)
+	template <bool WantReply = false>
+	std::conditional_t<WantReply, std::vector<std::pair<ITrackerType, bool>>, std::monostate>
+	update_tracker_state_vector(const std::vector<std::pair<ITrackerType, bool>>& status_pairs) noexcept
 	{
-		if constexpr (want_reply)
-			return send_message_want_reply(std::move(message));
-		else
-			return send_message_no_reply(std::move(message));
-	}
-
-	/**
-	 * \brief Connect (activate/spawn) tracker in SteamVR
-	 * \param tracker Tracker's role which is to connect
-	 * \param state Tracker's state to be set
-	 * \argument want_reply Check if the client wants a reply
-	 * \return Returns tracker id / success?
-	 */
-	template <bool want_reply = true>
-	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
-	set_tracker_state(const ITrackerType tracker, const bool state) noexcept
-	{
-		try
-		{
-			auto message = K2Message();
-
-			message.set_messagetype(K2Message_SetTrackerState);
-			message.set_tracker(tracker);
-			message.set_state(state);
-
-			// Send and grab the response
-			return send_message<want_reply>(message);
-		}
-		catch (const std::exception& e)
-		{
-			if constexpr (want_reply) return K2ResponseMessage(); // Success is set to false by default
-			else return std::monostate();
-		}
-	}
-
-	/**
-	 * \brief Connect (activate/spawn) all trackers in SteamVR
-	 * \param state Tracker's state to be set
-	 * \argument want_reply Check if the client wants a reply
-	 * \return Returns success?
-	 */
-	template <bool want_reply = true>
-	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
-	set_state_all(bool state) noexcept
-	{
-		try
-		{
-			auto message = K2Message();
-
-			message.set_messagetype(K2Message_SetStateAll);
-			message.set_state(state);
-
-			// Send and grab the response
-			return send_message<want_reply>(message);
-		}
-		catch (const std::exception& e)
-		{
-			if constexpr (want_reply) return K2ResponseMessage(); // Success is set to false by default
-			else return std::monostate();
-		}
+		if constexpr (WantReply) return update_tracker_state_vector_r(status_pairs);
+		else return update_tracker_state_vector_n(status_pairs); // std::monostate
 	}
 
 	/**
@@ -200,124 +103,45 @@ namespace ktvr
 	 * \param tracker_bases New bases for trackers
 	 * \return Returns tracker role / success?
 	 */
-	template <bool want_reply = false>
-	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
-	update_tracker_vector(std::vector<K2TrackerBase> tracker_bases) noexcept
+	template <bool WantReply = false>
+	std::conditional_t<WantReply, std::vector<std::pair<ITrackerType, bool>>, std::monostate>
+	update_tracker_vector(const std::vector<K2TrackerBase>& tracker_bases) noexcept
 	{
-		try
-		{
-			auto message = K2Message();
-
-			message.set_messagetype(K2Message_UpdateTrackerPoseVector);
-			message.mutable_trackerbasevector()->Add(tracker_bases.begin(), tracker_bases.end());
-
-			// Send and grab the response
-			return send_message<want_reply>(message);
-		}
-		catch (const std::exception& e)
-		{
-			if constexpr (want_reply) return K2ResponseMessage(); // Success is set to false by default
-			else return std::monostate();
-		}
-	}
-
-
-	/**
-	 * \brief Update trackers' state in SteamVR driver
-	 * \param status_pairs New statuses for trackers
-	 * \return Returns tracker role / success?
-	 */
-	template <bool want_reply = false>
-	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
-	update_tracker_state_vector(const std::vector<std::pair<ITrackerType, bool>>& status_pairs) noexcept
-	{
-		try
-		{
-			auto message = K2Message();
-
-			message.set_messagetype(K2Message_SetTrackerStateVector);
-
-			// Compose a vector of pairs
-			std::vector<K2StatusPair> pairs;
-			for (const auto& [tracker, status] : status_pairs)
-			{
-				auto pair = K2StatusPair();
-				pair.set_tracker(tracker);
-				pair.set_status(status);
-
-				pairs.push_back(pair);
-			}
-
-			// Send the vector to the server driver
-			message.mutable_trackerstatusesvector()->Add(pairs.begin(), pairs.end());
-
-			// Send and grab the response
-			return send_message<want_reply>(message);
-		}
-		catch (const std::exception& e)
-		{
-			if constexpr (want_reply) return K2ResponseMessage(); // Success is set to false by default
-			else return std::monostate();
-		}
+		if constexpr (WantReply) return update_tracker_vector_r(tracker_bases);
+		else return update_tracker_vector_n(tracker_bases); // std::monostate
 	}
 
 	/**
 	 * \brief Update tracker's pose in SteamVR driver with already existing values
-	 * \param tracker Tracker for updating data
-	 * \argument want_reply Check if the client wants a reply
+	 * \param trackers Tracker for updating data
+	 * \argument WantReply Check if the client wants a reply
 	 * \return Returns tracker id / success?
 	 */
-	template <bool want_reply = true>
-	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
-	refresh_tracker_pose(const ITrackerType tracker) noexcept
+	template <bool WantReply = true>
+	std::conditional_t<WantReply, std::vector<std::pair<ITrackerType, bool>>, std::monostate>
+	refresh_tracker_pose_vector(const std::vector<ITrackerType>& trackers) noexcept
 	{
-		try
-		{
-			auto message = K2Message();
-
-			message.set_messagetype(K2Message_RefreshTracker);
-			message.set_tracker(tracker);
-
-			// Send and grab the response
-			return send_message<want_reply>(message);
-		}
-		catch (const std::exception& e)
-		{
-			if constexpr (want_reply) return K2ResponseMessage(); // Success is set to false by default
-			else return std::monostate();
-		}
+		if constexpr (WantReply) return refresh_tracker_pose_vector_r(trackers);
+		else return refresh_tracker_pose_vector_n(trackers); // std::monostate
 	}
 
 	/**
 	 * \brief Request OpenVR to restart with a message
 	 * \param reason Reason for the restart
-	 * \argument want_reply Check if the client wants a reply
+	 * \argument WantReply Check if the client wants a reply
 	 * \return Returns tracker id / success?
 	 */
-	template <bool want_reply = true>
-	std::conditional_t<want_reply, K2ResponseMessage, std::monostate>
+	template <bool WantReply = true>
+	std::conditional_t<WantReply, std::pair<ITrackerType, bool>, std::monostate>
 	request_vr_restart(const std::string& reason) noexcept
 	{
-		try
-		{
-			auto message = K2Message();
-
-			message.set_messagetype(K2Message_RequestRestart);
-			message.set_message_string(reason);
-
-			// Send and grab the response
-			return send_message<want_reply>(message);
-		}
-		catch (const std::exception& e)
-		{
-			if constexpr (want_reply) return K2ResponseMessage(); // Success is set to false by default
-			else return std::monostate();
-		}
+		if constexpr (WantReply) return request_vr_restart_r(reason);
+		else return request_vr_restart_n(reason); // std::monostate
 	}
 
 	/**
 	 * \brief Test connection with the server
-	 * \return Returns send_time / total_time / success?
+	 * \return Returns ok? / send_time / receive_time / elapsed_time (now-send)
 	 */
-	KTVR_API std::tuple<K2ResponseMessage, long long, long long> test_connection() noexcept;
+	KTVR_API std::tuple<bool, long long, long long, long long> test_connection() noexcept;
 }

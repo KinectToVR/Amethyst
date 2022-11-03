@@ -348,9 +348,9 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			{
 				std::wstring _managing_device_name;
 				switch (const auto& device = TrackingDevices::TrackingDevicesVector[
-					TrackingDevices::deviceGUID_ID_Map[
-						TrackingDevices::GetManagingDevice(*_tracker_pointers[0])]];
-				device.index())
+						TrackingDevices::deviceGUID_ID_Map[
+							TrackingDevices::GetManagingDevice(*_tracker_pointers[0])]];
+					device.index())
 				{
 				case 0:
 					_managing_device_name =
@@ -378,8 +378,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_ptr_orientation_combo->SelectedIndex(_tracker_pointers[0]->orientationTrackingOption);
 			_ptr_position_combo->SelectedIndex(
 				_tracker_pointers[0]->m_no_position_filtering_requested
-				? -1 // Select the pre-applied placeholder
-				: _tracker_pointers[0]->positionTrackingFilterOption);
+					? -1 // Select the pre-applied placeholder
+					: _tracker_pointers[0]->positionTrackingFilterOption);
 		}
 
 		// Set mathbased to enable/disable
@@ -698,8 +698,8 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 							for (int i = 0; i < 3; i++)
 							{
 								// Update status in server
-								ktvr::set_tracker_state<false>(
-									tracker_p->base_tracker, tracker_p->data_isActive);
+								ktvr::update_tracker_state_vector<false>(
+									{{tracker_p->base_tracker, tracker_p->data_isActive}});
 								Sleep(20); // Wait a bit
 							}
 						}

@@ -1,8 +1,8 @@
 #pragma once
 #include "pch.h"
 
-#include <string>
 #include <openvr_driver.h>
+#include <Amethyst_API.h>
 
 // Mapping enum to string for eliminating if-else loop
 const std::map<ktvr::ITrackerType, const char*>

@@ -8,6 +8,16 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
-#include "framework.h"
+#include <grpc/grpc.h>
+#include <grpcpp/server.h>
+#include <grpcpp/server_builder.h>
+#include <grpcpp/server_context.h>
+#include <grpcpp/security/server_credentials.h>
+
+#include <Amethyst_API.pb.h>
+#include <Amethyst_API.grpc.pb.h>
+
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#include <glog/logging.h>
 
 #endif //PCH_H

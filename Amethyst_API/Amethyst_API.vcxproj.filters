@@ -62,9 +62,6 @@
     <ClCompile Include="Generated Files\Amethyst_API.pb.cc">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="Generated Files\Amethyst_API.grpc.pb.cc">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

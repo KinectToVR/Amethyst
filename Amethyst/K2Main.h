@@ -323,9 +323,13 @@ namespace k2app::main
 				// (When they're unfrozen, they go back to instant updates)
 				if (p_frozen_loops >= 1000)
 				{
+					std::vector<ktvr::ITrackerType> frozen_k2_tracker_bases;
 					for (const auto& tracker : K2Settings.K2TrackersVector)
 						if (tracker.data_isActive)
-							ktvr::refresh_tracker_pose<false>(tracker.base_tracker);
+							frozen_k2_tracker_bases.push_back(tracker.base_tracker);
+
+					// Refresh in the server driver
+					refresh_tracker_pose_vector<false>(frozen_k2_tracker_bases);
 
 					// Reset
 					p_frozen_loops = 0;
@@ -360,11 +364,14 @@ namespace k2app::main
 					// (When they're unfrozen, they go back to instant updates)
 					if (p_frozen_loops >= 1000)
 					{
-						// Only lower body joints
+						std::vector<ktvr::ITrackerType> frozen_k2_tracker_bases;
 						for (auto& tracker : K2Settings.K2TrackersVector)
-							if (tracker.data_isActive &&
+							if (tracker.data_isActive && // Only lower body joints
 								static_cast<int>(ITrackerType_Joint[tracker.base_tracker]) >= 16)
-								ktvr::refresh_tracker_pose<false>(tracker.base_tracker);
+								frozen_k2_tracker_bases.push_back(tracker.base_tracker);
+
+						// Refresh in the server driver
+						refresh_tracker_pose_vector<false>(frozen_k2_tracker_bases);
 
 						// Reset
 						p_frozen_loops = 0;
@@ -524,8 +531,8 @@ namespace k2app::main
 									// try even 5 times cause why not
 									for (int i = 0; i < 5; i++)
 									{
-										ktvr::set_tracker_state<false>(
-											K2Settings.K2TrackersVector[tracker_index].base_tracker, false);
+										ktvr::update_tracker_state_vector<false>(
+											{{K2Settings.K2TrackersVector[tracker_index].base_tracker, false}});
 										Sleep(20);
 									}
 									co_await _ui_thread;

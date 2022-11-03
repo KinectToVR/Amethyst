@@ -7,16 +7,19 @@
 #include "Amethyst_API.pb.h"
 
 #include <functional>
-#include <grpcpp/generic/async_generic_service.h>
-#include <grpcpp/support/async_stream.h>
-#include <grpcpp/support/async_unary_call.h>
+#include <grpcpp/impl/codegen/async_generic_service.h>
+#include <grpcpp/impl/codegen/async_stream.h>
+#include <grpcpp/impl/codegen/async_unary_call.h>
 #include <grpcpp/impl/codegen/client_callback.h>
 #include <grpcpp/impl/codegen/client_context.h>
+#include <grpcpp/impl/codegen/client_unary_call.h>
+#include <grpcpp/impl/codegen/channel_interface.h>
 #include <grpcpp/impl/codegen/completion_queue.h>
 #include <grpcpp/impl/codegen/message_allocator.h>
 #include <grpcpp/impl/codegen/method_handler.h>
 #include <grpcpp/impl/codegen/proto_utils.h>
 #include <grpcpp/impl/codegen/rpc_method.h>
+#include <grpcpp/impl/codegen/rpc_service_method.h>
 #include <grpcpp/impl/codegen/server_callback.h>
 #include <grpcpp/impl/codegen/server_callback_handlers.h>
 #include <grpcpp/impl/codegen/server_context.h>
@@ -27,7 +30,15 @@
 
 namespace ktvr
 {
-	class KTVR_API IK2DriverService final
+	inline const char* IK2DriverService_method_names[] = {
+		"/ktvr.IK2DriverService/SetTrackerStateVector",
+		"/ktvr.IK2DriverService/UpdateTrackerVector",
+		"/ktvr.IK2DriverService/RefreshTrackerPoseVector",
+		"/ktvr.IK2DriverService/RequestVRRestart",
+		"/ktvr.IK2DriverService/PingDriverService",
+	};
+
+	class IK2DriverService final
 	{
 	public:
 		static constexpr const char* service_full_name()
@@ -42,175 +53,122 @@ namespace ktvr
 			{
 			}
 
-			std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>> SetTrackerStateVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response)
+			// Note: 'state' becomes a 'success' check on return
+			std::unique_ptr<grpc::ClientReaderWriterInterface<
+				ServiceRequest, Service_TrackerStatePair>> SetTrackerStateVector(
+				grpc::ClientContext* context)
 			{
-				return std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>>(
-					SetTrackerStateVectorRaw(context, response));
+				return std::unique_ptr<grpc::ClientReaderWriterInterface<
+					ServiceRequest, Service_TrackerStatePair>>(SetTrackerStateVectorRaw(context));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> AsyncSetTrackerStateVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
+			std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+				ServiceRequest, Service_TrackerStatePair>> AsyncSetTrackerStateVector(
+				grpc::ClientContext* context, grpc::CompletionQueue* cq, void* tag)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					AsyncSetTrackerStateVectorRaw(context, response, cq, tag));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+					ServiceRequest, Service_TrackerStatePair>>(
+					AsyncSetTrackerStateVectorRaw(context, cq, tag));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> PrepareAsyncSetTrackerStateVector(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq)
+			std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+				ServiceRequest, Service_TrackerStatePair>> PrepareAsyncSetTrackerStateVector(
+				grpc::ClientContext* context, grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					PrepareAsyncSetTrackerStateVectorRaw(context, response, cq));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+					ServiceRequest, Service_TrackerStatePair>>(
+					PrepareAsyncSetTrackerStateVectorRaw(context, cq));
 			}
 
-			std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>> UpdateTrackerVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response)
+			std::unique_ptr<grpc::ClientReaderWriterInterface<
+				ServiceRequest, Service_TrackerStatePair>> UpdateTrackerVector(
+				grpc::ClientContext* context)
 			{
-				return std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>>(
-					UpdateTrackerVectorRaw(context, response));
+				return std::unique_ptr<grpc::ClientReaderWriterInterface<
+					ServiceRequest, Service_TrackerStatePair>>(UpdateTrackerVectorRaw(context));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> AsyncUpdateTrackerVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
+			std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+				ServiceRequest, Service_TrackerStatePair>> AsyncUpdateTrackerVector(
+				grpc::ClientContext* context, grpc::CompletionQueue* cq, void* tag)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					AsyncUpdateTrackerVectorRaw(context, response, cq, tag));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+					ServiceRequest, Service_TrackerStatePair>>(
+					AsyncUpdateTrackerVectorRaw(context, cq, tag));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> PrepareAsyncUpdateTrackerVector(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq)
+			std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+				ServiceRequest, Service_TrackerStatePair>> PrepareAsyncUpdateTrackerVector(
+				grpc::ClientContext* context, grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					PrepareAsyncUpdateTrackerVectorRaw(context, response, cq));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+					ServiceRequest, Service_TrackerStatePair>>(
+					PrepareAsyncUpdateTrackerVectorRaw(context, cq));
 			}
 
-			std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>> RefreshTrackerPoseVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response)
+			std::unique_ptr<grpc::ClientReaderWriterInterface<
+				ServiceRequest, Service_TrackerStatePair>> RefreshTrackerPoseVector(
+				grpc::ClientContext* context)
 			{
-				return std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>>(
-					RefreshTrackerPoseVectorRaw(context, response));
+				return std::unique_ptr<grpc::ClientReaderWriterInterface<
+					ServiceRequest, Service_TrackerStatePair>>(RefreshTrackerPoseVectorRaw(context));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> AsyncRefreshTrackerPoseVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
+			std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+				ServiceRequest, Service_TrackerStatePair>> AsyncRefreshTrackerPoseVector(
+				grpc::ClientContext* context, grpc::CompletionQueue* cq, void* tag)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					AsyncRefreshTrackerPoseVectorRaw(context, response, cq, tag));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+					ServiceRequest, Service_TrackerStatePair>>(
+					AsyncRefreshTrackerPoseVectorRaw(context, cq, tag));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> PrepareAsyncRefreshTrackerPoseVector(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq)
+			std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+				ServiceRequest, Service_TrackerStatePair>> PrepareAsyncRefreshTrackerPoseVector(
+				grpc::ClientContext* context, grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					PrepareAsyncRefreshTrackerPoseVectorRaw(context, response, cq));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriterInterface<
+					ServiceRequest, Service_TrackerStatePair>>(
+					PrepareAsyncRefreshTrackerPoseVectorRaw(context, cq));
 			}
 
-			virtual grpc::Status RequestVRRestart(grpc::ClientContext* context, const ServiceRequest& request,
-			                                      K2ResponseMessage* response) = 0;
+			virtual grpc::Status RequestVRRestart(grpc::ClientContext* context,
+			                                      const ServiceRequest& request,
+			                                      Service_TrackerStatePair* response) = 0;
 
-			std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>> AsyncRequestVRRestart(
-				grpc::ClientContext* context, const ServiceRequest& request, grpc::CompletionQueue* cq)
+			std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<Service_TrackerStatePair>>
+			AsyncRequestVRRestart(grpc::ClientContext* context, const ServiceRequest& request,
+			                      grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>>(
+				return std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<Service_TrackerStatePair>>(
 					AsyncRequestVRRestartRaw(context, request, cq));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>> PrepareAsyncRequestVRRestart(
-				grpc::ClientContext* context, const ServiceRequest& request, grpc::CompletionQueue* cq)
+			std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<Service_TrackerStatePair>>
+			PrepareAsyncRequestVRRestart(grpc::ClientContext* context, const ServiceRequest& request,
+			                             grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>>(
+				return std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<Service_TrackerStatePair>>(
 					PrepareAsyncRequestVRRestartRaw(context, request, cq));
 			}
 
-			std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>> SetTrackerStateVectorNoReply(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response)
+			virtual grpc::Status PingDriverService(grpc::ClientContext* context,
+			                                       const google::protobuf::Empty& request,
+			                                       PingRequest* response) = 0;
+
+			std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<PingRequest>> AsyncPingDriverService(
+				grpc::ClientContext* context, const google::protobuf::Empty& request, grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>>(
-					SetTrackerStateVectorNoReplyRaw(context, response));
+				return std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<PingRequest>>(
+					AsyncPingDriverServiceRaw(context, request, cq));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> AsyncSetTrackerStateVectorNoReply(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
+			std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<PingRequest>>
+			PrepareAsyncPingDriverService(grpc::ClientContext* context, const google::protobuf::Empty& request,
+			                              grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					AsyncSetTrackerStateVectorNoReplyRaw(context, response, cq, tag));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> PrepareAsyncSetTrackerStateVectorNoReply(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq)
-			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					PrepareAsyncSetTrackerStateVectorNoReplyRaw(context, response, cq));
-			}
-
-			std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>> UpdateTrackerVectorNoReply(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response)
-			{
-				return std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>>(
-					UpdateTrackerVectorNoReplyRaw(context, response));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> AsyncUpdateTrackerVectorNoReply(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
-			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					AsyncUpdateTrackerVectorNoReplyRaw(context, response, cq, tag));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> PrepareAsyncUpdateTrackerVectorNoReply(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq)
-			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					PrepareAsyncUpdateTrackerVectorNoReplyRaw(context, response, cq));
-			}
-
-			std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>> RefreshTrackerPoseVectorNoReply(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response)
-			{
-				return std::unique_ptr<grpc::ClientWriterInterface<ServiceRequest>>(
-					RefreshTrackerPoseVectorNoReplyRaw(context, response));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>> AsyncRefreshTrackerPoseVectorNoReply(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
-			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					AsyncRefreshTrackerPoseVectorNoReplyRaw(context, response, cq, tag));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>
-			PrepareAsyncRefreshTrackerPoseVectorNoReply(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq)
-			{
-				return std::unique_ptr<grpc::ClientAsyncWriterInterface<ServiceRequest>>(
-					PrepareAsyncRefreshTrackerPoseVectorNoReplyRaw(context, response, cq));
-			}
-
-			virtual grpc::Status RequestVRRestartNoReply(grpc::ClientContext* context, const ServiceRequest& request,
-			                                             K2ResponseMessage* response) = 0;
-
-			std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>> AsyncRequestVRRestartNoReply(
-				grpc::ClientContext* context, const ServiceRequest& request, grpc::CompletionQueue* cq)
-			{
-				return std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>>(
-					AsyncRequestVRRestartNoReplyRaw(context, request, cq));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>>
-			PrepareAsyncRequestVRRestartNoReply(
-				grpc::ClientContext* context, const ServiceRequest& request, grpc::CompletionQueue* cq)
-			{
-				return std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>>(
-					PrepareAsyncRequestVRRestartNoReplyRaw(context, request, cq));
+				return std::unique_ptr<grpc::ClientAsyncResponseReaderInterface<PingRequest>>(
+					PrepareAsyncPingDriverServiceRaw(context, request, cq));
 			}
 
 			class async_interface
@@ -220,36 +178,29 @@ namespace ktvr
 				{
 				}
 
-				virtual void SetTrackerStateVector(grpc::ClientContext* context, K2ResponseMessage* response,
-				                                   grpc::ClientWriteReactor<
-					                                   ServiceRequest>* reactor) = 0;
-				virtual void UpdateTrackerVector(grpc::ClientContext* context, K2ResponseMessage* response,
-				                                 grpc::ClientWriteReactor<
-					                                 ServiceRequest>* reactor) = 0;
-				virtual void RefreshTrackerPoseVector(grpc::ClientContext* context, K2ResponseMessage* response,
-				                                      grpc::ClientWriteReactor<
-					                                      ServiceRequest>* reactor) = 0;
+				// Note: 'state' becomes a 'success' check on return
+				virtual void SetTrackerStateVector(grpc::ClientContext* context,
+				                                   grpc::ClientBidiReactor<
+					                                   ServiceRequest, Service_TrackerStatePair>*
+				                                   reactor) = 0;
+				virtual void UpdateTrackerVector(grpc::ClientContext* context,
+				                                 grpc::ClientBidiReactor<
+					                                 ServiceRequest, Service_TrackerStatePair>* reactor)
+				= 0;
+				virtual void RefreshTrackerPoseVector(grpc::ClientContext* context,
+				                                      grpc::ClientBidiReactor<
+					                                      ServiceRequest, Service_TrackerStatePair>*
+				                                      reactor) = 0;
 				virtual void RequestVRRestart(grpc::ClientContext* context, const ServiceRequest* request,
-				                              K2ResponseMessage* response, std::function<void(
-					                              grpc::Status)>) = 0;
+				                              Service_TrackerStatePair* response,
+				                              std::function<void(grpc::Status)>) = 0;
 				virtual void RequestVRRestart(grpc::ClientContext* context, const ServiceRequest* request,
-				                              K2ResponseMessage* response,
+				                              Service_TrackerStatePair* response,
 				                              grpc::ClientUnaryReactor* reactor) = 0;
-				virtual void SetTrackerStateVectorNoReply(grpc::ClientContext* context, K2ResponseMessage* response,
-				                                          grpc::ClientWriteReactor<
-					                                          ServiceRequest>* reactor) = 0;
-				virtual void UpdateTrackerVectorNoReply(grpc::ClientContext* context, K2ResponseMessage* response,
-				                                        grpc::ClientWriteReactor<
-					                                        ServiceRequest>* reactor) = 0;
-				virtual void RefreshTrackerPoseVectorNoReply(grpc::ClientContext* context, K2ResponseMessage* response,
-				                                             grpc::ClientWriteReactor<
-					                                             ServiceRequest>* reactor) = 0;
-				virtual void RequestVRRestartNoReply(grpc::ClientContext* context, const ServiceRequest* request,
-				                                     K2ResponseMessage* response,
-				                                     std::function<void(grpc::Status)>) = 0;
-				virtual void RequestVRRestartNoReply(grpc::ClientContext* context, const ServiceRequest* request,
-				                                     K2ResponseMessage* response,
-				                                     grpc::ClientUnaryReactor* reactor) = 0;
+				virtual void PingDriverService(grpc::ClientContext* context, const google::protobuf::Empty* request,
+				                               PingRequest* response, std::function<void(grpc::Status)>) = 0;
+				virtual void PingDriverService(grpc::ClientContext* context, const google::protobuf::Empty* request,
+				                               PingRequest* response, grpc::ClientUnaryReactor* reactor) = 0;
 			};
 
 			using experimental_async_interface = class async_interface;
@@ -257,277 +208,245 @@ namespace ktvr
 			class async_interface* experimental_async() { return async(); }
 
 		private:
-			virtual grpc::ClientWriterInterface<ServiceRequest>* SetTrackerStateVectorRaw(grpc::ClientContext* context,
-				K2ResponseMessage* response) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* AsyncSetTrackerStateVectorRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* PrepareAsyncSetTrackerStateVectorRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq) = 0;
-			virtual grpc::ClientWriterInterface<ServiceRequest>* UpdateTrackerVectorRaw(grpc::ClientContext* context,
-				K2ResponseMessage* response) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* AsyncUpdateTrackerVectorRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* PrepareAsyncUpdateTrackerVectorRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq) = 0;
-			virtual grpc::ClientWriterInterface<ServiceRequest>* RefreshTrackerPoseVectorRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* AsyncRefreshTrackerPoseVectorRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* PrepareAsyncRefreshTrackerPoseVectorRaw(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq) = 0;
-			virtual grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>* AsyncRequestVRRestartRaw(
-				grpc::ClientContext* context, const
-				ServiceRequest& request, grpc::CompletionQueue* cq) = 0;
-			virtual grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>* PrepareAsyncRequestVRRestartRaw(
-				grpc::ClientContext* context, const ServiceRequest& request, grpc::CompletionQueue* cq) = 0;
-			virtual grpc::ClientWriterInterface<ServiceRequest>* SetTrackerStateVectorNoReplyRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* AsyncSetTrackerStateVectorNoReplyRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* PrepareAsyncSetTrackerStateVectorNoReplyRaw(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq) = 0;
-			virtual grpc::ClientWriterInterface<ServiceRequest>* UpdateTrackerVectorNoReplyRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* AsyncUpdateTrackerVectorNoReplyRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* PrepareAsyncUpdateTrackerVectorNoReplyRaw(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq) = 0;
-			virtual grpc::ClientWriterInterface<ServiceRequest>* RefreshTrackerPoseVectorNoReplyRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* AsyncRefreshTrackerPoseVectorNoReplyRaw(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag) = 0;
-			virtual grpc::ClientAsyncWriterInterface<ServiceRequest>* PrepareAsyncRefreshTrackerPoseVectorNoReplyRaw(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq) = 0;
-			virtual grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>* AsyncRequestVRRestartNoReplyRaw(
-				grpc::ClientContext* context, const ServiceRequest& request, grpc::CompletionQueue* cq) = 0;
-			virtual grpc::ClientAsyncResponseReaderInterface<K2ResponseMessage>* PrepareAsyncRequestVRRestartNoReplyRaw(
-				grpc::ClientContext* context, const ServiceRequest& request, grpc::CompletionQueue* cq) = 0;
+			virtual grpc::ClientReaderWriterInterface<ServiceRequest, Service_TrackerStatePair>*
+			SetTrackerStateVectorRaw(grpc::ClientContext* context) = 0;
+			virtual grpc::ClientAsyncReaderWriterInterface<ServiceRequest, Service_TrackerStatePair>*
+			AsyncSetTrackerStateVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq, void* tag) = 0;
+			virtual grpc::ClientAsyncReaderWriterInterface<ServiceRequest, Service_TrackerStatePair>*
+			PrepareAsyncSetTrackerStateVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq) = 0;
+			virtual grpc::ClientReaderWriterInterface<ServiceRequest, Service_TrackerStatePair>*
+			UpdateTrackerVectorRaw(grpc::ClientContext* context) = 0;
+			virtual grpc::ClientAsyncReaderWriterInterface<ServiceRequest, Service_TrackerStatePair>*
+			AsyncUpdateTrackerVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq, void* tag) = 0;
+			virtual grpc::ClientAsyncReaderWriterInterface<ServiceRequest, Service_TrackerStatePair>*
+			PrepareAsyncUpdateTrackerVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq) = 0;
+			virtual grpc::ClientReaderWriterInterface<ServiceRequest, Service_TrackerStatePair>*
+			RefreshTrackerPoseVectorRaw(grpc::ClientContext* context) = 0;
+			virtual grpc::ClientAsyncReaderWriterInterface<ServiceRequest, Service_TrackerStatePair>*
+			AsyncRefreshTrackerPoseVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq, void* tag) =
+			0;
+			virtual grpc::ClientAsyncReaderWriterInterface<ServiceRequest, Service_TrackerStatePair>*
+			PrepareAsyncRefreshTrackerPoseVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq) = 0;
+			virtual grpc::ClientAsyncResponseReaderInterface<Service_TrackerStatePair>*
+			AsyncRequestVRRestartRaw(grpc::ClientContext* context, const ServiceRequest& request,
+			                         grpc::CompletionQueue* cq) = 0;
+			virtual grpc::ClientAsyncResponseReaderInterface<Service_TrackerStatePair>*
+			PrepareAsyncRequestVRRestartRaw(grpc::ClientContext* context, const ServiceRequest& request,
+			                                grpc::CompletionQueue* cq) = 0;
+			virtual grpc::ClientAsyncResponseReaderInterface<PingRequest>* AsyncPingDriverServiceRaw(
+				grpc::ClientContext* context, const google::protobuf::Empty& request,
+				grpc::CompletionQueue* cq) = 0;
+			virtual grpc::ClientAsyncResponseReaderInterface<PingRequest>* PrepareAsyncPingDriverServiceRaw(
+				grpc::ClientContext* context, const google::protobuf::Empty& request,
+				grpc::CompletionQueue* cq) = 0;
 		};
 
 		class Stub final : public StubInterface
 		{
 		public:
 			Stub(const std::shared_ptr<grpc::ChannelInterface>& channel,
-			     const grpc::StubOptions& options = grpc::StubOptions());
-
-			std::unique_ptr<grpc::ClientWriter<ServiceRequest>> SetTrackerStateVector(grpc::ClientContext* context,
-				K2ResponseMessage* response)
+			     const grpc::StubOptions& options = grpc::StubOptions())
+				: channel_(channel), rpcmethod_SetTrackerStateVector_(IK2DriverService_method_names[0],
+				                                                      options.suffix_for_stats(),
+				                                                      grpc::internal::RpcMethod::BIDI_STREAMING,
+				                                                      channel)
+				  , rpcmethod_UpdateTrackerVector_(IK2DriverService_method_names[1], options.suffix_for_stats(),
+				                                   grpc::internal::RpcMethod::BIDI_STREAMING, channel)
+				  , rpcmethod_RefreshTrackerPoseVector_(IK2DriverService_method_names[2], options.suffix_for_stats(),
+				                                        grpc::internal::RpcMethod::BIDI_STREAMING, channel)
+				  , rpcmethod_RequestVRRestart_(IK2DriverService_method_names[3], options.suffix_for_stats(),
+				                                grpc::internal::RpcMethod::NORMAL_RPC, channel)
+				  , rpcmethod_PingDriverService_(IK2DriverService_method_names[4], options.suffix_for_stats(),
+				                                 grpc::internal::RpcMethod::NORMAL_RPC, channel)
 			{
-				return std::unique_ptr<grpc::ClientWriter<ServiceRequest>>(SetTrackerStateVectorRaw(context, response));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> AsyncSetTrackerStateVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
+			std::unique_ptr<grpc::ClientReaderWriter<ServiceRequest, Service_TrackerStatePair>>
+			SetTrackerStateVector(grpc::ClientContext* context)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					AsyncSetTrackerStateVectorRaw(context, response, cq, tag));
+				return std::unique_ptr<grpc::ClientReaderWriter<
+					ServiceRequest, Service_TrackerStatePair>>(SetTrackerStateVectorRaw(context));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> PrepareAsyncSetTrackerStateVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq)
+			std::unique_ptr<grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>>
+			AsyncSetTrackerStateVector(grpc::ClientContext* context, grpc::CompletionQueue* cq, void* tag)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					PrepareAsyncSetTrackerStateVectorRaw(context, response, cq));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriter<
+					ServiceRequest, Service_TrackerStatePair>>(
+					AsyncSetTrackerStateVectorRaw(context, cq, tag));
 			}
 
-			std::unique_ptr<grpc::ClientWriter<ServiceRequest>> UpdateTrackerVector(grpc::ClientContext* context,
-				K2ResponseMessage* response)
+			std::unique_ptr<grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>>
+			PrepareAsyncSetTrackerStateVector(grpc::ClientContext* context, grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientWriter<ServiceRequest>>(UpdateTrackerVectorRaw(context, response));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriter<
+					ServiceRequest, Service_TrackerStatePair>>(
+					PrepareAsyncSetTrackerStateVectorRaw(context, cq));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> AsyncUpdateTrackerVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
+			std::unique_ptr<grpc::ClientReaderWriter<ServiceRequest, Service_TrackerStatePair>>
+			UpdateTrackerVector(grpc::ClientContext* context)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					AsyncUpdateTrackerVectorRaw(context, response, cq, tag));
+				return std::unique_ptr<grpc::ClientReaderWriter<
+					ServiceRequest, Service_TrackerStatePair>>(UpdateTrackerVectorRaw(context));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> PrepareAsyncUpdateTrackerVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq)
+			std::unique_ptr<grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>>
+			AsyncUpdateTrackerVector(grpc::ClientContext* context, grpc::CompletionQueue* cq, void* tag)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					PrepareAsyncUpdateTrackerVectorRaw(context, response, cq));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriter<
+					ServiceRequest, Service_TrackerStatePair>>(
+					AsyncUpdateTrackerVectorRaw(context, cq, tag));
 			}
 
-			std::unique_ptr<grpc::ClientWriter<ServiceRequest>> RefreshTrackerPoseVector(grpc::ClientContext* context,
-				K2ResponseMessage* response)
+			std::unique_ptr<grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>>
+			PrepareAsyncUpdateTrackerVector(grpc::ClientContext* context, grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientWriter<ServiceRequest>>(
-					RefreshTrackerPoseVectorRaw(context, response));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriter<
+					ServiceRequest, Service_TrackerStatePair>>(
+					PrepareAsyncUpdateTrackerVectorRaw(context, cq));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> AsyncRefreshTrackerPoseVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
+			std::unique_ptr<grpc::ClientReaderWriter<ServiceRequest, Service_TrackerStatePair>>
+			RefreshTrackerPoseVector(grpc::ClientContext* context)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					AsyncRefreshTrackerPoseVectorRaw(context, response, cq, tag));
+				return std::unique_ptr<grpc::ClientReaderWriter<
+					ServiceRequest, Service_TrackerStatePair>>(RefreshTrackerPoseVectorRaw(context));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> PrepareAsyncRefreshTrackerPoseVector(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq)
+			std::unique_ptr<grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>>
+			AsyncRefreshTrackerPoseVector(grpc::ClientContext* context, grpc::CompletionQueue* cq, void* tag)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					PrepareAsyncRefreshTrackerPoseVectorRaw(context, response, cq));
+				return std::unique_ptr<grpc::ClientAsyncReaderWriter<
+					ServiceRequest, Service_TrackerStatePair>>(
+					AsyncRefreshTrackerPoseVectorRaw(context, cq, tag));
+			}
+
+			std::unique_ptr<grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>>
+			PrepareAsyncRefreshTrackerPoseVector(grpc::ClientContext* context, grpc::CompletionQueue* cq)
+			{
+				return std::unique_ptr<grpc::ClientAsyncReaderWriter<
+					ServiceRequest, Service_TrackerStatePair>>(
+					PrepareAsyncRefreshTrackerPoseVectorRaw(context, cq));
 			}
 
 			grpc::Status RequestVRRestart(grpc::ClientContext* context, const ServiceRequest& request,
-			                              K2ResponseMessage* response) override;
-
-			std::unique_ptr<grpc::ClientAsyncResponseReader<K2ResponseMessage>> AsyncRequestVRRestart(
-				grpc::ClientContext* context, const
-				ServiceRequest& request, grpc::CompletionQueue* cq)
+			                              Service_TrackerStatePair* response) override
 			{
-				return std::unique_ptr<grpc::ClientAsyncResponseReader<K2ResponseMessage>>(
+				return ::grpc::internal::BlockingUnaryCall<
+					ServiceRequest, Service_TrackerStatePair, grpc::protobuf::MessageLite,
+					grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_RequestVRRestart_, context, request,
+					                             response);
+			}
+
+			std::unique_ptr<grpc::ClientAsyncResponseReader<Service_TrackerStatePair>> AsyncRequestVRRestart(
+				grpc::ClientContext* context, const ServiceRequest& request, grpc::CompletionQueue* cq)
+			{
+				return std::unique_ptr<grpc::ClientAsyncResponseReader<Service_TrackerStatePair>>(
 					AsyncRequestVRRestartRaw(context, request, cq));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncResponseReader<K2ResponseMessage>> PrepareAsyncRequestVRRestart(
-				grpc::ClientContext* context, const
-				ServiceRequest& request, grpc::CompletionQueue* cq)
+			std::unique_ptr<grpc::ClientAsyncResponseReader<Service_TrackerStatePair>>
+			PrepareAsyncRequestVRRestart(grpc::ClientContext* context, const ServiceRequest& request,
+			                             grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientAsyncResponseReader<K2ResponseMessage>>(
+				return std::unique_ptr<grpc::ClientAsyncResponseReader<Service_TrackerStatePair>>(
 					PrepareAsyncRequestVRRestartRaw(context, request, cq));
 			}
 
-			std::unique_ptr<grpc::ClientWriter<ServiceRequest>> SetTrackerStateVectorNoReply(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response)
+			grpc::Status PingDriverService(grpc::ClientContext* context, const google::protobuf::Empty& request,
+			                               PingRequest* response) override
 			{
-				return std::unique_ptr<grpc::ClientWriter<ServiceRequest>>(
-					SetTrackerStateVectorNoReplyRaw(context, response));
+				return ::grpc::internal::BlockingUnaryCall<
+					google::protobuf::Empty, PingRequest, grpc::protobuf::MessageLite,
+					grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_PingDriverService_, context, request,
+					                             response);
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> AsyncSetTrackerStateVectorNoReply(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
+			std::unique_ptr<grpc::ClientAsyncResponseReader<PingRequest>> AsyncPingDriverService(
+				grpc::ClientContext* context, const google::protobuf::Empty& request, grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					AsyncSetTrackerStateVectorNoReplyRaw(context, response, cq, tag));
+				return std::unique_ptr<grpc::ClientAsyncResponseReader<PingRequest>>(
+					AsyncPingDriverServiceRaw(context, request, cq));
 			}
 
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> PrepareAsyncSetTrackerStateVectorNoReply(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq)
+			std::unique_ptr<grpc::ClientAsyncResponseReader<PingRequest>> PrepareAsyncPingDriverService(
+				grpc::ClientContext* context, const google::protobuf::Empty& request, grpc::CompletionQueue* cq)
 			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					PrepareAsyncSetTrackerStateVectorNoReplyRaw(context, response, cq));
-			}
-
-			std::unique_ptr<grpc::ClientWriter<ServiceRequest>> UpdateTrackerVectorNoReply(grpc::ClientContext* context,
-				K2ResponseMessage* response)
-			{
-				return std::unique_ptr<grpc::ClientWriter<ServiceRequest>>(
-					UpdateTrackerVectorNoReplyRaw(context, response));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> AsyncUpdateTrackerVectorNoReply(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
-			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					AsyncUpdateTrackerVectorNoReplyRaw(context, response, cq, tag));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> PrepareAsyncUpdateTrackerVectorNoReply(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq)
-			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					PrepareAsyncUpdateTrackerVectorNoReplyRaw(context, response, cq));
-			}
-
-			std::unique_ptr<grpc::ClientWriter<ServiceRequest>> RefreshTrackerPoseVectorNoReply(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response)
-			{
-				return std::unique_ptr<grpc::ClientWriter<ServiceRequest>>(
-					RefreshTrackerPoseVectorNoReplyRaw(context, response));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> AsyncRefreshTrackerPoseVectorNoReply(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag)
-			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					AsyncRefreshTrackerPoseVectorNoReplyRaw(context, response, cq, tag));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>> PrepareAsyncRefreshTrackerPoseVectorNoReply(
-				grpc::ClientContext* context, K2ResponseMessage* response, grpc::CompletionQueue* cq)
-			{
-				return std::unique_ptr<grpc::ClientAsyncWriter<ServiceRequest>>(
-					PrepareAsyncRefreshTrackerPoseVectorNoReplyRaw(context, response, cq));
-			}
-
-			grpc::Status RequestVRRestartNoReply(grpc::ClientContext* context, const ServiceRequest& request,
-			                                     K2ResponseMessage* response) override;
-
-			std::unique_ptr<grpc::ClientAsyncResponseReader<K2ResponseMessage>> AsyncRequestVRRestartNoReply(
-				grpc::ClientContext* context, const
-				ServiceRequest& request, grpc::CompletionQueue* cq)
-			{
-				return std::unique_ptr<grpc::ClientAsyncResponseReader<K2ResponseMessage>>(
-					AsyncRequestVRRestartNoReplyRaw(context, request, cq));
-			}
-
-			std::unique_ptr<grpc::ClientAsyncResponseReader<K2ResponseMessage>> PrepareAsyncRequestVRRestartNoReply(
-				grpc::ClientContext* context, const ServiceRequest& request, grpc::CompletionQueue* cq)
-			{
-				return std::unique_ptr<grpc::ClientAsyncResponseReader<K2ResponseMessage>>(
-					PrepareAsyncRequestVRRestartNoReplyRaw(context, request, cq));
+				return std::unique_ptr<grpc::ClientAsyncResponseReader<PingRequest>>(
+					PrepareAsyncPingDriverServiceRaw(context, request, cq));
 			}
 
 			class async final :
 				public async_interface
 			{
 			public:
-				void SetTrackerStateVector(grpc::ClientContext* context, K2ResponseMessage* response,
-				                           grpc::ClientWriteReactor<
-					                           ServiceRequest>* reactor) override;
-				void UpdateTrackerVector(grpc::ClientContext* context, K2ResponseMessage* response,
-				                         grpc::ClientWriteReactor<
-					                         ServiceRequest>* reactor) override;
-				void RefreshTrackerPoseVector(grpc::ClientContext* context, K2ResponseMessage* response,
-				                              grpc::ClientWriteReactor<
-					                              ServiceRequest>* reactor) override;
+				void SetTrackerStateVector(grpc::ClientContext* context,
+				                           grpc::ClientBidiReactor<
+					                           ServiceRequest, Service_TrackerStatePair>*
+				                           reactor) override
+				{
+					grpc::internal::ClientCallbackReaderWriterFactory<
+						ServiceRequest, Service_TrackerStatePair>::Create(
+						stub_->channel_.get(), stub_->rpcmethod_SetTrackerStateVector_, context, reactor);
+				}
+
+				void UpdateTrackerVector(grpc::ClientContext* context,
+				                         grpc::ClientBidiReactor<
+					                         ServiceRequest, Service_TrackerStatePair>*
+				                         reactor) override
+				{
+					grpc::internal::ClientCallbackReaderWriterFactory<
+						ServiceRequest, Service_TrackerStatePair>::Create(
+						stub_->channel_.get(), stub_->rpcmethod_UpdateTrackerVector_, context, reactor);
+				}
+
+				void RefreshTrackerPoseVector(grpc::ClientContext* context,
+				                              grpc::ClientBidiReactor<
+					                              ServiceRequest, Service_TrackerStatePair>*
+				                              reactor) override
+				{
+					grpc::internal::ClientCallbackReaderWriterFactory<
+						ServiceRequest, Service_TrackerStatePair>::Create(
+						stub_->channel_.get(), stub_->rpcmethod_RefreshTrackerPoseVector_, context, reactor);
+				}
+
 				void RequestVRRestart(grpc::ClientContext* context, const ServiceRequest* request,
-				                      K2ResponseMessage* response, std::function<void(
-					                      grpc::Status)>) override;
+				                      Service_TrackerStatePair* response,
+				                      std::function<void(grpc::Status)> f) override
+				{
+					::grpc::internal::CallbackUnaryCall<ServiceRequest, Service_TrackerStatePair,
+					                                    grpc::protobuf::MessageLite, grpc::protobuf::MessageLite>(
+						stub_->channel_.get(), stub_->rpcmethod_RequestVRRestart_, context, request, response,
+						std::move(f));
+				}
+
 				void RequestVRRestart(grpc::ClientContext* context, const ServiceRequest* request,
-				                      K2ResponseMessage* response,
-				                      grpc::ClientUnaryReactor* reactor) override;
-				void SetTrackerStateVectorNoReply(grpc::ClientContext* context, K2ResponseMessage* response,
-				                                  grpc::ClientWriteReactor<
-					                                  ServiceRequest>* reactor) override;
-				void UpdateTrackerVectorNoReply(grpc::ClientContext* context, K2ResponseMessage* response,
-				                                grpc::ClientWriteReactor<
-					                                ServiceRequest>* reactor) override;
-				void RefreshTrackerPoseVectorNoReply(grpc::ClientContext* context, K2ResponseMessage* response,
-				                                     grpc::ClientWriteReactor<
-					                                     ServiceRequest>* reactor) override;
-				void RequestVRRestartNoReply(grpc::ClientContext* context, const ServiceRequest* request,
-				                             K2ResponseMessage* response, std::function<void(
-					                             grpc::Status)>) override;
-				void RequestVRRestartNoReply(grpc::ClientContext* context, const ServiceRequest* request,
-				                             K2ResponseMessage* response,
-				                             grpc::ClientUnaryReactor* reactor) override;
+				                      Service_TrackerStatePair* response,
+				                      grpc::ClientUnaryReactor* reactor) override
+				{
+					grpc::internal::ClientCallbackUnaryFactory::Create<
+						grpc::protobuf::MessageLite, grpc::protobuf::MessageLite>(
+						stub_->channel_.get(), stub_->rpcmethod_RequestVRRestart_, context, request, response, reactor);
+				}
+
+				void PingDriverService(grpc::ClientContext* context, const google::protobuf::Empty* request,
+				                       PingRequest* response, std::function<void(grpc::Status)> f) override
+				{
+					::grpc::internal::CallbackUnaryCall<google::protobuf::Empty, PingRequest,
+					                                    grpc::protobuf::MessageLite, grpc::protobuf::MessageLite>(
+						stub_->channel_.get(), stub_->rpcmethod_PingDriverService_, context, request, response,
+						std::move(f));
+				}
+
+				void PingDriverService(grpc::ClientContext* context, const google::protobuf::Empty* request,
+				                       PingRequest* response, grpc::ClientUnaryReactor* reactor) override
+				{
+					grpc::internal::ClientCallbackUnaryFactory::Create<
+						grpc::protobuf::MessageLite, grpc::protobuf::MessageLite>(
+						stub_->channel_.get(), stub_->rpcmethod_PingDriverService_, context, request, response,
+						reactor);
+				}
 
 			private:
 				friend class Stub;
@@ -545,108 +464,262 @@ namespace ktvr
 		private:
 			std::shared_ptr<grpc::ChannelInterface> channel_;
 			class async async_stub_{this};
-			grpc::ClientWriter<ServiceRequest>* SetTrackerStateVectorRaw(
-				grpc::ClientContext* context, K2ResponseMessage* response) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* AsyncSetTrackerStateVectorRaw(grpc::ClientContext* context,
-				K2ResponseMessage* response,
-				grpc::CompletionQueue* cq, void* tag) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* PrepareAsyncSetTrackerStateVectorRaw(grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq) override;
-			grpc::ClientWriter<ServiceRequest>* UpdateTrackerVectorRaw(grpc::ClientContext* context,
-			                                                           K2ResponseMessage* response) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* AsyncUpdateTrackerVectorRaw(grpc::ClientContext* context,
-				K2ResponseMessage* response,
-				grpc::CompletionQueue* cq, void* tag) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* PrepareAsyncUpdateTrackerVectorRaw(grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq) override;
-			grpc::ClientWriter<ServiceRequest>* RefreshTrackerPoseVectorRaw(
-				grpc::ClientContext* context, K2ResponseMessage* response) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* AsyncRefreshTrackerPoseVectorRaw(grpc::ClientContext* context,
-				K2ResponseMessage* response,
-				grpc::CompletionQueue* cq, void* tag) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* PrepareAsyncRefreshTrackerPoseVectorRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq) override;
-			grpc::ClientAsyncResponseReader<K2ResponseMessage>* AsyncRequestVRRestartRaw(
-				grpc::ClientContext* context, const
-				ServiceRequest& request, grpc::CompletionQueue* cq) override;
-			grpc::ClientAsyncResponseReader<K2ResponseMessage>* PrepareAsyncRequestVRRestartRaw(
-				grpc::ClientContext* context, const
-				ServiceRequest& request, grpc::CompletionQueue* cq) override;
-			grpc::ClientWriter<ServiceRequest>* SetTrackerStateVectorNoReplyRaw(
-				grpc::ClientContext* context, K2ResponseMessage* response) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* AsyncSetTrackerStateVectorNoReplyRaw(grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* PrepareAsyncSetTrackerStateVectorNoReplyRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq) override;
-			grpc::ClientWriter<ServiceRequest>* UpdateTrackerVectorNoReplyRaw(
-				grpc::ClientContext* context, K2ResponseMessage* response) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* AsyncUpdateTrackerVectorNoReplyRaw(grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* PrepareAsyncUpdateTrackerVectorNoReplyRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq) override;
-			grpc::ClientWriter<ServiceRequest>* RefreshTrackerPoseVectorNoReplyRaw(grpc::ClientContext* context,
-				K2ResponseMessage* response) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* AsyncRefreshTrackerPoseVectorNoReplyRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq, void* tag) override;
-			grpc::ClientAsyncWriter<ServiceRequest>* PrepareAsyncRefreshTrackerPoseVectorNoReplyRaw(
-				grpc::ClientContext* context,
-				K2ResponseMessage* response, grpc::CompletionQueue* cq) override;
-			grpc::ClientAsyncResponseReader<K2ResponseMessage>* AsyncRequestVRRestartNoReplyRaw(
-				grpc::ClientContext* context, const
-				ServiceRequest& request, grpc::CompletionQueue* cq) override;
-			grpc::ClientAsyncResponseReader<K2ResponseMessage>* PrepareAsyncRequestVRRestartNoReplyRaw(
-				grpc::ClientContext* context, const
-				ServiceRequest& request, grpc::CompletionQueue* cq) override;
+
+			grpc::ClientReaderWriter<ServiceRequest, Service_TrackerStatePair>*
+			SetTrackerStateVectorRaw(grpc::ClientContext* context) override
+			{
+				return grpc::internal::ClientReaderWriterFactory<
+					ServiceRequest, Service_TrackerStatePair>::Create(
+					channel_.get(), rpcmethod_SetTrackerStateVector_, context);
+			}
+
+			grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>*
+			AsyncSetTrackerStateVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq,
+			                              void* tag) override
+			{
+				return grpc::internal::ClientAsyncReaderWriterFactory<
+					ServiceRequest, Service_TrackerStatePair>::Create(
+					channel_.get(), cq, rpcmethod_SetTrackerStateVector_, context, true, tag);
+			}
+
+			grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>*
+			PrepareAsyncSetTrackerStateVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq) override
+			{
+				return grpc::internal::ClientAsyncReaderWriterFactory<
+					ServiceRequest, Service_TrackerStatePair>::Create(
+					channel_.get(), cq, rpcmethod_SetTrackerStateVector_, context, false, nullptr);
+			}
+
+			grpc::ClientReaderWriter<ServiceRequest, Service_TrackerStatePair>*
+			UpdateTrackerVectorRaw(grpc::ClientContext* context) override
+			{
+				return grpc::internal::ClientReaderWriterFactory<
+					ServiceRequest, Service_TrackerStatePair>::Create(
+					channel_.get(), rpcmethod_UpdateTrackerVector_, context);
+			}
+
+			grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>*
+			AsyncUpdateTrackerVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq,
+			                            void* tag) override
+			{
+				return grpc::internal::ClientAsyncReaderWriterFactory<
+					ServiceRequest, Service_TrackerStatePair>::Create(
+					channel_.get(), cq, rpcmethod_UpdateTrackerVector_, context, true, tag);
+			}
+
+			grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>*
+			PrepareAsyncUpdateTrackerVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq) override
+			{
+				return grpc::internal::ClientAsyncReaderWriterFactory<
+					ServiceRequest, Service_TrackerStatePair>::Create(
+					channel_.get(), cq, rpcmethod_UpdateTrackerVector_, context, false, nullptr);
+			}
+
+			grpc::ClientReaderWriter<ServiceRequest, Service_TrackerStatePair>*
+			RefreshTrackerPoseVectorRaw(grpc::ClientContext* context) override
+			{
+				return grpc::internal::ClientReaderWriterFactory<
+					ServiceRequest, Service_TrackerStatePair>::Create(
+					channel_.get(), rpcmethod_RefreshTrackerPoseVector_, context);
+			}
+
+			grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>*
+			AsyncRefreshTrackerPoseVectorRaw(grpc::ClientContext* context, grpc::CompletionQueue* cq,
+			                                 void* tag) override
+			{
+				return grpc::internal::ClientAsyncReaderWriterFactory<
+					ServiceRequest, Service_TrackerStatePair>::Create(
+					channel_.get(), cq, rpcmethod_RefreshTrackerPoseVector_, context, true, tag);
+			}
+
+			grpc::ClientAsyncReaderWriter<ServiceRequest, Service_TrackerStatePair>*
+			PrepareAsyncRefreshTrackerPoseVectorRaw(grpc::ClientContext* context,
+			                                        grpc::CompletionQueue* cq) override
+			{
+				return grpc::internal::ClientAsyncReaderWriterFactory<
+					ServiceRequest, Service_TrackerStatePair>::Create(
+					channel_.get(), cq, rpcmethod_RefreshTrackerPoseVector_, context, false, nullptr);
+			}
+
+			grpc::ClientAsyncResponseReader<Service_TrackerStatePair>* AsyncRequestVRRestartRaw(
+				grpc::ClientContext* context, const ServiceRequest& request,
+				grpc::CompletionQueue* cq) override
+			{
+				auto* result =
+					this->PrepareAsyncRequestVRRestartRaw(context, request, cq);
+				result->StartCall();
+				return result;
+			}
+
+			grpc::ClientAsyncResponseReader<Service_TrackerStatePair>* PrepareAsyncRequestVRRestartRaw(
+				grpc::ClientContext* context, const ServiceRequest& request,
+				grpc::CompletionQueue* cq) override
+			{
+				return grpc::internal::ClientAsyncResponseReaderHelper::Create<
+					Service_TrackerStatePair, ServiceRequest, grpc::protobuf::MessageLite,
+					grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_RequestVRRestart_, context, request);
+			}
+
+			grpc::ClientAsyncResponseReader<PingRequest>* AsyncPingDriverServiceRaw(
+				grpc::ClientContext* context, const google::protobuf::Empty& request,
+				grpc::CompletionQueue* cq) override
+			{
+				auto* result =
+					this->PrepareAsyncPingDriverServiceRaw(context, request, cq);
+				result->StartCall();
+				return result;
+			}
+
+			grpc::ClientAsyncResponseReader<PingRequest>* PrepareAsyncPingDriverServiceRaw(
+				grpc::ClientContext* context, const google::protobuf::Empty& request,
+				grpc::CompletionQueue* cq) override
+			{
+				return grpc::internal::ClientAsyncResponseReaderHelper::Create<
+					PingRequest, google::protobuf::Empty, grpc::protobuf::MessageLite,
+					grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_PingDriverService_, context, request);
+			}
+
 			const grpc::internal::RpcMethod rpcmethod_SetTrackerStateVector_;
 			const grpc::internal::RpcMethod rpcmethod_UpdateTrackerVector_;
 			const grpc::internal::RpcMethod rpcmethod_RefreshTrackerPoseVector_;
 			const grpc::internal::RpcMethod rpcmethod_RequestVRRestart_;
-			const grpc::internal::RpcMethod rpcmethod_SetTrackerStateVectorNoReply_;
-			const grpc::internal::RpcMethod rpcmethod_UpdateTrackerVectorNoReply_;
-			const grpc::internal::RpcMethod rpcmethod_RefreshTrackerPoseVectorNoReply_;
-			const grpc::internal::RpcMethod rpcmethod_RequestVRRestartNoReply_;
+			const grpc::internal::RpcMethod rpcmethod_PingDriverService_;
 		};
 
 		static std::unique_ptr<Stub> NewStub(const std::shared_ptr<grpc::ChannelInterface>& channel,
-		                                     const grpc::StubOptions& options =
-			                                     grpc::StubOptions());
+		                                     const grpc::StubOptions& options = grpc::StubOptions())
+		{
+			(void)options;
+			std::unique_ptr<Stub> stub(new Stub(channel, options));
+			return stub;
+		}
 
-		class KTVR_API Service : public grpc::Service
+		class Service : public grpc::Service
 		{
 		public:
-			Service();
-			~Service() override;
+			Service()
+			{
+				AddMethod(new grpc::internal::RpcServiceMethod(
+					IK2DriverService_method_names[0],
+					grpc::internal::RpcMethod::BIDI_STREAMING,
+					new grpc::internal::BidiStreamingHandler<
+						Service, ServiceRequest, Service_TrackerStatePair>(
+						[](Service* service,
+						   grpc::ServerContext* ctx,
+						   grpc::ServerReaderWriter<Service_TrackerStatePair,
+						                            ServiceRequest>* stream)
+						{
+							return service->SetTrackerStateVector(ctx, stream);
+						}, this)));
+				AddMethod(new grpc::internal::RpcServiceMethod(
+					IK2DriverService_method_names[1],
+					grpc::internal::RpcMethod::BIDI_STREAMING,
+					new grpc::internal::BidiStreamingHandler<
+						Service, ServiceRequest, Service_TrackerStatePair>(
+						[](Service* service,
+						   grpc::ServerContext* ctx,
+						   grpc::ServerReaderWriter<Service_TrackerStatePair,
+						                            ServiceRequest>* stream)
+						{
+							return service->UpdateTrackerVector(ctx, stream);
+						}, this)));
+				AddMethod(new grpc::internal::RpcServiceMethod(
+					IK2DriverService_method_names[2],
+					grpc::internal::RpcMethod::BIDI_STREAMING,
+					new grpc::internal::BidiStreamingHandler<
+						Service, ServiceRequest, Service_TrackerStatePair>(
+						[](Service* service,
+						   grpc::ServerContext* ctx,
+						   grpc::ServerReaderWriter<Service_TrackerStatePair,
+						                            ServiceRequest>* stream)
+						{
+							return service->RefreshTrackerPoseVector(ctx, stream);
+						}, this)));
+				AddMethod(new grpc::internal::RpcServiceMethod(
+					IK2DriverService_method_names[3],
+					grpc::internal::RpcMethod::NORMAL_RPC,
+					new grpc::internal::RpcMethodHandler<
+						Service, ServiceRequest, Service_TrackerStatePair,
+						grpc::protobuf::MessageLite, grpc::protobuf::MessageLite>(
+						[](Service* service,
+						   grpc::ServerContext* ctx,
+						   const ServiceRequest* req,
+						   Service_TrackerStatePair* resp)
+						{
+							return service->RequestVRRestart(ctx, req, resp);
+						}, this)));
+				AddMethod(new grpc::internal::RpcServiceMethod(
+					IK2DriverService_method_names[4],
+					grpc::internal::RpcMethod::NORMAL_RPC,
+					new grpc::internal::RpcMethodHandler<
+						Service, google::protobuf::Empty, PingRequest,
+						grpc::protobuf::MessageLite
+						, grpc::protobuf::MessageLite>(
+						[](Service* service,
+						   grpc::ServerContext* ctx,
+						   const google::protobuf::Empty* req,
+						   PingRequest* resp)
+						{
+							return service->PingDriverService(ctx, req, resp);
+						}, this)));
+			}
+
+			~Service() override = default;
 
 			// https://github.com/grpc/grpc/issues/15653
 			Service(const Service&) = delete;
-			Service& operator = (const Service&) = delete;
+			Service& operator =(const Service&) = delete;
 
+			// Note: 'state' becomes a 'success' check on return
 			virtual grpc::Status SetTrackerStateVector(grpc::ServerContext* context,
-			                                           grpc::ServerReader<ServiceRequest>* reader,
-			                                           K2ResponseMessage* response);
+			                                           grpc::ServerReaderWriter<
+				                                           Service_TrackerStatePair, ServiceRequest>*
+			                                           stream)
+			{
+				(void)context;
+				(void)stream;
+				return { grpc::StatusCode::UNIMPLEMENTED, "" };
+			}
+
 			virtual grpc::Status UpdateTrackerVector(grpc::ServerContext* context,
-			                                         grpc::ServerReader<ServiceRequest>* reader,
-			                                         K2ResponseMessage* response);
+			                                         grpc::ServerReaderWriter<
+				                                         Service_TrackerStatePair, ServiceRequest>*
+			                                         stream)
+			{
+				(void)context;
+				(void)stream;
+				return { grpc::StatusCode::UNIMPLEMENTED, "" };
+			}
+
 			virtual grpc::Status RefreshTrackerPoseVector(grpc::ServerContext* context,
-			                                              grpc::ServerReader<ServiceRequest>* reader,
-			                                              K2ResponseMessage* response);
-			virtual grpc::Status RequestVRRestart(grpc::ServerContext* context, const ServiceRequest* request,
-			                                      K2ResponseMessage* response);
-			virtual grpc::Status SetTrackerStateVectorNoReply(grpc::ServerContext* context,
-			                                                  grpc::ServerReader<ServiceRequest>* reader,
-			                                                  K2ResponseMessage* response);
-			virtual grpc::Status UpdateTrackerVectorNoReply(grpc::ServerContext* context,
-			                                                grpc::ServerReader<ServiceRequest>* reader,
-			                                                K2ResponseMessage* response);
-			virtual grpc::Status RefreshTrackerPoseVectorNoReply(grpc::ServerContext* context, grpc::ServerReader<
-				                                                     ServiceRequest>* reader,
-			                                                     K2ResponseMessage* response);
-			virtual grpc::Status RequestVRRestartNoReply(grpc::ServerContext* context, const ServiceRequest* request,
-			                                             K2ResponseMessage* response);
+			                                              grpc::ServerReaderWriter<
+				                                              Service_TrackerStatePair,
+				                                              ServiceRequest>* stream)
+			{
+				(void)context;
+				(void)stream;
+				return { grpc::StatusCode::UNIMPLEMENTED, "" };
+			}
+
+			virtual grpc::Status RequestVRRestart(grpc::ServerContext* context,
+			                                      const ServiceRequest* request,
+			                                      Service_TrackerStatePair* response)
+			{
+				(void)context;
+				(void)request;
+				(void)response;
+				return { grpc::StatusCode::UNIMPLEMENTED, "" };
+			}
+
+			virtual grpc::Status PingDriverService(grpc::ServerContext* context,
+			                                       const google::protobuf::Empty* request,
+			                                       PingRequest* response)
+			{
+				(void)context;
+				(void)request;
+				(void)response;
+				return { grpc::StatusCode::UNIMPLEMENTED, "" };
+			}
 		};
 
 		template <class BaseClass>
@@ -670,18 +743,21 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status SetTrackerStateVector(grpc::ServerContext* /*context*/,
-			                                   grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                   K2ResponseMessage* /*response*/) override
+			                                   grpc::ServerReaderWriter<
+				                                   Service_TrackerStatePair, ServiceRequest>*
+			                                   /*stream*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			void RequestSetTrackerStateVector(grpc::ServerContext* context, grpc::ServerAsyncReader<K2ResponseMessage,
-				                                  ServiceRequest>* reader, grpc::CompletionQueue* new_call_cq,
+			void RequestSetTrackerStateVector(grpc::ServerContext* context,
+			                                  grpc::ServerAsyncReaderWriter<
+				                                  Service_TrackerStatePair, ServiceRequest>* stream,
+			                                  grpc::CompletionQueue* new_call_cq,
 			                                  grpc::ServerCompletionQueue* notification_cq, void* tag)
 			{
-				grpc::Service::RequestAsyncClientStreaming(0, context, reader, new_call_cq, notification_cq, tag);
+				grpc::Service::RequestAsyncBidiStreaming(0, context, stream, new_call_cq, notification_cq, tag);
 			}
 		};
 
@@ -706,18 +782,21 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status UpdateTrackerVector(grpc::ServerContext* /*context*/,
-			                                 grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                 K2ResponseMessage* /*response*/) override
+			                                 grpc::ServerReaderWriter<
+				                                 Service_TrackerStatePair, ServiceRequest>* /*stream*/
+			) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			void RequestUpdateTrackerVector(grpc::ServerContext* context, grpc::ServerAsyncReader<K2ResponseMessage,
-				                                ServiceRequest>* reader, grpc::CompletionQueue* new_call_cq,
+			void RequestUpdateTrackerVector(grpc::ServerContext* context,
+			                                grpc::ServerAsyncReaderWriter<
+				                                Service_TrackerStatePair, ServiceRequest>* stream,
+			                                grpc::CompletionQueue* new_call_cq,
 			                                grpc::ServerCompletionQueue* notification_cq, void* tag)
 			{
-				grpc::Service::RequestAsyncClientStreaming(1, context, reader, new_call_cq, notification_cq, tag);
+				grpc::Service::RequestAsyncBidiStreaming(1, context, stream, new_call_cq, notification_cq, tag);
 			}
 		};
 
@@ -742,20 +821,21 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status RefreshTrackerPoseVector(grpc::ServerContext* /*context*/,
-			                                      grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                      K2ResponseMessage* /*response*/) override
+			                                      grpc::ServerReaderWriter<
+				                                      Service_TrackerStatePair, ServiceRequest>*
+			                                      /*stream*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
 			void RequestRefreshTrackerPoseVector(grpc::ServerContext* context,
-			                                     grpc::ServerAsyncReader<K2ResponseMessage,
-			                                                             ServiceRequest>* reader,
+			                                     grpc::ServerAsyncReaderWriter<
+				                                     Service_TrackerStatePair, ServiceRequest>* stream,
 			                                     grpc::CompletionQueue* new_call_cq,
 			                                     grpc::ServerCompletionQueue* notification_cq, void* tag)
 			{
-				grpc::Service::RequestAsyncClientStreaming(2, context, reader, new_call_cq, notification_cq, tag);
+				grpc::Service::RequestAsyncBidiStreaming(2, context, stream, new_call_cq, notification_cq, tag);
 			}
 		};
 
@@ -779,16 +859,17 @@ namespace ktvr
 			}
 
 			// disable synchronous version of this method
-			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                              K2ResponseMessage* /*response*/) override
+			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/,
+			                              const ServiceRequest* /*request*/,
+			                              Service_TrackerStatePair* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
 			void RequestRequestVRRestart(grpc::ServerContext* context, ServiceRequest* request,
-			                             grpc::ServerAsyncResponseWriter<
-				                             K2ResponseMessage>* response, grpc::CompletionQueue* new_call_cq,
+			                             grpc::ServerAsyncResponseWriter<Service_TrackerStatePair>* response,
+			                             grpc::CompletionQueue* new_call_cq,
 			                             grpc::ServerCompletionQueue* notification_cq, void* tag)
 			{
 				grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
@@ -796,7 +877,7 @@ namespace ktvr
 		};
 
 		template <class BaseClass>
-		class WithAsyncMethod_SetTrackerStateVectorNoReply : public BaseClass
+		class WithAsyncMethod_PingDriverService : public BaseClass
 		{
 		private:
 			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
@@ -804,151 +885,37 @@ namespace ktvr
 			}
 
 		public:
-			WithAsyncMethod_SetTrackerStateVectorNoReply()
+			WithAsyncMethod_PingDriverService()
 			{
 				grpc::Service::MarkMethodAsync(4);
 			}
 
-			~WithAsyncMethod_SetTrackerStateVectorNoReply() override
+			~WithAsyncMethod_PingDriverService() override
 			{
 				BaseClassMustBeDerivedFromService(this);
 			}
 
 			// disable synchronous version of this method
-			grpc::Status SetTrackerStateVectorNoReply(grpc::ServerContext* /*context*/,
-			                                          grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                          K2ResponseMessage* /*response*/) override
+			grpc::Status PingDriverService(grpc::ServerContext* /*context*/,
+			                               const google::protobuf::Empty* /*request*/,
+			                               PingRequest* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			void RequestSetTrackerStateVectorNoReply(grpc::ServerContext* context,
-			                                         grpc::ServerAsyncReader<K2ResponseMessage,
-			                                                                 ServiceRequest>* reader,
-			                                         grpc::CompletionQueue* new_call_cq,
-			                                         grpc::ServerCompletionQueue* notification_cq, void* tag)
+			void RequestPingDriverService(grpc::ServerContext* context, google::protobuf::Empty* request,
+			                              grpc::ServerAsyncResponseWriter<PingRequest>* response,
+			                              grpc::CompletionQueue* new_call_cq,
+			                              grpc::ServerCompletionQueue* notification_cq, void* tag)
 			{
-				grpc::Service::RequestAsyncClientStreaming(4, context, reader, new_call_cq, notification_cq, tag);
-			}
-		};
-
-		template <class BaseClass>
-		class WithAsyncMethod_UpdateTrackerVectorNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithAsyncMethod_UpdateTrackerVectorNoReply()
-			{
-				grpc::Service::MarkMethodAsync(5);
-			}
-
-			~WithAsyncMethod_UpdateTrackerVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status UpdateTrackerVectorNoReply(grpc::ServerContext* /*context*/,
-			                                        grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                        K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			void RequestUpdateTrackerVectorNoReply(grpc::ServerContext* context,
-			                                       grpc::ServerAsyncReader<K2ResponseMessage,
-			                                                               ServiceRequest>* reader,
-			                                       grpc::CompletionQueue* new_call_cq,
-			                                       grpc::ServerCompletionQueue* notification_cq, void* tag)
-			{
-				grpc::Service::RequestAsyncClientStreaming(5, context, reader, new_call_cq, notification_cq, tag);
-			}
-		};
-
-		template <class BaseClass>
-		class WithAsyncMethod_RefreshTrackerPoseVectorNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithAsyncMethod_RefreshTrackerPoseVectorNoReply()
-			{
-				grpc::Service::MarkMethodAsync(6);
-			}
-
-			~WithAsyncMethod_RefreshTrackerPoseVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status RefreshTrackerPoseVectorNoReply(grpc::ServerContext* /*context*/,
-			                                             grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                             K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			void RequestRefreshTrackerPoseVectorNoReply(grpc::ServerContext* context, grpc::ServerAsyncReader<
-				                                            K2ResponseMessage, ServiceRequest>* reader,
-			                                            grpc::CompletionQueue* new_call_cq,
-			                                            grpc::ServerCompletionQueue* notification_cq, void* tag)
-			{
-				grpc::Service::RequestAsyncClientStreaming(6, context, reader, new_call_cq, notification_cq, tag);
-			}
-		};
-
-		template <class BaseClass>
-		class WithAsyncMethod_RequestVRRestartNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithAsyncMethod_RequestVRRestartNoReply()
-			{
-				grpc::Service::MarkMethodAsync(7);
-			}
-
-			~WithAsyncMethod_RequestVRRestartNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status RequestVRRestartNoReply(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                                     K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			void RequestRequestVRRestartNoReply(grpc::ServerContext* context, ServiceRequest* request,
-			                                    grpc::ServerAsyncResponseWriter<
-				                                    K2ResponseMessage>* response, grpc::CompletionQueue* new_call_cq,
-			                                    grpc::ServerCompletionQueue* notification_cq, void* tag)
-			{
-				grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+				grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
 			}
 		};
 
 		using AsyncService = WithAsyncMethod_SetTrackerStateVector<WithAsyncMethod_UpdateTrackerVector<
-			WithAsyncMethod_RefreshTrackerPoseVector<WithAsyncMethod_RequestVRRestart<
-				WithAsyncMethod_SetTrackerStateVectorNoReply<WithAsyncMethod_UpdateTrackerVectorNoReply<
-					WithAsyncMethod_RefreshTrackerPoseVectorNoReply<WithAsyncMethod_RequestVRRestartNoReply<
-						Service>>>>>>>>;
+			WithAsyncMethod_RefreshTrackerPoseVector<WithAsyncMethod_RequestVRRestart<WithAsyncMethod_PingDriverService<
+				Service>>>>>;
 
 		template <class BaseClass>
 		class WithCallbackMethod_SetTrackerStateVector : public BaseClass
@@ -962,12 +929,12 @@ namespace ktvr
 			WithCallbackMethod_SetTrackerStateVector()
 			{
 				grpc::Service::MarkMethodCallback(0,
-				                                  new grpc::internal::CallbackClientStreamingHandler<ServiceRequest,
-					                                  K2ResponseMessage>(
+				                                  new grpc::internal::CallbackBidiHandler<
+					                                  ServiceRequest, Service_TrackerStatePair>(
 					                                  [this](
-					                                  grpc::CallbackServerContext* context, K2ResponseMessage* response)
+					                                  grpc::CallbackServerContext* context)
 					                                  {
-						                                  return this->SetTrackerStateVector(context, response);
+						                                  return this->SetTrackerStateVector(context);
 					                                  }));
 			}
 
@@ -978,15 +945,20 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status SetTrackerStateVector(grpc::ServerContext* /*context*/,
-			                                   grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                   K2ResponseMessage* /*response*/) override
+			                                   grpc::ServerReaderWriter<
+				                                   Service_TrackerStatePair, ServiceRequest>*
+			                                   /*stream*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			virtual grpc::ServerReadReactor<ServiceRequest>* SetTrackerStateVector(
-				grpc::CallbackServerContext* /*context*/, K2ResponseMessage* /*response*/) { return nullptr; }
+			virtual grpc::ServerBidiReactor<ServiceRequest, Service_TrackerStatePair>*
+			SetTrackerStateVector(
+				grpc::CallbackServerContext* /*context*/)
+			{
+				return nullptr;
+			}
 		};
 
 		template <class BaseClass>
@@ -1001,12 +973,12 @@ namespace ktvr
 			WithCallbackMethod_UpdateTrackerVector()
 			{
 				grpc::Service::MarkMethodCallback(1,
-				                                  new grpc::internal::CallbackClientStreamingHandler<ServiceRequest,
-					                                  K2ResponseMessage>(
+				                                  new grpc::internal::CallbackBidiHandler<
+					                                  ServiceRequest, Service_TrackerStatePair>(
 					                                  [this](
-					                                  grpc::CallbackServerContext* context, K2ResponseMessage* response)
+					                                  grpc::CallbackServerContext* context)
 					                                  {
-						                                  return this->UpdateTrackerVector(context, response);
+						                                  return this->UpdateTrackerVector(context);
 					                                  }));
 			}
 
@@ -1017,15 +989,20 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status UpdateTrackerVector(grpc::ServerContext* /*context*/,
-			                                 grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                 K2ResponseMessage* /*response*/) override
+			                                 grpc::ServerReaderWriter<
+				                                 Service_TrackerStatePair, ServiceRequest>* /*stream*/
+			) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			virtual grpc::ServerReadReactor<ServiceRequest>* UpdateTrackerVector(
-				grpc::CallbackServerContext* /*context*/, K2ResponseMessage* /*response*/) { return nullptr; }
+			virtual grpc::ServerBidiReactor<ServiceRequest, Service_TrackerStatePair>*
+			UpdateTrackerVector(
+				grpc::CallbackServerContext* /*context*/)
+			{
+				return nullptr;
+			}
 		};
 
 		template <class BaseClass>
@@ -1040,12 +1017,12 @@ namespace ktvr
 			WithCallbackMethod_RefreshTrackerPoseVector()
 			{
 				grpc::Service::MarkMethodCallback(2,
-				                                  new grpc::internal::CallbackClientStreamingHandler<ServiceRequest,
-					                                  K2ResponseMessage>(
+				                                  new grpc::internal::CallbackBidiHandler<
+					                                  ServiceRequest, Service_TrackerStatePair>(
 					                                  [this](
-					                                  grpc::CallbackServerContext* context, K2ResponseMessage* response)
+					                                  grpc::CallbackServerContext* context)
 					                                  {
-						                                  return this->RefreshTrackerPoseVector(context, response);
+						                                  return this->RefreshTrackerPoseVector(context);
 					                                  }));
 			}
 
@@ -1056,15 +1033,20 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status RefreshTrackerPoseVector(grpc::ServerContext* /*context*/,
-			                                      grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                      K2ResponseMessage* /*response*/) override
+			                                      grpc::ServerReaderWriter<
+				                                      Service_TrackerStatePair, ServiceRequest>*
+			                                      /*stream*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			virtual grpc::ServerReadReactor<ServiceRequest>* RefreshTrackerPoseVector(
-				grpc::CallbackServerContext* /*context*/, K2ResponseMessage* /*response*/) { return nullptr; }
+			virtual grpc::ServerBidiReactor<ServiceRequest, Service_TrackerStatePair>*
+			RefreshTrackerPoseVector(
+				grpc::CallbackServerContext* /*context*/)
+			{
+				return nullptr;
+			}
 		};
 
 		template <class BaseClass>
@@ -1080,21 +1062,22 @@ namespace ktvr
 			{
 				grpc::Service::MarkMethodCallback(3,
 				                                  new grpc::internal::CallbackUnaryHandler<
-					                                  ServiceRequest, K2ResponseMessage>(
+					                                  ServiceRequest, Service_TrackerStatePair>(
 					                                  [this](
 					                                  grpc::CallbackServerContext* context,
 					                                  const ServiceRequest* request,
-					                                  K2ResponseMessage* response)
+					                                  Service_TrackerStatePair* response)
 					                                  {
 						                                  return this->RequestVRRestart(context, request, response);
 					                                  }));
 			}
 
 			void SetMessageAllocatorFor_RequestVRRestart(
-				grpc::MessageAllocator<ServiceRequest, K2ResponseMessage>* allocator)
+				grpc::MessageAllocator<ServiceRequest, Service_TrackerStatePair>* allocator)
 			{
 				grpc::internal::MethodHandler* const handler = grpc::Service::GetHandler(3);
-				static_cast<grpc::internal::CallbackUnaryHandler<ServiceRequest, K2ResponseMessage>*>(handler)
+				static_cast<grpc::internal::CallbackUnaryHandler<
+						ServiceRequest, Service_TrackerStatePair>*>(handler)
 					->SetMessageAllocator(allocator);
 			}
 
@@ -1104,8 +1087,9 @@ namespace ktvr
 			}
 
 			// disable synchronous version of this method
-			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                              K2ResponseMessage* /*response*/) override
+			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/,
+			                              const ServiceRequest* /*request*/,
+			                              Service_TrackerStatePair* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
@@ -1113,11 +1097,11 @@ namespace ktvr
 
 			virtual grpc::ServerUnaryReactor* RequestVRRestart(
 				grpc::CallbackServerContext* /*context*/, const ServiceRequest* /*request*/,
-				K2ResponseMessage* /*response*/) { return nullptr; }
+				Service_TrackerStatePair* /*response*/) { return nullptr; }
 		};
 
 		template <class BaseClass>
-		class WithCallbackMethod_SetTrackerStateVectorNoReply : public BaseClass
+		class WithCallbackMethod_PingDriverService : public BaseClass
 		{
 		private:
 			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
@@ -1125,170 +1109,51 @@ namespace ktvr
 			}
 
 		public:
-			WithCallbackMethod_SetTrackerStateVectorNoReply()
+			WithCallbackMethod_PingDriverService()
 			{
 				grpc::Service::MarkMethodCallback(4,
-				                                  new grpc::internal::CallbackClientStreamingHandler<ServiceRequest,
-					                                  K2ResponseMessage>(
-					                                  [this](
-					                                  grpc::CallbackServerContext* context, K2ResponseMessage* response)
-					                                  {
-						                                  return this->SetTrackerStateVectorNoReply(context, response);
-					                                  }));
-			}
-
-			~WithCallbackMethod_SetTrackerStateVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status SetTrackerStateVectorNoReply(grpc::ServerContext* /*context*/,
-			                                          grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                          K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			virtual grpc::ServerReadReactor<ServiceRequest>* SetTrackerStateVectorNoReply(
-				grpc::CallbackServerContext* /*context*/, K2ResponseMessage* /*response*/) { return nullptr; }
-		};
-
-		template <class BaseClass>
-		class WithCallbackMethod_UpdateTrackerVectorNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithCallbackMethod_UpdateTrackerVectorNoReply()
-			{
-				grpc::Service::MarkMethodCallback(5,
-				                                  new grpc::internal::CallbackClientStreamingHandler<ServiceRequest,
-					                                  K2ResponseMessage>(
-					                                  [this](
-					                                  grpc::CallbackServerContext* context, K2ResponseMessage* response)
-					                                  {
-						                                  return this->UpdateTrackerVectorNoReply(context, response);
-					                                  }));
-			}
-
-			~WithCallbackMethod_UpdateTrackerVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status UpdateTrackerVectorNoReply(grpc::ServerContext* /*context*/,
-			                                        grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                        K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			virtual grpc::ServerReadReactor<ServiceRequest>* UpdateTrackerVectorNoReply(
-				grpc::CallbackServerContext* /*context*/, K2ResponseMessage* /*response*/) { return nullptr; }
-		};
-
-		template <class BaseClass>
-		class WithCallbackMethod_RefreshTrackerPoseVectorNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithCallbackMethod_RefreshTrackerPoseVectorNoReply()
-			{
-				grpc::Service::MarkMethodCallback(6,
-				                                  new grpc::internal::CallbackClientStreamingHandler<ServiceRequest,
-					                                  K2ResponseMessage>(
-					                                  [this](
-					                                  grpc::CallbackServerContext* context, K2ResponseMessage* response)
-					                                  {
-						                                  return this->RefreshTrackerPoseVectorNoReply(
-							                                  context, response);
-					                                  }));
-			}
-
-			~WithCallbackMethod_RefreshTrackerPoseVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status RefreshTrackerPoseVectorNoReply(grpc::ServerContext* /*context*/,
-			                                             grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                             K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			virtual grpc::ServerReadReactor<ServiceRequest>* RefreshTrackerPoseVectorNoReply(
-				grpc::CallbackServerContext* /*context*/, K2ResponseMessage* /*response*/) { return nullptr; }
-		};
-
-		template <class BaseClass>
-		class WithCallbackMethod_RequestVRRestartNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithCallbackMethod_RequestVRRestartNoReply()
-			{
-				grpc::Service::MarkMethodCallback(7,
 				                                  new grpc::internal::CallbackUnaryHandler<
-					                                  ServiceRequest, K2ResponseMessage>(
+					                                  google::protobuf::Empty, PingRequest>(
 					                                  [this](
 					                                  grpc::CallbackServerContext* context,
-					                                  const ServiceRequest* request,
-					                                  K2ResponseMessage* response)
+					                                  const google::protobuf::Empty* request,
+					                                  PingRequest* response)
 					                                  {
-						                                  return this->RequestVRRestartNoReply(
-							                                  context, request, response);
+						                                  return this->PingDriverService(context, request, response);
 					                                  }));
 			}
 
-			void SetMessageAllocatorFor_RequestVRRestartNoReply(
-				grpc::MessageAllocator<ServiceRequest, K2ResponseMessage>* allocator)
+			void SetMessageAllocatorFor_PingDriverService(
+				grpc::MessageAllocator<google::protobuf::Empty, PingRequest>* allocator)
 			{
-				grpc::internal::MethodHandler* const handler = grpc::Service::GetHandler(7);
-				static_cast<grpc::internal::CallbackUnaryHandler<ServiceRequest, K2ResponseMessage>*>(handler)
+				grpc::internal::MethodHandler* const handler = grpc::Service::GetHandler(4);
+				static_cast<grpc::internal::CallbackUnaryHandler<google::protobuf::Empty, PingRequest>*>(
+						handler)
 					->SetMessageAllocator(allocator);
 			}
 
-			~WithCallbackMethod_RequestVRRestartNoReply() override
+			~WithCallbackMethod_PingDriverService() override
 			{
 				BaseClassMustBeDerivedFromService(this);
 			}
 
 			// disable synchronous version of this method
-			grpc::Status RequestVRRestartNoReply(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                                     K2ResponseMessage* /*response*/) override
+			grpc::Status PingDriverService(grpc::ServerContext* /*context*/,
+			                               const google::protobuf::Empty* /*request*/,
+			                               PingRequest* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			virtual grpc::ServerUnaryReactor* RequestVRRestartNoReply(
-				grpc::CallbackServerContext* /*context*/, const ServiceRequest* /*request*/,
-				K2ResponseMessage* /*response*/) { return nullptr; }
+			virtual grpc::ServerUnaryReactor* PingDriverService(
+				grpc::CallbackServerContext* /*context*/, const google::protobuf::Empty* /*request*/,
+				PingRequest* /*response*/) { return nullptr; }
 		};
 
 		using CallbackService = WithCallbackMethod_SetTrackerStateVector<WithCallbackMethod_UpdateTrackerVector<
 			WithCallbackMethod_RefreshTrackerPoseVector<WithCallbackMethod_RequestVRRestart<
-				WithCallbackMethod_SetTrackerStateVectorNoReply<WithCallbackMethod_UpdateTrackerVectorNoReply<
-					WithCallbackMethod_RefreshTrackerPoseVectorNoReply<WithCallbackMethod_RequestVRRestartNoReply<
-						Service>>>>>>>>;
+				WithCallbackMethod_PingDriverService<Service>>>>>;
 		using ExperimentalCallbackService = CallbackService;
 
 		template <class BaseClass>
@@ -1312,8 +1177,9 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status SetTrackerStateVector(grpc::ServerContext* /*context*/,
-			                                   grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                   K2ResponseMessage* /*response*/) override
+			                                   grpc::ServerReaderWriter<
+				                                   Service_TrackerStatePair, ServiceRequest>*
+			                                   /*stream*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
@@ -1341,8 +1207,9 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status UpdateTrackerVector(grpc::ServerContext* /*context*/,
-			                                 grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                 K2ResponseMessage* /*response*/) override
+			                                 grpc::ServerReaderWriter<
+				                                 Service_TrackerStatePair, ServiceRequest>* /*stream*/
+			) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
@@ -1370,8 +1237,9 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status RefreshTrackerPoseVector(grpc::ServerContext* /*context*/,
-			                                      grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                      K2ResponseMessage* /*response*/) override
+			                                      grpc::ServerReaderWriter<
+				                                      Service_TrackerStatePair, ServiceRequest>*
+			                                      /*stream*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
@@ -1398,8 +1266,9 @@ namespace ktvr
 			}
 
 			// disable synchronous version of this method
-			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                              K2ResponseMessage* /*response*/) override
+			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/,
+			                              const ServiceRequest* /*request*/,
+			                              Service_TrackerStatePair* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
@@ -1407,7 +1276,7 @@ namespace ktvr
 		};
 
 		template <class BaseClass>
-		class WithGenericMethod_SetTrackerStateVectorNoReply : public BaseClass
+		class WithGenericMethod_PingDriverService : public BaseClass
 		{
 		private:
 			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
@@ -1415,106 +1284,20 @@ namespace ktvr
 			}
 
 		public:
-			WithGenericMethod_SetTrackerStateVectorNoReply()
+			WithGenericMethod_PingDriverService()
 			{
 				grpc::Service::MarkMethodGeneric(4);
 			}
 
-			~WithGenericMethod_SetTrackerStateVectorNoReply() override
+			~WithGenericMethod_PingDriverService() override
 			{
 				BaseClassMustBeDerivedFromService(this);
 			}
 
 			// disable synchronous version of this method
-			grpc::Status SetTrackerStateVectorNoReply(grpc::ServerContext* /*context*/,
-			                                          grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                          K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-		};
-
-		template <class BaseClass>
-		class WithGenericMethod_UpdateTrackerVectorNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithGenericMethod_UpdateTrackerVectorNoReply()
-			{
-				grpc::Service::MarkMethodGeneric(5);
-			}
-
-			~WithGenericMethod_UpdateTrackerVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status UpdateTrackerVectorNoReply(grpc::ServerContext* /*context*/,
-			                                        grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                        K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-		};
-
-		template <class BaseClass>
-		class WithGenericMethod_RefreshTrackerPoseVectorNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithGenericMethod_RefreshTrackerPoseVectorNoReply()
-			{
-				grpc::Service::MarkMethodGeneric(6);
-			}
-
-			~WithGenericMethod_RefreshTrackerPoseVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status RefreshTrackerPoseVectorNoReply(grpc::ServerContext* /*context*/,
-			                                             grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                             K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-		};
-
-		template <class BaseClass>
-		class WithGenericMethod_RequestVRRestartNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithGenericMethod_RequestVRRestartNoReply()
-			{
-				grpc::Service::MarkMethodGeneric(7);
-			}
-
-			~WithGenericMethod_RequestVRRestartNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status RequestVRRestartNoReply(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                                     K2ResponseMessage* /*response*/) override
+			grpc::Status PingDriverService(grpc::ServerContext* /*context*/,
+			                               const google::protobuf::Empty* /*request*/,
+			                               PingRequest* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
@@ -1542,18 +1325,20 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status SetTrackerStateVector(grpc::ServerContext* /*context*/,
-			                                   grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                   K2ResponseMessage* /*response*/) override
+			                                   grpc::ServerReaderWriter<
+				                                   Service_TrackerStatePair, ServiceRequest>*
+			                                   /*stream*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			void RequestSetTrackerStateVector(grpc::ServerContext* context, grpc::ServerAsyncReader<grpc::ByteBuffer,
-				                                  grpc::ByteBuffer>* reader, grpc::CompletionQueue* new_call_cq,
+			void RequestSetTrackerStateVector(grpc::ServerContext* context,
+			                                  grpc::ServerAsyncReaderWriter<grpc::ByteBuffer, grpc::ByteBuffer>*
+			                                  stream, grpc::CompletionQueue* new_call_cq,
 			                                  grpc::ServerCompletionQueue* notification_cq, void* tag)
 			{
-				grpc::Service::RequestAsyncClientStreaming(0, context, reader, new_call_cq, notification_cq, tag);
+				grpc::Service::RequestAsyncBidiStreaming(0, context, stream, new_call_cq, notification_cq, tag);
 			}
 		};
 
@@ -1578,18 +1363,20 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status UpdateTrackerVector(grpc::ServerContext* /*context*/,
-			                                 grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                 K2ResponseMessage* /*response*/) override
+			                                 grpc::ServerReaderWriter<
+				                                 Service_TrackerStatePair, ServiceRequest>* /*stream*/
+			) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			void RequestUpdateTrackerVector(grpc::ServerContext* context, grpc::ServerAsyncReader<grpc::ByteBuffer,
-				                                grpc::ByteBuffer>* reader, grpc::CompletionQueue* new_call_cq,
+			void RequestUpdateTrackerVector(grpc::ServerContext* context,
+			                                grpc::ServerAsyncReaderWriter<grpc::ByteBuffer, grpc::ByteBuffer>*
+			                                stream, grpc::CompletionQueue* new_call_cq,
 			                                grpc::ServerCompletionQueue* notification_cq, void* tag)
 			{
-				grpc::Service::RequestAsyncClientStreaming(1, context, reader, new_call_cq, notification_cq, tag);
+				grpc::Service::RequestAsyncBidiStreaming(1, context, stream, new_call_cq, notification_cq, tag);
 			}
 		};
 
@@ -1614,18 +1401,20 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status RefreshTrackerPoseVector(grpc::ServerContext* /*context*/,
-			                                      grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                      K2ResponseMessage* /*response*/) override
+			                                      grpc::ServerReaderWriter<
+				                                      Service_TrackerStatePair, ServiceRequest>*
+			                                      /*stream*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			void RequestRefreshTrackerPoseVector(grpc::ServerContext* context, grpc::ServerAsyncReader<grpc::ByteBuffer,
-				                                     grpc::ByteBuffer>* reader, grpc::CompletionQueue* new_call_cq,
+			void RequestRefreshTrackerPoseVector(grpc::ServerContext* context,
+			                                     grpc::ServerAsyncReaderWriter<grpc::ByteBuffer, grpc::ByteBuffer>
+			                                     * stream, grpc::CompletionQueue* new_call_cq,
 			                                     grpc::ServerCompletionQueue* notification_cq, void* tag)
 			{
-				grpc::Service::RequestAsyncClientStreaming(2, context, reader, new_call_cq, notification_cq, tag);
+				grpc::Service::RequestAsyncBidiStreaming(2, context, stream, new_call_cq, notification_cq, tag);
 			}
 		};
 
@@ -1649,16 +1438,17 @@ namespace ktvr
 			}
 
 			// disable synchronous version of this method
-			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                              K2ResponseMessage* /*response*/) override
+			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/,
+			                              const ServiceRequest* /*request*/,
+			                              Service_TrackerStatePair* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
 			void RequestRequestVRRestart(grpc::ServerContext* context, grpc::ByteBuffer* request,
-			                             grpc::ServerAsyncResponseWriter<
-				                             grpc::ByteBuffer>* response, grpc::CompletionQueue* new_call_cq,
+			                             grpc::ServerAsyncResponseWriter<grpc::ByteBuffer>* response,
+			                             grpc::CompletionQueue* new_call_cq,
 			                             grpc::ServerCompletionQueue* notification_cq, void* tag)
 			{
 				grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
@@ -1666,7 +1456,7 @@ namespace ktvr
 		};
 
 		template <class BaseClass>
-		class WithRawMethod_SetTrackerStateVectorNoReply : public BaseClass
+		class WithRawMethod_PingDriverService : public BaseClass
 		{
 		private:
 			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
@@ -1674,144 +1464,31 @@ namespace ktvr
 			}
 
 		public:
-			WithRawMethod_SetTrackerStateVectorNoReply()
+			WithRawMethod_PingDriverService()
 			{
 				grpc::Service::MarkMethodRaw(4);
 			}
 
-			~WithRawMethod_SetTrackerStateVectorNoReply() override
+			~WithRawMethod_PingDriverService() override
 			{
 				BaseClassMustBeDerivedFromService(this);
 			}
 
 			// disable synchronous version of this method
-			grpc::Status SetTrackerStateVectorNoReply(grpc::ServerContext* /*context*/,
-			                                          grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                          K2ResponseMessage* /*response*/) override
+			grpc::Status PingDriverService(grpc::ServerContext* /*context*/,
+			                               const google::protobuf::Empty* /*request*/,
+			                               PingRequest* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			void RequestSetTrackerStateVectorNoReply(grpc::ServerContext* context,
-			                                         grpc::ServerAsyncReader<grpc::ByteBuffer,
-			                                                                 grpc::ByteBuffer>* reader,
-			                                         grpc::CompletionQueue* new_call_cq,
-			                                         grpc::ServerCompletionQueue* notification_cq, void* tag)
+			void RequestPingDriverService(grpc::ServerContext* context, grpc::ByteBuffer* request,
+			                              grpc::ServerAsyncResponseWriter<grpc::ByteBuffer>* response,
+			                              grpc::CompletionQueue* new_call_cq,
+			                              grpc::ServerCompletionQueue* notification_cq, void* tag)
 			{
-				grpc::Service::RequestAsyncClientStreaming(4, context, reader, new_call_cq, notification_cq, tag);
-			}
-		};
-
-		template <class BaseClass>
-		class WithRawMethod_UpdateTrackerVectorNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithRawMethod_UpdateTrackerVectorNoReply()
-			{
-				grpc::Service::MarkMethodRaw(5);
-			}
-
-			~WithRawMethod_UpdateTrackerVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status UpdateTrackerVectorNoReply(grpc::ServerContext* /*context*/,
-			                                        grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                        K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			void RequestUpdateTrackerVectorNoReply(grpc::ServerContext* context,
-			                                       grpc::ServerAsyncReader<grpc::ByteBuffer,
-			                                                               grpc::ByteBuffer>* reader,
-			                                       grpc::CompletionQueue* new_call_cq,
-			                                       grpc::ServerCompletionQueue* notification_cq, void* tag)
-			{
-				grpc::Service::RequestAsyncClientStreaming(5, context, reader, new_call_cq, notification_cq, tag);
-			}
-		};
-
-		template <class BaseClass>
-		class WithRawMethod_RefreshTrackerPoseVectorNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithRawMethod_RefreshTrackerPoseVectorNoReply()
-			{
-				grpc::Service::MarkMethodRaw(6);
-			}
-
-			~WithRawMethod_RefreshTrackerPoseVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status RefreshTrackerPoseVectorNoReply(grpc::ServerContext* /*context*/,
-			                                             grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                             K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			void RequestRefreshTrackerPoseVectorNoReply(grpc::ServerContext* context,
-			                                            grpc::ServerAsyncReader<grpc::ByteBuffer,
-				                                            grpc::ByteBuffer>* reader,
-			                                            grpc::CompletionQueue* new_call_cq,
-			                                            grpc::ServerCompletionQueue* notification_cq, void* tag)
-			{
-				grpc::Service::RequestAsyncClientStreaming(6, context, reader, new_call_cq, notification_cq, tag);
-			}
-		};
-
-		template <class BaseClass>
-		class WithRawMethod_RequestVRRestartNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithRawMethod_RequestVRRestartNoReply()
-			{
-				grpc::Service::MarkMethodRaw(7);
-			}
-
-			~WithRawMethod_RequestVRRestartNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status RequestVRRestartNoReply(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                                     K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			void RequestRequestVRRestartNoReply(grpc::ServerContext* context, grpc::ByteBuffer* request,
-			                                    grpc::ServerAsyncResponseWriter<
-				                                    grpc::ByteBuffer>* response, grpc::CompletionQueue* new_call_cq,
-			                                    grpc::ServerCompletionQueue* notification_cq, void* tag)
-			{
-				grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+				grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
 			}
 		};
 
@@ -1827,14 +1504,12 @@ namespace ktvr
 			WithRawCallbackMethod_SetTrackerStateVector()
 			{
 				grpc::Service::MarkMethodRawCallback(0,
-				                                     new grpc::internal::CallbackClientStreamingHandler<
-					                                     grpc::ByteBuffer,
-					                                     grpc::ByteBuffer>(
+				                                     new grpc::internal::CallbackBidiHandler<
+					                                     grpc::ByteBuffer, grpc::ByteBuffer>(
 					                                     [this](
-					                                     grpc::CallbackServerContext* context,
-					                                     grpc::ByteBuffer* response)
+					                                     grpc::CallbackServerContext* context)
 					                                     {
-						                                     return this->SetTrackerStateVector(context, response);
+						                                     return this->SetTrackerStateVector(context);
 					                                     }));
 			}
 
@@ -1845,15 +1520,19 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status SetTrackerStateVector(grpc::ServerContext* /*context*/,
-			                                   grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                   K2ResponseMessage* /*response*/) override
+			                                   grpc::ServerReaderWriter<
+				                                   Service_TrackerStatePair, ServiceRequest>*
+			                                   /*stream*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			virtual grpc::ServerReadReactor<grpc::ByteBuffer>* SetTrackerStateVector(
-				grpc::CallbackServerContext* /*context*/, grpc::ByteBuffer* /*response*/) { return nullptr; }
+			virtual grpc::ServerBidiReactor<grpc::ByteBuffer, grpc::ByteBuffer>* SetTrackerStateVector(
+				grpc::CallbackServerContext* /*context*/)
+			{
+				return nullptr;
+			}
 		};
 
 		template <class BaseClass>
@@ -1868,14 +1547,12 @@ namespace ktvr
 			WithRawCallbackMethod_UpdateTrackerVector()
 			{
 				grpc::Service::MarkMethodRawCallback(1,
-				                                     new grpc::internal::CallbackClientStreamingHandler<
-					                                     grpc::ByteBuffer,
-					                                     grpc::ByteBuffer>(
+				                                     new grpc::internal::CallbackBidiHandler<
+					                                     grpc::ByteBuffer, grpc::ByteBuffer>(
 					                                     [this](
-					                                     grpc::CallbackServerContext* context,
-					                                     grpc::ByteBuffer* response)
+					                                     grpc::CallbackServerContext* context)
 					                                     {
-						                                     return this->UpdateTrackerVector(context, response);
+						                                     return this->UpdateTrackerVector(context);
 					                                     }));
 			}
 
@@ -1886,15 +1563,19 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status UpdateTrackerVector(grpc::ServerContext* /*context*/,
-			                                 grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                 K2ResponseMessage* /*response*/) override
+			                                 grpc::ServerReaderWriter<
+				                                 Service_TrackerStatePair, ServiceRequest>* /*stream*/
+			) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			virtual grpc::ServerReadReactor<grpc::ByteBuffer>* UpdateTrackerVector(
-				grpc::CallbackServerContext* /*context*/, grpc::ByteBuffer* /*response*/) { return nullptr; }
+			virtual grpc::ServerBidiReactor<grpc::ByteBuffer, grpc::ByteBuffer>* UpdateTrackerVector(
+				grpc::CallbackServerContext* /*context*/)
+			{
+				return nullptr;
+			}
 		};
 
 		template <class BaseClass>
@@ -1909,14 +1590,12 @@ namespace ktvr
 			WithRawCallbackMethod_RefreshTrackerPoseVector()
 			{
 				grpc::Service::MarkMethodRawCallback(2,
-				                                     new grpc::internal::CallbackClientStreamingHandler<
-					                                     grpc::ByteBuffer,
-					                                     grpc::ByteBuffer>(
+				                                     new grpc::internal::CallbackBidiHandler<
+					                                     grpc::ByteBuffer, grpc::ByteBuffer>(
 					                                     [this](
-					                                     grpc::CallbackServerContext* context,
-					                                     grpc::ByteBuffer* response)
+					                                     grpc::CallbackServerContext* context)
 					                                     {
-						                                     return this->RefreshTrackerPoseVector(context, response);
+						                                     return this->RefreshTrackerPoseVector(context);
 					                                     }));
 			}
 
@@ -1927,15 +1606,19 @@ namespace ktvr
 
 			// disable synchronous version of this method
 			grpc::Status RefreshTrackerPoseVector(grpc::ServerContext* /*context*/,
-			                                      grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                      K2ResponseMessage* /*response*/) override
+			                                      grpc::ServerReaderWriter<
+				                                      Service_TrackerStatePair, ServiceRequest>*
+			                                      /*stream*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			virtual grpc::ServerReadReactor<grpc::ByteBuffer>* RefreshTrackerPoseVector(
-				grpc::CallbackServerContext* /*context*/, grpc::ByteBuffer* /*response*/) { return nullptr; }
+			virtual grpc::ServerBidiReactor<grpc::ByteBuffer, grpc::ByteBuffer>* RefreshTrackerPoseVector(
+				grpc::CallbackServerContext* /*context*/)
+			{
+				return nullptr;
+			}
 		};
 
 		template <class BaseClass>
@@ -1957,7 +1640,8 @@ namespace ktvr
 					                                     const grpc::ByteBuffer* request,
 					                                     grpc::ByteBuffer* response)
 					                                     {
-						                                     return this->RequestVRRestart(context, request, response);
+						                                     return this->
+							                                     RequestVRRestart(context, request, response);
 					                                     }));
 			}
 
@@ -1967,8 +1651,9 @@ namespace ktvr
 			}
 
 			// disable synchronous version of this method
-			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                              K2ResponseMessage* /*response*/) override
+			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/,
+			                              const ServiceRequest* /*request*/,
+			                              Service_TrackerStatePair* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
@@ -1980,7 +1665,7 @@ namespace ktvr
 		};
 
 		template <class BaseClass>
-		class WithRawCallbackMethod_SetTrackerStateVectorNoReply : public BaseClass
+		class WithRawCallbackMethod_PingDriverService : public BaseClass
 		{
 		private:
 			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
@@ -1988,134 +1673,9 @@ namespace ktvr
 			}
 
 		public:
-			WithRawCallbackMethod_SetTrackerStateVectorNoReply()
+			WithRawCallbackMethod_PingDriverService()
 			{
 				grpc::Service::MarkMethodRawCallback(4,
-				                                     new grpc::internal::CallbackClientStreamingHandler<
-					                                     grpc::ByteBuffer,
-					                                     grpc::ByteBuffer>(
-					                                     [this](
-					                                     grpc::CallbackServerContext* context,
-					                                     grpc::ByteBuffer* response)
-					                                     {
-						                                     return this->SetTrackerStateVectorNoReply(
-							                                     context, response);
-					                                     }));
-			}
-
-			~WithRawCallbackMethod_SetTrackerStateVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status SetTrackerStateVectorNoReply(grpc::ServerContext* /*context*/,
-			                                          grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                          K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			virtual grpc::ServerReadReactor<grpc::ByteBuffer>* SetTrackerStateVectorNoReply(
-				grpc::CallbackServerContext* /*context*/, grpc::ByteBuffer* /*response*/) { return nullptr; }
-		};
-
-		template <class BaseClass>
-		class WithRawCallbackMethod_UpdateTrackerVectorNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithRawCallbackMethod_UpdateTrackerVectorNoReply()
-			{
-				grpc::Service::MarkMethodRawCallback(5,
-				                                     new grpc::internal::CallbackClientStreamingHandler<
-					                                     grpc::ByteBuffer,
-					                                     grpc::ByteBuffer>(
-					                                     [this](
-					                                     grpc::CallbackServerContext* context,
-					                                     grpc::ByteBuffer* response)
-					                                     {
-						                                     return this->UpdateTrackerVectorNoReply(context, response);
-					                                     }));
-			}
-
-			~WithRawCallbackMethod_UpdateTrackerVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status UpdateTrackerVectorNoReply(grpc::ServerContext* /*context*/,
-			                                        grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                        K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			virtual grpc::ServerReadReactor<grpc::ByteBuffer>* UpdateTrackerVectorNoReply(
-				grpc::CallbackServerContext* /*context*/, grpc::ByteBuffer* /*response*/) { return nullptr; }
-		};
-
-		template <class BaseClass>
-		class WithRawCallbackMethod_RefreshTrackerPoseVectorNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithRawCallbackMethod_RefreshTrackerPoseVectorNoReply()
-			{
-				grpc::Service::MarkMethodRawCallback(6,
-				                                     new grpc::internal::CallbackClientStreamingHandler<
-					                                     grpc::ByteBuffer,
-					                                     grpc::ByteBuffer>(
-					                                     [this](
-					                                     grpc::CallbackServerContext* context,
-					                                     grpc::ByteBuffer* response)
-					                                     {
-						                                     return this->RefreshTrackerPoseVectorNoReply(
-							                                     context, response);
-					                                     }));
-			}
-
-			~WithRawCallbackMethod_RefreshTrackerPoseVectorNoReply() override
-			{
-				BaseClassMustBeDerivedFromService(this);
-			}
-
-			// disable synchronous version of this method
-			grpc::Status RefreshTrackerPoseVectorNoReply(grpc::ServerContext* /*context*/,
-			                                             grpc::ServerReader<ServiceRequest>* /*reader*/,
-			                                             K2ResponseMessage* /*response*/) override
-			{
-				abort();
-				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
-			}
-
-			virtual grpc::ServerReadReactor<grpc::ByteBuffer>* RefreshTrackerPoseVectorNoReply(
-				grpc::CallbackServerContext* /*context*/, grpc::ByteBuffer* /*response*/) { return nullptr; }
-		};
-
-		template <class BaseClass>
-		class WithRawCallbackMethod_RequestVRRestartNoReply : public BaseClass
-		{
-		private:
-			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
-			{
-			}
-
-		public:
-			WithRawCallbackMethod_RequestVRRestartNoReply()
-			{
-				grpc::Service::MarkMethodRawCallback(7,
 				                                     new grpc::internal::CallbackUnaryHandler<
 					                                     grpc::ByteBuffer, grpc::ByteBuffer>(
 					                                     [this](
@@ -2123,25 +1683,26 @@ namespace ktvr
 					                                     const grpc::ByteBuffer* request,
 					                                     grpc::ByteBuffer* response)
 					                                     {
-						                                     return this->RequestVRRestartNoReply(
+						                                     return this->PingDriverService(
 							                                     context, request, response);
 					                                     }));
 			}
 
-			~WithRawCallbackMethod_RequestVRRestartNoReply() override
+			~WithRawCallbackMethod_PingDriverService() override
 			{
 				BaseClassMustBeDerivedFromService(this);
 			}
 
 			// disable synchronous version of this method
-			grpc::Status RequestVRRestartNoReply(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                                     K2ResponseMessage* /*response*/) override
+			grpc::Status PingDriverService(grpc::ServerContext* /*context*/,
+			                               const google::protobuf::Empty* /*request*/,
+			                               PingRequest* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
-			virtual grpc::ServerUnaryReactor* RequestVRRestartNoReply(
+			virtual grpc::ServerUnaryReactor* PingDriverService(
 				grpc::CallbackServerContext* /*context*/, const grpc::ByteBuffer* /*request*/,
 				grpc::ByteBuffer* /*response*/) { return nullptr; }
 		};
@@ -2159,10 +1720,11 @@ namespace ktvr
 			{
 				grpc::Service::MarkMethodStreamed(3,
 				                                  new grpc::internal::StreamedUnaryHandler<
-					                                  ServiceRequest, K2ResponseMessage>(
+					                                  ServiceRequest, Service_TrackerStatePair>(
 					                                  [this](grpc::ServerContext* context,
 					                                         grpc::ServerUnaryStreamer<
-						                                         ServiceRequest, K2ResponseMessage>* streamer)
+						                                         ServiceRequest,
+						                                         Service_TrackerStatePair>* streamer)
 					                                  {
 						                                  return this->StreamedRequestVRRestart(context,
 							                                  streamer);
@@ -2175,21 +1737,24 @@ namespace ktvr
 			}
 
 			// disable regular version of this method
-			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                              K2ResponseMessage* /*response*/) override
+			grpc::Status RequestVRRestart(grpc::ServerContext* /*context*/,
+			                              const ServiceRequest* /*request*/,
+			                              Service_TrackerStatePair* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
 			// replace default version of method with streamed unary
-			virtual grpc::Status StreamedRequestVRRestart(grpc::ServerContext* context, grpc::ServerUnaryStreamer<
-				                                              ServiceRequest, K2ResponseMessage>* server_unary_streamer)
-			= 0;
+			virtual grpc::Status StreamedRequestVRRestart(grpc::ServerContext* context,
+			                                              grpc::ServerUnaryStreamer<
+				                                              ServiceRequest,
+				                                              Service_TrackerStatePair>*
+			                                              server_unary_streamer) = 0;
 		};
 
 		template <class BaseClass>
-		class WithStreamedUnaryMethod_RequestVRRestartNoReply : public BaseClass
+		class WithStreamedUnaryMethod_PingDriverService : public BaseClass
 		{
 		private:
 			void BaseClassMustBeDerivedFromService(const Service* /*service*/)
@@ -2197,45 +1762,47 @@ namespace ktvr
 			}
 
 		public:
-			WithStreamedUnaryMethod_RequestVRRestartNoReply()
+			WithStreamedUnaryMethod_PingDriverService()
 			{
-				grpc::Service::MarkMethodStreamed(7,
+				grpc::Service::MarkMethodStreamed(4,
 				                                  new grpc::internal::StreamedUnaryHandler<
-					                                  ServiceRequest, K2ResponseMessage>(
+					                                  google::protobuf::Empty, PingRequest>(
 					                                  [this](grpc::ServerContext* context,
 					                                         grpc::ServerUnaryStreamer<
-						                                         ServiceRequest, K2ResponseMessage>* streamer)
+						                                         google::protobuf::Empty, PingRequest>*
+					                                         streamer)
 					                                  {
-						                                  return this->StreamedRequestVRRestartNoReply(context,
+						                                  return this->StreamedPingDriverService(context,
 							                                  streamer);
 					                                  }));
 			}
 
-			~WithStreamedUnaryMethod_RequestVRRestartNoReply() override
+			~WithStreamedUnaryMethod_PingDriverService() override
 			{
 				BaseClassMustBeDerivedFromService(this);
 			}
 
 			// disable regular version of this method
-			grpc::Status RequestVRRestartNoReply(grpc::ServerContext* /*context*/, const ServiceRequest* /*request*/,
-			                                     K2ResponseMessage* /*response*/) override
+			grpc::Status PingDriverService(grpc::ServerContext* /*context*/,
+			                               const google::protobuf::Empty* /*request*/,
+			                               PingRequest* /*response*/) override
 			{
 				abort();
 				return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "");
 			}
 
 			// replace default version of method with streamed unary
-			virtual grpc::Status StreamedRequestVRRestartNoReply(grpc::ServerContext* context,
-			                                                     grpc::ServerUnaryStreamer<
-				                                                     ServiceRequest, K2ResponseMessage>*
-			                                                     server_unary_streamer) = 0;
+			virtual grpc::Status StreamedPingDriverService(grpc::ServerContext* context,
+			                                               grpc::ServerUnaryStreamer<
+				                                               google::protobuf::Empty, PingRequest>*
+			                                               server_unary_streamer) = 0;
 		};
 
-		using StreamedUnaryService = WithStreamedUnaryMethod_RequestVRRestart<
-			WithStreamedUnaryMethod_RequestVRRestartNoReply<Service>>;
+		using StreamedUnaryService = WithStreamedUnaryMethod_RequestVRRestart<WithStreamedUnaryMethod_PingDriverService<
+			Service>>;
 		using SplitStreamedService = Service;
-		using StreamedService = WithStreamedUnaryMethod_RequestVRRestart<WithStreamedUnaryMethod_RequestVRRestartNoReply
-			<Service>>;
+		using StreamedService = WithStreamedUnaryMethod_RequestVRRestart<WithStreamedUnaryMethod_PingDriverService<
+			Service>>;
 	};
 } // namespace ktvr
 

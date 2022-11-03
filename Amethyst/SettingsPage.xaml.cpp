@@ -1193,7 +1193,7 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 		menuTrackerToggleItem.Click(
 			[&, index, tracker_map, current_tracker, this]
 		(const Windows::Foundation::IInspectable& sender, const RoutedEventArgs& e)
-		-> Windows::Foundation::IAsyncAction
+			-> Windows::Foundation::IAsyncAction
 			{
 				// Notify of the setup end
 				k2app::shared::settings::settings_localInitFinished = false;
@@ -1219,8 +1219,8 @@ void Amethyst::implementation::SettingsPage::TrackerConfigButton_Click(
 
 							// Make actual changes
 							if (trackerState && k2app::interfacing::K2AppTrackersInitialized)
-								ktvr::set_tracker_state<false>(
-									k2app::K2Settings.K2TrackersVector.at(_t).base_tracker, false);
+								ktvr::update_tracker_state_vector<false>(
+									{{k2app::K2Settings.K2TrackersVector.at(_t).base_tracker, false}});
 
 							// Sleep on UI's background
 							apartment_context _ui_thread;
@@ -1921,9 +1921,9 @@ Windows::Foundation::IAsyncAction Amethyst::implementation::SettingsPage::AutoSt
 }
 
 
-void winrt::Amethyst::implementation::SettingsPage::ToggleFlipTeachingTip_Closed(
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTip& sender,
-	const winrt::Microsoft::UI::Xaml::Controls::TeachingTipClosedEventArgs& args)
+void Amethyst::implementation::SettingsPage::ToggleFlipTeachingTip_Closed(
+	const Controls::TeachingTip& sender,
+	const Controls::TeachingTipClosedEventArgs& args)
 {
 	k2app::shared::main::interfaceBlockerGrid->IsHitTestVisible(false);
 }
