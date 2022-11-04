@@ -309,12 +309,13 @@
     "/SharedStrings/Updates/Statuses/Downloading": "Downloading - 0%",
     "/SharedStrings/Updates/Statuses/Error": "Error downloading!",
 
-    "/ServerStatuses/Success": "Success! (Code 1)\nI_OK\nEverything's good!",
-    "/ServerStatuses/WTF": "COULD NOT CHECK STATUS (Code -12)\nE_WTF\nSomething's fucked a really big time.",
-    "/ServerStatuses/Exception": "EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.",
-    "/ServerStatuses/ConnectionError": "SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.",
+    "/ServerStatuses/WTF": "COULD NOT CHECK STATUS (\u15dc\u02ec\u15dc)\nE_WTF\nSomething's fucked a really big time.",
+    "/ServerStatuses/Success": "Success! (Code 1:0)\nI_OK\nEverything's good!",
+    "/ServerStatuses/ConnectionError": "SERVER CONNECTION ERROR (Code -1:{0})\nE_CONNECTION_ERROR\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.",
+    "/ServerStatuses/RPCChannelFailure": "RPC CHANNEL FAILURE (Code -2:{0})\nE_RPC_CHAN_FAILURE\nCould not connect to localhost:7135, is it already taken?",
+    "/ServerStatuses/RPCStubFailure": "RPC/API STUB FAILURE (Code -3:{0})\nE_RPC_STUB_FAILURE\nCould not derive IK2DriverService! Is the protocol valid?",
+    "/ServerStatuses/Exception": "EXCEPTION WHILE CHECKING (Code -10:{0})\nE_EXCEPTION_WHILE_CHECKING\nYour Amethyst SteamVR driver may be broken or outdated.",
     "/ServerStatuses/ServerFailure": "FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.",
-    "/ServerStatuses/APIFailure": "COULD NOT CONNECT TO K2API (Code -11)\nE_K2API_FAILURE\nThis error shouldn't occur, actually. Something's wrong a big part.",
 
     "/CrashHandler/Content/AlreadyRunning": "Looks like the app is already running\nand you've tried to launch a second instance,\nthis action is not currently supported.\n\nPlease check if the app isn't opened.\nIf problem persists, press the 'Force Exit' button.",
     "/CrashHandler/Content/Crash/NoDevices": "There were no appropriate devices (plugins) available to load and use for body tracking.\n\nPlease check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices.",

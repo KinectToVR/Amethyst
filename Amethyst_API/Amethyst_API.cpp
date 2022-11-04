@@ -48,13 +48,13 @@ namespace ktvr
 		}
 		catch (const std::exception& e)
 		{
-			return -1;
+			return -10;
 		}
 		return 0;
 	}
 
 	std::vector<std::pair<ITrackerType, bool>>
-	update_tracker_state_vector_r(const std::vector<std::pair<ITrackerType, bool>>& status_pairs) noexcept
+	update_tracker_state_vector_return_shim(const std::vector<std::pair<ITrackerType, bool>>& status_pairs) noexcept
 	{
 		try
 		{
@@ -91,7 +91,7 @@ namespace ktvr
 	}
 
 	std::monostate
-	update_tracker_state_vector_n(const std::vector<std::pair<ITrackerType, bool>>& status_pairs) noexcept
+	update_tracker_state_vector_no_return_shim(const std::vector<std::pair<ITrackerType, bool>>& status_pairs) noexcept
 	{
 		try
 		{
@@ -128,7 +128,7 @@ namespace ktvr
 	}
 
 	std::vector<std::pair<ITrackerType, bool>>
-	update_tracker_vector_r(const std::vector<K2TrackerBase>& tracker_bases) noexcept
+	update_tracker_vector_return_shim(const std::vector<K2TrackerBase>& tracker_bases) noexcept
 	{
 		try
 		{
@@ -164,7 +164,7 @@ namespace ktvr
 	}
 
 	std::monostate
-	update_tracker_vector_n(const std::vector<K2TrackerBase>& tracker_bases) noexcept
+	update_tracker_vector_no_return_shim(const std::vector<K2TrackerBase>& tracker_bases) noexcept
 	{
 		try
 		{
@@ -200,7 +200,7 @@ namespace ktvr
 	}
 
 	std::vector<std::pair<ITrackerType, bool>>
-	refresh_tracker_pose_vector_r(const std::vector<ITrackerType>& trackers) noexcept
+	refresh_tracker_pose_vector_return_shim(const std::vector<ITrackerType>& trackers) noexcept
 	{
 		try
 		{
@@ -236,7 +236,7 @@ namespace ktvr
 	}
 
 	std::monostate
-	refresh_tracker_pose_vector_n(const std::vector<ITrackerType>& trackers) noexcept
+	refresh_tracker_pose_vector_no_return_shim(const std::vector<ITrackerType>& trackers) noexcept
 	{
 		try
 		{
@@ -272,7 +272,7 @@ namespace ktvr
 	}
 
 	std::pair<ITrackerType, bool>
-	request_vr_restart_r(const std::string& reason) noexcept
+	request_vr_restart_return_shim(const std::string& reason) noexcept
 	{
 		try
 		{
@@ -295,7 +295,7 @@ namespace ktvr
 	}
 
 	std::monostate
-	request_vr_restart_n(const std::string& reason) noexcept
+	request_vr_restart_no_return_shim(const std::string& reason) noexcept
 	{
 		try
 		{
@@ -317,7 +317,7 @@ namespace ktvr
 		}
 	}
 
-	std::tuple<bool, long long, long long, long long> test_connection() noexcept
+	std::tuple<grpc::Status, long long, long long, long long> test_connection() noexcept
 	{
 		try
 		{
@@ -326,8 +326,8 @@ namespace ktvr
 
 			// Grab the current time and send the message
 			const long long send_time = AME_API_GET_TIMESTAMP_NOW;
-			const bool success = stub->PingDriverService(
-				&context, google::protobuf::Empty(), &reply).ok();
+			const auto status = stub->PingDriverService(
+				&context, google::protobuf::Empty(), &reply);
 
 			// Return tuple with response and elapsed time
 			const auto elapsed_time = // Always >= 0
@@ -335,17 +335,20 @@ namespace ktvr
 				           static_cast<long long>(0), LLONG_MAX);
 
 			// If failed for some reason
-			if (!success)
+			if (!status.ok())
 			{
 				LOG(INFO) << "PingDriverService failed!";
-				return {false, send_time, reply.received_timestamp(), elapsed_time};
+				return {status, send_time, reply.received_timestamp(), elapsed_time};
 			}
 
-			return {true, send_time, reply.received_timestamp(), elapsed_time};
+			return {status, send_time, reply.received_timestamp(), elapsed_time};
 		}
 		catch (const std::exception& e)
 		{
-			return {false, static_cast<long long>(0), static_cast<long long>(0), static_cast<long long>(0)};
+			return {
+				grpc::Status(grpc::UNKNOWN, "An exception occurred."),
+				static_cast<long long>(0), static_cast<long long>(0), static_cast<long long>(0)
+			};
 		}
 	}
 }

@@ -490,6 +490,8 @@ namespace k2app::interfacing
 
 	// Server interfacing data
 	inline int serverDriverStatusCode = 0;
+	inline int serverRPCStatusCode = 0;
+
 	inline uint32_t pingTime = 0, parsingTime = 0;
 	inline bool isServerDriverPresent = false,
 	            serverDriverFailure = false;
@@ -752,7 +754,7 @@ namespace k2app::interfacing
 	 * \brief This will init K2API and server driver
 	 * \return Success?
 	 */
-	inline bool TestK2ServerConnection()
+	inline grpc::Status TestK2ServerConnection()
 	{
 		// Do not spawn 1000 voids, check how many do we have
 		if (pingCheckingThreadsNumber <= maxPingCheckingThreads)
@@ -763,7 +765,7 @@ namespace k2app::interfacing
 			try
 			{
 				// Send a ping message and capture the data
-				const auto [success, send_time,
+				const auto [status, send_time,
 					receive_time, full_time] = ktvr::test_connection();
 
 				// Dump data to variables
@@ -773,7 +775,7 @@ namespace k2app::interfacing
 				// Log ?success
 				LOG(INFO) <<
 					"Connection test has ended, [result: " <<
-					(success ? "success" : "fail") << "]";
+					(status.ok() ? "success" : "fail") << "]";
 
 				// Log some data if needed
 				LOG(INFO) << "\n" <<
@@ -787,7 +789,7 @@ namespace k2app::interfacing
 					static_cast<int>(maxPingCheckingThreads) + 1);
 
 				// Return the result
-				return success;
+				return status;
 			}
 			catch (const std::exception& e)
 			{
@@ -799,20 +801,21 @@ namespace k2app::interfacing
 				pingCheckingThreadsNumber = std::clamp(
 					static_cast<int>(pingCheckingThreadsNumber) - 1, 0,
 					static_cast<int>(maxPingCheckingThreads) + 1);
-				return false;
+
+				return grpc::Status(grpc::UNKNOWN, "An exception occurred.");
 			}
 		}
 
 		// else
 		LOG(ERROR) << "Connection checking threads exceeds 3, aborting...";
-		return false;
+		return grpc::Status(grpc::UNAVAILABLE, "Too many simultaneous checking threads.");
 	}
 
 	/**
 	 * \brief This will check K2API and server driver
 	 * \return Success?
 	 */
-	inline int CheckK2ServerStatus()
+	inline std::pair<int, int> CheckK2ServerStatus()
 	{
 		if (!isServerDriverPresent)
 		{
@@ -823,7 +826,7 @@ namespace k2app::interfacing
 				LOG(INFO) << "AME_API version name: " << ktvr::IAME_API_Version;
 
 				const auto init_code = ktvr::init_ame_api();
-				bool server_connected = false;
+				grpc::Status server_status;
 
 				LOG(INFO) << "Server IPC initialization " <<
 					(init_code == 0 ? "succeed" : "failed") << ", exit code: " << init_code;
@@ -837,28 +840,36 @@ namespace k2app::interfacing
 					for (int i = 0; i < 3; i++)
 					{
 						LOG(INFO) << "Starting the test no " << i + 1 << "...";
-						server_connected = TestK2ServerConnection();
+						server_status = TestK2ServerConnection();
 						// Not direct assignment since it's only a one-way check
-						if (server_connected)isServerDriverPresent = true;
+						if (server_status.ok())isServerDriverPresent = true;
 					}
 				}
 
 				return init_code == 0
-					       ? (server_connected ? 1 : -1)
-					       : -10;
+					       // If the API is ok
+					       ? (server_status.ok()
+						          // If the server is/isn't ok
+						          ? std::make_pair(1, server_status.error_code())
+						          : std::make_pair(-1, server_status.error_code()))
+					       // If the API is not ok
+					       : std::make_pair(init_code, grpc::UNKNOWN);
 			}
-			catch (const std::exception& e) { return -10; }
+			catch (const std::exception& e) { return {-10, grpc::UNKNOWN}; }
 		}
 
 		/*
 		 * codes:
 		 codes:
-			-10: driver is disabled
-			-1: driver is workin but outdated or doomed
-			10: ur pc brokey, cry about it
-			1: ok
+			all ok: 1
+			server could not be reached: -1
+			exception when trying to reach: -10
+			could not create rpc channel: -2
+			could not create rpc stub: -3
+
+			fatal run-time failure: 10
 		 */
-		return 1; //don't check if it was already working
+		return {1, grpc::OK}; // Don't check if already ok
 	}
 
 	/**
@@ -869,8 +880,8 @@ namespace k2app::interfacing
 	{
 		if (!serverDriverFailure)
 		{
-			// Backup the status
-			serverDriverStatusCode = CheckK2ServerStatus();
+			// Backup the server and RPC status
+			std::tie(serverDriverStatusCode, serverRPCStatusCode) = CheckK2ServerStatus();
 		}
 		else
 		{
@@ -880,30 +891,53 @@ namespace k2app::interfacing
 
 		isServerDriverPresent = false; // Assume fail
 		serverStatusString = LocalizedJSONString(L"/ServerStatuses/WTF");
-		//L"COULD NOT CHECK STATUS (Code -12)\nE_WTF\nSomething's fucked a really big time.";
+		//L"COULD NOT CHECK STATUS (\u15dc\u02ec\u15dc)\nE_WTF\nSomething's fucked a really big time.";
 
+		using namespace std::string_literals;
 		switch (serverDriverStatusCode)
 		{
-		case -10:
-			serverStatusString = LocalizedJSONString(L"/ServerStatuses/Exception");
-		//L"EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
-			break;
-		case -1:
-			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ConnectionError");
-		//L"SERVER CONNECTION ERROR (Code -1)\nE_CONNECTION_ERROR\nYour Amethyst SteamVR driver may be broken or outdated.";
-			break;
-		case 10:
-			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ServerFailure");
-		//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
-			break;
 		case 1:
 			serverStatusString = LocalizedJSONString(L"/ServerStatuses/Success");
-		//L"Success! (Code 1)\nI_OK\nEverything's good!";
+			//L"Success! (Code 1)\nI_OK\nEverything's good!";
 			isServerDriverPresent = true; // Change to success
 			break;
+
+		case -1:
+			serverStatusString = stringReplaceAll_R(
+				LocalizedJSONString(L"/ServerStatuses/ConnectionError"),
+				L"{0}"s, std::to_wstring(serverRPCStatusCode));
+			//L"SERVER CONNECTION ERROR (Code -1:{0})\nE_CONNECTION_ERROR\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
+			break;
+
+		case -10:
+			serverStatusString = stringReplaceAll_R(
+				LocalizedJSONString(L"/ServerStatuses/Exception"),
+				L"{0}"s, std::to_wstring(serverRPCStatusCode));
+			//L"EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
+			break;
+
+		case -2:
+			serverStatusString = stringReplaceAll_R(
+				LocalizedJSONString(L"/ServerStatuses/RPCChannelFailure"),
+				L"{0}"s, std::to_wstring(serverRPCStatusCode));
+			//L"RPC CHANNEL FAILURE (Code -2:{0})\nE_RPC_CHAN_FAILURE\nCould not connect to localhost:7135, is it already taken?";
+			break;
+
+		case -3:
+			serverStatusString = stringReplaceAll_R(
+				LocalizedJSONString(L"/ServerStatuses/RPCStubFailure"),
+				L"{0}"s, std::to_wstring(serverRPCStatusCode));
+			//L"RPC/API STUB FAILURE (Code -3:{0})\nE_RPC_STUB_FAILURE\nCould not derive IK2DriverService! Is the protocol valid?";
+			break;
+
+		case 10:
+			serverStatusString = LocalizedJSONString(L"/ServerStatuses/ServerFailure");
+			//L"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
+			break;
+
 		default:
-			serverStatusString = LocalizedJSONString(L"/ServerStatuses/APIFailure");
-		//L"COULD NOT CONNECT TO K2API (Code -11)\nE_K2API_FAILURE\nThis error shouldn't occur, actually. Something's wrong a big part.";
+			serverStatusString = LocalizedJSONString(L"/ServerStatuses/WTF");
+			//L"COULD NOT CHECK STATUS (\u15dc\u02ec\u15dc)\nE_WTF\nSomething's fucked a really big time.";
 			break;
 		}
 	}

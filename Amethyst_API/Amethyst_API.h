@@ -68,22 +68,22 @@ namespace ktvr
 	KTVR_API int init_ame_api(const int& port = 7135) noexcept;
 
 	KTVR_API std::vector<std::pair<ITrackerType, bool>>
-	update_tracker_state_vector_r(const std::vector<std::pair<ITrackerType, bool>>&) noexcept;
+	update_tracker_state_vector_return_shim(const std::vector<std::pair<ITrackerType, bool>>&) noexcept;
 	KTVR_API std::monostate
-	update_tracker_state_vector_n(const std::vector<std::pair<ITrackerType, bool>>&) noexcept;
+	update_tracker_state_vector_no_return_shim(const std::vector<std::pair<ITrackerType, bool>>&) noexcept;
 
 	KTVR_API std::vector<std::pair<ITrackerType, bool>>
-	update_tracker_vector_r(const std::vector<K2TrackerBase>&) noexcept;
+	update_tracker_vector_return_shim(const std::vector<K2TrackerBase>&) noexcept;
 	KTVR_API std::monostate
-	update_tracker_vector_n(const std::vector<K2TrackerBase>&) noexcept;
+	update_tracker_vector_no_return_shim(const std::vector<K2TrackerBase>&) noexcept;
 
 	KTVR_API std::vector<std::pair<ITrackerType, bool>>
-	refresh_tracker_pose_vector_r(const std::vector<ITrackerType>&) noexcept;
+	refresh_tracker_pose_vector_return_shim(const std::vector<ITrackerType>&) noexcept;
 	KTVR_API std::monostate
-	refresh_tracker_pose_vector_n(const std::vector<ITrackerType>&) noexcept;
+	refresh_tracker_pose_vector_no_return_shim(const std::vector<ITrackerType>&) noexcept;
 
-	KTVR_API std::pair<ITrackerType, bool> request_vr_restart_r(const std::string&) noexcept;
-	KTVR_API std::monostate request_vr_restart_n(const std::string&) noexcept;
+	KTVR_API std::pair<ITrackerType, bool> request_vr_restart_return_shim(const std::string&) noexcept;
+	KTVR_API std::monostate request_vr_restart_no_return_shim(const std::string&) noexcept;
 
 	/**
 	 * \brief Update trackers' state in SteamVR driver
@@ -94,8 +94,8 @@ namespace ktvr
 	std::conditional_t<WantReply, std::vector<std::pair<ITrackerType, bool>>, std::monostate>
 	update_tracker_state_vector(const std::vector<std::pair<ITrackerType, bool>>& status_pairs) noexcept
 	{
-		if constexpr (WantReply) return update_tracker_state_vector_r(status_pairs);
-		else return update_tracker_state_vector_n(status_pairs); // std::monostate
+		if constexpr (WantReply) return update_tracker_state_vector_return_shim(status_pairs);
+		else return update_tracker_state_vector_no_return_shim(status_pairs); // std::monostate
 	}
 
 	/**
@@ -107,8 +107,8 @@ namespace ktvr
 	std::conditional_t<WantReply, std::vector<std::pair<ITrackerType, bool>>, std::monostate>
 	update_tracker_vector(const std::vector<K2TrackerBase>& tracker_bases) noexcept
 	{
-		if constexpr (WantReply) return update_tracker_vector_r(tracker_bases);
-		else return update_tracker_vector_n(tracker_bases); // std::monostate
+		if constexpr (WantReply) return update_tracker_vector_return_shim(tracker_bases);
+		else return update_tracker_vector_no_return_shim(tracker_bases); // std::monostate
 	}
 
 	/**
@@ -121,8 +121,8 @@ namespace ktvr
 	std::conditional_t<WantReply, std::vector<std::pair<ITrackerType, bool>>, std::monostate>
 	refresh_tracker_pose_vector(const std::vector<ITrackerType>& trackers) noexcept
 	{
-		if constexpr (WantReply) return refresh_tracker_pose_vector_r(trackers);
-		else return refresh_tracker_pose_vector_n(trackers); // std::monostate
+		if constexpr (WantReply) return refresh_tracker_pose_vector_return_shim(trackers);
+		else return refresh_tracker_pose_vector_no_return_shim(trackers); // std::monostate
 	}
 
 	/**
@@ -135,13 +135,13 @@ namespace ktvr
 	std::conditional_t<WantReply, std::pair<ITrackerType, bool>, std::monostate>
 	request_vr_restart(const std::string& reason) noexcept
 	{
-		if constexpr (WantReply) return request_vr_restart_r(reason);
-		else return request_vr_restart_n(reason); // std::monostate
+		if constexpr (WantReply) return request_vr_restart_return_shim(reason);
+		else return request_vr_restart_no_return_shim(reason); // std::monostate
 	}
 
 	/**
 	 * \brief Test connection with the server
 	 * \return Returns ok? / send_time / receive_time / elapsed_time (now-send)
 	 */
-	KTVR_API std::tuple<bool, long long, long long, long long> test_connection() noexcept;
+	KTVR_API std::tuple<grpc::Status, long long, long long, long long> test_connection() noexcept;
 }
