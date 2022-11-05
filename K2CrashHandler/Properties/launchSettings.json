@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "K2CrashHandler (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "K2CrashHandler (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

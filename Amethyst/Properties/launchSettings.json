@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Amethyst (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Amethyst (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
