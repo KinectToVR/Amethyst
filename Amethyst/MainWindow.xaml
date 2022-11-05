@@ -1,16 +1,508 @@
-<!-- Copyright (c) Microsoft Corporation. All rights reserved. -->
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. -->
 <!-- Licensed under the MIT License. See LICENSE in the project root for license information. -->
 
 <Window
     x:Class="Amethyst.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Amethyst"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
-    </StackPanel>
+    <!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
+    <Grid Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
+          Loaded="MainGrid_Loaded" x:Name="MainGrid"
+          MinHeight="650" MinWidth="1000" IsTabStop="True">
+
+        <Grid VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Image Source="ms-appx:///Assets/ktvr.png"
+                   HorizontalAlignment="Left"
+                   Width="18" Height="18"
+                   Margin="16,12,0,0" />
+
+            <TextBlock Text="Amethyst" TextWrapping="NoWrap" Opacity="1.0"
+                       Margin="50,12,0,0" x:Name="AppTitleLabel"
+                       FontSize="12" FontWeight="SemiBold">
+                <TextBlock.OpacityTransition>
+                    <ScalarTransition />
+                </TextBlock.OpacityTransition>
+            </TextBlock>
+
+            <TextBlock Text="PREVIEW" TextWrapping="NoWrap" Margin="110,14,0,0"
+                       Opacity="{Binding ElementName=AppTitleLabel, Path=Opacity, TargetNullValue=1.0}"
+                       FontSize="10" FontWeight="SemiLight" x:Name="PreviewBadgeLabel"
+                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                <TextBlock.OpacityTransition>
+                    <ScalarTransition />
+                </TextBlock.OpacityTransition>
+            </TextBlock>
+        </Grid>
+
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="62" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                  Grid.Column="1" x:Name="DragElement" Canvas.ZIndex="1" />
+        </Grid>
+
+        <Grid VerticalAlignment="Top" HorizontalAlignment="Left"
+              Width="70" Height="560" Margin="0,40,0,0"
+              x:Name="NavigationBlockerGrid" Background="Transparent"
+              Canvas.ZIndex="1" IsHitTestVisible="False" />
+
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+              x:Name="InterfaceDimGrid"
+              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+              Opacity="{Binding ElementName=InterfaceBlockerGrid, Path=Opacity}"
+              Canvas.ZIndex="1" IsHitTestVisible="False">
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+        </Grid>
+
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+              x:Name="InterfaceBlockerGrid" Opacity="0.0"
+              Background="Transparent"
+              Canvas.ZIndex="1" IsHitTestVisible="False">
+
+            <Grid.Resources>
+                <TeachingTip x:Name="InitializerTeachingTip"
+                             Canvas.ZIndex="100"
+                             Title="/WELCOME"
+                             Subtitle="/TEXT"
+                             PreferredPlacement="Top"
+                             PlacementMargin="20"
+                             IsLightDismissEnabled="False"
+                             ActionButtonContent="/SKIP"
+                             CloseButtonContent="/NEXT"
+                             Style="{ThemeResource BigTeachingTipStyle}"
+                             ActionButtonClick="InitializerTeachingTip_ActionButtonClick"
+                             CloseButtonClick="InitializerTeachingTip_CloseButtonClick" />
+
+                <TeachingTip x:Name="ShutdownTeachingTip"
+                             Canvas.ZIndex="100"
+                             Title="/SHUTDOWN"
+                             Subtitle="/TEXT"
+                             PreferredPlacement="TopRight"
+                             PlacementMargin="0,29,-8,0"
+                             Style="{ThemeResource BigTeachingTipStyle}"
+                             IsLightDismissEnabled="True" />
+
+                <TeachingTip x:Name="ReloadTeachingTip"
+                             Canvas.ZIndex="100"
+                             Title="/RELOAD"
+                             Subtitle="/TEXT"
+                             PreferredPlacement="TopRight"
+                             PlacementMargin="0,29,-8,0"
+                             CloseButtonContent="/RESTART"
+                             CloseButtonClick="ReloadTeachingTip_CloseButtonClick"
+                             Style="{ThemeResource BigTeachingTipStyle}"
+                             IsLightDismissEnabled="False" />
+            </Grid.Resources>
+        </Grid>
+
+        <muxc:NavigationView x:Name="NavView"
+                             IsTabStop="False"
+                             Margin="0,40,0,0"
+                             IsTitleBarAutoPaddingEnabled="False"
+                             Loaded="NavView_Loaded"
+                             ItemInvoked="NavView_ItemInvoked"
+                             BackRequested="NavView_BackRequested"
+
+                             FontSize="16"
+                             IsPaneOpen="False"
+                             SelectedItem="general"
+
+                             IsSettingsVisible="False"
+                             IsBackButtonVisible="Collapsed"
+                             IsBackEnabled="False"
+                             AlwaysShowHeader="False"
+                             SelectionFollowsFocus="Disabled"
+                             IsPaneToggleButtonVisible="False"
+
+                             PaneDisplayMode="Left"
+                             CompactPaneLength="70"
+                             OpenPaneLength="70">
+
+            <!--Note: Disable/Delete this if using LeftCompat instead of Left pane mode-->
+            <NavigationView.Resources>
+                <!-- ReSharper disable once Xaml.RedundantResource -->
+                <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
+                <!-- ReSharper disable once Xaml.RedundantResource -->
+                <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="Transparent" />
+            </NavigationView.Resources>
+
+            <muxc:NavigationView.MenuItems>
+
+                <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                    Tag="general" x:Name="GeneralItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <FontIcon Glyph="&#xEA8A;" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                  x:Name="NavViewGeneralButtonIcon" FontSize="22" Translation="0,-8,0">
+                            <FontIcon.TranslationTransition>
+                                <Vector3Transition />
+                            </FontIcon.TranslationTransition>
+                        </FontIcon>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock HorizontalAlignment="Center"
+                                       x:Name="NavViewGeneralButtonLabel" Opacity="0.0"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
+                    </Grid>
+                </NavigationViewItem>
+
+                <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                    Tag="settings" x:Name="SettingsItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <FontIcon Glyph="&#xE713;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                  x:Name="NavViewSettingsButtonIcon" FontSize="22" Translation="0,-8,0">
+                            <FontIcon.TranslationTransition>
+                                <Vector3Transition />
+                            </FontIcon.TranslationTransition>
+                        </FontIcon>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock HorizontalAlignment="Center"
+                                       x:Name="NavViewSettingsButtonLabel"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
+                    </Grid>
+                </NavigationViewItem>
+
+                <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                    Tag="devices" x:Name="DevicesItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <FontIcon Glyph="&#xF158;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                  x:Name="NavViewDevicesButtonIcon" FontSize="20" Translation="0,-8,0">
+                            <FontIcon.TranslationTransition>
+                                <Vector3Transition />
+                            </FontIcon.TranslationTransition>
+                        </FontIcon>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock HorizontalAlignment="Center"
+                                       x:Name="NavViewDevicesButtonLabel"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
+                    </Grid>
+                </NavigationViewItem>
+
+                <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                    Tag="info" x:Name="InfoItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <FontIcon Glyph="&#xE946;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                  x:Name="NavViewInfoButtonIcon" FontSize="22" Translation="0,-8,0">
+                            <FontIcon.TranslationTransition>
+                                <Vector3Transition />
+                            </FontIcon.TranslationTransition>
+                        </FontIcon>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock HorizontalAlignment="Center"
+                                       x:Name="NavViewInfoButtonLabel"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
+                    </Grid>
+                </NavigationViewItem>
+
+                <NavigationViewItem FontSize="10" FontWeight="Medium" Visibility="Collapsed"
+                                    Tag="console" x:Name="ConsoleItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                        <FontIcon Glyph="&#xEB51;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                  x:Name="NavViewOkashiButtonIcon" FontSize="22" Translation="0,-8,0">
+                            <FontIcon.TranslationTransition>
+                                <Vector3Transition />
+                            </FontIcon.TranslationTransition>
+                        </FontIcon>
+
+                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock Text="お菓子❢" HorizontalAlignment="Center"
+                                       x:Name="NavViewOkashiButtonLabel"
+                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                <TextBlock.OpacityTransition>
+                                    <ScalarTransition />
+                                </TextBlock.OpacityTransition>
+                            </TextBlock>
+                        </Viewbox>
+                    </Grid>
+                </NavigationViewItem>
+            </muxc:NavigationView.MenuItems>
+
+            <muxc:NavigationView.PaneFooter>
+                <StackPanel Orientation="Vertical">
+                    <NavigationViewItem x:Name="UpdateButton" Height="63"
+                                        FontSize="10" FontWeight="Medium"
+                                        BackgroundSizing="OuterBorderEdge"
+                                        Tapped="UpdateButton_Tapped"
+                                        Loaded="UpdateButton_Loaded">
+
+                        <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                            <Grid Translation="0,-8,0" x:Name="UpdateIconGrid">
+                                <Grid.TranslationTransition>
+                                    <Vector3Transition />
+                                </Grid.TranslationTransition>
+
+                                <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" FontSize="20"
+                                          Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                          Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5124">
+                                    <FontIcon.RenderTransform>
+                                        <CompositeTransform />
+                                    </FontIcon.RenderTransform>
+
+                                    <FontIcon.Transitions>
+                                        <TransitionCollection>
+                                            <RepositionThemeTransition />
+                                        </TransitionCollection>
+                                    </FontIcon.Transitions>
+                                </FontIcon>
+
+                                <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="16"
+                                          IsHitTestVisible="False"
+                                          HorizontalAlignment="Left" VerticalAlignment="Bottom" Canvas.ZIndex="1"
+                                          Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                          Translation="0,-9,0"
+                                          Opacity="0.0" Margin="16,0,0,0">
+                                    <FontIcon.OpacityTransition>
+                                        <ScalarTransition />
+                                    </FontIcon.OpacityTransition>
+                                </FontIcon>
+                            </Grid>
+
+                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                                <TextBlock x:Name="UpdateIconText" Opacity="1.0"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                    <TextBlock.OpacityTransition>
+                                        <ScalarTransition />
+                                    </TextBlock.OpacityTransition>
+                                </TextBlock>
+                            </Viewbox>
+                        </Grid>
+                    </NavigationViewItem>
+
+                    <NavigationViewItem x:Name="HelpButton" Height="63"
+                                        FontSize="10" FontWeight="Medium"
+                                        BackgroundSizing="OuterBorderEdge"
+                                        Tapped="HelpButton_Tapped">
+
+                        <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                            <Grid Translation="0,-8,0">
+                                <Grid.TranslationTransition>
+                                    <Vector3Transition />
+                                </Grid.TranslationTransition>
+
+                                <FontIcon x:Name="HelpIcon" Glyph="&#xEA3A;" FontSize="20"
+                                          Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                    <FontIcon.RenderTransform>
+                                        <CompositeTransform />
+                                    </FontIcon.RenderTransform>
+
+                                    <FontIcon.Transitions>
+                                        <TransitionCollection>
+                                            <RepositionThemeTransition />
+                                        </TransitionCollection>
+                                    </FontIcon.Transitions>
+                                </FontIcon>
+
+                                <FontIcon Glyph="&#xE897;" FontSize="12"
+                                          Foreground="{Binding ElementName=HelpIcon, Path=Foreground}">
+                                    <FontIcon.RenderTransform>
+                                        <CompositeTransform />
+                                    </FontIcon.RenderTransform>
+
+                                    <FontIcon.Transitions>
+                                        <TransitionCollection>
+                                            <RepositionThemeTransition />
+                                        </TransitionCollection>
+                                    </FontIcon.Transitions>
+                                </FontIcon>
+                            </Grid>
+
+                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                                <TextBlock x:Name="HelpIconText" Opacity="1.0"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                    <TextBlock.OpacityTransition>
+                                        <ScalarTransition />
+                                    </TextBlock.OpacityTransition>
+                                </TextBlock>
+                            </Viewbox>
+                        </Grid>
+                    </NavigationViewItem>
+                </StackPanel>
+            </muxc:NavigationView.PaneFooter>
+
+            <Frame x:Name="ContentFrame" NavigationFailed="ContentFrame_NavigationFailed" />
+        </muxc:NavigationView>
+
+        <Grid.Resources>
+            <Storyboard x:Name="IconRotation" AutoReverse="False" RepeatBehavior="Forever">
+                <DoubleAnimation Duration="0:0:1" To="360"
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)"
+                                 Storyboard.TargetName="UpdateIcon" />
+            </Storyboard>
+
+            <Flyout x:Name="UpdateFlyout"
+                    Opening="ButtonFlyout_Opening"
+                    Closing="ButtonFlyout_Closing">
+                <Flyout.FlyoutPresenterStyle>
+                    <Style TargetType="FlyoutPresenter">
+                        <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="Background"
+                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                    </Style>
+                </Flyout.FlyoutPresenterStyle>
+
+                <StackPanel>
+                    <TextBlock x:Name="FlyoutHeader" FontSize="17"
+                               Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
+                    <TextBlock x:Name="FlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
+                    <TextBlock x:Name="FlyoutContent" Margin="0,0,0,12" />
+
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click"
+                                Grid.Column="0" Margin="0,0,5,0"
+                                HorizontalAlignment="Stretch" />
+                        <Button x:Name="InstallNowButton" Click="InstallNowButton_Click"
+                                Grid.Column="1" Margin="5,0,0,0"
+                                Style="{ThemeResource AccentButtonStyle}"
+                                HorizontalAlignment="Stretch" />
+                    </Grid>
+                </StackPanel>
+            </Flyout>
+
+            <Flyout x:Name="UpdatePendingFlyout"
+                    Opening="ButtonFlyout_Opening"
+                    Closing="ButtonFlyout_Closing">
+                <Flyout.FlyoutPresenterStyle>
+                    <Style TargetType="FlyoutPresenter">
+                        <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="Background"
+                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                    </Style>
+                </Flyout.FlyoutPresenterStyle>
+
+                <StackPanel x:Name="UpdatePendingFlyoutMainStack"
+                            Orientation="Vertical">
+                    <TextBlock x:Name="UpdatePendingFlyoutHeader" FontSize="17"
+                               Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
+                    <TextBlock Text="Amethyisht [version_string]"
+                               x:Name="UpdatePendingFlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
+                        <TextBlock Margin="0,0,7,0" x:Name="UpdatePendingFlyoutStatusLabel"
+                                   Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
+                        <TextBlock x:Name="UpdatePendingFlyoutStatusContent" Margin="0,0,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Flyout>
+
+            <MenuFlyout x:Name="HelpFlyout"
+                        Opening="ButtonFlyout_Opening"
+                        Closing="ButtonFlyout_Closing">
+                <MenuFlyout.MenuFlyoutPresenterStyle>
+                    <Style TargetType="MenuFlyoutPresenter">
+                        <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="Background"
+                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                    </Style>
+                </MenuFlyout.MenuFlyoutPresenterStyle>
+
+                <!--Docs-->
+                <MenuFlyoutItem x:Name="HelpFlyoutDocsButton"
+                                Click="HelpFlyoutDocsButton_Click"
+                                Text="[NOT_SET_DOCS]">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE897;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+
+                <!--Discord-->
+                <MenuFlyoutItem x:Name="HelpFlyoutDiscordButton"
+                                Click="HelpFlyoutDiscordButton_Click">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE8F2;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+
+                <!--GitHub / Dev Docs-->
+                <MenuFlyoutItem x:Name="HelpFlyoutDevButton"
+                                Click="HelpFlyoutDevButton_Click">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE943;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+
+                <!--Licenses-->
+                <MenuFlyoutItem x:Name="HelpFlyoutLicensesButton"
+                                Click="HelpFlyoutLicensesButton_Click">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xF000;" />
+                    </MenuFlyoutItem.Icon>
+
+                    <MenuFlyoutItem.Resources>
+                        <Flyout Placement="Full" x:Name="LicensesFlyout"
+                                Opening="LicensesFlyout_Opening"
+                                Closing="ButtonFlyout_Closing"
+                                Closed="LicensesFlyout_Closed">
+
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="MaxHeight" Value="615" />
+                                    <Setter Property="MaxWidth" Value="720" />
+                                    <Setter Property="MinWidth" Value="720" />
+                                    <Setter Property="Margin" Value="30,15,0,0" />
+                                    <Setter Property="CornerRadius" Value="8" />
+                                    <Setter Property="Background"
+                                            Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+                                <TextBlock Text="LICENSES" Style="{ThemeResource TitleLargeTextBlockStyle}"
+                                           Margin="10,0,0,0" />
+
+                                <TextBlock x:Name="LicensesText" Text="Uh-Oh! Where are the licenses?"
+                                           HorizontalAlignment="Center"
+                                           TextWrapping="Wrap" Width="675" Margin="0,20,0,0" />
+                            </StackPanel>
+
+                        </Flyout>
+                    </MenuFlyoutItem.Resources>
+                </MenuFlyoutItem>
+            </MenuFlyout>
+        </Grid.Resources>
+
+    </Grid>
+
 </Window>

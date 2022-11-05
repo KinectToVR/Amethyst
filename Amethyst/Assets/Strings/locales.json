@@ -1,0 +1,26 @@
+{
+    "en": {
+        "en": "English",
+        "fr": "French",
+        "de": "German",
+        "ru": "Russian"
+    },
+    "fr": {
+        "en": "Anglais",
+        "fr": "Français",
+        "de": "Allemand",
+        "ru": "Russe"
+    },
+    "de": {
+        "en": "Englisch",
+        "fr": "Französisch",
+        "de": "Deutsch",
+        "ru": "Russisch"
+    },
+    "ru": {
+        "en": "Английский",
+        "fr": "Французский",
+        "de": "Немецкий",
+        "ru": "Русский"
+    }
+}
