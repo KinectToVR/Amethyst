@@ -1,4 +1,4 @@
-﻿using MathNet.Spatial.Euclidean;
+﻿using System.Numerics;
 
 namespace AmethystPluginContract;
 
@@ -9,7 +9,7 @@ public class TrackedJoint
         JointName = jointName;
     }
 
-    public Vector3D JointPosition
+    public Vector3 JointPosition
     {
         get => _jointPosition;
         set
@@ -23,14 +23,14 @@ public class TrackedJoint
 
     public Quaternion JointOrientation { get; set; } = new();
 
-    public Vector3D PreviousJointPosition { get; set; } = new();
+    public Vector3 PreviousJointPosition { get; set; } = new();
     public Quaternion PreviousJointOrientation { get; set; } = new();
 
-    public Vector3D JointVelocity { get; set; } = new();
-    public Vector3D JointAcceleration { get; set; } = new();
+    public Vector3 JointVelocity { get; set; } = new();
+    public Vector3 JointAcceleration { get; set; } = new();
 
-    public Vector3D JointAngularVelocity { get; set; } = new();
-    public Vector3D JointAngularAcceleration { get; set; } = new();
+    public Vector3 JointAngularVelocity { get; set; } = new();
+    public Vector3 JointAngularAcceleration { get; set; } = new();
 
     public TrackedJointState TrackingState { get; set; } = TrackedJointState.State_Tracked;
 
@@ -38,5 +38,5 @@ public class TrackedJoint
     public long PreviousPoseTimestamp { get; private set; }
     public string JointName { get; }
 
-    private Vector3D _jointPosition;
+    private Vector3 _jointPosition;
 }

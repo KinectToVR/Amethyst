@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
+using System.Numerics;
 using System.Reflection;
-using MathNet.Spatial.Euclidean;
 
 namespace AmethystPluginContract;
 
@@ -93,22 +93,22 @@ public interface IAmethystHost
     double HMDOrientationYawCalibrated { get; }
 
     // Get the raw OpenVRs HMD pose
-    Tuple<Vector3D, Quaternion> HMDPose { get; }
+    Tuple<Vector3, Quaternion> HMDPose { get; }
 
     // Get the OpenVRs HMD pose, but un-wrapped aka "calibrated" using the vr room center
-    Tuple<Vector3D, Quaternion> HMDPoseCalibrated { get; }
+    Tuple<Vector3, Quaternion> HMDPoseCalibrated { get; }
 
     // Get the raw OpenVRs left controller pose
-    Tuple<Vector3D, Quaternion> LeftControllerPose { get; }
+    Tuple<Vector3, Quaternion> LeftControllerPose { get; }
 
     // Get the OpenVRs left controller pose, but un-wrapped aka "calibrated" using the vr room center
-    Tuple<Vector3D, Quaternion> LeftControllerPoseCalibrated { get; }
+    Tuple<Vector3, Quaternion> LeftControllerPoseCalibrated { get; }
 
     // Get the raw OpenVRs right controller pose
-    Tuple<Vector3D, Quaternion> RightControllerPose { get; }
+    Tuple<Vector3, Quaternion> RightControllerPose { get; }
 
     // Get the OpenVRs right controller pose, but un-wrapped aka "calibrated" using the vr room center
-    Tuple<Vector3D, Quaternion> RightControllerPoseCalibrated { get; }
+    Tuple<Vector3, Quaternion> RightControllerPoseCalibrated { get; }
 
     // Log a message to Amethyst logs : handler
     void Log(string message, LogSeverity severity);

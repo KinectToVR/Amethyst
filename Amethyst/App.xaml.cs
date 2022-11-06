@@ -3,7 +3,11 @@
 
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
+using Amethyst.Utils;
 using Microsoft.UI.Xaml;
+using Microsoft.VisualBasic;
+using System;
+using Amethyst.Classes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,6 +33,10 @@ public partial class App : Application
             new Size(1000, 700); // Set default window launch size (WinUI)
         ApplicationView.PreferredLaunchWindowingMode =
             ApplicationViewWindowingMode.PreferredLaunchViewSize;
+
+        // Initialize logger
+        Logger.Init(Interfacing.GetK2AppDataLogFileDir("Amethyst",
+            $"Amethyst_{DateTime.Now.ToString("yyyyMMdd-HHmmss.ffffff")}.log"));
     }
 
     /// <summary>
