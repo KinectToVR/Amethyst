@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using AmethystPluginContract;
 
 namespace Amethyst.Classes;
 
@@ -34,4 +35,9 @@ public static class Interfacing
         return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Amethyst", "logs", relativeFolderName, relativeFilePath);
     }
+
+    // Application settings
+    public static K2AppSettings AppSettings = new K2AppSettings();
+
+
 }

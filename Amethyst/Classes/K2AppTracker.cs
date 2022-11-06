@@ -6,77 +6,79 @@ namespace Amethyst.Classes;
 
 public class K2AppTracker : INotifyPropertyChanged
 {
+    // Is this tracker enabled?
+    private bool _isActive;
+
     // Internal filters' data
-    private readonly Vector3 _kalmanPosition = new(0);
-    private readonly Vector3 _LERPPosition = new(0);
-    private readonly Vector3 _lowPassPosition = new(0);
-    private readonly Quaternion _pose_orientation = new(1, 0, 0, 0);
-
-    // Tracker pose (inherited)
-    private readonly Vector3 _pose_position = new(0, 0, 0);
-    private readonly Vector3 _predictedPosition = new(0);
-
-    private readonly Quaternion _SLERPOrientation = new(0, 0, 0, 1);
-    private readonly Quaternion _SLERPSlowOrientation = new(0, 0, 0, 1);
-
-    // Position filter update option
-    private readonly RotationTrackingFilterOption orientationTrackingFilterOption =
-        RotationTrackingFilterOption.OrientationTrackingFilter_SLERP;
+    private Vector3 _kalmanPosition = new(0);
 
     // LERP data's backup
+    private Vector3 _lowPassPosition = new(0);
+    private Vector3 _predictedPosition = new(0);
+    private Vector3 _LERPPosition = new(0);
     private Vector3 _lastLERPPosition = new(0);
+
+    private Quaternion _SLERPOrientation = new(0, 0, 0, 1);
+    private Quaternion _SLERPSlowOrientation = new(0, 0, 0, 1);
     private Quaternion _lastSLERPOrientation = new(0, 0, 0, 1);
     private Quaternion _lastSLERPSlowOrientation = new(0, 0, 0, 1);
-    private Vector3 _pose_acceleration = new(0, 0, 0);
-    private Vector3 _pose_angularAcceleration = new(0, 0, 0);
-    private Vector3 _pose_angularVelocity = new(0, 0, 0);
 
-    private long _pose_poseTimestamp = 0;
-    private Quaternion _pose_previousOrientation = new(1, 0, 0, 0);
-    private long _pose_previousPoseTimestamp = 0;
+    public Vector3 PoseVelocity { get; set; } = new(0, 0, 0);
+    public Vector3 PoseAcceleration { get; set; } = new(0, 0, 0);
+    public Vector3 PoseAngularAcceleration { get; set; } = new(0, 0, 0);
+    public Vector3 PoseAngularVelocity { get; set; } = new(0, 0, 0);
 
-    private Vector3 _pose_previousPosition = new(0, 0, 0);
-    private Vector3 _pose_velocity = new(0, 0, 0);
+    // Tracker pose (inherited)
+    public Vector3 Position { get; set; } = new(0, 0, 0);
+    public Quaternion Orientation { get; set; } = new(1, 0, 0, 0);
 
-    // Is this tracker enabled?
-    public bool IsActive = false;
+    public Vector3 PreviousPosition { get; set; } = new(0, 0, 0);
+    public Quaternion PreviousOrientation { get; set; } = new(1, 0, 0, 0);
+
+    public long PoseTimestamp { get; set; } = 0;
+    public long PreviousPoseTimestamp { get; set; } = 0;
+
+    // Internal data offset
+    private Vector3 _positionOffset = new(0, 0, 0);
+    private Vector3 _orientationOffset = new(0, 0, 0);
 
     // Is this joint overridden?
-    public bool IsPositionOverridden = false,
-        IsRotationOverridden = false;
+    public bool IsPositionOverridden { get; set; } = false;
+    public bool IsRotationOverridden { get; set; } = false;
 
-    // Does the managing device request no pos filtering?
-    public bool NoPositionFilteringRequested = false;
-    public Vector3 OrientationOffset = new(0, 0, 0);
+    // Position filter update option
+    private RotationTrackingFilterOption orientationTrackingFilterOption =
+        RotationTrackingFilterOption.OrientationTrackingFilter_SLERP;
 
+    // Orientation tracking option
     private JointRotationTrackingOption orientationTrackingOption =
         JointRotationTrackingOption.DeviceInferredRotation;
 
-    // Override device's GUID
-    public string OverrideGUID;
-
-    // If the joint is overridden, overrides' ids (computed)
-    public uint OverrideJointID = 0;
-
-    // Internal data offset
-    public Vector3 PositionOffset = new(0, 0, 0);
-
-    // Position and orientation option
+    // Position filter option
     private JointPositionTrackingOption positionTrackingFilterOption =
         JointPositionTrackingOption.PositionTrackingFilter_LERP;
-
-    public TrackerType Role = TrackerType.Tracker_Handed;
-
-    // The assigned host joint if using manual joints
-    public uint SelectedTrackedJointID = 0;
-
-    // Tracker data (inherited)
-    public string Serial;
 
     public K2AppTracker()
     {
         InitializeFilters();
     }
+
+    // Does the managing device request no pos filtering?
+    public bool NoPositionFilteringRequested { get; set; } = false;
+
+    // Override device's GUID
+    public string OverrideGUID { get; set; }
+
+    // If the joint is overridden, overrides' ids (computed)
+    public uint OverrideJointID { get; set; } = 0;
+
+    public TrackerType Role { get; set; } = TrackerType.Tracker_Handed;
+
+    // The assigned host joint if using manual joints
+    public uint SelectedTrackedJointID { get; set; } = 0;
+
+    // Tracker data (inherited)
+    public string Serial { get; set; }
 
     public JointRotationTrackingOption OrientationTrackingOption
     {
@@ -94,6 +96,46 @@ public class K2AppTracker : INotifyPropertyChanged
         set
         {
             positionTrackingFilterOption = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public RotationTrackingFilterOption OrientationTrackingFilterOption
+    {
+        get => orientationTrackingFilterOption;
+        set
+        {
+            orientationTrackingFilterOption = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public Vector3 PositionOffset
+    {
+        get => _positionOffset;
+        set
+        {
+            _positionOffset = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public Vector3 OrientationOffset
+    {
+        get => _orientationOffset;
+        set
+        {
+            _orientationOffset = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool IsActive
+    {
+        get => _isActive;
+        set
+        {
+            _isActive = value;
             OnPropertyChanged();
         }
     }
@@ -121,8 +163,8 @@ public class K2AppTracker : INotifyPropertyChanged
             JointPositionTrackingOption.PositionTrackingFilter_Lowpass => _lowPassPosition,
             JointPositionTrackingOption.PositionTrackingFilter_Kalman => _kalmanPosition,
             JointPositionTrackingOption.PositionTrackingFilter_Prediction => _predictedPosition,
-            JointPositionTrackingOption.NoPositionTrackingFilter => _pose_position,
-            _ => _pose_position
+            JointPositionTrackingOption.NoPositionTrackingFilter => Position,
+            _ => Position
         };
     }
 
@@ -135,8 +177,8 @@ public class K2AppTracker : INotifyPropertyChanged
         {
             RotationTrackingFilterOption.OrientationTrackingFilter_SLERP => _SLERPOrientation,
             RotationTrackingFilterOption.OrientationTrackingFilter_SLERP_Slow => _SLERPSlowOrientation,
-            RotationTrackingFilterOption.NoOrientationTrackingFilter => _pose_orientation,
-            _ => _pose_orientation
+            RotationTrackingFilterOption.NoOrientationTrackingFilter => Orientation,
+            _ => Orientation
         };
     }
 
