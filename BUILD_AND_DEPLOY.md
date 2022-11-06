@@ -33,7 +33,8 @@ Follow these steps:
     glog:x64-windows-static `
     gflags:x64-windows-static `
     protobuf:x64-windows-static `
-    cereal:x64-windows-static
+    cereal:x64-windows-static `
+    grpc:x64-windows-static
   ```
 
 - Clone the latest `OpenVR` to `external/`<br>
