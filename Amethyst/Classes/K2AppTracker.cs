@@ -39,8 +39,8 @@ public class K2AppTracker : INotifyPropertyChanged
     public long PreviousPoseTimestamp { get; set; } = 0;
 
     // Internal data offset
-    private Vector3 _positionOffset = new(0, 0, 0);
-    private Vector3 _orientationOffset = new(0, 0, 0);
+    public Vector3 PositionOffset = new(0, 0, 0);
+    public Vector3 OrientationOffset = new(0, 0, 0);
 
     // Is this joint overridden?
     public bool IsPositionOverridden { get; set; } = false;
@@ -106,26 +106,6 @@ public class K2AppTracker : INotifyPropertyChanged
         set
         {
             orientationTrackingFilterOption = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public Vector3 PositionOffset
-    {
-        get => _positionOffset;
-        set
-        {
-            _positionOffset = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public Vector3 OrientationOffset
-    {
-        get => _orientationOffset;
-        set
-        {
-            _orientationOffset = value;
             OnPropertyChanged();
         }
     }
