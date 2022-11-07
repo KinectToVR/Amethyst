@@ -1121,12 +1121,12 @@ namespace k2app::interfacing
 
 			// Optionally setup & show the reregister button
 			shared::general::reRegisterButton->Visibility(
-				serverDriverStatusCode == -10
+				serverDriverStatusCode == -1
 					? Visibility::Visible
 					: Visibility::Collapsed);
 
 			shared::general::serverOpenDiscordButton->Height(
-				serverDriverStatusCode == -10
+				serverDriverStatusCode == -1
 					? 40
 					: 65);
 		}
