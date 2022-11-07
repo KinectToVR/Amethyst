@@ -4,7 +4,6 @@ using System.IO;
 using System.Numerics;
 using System.Reflection;
 using Amethyst.Utils;
-using AmethystPluginContract;
 using Valve.VR;
 
 namespace Amethyst.Classes;

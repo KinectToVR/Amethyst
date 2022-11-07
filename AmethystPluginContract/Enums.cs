@@ -1,4 +1,4 @@
-﻿namespace AmethystPluginContract;
+﻿namespace Amethyst.Plugins.Contract;
 
 // Global Joint Types,
 // see enumeration in external/Kinect

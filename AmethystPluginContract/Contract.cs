@@ -2,7 +2,7 @@
 using System.Numerics;
 using System.Reflection;
 
-namespace AmethystPluginContract;
+namespace Amethyst.Plugins.Contract;
 
 public interface ITrackingDevice
 {

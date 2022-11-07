@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Numerics;
-using AmethystPluginContract;
+using Amethyst.Plugins.Contract;
 
 namespace Amethyst.Classes;
 

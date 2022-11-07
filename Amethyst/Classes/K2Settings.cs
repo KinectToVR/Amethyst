@@ -6,8 +6,8 @@ using System.Numerics;
 using Windows.Globalization;
 using Windows.System.UserProfile;
 using Amethyst.Utils;
-using AmethystPluginContract;
 using System.ComponentModel;
+using Amethyst.Plugins.Contract;
 
 namespace Amethyst.Classes;
 

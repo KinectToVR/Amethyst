@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Amethyst.Utils;
-using Valve.VR;
+using Amethyst.Vendor;
 
 namespace Amethyst.Classes;
 

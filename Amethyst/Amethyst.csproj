@@ -135,7 +135,7 @@
     <PRIResource Remove="Assets\Strings\**" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AmethystPluginContract\AmethystPluginContract.csproj" />
+    <ProjectReference Include="..\AmethystPluginContract\Amethyst.Plugins.Contract.csproj" />
     <ProjectReference Include="..\AmethystSupport\AmethystSupport.vcxproj" />
   </ItemGroup>
   <ItemGroup>
