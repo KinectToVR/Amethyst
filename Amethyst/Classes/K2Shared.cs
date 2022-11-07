@@ -1,28 +1,77 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Amethyst.Classes;
 
 public static class Shared
 {
-    public static string[] SplitStatusString(string status)
+    public static class Main
     {
-        if (status.IndexOf('\n') + 1 >= 0 && status.IndexOf('\n') + 1 <= status.Length &&
-            status.LastIndexOf('\n') - (status.IndexOf('\n') + 1) >= 0 &&
-            status.LastIndexOf('\n') - (status.IndexOf('\n') + 1) <= status.Length)
-
-            return new[]
-            {
-                status[..status.IndexOf('\n')],
-                status[(status.IndexOf('\n') + 1)..(status.LastIndexOf('\n') - (status.IndexOf('\n') + 1))],
-                status[..status.LastIndexOf('\n')]
-            };
-
-        return new[]
+        // Navigate the main view (w/ animations)
+        public static void NavigateToPage(string navItemTag,
+            Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo transitionInfo)
         {
-            "INVALID STATUS STRING", "E_FIX_YOUR_DAMN_SHIT",
-            "The status string was invalid, please format it as: [title]\\n[code]\\n[text]"
-        };
+        }
+
+        // Vector of std.pair holding the Navigation Tag and the relative Navigation Page.
+        public static List<(string Tag, Type Page)> Pages;
+
+        // Main Window
+        public static Microsoft.UI.Xaml.Controls.NavigationViewItem
+            GeneralItem,
+            SettingsItem,
+            DevicesItem,
+            InfoItem,
+            ConsoleItem,
+            HelpButton;
+
+        public static Mutex ApplicationMultiInstanceMutex;
+
+        public static Microsoft.UI.Xaml.Window Window;
+        public static Microsoft.UI.Windowing.AppWindow AppWindow;
+        public static Microsoft.UI.Dispatching.DispatcherQueue DispatcherQueue;
+
+        public static Microsoft.Windows.AppNotifications.AppNotificationManager NotificationManager;
+        public static Microsoft.Windows.ApplicationModel.Resources.ResourceManager ResourceManager;
+        public static Microsoft.Windows.ApplicationModel.Resources.ResourceContext ResourceContext;
+
+        public static Microsoft.UI.Xaml.Controls.TextBlock
+            AppTitleLabel,
+            FlyoutHeader,
+            FlyoutFooter,
+            FlyoutContent;
+
+        public static Microsoft.UI.Xaml.Controls.Grid
+            InterfaceBlockerGrid, NavigationBlockerGrid;
+
+        public static Microsoft.UI.Xaml.Controls.NavigationView MainNavigationView;
+        public static Microsoft.UI.Xaml.Controls.Frame MainContentFrame;
+
+        public static Microsoft.UI.Xaml.Controls.FontIcon UpdateIconDot;
+        public static Microsoft.UI.Xaml.Controls.Flyout UpdateFlyout;
+
+        public static Microsoft.UI.Xaml.Controls.Button
+            InstallNowButton, InstallLaterButton;
+
+        public static Microsoft.UI.Xaml.Media.SolidColorBrush
+            AttentionBrush, NeutralBrush;
+
+        public static class NavigationItems
+        {
+            public static Microsoft.UI.Xaml.Controls.FontIcon
+                NavViewGeneralButtonIcon,
+                NavViewSettingsButtonIcon,
+                NavViewDevicesButtonIcon,
+                NavViewInfoButtonIcon,
+                NavViewOkashiButtonIcon;
+
+            public static Microsoft.UI.Xaml.Controls.TextBlock
+                NavViewGeneralButtonLabel,
+                NavViewSettingsButtonLabel,
+                NavViewDevicesButtonLabel,
+                NavViewInfoButtonLabel,
+                NavViewOkashiButtonLabel;
+        }
     }
-
-
 }

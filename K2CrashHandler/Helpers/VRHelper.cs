@@ -7,13 +7,13 @@ using Microsoft.Win32;
 
 namespace K2CrashHandler.Helpers;
 
-public class VRHelper
+public class VrHelper
 {
     public string CopiedDriverPath = "";
     public string SteamPath = "";
-    public string SteamVRPath = "";
-    public string SteamVRSettingsPath = "";
-    public string VRPathReg = "";
+    public string SteamVrPath = "";
+    public string SteamVrSettingsPath = "";
+    public string VrPathReg = "";
 
     // Returns: <Exists>, <Path> of SteamVR, VRSettings, CopiedDriver
     public
@@ -24,28 +24,25 @@ public class VRHelper
         SteamPath = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Valve\Steam",
             "InstallPath", null)?.ToString();
 
-        SteamVRPath = "";
-        VRPathReg = "";
+        SteamVrPath = "";
+        VrPathReg = "";
         try
         {
-            var openVrPaths = OpenVRPaths.Read();
-            foreach (var runtimePath in openVrPaths.runtime)
+            var openVrPaths = OpenVrPaths.Read();
+            foreach (var runtimePath in openVrPaths.Runtime)
             {
                 var tempVrPathReg = Path.Combine(runtimePath, "bin", "win64", "vrpathreg.exe");
-                if (File.Exists(tempVrPathReg))
-                {
-                    SteamVRPath = runtimePath;
-                    VRPathReg = tempVrPathReg;
-                    break;
-                }
+                if (!File.Exists(tempVrPathReg)) continue;
+                SteamVrPath = runtimePath;
+                VrPathReg = tempVrPathReg;
             }
         }
         catch (Exception)
         {
         }
 
-        SteamVRSettingsPath = Path.Combine(SteamPath, "config", "steamvr.vrsettings");
-        CopiedDriverPath = Path.Combine(SteamVRPath, "drivers", "Amethyst");
+        SteamVrSettingsPath = Path.Combine(SteamPath, "config", "steamvr.vrsettings");
+        CopiedDriverPath = Path.Combine(SteamVrPath, "drivers", "Amethyst");
 
         // Return the found-outs
         return new
@@ -55,19 +52,19 @@ public class VRHelper
                 new Tuple<bool, bool, bool>
                 (
                     !string.IsNullOrEmpty(SteamPath),
-                    File.Exists(SteamVRSettingsPath),
+                    File.Exists(SteamVrSettingsPath),
                     Directory.Exists(CopiedDriverPath)
                 ),
                 new Tuple<string, string, string>
                 (
-                    SteamVRPath,
-                    SteamVRSettingsPath,
+                    SteamVrPath,
+                    SteamVrSettingsPath,
                     CopiedDriverPath
                 )
             );
     }
 
-    public bool CloseSteamVR()
+    public bool CloseSteamVr()
     {
         // Check if SteamVR is running
         if (Process.GetProcesses()

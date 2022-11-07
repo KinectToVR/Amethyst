@@ -4,32 +4,32 @@ using System.IO;
 
 namespace K2CrashHandler.Helpers;
 
-internal class OpenVRPaths
+internal class OpenVrPaths
 {
-    private static readonly string path =
-        Environment.ExpandEnvironmentVariables(Path.Combine("%LocalAppData%", "openvr", "openvrpaths.vrpath"));
+    private static readonly string Path =
+        Environment.ExpandEnvironmentVariables(System.IO.Path.Combine("%LocalAppData%", "openvr", "openvrpaths.vrpath"));
 
-    public static OpenVRPaths Read()
+    public static OpenVrPaths Read()
     {
-        var temp = JsonFile.Read<OpenVRPaths>(path);
+        var temp = JsonFile.Read<OpenVrPaths>(Path);
 
-        if (temp.external_drivers == null) temp.external_drivers = new List<string>();
+        if (temp.ExternalDrivers == null) temp.ExternalDrivers = new List<string>();
 
         return temp;
     }
 
     public void Write()
     {
-        JsonFile.Write(path, this, 1, '\t');
+        JsonFile.Write(Path, this, 1, '\t');
     }
 
     // Prevent Warning CS0649: Field '...' is never assigned to, and will always have its default value null:
 #pragma warning disable 0649
-    public List<string> config;
-    public List<string> external_drivers = new();
-    public string jsonid;
-    public List<string> log;
-    public List<string> runtime;
-    public int version;
+    public List<string> Config;
+    public List<string> ExternalDrivers = new();
+    public string Jsonid;
+    public List<string> Log;
+    public List<string> Runtime;
+    public int Version;
 #pragma warning restore 0649
 }

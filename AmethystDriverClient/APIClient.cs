@@ -14,22 +14,22 @@ public static class DriverClient
         return 0;
     }
 
-    public static List<ValueTuple<TrackerType, bool>> UpdateTrackerStates()
+    public static List<(TrackerType Role, bool State)> UpdateTrackerStates(List<(TrackerType Role, bool State)> states)
     {
-        return new List<(TrackerType, bool)> { new(TrackerType.Tracker_Handed, true) };
+        return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
     }
 
-    public static List<ValueTuple<TrackerType, bool>> UpdateTrackerPoses()
+    public static List<(TrackerType Role, bool State)> UpdateTrackerPoses()
     {
-        return new List<(TrackerType, bool)> { new(TrackerType.Tracker_Handed, true) };
+        return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
     }
 
-    public static List<ValueTuple<TrackerType, bool>> RefreshTrackerPoses()
+    public static List<(TrackerType Role, bool State)> RefreshTrackerPoses()
     {
-        return new List<(TrackerType, bool)> { new(TrackerType.Tracker_Handed, true) };
+        return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
     }
 
-    public static bool RequestVRRestart()
+    public static bool RequestVrRestart()
     {
         return true;
     }

@@ -4,68 +4,68 @@
 // see enumeration in external/Kinect
 public enum TrackedJointType
 {
-    Joint_Head,
-    Joint_Neck,
-    Joint_SpineShoulder,
-    Joint_ShoulderLeft,
-    Joint_ElbowLeft,
-    Joint_WristLeft,
-    Joint_HandLeft,
-    Joint_HandTipLeft,
-    Joint_ThumbLeft,
-    Joint_ShoulderRight,
-    Joint_ElbowRight,
-    Joint_WristRight,
-    Joint_HandRight,
-    Joint_HandTipRight,
-    Joint_ThumbRight,
-    Joint_SpineMiddle,
-    Joint_SpineWaist,
-    Joint_HipLeft,
-    Joint_KneeLeft,
-    Joint_AnkleLeft,
-    Joint_FootLeft,
-    Joint_HipRight,
-    Joint_KneeRight,
-    Joint_AnkleRight,
-    Joint_FootRight,
-    Joint_Total,
-    Joint_Manual
+    JointHead,
+    JointNeck,
+    JointSpineShoulder,
+    JointShoulderLeft,
+    JointElbowLeft,
+    JointWristLeft,
+    JointHandLeft,
+    JointHandTipLeft,
+    JointThumbLeft,
+    JointShoulderRight,
+    JointElbowRight,
+    JointWristRight,
+    JointHandRight,
+    JointHandTipRight,
+    JointThumbRight,
+    JointSpineMiddle,
+    JointSpineWaist,
+    JointHipLeft,
+    JointKneeLeft,
+    JointAnkleLeft,
+    JointFootLeft,
+    JointHipRight,
+    JointKneeRight,
+    JointAnkleRight,
+    JointFootRight,
+    JointTotal,
+    JointManual
 }
 
 // Global joint states
 public enum TrackedJointState
 {
-    State_NotTracked,
-    State_Inferred,
-    State_Tracked
+    StateNotTracked,
+    StateInferred,
+    StateTracked
 }
 
 // Log severity enumeration
 public enum LogSeverity
 {
-    INFO,
-    WARNING,
-    ERROR,
-    FATAL
+    Info,
+    Warning,
+    Error,
+    Fatal
 }
 
 // OpenVR tracker type
 public enum TrackerType
 {
-    Tracker_Handed,
-    Tracker_LeftFoot,
-    Tracker_RightFoot,
-    Tracker_LeftShoulder,
-    Tracker_RightShoulder,
-    Tracker_LeftElbow,
-    Tracker_RightElbow,
-    Tracker_LeftKnee,
-    Tracker_RightKnee,
-    Tracker_Waist,
-    Tracker_Chest,
-    Tracker_Camera,
-    Tracker_Keyboard
+    TrackerHanded,
+    TrackerLeftFoot,
+    TrackerRightFoot,
+    TrackerLeftShoulder,
+    TrackerRightShoulder,
+    TrackerLeftElbow,
+    TrackerRightElbow,
+    TrackerLeftKnee,
+    TrackerRightKnee,
+    TrackerWaist,
+    TrackerChest,
+    TrackerCamera,
+    TrackerKeyboard
 }
 
 // Rotation tracking option enumeration
@@ -78,10 +78,10 @@ public enum JointRotationTrackingOption
     SoftwareCalculatedRotation,
 
     // Calculated rotation v2 - Optional and feet-only
-    SoftwareCalculatedRotation_V2,
+    SoftwareCalculatedRotationV2,
 
     // Copy rotation from HMD
-    FollowHMDRotation,
+    FollowHmdRotation,
 
     // Completely disable rotation
     DisableJointRotation
@@ -91,10 +91,10 @@ public enum JointRotationTrackingOption
 public enum RotationTrackingFilterOption
 {
     // Spherical interpolation
-    OrientationTrackingFilter_SLERP,
+    OrientationTrackingFilterSlerp,
 
     // Spherical interpolation, but slower
-    OrientationTrackingFilter_SLERP_Slow,
+    OrientationTrackingFilterSlerpSlow,
 
     // Filter Off
     NoOrientationTrackingFilter
@@ -104,16 +104,16 @@ public enum RotationTrackingFilterOption
 public enum JointPositionTrackingOption
 {
     // Interpolation
-    PositionTrackingFilter_LERP,
+    PositionTrackingFilterLerp,
 
     // Low pass filter
-    PositionTrackingFilter_Lowpass,
+    PositionTrackingFilterLowpass,
 
     // Extended Kalman
-    PositionTrackingFilter_Kalman,
+    PositionTrackingFilterKalman,
 
     // Hekky^ pose prediction
-    PositionTrackingFilter_Prediction,
+    PositionTrackingFilterPrediction,
 
     // Filter Off
     NoPositionTrackingFilter

@@ -32,7 +32,7 @@ public class TrackedJoint
     public Vector3 JointAngularVelocity { get; set; } = new();
     public Vector3 JointAngularAcceleration { get; set; } = new();
 
-    public TrackedJointState TrackingState { get; set; } = TrackedJointState.State_Tracked;
+    public TrackedJointState TrackingState { get; set; } = TrackedJointState.StateTracked;
 
     public long PoseTimestamp { get; private set; }
     public long PreviousPoseTimestamp { get; private set; }

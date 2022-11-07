@@ -143,7 +143,7 @@ public static class Logger
         //PageLogs.LogLine(message, color);
     }
 
-    private static void LogInternalUniqueMessage(string message, string messageUI, ConsoleColor color)
+    private static void LogInternalUniqueMessage(string message, string messageUi, ConsoleColor color)
     {
         Console.ForegroundColor = color;
         Console.WriteLine(message);

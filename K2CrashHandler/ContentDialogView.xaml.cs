@@ -13,14 +13,14 @@ namespace K2CrashHandler;
 
 public sealed partial class ContentDialogView
 {
-    private readonly string logFileLocation = "0";
+    private readonly string _logFileLocation = "0";
 
-    private readonly string primaryButtonText = "[NOT SET]";
-    private readonly string secondaryButtonText = "[NOT SET]";
-    private readonly SemaphoreSlim semaphoreObject = new(0);
+    private readonly string _primaryButtonText = "[NOT SET]";
+    private readonly string _secondaryButtonText = "[NOT SET]";
+    private readonly SemaphoreSlim _semaphoreObject = new(0);
 
-    private bool confirmationFlyoutResult,
-        confirmationFlyoutRunning;
+    private bool _confirmationFlyoutResult,
+        _confirmationFlyoutRunning;
 
     public ContentDialogView()
     {
@@ -31,12 +31,12 @@ public sealed partial class ContentDialogView
     (
         string title = "[NO TITLE]",
         string content = "[CONTENT NOT SET]",
-        string _primaryButtonText = "[NOT SET]",
-        string _secondaryButtonText = "[NOT SET]",
+        string primaryButtonText = "[NOT SET]",
+        string secondaryButtonText = "[NOT SET]",
         RoutedEventHandler primaryButtonHandler = null,
         RoutedEventHandler secondaryButtonHandler = null,
         bool accentPrimaryButton = true,
-        string _logFileLocation = "0"
+        string logFileLocation = "0"
     )
     {
         InitializeComponent();
@@ -45,27 +45,27 @@ public sealed partial class ContentDialogView
         DialogContent.Content = content;
 
         // Back up
-        primaryButtonText = _primaryButtonText;
-        secondaryButtonText = _secondaryButtonText;
-        logFileLocation = _logFileLocation;
+        this._primaryButtonText = primaryButtonText;
+        this._secondaryButtonText = secondaryButtonText;
+        this._logFileLocation = logFileLocation;
 
-        DialogPrimaryButton.Content = primaryButtonText;
-        DialogSecondaryButton.Content = secondaryButtonText;
+        DialogPrimaryButton.Content = this._primaryButtonText;
+        DialogSecondaryButton.Content = this._secondaryButtonText;
 
         DialogPrimaryButton.Click += primaryButtonHandler;
         DialogSecondaryButton.Click += secondaryButtonHandler;
 
         if (accentPrimaryButton) DialogPrimaryButton.Style = (Style)Resources["AccentButtonStyle"];
 
-        LogFilesRun.Text = File.Exists(logFileLocation)
+        LogFilesRun.Text = File.Exists(this._logFileLocation)
             ? "If you're looking the log file, it's"
             : "If you're looking log files, they're";
     }
 
     private void LogsHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
     {
-        OpenFolderAndSelectItem(File.Exists(logFileLocation)
-            ? logFileLocation
+        OpenFolderAndSelectItem(File.Exists(_logFileLocation)
+            ? _logFileLocation
             : Path.Combine(Environment.GetFolderPath(
                 Environment.SpecialFolder.ApplicationData), "Amethyst\\logs\\"));
     }
@@ -89,18 +89,18 @@ public sealed partial class ContentDialogView
             (Visibility)Convert.ToInt32(string.IsNullOrEmpty(cancelButtonText));
 
         // Show the flyout
-        confirmationFlyoutRunning = true;
+        _confirmationFlyoutRunning = true;
         ConfirmationFlyout.Placement = FlyoutPlacementMode.TopEdgeAlignedLeft;
         ConfirmationFlyout.ShowAt(DialogPrimaryButton);
 
         // Wait for the result
-        await semaphoreObject.WaitAsync();
+        await _semaphoreObject.WaitAsync();
 
         // Wait a bit
         await Task.Delay(1200);
 
         // Return the result
-        return confirmationFlyoutResult;
+        return _confirmationFlyoutResult;
     }
 
     public async Task<bool> HandleSecondaryButtonConfirmationFlyout(string content, string confirmButtonText,
@@ -117,50 +117,50 @@ public sealed partial class ContentDialogView
             (Visibility)Convert.ToInt32(string.IsNullOrEmpty(cancelButtonText));
 
         // Show the flyout
-        confirmationFlyoutRunning = true;
+        _confirmationFlyoutRunning = true;
         ConfirmationFlyout.Placement = FlyoutPlacementMode.TopEdgeAlignedRight;
         ConfirmationFlyout.ShowAt(DialogSecondaryButton);
 
         // Wait for the result
-        await semaphoreObject.WaitAsync();
+        await _semaphoreObject.WaitAsync();
 
         // Return the result
-        return confirmationFlyoutResult;
+        return _confirmationFlyoutResult;
     }
 
     private void ConfirmationFlyoutConfirmActionButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!confirmationFlyoutRunning) return;
+        if (!_confirmationFlyoutRunning) return;
 
         // Set the result and release the semaphore
-        confirmationFlyoutResult = true;
-        semaphoreObject.Release();
+        _confirmationFlyoutResult = true;
+        _semaphoreObject.Release();
 
-        confirmationFlyoutRunning = false;
+        _confirmationFlyoutRunning = false;
         ConfirmationFlyout.Hide();
     }
 
     private void ConfirmationFlyoutCancelActionButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!confirmationFlyoutRunning) return;
+        if (!_confirmationFlyoutRunning) return;
 
         // Set the result and release the semaphore
-        confirmationFlyoutResult = false;
-        semaphoreObject.Release();
+        _confirmationFlyoutResult = false;
+        _semaphoreObject.Release();
 
-        confirmationFlyoutRunning = false;
+        _confirmationFlyoutRunning = false;
         ConfirmationFlyout.Hide();
     }
 
     private void ConfirmationFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
     {
-        if (!confirmationFlyoutRunning) return;
+        if (!_confirmationFlyoutRunning) return;
 
         // Set the result and release the semaphore
-        confirmationFlyoutResult = false;
-        semaphoreObject.Release();
+        _confirmationFlyoutResult = false;
+        _semaphoreObject.Release();
 
-        confirmationFlyoutRunning = false;
+        _confirmationFlyoutRunning = false;
     }
 
     public void PrimaryButtonActionPending(bool actionPending)
@@ -176,7 +176,7 @@ public sealed partial class ContentDialogView
             Height = 20
         };
 
-        DialogPrimaryButton.Content = actionPending ? viewbox : primaryButtonText;
+        DialogPrimaryButton.Content = actionPending ? viewbox : _primaryButtonText;
     }
 
     public void SecondaryButtonActionPending(bool actionPending)
@@ -192,7 +192,7 @@ public sealed partial class ContentDialogView
             Height = 22
         };
 
-        DialogSecondaryButton.Content = actionPending ? viewbox : secondaryButtonText;
+        DialogSecondaryButton.Content = actionPending ? viewbox : _secondaryButtonText;
     }
 
     // An alternative to:
@@ -233,18 +233,18 @@ public sealed partial class ContentDialogView
         [Out] out IntPtr pidl, uint sfgaoIn, [Out] out uint psfgaoOut);
 
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-    private static extern uint SHGetNameFromIDList(IntPtr pidl, SIGDN sigdnName, [Out] out IntPtr ppszName);
+    private static extern uint SHGetNameFromIDList(IntPtr pidl, Sigdn sigdnName, [Out] out IntPtr ppszName);
 
-    private enum SIGDN : uint
+    private enum Sigdn : uint
     {
-        NORMALDISPLAY = 0x00000000,
-        PARENTRELATIVEPARSING = 0x80018001,
-        DESKTOPABSOLUTEPARSING = 0x80028000,
-        PARENTRELATIVEEDITING = 0x80031001,
-        DESKTOPABSOLUTEEDITING = 0x8004c000,
-        FILESYSPATH = 0x80058000,
-        URL = 0x80068000,
-        PARENTRELATIVEFORADDRESSBAR = 0x8007c001,
-        PARENTRELATIVE = 0x80080001
+        Normaldisplay = 0x00000000,
+        Parentrelativeparsing = 0x80018001,
+        Desktopabsoluteparsing = 0x80028000,
+        Parentrelativeediting = 0x80031001,
+        Desktopabsoluteediting = 0x8004c000,
+        Filesyspath = 0x80058000,
+        Url = 0x80068000,
+        Parentrelativeforaddressbar = 0x8007c001,
+        Parentrelative = 0x80080001
     }
 }

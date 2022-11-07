@@ -15,21 +15,21 @@ public static class TrackingDevices
         NoDeviceDll, // Device dll not found at proper path
         NoDeviceDependencyDll, // Dep dll/s not found or invalid
         DeviceDllLinkError, // Could not link for some reason
-        BadOrDuplicateGUID, // Empty/Bad/Duplicate device GUID
+        BadOrDuplicateGuid, // Empty/Bad/Duplicate device GUID
         InvalidFactory, // Device factory just gave up, now cry
         Other // Check logs, MEF probably gave us up again...
     }
 
     // Vector of current devices' JSON resource roots & paths
     // Note: the size must be the same as TrackingDevicesVector's
-    public static List<ValueTuple<Windows.Data.Json.JsonObject, System.IO.DirectoryInfo>>
+    public static List<(Windows.Data.Json.JsonObject ResourceRoot, System.IO.DirectoryInfo Directory)>
         TrackingDevicesLocalizationResourcesRootsVector;
 
     // Written to at the first plugin load
-    public static List<ValueTuple<
-            string, // Name
-            string, // GUID
-            PluginLoadError, // Status
-            string>> // Plugin dll dir
+    public static List<(
+            string Name,
+            string GUID,
+            PluginLoadError Status,
+            string DllDirectory)>
         LoadAttemptedTrackingDevicesVector;
 }

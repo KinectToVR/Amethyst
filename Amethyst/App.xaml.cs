@@ -19,7 +19,7 @@ namespace Amethyst;
 /// </summary>
 public partial class App : Application
 {
-    private Window m_window;
+    private Window _mWindow;
 
     /// <summary>
     ///     Initializes the singleton application object.  This is the first line of authored code
@@ -46,7 +46,7 @@ public partial class App : Application
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        m_window = new MainWindow();
-        m_window.Activate();
+        _mWindow = new MainWindow();
+        _mWindow.Activate();
     }
 }

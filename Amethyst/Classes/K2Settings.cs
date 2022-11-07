@@ -26,8 +26,8 @@ public class K2AppSettings : INotifyPropertyChanged
 
     // Current tracking device: 0 is the default base device
     // First: Device's GUID / saved, Second: Index ID / generated
-    public ValueTuple<string, uint> TrackingDeviceGUIDPair { get; set; } = new(); // -> Always set and >= 0
-    public SortedDictionary<string, uint> OverrideDeviceGUIDsMap { get; set; } = new();
+    public (string GUID, uint ID) TrackingDeviceGuidPair { get; set; } = new(); // -> Always set and >= 0
+    public SortedDictionary<string, uint> OverrideDeviceGuiDsMap { get; set; } = new();
 
     // Skeleton flip when facing away: One-For-All and on is the default
     public bool IsFlipEnabled { get; set; } = true;
@@ -107,24 +107,24 @@ public class K2AppSettings : INotifyPropertyChanged
             K2TrackersVector.Add(new K2AppTracker());
 
         // Force the first 7 trackers to be the default ones : roles
-        K2TrackersVector[0].Role = TrackerType.Tracker_Waist;
-        K2TrackersVector[1].Role = TrackerType.Tracker_LeftFoot;
-        K2TrackersVector[2].Role = TrackerType.Tracker_RightFoot;
-        K2TrackersVector[3].Role = TrackerType.Tracker_LeftElbow;
-        K2TrackersVector[4].Role = TrackerType.Tracker_RightElbow;
-        K2TrackersVector[5].Role = TrackerType.Tracker_LeftKnee;
-        K2TrackersVector[6].Role = TrackerType.Tracker_RightKnee;
+        K2TrackersVector[0].Role = TrackerType.TrackerWaist;
+        K2TrackersVector[1].Role = TrackerType.TrackerLeftFoot;
+        K2TrackersVector[2].Role = TrackerType.TrackerRightFoot;
+        K2TrackersVector[3].Role = TrackerType.TrackerLeftElbow;
+        K2TrackersVector[4].Role = TrackerType.TrackerRightElbow;
+        K2TrackersVector[5].Role = TrackerType.TrackerLeftKnee;
+        K2TrackersVector[6].Role = TrackerType.TrackerRightKnee;
 
         foreach (var tracker in K2TrackersVector)
         {
             // Force the first 7 trackers to be the default ones : serials
-            tracker.Serial = EnumUtils.TrackerTypeRoleSerialDictionary[tracker.Role];
+            tracker.Serial = TypeUtils.TrackerTypeRoleSerialDictionary[tracker.Role];
 
             // Force disable software orientation if used by a non-foot
-            if (tracker.Role != TrackerType.Tracker_LeftFoot &&
-                tracker.Role != TrackerType.Tracker_RightFoot &&
+            if (tracker.Role != TrackerType.TrackerLeftFoot &&
+                tracker.Role != TrackerType.TrackerRightFoot &&
                 tracker.OrientationTrackingOption is JointRotationTrackingOption.SoftwareCalculatedRotation
-                    or JointRotationTrackingOption.SoftwareCalculatedRotation_V2)
+                    or JointRotationTrackingOption.SoftwareCalculatedRotationV2)
                 tracker.OrientationTrackingOption = JointRotationTrackingOption.DeviceInferredRotation;
         }
 

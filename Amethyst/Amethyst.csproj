@@ -135,12 +135,12 @@
     <PRIResource Remove="Assets\Strings\**" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AmethystDriverClient\Amethyst.Driver.Client.csproj" />
     <ProjectReference Include="..\AmethystPluginContract\Amethyst.Plugins.Contract.csproj" />
     <ProjectReference Include="..\AmethystSupport\AmethystSupport.vcxproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Vendor\openvr_api.dll">

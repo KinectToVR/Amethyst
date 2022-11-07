@@ -87,16 +87,16 @@ public interface IAmethystHost
     List<TrackedJoint> AppJointPoses { get; }
 
     // Get the HMD Yaw (exclusively)
-    double HMDOrientationYaw { get; }
+    double HmdOrientationYaw { get; }
 
     // Get the HMD Yaw (exclusively), but un-wrapped aka "calibrated" using the VR room center
-    double HMDOrientationYawCalibrated { get; }
+    double HmdOrientationYawCalibrated { get; }
 
     // Get the raw OpenVRs HMD pose
-    Tuple<Vector3, Quaternion> HMDPose { get; }
+    Tuple<Vector3, Quaternion> HmdPose { get; }
 
     // Get the OpenVRs HMD pose, but un-wrapped aka "calibrated" using the vr room center
-    Tuple<Vector3, Quaternion> HMDPoseCalibrated { get; }
+    Tuple<Vector3, Quaternion> HmdPoseCalibrated { get; }
 
     // Get the raw OpenVRs left controller pose
     Tuple<Vector3, Quaternion> LeftControllerPose { get; }

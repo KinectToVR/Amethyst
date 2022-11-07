@@ -15,13 +15,13 @@ public class K2AppTracker : INotifyPropertyChanged
     // LERP data's backup
     private Vector3 _lowPassPosition = new(0);
     private Vector3 _predictedPosition = new(0);
-    private Vector3 _LERPPosition = new(0);
-    private Vector3 _lastLERPPosition = new(0);
+    private Vector3 _lerpPosition = new(0);
+    private Vector3 _lastLerpPosition = new(0);
 
-    private Quaternion _SLERPOrientation = new(0, 0, 0, 1);
-    private Quaternion _SLERPSlowOrientation = new(0, 0, 0, 1);
-    private Quaternion _lastSLERPOrientation = new(0, 0, 0, 1);
-    private Quaternion _lastSLERPSlowOrientation = new(0, 0, 0, 1);
+    private Quaternion _slerpOrientation = new(0, 0, 0, 1);
+    private Quaternion _slerpSlowOrientation = new(0, 0, 0, 1);
+    private Quaternion _lastSlerpOrientation = new(0, 0, 0, 1);
+    private Quaternion _lastSlerpSlowOrientation = new(0, 0, 0, 1);
 
     public Vector3 PoseVelocity { get; set; } = new(0, 0, 0);
     public Vector3 PoseAcceleration { get; set; } = new(0, 0, 0);
@@ -47,16 +47,16 @@ public class K2AppTracker : INotifyPropertyChanged
     public bool IsRotationOverridden { get; set; } = false;
 
     // Position filter update option
-    private RotationTrackingFilterOption orientationTrackingFilterOption =
-        RotationTrackingFilterOption.OrientationTrackingFilter_SLERP;
+    private RotationTrackingFilterOption _orientationTrackingFilterOption =
+        RotationTrackingFilterOption.OrientationTrackingFilterSlerp;
 
     // Orientation tracking option
-    private JointRotationTrackingOption orientationTrackingOption =
+    private JointRotationTrackingOption _orientationTrackingOption =
         JointRotationTrackingOption.DeviceInferredRotation;
 
     // Position filter option
-    private JointPositionTrackingOption positionTrackingFilterOption =
-        JointPositionTrackingOption.PositionTrackingFilter_LERP;
+    private JointPositionTrackingOption _positionTrackingFilterOption =
+        JointPositionTrackingOption.PositionTrackingFilterLerp;
 
     public K2AppTracker()
     {
@@ -67,45 +67,45 @@ public class K2AppTracker : INotifyPropertyChanged
     public bool NoPositionFilteringRequested { get; set; } = false;
 
     // Override device's GUID
-    public string OverrideGUID { get; set; }
+    public string OverrideGuid { get; set; }
 
     // If the joint is overridden, overrides' ids (computed)
-    public uint OverrideJointID { get; set; } = 0;
+    public uint OverrideJointId { get; set; } = 0;
 
-    public TrackerType Role { get; set; } = TrackerType.Tracker_Handed;
+    public TrackerType Role { get; set; } = TrackerType.TrackerHanded;
 
     // The assigned host joint if using manual joints
-    public uint SelectedTrackedJointID { get; set; } = 0;
+    public uint SelectedTrackedJointId { get; set; } = 0;
 
     // Tracker data (inherited)
     public string Serial { get; set; }
 
     public JointRotationTrackingOption OrientationTrackingOption
     {
-        get => orientationTrackingOption;
+        get => _orientationTrackingOption;
         set
         {
-            orientationTrackingOption = value;
+            _orientationTrackingOption = value;
             OnPropertyChanged();
         }
     }
 
     public JointPositionTrackingOption PositionTrackingFilterOption
     {
-        get => positionTrackingFilterOption;
+        get => _positionTrackingFilterOption;
         set
         {
-            positionTrackingFilterOption = value;
+            _positionTrackingFilterOption = value;
             OnPropertyChanged();
         }
     }
 
     public RotationTrackingFilterOption OrientationTrackingFilterOption
     {
-        get => orientationTrackingFilterOption;
+        get => _orientationTrackingFilterOption;
         set
         {
-            orientationTrackingFilterOption = value;
+            _orientationTrackingFilterOption = value;
             OnPropertyChanged();
         }
     }
@@ -131,18 +131,17 @@ public class K2AppTracker : INotifyPropertyChanged
     // and to select it, the filter number must be < 0
     public Vector3 GetFilteredPosition(JointPositionTrackingOption? filter = null)
     {
-        var _filter = filter ?? JointPositionTrackingOption.NoPositionTrackingFilter;
+        var computedFilter = 
+            NoPositionFilteringRequested // If filtering is force-disabled
+            ? JointPositionTrackingOption.NoPositionTrackingFilter
+            : filter ?? _positionTrackingFilterOption;
 
-        if (!filter.HasValue) _filter = positionTrackingFilterOption;
-        if (NoPositionFilteringRequested)
-            _filter = JointPositionTrackingOption.NoPositionTrackingFilter;
-
-        return _filter switch
+        return computedFilter switch
         {
-            JointPositionTrackingOption.PositionTrackingFilter_LERP => _LERPPosition,
-            JointPositionTrackingOption.PositionTrackingFilter_Lowpass => _lowPassPosition,
-            JointPositionTrackingOption.PositionTrackingFilter_Kalman => _kalmanPosition,
-            JointPositionTrackingOption.PositionTrackingFilter_Prediction => _predictedPosition,
+            JointPositionTrackingOption.PositionTrackingFilterLerp => _lerpPosition,
+            JointPositionTrackingOption.PositionTrackingFilterLowpass => _lowPassPosition,
+            JointPositionTrackingOption.PositionTrackingFilterKalman => _kalmanPosition,
+            JointPositionTrackingOption.PositionTrackingFilterPrediction => _predictedPosition,
             JointPositionTrackingOption.NoPositionTrackingFilter => Position,
             _ => Position
         };
@@ -153,10 +152,10 @@ public class K2AppTracker : INotifyPropertyChanged
     // and to select it, the filter number must be < 0
     public Quaternion GetFilteredOrientation(RotationTrackingFilterOption? filter = null)
     {
-        return (filter ?? orientationTrackingFilterOption) switch
+        return (filter ?? _orientationTrackingFilterOption) switch
         {
-            RotationTrackingFilterOption.OrientationTrackingFilter_SLERP => _SLERPOrientation,
-            RotationTrackingFilterOption.OrientationTrackingFilter_SLERP_Slow => _SLERPSlowOrientation,
+            RotationTrackingFilterOption.OrientationTrackingFilterSlerp => _slerpOrientation,
+            RotationTrackingFilterOption.OrientationTrackingFilterSlerpSlow => _slerpSlowOrientation,
             RotationTrackingFilterOption.NoOrientationTrackingFilter => Orientation,
             _ => Orientation
         };
