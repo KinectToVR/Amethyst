@@ -10,7 +10,7 @@
   <Identity
     Name="1cb715ac-5d11-488e-85be-aef7e0daa605"
     Publisher="CN=K2VRTeam"
-    Version="1.0.3.1" />
+    Version="1.1.0.0" />
 
   <Properties>
     <DisplayName>Amethyst</DisplayName>

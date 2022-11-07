@@ -51,7 +51,7 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,3,1
+ FILEVERSION 1,1,0,0
  PRODUCTVERSION 13,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -69,9 +69,9 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "K2VR Team"
             VALUE "FileDescription", "Amethyst API"
-            VALUE "FileVersion", "1.0.3.1"
+            VALUE "FileVersion", "1.1.0.0"
             VALUE "InternalName", "Amethyst_API.dll"
-            VALUE "LegalCopyright", "Copyright © K2VR Team 2022"
+            VALUE "LegalCopyright", "Copyright ï¿½ K2VR Team 2022"
             VALUE "OriginalFilename", "Amethyst_API.dll"
             VALUE "ProductName", "Amethyst"
             VALUE "ProductVersion", "13.0.0.0"

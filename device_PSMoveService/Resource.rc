@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,3,1
- PRODUCTVERSION 1,0,3,1
+ FILEVERSION 1,1,0,0
+ PRODUCTVERSION 1,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "K2VR Team"
             VALUE "FileDescription", "Amethyst PSMS Plugin"
-            VALUE "FileVersion", "1.0.3.1"
+            VALUE "FileVersion", "1.1.0.0"
             VALUE "InternalName", "device_PSMoveService.dll"
-            VALUE "LegalCopyright", "Copyright © K2VR Team 2022"
+            VALUE "LegalCopyright", "Copyright ï¿½ K2VR Team 2022"
             VALUE "OriginalFilename", "device_PSMoveService.dll"
             VALUE "ProductName", "Amethyst PSMS Plugin"
-            VALUE "ProductVersion", "1.0.3.1"
+            VALUE "ProductVersion", "1.1.0.0"
         END
     END
     BLOCK "VarFileInfo"

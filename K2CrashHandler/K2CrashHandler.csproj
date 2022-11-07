@@ -20,10 +20,10 @@
 		<PackageProjectUrl>k2vr.tech</PackageProjectUrl>
 		<Copyright>Copyright © K2VR Team 2022</Copyright>
 		<BaseOutputPath>$(SolutionDir)$(Platform)\$(Configuration)\K2CrashHandler\bin\</BaseOutputPath>
-		<FileVersion>1.0.3.1</FileVersion>
-		<AssemblyVersion>1.0.3.1</AssemblyVersion>
+		<FileVersion>1.1.0.0</FileVersion>
+		<AssemblyVersion>1.1.0.0</AssemblyVersion>
 		<RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
-		<Version>1.0.3.1</Version>
+		<Version>1.1.0.0</Version>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	</PropertyGroup>
 
