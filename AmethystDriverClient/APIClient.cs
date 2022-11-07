@@ -1,4 +1,6 @@
 ﻿using Amethyst.Plugins.Contract;
+using Grpc.Net.Client;
+using Amethyst.Driver.API;
 
 namespace Amethyst.Driver.Client;
 
@@ -19,17 +21,17 @@ public static class DriverClient
         return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
     }
 
-    public static List<(TrackerType Role, bool State)> UpdateTrackerPoses()
+    public static List<(TrackerType Role, bool State)> UpdateTrackerPoses(List<K2TrackerBase> trackerBases)
     {
         return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
     }
 
-    public static List<(TrackerType Role, bool State)> RefreshTrackerPoses()
+    public static List<(TrackerType Role, bool State)> RefreshTrackerPoses(List<TrackerType> trackers)
     {
         return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
     }
 
-    public static bool RequestVrRestart()
+    public static bool RequestVrRestart(string reason)
     {
         return true;
     }

@@ -50,24 +50,6 @@ public enum LogSeverity
     Fatal
 }
 
-// OpenVR tracker type
-public enum TrackerType
-{
-    TrackerHanded,
-    TrackerLeftFoot,
-    TrackerRightFoot,
-    TrackerLeftShoulder,
-    TrackerRightShoulder,
-    TrackerLeftElbow,
-    TrackerRightElbow,
-    TrackerLeftKnee,
-    TrackerRightKnee,
-    TrackerWaist,
-    TrackerChest,
-    TrackerCamera,
-    TrackerKeyboard
-}
-
 // Rotation tracking option enumeration
 public enum JointRotationTrackingOption
 {

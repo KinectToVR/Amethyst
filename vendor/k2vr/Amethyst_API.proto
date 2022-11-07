@@ -1,0 +1,103 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "Amethyst.Driver.API";
+
+package ktvr;
+
+service IK2DriverService
+{
+  // Note: 'state' becomes a 'success' check on return
+  rpc SetTrackerStateVector (stream ServiceRequest) returns (stream Service_TrackerStatePair) {}
+  rpc UpdateTrackerVector (stream ServiceRequest) returns (stream Service_TrackerStatePair) {}
+  rpc RefreshTrackerPoseVector (stream ServiceRequest) returns (stream Service_TrackerStatePair) {}
+  rpc RequestVRRestart (ServiceRequest) returns (Service_TrackerStatePair) {}
+  rpc PingDriverService (google.protobuf.Empty) returns (PingRequest) {}
+}
+
+message ServiceRequest
+{
+  oneof value_oneof
+  {
+    Service_TrackerStatePair trackerStateTuple = 1;
+    K2TrackerBase trackerBase = 2; // For update/refresh
+    string message = 3; // For OpenVR restart requests
+  }
+
+  bool want_reply = 4;
+}
+
+message PingRequest
+{
+  int64 received_timestamp = 1;
+}
+
+message Service_TrackerStatePair
+{
+  TrackerType trackerType = 1;
+  bool state = 2;
+}
+
+enum TrackerType
+{  
+  Tracker_Handed = 0;
+  Tracker_LeftFoot = 1;
+  Tracker_RightFoot = 2;
+  Tracker_LeftShoulder = 3;
+  Tracker_RightShoulder = 4;
+  Tracker_LeftElbow = 5;
+  Tracker_RightElbow = 6;
+  Tracker_LeftKnee = 7;
+  Tracker_RightKnee = 8;
+  Tracker_Waist = 9;
+  Tracker_Chest = 10;
+  Tracker_Camera = 11;
+  Tracker_Keyboard = 12;
+}
+
+message K2Quaternion
+{
+  double w = 1;
+  double x = 2;
+  double y = 3;
+  double z = 4;
+}
+
+message K2Vector3
+{
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message K2TrackerPhysics
+{
+	K2Vector3 velocity = 1;
+	K2Vector3 acceleration = 2;
+
+	K2Vector3 angularVelocity = 3;
+	K2Vector3 angularAcceleration = 4;
+}
+
+message K2TrackerPose
+{
+  K2Quaternion orientation = 1;
+  K2Vector3 position = 2;
+
+  optional K2TrackerPhysics physics = 3;
+}
+
+message K2TrackerData
+{
+  string serial = 1;
+  TrackerType role = 2;
+  bool isActive = 3;
+}
+
+// K2Tracker base
+message K2TrackerBase
+{
+  K2TrackerPose pose = 1;
+  K2TrackerData data = 2;
+  TrackerType tracker = 3;
+}
