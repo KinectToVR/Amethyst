@@ -101,8 +101,6 @@ namespace k2app
 		k2_PositionTrackingFilter_Lowpass,
 		// Extended Kalman
 		k2_PositionTrackingFilter_Kalman,
-		// Hekky^ pose prediction
-		k2_PositionTrackingFilter_Prediction,
 		// Filter Off
 		k2_NoPositionTrackingFilter
 	};
@@ -271,13 +269,6 @@ namespace k2app
 
 			/* Update the pose prediction filter */
 			predictedPosition = pose_position;
-
-			/* Notes for `k2_PositionTrackingFilter_Prediction\\predictedPosition` impl:
-			 *
-			 * - if you need timestamps, you're gonna need to manage them manually (sorry)
-			 * - you may want to create your own filter class and put it in `[repo]/external/vendor/`, like lowpass and kalman filters
-			 * - the tracker class will auto-manage your filter, just output the final position to the `predictedPosition` variable
-			 */
 		}
 
 		// Update orientation filters
@@ -292,31 +283,6 @@ namespace k2app
 			/* Update the Slower SLERP filter */
 			SLERPSlowOrientation = lastSLERPSlowOrientation.normalized().slerp(0.15, pose_orientation.normalized());
 			lastSLERPSlowOrientation = pose_orientation.normalized(); // Backup the orientation
-		}
-
-		// Update the internal physics components,
-		// not called if the managing device overrides physics
-		void updateInternalPhysics()
-		{
-			// Timestamps
-			//pose_poseTimestamp;
-			//pose_previousPoseTimestamp;
-
-			// Pose components
-			//pose_position
-			//pose_previousPosition
-			//pose_orientation
-			//pose_previousOrientation
-
-			// Physics components to update
-			//pose_velocity;
-			//pose_angularVelocity;
-			//pose_acceleration;
-			//pose_angularAcceleration;
-
-			// Called after all orientation&pose composes,
-			// MUST YIELD UNCALIBRATED-SPACE COMPONENTS
-			// (which get calibrated at getTrackerBase())
 		}
 
 		// Get filtered data
@@ -341,8 +307,6 @@ namespace k2app
 				return lowPassPosition;
 			case k2_PositionTrackingFilter_Kalman:
 				return kalmanPosition;
-			case k2_PositionTrackingFilter_Prediction:
-				return predictedPosition;
 			case k2_NoPositionTrackingFilter:
 				return pose_position;
 			}
@@ -510,6 +474,7 @@ namespace k2app
 			tracker_base.mutable_pose()->mutable_position()->set_z(_full_position.z());
 
 			// Physics
+			if (overridePhysics)
 			{
 				const auto _full_velocity =
 					not_calibrated
@@ -598,6 +563,7 @@ namespace k2app
 			tracker_base.mutable_pose()->mutable_position()->set_z(_full_position.z());
 
 			// Physics
+			if (overridePhysics)
 			{
 				// Velocity
 				tracker_base.mutable_pose()->mutable_physics()->mutable_velocity()->set_x(pose_velocity.x());
@@ -667,6 +633,7 @@ namespace k2app
 
 		// Is this tracker enabled?
 		bool data_isActive = false;
+		bool overridePhysics = false;
 
 		// Does the managing device request no pos filtering?
 		bool m_no_position_filtering_requested = false;
@@ -695,6 +662,8 @@ namespace k2app
 				CEREAL_NVP(isRotationOverridden),
 				CEREAL_NVP(overrideJointID),
 				CEREAL_NVP(overrideGUID),
+
+				CEREAL_NVP(overridePhysics),
 
 				CEREAL_NVP(pose_position),
 				CEREAL_NVP(pose_orientation),

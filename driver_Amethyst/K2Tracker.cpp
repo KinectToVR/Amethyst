@@ -119,6 +119,29 @@ void K2Tracker::set_pose(const ktvr::K2TrackerPose& pose)
 			_pose.vecAngularAcceleration[2] = pose.physics().angularacceleration().z();
 		}
 
+		else
+		{
+			// Velocity
+			_pose.vecVelocity[0] = 0.;
+			_pose.vecVelocity[1] = 0.;
+			_pose.vecVelocity[2] = 0.;
+
+			// Acceleration
+			_pose.vecAcceleration[0] = 0.;
+			_pose.vecAcceleration[1] = 0.;
+			_pose.vecAcceleration[2] = 0.;
+
+			// Angular Velocity
+			_pose.vecAngularVelocity[0] = 0.;
+			_pose.vecAngularVelocity[1] = 0.;
+			_pose.vecAngularVelocity[2] = 0.;
+
+			// Angular Acceleration
+			_pose.vecAngularAcceleration[0] = 0.;
+			_pose.vecAngularAcceleration[1] = 0.;
+			_pose.vecAngularAcceleration[2] = 0.;
+		}
+
 		// Automatically update the tracker when finished
 		update(); // called from this
 	}

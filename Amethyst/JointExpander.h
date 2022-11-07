@@ -522,8 +522,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 				L"SettingsPage", L"Filters/Position/LowPass")));
 			_kalman.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Position/Kalman")));
-			_predict.Content(box_value(k2app::interfacing::LocalizedResourceWString(
-				L"SettingsPage", L"Filters/Position/Prediction")));
 			_pos_off.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Position/Off")));
 

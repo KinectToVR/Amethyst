@@ -841,6 +841,7 @@ namespace k2app::main
 					// If the device overrides physics
 					if (_kinect->isPhysicsOverrideEnabled())
 					{
+						tracker.overridePhysics = true; // Mark as requested
 						tracker.pose_velocity = _joint.getJointVelocity();
 						tracker.pose_acceleration = _joint.getJointAcceleration();
 						tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
@@ -849,7 +850,7 @@ namespace k2app::main
 					// If not and the tracker is not overriden
 					else if (!tracker.isPositionOverridden ||
 						!K2Settings.overrideDeviceGUIDsMap.contains(tracker.overrideGUID))
-						tracker.updateInternalPhysics();
+						tracker.overridePhysics = false;
 				}
 			}
 			else if (_device.index() == 1)
@@ -874,6 +875,7 @@ namespace k2app::main
 					// If the device overrides physics
 					if (_joints->isPhysicsOverrideEnabled())
 					{
+						tracker.overridePhysics = true; // Mark as requested
 						tracker.pose_velocity = _joint.getJointVelocity();
 						tracker.pose_acceleration = _joint.getJointAcceleration();
 						tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
@@ -882,7 +884,7 @@ namespace k2app::main
 					// If not and the tracker is not overriden
 					else if (!tracker.isPositionOverridden ||
 						!K2Settings.overrideDeviceGUIDsMap.contains(tracker.overrideGUID))
-						tracker.updateInternalPhysics();
+						tracker.overridePhysics = false;
 				}
 			}
 		}
@@ -1145,12 +1147,13 @@ namespace k2app::main
 							// If the device overrides physics
 							if (_kinect->isPhysicsOverrideEnabled())
 							{
+								tracker.overridePhysics = true; // Mark as requested
 								tracker.pose_velocity = _joint.getJointVelocity();
 								tracker.pose_acceleration = _joint.getJointAcceleration();
 								tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
 								tracker.pose_angularAcceleration = _joint.getJointAngularAcceleration();
 							}
-							else tracker.updateInternalPhysics();
+							else tracker.overridePhysics = false;
 						}
 				}
 				else if (_device.index() == 1)
@@ -1177,12 +1180,13 @@ namespace k2app::main
 							// If the device overrides physics
 							if (_joints->isPhysicsOverrideEnabled())
 							{
+								tracker.overridePhysics = true; // Mark as requested
 								tracker.pose_velocity = _joint.getJointVelocity();
 								tracker.pose_acceleration = _joint.getJointAcceleration();
 								tracker.pose_angularVelocity = _joint.getJointAngularVelocity();
 								tracker.pose_angularAcceleration = _joint.getJointAngularAcceleration();
 							}
-							else tracker.updateInternalPhysics();
+							else tracker.overridePhysics = false;
 						}
 				}
 			}
