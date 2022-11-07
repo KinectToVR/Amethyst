@@ -515,7 +515,7 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_position_combo.FontWeight(winrt::Windows::UI::Text::FontWeights::SemiBold());
 
 			// Set up (content caption / pos)'s items
-			ComboBoxItem _lerp, _low_pass, _kalman, _predict, _pos_off;
+			ComboBoxItem _lerp, _low_pass, _kalman, _pos_off;
 			_lerp.Content(box_value(k2app::interfacing::LocalizedResourceWString(
 				L"SettingsPage", L"Filters/Position/LERP")));
 			_low_pass.Content(box_value(k2app::interfacing::LocalizedResourceWString(
@@ -528,7 +528,6 @@ namespace winrt::Microsoft::UI::Xaml::Controls
 			_position_combo.Items().Append(_lerp);
 			_position_combo.Items().Append(_low_pass);
 			_position_combo.Items().Append(_kalman);
-			_position_combo.Items().Append(_predict);
 			_position_combo.Items().Append(_pos_off);
 
 			_position_combo.SelectedIndex(0);
