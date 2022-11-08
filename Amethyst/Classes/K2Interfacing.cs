@@ -216,7 +216,7 @@ public static class Interfacing
         // When a tracker's been auto-disabled
         if (eventArgs.Argument.Contains("focus_trackers"))
             Shared.Main.DispatcherQueue.TryEnqueue(
-                async Task() =>
+                async () =>
                 {
                     // Bring Amethyst to front
                     SetForegroundWindow(Shared.Main.AppWindowId);
@@ -246,7 +246,7 @@ public static class Interfacing
         // When you need to restart OpenVR
         if (eventArgs.Argument.Contains("focus_restart"))
             Shared.Main.DispatcherQueue.TryEnqueue(
-                async Task() =>
+                async () =>
                 {
                     // Bring Amethyst to front
                     SetForegroundWindow(Shared.Main.AppWindowId);
@@ -741,7 +741,7 @@ public static class Interfacing
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
         else
-            Shared.Main.DispatcherQueue.TryEnqueue(async Task() =>
+            Shared.Main.DispatcherQueue.TryEnqueue(async () =>
             {
                 // Sleep a bit before checking
                 await Task.Delay(1000);

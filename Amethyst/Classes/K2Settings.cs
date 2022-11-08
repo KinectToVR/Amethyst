@@ -27,8 +27,8 @@ public class K2AppSettings : INotifyPropertyChanged
 
     // Current tracking device: 0 is the default base device
     // First: Device's GUID / saved, Second: Index ID / generated
-    public (string GUID, uint ID) TrackingDeviceGuidPair { get; set; } = new(); // -> Always set and >= 0
-    public SortedDictionary<string, uint> OverrideDeviceGuiDsMap { get; set; } = new();
+    public string TrackingDeviceGuid { get; set; } // -> Always set
+    public SortedSet<string> OverrideDevicesGuidMap { get; set; } = new();
 
     // Skeleton flip when facing away: One-For-All and on is the default
     public bool IsFlipEnabled { get; set; } = true;

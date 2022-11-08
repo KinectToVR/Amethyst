@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Numerics;
 using System.Reflection;
 
@@ -64,6 +64,10 @@ public interface ITrackingDevice
     // You should register some timer to update your device yourself
     [DefaultValue(false)] bool IsSelfUpdateEnabled { get; }
 
+    // Should be set up at construction
+    // Mark this as false ALSO if your device supports 360 tracking by itself
+    [DefaultValue(false)] bool IsFlipSupported { get; }
+    
     // To support settings daemon and register the layout root,
     // the device must properly report it first
     // -> will lead to showing an additional 'settings' button

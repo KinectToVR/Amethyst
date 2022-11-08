@@ -1,11 +1,176 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Amethyst.Plugins.Contract;
+using Amethyst.Utils;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
+using static Amethyst.Classes.Shared;
 
 namespace Amethyst.Classes;
 
 public static class TrackingDevices
 {
+    public static SortedDictionary<string, ITrackingDevice> TrackingDevicesVector = new();
+
+    public static ITrackingDevice GetTrackingDevice()
+    {
+        return TrackingDevicesVector[Interfacing.AppSettings.TrackingDeviceGuid];
+    }
+
+    public static (bool Exists, ITrackingDevice) GetDevice(string guid)
+    {
+        return (TrackingDevicesVector.TryGetValue(guid, out var device), device);
+    }
+
+    public static bool IsExternalFlipSupportable()
+    {
+        if (!GetTrackingDevice().IsFlipSupported) return false;
+
+        /* Now check if either waist tracker is overridden or disabled
+		 * And then search in OpenVR for a one with waist role */
+
+        // If we have an override and if it's actually affecting the waist rotation
+        foreach (var overrideDeviceGuid in Interfacing.AppSettings.OverrideDevicesGuidMap
+                     .Where(overrideDeviceGuid =>
+                         Interfacing.AppSettings.K2TrackersVector[0].IsActive &&
+                         Interfacing.AppSettings.K2TrackersVector[0].IsRotationOverridden &&
+                         Interfacing.AppSettings.K2TrackersVector[0].OverrideGuid == overrideDeviceGuid))
+            return !TrackingDevicesVector[overrideDeviceGuid].IsFlipSupported;
+
+        // If still not, then also check if the waist is disabled by any chance
+        return !Interfacing.AppSettings.K2TrackersVector[0].IsActive &&
+               Interfacing.FindVrTracker("waist", false).Found;
+    }
+
+    public static void CheckExternalFlip()
+    {
+        if (Settings.ExternalFlipCheckBox == null) return;
+
+        // Everything's fine
+        if (IsExternalFlipSupportable() &&
+            Interfacing.AppSettings.IsFlipEnabled &&
+            Interfacing.AppSettings.IsExternalFlipEnabled)
+        {
+            Settings.ExternalFlipStatusLabel.Text =
+                Interfacing.LocalizedJsonString("/SettingsPage/Captions/ExtFlipStatus/Active");
+
+            Settings.ExternalFlipStatusStackPanel.Visibility = Visibility.Visible;
+        }
+        // No tracker detected
+        else if (Interfacing.AppSettings.IsExternalFlipEnabled)
+        {
+            Settings.ExternalFlipStatusLabel.Text =
+                Interfacing.LocalizedJsonString("/SettingsPage/Captions/ExtFlipStatus/NoTracker");
+
+            Settings.ExternalFlipStatusStackPanel.Visibility = Visibility.Visible;
+        }
+        // Disabled by the user
+        else
+        {
+            Settings.ExternalFlipStatusLabel.Text =
+                Interfacing.LocalizedJsonString("/SettingsPage/Captions/ExtFlipStatus/Disabled");
+
+            Settings.ExternalFlipStatusStackPanel.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    public static void UpdateIsFlipEnabled()
+    {
+        // Skip if not set up yet
+        if (Settings.FlipDropDown == null) return;
+
+        // Make expander opacity .5 and collapse it
+        // to imitate that it's disabled
+
+        // Flip
+        if (!Interfacing.AppSettings.IsFlipEnabled)
+        {
+            Settings.FlipDropDown.IsEnabled = false;
+            Settings.FlipDropDown.IsExpanded = false;
+        }
+        else
+        {
+            Settings.FlipDropDown.IsEnabled = true;
+        }
+    }
+
+    public static void TrackersConfigChanged(bool showToasts = true)
+    {
+        // Don't react to pre-init signals
+        if (!Settings.SettingsLocalInitFinished) return;
+        Logger.Info("Trackers configuration has been changed!");
+        if (!showToasts) Logger.Info("Any toast won't be shown this time: force-disabled");
+
+        // If this is the first time and happened runtime, also show the notification
+        if (Interfacing.K2AppTrackersSpawned)
+        {
+            if (Settings.RestartButton != null && showToasts)
+                if (!Settings.RestartButton.IsEnabled)
+                {
+                    Interfacing.ShowToast(
+                        Interfacing.LocalizedJsonString(
+                            "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
+                        Interfacing.LocalizedJsonString(
+                            "/SharedStrings/Toasts/TrackersConfigChanged"),
+                        false, "focus_restart");
+
+                    Interfacing.ShowVRToast(
+                        Interfacing.LocalizedJsonString(
+                            "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
+                        Interfacing.LocalizedJsonString(
+                            "/SharedStrings/Toasts/TrackersConfigChanged"));
+                }
+
+            // Compare with saved settings and unlock the restart
+            if (Settings.RestartButton != null)
+                Settings.RestartButton.IsEnabled = true;
+        }
+
+        // Enable/Disable combos
+        UpdateIsFlipEnabled();
+        // Enable/Disable ExtFlip
+        CheckExternalFlip();
+    }
+
+    public static void CheckOverrideIndexes(string guid)
+    {
+        // Do we need to save?
+        var settingsChangesMade = false;
+
+        // Check if all joints have valid IDs
+        if (TrackingDevicesVector.TryGetValue(guid, out var device))
+            foreach (var tracker in Interfacing.AppSettings.K2TrackersVector.Where(tracker =>
+                         tracker.OverrideGuid == guid &&
+                         tracker.OverrideJointId >= device.TrackedJoints.Count))
+            {
+                tracker.OverrideJointId = 0;
+                settingsChangesMade = true;
+            }
+
+        // Save it (if needed)
+        if (settingsChangesMade)
+            Interfacing.AppSettings.SaveSettings();
+    }
+
+    public static void CheckBaseIndexes()
+    {
+        // Do we need to save?
+        var settingsChangesMade = false;
+
+        // Check if all joints have valid IDs
+        foreach (var tracker in Interfacing.AppSettings.K2TrackersVector.Where(tracker =>
+                     tracker.SelectedTrackedJointId >= GetTrackingDevice().TrackedJoints.Count))
+        {
+            tracker.SelectedTrackedJointId = 0;
+            settingsChangesMade = true;
+        }
+
+        // Save it (if needed)
+        if (settingsChangesMade)
+            Interfacing.AppSettings.SaveSettings();
+    }
+
     public enum PluginLoadError
     {
         Unknown, // We literally don't know what's happened
@@ -22,7 +187,8 @@ public static class TrackingDevices
 
     // Vector of current devices' JSON resource roots & paths
     // Note: the size must be the same as TrackingDevicesVector's
-    public static SortedDictionary<string, (Windows.Data.Json.JsonObject ResourceRoot, System.IO.DirectoryInfo Directory)>
+    public static SortedDictionary<string, (Windows.Data.Json.JsonObject ResourceRoot, System.IO.DirectoryInfo Directory
+            )>
         TrackingDevicesLocalizationResourcesRootsVector;
 
     // Written to at the first plugin load
