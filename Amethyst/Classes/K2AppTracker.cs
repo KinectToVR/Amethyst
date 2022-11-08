@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Numerics;
+using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
 
 namespace Amethyst.Classes;
@@ -192,6 +193,24 @@ public class K2AppTracker : INotifyPropertyChanged
         // Low pass filter initialization
 
         // Kalman filter initialization
+    }
+
+    public TrackedJoint GetTrackedJoint()
+    {
+        return new TrackedJoint(Serial)
+        {
+            JointAcceleration = PoseAcceleration,
+            JointAngularAcceleration = PoseAngularAcceleration,
+            JointAngularVelocity = PoseAngularVelocity,
+            JointOrientation = Orientation,
+            JointPosition = Position,
+            JointVelocity = PoseVelocity,
+            PreviousJointOrientation = PreviousOrientation,
+            PreviousJointPosition = PreviousPosition,
+            TrackingState = IsActive 
+                ? TrackedJointState.StateTracked 
+                : TrackedJointState.StateNotTracked
+        };
     }
 
     public void OnPropertyChanged(string propName = null)

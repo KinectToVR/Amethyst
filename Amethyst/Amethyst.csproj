@@ -106,6 +106,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Grpc.Core" Version="2.46.5" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.50.0-pre1" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.50.0-pre1" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.220930.4-preview2" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25231-preview" />
     <Manifest Include="$(ApplicationManifest)" />

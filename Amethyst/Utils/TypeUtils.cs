@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
 using Valve.VR;
 

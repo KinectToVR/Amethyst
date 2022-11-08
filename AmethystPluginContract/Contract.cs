@@ -4,20 +4,30 @@ using System.Reflection;
 
 namespace Amethyst.Plugins.Contract;
 
+public interface ITrackingDeviceMetadata
+{
+    string Name { get; }
+    string Guid { get; }
+}
+
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public sealed class TrackingDeviceMetadataAttribute : Attribute, ITrackingDeviceMetadata
+{
+    public string Name { get; set; }
+    public string Guid { get; set; }
+
+    public TrackingDeviceMetadataAttribute(string name, string guid)
+    {
+        Name = name;
+        Guid = guid;
+    }
+}
+
 public interface ITrackingDevice
 {
-    string DeviceDllPath => Assembly.GetExecutingAssembly().Location;
-
-    // Return device's globally unique ID
-    // Note: MUST NOT overlap or repeat between devices
-    [DefaultValue("INVALID")] Guid DeviceGuid { get; }
-
-    // Return device's name (can repeat)
-    [DefaultValue("UNKNOWN")] string DeviceName { get; }
-
     // Joints' list / you need to (should) update at every update() call
     // Each must have its own role or _Manual to force user's manual set
-    List<KeyValuePair<TrackedJointType, TrackedJoint>> TrackedJoints { get; }
+    List<(TrackedJointType Role, TrackedJoint Joint)> TrackedJoints { get; }
 
     // This is called after the app loads the plugin
     void OnLoad();
@@ -93,22 +103,22 @@ public interface IAmethystHost
     double HmdOrientationYawCalibrated { get; }
 
     // Get the raw OpenVRs HMD pose
-    Tuple<Vector3, Quaternion> HmdPose { get; }
+    (Vector3 Position, Quaternion Orientation) HmdPose { get; }
 
     // Get the OpenVRs HMD pose, but un-wrapped aka "calibrated" using the vr room center
-    Tuple<Vector3, Quaternion> HmdPoseCalibrated { get; }
+    (Vector3 Position, Quaternion Orientation) HmdPoseCalibrated { get; }
 
     // Get the raw OpenVRs left controller pose
-    Tuple<Vector3, Quaternion> LeftControllerPose { get; }
+    (Vector3 Position, Quaternion Orientation) LeftControllerPose { get; }
 
     // Get the OpenVRs left controller pose, but un-wrapped aka "calibrated" using the vr room center
-    Tuple<Vector3, Quaternion> LeftControllerPoseCalibrated { get; }
+    (Vector3 Position, Quaternion Orientation) LeftControllerPoseCalibrated { get; }
 
     // Get the raw OpenVRs right controller pose
-    Tuple<Vector3, Quaternion> RightControllerPose { get; }
+    (Vector3 Position, Quaternion Orientation) RightControllerPose { get; }
 
     // Get the OpenVRs right controller pose, but un-wrapped aka "calibrated" using the vr room center
-    Tuple<Vector3, Quaternion> RightControllerPoseCalibrated { get; }
+    (Vector3 Position, Quaternion Orientation) RightControllerPoseCalibrated { get; }
 
     // Log a message to Amethyst logs : handler
     void Log(string message, LogSeverity severity);
@@ -116,13 +126,16 @@ public interface IAmethystHost
     // Request a refresh of the status/name/etc. interface
     void RefreshStatusInterface();
 
+    // Get Amethyst UI language
+    void RefreshLanguageCode();
+
     // Request a string from AME resources, empty for no match
     // Warning: The primarily searched resource is the device-provided one!
-    string RequestLocalizedString(string key);
+    string RequestLocalizedString(string key, string guid);
 
     // Request a folder to be set as device's AME resources,
     // you can access these resources with the lower function later (after onLoad)
     // Warning: Resources are containerized and can't be accessed in-between devices!
     // Warning: The default root is "[device_folder_path]/resources/Strings"!
-    bool SetLocalizationResourcesRoot(string path);
+    bool SetLocalizationResourcesRoot(string path, string guid);
 }

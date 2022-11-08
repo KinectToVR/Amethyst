@@ -22,7 +22,7 @@ public static class TrackingDevices
 
     // Vector of current devices' JSON resource roots & paths
     // Note: the size must be the same as TrackingDevicesVector's
-    public static List<(Windows.Data.Json.JsonObject ResourceRoot, System.IO.DirectoryInfo Directory)>
+    public static SortedDictionary<string, (Windows.Data.Json.JsonObject ResourceRoot, System.IO.DirectoryInfo Directory)>
         TrackingDevicesLocalizationResourcesRootsVector;
 
     // Written to at the first plugin load

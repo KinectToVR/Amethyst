@@ -1,6 +1,7 @@
 ﻿using Amethyst.Plugins.Contract;
 using Grpc.Net.Client;
 using Amethyst.Driver.API;
+using Grpc.Core;
 
 namespace Amethyst.Driver.Client;
 
@@ -16,17 +17,17 @@ public static class DriverClient
         return 0;
     }
 
-    public static List<(TrackerType Role, bool State)> UpdateTrackerStates(List<(TrackerType Role, bool State)> states)
+    public static IEnumerable<(TrackerType Role, bool State)> UpdateTrackerStates(IEnumerable<(TrackerType Role, bool State)> states)
     {
         return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
     }
 
-    public static List<(TrackerType Role, bool State)> UpdateTrackerPoses(List<K2TrackerBase> trackerBases)
+    public static IEnumerable<(TrackerType Role, bool State)> UpdateTrackerPoses(IEnumerable<K2TrackerBase> trackerBases)
     {
         return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
     }
 
-    public static List<(TrackerType Role, bool State)> RefreshTrackerPoses(List<TrackerType> trackers)
+    public static IEnumerable<(TrackerType Role, bool State)> RefreshTrackerPoses(IEnumerable<TrackerType> trackers)
     {
         return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
     }
@@ -36,8 +37,9 @@ public static class DriverClient
         return true;
     }
 
-    public static ValueTuple<object, long, long, long> TestConnection()
+    public static async Task<(Status Status, long SendTimestamp, long ReceiveTimestamp, long ElpasedTime)>
+        TestConnection()
     {
-        return new ValueTuple<object, long, long, long>(true, 0, 0, 0);
+        return new ValueTuple<Status, long, long, long>(Status.DefaultSuccess, 0, 0, 0);
     }
 }

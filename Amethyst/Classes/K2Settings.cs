@@ -7,6 +7,7 @@ using Windows.Globalization;
 using Windows.System.UserProfile;
 using Amethyst.Utils;
 using System.ComponentModel;
+using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
 
 namespace Amethyst.Classes;
