@@ -52,7 +52,7 @@ public static class TrackingDevices
         }
 
         General.AdditionalDeviceErrorsHyperlinkTappedEvent =
-            new Task(async Task() =>
+            new Task(async () =>
             {
                 // Play a sound
                 AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);

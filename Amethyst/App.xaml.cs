@@ -29,6 +29,8 @@ public partial class App : Application
     {
         InitializeComponent();
 
+        // TODO
+
         ApplicationView.PreferredLaunchViewSize =
             new Size(1000, 700); // Set default window launch size (WinUI)
         ApplicationView.PreferredLaunchWindowingMode =

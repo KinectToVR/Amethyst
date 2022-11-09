@@ -104,7 +104,7 @@ public static class Interfacing
     public static K2AppSettings AppSettings = new();
 
     // Input actions' handler
-    public static K2EVRInput.SteamEVRInput EvrInput;
+    public static K2EVRInput.SteamEVRInput EvrInput = new();
 
     // If trackers are added / initialized
     public static bool K2AppTrackersSpawned = false,
@@ -288,7 +288,7 @@ public static class Interfacing
         // Else no click action requested ("none")
     }
 
-    public static async void HandleAppExit(int sleepMillis)
+    public static async Task HandleAppExit(int sleepMillis)
     {
         // Mark exiting as true
         IsExitingNow = true;
@@ -447,36 +447,36 @@ public static class Interfacing
     {
         Logger.Info("Attempting connection to VRSystem... ");
 
-        Task<(CVRSystem system, EVRInitError error)> vrTask = new(() =>
-        {
-            var eError = EVRInitError.None;
-            return (OpenVR.Init(ref eError, EVRApplicationType.VRApplication_Overlay), eError);
-        });
+        Task<(CVRSystem system, EVRInitError error)> initializeOpenVr =
+            new(() =>
+            {
+                var eError = EVRInitError.None;
+                return (OpenVR.Init(ref eError, EVRApplicationType.VRApplication_Overlay), eError);
+            });
 
         Logger.Info("Waiting for the VR System to initialize...");
+        initializeOpenVr.Start(); // Try starting the init task
 
-        if (await Task.WhenAny(vrTask, Task.Delay(5000)) == vrTask)
-        {
-            // We're good to go!
-            Logger.Info("The async future reports that the VR System is ready!");
-        }
-        else
+        if (!initializeOpenVr.Wait(TimeSpan.FromSeconds(5)))
         {
             Logger.Error("The VR System took too long to initialize, giving up!");
             Environment.FailFast("The VR System took too long to initialize");
         }
 
-        if (vrTask.Result.error != EVRInitError.None)
+        if (initializeOpenVr.Result.error != EVRInitError.None)
         {
-            Logger.Error($"IVRSystem could not be initialized: EVRInitError Code {vrTask.Result.error}");
+            Logger.Error($"IVRSystem could not be initialized: EVRInitError Code {initializeOpenVr.Result.error}");
             return false; // Catastrophic failure!
         }
+
+        // We're good to go!
+        Logger.Info("Looks like the VR System is ready to go!");
 
         // Initialize the overlay
         OpenVR.Overlay.CreateOverlay("k2vr.amethyst.desktop", "Amethyst", ref VrOverlayHandle);
 
         // Since we're ok, capture playspace details
-        var trackingOrigin = vrTask.Result.system.GetRawZeroPoseToStandingAbsoluteTrackingPose();
+        var trackingOrigin = OpenVR.System.GetRawZeroPoseToStandingAbsoluteTrackingPose();
         VrPlayspaceTranslation = TypeUtils.ExtractVrPosition(ref trackingOrigin);
         VrPlayspaceOrientationQuaternion = TypeUtils.ExtractVrRotation(ref trackingOrigin);
 
@@ -922,7 +922,7 @@ public static class Interfacing
     }
 
     [DllImport("user32.dll")]
-    private static extern IntPtr GetActiveWindow();
+    public static extern IntPtr GetActiveWindow();
 
     public static bool IsCurrentWindowActive()
     {

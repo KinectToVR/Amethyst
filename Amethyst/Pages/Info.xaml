@@ -1,0 +1,202 @@
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. -->
+<!-- Licensed under the MIT License. See LICENSE in the project root for license information. -->
+
+<Page
+    x:Class="Amethyst.Pages.Info"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Amethyst.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Loaded="Page_Loaded" Background="Transparent">
+
+    <Grid Background="Transparent" Loaded="Grid_Loaded">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="700" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid HorizontalAlignment="Left"
+              VerticalAlignment="Bottom"
+              x:Name="HelpButtonDummyGrid"
+              Margin="0,18" Grid.Column="0">
+
+            <Grid.Resources>
+                <TeachingTip x:Name="HelpTeachingTip"
+                         Target="{Binding ElementName=HelpButtonDummyGrid}"
+                         Title="/HELP"
+                         Subtitle="/TEXT"
+                         PreferredPlacement="RightBottom"
+                         IsLightDismissEnabled="False"
+                         ActionButtonContent="/BACK"
+                         CloseButtonContent="/NEXT"
+                         Style="{ThemeResource BigTeachingTipStyle}"
+                         ActionButtonClick="HelpTeachingTip_ActionButtonClick"
+                         CloseButtonClick="HelpTeachingTip_CloseButtonClick" />
+
+                <TeachingTip x:Name="EndingTeachingTip"
+                         Target="{Binding ElementName=HelpButtonDummyGrid}"
+                         Title="/END"
+                         Subtitle="/TEXT"
+                         PreferredPlacement="RightBottom"
+                         IsLightDismissEnabled="False"
+                         CloseButtonContent="/FINISH"
+                         Style="{ThemeResource BigTeachingTipStyle}"
+                         CloseButtonClick="EndingTeachingTip_CloseButtonClick" />
+            </Grid.Resources>
+        </Grid>
+
+        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                      Grid.Column="1" Padding="20,-20" Margin="-20,20,-20,20">
+
+            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
+                        Margin="0,0,0,20">
+
+                <Grid Background="Transparent" Height="65" />
+
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal">
+                    <Image Source="ms-appx:///Assets/ktvr.png" Height="200" Width="200" HorizontalAlignment="Left"
+                           VerticalAlignment="Center" ToolTipService.ToolTip="What 'bout a double-tap?"
+                           DoubleTapped="K2DoubleTapped" />
+
+                    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
+                                Margin="30,35,0,0">
+                        <TextBlock Margin="0,0,0,0" x:Name="AppTitle" FontSize="85" VerticalAlignment="Center"
+                                   HorizontalAlignment="Right"
+                                   ToolTipService.ToolTip="Pls donate if you like us! ˶ᵔ ᵕ ᵔ˶" />
+                        <TextBlock Margin="0,-15,-80,0" x:Name="AppCaption" FontSize="22"
+                                   VerticalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Opacity="0.5" HorizontalAlignment="Right" ToolTipService.ToolTip="(つ*ヮ*)つ" />
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock FontWeight="SemiBold" x:Name="CreditsHeader" FontSize="25" Margin="0,50,0,0" />
+
+                <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                           x:Name="CreditsMainTeamTitle" Margin="0,17,0,0" />
+
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel HorizontalAlignment="Stretch"
+                                Grid.Column="0" Orientation="Vertical">
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="CreditsMainTeamRolesAkaya" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/KimihikoAkayasaki" UnderlineStyle="None">KimihikoAkayasaki</Hyperlink>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="CreditsMainTeamRolesElla" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/AuroraNemoia" UnderlineStyle="None">AuroraNemoia</Hyperlink>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="CreditsMainTeamRolesHekky" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/hyblocker" UnderlineStyle="None">hyblocker</Hyperlink>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="CreditsMainTeamRolesHimbeer" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/HimbeersaftLP" UnderlineStyle="None">himbeersaft</Hyperlink>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="CreditsMainTeamRolesArtemis" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/ArtemisMax" UnderlineStyle="None">ArtemisMax</Hyperlink>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="CreditsMainTeamRolesOllie" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/i386sh" UnderlineStyle="None">i386sh</Hyperlink>
+                            <Run xml:space="preserve">/ notzer0</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run x:Name="CreditsMainTeamRolesAria" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/conatsera" UnderlineStyle="None">conatsera</Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <StackPanel HorizontalAlignment="Stretch"
+                                Grid.Column="2" Orientation="Vertical">
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Akaya"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Ella"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Hekky"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Himbeer"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Artemis"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Ollie"</Run>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Ene"</Run>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                           x:Name="CreditsTranslatorsTitle" Margin="0,17,0,0" />
+
+                <TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords">
+                    <Run xml:space="preserve">Ella (AuroraNemoia)    </Run>
+                    <Run xml:space="preserve">Skye (DergnNamedSkye)    </Run>
+                    <Run xml:space="preserve">Sara the Maid    </Run>
+                    <Run xml:space="preserve">m1nt_ (Rubber Duck Shobe)    </Run>
+                </TextBlock>
+
+                <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                           x:Name="CreditsHelpersTitle" Margin="0,17,0,0" />
+
+                <TextBlock FontWeight="SemiBold">
+                    <Run xml:space="preserve">Alex (lexd0g)    </Run>
+                    <Run xml:space="preserve">Allen    </Run>
+                    <Run xml:space="preserve">Aze    </Run>
+                    <Run xml:space="preserve">Fiery (fierybattlehawk)    </Run>
+                    <Run xml:space="preserve">illyriarose    </Run>
+                    <Run xml:space="preserve">Luka (woomie)    </Run>
+                </TextBlock>
+                <TextBlock FontWeight="SemiBold">
+                    <Run xml:space="preserve">Sky (P. S.)    </Run>
+                    <Run xml:space="preserve">Sylva    </Run>
+                    <Run xml:space="preserve">TeH_Venom    </Run>
+                    <Run xml:space="preserve">vexa (vexatag)</Run>
+                </TextBlock>
+
+                <TextBlock FontWeight="SemiBold" x:Name="CreditsCommunity" Margin="0,17,0,0" />
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+    </Grid>
+</Page>

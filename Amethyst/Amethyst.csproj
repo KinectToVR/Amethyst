@@ -132,10 +132,16 @@
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y /i /e &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst&quot;" />
+    <Exec Command="xcopy /y /i /e &quot;$(ProjectDir)Vendor\openvr_api.dll&quot; &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)&quot;&#xD;&#xA;xcopy /y /i /e &quot;$(ProjectDir)Assets\Strings\*&quot; &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\Assets\Strings&quot;&#xD;&#xA;xcopy /y /i /e &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst&quot;" />
   </Target>
   <ItemGroup>
     <PRIResource Remove="Assets\Strings\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Pages\Devices.xaml" />
+    <None Remove="Pages\General.xaml" />
+    <None Remove="Pages\Info.xaml" />
+    <None Remove="Pages\Settings.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AmethystDriverClient\Amethyst.Driver.Client.csproj" />
@@ -145,9 +151,20 @@
   <ItemGroup>
     <Folder Include="Classes\" />
     <Folder Include="MVVM\" />
-    <Folder Include="Pages\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Pages\Info.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\Devices.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\Settings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\General.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Vendor\openvr_api.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

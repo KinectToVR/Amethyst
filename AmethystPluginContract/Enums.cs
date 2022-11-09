@@ -29,7 +29,6 @@ public enum TrackedJointType
     JointKneeRight,
     JointAnkleRight,
     JointFootRight,
-    JointTotal,
     JointManual
 }
 
