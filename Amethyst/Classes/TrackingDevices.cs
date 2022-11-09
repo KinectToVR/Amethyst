@@ -1,26 +1,159 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media.Animation;
 using static Amethyst.Classes.Shared;
 
 namespace Amethyst.Classes;
 
 public static class TrackingDevices
 {
-    public static SortedDictionary<string, ITrackingDevice> TrackingDevicesVector = new();
+    public static SortedDictionary<string, TrackingDevice> TrackingDevicesVector = new();
 
-    public static ITrackingDevice GetTrackingDevice()
+    public static TrackingDevice GetTrackingDevice()
     {
         return TrackingDevicesVector[Interfacing.AppSettings.TrackingDeviceGuid];
     }
 
-    public static (bool Exists, ITrackingDevice) GetDevice(string guid)
+    public static (bool Exists, TrackingDevice) GetDevice(string guid)
     {
         return (TrackingDevicesVector.TryGetValue(guid, out var device), device);
+    }
+
+    public static void UpdateTrackingDevicesInterface()
+    {
+        if (TrackingDevicesVector.Count < 1) return; // Just give up
+
+        var currentDevice = GetTrackingDevice();
+        var baseStatusOk = currentDevice.DeviceStatus == 0;
+
+        var overrideStatusOk = true;
+        var failingOverrideGuid = "";
+
+        // Optionally disable flip
+        if (!currentDevice.IsFlipSupported &&
+            Interfacing.AppSettings.IsFlipEnabled)
+        {
+            Interfacing.AppSettings.IsFlipEnabled = false;
+            Interfacing.AppSettings.SaveSettings();
+        }
+
+        foreach (var device in Interfacing.AppSettings.OverrideDevicesGuidMap
+                     .Where(device => TrackingDevicesVector[device].DeviceStatus != 0))
+        {
+            overrideStatusOk = false;
+            failingOverrideGuid = device;
+        }
+
+        General.AdditionalDeviceErrorsHyperlinkTappedEvent =
+            new Task(async Task() =>
+            {
+                // Play a sound
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+                // Navigate to the devices page
+                Main.MainNavigationView.SelectedItem =
+                    Main.MainNavigationView.MenuItems[2];
+
+                Main.NavigateToPage("devices",
+                    new EntranceNavigationTransitionInfo());
+
+                await Task.Delay(500);
+
+                // Should already be init-ed after 500ms, but check anyway
+                if (Devices.DevicesTreeView != null)
+                {
+                    var devicesListIndex = Devices.DevicesTreeView.RootNodes
+                        .Where(x => (x as TrackingDevice).Guid == failingOverrideGuid).ToList()[0];
+
+                    var skipAnimation = Devices.DevicesTreeView.SelectedNode == devicesListIndex;
+                    Devices.DevicesTreeView.SelectedNode = devicesListIndex;
+
+                    await Devices.ReloadSelectedDevice(skipAnimation);
+                    Devices.SelectedTrackingDeviceGuid = failingOverrideGuid;
+                }
+            });
+
+        // Update general tab
+        if (General.ErrorWhatText != null)
+        {
+            // Don't show device errors if we've got a server error
+            if (!Interfacing.IsServerDriverPresent)
+                baseStatusOk = true; // Skip if the server's failed
+
+            var show = baseStatusOk ? Visibility.Collapsed : Visibility.Visible;
+            General.ErrorWhatText.Visibility = show;
+            General.ErrorWhatGrid.Visibility = show;
+            General.ErrorButtonsGrid.Visibility = show;
+            General.TrackingDeviceErrorLabel.Visibility = show;
+
+            // Split status and message by \n
+            var message = StringUtils.SplitStatusString(currentDevice.DeviceStatusString);
+            General.DeviceNameLabel.Text = currentDevice.Name;
+            General.DeviceStatusLabel.Text = message[0];
+            General.TrackingDeviceErrorLabel.Text = message[1];
+            General.ErrorWhatText.Text = message[2];
+
+            // Dim the calibration button if can't calibrate right now
+            General.CalibrationButton.Opacity =
+                !General.CalibrationButton.IsEnabled || // Don't dim if disabled
+                Interfacing.AppSettings.OverrideDevicesGuidMap.Count > 0 ||
+                baseStatusOk // Don't dim if we have overrides or just are OK
+                    ? 1.0
+                    : 0.0;
+
+            // Show the 'additional errors' button if there are errors
+            // Skip if the server driver's not present
+            General.AdditionalDeviceErrorsHyperlink.Visibility =
+                overrideStatusOk || !Interfacing.IsServerDriverPresent
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
+            // Set the app state (optionally)
+            if (Interfacing.CurrentPageTag == "devices")
+                Interfacing.CurrentAppState = 
+                    Devices.DevicesTreeView != null && overrideStatusOk &&
+                    Interfacing.AppSettings.OverrideDevicesGuidMap
+                        .Contains(Devices.SelectedTrackingDeviceGuid)
+                    ? "overrides" // Currently managing overrides
+                    : "devices"; // Currently viewing tracking devices
+        }
+
+        // Update settings tab
+        if (Settings.FlipDropDown != null)
+        {
+            // Overwritten a bit earlier
+            Settings.FlipToggle.IsOn = Interfacing.AppSettings.IsFlipEnabled;
+
+            Settings.FlipToggle.IsEnabled = currentDevice.IsFlipSupported;
+            Settings.FlipDropDown.IsEnabled = currentDevice.IsFlipSupported;
+            Settings.FlipDropDownGrid.Opacity = currentDevice.IsFlipSupported
+                ? 1.0 // If supported : display as normal
+                : 0.5; // IF not : dim a bit (and probably hide)
+
+            // Update extflip
+            CheckExternalFlip();
+        }
+    }
+
+    public static void HandleDeviceRefresh(bool shouldReconnect)
+    {
+        // Just give up if not set up yet
+        if (Devices.JointBasisLabel == null) return;
+
+        Devices.DevicesSignalJoints = false; // Block signals
+        var currentDevice = GetTrackingDevice();
+
+        if (shouldReconnect) currentDevice.Initialize();
+
+        // Update the device name
+        Devices.DeviceNameLabel.Text = currentDevice.Name;
     }
 
     public static bool IsExternalFlipSupportable()

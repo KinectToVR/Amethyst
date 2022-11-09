@@ -144,6 +144,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />
+    <Folder Include="MVVM\" />
+    <Folder Include="Pages\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Vendor\openvr_api.dll">

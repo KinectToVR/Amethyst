@@ -81,7 +81,7 @@ public interface ITrackingDevice
     // Return new() of your implemented Page, and that's basically it!
     object SettingsInterfaceRoot { get; }
 
-    // These will indicate the device's status.
+    // These will indicate the device's status [OK is (int)0]
     // Both should be updated either on call or as frequent as possible
     [DefaultValue(-1)] int DeviceStatus { get; }
 
