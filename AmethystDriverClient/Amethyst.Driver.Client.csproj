@@ -4,9 +4,12 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>0.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Amethyst.Plugins.Contract" Version="0.0.1" />
     <PackageReference Include="Google.Protobuf" Version="3.21.9" />
     <PackageReference Include="Grpc.Net.Client" Version="2.50.0-pre1" />
     <PackageReference Include="Grpc.Tools" Version="2.50.0">
@@ -15,8 +18,20 @@
     </PackageReference>
   </ItemGroup>
 
+  <PropertyGroup>
+    <PackageId>Amethyst.Driver.Client</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>K2VR</Authors>
+    <Company>K2VR</Company>
+    <PackageTags>Amethyst;K2VR;KinectToVR;VR;OpenVR;Fullbody Tracking</PackageTags>
+    <Description>
+      This client class library lets you connect the Amethyst OpenVR driver.
+      Sample usage can be found in Amethyst/K2Interfacing.cs or Amethyst Docs.
+      The server API isn't live yet, please make sure to keep that in mind.
+    </Description>
+  </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\AmethystPluginContract\Amethyst.Plugins.Contract.csproj" />
     <Protobuf Include="..\vendor\k2vr\Amethyst_API.proto" GrpcServices="Client" />
   </ItemGroup>
 

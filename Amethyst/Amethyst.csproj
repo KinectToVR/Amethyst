@@ -7,7 +7,7 @@
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <RootNamespace>Amethyst</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x86;x64;arm64</Platforms>
+    <Platforms>x64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
@@ -106,6 +106,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Amethyst.Driver.Client" Version="0.0.1" />
     <PackageReference Include="Grpc.Core" Version="2.46.5" />
     <PackageReference Include="Grpc.Core.Api" Version="2.50.0-pre1" />
     <PackageReference Include="Grpc.Net.Client" Version="2.50.0-pre1" />
@@ -142,11 +143,6 @@
     <None Remove="Pages\General.xaml" />
     <None Remove="Pages\Info.xaml" />
     <None Remove="Pages\Settings.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AmethystDriverClient\Amethyst.Driver.Client.csproj" />
-    <ProjectReference Include="..\AmethystPluginContract\Amethyst.Plugins.Contract.csproj" />
-    <ProjectReference Include="..\AmethystSupport\AmethystSupport.vcxproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />
