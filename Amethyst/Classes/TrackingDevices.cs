@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Amethyst.MVVM;
@@ -58,26 +59,24 @@ public static class TrackingDevices
                 AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
                 // Navigate to the devices page
-                Main.MainNavigationView.SelectedItem =
-                    Main.MainNavigationView.MenuItems[2];
+                Shared.Main.MainNavigationView.SelectedItem =
+                    Shared.Main.MainNavigationView.MenuItems[2];
 
-                Main.NavigateToPage("devices",
+                Shared.Main.NavigateToPage("devices",
                     new EntranceNavigationTransitionInfo());
 
                 await Task.Delay(500);
 
                 // Should already be init-ed after 500ms, but check anyway
-                if (Devices.DevicesTreeView != null)
-                {
-                    var devicesListIndex = Devices.DevicesTreeView.RootNodes
-                        .Where(x => (x as TrackingDevice).Guid == failingOverrideGuid).ToList()[0];
+                if (Devices.DevicesTreeView == null) return;
+                var devicesListIndex = TrackingDevicesVector.Keys.ToList().IndexOf(failingOverrideGuid);
+                var devicesListNode = Devices.DevicesTreeView.RootNodes[devicesListIndex];
 
-                    var skipAnimation = Devices.DevicesTreeView.SelectedNode == devicesListIndex;
-                    Devices.DevicesTreeView.SelectedNode = devicesListIndex;
+                var skipAnimation = Devices.DevicesTreeView.SelectedNode == devicesListNode;
+                Devices.DevicesTreeView.SelectedNode = devicesListNode;
 
-                    await Devices.ReloadSelectedDevice(skipAnimation);
-                    Devices.SelectedTrackingDeviceGuid = failingOverrideGuid;
-                }
+                await Devices.ReloadSelectedDevice(skipAnimation);
+                Devices.SelectedTrackingDeviceGuid = failingOverrideGuid;
             });
 
         // Update general tab
@@ -320,15 +319,15 @@ public static class TrackingDevices
 
     // Vector of current devices' JSON resource roots & paths
     // Note: the size must be the same as TrackingDevicesVector's
-    public static SortedDictionary<string, (Windows.Data.Json.JsonObject ResourceRoot, System.IO.DirectoryInfo Directory
-            )>
-        TrackingDevicesLocalizationResourcesRootsVector;
+    public static SortedDictionary<string, 
+            (Windows.Data.Json.JsonObject ResourceRoot, string Directory)>
+        TrackingDevicesLocalizationResourcesRootsVector = new();
 
     // Written to at the first plugin load
     public static List<(
             string Name,
             string GUID,
             PluginLoadError Status,
-            string DllDirectory)>
+            string DeviceFolder)>
         LoadAttemptedTrackingDevicesVector;
 }

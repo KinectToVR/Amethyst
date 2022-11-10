@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -30,6 +32,9 @@ using System.Timers;
 using Windows.Storage.Streams;
 using Windows.System;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Data.Json;
+using Amethyst.MVVM;
+using Amethyst.Plugins.Contract;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -185,7 +190,7 @@ public sealed partial class MainWindow : Window
                 // Rebuild devices' settings
                 // (Trick the device into rebuilding its interface)
                 TrackingDevices.TrackingDevicesVector.Values.ToList()
-                    .ForEach(device => device.OnLoad());
+                    .ForEach(plugin => plugin.OnLoad());
 
                 Task.Delay(100); // Sleep a bit
             }
@@ -256,12 +261,172 @@ public sealed partial class MainWindow : Window
         Interfacing.K2ServerDriverSetup();
 
         // Start the main loop
-        // TODO std::thread(k2app::main::K2MainLoop).detach();
+        Task.Run(Main.MainLoop);
 
         // Disable internal sounds
         ElementSoundPlayer.State = ElementSoundPlayerState.Off;
 
-        // TODO load devices, config and compose
+        /* Load devices, config and compose (start) */
+
+        // Create the plugin directory (if not existent)
+        Directory.CreateDirectory(Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Plugins"));
+
+        // Search the "Plugins" sub-directory for assemblies that match the imports.
+        var catalog = new AggregateCatalog();
+
+        // Add the current assembly to support invoke method exports
+        Logger.Info("Exporting the plugin host plugin...");
+        catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
+
+        // Iterate over all directories in .\Plugins dir and add all Plugin* dirs to catalogs
+        var pluginDirectoryList = Directory.EnumerateDirectories(
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins"),
+            "*", SearchOption.TopDirectoryOnly).ToList();
+
+        Logger.Info("Searching for local devices now...");
+        pluginDirectoryList.ForEach(pluginPath =>
+            catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath)));
+
+        try
+        {
+            // Load the JSON source into buffer, parse
+            Logger.Info("Searching for external devices now...");
+            var jsonRoot = JsonObject.Parse(
+                File.ReadAllText(Interfacing.GetK2AppDataFileDir("amethystpaths.k2path")));
+
+            // Loop over all the external devices and append
+            if (jsonRoot.ContainsKey("external_devices"))
+                jsonRoot.GetNamedArray("external_devices").ToList()
+                    .Select(pluginEntry => Directory.Exists(pluginEntry.ToString())).ToList()
+                    .ForEach(pluginPath => catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath.ToString())));
+
+            else Logger.Info("No external devices found! Loading the local ones now...");
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Checking for external devices has failed, an exception occurred. Message: {e.Message}");
+        }
+
+        if (pluginDirectoryList.Count < 1)
+        {
+            Logger.Fatal("No plugins (tracking devices) found! Shutting down...");
+            Interfacing.Fail(-12); // Exit and cause the crash handler to appear
+        }
+
+        Logger.Info($"Found {pluginDirectoryList.Count} potentially valid plugin directories...");
+        try
+        {
+            // Match Imports with corresponding exports in all catalogs in the container
+            using var container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
+            var plugins = container.GetExports<ITrackingDevice, ITrackingDeviceMetadata>().ToList();
+            Logger.Info($"Found {plugins.Count} potentially valid plugins...");
+
+            foreach (var plugin in plugins)
+                try
+                {
+                    Logger.Info($"Parsing ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
+
+                    // Check the plugin GUID against others loaded, INVALID and null
+                    if (string.IsNullOrEmpty(plugin.Metadata.Guid) || plugin.Metadata.Guid == "INVALID" ||
+                        TrackingDevices.TrackingDevicesVector.ContainsKey(plugin.Metadata.Guid))
+                    {
+                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
+                            plugin.Metadata.Guid, TrackingDevices.PluginLoadError.BadOrDuplicateGuid, ""));
+
+                        Logger.Error($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                     "has a duplicate GUID value to another plugin, discarding it!");
+                        continue; // Give up on this one :(
+                    }
+
+                    try
+                    {
+                        Logger.Info($"Trying to load ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
+                        Logger.Info($"Result: {plugin.Value}"); // Load the plugin
+                    }
+                    catch (CompositionException e)
+                    {
+                        Logger.Error("Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                     "failed with a local (plugin-wise) MEF exception: " +
+                                     $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
+                                     $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
+
+                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
+                            plugin.Metadata.Guid, TrackingDevices.PluginLoadError.NoDeviceDependencyDll, ""));
+                        continue; // Give up on this one :(
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                     "failed with an exception, probably some of its dependencies are missing. " +
+                                     $"Message: {e.Message}, Trace: {e.StackTrace}");
+
+                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
+                            plugin.Metadata.Guid, TrackingDevices.PluginLoadError.Other, ""));
+                        continue; // Give up on this one :(
+                    }
+
+                    // It must be good if we're somehow still here
+                    var pluginLocation = Assembly.GetAssembly(plugin.Value.GetType()).Location;
+                    var pluginFolder = Directory.GetParent(pluginLocation).FullName;
+
+                    Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "to the load-attempted device plugins list (TrackingDevices)...");
+                    TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
+                        plugin.Metadata.Guid, TrackingDevices.PluginLoadError.NoError, pluginFolder));
+
+                    Logger.Info($"Creating ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "localized strings resource context (TrackingDevices)...");
+                    TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector.Add(
+                        plugin.Metadata.Guid, (new JsonObject(), pluginFolder));
+
+                    Logger.Info($"Registering ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "default root language resource context (TrackingDevices)...");
+                    Interfacing.Plugins.SetLocalizationResourcesRoot(pluginFolder, plugin.Metadata.Guid);
+
+                    Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "to the global tracking device plugins list (TrackingDevices)...");
+                    TrackingDevices.TrackingDevicesVector.Add(plugin.Metadata.Guid, new TrackingDevice(
+                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation, plugin.Value));
+
+                    Logger.Info($"Device ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                $"with the device class library dll at: {pluginLocation}\n" +
+                                $"properties:\nStatus: {plugin.Value.DeviceStatus}\n" +
+                                $"Status String: {plugin.Value.DeviceStatusString}\n" +
+                                $"Supports Flip: {plugin.Value.IsFlipSupported}\n" +
+                                $"Initialized: {plugin.Value.IsInitialized}\n" +
+                                $"Overrides Physics: {plugin.Value.IsPhysicsOverrideEnabled}\n" +
+                                $"Blocks Filtering: {plugin.Value.IsPositionFilterBlockingEnabled}\n" +
+                                $"Updates By Itself: {plugin.Value.IsSelfUpdateEnabled}\n" +
+                                $"Supports Settings: {plugin.Value.IsSettingsDaemonSupported}\n" +
+                                $"Provides Prepended Joints: {plugin.Value.TrackedJoints.Count}");
+                }
+                catch (Exception e)
+                {
+                    Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                 "failed with a (hopefully) caught exception. " +
+                                 $"Provided exception Message: {e.Message}, Trace: {e.StackTrace}");
+                }
+        }
+        catch (CompositionException e)
+        {
+            Logger.Error("Loading plugins failed with a global MEF exception: " +
+                         $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
+                         $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
+        }
+
+        if (TrackingDevices.TrackingDevicesVector.Count < 1)
+        {
+            Logger.Fatal("No plugins (tracking devices) loaded! Shutting down...");
+            Interfacing.Fail(-12); // Exit and cause the crash handler to appear
+        }
+
+
+
+
+
+
+        /* Load devices, config and compose (end) */
 
         // Notify of the setup end
         _mainPageInitFinished = true;
@@ -524,7 +689,7 @@ public sealed partial class MainWindow : Window
 
                 if (!string.IsNullOrEmpty(getInstallerUri))
                 {
-                    var jsonRoot = Windows.Data.Json.JsonObject.Parse(getInstallerUri);
+                    var jsonRoot = JsonObject.Parse(getInstallerUri);
 
                     // Parse the loaded json
                     if (jsonRoot.ContainsKey("download"))
@@ -730,7 +895,7 @@ public sealed partial class MainWindow : Window
                         Logger.Info($"Update-check successful, string:\n{getReleaseVersion}");
 
                         // Parse the loaded json
-                        var jsonHead = Windows.Data.Json.JsonObject.Parse(getReleaseVersion);
+                        var jsonHead = JsonObject.Parse(getReleaseVersion);
 
                         if (!jsonHead.ContainsKey("amethyst"))
                             Logger.Error("The latest release's manifest was invalid!");
@@ -776,7 +941,7 @@ public sealed partial class MainWindow : Window
                     if (!string.IsNullOrEmpty(getDocsLanguages))
                     {
                         // Parse the loaded json
-                        var jsonRoot = Windows.Data.Json.JsonObject.Parse(getDocsLanguages);
+                        var jsonRoot = JsonObject.Parse(getDocsLanguages);
 
                         // Check if the resource root is fine & the language code exists
                         Interfacing.DocsLanguageCode = AppData.Settings.AppLanguage;

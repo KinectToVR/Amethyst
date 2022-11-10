@@ -1271,8 +1271,7 @@ public static class Interfacing
 
                 // If everything's ok, change the root
                 if (TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector.ContainsKey(guid))
-                    TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector[guid] =
-                        (jsonObject, new DirectoryInfo(path));
+                    TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector[guid] = (jsonObject, path);
 
                 return true; // We're good
             }
