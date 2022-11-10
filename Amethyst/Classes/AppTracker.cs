@@ -5,7 +5,7 @@ using Amethyst.Plugins.Contract;
 
 namespace Amethyst.Classes;
 
-public class K2AppTracker : INotifyPropertyChanged
+public class AppTracker : INotifyPropertyChanged
 {
     // Is this tracker enabled?
     private bool _isActive;
@@ -60,7 +60,7 @@ public class K2AppTracker : INotifyPropertyChanged
     private JointPositionTrackingOption _positionTrackingFilterOption =
         JointPositionTrackingOption.PositionTrackingFilterLerp;
 
-    public K2AppTracker()
+    public AppTracker()
     {
         InitializeFilters();
     }

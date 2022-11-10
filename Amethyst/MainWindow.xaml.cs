@@ -271,7 +271,7 @@ public sealed partial class MainWindow : Window
     {
         // Load theme config
         Shared.Main.MainNavigationView.XamlRoot.Content.As<Grid>().RequestedTheme =
-            AppData.AppSettings.AppTheme switch
+            AppData.Settings.AppTheme switch
             {
                 2 => ElementTheme.Light,
                 1 => ElementTheme.Dark,
@@ -779,7 +779,7 @@ public sealed partial class MainWindow : Window
                         var jsonRoot = Windows.Data.Json.JsonObject.Parse(getDocsLanguages);
 
                         // Check if the resource root is fine & the language code exists
-                        Interfacing.DocsLanguageCode = AppData.AppSettings.AppLanguage;
+                        Interfacing.DocsLanguageCode = AppData.Settings.AppLanguage;
 
                         if (jsonRoot is null || !jsonRoot.ContainsKey(Interfacing.DocsLanguageCode))
                         {
@@ -997,7 +997,7 @@ public sealed partial class MainWindow : Window
     private async void UpdateButton_Loaded(object sender, RoutedEventArgs e)
     {
         // Show the startup tour teachingtip
-        if (!AppData.AppSettings.FirstTimeTourShown)
+        if (!AppData.Settings.FirstTimeTourShown)
         {
             // Play a sound
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
@@ -1082,13 +1082,13 @@ public sealed partial class MainWindow : Window
     {
         Launcher.LaunchUriAsync(new Uri(Interfacing.CurrentAppState switch
         {
-            "calibration" => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/calibration/",
-            "calibration_auto" => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/calibration/#3",
-            "calibration_manual" => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/calibration/#6",
-            "devices" or "offsets" or "settings" => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/",
-            "overrides" => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/overrides/",
+            "calibration" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/calibration/",
+            "calibration_auto" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/calibration/#3",
+            "calibration_manual" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/calibration/#6",
+            "devices" or "offsets" or "settings" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/",
+            "overrides" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/overrides/",
             "info" => "https://opencollective.com/k2vr",
-            "general" or _ => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/"
+            "general" or _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/"
         }));
     }
 
@@ -1181,12 +1181,12 @@ public sealed partial class MainWindow : Window
         // Handle all the exit actions (if needed)
         // Show the close tip (if not shown yet)
         if (!Interfacing.IsExitHandled &&
-            !AppData.AppSettings.FirstShutdownTipShown)
+            !AppData.Settings.FirstShutdownTipShown)
         {
             ShutdownTeachingTip.IsOpen = true;
 
-            AppData.AppSettings.FirstShutdownTipShown = true;
-            AppData.AppSettings.SaveSettings(); // Save settings
+            AppData.Settings.FirstShutdownTipShown = true;
+            AppData.Settings.SaveSettings(); // Save settings
             return;
         }
 

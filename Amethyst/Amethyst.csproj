@@ -146,7 +146,6 @@
     <None Remove="Pages\Settings.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Classes\" />
     <Folder Include="MVVM\" />
   </ItemGroup>
   <ItemGroup>

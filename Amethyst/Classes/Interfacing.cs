@@ -94,7 +94,7 @@ public static class Interfacing
     public static ElementTheme ActualTheme = ElementTheme.Dark;
 
     // Input actions' handler
-    public static readonly K2EVRInput.SteamEVRInput EvrInput = new();
+    public static readonly EVRInput.SteamEVRInput EvrInput = new();
 
     // If trackers are added / initialized
     public static bool K2AppTrackersSpawned = false,
@@ -376,7 +376,7 @@ public static class Interfacing
 
             // Create a dummy update vector
             List<(TrackerType Role, bool State)> trackerStatuses =
-                (from tracker in AppData.AppSettings.K2TrackersVector
+                (from tracker in AppData.Settings.TrackersVector
                     where tracker.IsActive
                     select (tracker.Role, true)).ToList();
 
@@ -773,7 +773,7 @@ public static class Interfacing
             // Check if it's not ame
             var canReturn = true;
             if (!canBeAme) // If requested
-                AppData.AppSettings.K2TrackersVector.Where(
+                AppData.Settings.TrackersVector.Where(
                         tracker => serialStringBuilder.ToString() == tracker.Serial).ToList()
                     .ForEach(_ =>
                     {
@@ -968,12 +968,12 @@ public static class Interfacing
             }
 
             // If the language key is the current language, don't split the name
-            if (AppData.AppSettings.AppLanguage == languageKey)
-                return jsonObject.GetNamedObject(AppData.AppSettings.AppLanguage).GetNamedString(AppData.AppSettings.AppLanguage);
+            if (AppData.Settings.AppLanguage == languageKey)
+                return jsonObject.GetNamedObject(AppData.Settings.AppLanguage).GetNamedString(AppData.Settings.AppLanguage);
 
             // Else split the same way as in docs
             return jsonObject.GetNamedObject(languageKey).GetNamedString(languageKey) +
-                   " (" + jsonObject.GetNamedObject(AppData.AppSettings.AppLanguage).GetNamedString(languageKey) + ")";
+                   " (" + jsonObject.GetNamedObject(AppData.Settings.AppLanguage).GetNamedString(languageKey) + ")";
         }
         catch (Exception e)
         {
@@ -1168,7 +1168,7 @@ public static class Interfacing
 
         public static List<TrackedJoint> GetAppJointPoses()
         {
-            return AppData.AppSettings.K2TrackersVector.Select(
+            return AppData.Settings.TrackersVector.Select(
                 tracker => tracker.GetTrackedJoint()).ToList();
         }
 
@@ -1178,7 +1178,7 @@ public static class Interfacing
             StatusUiRefreshRequested = true;
         }
 
-        public static string RequestLanguageCode => AppData.AppSettings.AppLanguage;
+        public static string RequestLanguageCode => AppData.Settings.AppLanguage;
 
         public static string RequestLocalizedString(string key, string guid)
         {
@@ -1216,7 +1216,7 @@ public static class Interfacing
                 Logger.Info(
                     $"[Requested by device with guid {guid}] " +
                     "Searching for language resources with key " +
-                    $"\"{AppData.AppSettings.AppLanguage}\" in \"{path}\"...");
+                    $"\"{AppData.Settings.AppLanguage}\" in \"{path}\"...");
 
                 if (!Directory.Exists(path))
                 {
@@ -1228,7 +1228,7 @@ public static class Interfacing
                     return false; // Give up on trying
                 }
 
-                var resourcePath = Path.Join(path, AppData.AppSettings.AppLanguage + ".json");
+                var resourcePath = Path.Join(path, AppData.Settings.AppLanguage + ".json");
 
                 // If the specified language doesn't exist somehow, fallback to 'en'
                 if (!File.Exists(resourcePath))
@@ -1267,7 +1267,7 @@ public static class Interfacing
                 else
                     Logger.Error(
                         $"[Requested by device with guid {guid}] " +
-                        $"Successfully loaded language resources with key \"{AppData.AppSettings.AppLanguage}\"!");
+                        $"Successfully loaded language resources with key \"{AppData.Settings.AppLanguage}\"!");
 
                 // If everything's ok, change the root
                 if (TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector.ContainsKey(guid))
@@ -1280,7 +1280,7 @@ public static class Interfacing
             {
                 Logger.Warn(
                     $"[Requested by device with guid {guid}] " +
-                    $"JSON error at key: \"{AppData.AppSettings.AppLanguage}\"! " +
+                    $"JSON error at key: \"{AppData.Settings.AppLanguage}\"! " +
                     $"Message: {e.Message}");
 
                 return false; // Just give up

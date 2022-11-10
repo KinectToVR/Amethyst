@@ -8,5 +8,5 @@ public static class AppData
     public const uint K2ApiVersion = 0; // API version
 
     // Application settings
-    public static K2AppSettings AppSettings = new();
+    public static AppSettings Settings = new();
 }

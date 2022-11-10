@@ -12,7 +12,7 @@ using Amethyst.Plugins.Contract;
 
 namespace Amethyst.Classes;
 
-public class K2AppSettings : INotifyPropertyChanged
+public class AppSettings : INotifyPropertyChanged
 {
     // Current language & theme
     public string AppLanguage { get; set; } = "en";
@@ -21,7 +21,7 @@ public class K2AppSettings : INotifyPropertyChanged
     public uint AppTheme { get; set; }
 
     // Current joints
-    public List<K2AppTracker> K2TrackersVector { get; set; } = new();
+    public List<AppTracker> TrackersVector { get; set; } = new();
     public bool UseTrackerPairs { get; set; } = true; // Pair feet, elbows and knees
     public bool CheckForOverlappingTrackers { get; set; } = true; // Check for overlapping roles
 
@@ -101,22 +101,22 @@ public class K2AppSettings : INotifyPropertyChanged
         // TODO IMPL
 
         // Check if the trackers vector is broken
-        var vectorBroken = K2TrackersVector.Count < 7;
+        var vectorBroken = TrackersVector.Count < 7;
 
         // Optionally fix the trackers vector
-        while (K2TrackersVector.Count < 7)
-            K2TrackersVector.Add(new K2AppTracker());
+        while (TrackersVector.Count < 7)
+            TrackersVector.Add(new AppTracker());
 
         // Force the first 7 trackers to be the default ones : roles
-        K2TrackersVector[0].Role = TrackerType.TrackerWaist;
-        K2TrackersVector[1].Role = TrackerType.TrackerLeftFoot;
-        K2TrackersVector[2].Role = TrackerType.TrackerRightFoot;
-        K2TrackersVector[3].Role = TrackerType.TrackerLeftElbow;
-        K2TrackersVector[4].Role = TrackerType.TrackerRightElbow;
-        K2TrackersVector[5].Role = TrackerType.TrackerLeftKnee;
-        K2TrackersVector[6].Role = TrackerType.TrackerRightKnee;
+        TrackersVector[0].Role = TrackerType.TrackerWaist;
+        TrackersVector[1].Role = TrackerType.TrackerLeftFoot;
+        TrackersVector[2].Role = TrackerType.TrackerRightFoot;
+        TrackersVector[3].Role = TrackerType.TrackerLeftElbow;
+        TrackersVector[4].Role = TrackerType.TrackerRightElbow;
+        TrackersVector[5].Role = TrackerType.TrackerLeftKnee;
+        TrackersVector[6].Role = TrackerType.TrackerRightKnee;
 
-        foreach (var tracker in K2TrackersVector)
+        foreach (var tracker in TrackersVector)
         {
             // Force the first 7 trackers to be the default ones : serials
             tracker.Serial = TypeUtils.TrackerTypeRoleSerialDictionary[tracker.Role];
@@ -132,54 +132,54 @@ public class K2AppSettings : INotifyPropertyChanged
         // If the vector was broken, override waist & feet statuses
         if (vectorBroken)
         {
-            K2TrackersVector[0].IsActive = true;
-            K2TrackersVector[1].IsActive = true;
-            K2TrackersVector[2].IsActive = true;
+            TrackersVector[0].IsActive = true;
+            TrackersVector[1].IsActive = true;
+            TrackersVector[2].IsActive = true;
         }
 
         // Scan for duplicate trackers
-        foreach (var tracker in K2TrackersVector.GroupBy(x => x.Role)
+        foreach (var tracker in TrackersVector.GroupBy(x => x.Role)
                      .Select(y => y.First()))
         {
             Logger.Warn("A duplicate tracker was found in the trackers vector! Removing it...");
-            K2TrackersVector.Remove(tracker); // Remove the duplicate tracker
+            TrackersVector.Remove(tracker); // Remove the duplicate tracker
         }
 
         // Check if any trackers are enabled
         // -> No trackers are enabled, force-enable the waist tracker
-        if (!K2TrackersVector.Any(x => x.IsActive))
+        if (!TrackersVector.Any(x => x.IsActive))
         {
             Logger.Warn("All trackers were disabled, force-enabling the waist tracker!");
-            K2TrackersVector[0].IsActive = true; // Enable the waist tracker
+            TrackersVector[0].IsActive = true; // Enable the waist tracker
         }
 
         // Fix statuses (optional)
         if (UseTrackerPairs)
         {
-            K2TrackersVector[2].IsActive = K2TrackersVector[1].IsActive;
-            K2TrackersVector[4].IsActive = K2TrackersVector[3].IsActive;
-            K2TrackersVector[6].IsActive = K2TrackersVector[5].IsActive;
+            TrackersVector[2].IsActive = TrackersVector[1].IsActive;
+            TrackersVector[4].IsActive = TrackersVector[3].IsActive;
+            TrackersVector[6].IsActive = TrackersVector[5].IsActive;
 
-            K2TrackersVector[2].OrientationTrackingOption =
-                K2TrackersVector[1].OrientationTrackingOption;
-            K2TrackersVector[4].OrientationTrackingOption =
-                K2TrackersVector[3].OrientationTrackingOption;
-            K2TrackersVector[6].OrientationTrackingOption =
-                K2TrackersVector[5].OrientationTrackingOption;
+            TrackersVector[2].OrientationTrackingOption =
+                TrackersVector[1].OrientationTrackingOption;
+            TrackersVector[4].OrientationTrackingOption =
+                TrackersVector[3].OrientationTrackingOption;
+            TrackersVector[6].OrientationTrackingOption =
+                TrackersVector[5].OrientationTrackingOption;
 
-            K2TrackersVector[2].PositionTrackingFilterOption =
-                K2TrackersVector[1].PositionTrackingFilterOption;
-            K2TrackersVector[4].PositionTrackingFilterOption =
-                K2TrackersVector[3].PositionTrackingFilterOption;
-            K2TrackersVector[6].PositionTrackingFilterOption =
-                K2TrackersVector[5].PositionTrackingFilterOption;
+            TrackersVector[2].PositionTrackingFilterOption =
+                TrackersVector[1].PositionTrackingFilterOption;
+            TrackersVector[4].PositionTrackingFilterOption =
+                TrackersVector[3].PositionTrackingFilterOption;
+            TrackersVector[6].PositionTrackingFilterOption =
+                TrackersVector[5].PositionTrackingFilterOption;
 
-            K2TrackersVector[2].OrientationTrackingFilterOption =
-                K2TrackersVector[1].OrientationTrackingFilterOption;
-            K2TrackersVector[4].OrientationTrackingFilterOption =
-                K2TrackersVector[3].OrientationTrackingFilterOption;
-            K2TrackersVector[6].OrientationTrackingFilterOption =
-                K2TrackersVector[5].OrientationTrackingFilterOption;
+            TrackersVector[2].OrientationTrackingFilterOption =
+                TrackersVector[1].OrientationTrackingFilterOption;
+            TrackersVector[4].OrientationTrackingFilterOption =
+                TrackersVector[3].OrientationTrackingFilterOption;
+            TrackersVector[6].OrientationTrackingFilterOption =
+                TrackersVector[5].OrientationTrackingFilterOption;
         }
 
         // Optionally fix volume if too big somehow

@@ -6,7 +6,7 @@ using Valve.VR;
 
 namespace Amethyst.Classes;
 
-public static class K2EVRInput
+public static class EVRInput
 {
     // Action strings set in action_manifest.json
 
