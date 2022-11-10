@@ -38,7 +38,7 @@ public static class AppSounds
             try
             {
                 // Check if the sound file even exists & if sounds are on
-                if (Interfacing.AppSettings.EnableAppSounds &&
+                if (AppData.AppSettings.EnableAppSounds &&
                     File.Exists(Path.Join(Interfacing.GetProgramLocation().Directory.ToString(),
                         "Assets", "Sounds", sound + ".wav")))
                 {
@@ -50,7 +50,7 @@ public static class AppSounds
                                 "Assets", "Sounds", sound + ".wav"))),
 
                         // Set the desired volume
-                        Volume = Interfacing.AppSettings.AppSoundsVolume
+                        Volume = AppData.AppSettings.AppSoundsVolume
                     }.Play(); // Play the sound
 
                     // Wait for the sound to complete

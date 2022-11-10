@@ -15,7 +15,7 @@ namespace Amethyst.Classes;
 public class K2AppSettings : INotifyPropertyChanged
 {
     // Current language & theme
-    public string AppLanguage { get; set; }
+    public string AppLanguage { get; set; } = "en";
 
     // 0:system, 1:dark, 2:light
     public uint AppTheme { get; set; }

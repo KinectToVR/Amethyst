@@ -26,6 +26,10 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Runtime.InteropServices;
+using System.Timers;
+using Windows.Storage.Streams;
+using Windows.System;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,6 +42,8 @@ namespace Amethyst;
 public sealed partial class MainWindow : Window
 {
     private bool _mainPageLoadedOnce = false, _mainPageInitFinished = false;
+    private string remoteVersionString = AppData.K2InternalVersion;
+
     private WindowsSystemDispatcherQueueHelper m_wsdqHelper; // See separate sample below for implementation
     private Microsoft.UI.Composition.SystemBackdrops.MicaController m_micaController;
     private Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration m_configurationSource;
@@ -265,7 +271,7 @@ public sealed partial class MainWindow : Window
     {
         // Load theme config
         Shared.Main.MainNavigationView.XamlRoot.Content.As<Grid>().RequestedTheme =
-            Interfacing.AppSettings.AppTheme switch
+            AppData.AppSettings.AppTheme switch
             {
                 2 => ElementTheme.Light,
                 1 => ElementTheme.Dark,
@@ -279,8 +285,8 @@ public sealed partial class MainWindow : Window
         NavView.XamlRoot.Content.As<Grid>().ActualThemeChanged += MainWindow_ActualThemeChanged;
     }
 
-    [DllImport("user32.dll")]
-    public static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+    [LibraryImport("user32.dll")]
+    private static partial int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
     private void MainWindow_ActualThemeChanged(FrameworkElement sender, object args)
     {
@@ -466,22 +472,419 @@ public sealed partial class MainWindow : Window
 
     private async Task ExecuteUpdates()
     {
-        // TODO
+        Interfacing.UpdatingNow = true;
+        UpdatePendingFlyout.Hide();
+        UpdateIconDot.Opacity = 0.0;
+        await Task.Delay(500);
+
+        // Mark the update footer as active
+        UpdateIconGrid.Translation = Vector3.Zero;
+        UpdateIconText.Opacity = 0.0;
+        UpdateIcon.Foreground = Shared.Main.AttentionBrush;
+        IconRotation.Begin();
+
+        UpdatePendingFlyoutFooter.Text = $"Amethyst v{remoteVersionString}";
+        UpdatePendingFlyoutStatusContent.Text =
+            Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
+
+        if (!Interfacing.IsNuxPending)
+            UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions()
+            {
+                Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
+                ShowMode = FlyoutShowMode.Transient
+            });
+
+        // Success? ...or nah?
+        var updateError = false;
+
+        // Reset the progressbar
+        var updatePendingProgressBar = new ProgressBar
+        {
+            IsIndeterminate = false,
+            HorizontalAlignment = HorizontalAlignment.Stretch
+        };
+
+        UpdatePendingFlyoutMainStack.Children.Add(updatePendingProgressBar);
+
+        // Download the latest installer/updater
+        // https://github.com/KinectToVR/Amethyst-Installer-Releases/releases/latest/download/Amethyst-Installer.exe
+
+        try
+        {
+            using var client = new Windows.Web.Http.HttpClient();
+            var installerUri = "";
+
+            Logger.Info("Checking out the updater version... [GET]");
+
+            // Get the installer download Uri
+            try
+            {
+                using var response = await client.GetAsync(new Uri("https://api.k2vr.tech/v0/installer/version"));
+                var getInstallerUri = await response.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(getInstallerUri))
+                {
+                    var jsonRoot = Windows.Data.Json.JsonObject.Parse(getInstallerUri);
+
+                    // Parse the loaded json
+                    if (jsonRoot.ContainsKey("download"))
+                    {
+                        installerUri = jsonRoot.GetNamedString("download");
+                    }
+                    else
+                    {
+                        Logger.Error("Installer-uri-check failed, the \"download\" key wasn't found.");
+                        updateError = true;
+                    }
+                }
+                else
+                {
+                    Logger.Error("Installer-uri-check failed, the string was empty.");
+                    updateError = true;
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Error checking the updater download Uri! Message: {e.Message}");
+                updateError = true;
+            }
+
+
+            // Download if we're ok
+            if (!updateError)
+                try
+                {
+                    var thisFolder = await Windows.Storage.StorageFolder
+                        .GetFolderFromPathAsync(Interfacing.GetK2AppDataTempDir().FullName);
+
+                    // To save downloaded image to local storage
+                    var installerFile = await thisFolder.CreateFileAsync(
+                        "Amethyst-Installer.exe", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+
+                    using var fsInstallerFile = await installerFile.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite);
+                    using var response = await client.GetAsync(new Uri(installerUri),
+                        Windows.Web.Http.HttpCompletionOption.ResponseHeadersRead);
+
+                    using var stream = await response.Content.ReadAsInputStreamAsync();
+
+                    ulong totalBytesRead = 0; // Already read buffer
+                    var totalBytesToRead = response.Content.Headers.ContentLength.Value;
+                    var downloadStatusString =
+                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
+
+                    while (true)
+                    {
+                        var buffer = new byte[64 * 1024];
+                        var readBuffer = await stream.ReadAsync(
+                            buffer.AsBuffer(), (uint)buffer.Length, InputStreamOptions.None);
+
+                        // There's nothing else to read
+                        if (readBuffer is null || readBuffer.Length == 0) break;
+
+                        // Report the progress
+                        totalBytesRead += readBuffer.Length;
+                        Logger.Info($"Downloaded {totalBytesRead} of {totalBytesToRead} bytes...");
+
+                        // Update the progressbar
+                        var progress = (double)totalBytesRead / totalBytesToRead;
+
+                        updatePendingProgressBar.Value = progress * 100;
+                        UpdatePendingFlyoutStatusContent.Text = downloadStatusString.Replace(
+                            "0", ((int)progress * 100).ToString());
+
+                        // Write to file
+                        await fsInstallerFile.WriteAsync(readBuffer);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Error($"Error downloading the updater! Message: {e.Message}");
+                    updateError = true;
+                }
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+            updateError = true;
+        }
+
+        // Mark the update footer as inactive
+        IconRotation.Stop();
+        UpdateIcon.Foreground = Shared.Main.NeutralBrush;
+        UpdateIconGrid.Translation = new Vector3(0, -8, 0);
+        UpdateIconText.Opacity = 1.0;
+
+        // Check the file result and the DL result
+        if (!updateError)
+        {
+            Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+                    "K2CrashHandler", "K2CrashHandler.exe"), // Optional auto-restart scenario "-o"
+                $" --update {(Interfacing.UpdateOnClosed ? "" : "-o")} -path \"{Interfacing.GetProgramLocation().DirectoryName}\"");
+
+            // Exit, cleanup should be automatic
+            Interfacing.UpdateOnClosed = false; // Don't re-do
+            Environment.Exit(0); // Should get caught by the exit handler
+        }
+
+        // Still here? Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
+
+        updatePendingProgressBar.ShowError = true;
+        UpdatePendingFlyoutStatusContent.Text =
+            Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error");
+
+        await Task.Delay(3200);
+        UpdatePendingFlyout.Hide();
+        await Task.Delay(500);
+
+        // Don't give up yet
+        Interfacing.UpdatingNow = false;
+        if (Interfacing.UpdateFound)
+            UpdateIconDot.Opacity = 1.0;
+
+        // Remove the progressbar
+        UpdatePendingFlyoutMainStack.Children.Remove(
+            UpdatePendingFlyoutMainStack.Children.Last());
     }
 
-    private async Task CheckUpdates(bool show, uint delay)
+    private async Task CheckUpdates(bool show, uint delay = 0)
     {
-        // TODO
+        // Attempt only after init
+        if (!_mainPageInitFinished) return;
+
+        {
+            // Check if we're midway updating
+            if (Interfacing.UpdatingNow)
+            {
+                // Show the updater progress flyout
+                if (!Interfacing.IsNuxPending)
+                    UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions()
+                    {
+                        Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
+                        ShowMode = FlyoutShowMode.Transient
+                    });
+
+                return; // Don't proceed further
+            }
+
+            // Mark as checking
+            Interfacing.CheckingUpdatesNow = true;
+            await Task.Delay((int)delay);
+
+            // Don't check if found
+            if (!Interfacing.UpdateFound)
+            {
+                // Mark the update footer as active
+                UpdateIconGrid.Translation = Vector3.Zero;
+                UpdateIconText.Opacity = 0.0;
+                UpdateIcon.Foreground = Shared.Main.AttentionBrush;
+
+                // Here check for updates (via external bool)
+                IconRotation.Begin();
+
+                // Check for updates
+                var updateTimer = new Task(() => Task.Delay(1000));
+
+                // Check now
+                updateTimer.Start();
+                Interfacing.UpdateFound = false;
+
+                // Dummy for holding change logs
+                List<string> changesStringVector = new();
+
+                // Check for updates
+                try
+                {
+                    using var client = new Windows.Web.Http.HttpClient();
+                    string getReleaseVersion = "", getDocsLanguages = "en";
+
+                    // Release
+                    try
+                    {
+                        Logger.Info("Checking for updates... [GET]");
+                        using var response =
+                            await client.GetAsync(new Uri($"https://api.k2vr.tech/v{AppData.K2ApiVersion}/update"));
+                        getReleaseVersion = await response.Content.ReadAsStringAsync();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error($"Error getting the release info! Message: {e.Message}");
+                    }
+
+                    // Language
+                    try
+                    {
+                        Logger.Info("Checking available languages... [GET]");
+                        using var response =
+                            await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
+                        getDocsLanguages = await response.Content.ReadAsStringAsync();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error($"Error getting the language info! Message: {e.Message}");
+                    }
+
+                    // If the read string isn't empty, proceed to checking for updates
+                    if (!string.IsNullOrEmpty(getReleaseVersion))
+                    {
+                        Logger.Info($"Update-check successful, string:\n{getReleaseVersion}");
+
+                        // Parse the loaded json
+                        var jsonHead = Windows.Data.Json.JsonObject.Parse(getReleaseVersion);
+
+                        if (!jsonHead.ContainsKey("amethyst"))
+                            Logger.Error("The latest release's manifest was invalid!");
+
+                        // Parse the amethyst entry
+                        var jsonRoot = jsonHead.GetNamedObject("amethyst");
+
+                        if (!jsonRoot.ContainsKey("version") ||
+                            !jsonRoot.ContainsKey("version_string") ||
+                            !jsonRoot.ContainsKey("changelog"))
+                        {
+                            Logger.Error("The latest release's manifest was invalid!");
+                        }
+
+                        else
+                        {
+                            // Get the version tag (uint, fallback to latest)
+                            var remoteVersion = (int)jsonRoot.GetNamedNumber("version", AppData.K2IntVersion);
+
+                            // Get the remote version name
+                            remoteVersionString = jsonRoot.GetNamedString("version_string");
+
+                            Logger.Info($"Local version: {AppData.K2IntVersion}");
+                            Logger.Info($"Remote version: {remoteVersion}");
+
+                            Logger.Info($"Local version string: {AppData.K2InternalVersion}");
+                            Logger.Info($"Remote version string: {remoteVersionString}");
+
+                            // Check the version
+                            if (AppData.K2IntVersion < remoteVersion)
+                                Interfacing.UpdateFound = true;
+
+                            // Cache the changes
+                            changesStringVector = jsonRoot.GetNamedArray("changelog")
+                                .Select(x => x.ToString()).ToList();
+                        }
+                    }
+                    else
+                    {
+                        Logger.Error("Update-check failed, the string was empty.");
+                    }
+
+                    if (!string.IsNullOrEmpty(getDocsLanguages))
+                    {
+                        // Parse the loaded json
+                        var jsonRoot = Windows.Data.Json.JsonObject.Parse(getDocsLanguages);
+
+                        // Check if the resource root is fine & the language code exists
+                        Interfacing.DocsLanguageCode = AppData.AppSettings.AppLanguage;
+
+                        if (jsonRoot is null || !jsonRoot.ContainsKey(Interfacing.DocsLanguageCode))
+                        {
+                            Logger.Info("Docs do not contain a language with code " +
+                                        $"\"{Interfacing.DocsLanguageCode}\", falling back to \"en\" (English)!");
+                            Interfacing.DocsLanguageCode = "en";
+                        }
+                    }
+                    else
+                    {
+                        Logger.Error("Language-check failed, the string was empty.");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+                }
+
+                // Limit time to (min) 1s
+                await updateTimer;
+
+                // Resume to UI and stop the animation
+                IconRotation.Stop();
+
+                // Mark the update footer as inactive
+                {
+                    UpdateIcon.Foreground = Shared.Main.NeutralBrush;
+
+                    UpdateIconGrid.Translation = new Vector3(0, -8, 0);
+                    UpdateIconText.Opacity = 1.0;
+                }
+
+                if (Interfacing.UpdateFound)
+                {
+                    FlyoutHeader.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/NewUpdateFound");
+                    FlyoutFooter.Text = $"Amethyst v{remoteVersionString}";
+
+                    var changelogString = "";
+                    changesStringVector.ForEach(x => changelogString += $"- {x}\n");
+                    FlyoutContent.Text = changelogString.TrimEnd('\n');
+                    FlyoutContent.Margin = new Thickness(0, 0, 0, 12);
+
+                    InstallLaterButton.Visibility = Visibility.Visible;
+                    InstallNowButton.Visibility = Visibility.Visible;
+                    UpdateIconDot.Opacity = 1.0;
+                }
+                else
+                {
+                    FlyoutHeader.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/UpToDate");
+                    FlyoutFooter.Text = $"Amethyst v{AppData.K2InternalVersion}";
+                    FlyoutContent.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/Suggestions");
+                    FlyoutContent.Margin = new Thickness(0);
+
+                    InstallLaterButton.Visibility = Visibility.Collapsed;
+                    InstallNowButton.Visibility = Visibility.Collapsed;
+                    UpdateIconDot.Opacity = 0.0;
+                }
+            }
+
+            // If an update was found, show it
+            // (or if the check was manual)
+            if ((Interfacing.UpdateFound || show) && !Interfacing.IsNuxPending)
+                UpdateFlyout.ShowAt(HelpButton, new FlyoutShowOptions()
+                {
+                    Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
+                    ShowMode = FlyoutShowMode.Transient
+                });
+
+            // Uncheck
+            Interfacing.CheckingUpdatesNow = false;
+        }
     }
 
     private void InitializerTeachingTip_ActionButtonClick(TeachingTip sender, object args)
     {
-        // TODO
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        // Dismiss the current tip
+        Shared.TeachingTips.Main.InitializerTeachingTip.IsOpen = false;
+
+        // Just dismiss the tip
+        Shared.Main.InterfaceBlockerGrid.Opacity = 0.0;
+        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
+        Interfacing.IsNuxPending = false;
     }
 
     private void InitializerTeachingTip_CloseButtonClick(TeachingTip sender, object args)
     {
-        // TODO
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        // Dismiss the current tip
+        Shared.TeachingTips.Main.InitializerTeachingTip.IsOpen = false;
+
+        // Navigate to the general page
+        Shared.Main.MainNavigationView.SelectedItem =
+            Shared.Main.MainNavigationView.MenuItems[0];
+
+        Shared.Main.NavigateToPage("general",
+            new EntranceNavigationTransitionInfo());
+
+        // Show the next tip (general page)
+        Shared.TeachingTips.General.ToggleTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.General.ToggleTrackersTeachingTip.IsOpen = true;
     }
 
     private async void ReloadTeachingTip_CloseButtonClick(TeachingTip sender, object args)
@@ -583,19 +986,66 @@ public sealed partial class MainWindow : Window
             ContentFrame.GoBack();
     }
 
-    private void UpdateButton_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    private async void UpdateButton_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
     {
-        // TODO
+        // Check for updates (and show)
+        if (Interfacing.CheckingUpdatesNow) return;
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+        await CheckUpdates(true);
     }
 
-    private void UpdateButton_Loaded(object sender, RoutedEventArgs e)
+    private async void UpdateButton_Loaded(object sender, RoutedEventArgs e)
     {
-        // TODO
+        // Show the startup tour teachingtip
+        if (!AppData.AppSettings.FirstTimeTourShown)
+        {
+            // Play a sound
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+            // Show the first tip
+            Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
+            Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+
+            Shared.TeachingTips.Main.InitializerTeachingTip.IsOpen = true;
+            Interfacing.IsNuxPending = true;
+        }
+
+        // Check for updates (and show)
+        await CheckUpdates(false, 2000);
     }
 
     private void HelpButton_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
     {
-        // TODO
+        // Change the docs button's text
+        HelpFlyoutDocsButton.Text = Interfacing.CurrentAppState switch
+        {
+            "general" => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/GeneralPage/Overview"),
+            "calibration" => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Main"),
+            "calibration_auto" => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Automatic"),
+            "calibration_manual" => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Manual"),
+            "offsets" => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/GeneralPage/Offsets"),
+            "settings" => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/SettingsPage/Overview"),
+            "devices" => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overview"),
+            "overrides" => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overrides"),
+            "info" => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/InfoPage/OpenCollective"),
+            _ => HelpFlyoutDocsButton.Text
+        };
+
+        // Show the help flyout
+        HelpFlyout.ShowAt(HelpButton, new FlyoutShowOptions()
+        {
+            Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
+            ShowMode = FlyoutShowMode.Transient
+        });
     }
 
     private void ContentFrame_NavigationFailed(object sender, Microsoft.UI.Xaml.Navigation.NavigationFailedEventArgs e)
@@ -618,27 +1068,38 @@ public sealed partial class MainWindow : Window
 
     private void InstallLaterButton_Click(object sender, RoutedEventArgs e)
     {
-        // TODO
+        Interfacing.UpdateOnClosed = true;
+        UpdateFlyout.Hide();
     }
 
-    private void InstallNowButton_Click(object sender, RoutedEventArgs e)
+    private async void InstallNowButton_Click(object sender, RoutedEventArgs e)
     {
-        // TODO
+        await ExecuteUpdates();
+        UpdateFlyout.Hide();
     }
 
     private void HelpFlyoutDocsButton_Click(object sender, RoutedEventArgs e)
     {
-        // TODO
+        Launcher.LaunchUriAsync(new Uri(Interfacing.CurrentAppState switch
+        {
+            "calibration" => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/calibration/",
+            "calibration_auto" => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/calibration/#3",
+            "calibration_manual" => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/calibration/#6",
+            "devices" or "offsets" or "settings" => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/",
+            "overrides" => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/overrides/",
+            "info" => "https://opencollective.com/k2vr",
+            "general" or _ => $"https://docs.k2vr.tech/{AppData.AppSettings.AppLanguage}/"
+        }));
     }
 
     private void HelpFlyoutDiscordButton_Click(object sender, RoutedEventArgs e)
     {
-        // TODO
+        Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBQCRDG"));
     }
 
     private void HelpFlyoutDevButton_Click(object sender, RoutedEventArgs e)
     {
-        // TODO
+        Launcher.LaunchUriAsync(new Uri("https://github.com/KinectToVR"));
     }
 
     private async void HelpFlyoutLicensesButton_Click(object sender, RoutedEventArgs e)
@@ -720,12 +1181,12 @@ public sealed partial class MainWindow : Window
         // Handle all the exit actions (if needed)
         // Show the close tip (if not shown yet)
         if (!Interfacing.IsExitHandled &&
-            !Interfacing.AppSettings.FirstShutdownTipShown)
+            !AppData.AppSettings.FirstShutdownTipShown)
         {
             ShutdownTeachingTip.IsOpen = true;
 
-            Interfacing.AppSettings.FirstShutdownTipShown = true;
-            Interfacing.AppSettings.SaveSettings(); // Save settings
+            AppData.AppSettings.FirstShutdownTipShown = true;
+            AppData.AppSettings.SaveSettings(); // Save settings
             return;
         }
 

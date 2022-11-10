@@ -51,12 +51,6 @@ public static class Interfacing
             "Amethyst", "logs", relativeFolderName, relativeFilePath);
     }
 
-    // Internal version number
-    public const string K2InternalVersion = "1.0.3.1";
-
-    public const uint K2IntVersion = 3; // Amethyst version
-    public const uint K2ApiVersion = 0; // API version
-
     public static bool
         IsExitingNow = false, // App closing check
         IsExitHandled = false; // If actions have been done
@@ -97,14 +91,10 @@ public static class Interfacing
     public static uint VrNotificationId = 0;
 
     // The actual app theme (ONLY dark/light)
-    public static ElementTheme ActualTheme =
-        ElementTheme.Dark;
-
-    // Application settings
-    public static K2AppSettings AppSettings = new();
+    public static ElementTheme ActualTheme = ElementTheme.Dark;
 
     // Input actions' handler
-    public static K2EVRInput.SteamEVRInput EvrInput = new();
+    public static readonly K2EVRInput.SteamEVRInput EvrInput = new();
 
     // If trackers are added / initialized
     public static bool K2AppTrackersSpawned = false,
@@ -272,19 +262,7 @@ public static class Interfacing
                     // Focus on the restart button
                     Shared.Settings.RestartButton.Focus(FocusState.Keyboard);
                 });
-
-        // When you've entered the cheater mode
-        if (eventArgs.Argument.Contains("okashi"))
-            Shared.Main.DispatcherQueue.TryEnqueue(() =>
-            {
-                // Navigate to the okashi/console page
-                Shared.Main.MainNavigationView.SelectedItem =
-                    Shared.Main.MainNavigationView.MenuItems[4];
-
-                Shared.Main.NavigateToPage("console",
-                    new EntranceNavigationTransitionInfo());
-            });
-
+        
         // Else no click action requested ("none")
     }
 
@@ -398,7 +376,7 @@ public static class Interfacing
 
             // Create a dummy update vector
             List<(TrackerType Role, bool State)> trackerStatuses =
-                (from tracker in AppSettings.K2TrackersVector
+                (from tracker in AppData.AppSettings.K2TrackersVector
                     where tracker.IsActive
                     select (tracker.Role, true)).ToList();
 
@@ -795,7 +773,7 @@ public static class Interfacing
             // Check if it's not ame
             var canReturn = true;
             if (!canBeAme) // If requested
-                AppSettings.K2TrackersVector.Where(
+                AppData.AppSettings.K2TrackersVector.Where(
                         tracker => serialStringBuilder.ToString() == tracker.Serial).ToList()
                     .ForEach(_ =>
                     {
@@ -990,12 +968,12 @@ public static class Interfacing
             }
 
             // If the language key is the current language, don't split the name
-            if (AppSettings.AppLanguage == languageKey)
-                return jsonObject.GetNamedObject(AppSettings.AppLanguage).GetNamedString(AppSettings.AppLanguage);
+            if (AppData.AppSettings.AppLanguage == languageKey)
+                return jsonObject.GetNamedObject(AppData.AppSettings.AppLanguage).GetNamedString(AppData.AppSettings.AppLanguage);
 
             // Else split the same way as in docs
             return jsonObject.GetNamedObject(languageKey).GetNamedString(languageKey) +
-                   " (" + jsonObject.GetNamedObject(AppSettings.AppLanguage).GetNamedString(languageKey) + ")";
+                   " (" + jsonObject.GetNamedObject(AppData.AppSettings.AppLanguage).GetNamedString(languageKey) + ")";
         }
         catch (Exception e)
         {
@@ -1190,7 +1168,7 @@ public static class Interfacing
 
         public static List<TrackedJoint> GetAppJointPoses()
         {
-            return AppSettings.K2TrackersVector.Select(
+            return AppData.AppSettings.K2TrackersVector.Select(
                 tracker => tracker.GetTrackedJoint()).ToList();
         }
 
@@ -1200,7 +1178,7 @@ public static class Interfacing
             StatusUiRefreshRequested = true;
         }
 
-        public static string RequestLanguageCode => AppSettings.AppLanguage;
+        public static string RequestLanguageCode => AppData.AppSettings.AppLanguage;
 
         public static string RequestLocalizedString(string key, string guid)
         {
@@ -1238,7 +1216,7 @@ public static class Interfacing
                 Logger.Info(
                     $"[Requested by device with guid {guid}] " +
                     "Searching for language resources with key " +
-                    $"\"{AppSettings.AppLanguage}\" in \"{path}\"...");
+                    $"\"{AppData.AppSettings.AppLanguage}\" in \"{path}\"...");
 
                 if (!Directory.Exists(path))
                 {
@@ -1250,7 +1228,7 @@ public static class Interfacing
                     return false; // Give up on trying
                 }
 
-                var resourcePath = Path.Join(path, AppSettings.AppLanguage + ".json");
+                var resourcePath = Path.Join(path, AppData.AppSettings.AppLanguage + ".json");
 
                 // If the specified language doesn't exist somehow, fallback to 'en'
                 if (!File.Exists(resourcePath))
@@ -1289,7 +1267,7 @@ public static class Interfacing
                 else
                     Logger.Error(
                         $"[Requested by device with guid {guid}] " +
-                        $"Successfully loaded language resources with key \"{AppSettings.AppLanguage}\"!");
+                        $"Successfully loaded language resources with key \"{AppData.AppSettings.AppLanguage}\"!");
 
                 // If everything's ok, change the root
                 if (TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector.ContainsKey(guid))
@@ -1302,7 +1280,7 @@ public static class Interfacing
             {
                 Logger.Warn(
                     $"[Requested by device with guid {guid}] " +
-                    $"JSON error at key: \"{AppSettings.AppLanguage}\"! " +
+                    $"JSON error at key: \"{AppData.AppSettings.AppLanguage}\"! " +
                     $"Message: {e.Message}");
 
                 return false; // Just give up

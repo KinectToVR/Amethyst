@@ -18,7 +18,7 @@ public static class TrackingDevices
 
     public static TrackingDevice GetTrackingDevice()
     {
-        return TrackingDevicesVector[Interfacing.AppSettings.TrackingDeviceGuid];
+        return TrackingDevicesVector[AppData.AppSettings.TrackingDeviceGuid];
     }
 
     public static (bool Exists, TrackingDevice) GetDevice(string guid)
@@ -38,13 +38,13 @@ public static class TrackingDevices
 
         // Optionally disable flip
         if (!currentDevice.IsFlipSupported &&
-            Interfacing.AppSettings.IsFlipEnabled)
+            AppData.AppSettings.IsFlipEnabled)
         {
-            Interfacing.AppSettings.IsFlipEnabled = false;
-            Interfacing.AppSettings.SaveSettings();
+            AppData.AppSettings.IsFlipEnabled = false;
+            AppData.AppSettings.SaveSettings();
         }
 
-        foreach (var device in Interfacing.AppSettings.OverrideDevicesGuidMap
+        foreach (var device in AppData.AppSettings.OverrideDevicesGuidMap
                      .Where(device => TrackingDevicesVector[device].DeviceStatus != 0))
         {
             overrideStatusOk = false;
@@ -103,7 +103,7 @@ public static class TrackingDevices
             // Dim the calibration button if can't calibrate right now
             General.CalibrationButton.Opacity =
                 !General.CalibrationButton.IsEnabled || // Don't dim if disabled
-                Interfacing.AppSettings.OverrideDevicesGuidMap.Count > 0 ||
+                AppData.AppSettings.OverrideDevicesGuidMap.Count > 0 ||
                 baseStatusOk // Don't dim if we have overrides or just are OK
                     ? 1.0
                     : 0.0;
@@ -119,7 +119,7 @@ public static class TrackingDevices
             if (Interfacing.CurrentPageTag == "devices")
                 Interfacing.CurrentAppState = 
                     Devices.DevicesTreeView != null && overrideStatusOk &&
-                    Interfacing.AppSettings.OverrideDevicesGuidMap
+                    AppData.AppSettings.OverrideDevicesGuidMap
                         .Contains(Devices.SelectedTrackingDeviceGuid)
                     ? "overrides" // Currently managing overrides
                     : "devices"; // Currently viewing tracking devices
@@ -129,7 +129,7 @@ public static class TrackingDevices
         if (Settings.FlipDropDown != null)
         {
             // Overwritten a bit earlier
-            Settings.FlipToggle.IsOn = Interfacing.AppSettings.IsFlipEnabled;
+            Settings.FlipToggle.IsOn = AppData.AppSettings.IsFlipEnabled;
 
             Settings.FlipToggle.IsEnabled = currentDevice.IsFlipSupported;
             Settings.FlipDropDown.IsEnabled = currentDevice.IsFlipSupported;
@@ -164,15 +164,15 @@ public static class TrackingDevices
 		 * And then search in OpenVR for a one with waist role */
 
         // If we have an override and if it's actually affecting the waist rotation
-        foreach (var overrideDeviceGuid in Interfacing.AppSettings.OverrideDevicesGuidMap
+        foreach (var overrideDeviceGuid in AppData.AppSettings.OverrideDevicesGuidMap
                      .Where(overrideDeviceGuid =>
-                         Interfacing.AppSettings.K2TrackersVector[0].IsActive &&
-                         Interfacing.AppSettings.K2TrackersVector[0].IsRotationOverridden &&
-                         Interfacing.AppSettings.K2TrackersVector[0].OverrideGuid == overrideDeviceGuid))
+                         AppData.AppSettings.K2TrackersVector[0].IsActive &&
+                         AppData.AppSettings.K2TrackersVector[0].IsRotationOverridden &&
+                         AppData.AppSettings.K2TrackersVector[0].OverrideGuid == overrideDeviceGuid))
             return !TrackingDevicesVector[overrideDeviceGuid].IsFlipSupported;
 
         // If still not, then also check if the waist is disabled by any chance
-        return !Interfacing.AppSettings.K2TrackersVector[0].IsActive &&
+        return !AppData.AppSettings.K2TrackersVector[0].IsActive &&
                Interfacing.FindVrTracker("waist", false).Found;
     }
 
@@ -182,8 +182,8 @@ public static class TrackingDevices
 
         // Everything's fine
         if (IsExternalFlipSupportable() &&
-            Interfacing.AppSettings.IsFlipEnabled &&
-            Interfacing.AppSettings.IsExternalFlipEnabled)
+            AppData.AppSettings.IsFlipEnabled &&
+            AppData.AppSettings.IsExternalFlipEnabled)
         {
             Settings.ExternalFlipStatusLabel.Text =
                 Interfacing.LocalizedJsonString("/SettingsPage/Captions/ExtFlipStatus/Active");
@@ -191,7 +191,7 @@ public static class TrackingDevices
             Settings.ExternalFlipStatusStackPanel.Visibility = Visibility.Visible;
         }
         // No tracker detected
-        else if (Interfacing.AppSettings.IsExternalFlipEnabled)
+        else if (AppData.AppSettings.IsExternalFlipEnabled)
         {
             Settings.ExternalFlipStatusLabel.Text =
                 Interfacing.LocalizedJsonString("/SettingsPage/Captions/ExtFlipStatus/NoTracker");
@@ -217,7 +217,7 @@ public static class TrackingDevices
         // to imitate that it's disabled
 
         // Flip
-        if (!Interfacing.AppSettings.IsFlipEnabled)
+        if (!AppData.AppSettings.IsFlipEnabled)
         {
             Settings.FlipDropDown.IsEnabled = false;
             Settings.FlipDropDown.IsExpanded = false;
@@ -273,7 +273,7 @@ public static class TrackingDevices
 
         // Check if all joints have valid IDs
         if (TrackingDevicesVector.TryGetValue(guid, out var device))
-            foreach (var tracker in Interfacing.AppSettings.K2TrackersVector.Where(tracker =>
+            foreach (var tracker in AppData.AppSettings.K2TrackersVector.Where(tracker =>
                          tracker.OverrideGuid == guid &&
                          tracker.OverrideJointId >= device.TrackedJoints.Count))
             {
@@ -283,7 +283,7 @@ public static class TrackingDevices
 
         // Save it (if needed)
         if (settingsChangesMade)
-            Interfacing.AppSettings.SaveSettings();
+            AppData.AppSettings.SaveSettings();
     }
 
     public static void CheckBaseIndexes()
@@ -292,7 +292,7 @@ public static class TrackingDevices
         var settingsChangesMade = false;
 
         // Check if all joints have valid IDs
-        foreach (var tracker in Interfacing.AppSettings.K2TrackersVector.Where(tracker =>
+        foreach (var tracker in AppData.AppSettings.K2TrackersVector.Where(tracker =>
                      tracker.SelectedTrackedJointId >= GetTrackingDevice().TrackedJoints.Count))
         {
             tracker.SelectedTrackedJointId = 0;
@@ -301,7 +301,7 @@ public static class TrackingDevices
 
         // Save it (if needed)
         if (settingsChangesMade)
-            Interfacing.AppSettings.SaveSettings();
+            AppData.AppSettings.SaveSettings();
     }
 
     public enum PluginLoadError

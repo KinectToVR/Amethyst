@@ -154,8 +154,8 @@ public sealed partial class Info : Page
             new EntranceNavigationTransitionInfo());
 
         // We're done
-        Interfacing.AppSettings.FirstTimeTourShown = true;
-        Interfacing.AppSettings.SaveSettings();
+        AppData.AppSettings.FirstTimeTourShown = true;
+        AppData.AppSettings.SaveSettings();
     }
 
     private void K2DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
