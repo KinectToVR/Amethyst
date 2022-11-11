@@ -223,9 +223,9 @@ public static class Shared
             AdditionalDeviceErrorsHyperlink;
 
         public static Task AdditionalDeviceErrorsHyperlinkTappedEvent =
-            new(async () =>
+            new(() =>
             {
-                // Placeholder event
+                // Placeholder event // async
             });
     }
 

@@ -17,6 +17,7 @@ using Grpc.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Amethyst.Classes;
 
@@ -318,7 +319,7 @@ public static class Interfacing
     {
         // Ditch this if not loaded yet
         if (Shared.Devices.JointExpanderHostStackPanel == null) return;
-        Shared.Devices.DevicesJointsSetupPending = true;
+        //Shared.Devices.DevicesJointsSetupPending = true;
 
         // Optionally fix combos for disabled trackers -> joint selectors for base
         //foreach (const auto&expander : jointSelectorExpanders)
@@ -339,7 +340,7 @@ public static class Interfacing
 
         throw new NotImplementedException("MVVM");
 
-        Shared.Devices.DevicesJointsSetupPending = false;
+       // Shared.Devices.DevicesJointsSetupPending = false;
     }
 
     // Controllers' ID's (vr::k_unTrackedDeviceIndexInvalid for non-existent)
@@ -420,31 +421,32 @@ public static class Interfacing
 
         return true;
     }
-
-    public static async Task<bool> OpenVRStartup()
+    
+    public static bool OpenVrStartup()
     {
         Logger.Info("Attempting connection to VRSystem... ");
 
-        Task<(CVRSystem system, EVRInitError error)> initializeOpenVr =
-            new(() =>
+        try
+        {
+            Logger.Info("Creating a cancellation token...");
+            using var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(3));
+
+            Logger.Info("Waiting for the VR System to initialize...");
+            var eError = EVRInitError.None;
+            OpenVR.Init(ref eError, EVRApplicationType.VRApplication_Overlay);
+                
+            Logger.Info("The VRSystem finished initializing...");
+            if (eError != EVRInitError.None)
             {
-                var eError = EVRInitError.None;
-                return (OpenVR.Init(ref eError, EVRApplicationType.VRApplication_Overlay), eError);
-            });
-
-        Logger.Info("Waiting for the VR System to initialize...");
-        initializeOpenVr.Start(); // Try starting the init task
-
-        if (!initializeOpenVr.Wait(TimeSpan.FromSeconds(5)))
-        {
-            Logger.Error("The VR System took too long to initialize, giving up!");
-            Environment.FailFast("The VR System took too long to initialize");
+                Logger.Error($"IVRSystem could not be initialized: EVRInitError Code {eError}");
+                return false; // Catastrophic failure!
+            }
         }
-
-        if (initializeOpenVr.Result.error != EVRInitError.None)
+        catch (Exception e)
         {
-            Logger.Error($"IVRSystem could not be initialized: EVRInitError Code {initializeOpenVr.Result.error}");
-            return false; // Catastrophic failure!
+            Logger.Error($"The VR System took too long to initialize ({e.Message}), giving up!");
+            Environment.FailFast("The VR System took too long to initialize");
         }
 
         // We're good to go!
@@ -570,7 +572,7 @@ public static class Interfacing
             catch (Exception e)
             {
                 // Log ?success
-                Logger.Info("Connection test has ended, [result: fail], got an exception");
+                Logger.Info($"Connection test has ended, [result: fail], got an exception: {e.Message}");
 
                 // Release
                 PingCheckingThreadsNumber = Math.Clamp(

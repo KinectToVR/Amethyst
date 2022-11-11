@@ -22,7 +22,7 @@ public static class TrackingDevices
         return TrackingDevicesVector[AppData.Settings.TrackingDeviceGuid];
     }
 
-    public static (bool Exists, TrackingDevice) GetDevice(string guid)
+    public static (bool Exists, TrackingDevice Device) GetDevice(string guid)
     {
         return (TrackingDevicesVector.TryGetValue(guid, out var device), device);
     }
@@ -125,20 +125,19 @@ public static class TrackingDevices
         }
 
         // Update settings tab
-        if (Settings.FlipDropDown != null)
-        {
-            // Overwritten a bit earlier
-            Settings.FlipToggle.IsOn = AppData.Settings.IsFlipEnabled;
+        if (Settings.FlipDropDown == null) return;
 
-            Settings.FlipToggle.IsEnabled = currentDevice.IsFlipSupported;
-            Settings.FlipDropDown.IsEnabled = currentDevice.IsFlipSupported;
-            Settings.FlipDropDownGrid.Opacity = currentDevice.IsFlipSupported
-                ? 1.0 // If supported : display as normal
-                : 0.5; // IF not : dim a bit (and probably hide)
+        // Overwritten a bit earlier
+        Settings.FlipToggle.IsOn = AppData.Settings.IsFlipEnabled;
 
-            // Update extflip
-            CheckExternalFlip();
-        }
+        Settings.FlipToggle.IsEnabled = currentDevice.IsFlipSupported;
+        Settings.FlipDropDown.IsEnabled = currentDevice.IsFlipSupported;
+        Settings.FlipDropDownGrid.Opacity = currentDevice.IsFlipSupported
+            ? 1.0 // If supported : display as normal
+            : 0.5; // IF not : dim a bit (and probably hide)
+
+        // Update extflip
+        CheckExternalFlip();
     }
 
     public static void HandleDeviceRefresh(bool shouldReconnect)
@@ -301,6 +300,16 @@ public static class TrackingDevices
         // Save it (if needed)
         if (settingsChangesMade)
             AppData.Settings.SaveSettings();
+    }
+
+    public static bool IsBase(string guid)
+    {
+        return AppData.Settings.TrackingDeviceGuid == guid;
+    }
+
+    public static bool IsOverride(string guid)
+    {
+        return AppData.Settings.OverrideDevicesGuidMap.Contains(guid);
     }
 
     public enum PluginLoadError

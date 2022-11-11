@@ -72,8 +72,9 @@ public static class EVRInput
 
             if (!File.Exists(absoluteManifestPath))
             {
-                Logger.Error("Action manifest was not found in the program (exe) directory.");
-                return false;
+                Logger.Error("Action manifest was not found in the program " +
+                             $"({Interfacing.GetProgramLocation().Directory}) directory.");
+                return false; // Return failure status
             }
 
             // Set the action manifest. This should be in the executable directory.

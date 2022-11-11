@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Amethyst.Classes;
 using Amethyst.Utils;
 
 namespace Amethyst.MVVM;
@@ -22,6 +23,12 @@ public class TrackingDevice : INotifyPropertyChanged
         Location = path;
         Device = device;
     }
+
+    // Extensions: is this device set as base?
+    public bool IsBase => TrackingDevices.IsBase(Guid);
+
+    // Extensions: is this device set as an override?
+    public bool IsOverride => TrackingDevices.IsOverride(Guid);
 
     // Get GUID
     [DefaultValue("INVALID")] public string Guid { get; }
@@ -48,6 +55,7 @@ public class TrackingDevice : INotifyPropertyChanged
     public bool IsSelfUpdateEnabled => Device.IsSelfUpdateEnabled;
     public bool IsFlipSupported => Device.IsFlipSupported;
     public bool IsSettingsDaemonSupported => Device.IsSettingsDaemonSupported;
+    public bool IsAppOrientationSupported => Device.IsAppOrientationSupported;
 
     public object SettingsInterfaceRoot => Device.SettingsInterfaceRoot;
     public int DeviceStatus => Device.DeviceStatus;

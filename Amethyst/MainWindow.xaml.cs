@@ -35,6 +35,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Data.Json;
 using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
+using System.Xml.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -131,10 +132,11 @@ public sealed partial class MainWindow : Window
                 Shared.Main.AppWindow.TitleBar.ButtonPressedBackgroundColor;
         }
         else
-            // Poor ass Windows 10
+            // Poor ass Windows 10 <1809
         {
-            ExtendsContentIntoTitleBar = true;
-            SetTitleBar(DragElement);
+            Logger.Warn("Time to get some updates for your archaic Windows install, man!");
+            ExtendsContentIntoTitleBar = true; // Use the UWP titlebar extension method
+            SetTitleBar(DragElement); // Use the UWP titlebar extension method: set drag zones
         }
 
         Logger.Info("Making the app dispatcher available for children views...");
@@ -217,9 +219,9 @@ public sealed partial class MainWindow : Window
                 Environment.Exit(0); // Exit peacefully
             }
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Logger.Error("Startup failed! Multi-instance lock mutex creation error.");
+            Logger.Error($"Startup failed! Multi-instance lock mutex creation error: {e.Message}");
 
             if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
                     "K2CrashHandler", "K2CrashHandler.exe")))
@@ -243,7 +245,7 @@ public sealed partial class MainWindow : Window
             Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
 
         // Priority: Connect to OpenVR
-        if (!Interfacing.OpenVRStartup().Result)
+        if (!Interfacing.OpenVrStartup())
         {
             Logger.Error("Could not connect to OpenVR! The app will be shut down.");
             Interfacing.Fail(-11); // OpenVR is critical, so exit
@@ -265,9 +267,7 @@ public sealed partial class MainWindow : Window
 
         // Disable internal sounds
         ElementSoundPlayer.State = ElementSoundPlayerState.Off;
-
-        /* Load devices, config and compose (start) */
-
+        
         // Create the plugin directory (if not existent)
         Directory.CreateDirectory(Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory, "Plugins"));
@@ -284,6 +284,7 @@ public sealed partial class MainWindow : Window
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins"),
             "*", SearchOption.TopDirectoryOnly).ToList();
 
+        // Search for local plugins
         Logger.Info("Searching for local devices now...");
         pluginDirectoryList.ForEach(pluginPath =>
             catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath)));
@@ -302,6 +303,12 @@ public sealed partial class MainWindow : Window
                     .ForEach(pluginPath => catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath.ToString())));
 
             else Logger.Info("No external devices found! Loading the local ones now...");
+        }
+        catch (FileNotFoundException e)
+        {
+            Logger.Error($"Checking for external devices has failed, an exception occurred. Message: {e.Message}");
+            Logger.Error($"Creating new {Interfacing.GetK2AppDataFileDir("amethystpaths.k2path")} config...");
+            File.Create(Interfacing.GetK2AppDataFileDir("amethystpaths.k2path")); // Create a placeholder file
         }
         catch (Exception e)
         {
@@ -331,6 +338,7 @@ public sealed partial class MainWindow : Window
                     if (string.IsNullOrEmpty(plugin.Metadata.Guid) || plugin.Metadata.Guid == "INVALID" ||
                         TrackingDevices.TrackingDevicesVector.ContainsKey(plugin.Metadata.Guid))
                     {
+                        // Add the device to the 'attempted' list, mark as duplicate
                         TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
                             plugin.Metadata.Guid, TrackingDevices.PluginLoadError.BadOrDuplicateGuid, ""));
 
@@ -351,6 +359,7 @@ public sealed partial class MainWindow : Window
                                      $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
                                      $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
 
+                        // Add the device to the 'attempted' list, mark as possibly missing deps
                         TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
                             plugin.Metadata.Guid, TrackingDevices.PluginLoadError.NoDeviceDependencyDll, ""));
                         continue; // Give up on this one :(
@@ -361,6 +370,7 @@ public sealed partial class MainWindow : Window
                                      "failed with an exception, probably some of its dependencies are missing. " +
                                      $"Message: {e.Message}, Trace: {e.StackTrace}");
 
+                        // Add the device to the 'attempted' list, mark as unknown
                         TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
                             plugin.Metadata.Guid, TrackingDevices.PluginLoadError.Other, ""));
                         continue; // Give up on this one :(
@@ -370,20 +380,25 @@ public sealed partial class MainWindow : Window
                     var pluginLocation = Assembly.GetAssembly(plugin.Value.GetType()).Location;
                     var pluginFolder = Directory.GetParent(pluginLocation).FullName;
 
+                    // Add the device to the 'attempted' list, mark as all fine
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "to the load-attempted device plugins list (TrackingDevices)...");
                     TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
                         plugin.Metadata.Guid, TrackingDevices.PluginLoadError.NoError, pluginFolder));
 
+                    // Add the device resource root to the global list, create its context
                     Logger.Info($"Creating ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "localized strings resource context (TrackingDevices)...");
                     TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector.Add(
                         plugin.Metadata.Guid, (new JsonObject(), pluginFolder));
 
+                    // Set the device's string resources root to its provided folder
+                    // (If it wants to change it, it's gonna need to do that after OnLoad anyway)
                     Logger.Info($"Registering ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "default root language resource context (TrackingDevices)...");
                     Interfacing.Plugins.SetLocalizationResourcesRoot(pluginFolder, plugin.Metadata.Guid);
 
+                    // Add the device to the global device list, add the plugin folder path
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "to the global tracking device plugins list (TrackingDevices)...");
                     TrackingDevices.TrackingDevicesVector.Add(plugin.Metadata.Guid, new TrackingDevice(
@@ -400,12 +415,24 @@ public sealed partial class MainWindow : Window
                                 $"Updates By Itself: {plugin.Value.IsSelfUpdateEnabled}\n" +
                                 $"Supports Settings: {plugin.Value.IsSettingsDaemonSupported}\n" +
                                 $"Provides Prepended Joints: {plugin.Value.TrackedJoints.Count}");
+
+                    // Check if the loaded device is used as anything (AppData.Settings)
+                    Logger.Info($"Checking if ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) has any roles set...");
+                    if (TrackingDevices.IsBase(plugin.Metadata.Guid))
+                        Logger.Info($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) is a Base device!");
+                    else if (TrackingDevices.IsOverride(plugin.Metadata.Guid))
+                        Logger.Info($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) is an Override device!");
+                    else
+                        Logger.Info($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) does not serve any purpose :/");
                 }
                 catch (Exception e)
                 {
+                    // Add the device to the 'attempted' list, mark as unknown
                     Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                 "failed with a (hopefully) caught exception. " +
+                                 "failed with a global outer caught exception. " +
                                  $"Provided exception Message: {e.Message}, Trace: {e.StackTrace}");
+                    TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
+                        plugin.Metadata.Guid, TrackingDevices.PluginLoadError.Other, ""));
                 }
         }
         catch (CompositionException e)
@@ -415,19 +442,148 @@ public sealed partial class MainWindow : Window
                          $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
         }
 
+        // Check if we have enough plugins to run the app
         if (TrackingDevices.TrackingDevicesVector.Count < 1)
         {
             Logger.Fatal("No plugins (tracking devices) loaded! Shutting down...");
             Interfacing.Fail(-12); // Exit and cause the crash handler to appear
         }
 
+        Logger.Info("Registration of tracking device plugins has ended, there are " +
+                    $"{TrackingDevices.TrackingDevicesVector.Count} valid plugins in total.");
 
+        // Validate the saved base plugin guid
+        Logger.Info("Checking if the saved base device exists in loaded plugins...");
+        if (!TrackingDevices.TrackingDevicesVector.ContainsKey(AppData.Settings.TrackingDeviceGuid))
+        {
+            Logger.Info($"The saved base device ({AppData.Settings.TrackingDeviceGuid}) is invalid! " +
+                        $"Resetting it to the first one: ({TrackingDevices.TrackingDevicesVector.First().Key})!");
+            AppData.Settings.TrackingDeviceGuid = TrackingDevices.TrackingDevicesVector.First().Key;;
+        }
 
+        Logger.Info("Updating app settings for the selected base device...");
 
+        // Check orientation option configs : left foot
+        Logger.Info("Checking left foot orientation settings...");
+        if (AppData.Settings.TrackersVector[1].OrientationTrackingOption is
+                JointRotationTrackingOption.SoftwareCalculatedRotation or
+                JointRotationTrackingOption.SoftwareCalculatedRotationV2 &&
+            !TrackingDevices.GetTrackingDevice().IsAppOrientationSupported)
+            AppData.Settings.TrackersVector[1].OrientationTrackingOption =
+                JointRotationTrackingOption.DeviceInferredRotation;
 
+        // Check orientation option configs : right foot
+        Logger.Info("Checking right foot orientation settings...");
+        if (AppData.Settings.TrackersVector[2].OrientationTrackingOption is
+                JointRotationTrackingOption.SoftwareCalculatedRotation or
+                JointRotationTrackingOption.SoftwareCalculatedRotationV2 &&
+            !TrackingDevices.GetTrackingDevice().IsAppOrientationSupported)
+            AppData.Settings.TrackersVector[2].OrientationTrackingOption =
+                JointRotationTrackingOption.DeviceInferredRotation;
 
-        /* Load devices, config and compose (end) */
+        // Initialize the loaded base device now
+        Logger.Info("Initializing the selected base device...");
+        TrackingDevices.GetTrackingDevice().Initialize();
 
+        // Validate and initialize the loaded override devices now
+        Logger.Info("Checking if saved override devices exist in loaded plugins...");
+        foreach (var overrideGuid in AppData.Settings.OverrideDevicesGuidMap)
+        {
+            Logger.Info($"Checking if override ({overrideGuid}) exists in loaded plugins...");
+            if (!TrackingDevices.TrackingDevicesVector.ContainsKey(overrideGuid))
+            {
+                // This override guid is invalid or missing
+                Logger.Info($"The saved override device ({overrideGuid}) is invalid! Resetting it to NONE!");
+                AppData.Settings.OverrideDevicesGuidMap.Remove(overrideGuid);
+                continue; // Skip this one then...
+            }
+
+            Logger.Info($"Checking if override ({overrideGuid}) doesn't derive from the base device...");
+            if (AppData.Settings.TrackingDeviceGuid == overrideGuid)
+            {
+                // Already being used as the base device
+                Logger.Info($"({overrideGuid}) is already set as Base! Resetting it to NONE!");
+                AppData.Settings.OverrideDevicesGuidMap.Remove(overrideGuid);
+                continue; // Skip this one then...
+            }
+
+            // Still here? We must be fine then, initialize the device
+            Logger.Info($"Initializing the selected override device ({overrideGuid})...");
+            TrackingDevices.GetDevice(overrideGuid).Device.Initialize();
+        }
+
+        Logger.Info("Checking if saved tracker overrides exist in loaded overrides...");
+        foreach (var appTracker in AppData.Settings.TrackersVector)
+        {
+            Logger.Info($"Checking if tracker {appTracker.Serial} override " +
+                        $"({appTracker.OverrideGuid}) exists in loaded plugins...");
+
+            // Check if the override specified by the tracker is real
+            if (TrackingDevices.TrackingDevicesVector.ContainsKey(appTracker.OverrideGuid)) continue;
+            Logger.Info($"The saved tracker {appTracker.Serial} override " +
+                        $"({appTracker.OverrideGuid}) is invalid! Resetting it to NONE!");
+
+            // The override haven't gotten real :/ reset
+            appTracker.OverrideGuid = "";
+            appTracker.IsPositionOverridden = false;
+            appTracker.IsRotationOverridden = false;
+        }
+
+        // Second check and try after 3 seconds
+        Task.Run(() =>
+        {
+            // The Base device
+            if (!TrackingDevices.GetTrackingDevice().IsInitialized)
+                TrackingDevices.GetTrackingDevice().Initialize();
+
+            // All valid override devices
+            AppData.Settings.OverrideDevicesGuidMap
+                .Where(x=> !TrackingDevices.GetDevice(x).Device.IsInitialized).ToList()
+                .ForEach(device => TrackingDevices.GetDevice(device).Device.Initialize());
+        });
+
+        // Update the UI
+        TrackingDevices.UpdateTrackingDevicesInterface();
+
+        // Setup device change watchdog : local devices
+        var localWatcher = new FileSystemWatcher
+        {
+            Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins"),
+            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
+            Filter = "*.dll", IncludeSubdirectories = true, EnableRaisingEvents = true
+        };
+
+        // Setup device change watchdog : external devices
+        var externalWatcher = new FileSystemWatcher
+        {
+            Path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst"),
+            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName | NotifyFilters.Size,
+            Filter = "amethystpaths.k2path", IncludeSubdirectories = true, EnableRaisingEvents = true
+        };
+
+        // Send a non-dismissible tip about reloading the app
+        static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs) =>
+            Shared.Main.DispatcherQueue.TryEnqueue(() =>
+            {
+                Logger.Info("Device plugin tree has changed, you need to reload!");
+                Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
+                Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
+
+                Shared.TeachingTips.Main.ReloadTeachingTip.IsOpen = true;
+            });
+
+        // Add event handlers : local
+        localWatcher.Changed += OnWatcherOnChanged;
+        localWatcher.Created += OnWatcherOnChanged;
+        localWatcher.Deleted += OnWatcherOnChanged;
+        localWatcher.Renamed += OnWatcherOnChanged;
+
+        // Add event handlers : external
+        externalWatcher.Changed += OnWatcherOnChanged;
+        externalWatcher.Created += OnWatcherOnChanged;
+        externalWatcher.Deleted += OnWatcherOnChanged;
+        externalWatcher.Renamed += OnWatcherOnChanged;
+        
         // Notify of the setup end
         _mainPageInitFinished = true;
     }
@@ -1243,9 +1399,9 @@ public sealed partial class MainWindow : Window
         UpdateFlyout.Hide();
     }
 
-    private void HelpFlyoutDocsButton_Click(object sender, RoutedEventArgs e)
+    private async void HelpFlyoutDocsButton_Click(object sender, RoutedEventArgs e)
     {
-        Launcher.LaunchUriAsync(new Uri(Interfacing.CurrentAppState switch
+        await Launcher.LaunchUriAsync(new Uri(Interfacing.CurrentAppState switch
         {
             "calibration" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/calibration/",
             "calibration_auto" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/calibration/#3",
@@ -1257,14 +1413,14 @@ public sealed partial class MainWindow : Window
         }));
     }
 
-    private void HelpFlyoutDiscordButton_Click(object sender, RoutedEventArgs e)
+    private async void HelpFlyoutDiscordButton_Click(object sender, RoutedEventArgs e)
     {
-        Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBQCRDG"));
+        await Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBQCRDG"));
     }
 
-    private void HelpFlyoutDevButton_Click(object sender, RoutedEventArgs e)
+    private async void HelpFlyoutDevButton_Click(object sender, RoutedEventArgs e)
     {
-        Launcher.LaunchUriAsync(new Uri("https://github.com/KinectToVR"));
+        await Launcher.LaunchUriAsync(new Uri("https://github.com/KinectToVR"));
     }
 
     private async void HelpFlyoutLicensesButton_Click(object sender, RoutedEventArgs e)
@@ -1361,7 +1517,7 @@ public sealed partial class MainWindow : Window
         if (!Interfacing.IsExitHandled)
         {
             // Handle the exit actions
-            Interfacing.HandleAppExit(1000);
+            await Interfacing.HandleAppExit(1000);
 
             // Make sure any Mica/Acrylic controller is disposed so it doesn't try to
             // use this closed window.

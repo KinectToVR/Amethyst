@@ -66,7 +66,7 @@ public static class AppSounds
             catch (Exception e)
             {
                 Logger.Warn($"A sound file with type: {sound} " +
-                            "could not be played due to an unexpected error.");
+                            $"could not be played due to an unexpected error: {e.Message}");
             }
         });
     }
