@@ -270,7 +270,7 @@ public sealed partial class MainWindow : Window
         
         // Create the plugin directory (if not existent)
         Directory.CreateDirectory(Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory, "Plugins"));
+            Interfacing.GetProgramLocation().DirectoryName, "Plugins"));
 
         // Search the "Plugins" sub-directory for assemblies that match the imports.
         var catalog = new AggregateCatalog();
@@ -281,7 +281,7 @@ public sealed partial class MainWindow : Window
 
         // Iterate over all directories in .\Plugins dir and add all Plugin* dirs to catalogs
         var pluginDirectoryList = Directory.EnumerateDirectories(
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins"),
+            Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "Plugins"),
             "*", SearchOption.TopDirectoryOnly).ToList();
 
         // Search for local plugins
@@ -548,7 +548,7 @@ public sealed partial class MainWindow : Window
         // Setup device change watchdog : local devices
         var localWatcher = new FileSystemWatcher
         {
-            Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins"),
+            Path = Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "Plugins"),
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
             Filter = "*.dll", IncludeSubdirectories = true, EnableRaisingEvents = true
         };

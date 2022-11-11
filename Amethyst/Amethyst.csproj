@@ -136,7 +136,7 @@
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y /i /e &quot;$(ProjectDir)Vendor\openvr_api.dll&quot; &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)&quot;&#xD;&#xA;xcopy /y /i /e &quot;$(ProjectDir)Assets\Strings\*&quot; &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\Assets\Strings&quot;&#xD;&#xA;xcopy /y /i /e &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\*&quot; &quot;$(SolutionDir)$(Platform)\$(Configuration)\Amethyst&quot;" />
+    <Exec Command="xcopy /y /i /e &quot;$(ProjectDir)Vendor\openvr_api.dll&quot; &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)&quot;&#xD;&#xA;xcopy /y /i /e &quot;$(ProjectDir)Assets\Strings\*&quot; &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\Assets\Strings&quot;" />
   </Target>
   <ItemGroup>
     <PRIResource Remove="Assets\Strings\**" />

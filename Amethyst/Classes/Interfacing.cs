@@ -1034,7 +1034,7 @@ public static class Interfacing
     }
 
     // Load the current desired resource JSON into app memory
-    public static void LoadJSONStringResources_English()
+    public static void LoadJsonStringResourcesEnglish()
     {
         try
         {

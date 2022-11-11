@@ -139,7 +139,8 @@ public class AppSettings : INotifyPropertyChanged
 
         // Scan for duplicate trackers
         foreach (var tracker in TrackersVector.GroupBy(x => x.Role)
-                     .Select(y => y.First()))
+                     .Where(g => g.Count() > 1)
+                     .Select(y => y.First()).ToList())
         {
             Logger.Warn("A duplicate tracker was found in the trackers vector! Removing it...");
             TrackersVector.Remove(tracker); // Remove the duplicate tracker

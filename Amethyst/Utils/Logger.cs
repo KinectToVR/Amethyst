@@ -108,6 +108,7 @@ public static class Logger
 
         if (loggingPathDidntExist)
             LogInternal($"Created logging directory at \"{dir}\"");
+
         LogInternal($"Log file created at: {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
         LogInternal($"Running on machine: {Environment.MachineName}");
         LogInternal("Running duration (h:mm:ss): 0:00:00");
