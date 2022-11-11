@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Amethyst.Plugins.Contract" Version="0.0.5" />
     <PackageReference Include="Google.Protobuf" Version="3.21.9" />
     <PackageReference Include="Grpc.Net.Client" Version="2.50.0-pre1" />
     <PackageReference Include="Grpc.Tools" Version="2.50.0">
@@ -30,6 +29,9 @@
       The server API isn't live yet, please make sure to keep that in mind.
     </Description>
     <PackageIcon>ktvr.png</PackageIcon>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,6 +40,10 @@
 
   <ItemGroup>
     <None Include="Assets\ktvr.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AmethystPluginContract\Amethyst.Plugins.Contract.csproj" />
   </ItemGroup>
 
 </Project>
