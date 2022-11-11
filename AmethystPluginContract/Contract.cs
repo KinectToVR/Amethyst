@@ -67,6 +67,10 @@ public interface ITrackingDevice
     // Should be set up at construction
     // Mark this as false ALSO if your device supports 360 tracking by itself
     [DefaultValue(false)] bool IsFlipSupported { get; }
+
+    // Should be set up at construction
+    // This will allow Amethyst to calculate rotations by itself, additionally
+    [DefaultValue(false)] bool IsAppOrientationSupported { get; }
     
     // To support settings daemon and register the layout root,
     // the device must properly report it first
