@@ -318,7 +318,7 @@ public static class Interfacing
     public static void CheckDisabledJoints()
     {
         // Ditch this if not loaded yet
-        if (Shared.Devices.JointExpanderHostStackPanel == null) return;
+        if (Shared.Devices.JointExpanderHostStackPanel is null) return;
         //Shared.Devices.DevicesJointsSetupPending = true;
 
         // Optionally fix combos for disabled trackers -> joint selectors for base
@@ -867,7 +867,7 @@ public static class Interfacing
         Logger.Error("An error occurred and the app couldn't connect to K2 Server. " +
                      "Please check the upper message for more info.");
 
-        if (Shared.General.ErrorWhatText == null) return;
+        if (Shared.General.ErrorWhatText is null) return;
         Logger.Info("[Server Error] Entering the server error state...");
 
         // Hide device error labels (if any)
@@ -906,7 +906,7 @@ public static class Interfacing
 
     public static bool IsCurrentWindowActive()
     {
-        if (Shared.Main.AppWindow == null)
+        if (Shared.Main.AppWindow is null)
             return true; // Give up k?
 
         return GetActiveWindow() == Shared.Main.AppWindowId;
@@ -962,7 +962,7 @@ public static class Interfacing
             var jsonObject = Windows.Data.Json.JsonObject.Parse(File.ReadAllText(resourcePath));
 
             // Check if the resource root is fine
-            if (jsonObject == null || jsonObject.Count <= 0)
+            if (jsonObject is null || jsonObject.Count <= 0)
             {
                 Logger.Error("The current language enumeration resource root is empty! " +
                              "App interface will be broken!");
@@ -1022,7 +1022,7 @@ public static class Interfacing
             LocalResources = Windows.Data.Json.JsonObject.Parse(File.ReadAllText(resourcePath));
 
             // Check if the resource root is fine
-            if (LocalResources == null || LocalResources.Count <= 0)
+            if (LocalResources is null || LocalResources.Count <= 0)
                 Logger.Error("The current resource root is empty! App interface will be broken!");
             else
                 Logger.Info($"Successfully loaded language resources with key \"{languageKey}\"!");
@@ -1061,7 +1061,7 @@ public static class Interfacing
             EnglishResources = Windows.Data.Json.JsonObject.Parse(File.ReadAllText(resourcePath));
 
             // Check if the resource root is fine
-            if (EnglishResources == null || EnglishResources.Count <= 0)
+            if (EnglishResources is null || EnglishResources.Count <= 0)
                 Logger.Error("The current resource root is empty! App interface will be broken!");
             else
                 Logger.Info("Successfully loaded language resources with key \"en\"!");
@@ -1262,7 +1262,7 @@ public static class Interfacing
                 var jsonObject = Windows.Data.Json.JsonObject.Parse(File.ReadAllText(resourcePath));
 
                 // Check if the resource root is fine
-                if (jsonObject == null || jsonObject.Count <= 0)
+                if (jsonObject is null || jsonObject.Count <= 0)
                     Logger.Error(
                         $"[Requested by device with guid {guid}] " +
                         "The current resource root is empty! App interface will be broken!");

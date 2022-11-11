@@ -126,7 +126,7 @@ public static class Logger
     {
         Console.ResetColor();
         Console.WriteLine(message);
-        if (LogFilePath == null)
+        if (LogFilePath is null)
             throw new InvalidOperationException("Tried logging something without calling Logger.Init()! Aborting...");
         File.AppendAllLines(LogFilePath, new[] { message });
 
@@ -137,7 +137,7 @@ public static class Logger
     {
         Console.ForegroundColor = color;
         Console.WriteLine(message);
-        if (LogFilePath == null)
+        if (LogFilePath is null)
             throw new InvalidOperationException("Tried logging something without calling Logger.Init()! Aborting...");
         File.AppendAllLines(LogFilePath, new[] { message });
 
@@ -148,7 +148,7 @@ public static class Logger
     {
         Console.ForegroundColor = color;
         Console.WriteLine(message);
-        if (LogFilePath == null)
+        if (LogFilePath is null)
             throw new InvalidOperationException("Tried logging something without calling Logger.Init()! Aborting...");
         File.AppendAllLines(LogFilePath, new[] { message });
 

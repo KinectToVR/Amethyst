@@ -28,7 +28,7 @@ public static class Shared
         public static List<(string Tag, Type Page)> Pages;
 
         // Main Window
-        public static Microsoft.UI.Xaml.Controls.NavigationViewItem
+        public static NavigationViewItem
             GeneralItem,
             SettingsItem,
             DevicesItem,
@@ -47,22 +47,22 @@ public static class Shared
         public static Microsoft.Windows.ApplicationModel.Resources.ResourceManager ResourceManager;
         public static Microsoft.Windows.ApplicationModel.Resources.ResourceContext ResourceContext;
 
-        public static Microsoft.UI.Xaml.Controls.TextBlock
+        public static TextBlock
             AppTitleLabel,
             FlyoutHeader,
             FlyoutFooter,
             FlyoutContent;
 
-        public static Microsoft.UI.Xaml.Controls.Grid
+        public static Grid
             InterfaceBlockerGrid, NavigationBlockerGrid;
 
-        public static Microsoft.UI.Xaml.Controls.NavigationView MainNavigationView;
-        public static Microsoft.UI.Xaml.Controls.Frame MainContentFrame;
+        public static NavigationView MainNavigationView;
+        public static Frame MainContentFrame;
 
-        public static Microsoft.UI.Xaml.Controls.FontIcon UpdateIconDot;
-        public static Microsoft.UI.Xaml.Controls.Flyout UpdateFlyout;
+        public static FontIcon UpdateIconDot;
+        public static Flyout UpdateFlyout;
 
-        public static Microsoft.UI.Xaml.Controls.Button
+        public static Button
             InstallNowButton, InstallLaterButton;
 
         public static Microsoft.UI.Xaml.Media.SolidColorBrush
@@ -70,14 +70,14 @@ public static class Shared
 
         public static class NavigationItems
         {
-            public static Microsoft.UI.Xaml.Controls.FontIcon
+            public static FontIcon
                 NavViewGeneralButtonIcon,
                 NavViewSettingsButtonIcon,
                 NavViewDevicesButtonIcon,
                 NavViewInfoButtonIcon,
                 NavViewOkashiButtonIcon;
 
-            public static Microsoft.UI.Xaml.Controls.TextBlock
+            public static TextBlock
                 NavViewGeneralButtonLabel,
                 NavViewSettingsButtonLabel,
                 NavViewDevicesButtonLabel,
@@ -188,14 +188,14 @@ public static class Shared
             PendingOffsetsUpdate = false;
 
         public static Microsoft.UI.Xaml.Controls.Primitives.ToggleButton ToggleTrackersButton;
-        public static Microsoft.UI.Xaml.Controls.ToggleSplitButton SkeletonToggleButton;
-        public static Microsoft.UI.Xaml.Controls.CheckBox ForceRenderCheckBox;
-        public static Microsoft.UI.Xaml.Controls.MenuFlyoutItem OffsetsButton;
+        public static ToggleSplitButton SkeletonToggleButton;
+        public static CheckBox ForceRenderCheckBox;
+        public static MenuFlyoutItem OffsetsButton;
 
-        public static Microsoft.UI.Xaml.Controls.Button
+        public static Button
             CalibrationButton, ReRegisterButton, ServerOpenDiscordButton;
 
-        public static Microsoft.UI.Xaml.Controls.TextBlock
+        public static TextBlock
             VersionLabel,
             DeviceNameLabel,
             DeviceStatusLabel,
@@ -206,7 +206,7 @@ public static class Shared
             ServerErrorWhatText,
             ForceRenderText;
 
-        public static Microsoft.UI.Xaml.Controls.Grid
+        public static Grid
             OffsetsControlHostGrid,
             ErrorButtonsGrid,
             ErrorWhatGrid,
@@ -216,10 +216,10 @@ public static class Shared
         public static Microsoft.UI.Xaml.Controls.Primitives.ToggleButton
             ToggleFreezeButton;
 
-        public static Microsoft.UI.Xaml.Controls.ToggleMenuFlyoutItem
+        public static ToggleMenuFlyoutItem
             FreezeOnlyLowerToggle;
 
-        public static Microsoft.UI.Xaml.Controls.TextBlock
+        public static TextBlock
             AdditionalDeviceErrorsHyperlink;
 
         public static Task AdditionalDeviceErrorsHyperlinkTappedEvent =
@@ -234,26 +234,26 @@ public static class Shared
         // Settings Page
         public static bool SettingsLocalInitFinished = false;
 
-        public static Microsoft.UI.Xaml.Controls.Button RestartButton;
-        public static Microsoft.UI.Xaml.Controls.Grid FlipDropDownGrid;
-        public static Microsoft.UI.Xaml.Controls.ScrollViewer PageMainScrollViewer;
-        public static Microsoft.UI.Xaml.Controls.ToggleSwitch FlipToggle;
-        public static Microsoft.UI.Xaml.Controls.Slider SoundsVolumeSlider;
-        public static Microsoft.UI.Xaml.Controls.Expander FlipDropDown;
+        public static Button RestartButton;
+        public static Grid FlipDropDownGrid;
+        public static ScrollViewer PageMainScrollViewer;
+        public static ToggleSwitch FlipToggle;
+        public static Slider SoundsVolumeSlider;
+        public static Expander FlipDropDown;
 
-        public static Microsoft.UI.Xaml.Controls.CheckBox
+        public static CheckBox
             ExternalFlipCheckBox,
             AutoSpawnCheckbox,
             EnableSoundsCheckbox,
             AutoStartCheckBox,
             CheckOverlapsCheckBox;
 
-        public static Microsoft.UI.Xaml.Controls.TextBlock
+        public static TextBlock
             ExternalFlipCheckBoxLabel,
             SetErrorFlyoutText,
             ExternalFlipStatusLabel;
 
-        public static Microsoft.UI.Xaml.Controls.StackPanel
+        public static StackPanel
             ExternalFlipStackPanel,
             JointExpanderHostStackPanel,
             ExternalFlipStatusStackPanel,
@@ -269,7 +269,7 @@ public static class Shared
             DevicesSignalJoints = true, // Optionally no signal
             DevicesModelSetupFinished = false; // MVVM setup done?
 
-        public static Microsoft.UI.Xaml.Controls.TextBlock
+        public static TextBlock
             DeviceNameLabel,
             DeviceStatusLabel,
             ErrorWhatText,
@@ -277,22 +277,22 @@ public static class Shared
             OverridesLabel,
             JointBasisLabel;
 
-        public static Microsoft.UI.Xaml.Controls.Grid
+        public static Grid
             DeviceErrorGrid,
             TrackingDeviceChangePanel,
             DevicesMainContentGridOuter,
             DevicesMainContentGridInner,
             SelectedDeviceSettingsHostContainer;
 
-        public static Microsoft.UI.Xaml.Controls.TreeView DevicesTreeView;
+        public static TreeView DevicesTreeView;
 
-        public static Microsoft.UI.Xaml.Controls.ItemsRepeater PluginsItemsRepeater;
+        public static ItemsRepeater PluginsItemsRepeater;
 
-        public static Microsoft.UI.Xaml.Controls.Flyout
+        public static Flyout
             NoJointsFlyout,
             SetDeviceTypeFlyout;
 
-        public static Microsoft.UI.Xaml.Controls.Button
+        public static Button
             SetAsOverrideButton,
             SetAsBaseButton,
             DeselectDeviceButton;
@@ -304,9 +304,9 @@ public static class Shared
         public static string PreviousSelectedTrackingDeviceGuid;
         public static string SelectedTrackingDeviceGuid;
 
-        public static Microsoft.UI.Xaml.Controls.ScrollViewer DevicesMainContentScrollViewer;
+        public static ScrollViewer DevicesMainContentScrollViewer;
 
-        public static Microsoft.UI.Xaml.Controls.StackPanel
+        public static StackPanel
             DevicesOverridesSelectorStackPanelOuter,
             DevicesOverridesSelectorStackPanelInner,
             DevicesJointSelectorStackPanelOuter,
@@ -325,31 +325,31 @@ public static class Shared
     {
         public static class Main
         {
-            public static Microsoft.UI.Xaml.Controls.TeachingTip
+            public static TeachingTip
                 InitializerTeachingTip, ReloadTeachingTip;
         }
 
         public static class General
         {
-            public static Microsoft.UI.Xaml.Controls.TeachingTip
+            public static TeachingTip
                 ToggleTrackersTeachingTip, StatusTeachingTip;
         }
 
         public static class Settings
         {
-            public static Microsoft.UI.Xaml.Controls.TeachingTip
+            public static TeachingTip
                 ManageTrackersTeachingTip, AutoStartTeachingTip;
         }
 
         public static class Devices
         {
-            public static Microsoft.UI.Xaml.Controls.TeachingTip
+            public static TeachingTip
                 DevicesListTeachingTip, DeviceControlsTeachingTip;
         }
 
         public static class Info
         {
-            public static Microsoft.UI.Xaml.Controls.TeachingTip
+            public static TeachingTip
                 HelpTeachingTip;
         }
     }

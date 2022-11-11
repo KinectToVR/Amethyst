@@ -22,92 +22,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Assets\Strings\**" />
-    <Content Remove="Assets\Strings\**" />
-    <EmbeddedResource Remove="Assets\Strings\**" />
-    <None Remove="Assets\Strings\**" />
-    <Page Remove="Assets\Strings\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Image Include="Assets\flat_ktvr.ico" />
-    <Image Include="Assets\flat_ktvr.png" />
-    <Image Include="Assets\hug.gif" />
-    <Image Include="Assets\ktvr.ico" />
-    <Image Include="Assets\ktvr.png" />
-    <Image Include="Assets\LargeTile.scale-100.png" />
-    <Image Include="Assets\LargeTile.scale-125.png" />
-    <Image Include="Assets\LargeTile.scale-150.png" />
-    <Image Include="Assets\LargeTile.scale-200.png" />
-    <Image Include="Assets\LargeTile.scale-400.png" />
-    <Image Include="Assets\SmallTile.scale-100.png" />
-    <Image Include="Assets\SmallTile.scale-125.png" />
-    <Image Include="Assets\SmallTile.scale-150.png" />
-    <Image Include="Assets\SmallTile.scale-200.png" />
-    <Image Include="Assets\SmallTile.scale-400.png" />
-    <Image Include="Assets\SplashScreen.scale-100.png" />
-    <Image Include="Assets\SplashScreen.scale-125.png" />
-    <Image Include="Assets\SplashScreen.scale-150.png" />
-    <Image Include="Assets\SplashScreen.scale-200.png" />
-    <Image Include="Assets\SplashScreen.scale-400.png" />
-    <Image Include="Assets\Square150x150Logo.scale-100.png" />
-    <Image Include="Assets\Square150x150Logo.scale-125.png" />
-    <Image Include="Assets\Square150x150Logo.scale-150.png" />
-    <Image Include="Assets\Square150x150Logo.scale-200.png" />
-    <Image Include="Assets\Square150x150Logo.scale-400.png" />
-    <Image Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
-    <Image Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
-    <Image Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
-    <Image Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
-    <Image Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
-    <Image Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
-    <Image Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
-    <Image Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
-    <Image Include="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
-    <Image Include="Assets\Square44x44Logo.scale-100.png" />
-    <Image Include="Assets\Square44x44Logo.scale-125.png" />
-    <Image Include="Assets\Square44x44Logo.scale-150.png" />
-    <Image Include="Assets\Square44x44Logo.scale-200.png" />
-    <Image Include="Assets\Square44x44Logo.scale-400.png" />
-    <Image Include="Assets\Square44x44Logo.targetsize-16.png" />
-    <Image Include="Assets\Square44x44Logo.targetsize-24.png" />
-    <Image Include="Assets\Square44x44Logo.targetsize-256.png" />
-    <Image Include="Assets\Square44x44Logo.targetsize-32.png" />
-    <Image Include="Assets\Square44x44Logo.targetsize-48.png" />
-    <Image Include="Assets\StoreLogo.scale-100.png" />
-    <Image Include="Assets\StoreLogo.scale-125.png" />
-    <Image Include="Assets\StoreLogo.scale-150.png" />
-    <Image Include="Assets\StoreLogo.scale-200.png" />
-    <Image Include="Assets\StoreLogo.scale-400.png" />
-    <Image Include="Assets\Wide310x150Logo.scale-100.png" />
-    <Image Include="Assets\Wide310x150Logo.scale-125.png" />
-    <Image Include="Assets\Wide310x150Logo.scale-150.png" />
-    <Image Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Image Include="Assets\Wide310x150Logo.scale-400.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Media Include="Assets\CalibrationDirections.mp4" />
-    <Media Include="Assets\Sounds\CalibrationAborted.wav" />
-    <Media Include="Assets\Sounds\CalibrationComplete.wav" />
-    <Media Include="Assets\Sounds\CalibrationPointCaptured.wav" />
-    <Media Include="Assets\Sounds\CalibrationStart.wav" />
-    <Media Include="Assets\Sounds\CalibrationTick.wav" />
-    <Media Include="Assets\Sounds\Error.wav" />
-    <Media Include="Assets\Sounds\Focus.wav" />
-    <Media Include="Assets\Sounds\GoBack.wav" />
-    <Media Include="Assets\Sounds\Hide.wav" />
-    <Media Include="Assets\Sounds\Invoke.wav" />
-    <Media Include="Assets\Sounds\MoveNext.wav" />
-    <Media Include="Assets\Sounds\MovePrevious.wav" />
-    <Media Include="Assets\Sounds\Show.wav" />
-    <Media Include="Assets\Sounds\ToggleOff.wav" />
-    <Media Include="Assets\Sounds\ToggleOn.wav" />
-    <Media Include="Assets\Sounds\TrackersConnected.wav" />
-    <Media Include="Assets\Sounds\TrackersDisconnected.wav" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Grpc.Core" Version="2.46.5" />
     <PackageReference Include="Grpc.Core.Api" Version="2.50.0-pre1" />
     <PackageReference Include="Grpc.Net.Client" Version="2.50.0-pre1" />
@@ -135,12 +49,6 @@
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y /i /e &quot;$(ProjectDir)Vendor\openvr_api.dll&quot; &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)&quot;&#xD;&#xA;xcopy /y /i /e &quot;$(ProjectDir)Assets\Strings\*&quot; &quot;$(ProjectDir)bin\$(Platform)\$(Configuration)\$(TargetFramework)\win10-$(Platform)\Assets\Strings&quot;" />
-  </Target>
-  <ItemGroup>
-    <PRIResource Remove="Assets\Strings\**" />
-  </ItemGroup>
   <ItemGroup>
     <None Remove="Pages\Devices.xaml" />
     <None Remove="Pages\General.xaml" />
@@ -148,11 +56,27 @@
     <None Remove="Pages\Settings.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\vendor\openvr\headers\openvr_api.cs" Link="Vendor\openvr_api.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="MVVM\" />
+    <Folder Include="Vendor\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\vendor\openvr\bin\win64\openvr_api.dll" Link="openvr_api.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AmethystDriverClient\Amethyst.Driver.Client.csproj" />
     <ProjectReference Include="..\AmethystPluginContract\Amethyst.Plugins.Contract.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Assets\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\Info.xaml">
@@ -167,8 +91,5 @@
     <Page Update="Pages\General.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <None Update="Vendor\openvr_api.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

@@ -45,19 +45,19 @@ public sealed partial class ContentDialogView
         DialogContent.Content = content;
 
         // Back up
-        this._primaryButtonText = primaryButtonText;
-        this._secondaryButtonText = secondaryButtonText;
-        this._logFileLocation = logFileLocation;
+        _primaryButtonText = primaryButtonText;
+        _secondaryButtonText = secondaryButtonText;
+        _logFileLocation = logFileLocation;
 
-        DialogPrimaryButton.Content = this._primaryButtonText;
-        DialogSecondaryButton.Content = this._secondaryButtonText;
+        DialogPrimaryButton.Content = _primaryButtonText;
+        DialogSecondaryButton.Content = _secondaryButtonText;
 
         DialogPrimaryButton.Click += primaryButtonHandler;
         DialogSecondaryButton.Click += secondaryButtonHandler;
 
         if (accentPrimaryButton) DialogPrimaryButton.Style = (Style)Resources["AccentButtonStyle"];
 
-        LogFilesRun.Text = File.Exists(this._logFileLocation)
+        LogFilesRun.Text = File.Exists(_logFileLocation)
             ? "If you're looking the log file, it's"
             : "If you're looking log files, they're";
     }

@@ -68,7 +68,7 @@ public static class TrackingDevices
                 await Task.Delay(500);
 
                 // Should already be init-ed after 500ms, but check anyway
-                if (Devices.DevicesTreeView == null) return;
+                if (Devices.DevicesTreeView is null) return;
                 var devicesListIndex = TrackingDevicesVector.Keys.ToList().IndexOf(failingOverrideGuid);
                 var devicesListNode = Devices.DevicesTreeView.RootNodes[devicesListIndex];
 
@@ -125,7 +125,7 @@ public static class TrackingDevices
         }
 
         // Update settings tab
-        if (Settings.FlipDropDown == null) return;
+        if (Settings.FlipDropDown is null) return;
 
         // Overwritten a bit earlier
         Settings.FlipToggle.IsOn = AppData.Settings.IsFlipEnabled;
@@ -143,7 +143,7 @@ public static class TrackingDevices
     public static void HandleDeviceRefresh(bool shouldReconnect)
     {
         // Just give up if not set up yet
-        if (Devices.JointBasisLabel == null) return;
+        if (Devices.JointBasisLabel is null) return;
 
         Devices.DevicesSignalJoints = false; // Block signals
         var currentDevice = GetTrackingDevice();
@@ -176,7 +176,7 @@ public static class TrackingDevices
 
     public static void CheckExternalFlip()
     {
-        if (Settings.ExternalFlipCheckBox == null) return;
+        if (Settings.ExternalFlipCheckBox is null) return;
 
         // Everything's fine
         if (IsExternalFlipSupportable() &&
@@ -209,7 +209,7 @@ public static class TrackingDevices
     public static void UpdateIsFlipEnabled()
     {
         // Skip if not set up yet
-        if (Settings.FlipDropDown == null) return;
+        if (Settings.FlipDropDown is null) return;
 
         // Make expander opacity .5 and collapse it
         // to imitate that it's disabled
