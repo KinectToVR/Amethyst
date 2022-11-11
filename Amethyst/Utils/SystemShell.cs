@@ -75,15 +75,15 @@ internal class WindowsSystemDispatcherQueueHelper
         [In] [Out] [MarshalAs(UnmanagedType.IUnknown)]
         ref object dispatcherQueueController);
 
-    private object _mDispatcherQueueController = null;
+    private object _mDispatcherQueueController;
 
     public void EnsureWindowsSystemDispatcherQueueController()
     {
-        if (Windows.System.DispatcherQueue.GetForCurrentThread() != null)
+        if (Windows.System.DispatcherQueue.GetForCurrentThread() is not null)
             // one already exists, so we'll just use it.
             return;
 
-        if (_mDispatcherQueueController != null) return;
+        if (_mDispatcherQueueController is not null) return;
         DispatcherQueueOptions options;
         options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
         options.threadType = 2; // DQTYPE_THREAD_CURRENT

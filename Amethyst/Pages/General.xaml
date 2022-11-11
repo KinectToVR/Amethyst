@@ -7,7 +7,1663 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mvvm="using:Amethyst.MVVM" xmlns:classes="using:Amethyst.Classes"
+    Loaded="Page_Loaded"
     mc:Ignorable="d" Background="Transparent">
 
-    <Grid />
+    <Page.Resources>
+        <TeachingTip x:Name="NoCalibrationTeachingTip"
+                     Closed="NoCalibrationTeachingTip_Closed"
+                     PreferredPlacement="Top"
+                     IsLightDismissEnabled="True"
+                     Title="[CONTENT NOT SET]"
+                     Subtitle="[CONTENT NOT SET]">
+            <TeachingTip.IconSource>
+                <FontIconSource Glyph="&#xE7BA;" />
+            </TeachingTip.IconSource>
+        </TeachingTip>
+    </Page.Resources>
+
+    <Grid Background="Transparent">
+        <SplitView Canvas.ZIndex="1" x:Name="OffsetsView"
+                   PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                   PaneClosing="CancelPaneClosing" IsPaneOpen="False" OpenPaneLength="520"
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
+            <SplitView.Pane>
+
+                <Grid Margin="40,10" x:Name="OffsetsControlHostGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" MinHeight="580" />
+                        <RowDefinition Height="75" />
+                    </Grid.RowDefinitions>
+
+                    <Pivot x:Name="OffsetsControlPivot" Grid.Row="1">
+                        <Pivot.ItemTemplate>
+                            <DataTemplate x:DataType="classes:AppTracker">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="40" />
+                                        <RowDefinition Height="50" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="50" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="50" />
+
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="40" />
+                                        <RowDefinition Height="50" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="50" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="50" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Orientation'), Mode=OneWay}"
+                                               Grid.Row="1" Grid.Column="0" FontSize="20" FontWeight="Medium"
+                                               ToolTipService.ToolTip="{x:Bind GetResourceString('/GeneralPage/Captions/Tooltips/Orientation'), Mode=OneWay}" />
+
+                                    <Grid Grid.Column="0" Grid.Row="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="270" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Orientation/Z'), Mode=OneWay}"
+                                            VerticalAlignment="Center" HorizontalAlignment="Left"
+                                            Grid.Column="0" Margin="20,0,0,0"
+                                            FontSize="17" FontWeight="SemiBold" />
+
+                                        <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
+                                                   FontSize="26" FontWeight="Normal"
+                                                   Maximum="360" Minimum="0" Value="{x:Bind OrientationOffset.Z, Mode=TwoWay}"
+                                                   HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
+                                                   SpinButtonPlacementMode="Inline"
+                                                   SmallChange="1" LargeChange="10"
+                                                   Margin="10,0,0,0" />
+                                    </Grid>
+                                    <Grid Grid.Column="0" Grid.Row="4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="270" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Orientation/Y'), Mode=OneWay}"
+                                            VerticalAlignment="Center" HorizontalAlignment="Left"
+                                            Grid.Column="0" Margin="20,0,0,0"
+                                            FontSize="17" FontWeight="SemiBold" />
+
+                                        <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
+                                                   FontSize="26" FontWeight="Normal"
+                                                   Maximum="360" Minimum="0" Value="{x:Bind OrientationOffset.Y, Mode=TwoWay}"
+                                                   HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
+                                                   SpinButtonPlacementMode="Inline"
+                                                   SmallChange="1" LargeChange="10"
+                                                   Margin="10,0,0,0" />
+                                    </Grid>
+                                    <Grid Grid.Column="0" Grid.Row="6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="270" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Orientation/X'), Mode=OneWay}"
+                                            VerticalAlignment="Center" HorizontalAlignment="Left"
+                                            Grid.Column="0" Margin="20,0,0,0"
+                                            FontSize="17" FontWeight="SemiBold" />
+
+                                        <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
+                                                   FontSize="26" FontWeight="Normal"
+                                                   Maximum="360" Minimum="0" Value="{x:Bind OrientationOffset.X, Mode=TwoWay}"
+                                                   HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
+                                                   SpinButtonPlacementMode="Inline"
+                                                   SmallChange="1" LargeChange="10"
+                                                   Margin="10,0,0,0" />
+                                    </Grid>
+
+                                    <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20"
+                                               FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters." />
+
+                                    <TextBlock Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Position'), Mode=OneWay}"
+                                               Grid.Row="8" Grid.Column="0" FontSize="20" FontWeight="Medium"
+                                               ToolTipService.ToolTip="{x:Bind GetResourceString('/GeneralPage/Captions/Tooltips/Position'), Mode=OneWay}" />
+
+                                    <Grid Grid.Column="0" Grid.Row="9">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="270" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Position/X'), Mode=OneWay}"
+                                            VerticalAlignment="Center" HorizontalAlignment="Left"
+                                            Grid.Column="0" Margin="20,0,0,0"
+                                            FontSize="17" FontWeight="SemiBold" />
+
+                                        <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
+                                                   FontSize="26" FontWeight="Normal"
+                                                   Maximum="1000" Minimum="-1000" Value="{x:Bind PositionOffset.X, Mode=TwoWay}"
+                                                   HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
+                                                   SpinButtonPlacementMode="Inline"
+                                                   SmallChange="1" LargeChange="10"
+                                                   Margin="10,0,0,0" />
+                                    </Grid>
+                                    <Grid Grid.Column="0" Grid.Row="11">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="270" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Position/Y'), Mode=OneWay}"
+                                            VerticalAlignment="Center" HorizontalAlignment="Left"
+                                            Grid.Column="0" Margin="20,0,0,0"
+                                            FontSize="17" FontWeight="SemiBold" />
+
+                                        <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
+                                                   FontSize="26" FontWeight="Normal"
+                                                   Maximum="1000" Minimum="-1000" Value="{x:Bind PositionOffset.Y, Mode=TwoWay}"
+                                                   HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
+                                                   SpinButtonPlacementMode="Inline"
+                                                   SmallChange="1" LargeChange="10"
+                                                   Margin="10,0,0,0" />
+                                    </Grid>
+                                    <Grid Grid.Column="0" Grid.Row="13">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="270" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Position/Z'), Mode=OneWay}"
+                                            VerticalAlignment="Center" HorizontalAlignment="Left"
+                                            Grid.Column="0" Margin="20,0,0,0"
+                                            FontSize="17" FontWeight="SemiBold" />
+
+                                        <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
+                                                   FontSize="26" FontWeight="Normal"
+                                                   Maximum="1000" Minimum="-1000" Value="{x:Bind PositionOffset.Z, Mode=TwoWay}"
+                                                   HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
+                                                   SpinButtonPlacementMode="Inline"
+                                                   SmallChange="1" LargeChange="10"
+                                                   Margin="10,0,0,0" />
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </Pivot.ItemTemplate>
+                    </Pivot>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,10" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="7" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="4"
+                                FontSize="14" HorizontalAlignment="Stretch" Padding="15,0"
+                                Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0" />
+
+                        <Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="4"
+                                FontSize="14" Height="50" Grid.Column="2" Style="{ThemeResource AccentButtonStyle}"
+                                FontWeight="Medium" Padding="15,0"
+                                Margin="5,15,5,0" HorizontalAlignment="Stretch" />
+                    </Grid>
+
+                </Grid>
+
+            </SplitView.Pane>
+        </SplitView>
+
+        <SplitView Canvas.ZIndex="1" x:Name="CalibrationDeviceSelectView"
+                   PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                   PaneClosing="CancelPaneClosing" IsPaneOpen="False" OpenPaneLength="520"
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid x:Name="DeviceSelectionPane">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="Calibration_Titles_Device"
+                                   Margin="0,15,0,0" HorizontalAlignment="Center"
+                                   FontSize="26" VerticalAlignment="Center"
+                                   Style="{ThemeResource BaseTextBlockStyle}" />
+
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="40,10,30,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="50" />
+                            </Grid.RowDefinitions>
+
+                            <!--String copy resource-->
+                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Base_Text" />
+                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Override_Text" />
+                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Error_Text" />
+
+                            <TreeView x:Name="TrackingDeviceTreeView" CornerRadius="5"
+                                      VerticalAlignment="Top" HorizontalAlignment="Stretch"
+
+                                      Grid.Row="0" FontSize="16" FontWeight="Bold"
+                                      CanReorderItems="False" CanDragItems="False"
+
+                                      SelectionMode="None" AllowDrop="False"
+
+                                      ItemInvoked="TrackingDeviceTreeView_ItemInvoked">
+
+                                <TreeView.ItemTemplate>
+                                    <DataTemplate x:DataType="mvvm:TrackingDevice">
+
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                              Opacity="{x:Bind BoolToOpacity(StatusOk), Mode=OneWay}">
+
+                                            <Border Height="20" CornerRadius="3" Padding="5,0"
+                                                    Margin="0,-15,15,0"
+                                                    Opacity="{x:Bind BoolToOpacity(IsBase), Mode=OneWay, FallbackValue=0.0}"
+                                                    BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
+                                                    Background="{ThemeResource SystemFillColorAttentionBrush}"
+                                                    VerticalAlignment="Top" HorizontalAlignment="Right">
+                                                <Border.OpacityTransition>
+                                                    <ScalarTransition />
+                                                </Border.OpacityTransition>
+
+                                                <TextBlock
+                                                    Text="{Binding ElementName=DeviceEntryView_Base_Text, Path=Text}"
+                                                    FontWeight="Medium" Margin="0,-2,0,0"
+                                                    Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                            </Border>
+
+                                            <Border Height="20" CornerRadius="3" Padding="5,0"
+                                                    Margin="0,-15,15,0"
+                                                    Opacity="{x:Bind BoolToOpacity(IsOverride), Mode=OneWay, FallbackValue=0.0}"
+                                                    BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
+                                                    Background="{ThemeResource SystemFillColorAttentionBrush}"
+                                                    VerticalAlignment="Top" HorizontalAlignment="Right">
+                                                <Border.OpacityTransition>
+                                                    <ScalarTransition />
+                                                </Border.OpacityTransition>
+
+                                                <TextBlock
+                                                    Text="{Binding ElementName=DeviceEntryView_Override_Text, Path=Text}"
+                                                    FontWeight="Medium" Margin="0,-2,0,0"
+                                                    Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                            </Border>
+
+                                            <Border Height="20" CornerRadius="3" Padding="5,0"
+                                                    Margin="0,0,15,-18"
+                                                    Opacity="{x:Bind BoolToOpacity(StatusError), Mode=OneWay, FallbackValue=0.0}"
+                                                    BorderBrush="{ThemeResource SystemFillColorCriticalBrush}"
+                                                    Background="{ThemeResource SystemFillColorCriticalBrush}"
+                                                    VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                                <Border.OpacityTransition>
+                                                    <ScalarTransition />
+                                                </Border.OpacityTransition>
+
+                                                <TextBlock
+                                                    Text="{Binding ElementName=DeviceEntryView_Error_Text, Path=Text}"
+                                                    FontWeight="Medium" Margin="0,-2,0,0"
+                                                    Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                            </Border>
+
+                                            <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                                       ToolTipService.ToolTip="{x:Bind Guid, Mode=OneWay}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </TreeView.ItemTemplate>
+
+                                <TreeView.Resources>
+                                    <!--Other resources, styles-->
+                                    <ResourceDictionary>
+                                        <ResourceDictionary.MergedDictionaries>
+                                            <ResourceDictionary>
+                                                <Thickness x:Key="TreeViewItemBorderThemeThickness">0</Thickness>
+                                                <Thickness x:Key="TreeViewItemPresenterMargin">4,10</Thickness>
+                                                <Thickness x:Key="TreeViewItemPresenterPadding">0,3,0,5</Thickness>
+                                                <Thickness x:Key="TreeViewItemMultiSelectSelectedItemBorderMargin">0</Thickness>
+                                                <x:Double x:Key="TreeViewItemMultiSelectCheckBoxMinHeight">62</x:Double>
+                                                <x:Double x:Key="TreeViewItemContentHeight">60</x:Double>
+
+                                                <Style TargetType="TreeViewItem">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="TreeViewItem">
+                                                                <Grid x:Name="ContentPresenterGrid"
+                                                                      Background="{TemplateBinding Background}"
+                                                                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                                      BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+                                                                      Margin="{ThemeResource TreeViewItemPresenterMargin}"
+                                                                      Padding="{ThemeResource TreeViewItemPresenterPadding}"
+                                                                      CornerRadius="{TemplateBinding CornerRadius}">
+
+                                                                    <Grid.BackgroundTransition>
+                                                                        <BrushTransition />
+                                                                    </Grid.BackgroundTransition>
+
+                                                                    <Grid Opacity="0.4"
+                                                                          Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                                                                          HorizontalAlignment="Stretch"
+                                                                          Canvas.ZIndex="-1"
+                                                                          VerticalAlignment="Stretch" Margin="-10">
+                                                                        <Grid.OpacityTransition>
+                                                                            <ScalarTransition />
+                                                                        </Grid.OpacityTransition>
+                                                                    </Grid>
+
+                                                                    <Grid
+                                                                        x:Name="SelectionIndicator"
+                                                                        Width="3" Height="32" Opacity="1"
+                                                                        Background="{ThemeResource TreeViewItemSelectionIndicatorForeground}"
+                                                                        HorizontalAlignment="Left"
+                                                                        VerticalAlignment="Center"
+                                                                        CornerRadius="2">
+
+                                                                        <Grid.BackgroundTransition>
+                                                                            <BrushTransition />
+                                                                        </Grid.BackgroundTransition>
+                                                                    </Grid>
+
+                                                                    <Grid
+                                                                        x:Name="MultiSelectGrid"
+                                                                        Margin="{ThemeResource TreeViewItemMultiSelectSelectedItemBorderMargin}"
+                                                                        Padding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.Indentation}"
+                                                                        BorderBrush="Transparent"
+                                                                        BorderThickness="{ThemeResource TreeViewItemBorderThemeThickness}"
+                                                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="Auto" />
+                                                                            <ColumnDefinition Width="Auto" />
+                                                                            <ColumnDefinition />
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <Grid.BackgroundTransition>
+                                                                            <BrushTransition />
+                                                                        </Grid.BackgroundTransition>
+
+                                                                        <Grid Grid.Column="0">
+                                                                            <CheckBox
+                                                                                x:Name="MultiSelectCheckBox"
+                                                                                Width="32"
+                                                                                MinWidth="32"
+                                                                                MinHeight="{ThemeResource TreeViewItemMultiSelectCheckBoxMinHeight}"
+                                                                                Margin="10,0,0,0"
+                                                                                VerticalAlignment="Center"
+                                                                                Visibility="Collapsed"
+                                                                                IsTabStop="False"
+                                                                                AutomationProperties.AccessibilityView="Raw" />
+                                                                            <Border
+                                                                                x:Name="MultiArrangeOverlayTextBorder"
+                                                                                Visibility="Collapsed"
+                                                                                IsHitTestVisible="False"
+                                                                                MinWidth="20"
+                                                                                Height="20"
+                                                                                VerticalAlignment="Center"
+                                                                                HorizontalAlignment="Center"
+                                                                                Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                                                                BorderThickness="1"
+                                                                                BorderBrush="{ThemeResource SystemControlBackgroundChromeWhiteBrush}"
+                                                                                CornerRadius="{ThemeResource ControlCornerRadius}">
+                                                                                <TextBlock
+                                                                                    x:Name="MultiArrangeOverlayText"
+                                                                                    Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.DragItemsCount}"
+                                                                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                                                                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                                                                                    IsHitTestVisible="False"
+                                                                                    VerticalAlignment="Center"
+                                                                                    HorizontalAlignment="Center"
+                                                                                    AutomationProperties.AccessibilityView="Raw" />
+                                                                            </Border>
+                                                                        </Grid>
+
+                                                                        <Grid
+                                                                            x:Name="ExpandCollapseChevron"
+                                                                            Grid.Column="1"
+                                                                            Padding="14,0"
+                                                                            Width="Auto"
+                                                                            Opacity="{TemplateBinding GlyphOpacity}"
+                                                                            Background="Transparent">
+                                                                            <TextBlock
+                                                                                x:Name="CollapsedGlyph"
+                                                                                Foreground="{TemplateBinding GlyphBrush}"
+                                                                                Width="12"
+                                                                                Height="12"
+                                                                                Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.CollapsedGlyphVisibility}"
+                                                                                FontSize="{TemplateBinding GlyphSize}"
+                                                                                Text="{TemplateBinding CollapsedGlyph}"
+                                                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                                                Padding="2"
+                                                                                VerticalAlignment="Center"
+                                                                                AutomationProperties.AccessibilityView="Raw"
+                                                                                IsTextScaleFactorEnabled="False"
+                                                                                IsHitTestVisible="False" />
+                                                                            <TextBlock
+                                                                                x:Name="ExpandedGlyph"
+                                                                                Foreground="{TemplateBinding GlyphBrush}"
+                                                                                Width="12"
+                                                                                Height="12"
+                                                                                Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.ExpandedGlyphVisibility}"
+                                                                                FontSize="{TemplateBinding GlyphSize}"
+                                                                                Text="{TemplateBinding ExpandedGlyph}"
+                                                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                                                Padding="2"
+                                                                                VerticalAlignment="Center"
+                                                                                AutomationProperties.AccessibilityView="Raw"
+                                                                                IsTextScaleFactorEnabled="False"
+                                                                                IsHitTestVisible="False" />
+                                                                        </Grid>
+
+                                                                        <ContentPresenter
+                                                                            x:Name="ContentPresenter"
+                                                                            Grid.Column="2" FontWeight="Bold"
+                                                                            FontSize="16"
+                                                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                            Content="{TemplateBinding Content}"
+                                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                            MinHeight="{ThemeResource TreeViewItemContentHeight}"
+                                                                            Margin="-10,0" />
+                                                                    </Grid>
+
+                                                                    <VisualStateManager.VisualStateGroups>
+                                                                        <VisualStateGroup x:Name="CommonStates">
+                                                                            <VisualState x:Name="Normal">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="Transparent" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="Transparent" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="PointerOver">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="Transparent" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushPointerOver}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="Pressed">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPressed}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="Transparent" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushPressed}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="Selected">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundSelected}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelected}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="{ThemeResource TreeViewItemSelectionIndicatorForeground}" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelected}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelected}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushSelected}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="Disabled">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="Transparent" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushDisabled}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="PointerOverSelected">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundSelectedPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="{ThemeResource TreeViewItemSelectionIndicatorForeground}" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushSelectedPointerOver}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="PressedSelected">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundSelectedPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPressed}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="{ThemeResource TreeViewItemSelectionIndicatorForeground}" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedPressed}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushSelectedPressed}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="SelectedDisabled">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.Background"
+                                                                                        Value="{ThemeResource TreeViewItemBackgroundSelectedDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenter.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="SelectionIndicator.Background"
+                                                                                        Value="Transparent" />
+                                                                                    <Setter
+                                                                                        Target="CollapsedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ExpandedGlyph.Foreground"
+                                                                                        Value="{ThemeResource TreeViewItemForegroundSelectedDisabled}" />
+                                                                                    <Setter
+                                                                                        Target="ContentPresenterGrid.BorderBrush"
+                                                                                        Value="{ThemeResource TreeViewItemBorderBrushSelectedDisabled}" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="ReorderedPlaceholder">
+                                                                                <Storyboard>
+                                                                                    <FadeOutThemeAnimation
+                                                                                        TargetName="MultiSelectGrid" />
+                                                                                </Storyboard>
+                                                                            </VisualState>
+                                                                        </VisualStateGroup>
+                                                                    </VisualStateManager.VisualStateGroups>
+
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+
+                                            </ResourceDictionary>
+                                        </ResourceDictionary.MergedDictionaries>
+                                    </ResourceDictionary>
+                                </TreeView.Resources>
+                            </TreeView>
+
+                            <Button x:Name="CancelCalibrationButton_Devices" Grid.Row="1"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
+                                    Height="50" Grid.Column="0" Width="170"
+                                    FontWeight="Medium" HorizontalAlignment="Right" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </SplitView.Pane>
+        </SplitView>
+
+        <SplitView Canvas.ZIndex="2" x:Name="CalibrationModeSelectView"
+                   PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                   PaneClosing="CancelPaneClosing" IsPaneOpen="False" OpenPaneLength="520"
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid x:Name="CalibrationSelectionPane">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="Calibration_Titles_Choose"
+                                   Margin="0,15,0,0" HorizontalAlignment="Center"
+                                   FontSize="26" VerticalAlignment="Center"
+                                   Style="{ThemeResource BaseTextBlockStyle}" />
+
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="0,0,0,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="50" />
+                            </Grid.RowDefinitions>
+
+                            <Button x:Name="AutoCalibrationButton" Grid.Row="0" Margin="20,20,20,10" Width="460"
+                                    Click="AutoCalibrationButton_Click" HorizontalAlignment="Stretch">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="260"
+                                      Width="435" Opacity="1.0" x:Name="AutoCalibrationButtonDecorations">
+                                    <Border Height="20" CornerRadius="3" Padding="5,0"
+                                            BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
+                                            Background="{ThemeResource SystemFillColorAttentionBrush}"
+                                            VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,7,0,0">
+                                        <TextBlock x:Name="Calibration_Captions_Recommended"
+                                                   FontWeight="Medium"
+                                                   Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                    </Border>
+
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch" Height="260">
+
+                                        <Viewbox Width="150" Margin="0,45,0,40">
+                                            <Grid>
+                                                <Path
+                                                    Data="M90.5967 17.9605L77.6543 10.1026L94.2944 0L94.2944 2.36035L94.2945 2.36035L94.2945 27.7164C99.7823 28.5016 104.001 33.2211 104.001 38.9261C104.001 45.1805 98.9305 50.2506 92.6761 50.2506C86.4216 50.2506 81.3516 45.1805 81.3516 38.9261C81.3516 33.3819 85.3354 28.7685 90.5967 27.7921L90.5967 17.9605Z"
+                                                    Fill="{ThemeResource NoThemeColorSolidColorBrushOpposite}"
+                                                    Stroke="#00000000" />
+                                                <Path
+                                                    Data="M26.3479 40.5435L26.3479 36.8457L36.9795 36.8457L36.9795 40.5435L26.3479 40.5435L26.3479 40.5435ZM67.0241 40.5435L77.6553 40.5435L77.6553 36.8457L67.0241 36.8457L67.0241 40.5435L67.0241 40.5435Z"
+                                                    Fill="{ThemeResource NoThemeColorSolidColorBrushOpposite}"
+                                                    Stroke="#00000000" />
+                                                <Path
+                                                    Data="M11.3245 27.6016C5.07003 27.6016 0 32.6716 0 38.9261C0 45.1805 5.07003 50.2506 11.3245 50.2506C17.579 50.2506 22.649 45.1805 22.649 38.9261C22.649 32.6716 17.579 27.6016 11.3245 27.6016L11.3245 27.6016ZM11.3253 30.8369C6.85784 30.8369 3.23633 34.4584 3.23633 38.9258C3.23633 43.3933 6.85784 47.0148 11.3253 47.0148C15.7927 47.0148 19.4142 43.3933 19.4142 38.9258C19.4142 34.4584 15.7927 30.8369 11.3253 30.8369L11.3253 30.8369Z"
+                                                    Fill="{ThemeResource NoThemeColorSolidColorBrushOpposite}"
+                                                    Stroke="#00000000" />
+                                                <Path
+                                                    Data="M52.0003 27.6016C45.7458 27.6016 40.6758 32.6716 40.6758 38.9261C40.6758 45.1805 45.7458 50.2506 52.0003 50.2506C58.2548 50.2506 63.3248 45.1805 63.3248 38.9261C63.3248 32.6716 58.2548 27.6016 52.0003 27.6016L52.0003 27.6016ZM52.001 30.8369C47.5336 30.8369 43.9121 34.4584 43.9121 38.9258C43.9121 43.3933 47.5336 47.0148 52.001 47.0148C56.4685 47.0148 60.09 43.3933 60.09 38.9258C60.09 34.4584 56.4685 30.8369 52.001 30.8369L52.001 30.8369Z"
+                                                    Fill="{ThemeResource NoThemeColorSolidColorBrushOpposite}"
+                                                    Stroke="#00000000" />
+                                            </Grid>
+                                        </Viewbox>
+
+                                        <TextBlock x:Name="Calibration_Titles_Automatic"
+                                                   HorizontalAlignment="Center" FontSize="26" FontWeight="SemiBold" />
+                                        <TextBlock x:Name="Calibration_Captions_Automatic" Margin="0,20,0,0"
+                                                   HorizontalAlignment="Center" FontSize="16" FontWeight="Medium" />
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+                            <Button x:Name="ManualCalibrationButton" Grid.Row="1" Margin="20,10,20,20" Width="460"
+                                    Click="ManualCalibrationButton_Click" HorizontalAlignment="Stretch">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch" Height="260">
+
+                                    <Viewbox Width="80" Margin="0,45,0,30">
+                                        <Path
+                                            Data="M19.0293 13.5186L24.6152 7.46973L24.6152 24.9775L7.46387 24.9775L13.5215 19.3828L11.0127 16.667L2.72168 24.3232L2.68945 24.2939L2.31836 24.6953L1.53906 25.416L0.180664 26.6699L0 26.8447L0.180664 27.0107L2.31836 28.9844L2.68945 29.3867L2.72168 29.3564L11.0127 37.0137L13.5215 34.2969L7.43457 28.6758L24.6152 28.6758L24.6152 45.9316L19.0479 39.9033L16.3311 42.4121L23.9883 50.7041L23.959 50.7354L24.3584 51.1035L25.0801 51.8857L26.335 53.2441L26.5039 53.4102L26.6758 53.2441L28.6523 51.1035L29.0508 50.7354L29.0215 50.7041L36.6787 42.4121L33.9619 39.9033L28.3125 46.0205L28.3125 28.6758L45.4082 28.6758L39.3516 34.2695L41.8604 36.9854L50.1514 29.3291L50.1836 29.3584L50.5547 28.957L51.334 28.2373L52.6924 26.9824L52.8721 26.8066L52.6924 26.6426L50.5547 24.668L50.1836 24.2656L50.1514 24.2959L41.8604 16.6387L39.3516 19.3555L45.4395 24.9775L28.3125 24.9775L28.3125 7.42188L33.9434 13.5186L36.6602 11.0098L29.0029 2.71875L29.0322 2.6875L28.6328 2.31836L27.9111 1.53613L26.6563 0.178711L26.4883 0L26.3154 0.178711L24.3389 2.31836L23.9404 2.6875L23.9697 2.71875L16.3125 11.0098L19.0293 13.5186L19.0293 13.5186Z"
+                                            Fill="{ThemeResource NoThemeColorSolidColorBrushOpposite}"
+                                            Stroke="#00000000" />
+                                    </Viewbox>
+
+                                    <TextBlock x:Name="Calibration_Titles_Manual"
+                                               HorizontalAlignment="Center" FontSize="26"
+                                               FontWeight="SemiBold" />
+                                    <TextBlock x:Name="Calibration_Captions_Manual" Margin="0,20,0,0"
+                                               HorizontalAlignment="Center" FontSize="16" FontWeight="Medium" />
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="CancelCalibrationButton" Grid.Row="2"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
+                                    Height="50" Grid.Column="0" Width="170"
+                                    FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </SplitView.Pane>
+        </SplitView>
+
+        <SplitView Canvas.ZIndex="3" x:Name="CalibrationRunningView"
+                   PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                   PaneClosing="CancelPaneClosing" IsPaneOpen="False" OpenPaneLength="520"
+                   CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid x:Name="AutoCalibrationPane">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="Calibration_Headers_Automatic"
+                                   Margin="0,15,0,0" HorizontalAlignment="Center"
+                                   FontSize="26" VerticalAlignment="Center"
+                                   Style="{ThemeResource BaseTextBlockStyle}" />
+
+                        <Grid Grid.Row="1" CornerRadius="5" Margin="0,20,0,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="4*" />
+                                <RowDefinition Height="50" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="50" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="45" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="50" />
+                            </Grid.RowDefinitions>
+
+                            <Border Margin="20,0,20,20" Width="460"
+                                    HorizontalAlignment="Stretch"
+                                    Grid.Row="0"
+
+                                    CornerRadius="4"
+                                    Background="Transparent">
+                                <Grid>
+
+                                    <MediaPlayerElement x:Name="CalibrationPreviewMediaElement"
+                                                        Stretch="UniformToFill" Margin="0,0,0,80"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        VerticalContentAlignment="Center" />
+
+                                    <Border Margin="0,0,0,0" Width="460" Height="80"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Bottom" Grid.Row="0"
+
+                                            CornerRadius="0,0,3,3"
+                                            Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="80" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock x:Name="CalibrationCountdownLabel" HorizontalAlignment="Stretch"
+                                                       VerticalAlignment="Stretch"
+                                                       Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                                       Margin="0,3,0,0" Grid.Column="0"
+                                                       HorizontalTextAlignment="Center"
+                                                       Text="~" FontSize="48" FontWeight="Bold" />
+
+                                            <TextBlock x:Name="CalibrationInstructionsLabel" Grid.Column="1"
+                                                       VerticalAlignment="Center" Margin="0,0,0,5"
+                                                       HorizontalAlignment="Stretch" FontSize="26"
+                                                       FontWeight="SemiBold" />
+
+                                        </Grid>
+                                    </Border>
+
+                                </Grid>
+                            </Border>
+
+                            <Button x:Name="StartAutoCalibrationButton"
+                                    Click="StartAutoCalibrationButton_Click"
+                                    HorizontalAlignment="Stretch" Height="50"
+                                    Grid.Row="1" Margin="20,0,20,0" Width="460"
+                                    Style="{ThemeResource AccentButtonStyle}" FontWeight="SemiBold" />
+
+                            <Grid Margin="20,0,20,0" Width="460"
+                                  HorizontalAlignment="Stretch" Grid.Row="3">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="270" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" IsTabStop="True"
+                                           Margin="0,0,0,3" Grid.Column="0" HorizontalTextAlignment="Center"
+                                           x:Name="Calibration_Titles_Points" FontWeight="SemiBold" />
+
+                                <NumberBox Minimum="3" Maximum="5" Value="3" Grid.Column="1"
+                                           x:Name="CalibrationPointsNumberBox"
+                                           SpinButtonPlacementMode="Inline"
+                                           Foreground="{ThemeResource NoThemeColorSolidColorBrushOpposite}"
+                                           ValueChanged="CalibrationPointsNumberBox_ValueChanged"
+                                           FontSize="26" FontWeight="Normal" SmallChange="1" LargeChange="1" />
+
+                            </Grid>
+
+                            <Grid Margin="20,0,20,0" Width="460"
+                                  HorizontalAlignment="Stretch" Grid.Row="5">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           x:Name="Calibration_Captions_Points"
+                                           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                           TextWrapping="WrapWholeWords" />
+                            </Grid>
+
+                            <Button x:Name="DiscardAutoCalibrationButton" Grid.Row="7"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
+                                    Height="50" Grid.Column="0" Width="170"
+                                    FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
+                        </Grid>
+                    </Grid>
+
+                    <Grid x:Name="ManualCalibrationPane">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="Calibration_Headers_Manual"
+                                   Margin="0,15,0,0" HorizontalAlignment="Center"
+                                   FontSize="26" VerticalAlignment="Center"
+                                   Style="{ThemeResource BaseTextBlockStyle}" />
+
+                        <Grid Grid.Row="1" Margin="0,0,0,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="45" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="50" />
+                            </Grid.RowDefinitions>
+
+                            <Border Margin="0,0,0,0" Width="460" Height="80"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom" Grid.Row="0"
+
+                                    CornerRadius="4"
+                                    Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
+
+                                <Grid Margin="10,0" VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Margin="0,0,0,0" Width="50" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="100" BorderThickness="5"
+                                            BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
+                                        <TextBlock x:Name="Calibration_Labels_Brief_Left"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1"
+                                               Style="{ThemeResource BaseTextBlockStyle}"
+                                               x:Name="Calibration_LabelsWhat_Brief_Left" />
+                                </Grid>
+                            </Border>
+
+                            <Border Margin="0,0,0,0" Width="460" Height="80"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom" Grid.Row="1"
+
+                                    CornerRadius="4"
+                                    Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
+
+                                <Grid Margin="10,0" VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Margin="0,0,0,0" Width="50" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="100" BorderThickness="5"
+                                            BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
+                                        <TextBlock x:Name="Calibration_Labels_Brief_Right"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1"
+                                               Style="{ThemeResource BaseTextBlockStyle}"
+                                               x:Name="Calibration_LabelsWhat_Brief_Right" />
+                                </Grid>
+                            </Border>
+
+                            <Border Margin="0,0,0,0" Width="460" Height="80"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom" Grid.Row="2"
+
+                                    CornerRadius="4"
+                                    Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
+
+                                <Grid Margin="10,0" VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border x:Name="LabelFineTuneNormal" Visibility="Visible"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5"
+                                            BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
+                                        <TextBlock x:Name="Calibration_Labels_Grips_Left"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <Border x:Name="LabelFineTuneVive" Visibility="Collapsed"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5"
+                                            BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
+                                        <TextBlock x:Name="Calibration_Labels_Triggers_Left"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1"
+                                               Style="{ThemeResource BaseTextBlockStyle}"
+                                               x:Name="Calibration_LabelsWhat_Grips_Left" />
+                                </Grid>
+                            </Border>
+
+                            <Border Margin="0,0,0,0" Width="460" Height="80"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom" Grid.Row="3"
+
+                                    CornerRadius="4"
+                                    Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
+
+                                <Grid Margin="10,0" VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Visibility="{Binding ElementName=LabelFineTuneNormal, Path=Visibility}"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5"
+                                            BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
+                                        <TextBlock x:Name="Calibration_Labels_Grips_Right"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <Border Visibility="{Binding ElementName=LabelFineTuneVive, Path=Visibility}"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5"
+                                            BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
+                                        <TextBlock
+                                            Text="{Binding ElementName=Calibration_Labels_Grips_Right, Path=Text}"
+                                            FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1"
+                                               Style="{ThemeResource BaseTextBlockStyle}"
+                                               x:Name="Calibration_LabelsWhat_Grips_Right" />
+                                </Grid>
+                            </Border>
+
+                            <Border Margin="0,0,0,0" Width="460" Height="80"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom" Grid.Row="4"
+
+                                    CornerRadius="4"
+                                    Background="{ThemeResource CalibrationPaneBackgroundAcrylicBrush}">
+
+                                <Grid Margin="10,0" VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Visibility="{Binding ElementName=LabelFineTuneNormal, Path=Visibility}"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5"
+                                            BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
+                                        <TextBlock x:Name="Calibration_Labels_Triggers_Both"
+                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <Border Visibility="{Binding ElementName=LabelFineTuneVive, Path=Visibility}"
+                                            Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Grid.Row="0" CornerRadius="4" BorderThickness="5"
+                                            BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
+                                        <TextBlock
+                                            Text="{Binding ElementName=Calibration_Labels_Triggers_Both, Path=Text}"
+                                            FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               HorizontalAlignment="Stretch" FontSize="23"
+                                               VerticalAlignment="Center" Grid.Column="1"
+                                               Style="{ThemeResource BaseTextBlockStyle}"
+                                               x:Name="Calibration_LabelsWhat_Triggers" />
+                                </Grid>
+                            </Border>
+
+                            <Grid Margin="20,0,20,0" Width="460"
+                                  HorizontalAlignment="Stretch" Grid.Row="6">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           x:Name="Calibration_Labels_InputsNotice"
+                                           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                           TextWrapping="WrapWholeWords" />
+                            </Grid>
+
+                            <Button x:Name="DiscardCalibrationButton" Grid.Row="8"
+                                    Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
+                                    Height="50" Grid.Column="0" Width="170"
+                                    FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </SplitView.Pane>
+        </SplitView>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="520" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  Grid.Column="0" Background="Transparent">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="170" />
+                    <RowDefinition Height="0" />
+                    <RowDefinition Height="0" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock FontWeight="SemiBold" x:Name="Titles_Trackers"
+                           FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
+
+                <Grid HorizontalAlignment="Stretch" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="1" Margin="30,0,30,0"
+                          x:Name="ContextGridContainer">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.Resources>
+                            <TeachingTip x:Name="CalibrationTeachingTip"
+                                         Target="{Binding ElementName=ContextGridContainer}"
+                                         Title="/CALIBRATION"
+                                         Subtitle="/TEXT"
+                                         PreferredPlacement="Bottom"
+                                         IsLightDismissEnabled="False"
+                                         ActionButtonContent="/BACK"
+                                         CloseButtonContent="/NEXT"
+                                         Style="{ThemeResource BigTeachingTipStyle}"
+                                         ActionButtonClick="CalibrationTeachingTip_ActionButtonClick"
+                                         CloseButtonClick="CalibrationTeachingTip_CloseButtonClick" />
+                        </Grid.Resources>
+
+                        <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
+                                IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                Margin="10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
+                            <Button.OpacityTransition>
+                                <ScalarTransition />
+                            </Button.OpacityTransition>
+                        </Button>
+
+                        <ToggleButton Margin="10" CornerRadius="4" Grid.Column="1" x:Name="ToggleFreezeButton"
+                                      Click="ToggleFreezeButton_Click" FontWeight="SemiBold" IsTabStop="False"
+                                      IsEnabled="{Binding ElementName=CalibrationButton,Path=IsEnabled, TargetNullValue=False}"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="16">
+
+                            <ToggleButton.Resources>
+                                <TeachingTip x:Name="FreezeTrackingTeachingTip"
+                                             Closed="NoCalibrationTeachingTip_Closed"
+                                             Target="{Binding ElementName=ToggleFreezeButton}"
+                                             PreferredPlacement="Top"
+                                             IsLightDismissEnabled="True"
+                                             Title="[CONTENT NOT SET]"
+                                             Subtitle="[CONTENT NOT SET]">
+                                    <TeachingTip.IconSource>
+                                        <FontIconSource Glyph="&#xE946;" />
+                                    </TeachingTip.IconSource>
+                                </TeachingTip>
+                            </ToggleButton.Resources>
+                        </ToggleButton>
+
+                        <Button FontWeight="SemiBold" VerticalAlignment="Stretch" Width="65" Height="65"
+                                IsEnabled="{Binding ElementName=CalibrationButton,Path=IsEnabled, TargetNullValue=False}"
+                                Margin="10" CornerRadius="4" Grid.Column="2" HorizontalAlignment="Stretch">
+
+                            <Button.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.ThemeDictionaries>
+                                        <ResourceDictionary x:Key="Dark" />
+                                        <ResourceDictionary x:Key="Default" />
+                                    </ResourceDictionary.ThemeDictionaries>
+                                </ResourceDictionary>
+                            </Button.Resources>
+
+                            <Viewbox Margin="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <SymbolIcon Symbol="More" />
+                            </Viewbox>
+
+                            <Button.Flyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem x:Name="OffsetsButton" Click="OffsetsButton_Click" Tag="offsets">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xECC6;" />
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutSeparator />
+                                    <ToggleMenuFlyoutItem x:Name="FreezeOnlyLowerToggle"
+                                                          Click="FreezeOnlyLowerToggle_Click" Tag="freeze">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xF439;" />
+                                        </MenuFlyoutItem.Icon>
+                                    </ToggleMenuFlyoutItem>
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
+
+                        <!--<Button FontSize="15" x:Name="OffsetsButton" Click="OffsetsButton_Click"
+                                VerticalContentAlignment="Center" FontWeight="SemiBold" IsEnabled="False"
+                                Margin="10,10,40,10" CornerRadius="4" Grid.Column="1" HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" Visibility="Collapsed" />-->
+                    </Grid>
+
+                    <ToggleButton FontSize="15" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked"
+                                  Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center"
+                                  FontWeight="SemiBold" Margin="40,10" CornerRadius="4"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0">
+
+                        <ToggleButton.Resources>
+                            <TeachingTip x:Name="ToggleTrackersTeachingTip"
+                                         Target="{Binding ElementName=ToggleTrackersButton}"
+                                         Title="/TOGGLETRACKERS"
+                                         Subtitle="/TEXT"
+                                         PreferredPlacement="Bottom"
+                                         IsLightDismissEnabled="False"
+                                         ActionButtonContent="/BACK"
+                                         CloseButtonContent="/NEXT"
+                                         Style="{ThemeResource BigTeachingTipStyle}"
+                                         ActionButtonClick="ToggleTrackersTeachingTip_ActionButtonClick"
+                                         CloseButtonClick="ToggleTrackersTeachingTip_CloseButtonClick" />
+                        </ToggleButton.Resources>
+                    </ToggleButton>
+                </Grid>
+
+                <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                              Grid.Row="4" VerticalScrollBarVisibility="Visible">
+
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,0,0,20">
+
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom"
+                                    x:Name="DeviceContextContainerPanel" Margin="0,0,5,0">
+                            <StackPanel.Resources>
+                                <TeachingTip x:Name="StatusTeachingTip"
+                                             Target="{Binding ElementName=DeviceTitleContainer}"
+                                             Title="/STATUS"
+                                             Subtitle="/TEXT"
+                                             PreferredPlacement="Top"
+                                             IsLightDismissEnabled="False"
+                                             ActionButtonContent="/BACK"
+                                             CloseButtonContent="/NEXT"
+                                             Style="{ThemeResource BigTeachingTipStyle}"
+                                             ActionButtonClick="StatusTeachingTip_ActionButtonClick"
+                                             CloseButtonClick="StatusTeachingTip_CloseButtonClick" />
+                            </StackPanel.Resources>
+
+                            <Grid x:Name="DeviceTitleContainer" HorizontalAlignment="Stretch">
+                                <TextBlock FontWeight="SemiBold" x:Name="Titles_Device" FontSize="25"
+                                           Margin="40,20,0,10" HorizontalAlignment="Left" />
+                            </Grid>
+
+                            <!--Base Status-->
+
+                            <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           x:Name="Captions_Device_Name"
+                                           Margin="0,0,0,0" Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="[DUM_DEVICE]" Margin="5,0,0,0"
+                                           x:Name="SelectedDeviceNameLabel" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           x:Name="Captions_Device_Status" Margin="0,0,0,0"
+                                           Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
+                            </StackPanel>
+
+                            <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+
+                                  Padding="0,0,5,10"
+                                  Width="440" Height="Auto" Margin="0,5,0,0" CornerRadius="4" x:Name="ErrorWhatGrid">
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                           Text="[DUM_STATUS_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
+                                           x:Name="TrackingDeviceErrorLabel"
+                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                           x:Name="ErrorWhatText" TextWrapping="WrapWholeWords"
+                                           Margin="10,30,5,0" Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                    <TextBlock.Text>
+                                        There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Grid>
+
+                            <Grid Margin="0,12,0,0" x:Name="ErrorButtonsGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button FontSize="15" x:Name="OpenDiscordButton" Click="OpenDiscordButton_Click"
+                                        Height="65" VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Margin="40,10,10,10" CornerRadius="4" Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
+                                <Button FontSize="15" x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
+                                        Height="65" VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Margin="10,10,40,10" CornerRadius="4" Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
+                            </Grid>
+
+                            <!--Override Status Error-->
+                            <TextBlock x:Name="AdditionalDeviceErrorsHyperlink"
+                                       Margin="40,10,20,0" HorizontalAlignment="Left" Visibility="Collapsed"
+                                       Tapped="AdditionalDeviceErrorsHyperlink_Tapped" FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+
+                            <TextBlock x:Name="AdditionalDeviceErrorsHyperlink_Line2"
+                                       Margin="40,2,20,0" HorizontalAlignment="Left"
+                                       Visibility="{Binding ElementName=AdditionalDeviceErrorsHyperlink, 
+                                                    Path=Visibility, TargetNullValue=Collapsed}"
+                                       Tapped="AdditionalDeviceErrorsHyperlink_Tapped"
+                                       FontWeight="SemiBold" TextDecorations="Underline"
+                                       Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+                        </StackPanel>
+
+                        <Grid Height="60" VerticalAlignment="Bottom">
+                            <TextBlock FontWeight="SemiBold" x:Name="Titles_Status" FontSize="25"
+                                       Margin="40,20,0,0"
+                                       Grid.Row="5" />
+                        </Grid>
+
+                        <StackPanel Orientation="Vertical" Margin="0,5,0,0" VerticalAlignment="Bottom">
+
+                            <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           x:Name="Captions_DriverStatus_Label"
+                                           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Margin="5,0,0,0" x:Name="ServerStatusLabel" />
+                            </StackPanel>
+
+                            <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+
+                                  Padding="0,0,5,10"
+                                  Width="440" Height="Auto" Margin="0,5,0,0" CornerRadius="4"
+                                  x:Name="ServerErrorWhatGrid">
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                           Text="[DUM_SERVER_ERROR_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
+                                           x:Name="ServerErrorLabel"
+                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                           x:Name="ServerErrorWhatText"
+                                           Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                           Margin="10,30,5,0" TextWrapping="WrapWholeWords">
+                                    <TextBlock.Text>
+                                        There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Grid>
+
+                            <Grid Margin="0,12,0,0" x:Name="ServerErrorButtonsGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button FontSize="15" x:Name="ServerOpenDiscordButton" Click="OpenDiscordButton_Click"
+                                        Height="65"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Content="{Binding ElementName=OpenDiscordButton, Path=Content}"
+                                        Margin="40,10,10,10" CornerRadius="4" Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
+                                <Button FontSize="15" x:Name="ServerOpenDocsButton" Click="ServerOpenDocsButton_Click"
+                                        Height="{Binding ElementName=ServerOpenDiscordButton, Path=Height}"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Content="{Binding ElementName=OpenDocsButton, Path=Content}"
+                                        Margin="10,10,40,10" CornerRadius="4" Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
+                            </Grid>
+
+                            <!--If this button is visible, set the (upper two)'s height to 40-->
+                            <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold"
+                                    Margin="40,10" FontSize="15" Visibility="Collapsed" />
+
+                            <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           x:Name="Captions_VersionText" Margin="0,0,0,0"
+                                           Foreground="{ThemeResource ControlDisplayTextBrush}" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                           Text="[DUM_VERSION_STRING]" Margin="5,0,0,0" x:Name="VersionLabel" />
+                            </StackPanel>
+
+                        </StackPanel>
+
+                    </StackPanel>
+
+                </ScrollViewer>
+
+            </Grid>
+
+            <!--Skeleton canvas-->
+            <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Canvas.ZIndex="-1"
+                    Opacity="0.0" x:Name="SkeletonDrawingCanvas" Loaded="SkeletonDrawingCanvas_Loaded">
+                <Canvas.OpacityTransition>
+                    <ScalarTransition />
+                </Canvas.OpacityTransition>
+
+                <Canvas.Clip>
+                    <RectangleGeometry Rect="0,0,10000000,10000000" />
+                </Canvas.Clip>
+            </Canvas>
+
+            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                  Grid.Column="1" Canvas.ZIndex="1" IsHitTestVisible="False"
+                  x:Name="InterfaceBlockerGrid" Background="Transparent" />
+
+            <!--Background-->
+            <Grid Background="Black" Grid.Column="1" Canvas.ZIndex="-2"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+            <!--No Skeleton-->
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
+                     VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
+                <StackPanel x:Name="NotTrackedNotice" Opacity="1.0"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                    <StackPanel.OpacityTransition>
+                        <ScalarTransition />
+                    </StackPanel.OpacityTransition>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" Foreground="White" />
+                        <TextBlock Margin="10,0,0,7" x:Name="Captions_Preview_NoSkeleton"
+                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               x:Name="NoSkeletonTextNotice" HorizontalTextAlignment="Center" Foreground="White" />
+                </StackPanel>
+            </Viewbox>
+
+            <!--Skeleton Disabled-->
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
+                     VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
+                <StackPanel x:Name="SkeletonHiddenNotice" Opacity="0.0"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                    <StackPanel.OpacityTransition>
+                        <ScalarTransition />
+                    </StackPanel.OpacityTransition>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
+                        <TextBlock Margin="10,0,0,7" x:Name="Captions_Preview_Disabled"
+                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               Foreground="White" x:Name="Captions_Preview_DisabledText"
+                               HorizontalTextAlignment="Center" />
+                </StackPanel>
+            </Viewbox>
+
+            <!--Outta focus-->
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
+                     VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
+                <StackPanel x:Name="NotInFocusNotice" Opacity="0.0"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                    <StackPanel.OpacityTransition>
+                        <ScalarTransition />
+                    </StackPanel.OpacityTransition>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
+                        <TextBlock Margin="10,0,0,7" x:Name="Captions_Preview_NoFocus"
+                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               Foreground="White" x:Name="Captions_Preview_NoFocusText"
+                               HorizontalTextAlignment="Center" />
+                </StackPanel>
+            </Viewbox>
+
+            <!--Dashboard is closed-->
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
+                     VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
+                <StackPanel x:Name="DashboardClosedNotice" Opacity="0.0"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                    <StackPanel.OpacityTransition>
+                        <ScalarTransition />
+                    </StackPanel.OpacityTransition>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
+                        <TextBlock Margin="10,0,0,7" x:Name="Captions_Preview_NoDashboard"
+                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               Foreground="White" x:Name="Captions_Preview_NoDashboardText"
+                               HorizontalTextAlignment="Center" />
+                </StackPanel>
+            </Viewbox>
+
+            <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,0,20,20"
+                        x:Name="TrackingStateLabelsPanel" Opacity="0.0"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                <StackPanel.OpacityTransition>
+                    <ScalarTransition />
+                </StackPanel.OpacityTransition>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock x:Name="Labels_Tracking" Foreground="White"
+                               FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2" />
+                    <Border Height="16" Width="16" Background="White" CornerRadius="10" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
+                    <TextBlock x:Name="Labels_Inferred" Foreground="White"
+                               FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2" />
+                    <Border Height="16" Width="16" Background="{ThemeResource SystemFillColorAttentionBrush}"
+                            CornerRadius="10" />
+                </StackPanel>
+            </StackPanel>
+
+
+            <Grid Background="Transparent" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="175" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Row="1" Grid.Column="0">
+                    <ToggleSplitButton x:Name="SkeletonToggleButton" Click="SkeletonToggleButton_Click"
+                                       IsChecked="True" VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                       IsTabStop="False" Margin="20,0,0,0" CornerRadius="4" Padding="12,0"
+                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                        <ToggleSplitButton.Flyout>
+                            <Flyout Placement="Bottom"
+                                    Opening="ToggleButtonFlyout_Opening"
+                                    Closing="ToggleButtonFlyout_Closing">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter">
+                                        <Setter Property="CornerRadius" Value="8" />
+                                        <Setter Property="Background"
+                                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+
+                                <Grid Margin="0,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" />
+                                        <ColumnDefinition Width="2*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Opacity="1"
+                                               FontWeight="Medium" Margin="30,0,0,0"
+                                               Grid.Column="0" x:Name="ForceRenderText" />
+                                    <CheckBox x:Name="ForceRenderCheckBox"
+                                              Checked="ForceRenderCheckBox_Checked"
+                                              Unchecked="ForceRenderCheckBox_Unchecked"
+                                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                                              MinWidth="0" MinHeight="0" Margin="0,2,0,0" IsChecked="False" />
+
+                                </Grid>
+                            </Flyout>
+                        </ToggleSplitButton.Flyout>
+                    </ToggleSplitButton>
+                </Grid>
+
+                <!--Flyout for manifest and reregister errors-->
+                <FlyoutBase.AttachedFlyout>
+                    <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom"
+                            Opening="ToggleButtonFlyout_Opening"
+                            Closing="ToggleButtonFlyout_Closing">
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="CornerRadius" Value="8" />
+                                <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button FontSize="15" x:Name="DismissSetErrorButton"
+                                        Click="DismissSetErrorButton_Click"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
+
+                            </Grid>
+
+                            <TextBlock FontSize="15" HorizontalAlignment="Stretch"
+                                       x:Name="SetErrorFlyoutText"
+                                       VerticalAlignment="Stretch"
+                                       Grid.Row="0" FontWeight="SemiBold"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       Text="[NO CONTENT SET]" />
+
+                        </Grid>
+                    </Flyout>
+                </FlyoutBase.AttachedFlyout>
+
+            </Grid>
+        </Grid>
+    </Grid>
 </Page>

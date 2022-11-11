@@ -25,8 +25,8 @@ public sealed partial class Info : Page
     {
         InitializeComponent();
 
-        Shared.TeachingTips.Info.HelpTeachingTip = HelpTeachingTip;
         Logger.Info($"Constructing page: '{GetType().FullName}'...");
+        Shared.TeachingTips.Info.HelpTeachingTip = HelpTeachingTip;
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");

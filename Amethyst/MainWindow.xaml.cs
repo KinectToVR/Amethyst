@@ -1217,7 +1217,7 @@ public sealed partial class MainWindow : Window
 
         // Mark trackers as inactive
         Interfacing.K2AppTrackersInitialized = false;
-        if (Shared.General.ToggleTrackersButton != null)
+        if (Shared.General.ToggleTrackersButton is not null)
             Shared.General.ToggleTrackersButton.IsChecked = false;
 
         Logger.Info("Reload has been invoked: setting up exit flags...");
@@ -1521,7 +1521,7 @@ public sealed partial class MainWindow : Window
 
             // Make sure any Mica/Acrylic controller is disposed so it doesn't try to
             // use this closed window.
-            if (m_micaController != null)
+            if (m_micaController is not null)
             {
                 m_micaController.Dispose();
                 m_micaController = null;
@@ -1540,7 +1540,7 @@ public sealed partial class MainWindow : Window
 
     private void Window_ThemeChanged(FrameworkElement sender, object args)
     {
-        if (m_configurationSource != null) SetConfigurationSourceTheme();
+        if (m_configurationSource is not null) SetConfigurationSourceTheme();
     }
 
     private void SetConfigurationSourceTheme()

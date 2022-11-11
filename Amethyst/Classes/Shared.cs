@@ -184,9 +184,7 @@ public static class Shared
     public static class General
     {
         // General Page
-        public static bool GeneralTabSetupFinished = false,
-            PendingOffsetsUpdate = false;
-
+        public static bool GeneralTabSetupFinished = false;
         public static Microsoft.UI.Xaml.Controls.Primitives.ToggleButton ToggleTrackersButton;
         public static ToggleSplitButton SkeletonToggleButton;
         public static CheckBox ForceRenderCheckBox;

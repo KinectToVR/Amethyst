@@ -125,8 +125,8 @@ public static class Interfacing
         CalibrationFineTune;
 
     // For manual calibration: L, R -> X, Y
-    public static ((double X, double Y) LeftPosition,
-        (double X, double Y) RightPosition)
+    public static ((float X, float Y) LeftPosition,
+        (float X, float Y) RightPosition)
         CalibrationJoystickPositions;
 
     // Check if we're currently scanning for trackers from other apps
@@ -558,9 +558,9 @@ public static class Interfacing
                     (result.Status.StatusCode == StatusCode.OK ? "success" : "fail")}]");
 
                 // Log some data if needed
-                Logger.Info($"\nTested ping time: {PingTime} [micros], " +
-                            $"call/parsing time: {result.ReceiveTimestamp} [micros], " +
-                            $"flight-back time: {DateTime.Now.Ticks - result.ReceiveTimestamp} [micros]");
+                Logger.Info($"\nTested ping time: {PingTime} [ticks], " +
+                            $"call/parsing time: {result.ReceiveTimestamp} [ticks], " +
+                            $"flight-back time: {DateTime.Now.Ticks - result.ReceiveTimestamp} [ticks]");
 
                 // Release
                 PingCheckingThreadsNumber = Math.Clamp(
@@ -726,7 +726,7 @@ public static class Interfacing
                 // Sleep a bit before checking
                 await Task.Delay(1000);
 
-                if (Shared.General.ErrorWhatText != null &&
+                if (Shared.General.ErrorWhatText is not null &&
                     Shared.General.ErrorWhatText.Visibility == Visibility.Visible)
                     AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
             });
@@ -829,11 +829,11 @@ public static class Interfacing
     public static void UpdateServerStatus()
     {
         // Disable UI (partially) if we've encountered an error
-        if (Shared.Main.DevicesItem != null)
+        if (Shared.Main.DevicesItem is not null)
             Shared.Main.DevicesItem.IsEnabled = IsServerDriverPresent;
 
         // Check with this one, should be the same for all anyway
-        if (Shared.General.ServerErrorWhatText != null)
+        if (Shared.General.ServerErrorWhatText is not null)
         {
             Shared.General.ServerErrorWhatText.Visibility =
                 IsServerDriverPresent ? Visibility.Collapsed : Visibility.Visible;
@@ -1078,7 +1078,7 @@ public static class Interfacing
         try
         {
             // Check if the resource root is fine
-            if (LocalResources != null && LocalResources.Count > 0)
+            if (LocalResources is not null && LocalResources.Count > 0)
                 return LocalResources.GetNamedString(resourceKey);
 
             Logger.Error("The current resource root is empty! App interface will be broken!");
@@ -1188,7 +1188,7 @@ public static class Interfacing
             {
                 // Check if the resource root is fine
                 if (TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector
-                        .TryGetValue(guid, out var value) && value.ResourceRoot != null && value.ResourceRoot.Count > 0)
+                        .TryGetValue(guid, out var value) && value.ResourceRoot is not null && value.ResourceRoot.Count > 0)
                     return TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector[guid]
                         .ResourceRoot.GetNamedString(key);
 

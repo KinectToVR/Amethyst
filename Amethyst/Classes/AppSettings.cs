@@ -69,7 +69,7 @@ public class AppSettings : INotifyPropertyChanged
     public Quaternion ExternalFlipCalibrationMatrix = new();
 
     // If we wanna freeze only lower body trackers or all
-    public bool FreezeLowerOnly { get; set; } = false;
+    public bool FreezeLowerBodyOnly { get; set; } = false;
 
     // If the freeze bindings teaching tip has been shown
     public bool TeachingTipShownFreeze { get; set; } = false;

@@ -53,34 +53,35 @@ public static class TrackingDevices
         }
 
         General.AdditionalDeviceErrorsHyperlinkTappedEvent =
-            new Task(async () =>
-            {
-                // Play a sound
-                AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+            new Task(() => Shared.Main.DispatcherQueue.TryEnqueue(
+                async () =>
+                {
+                    // Play a sound
+                    AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
-                // Navigate to the devices page
-                Shared.Main.MainNavigationView.SelectedItem =
-                    Shared.Main.MainNavigationView.MenuItems[2];
+                    // Navigate to the devices page
+                    Shared.Main.MainNavigationView.SelectedItem =
+                        Shared.Main.MainNavigationView.MenuItems[2];
 
-                Shared.Main.NavigateToPage("devices",
-                    new EntranceNavigationTransitionInfo());
+                    Shared.Main.NavigateToPage("devices",
+                        new EntranceNavigationTransitionInfo());
 
-                await Task.Delay(500);
+                    await Task.Delay(500);
 
-                // Should already be init-ed after 500ms, but check anyway
-                if (Devices.DevicesTreeView is null) return;
-                var devicesListIndex = TrackingDevicesVector.Keys.ToList().IndexOf(failingOverrideGuid);
-                var devicesListNode = Devices.DevicesTreeView.RootNodes[devicesListIndex];
+                    // Should already be init-ed after 500ms, but check anyway
+                    if (Devices.DevicesTreeView is null) return;
+                    var devicesListIndex = TrackingDevicesVector.Keys.ToList().IndexOf(failingOverrideGuid);
+                    var devicesListNode = Devices.DevicesTreeView.RootNodes[devicesListIndex];
 
-                var skipAnimation = Devices.DevicesTreeView.SelectedNode == devicesListNode;
-                Devices.DevicesTreeView.SelectedNode = devicesListNode;
+                    var skipAnimation = Devices.DevicesTreeView.SelectedNode == devicesListNode;
+                    Devices.DevicesTreeView.SelectedNode = devicesListNode;
 
-                await Devices.ReloadSelectedDevice(skipAnimation);
-                Devices.SelectedTrackingDeviceGuid = failingOverrideGuid;
-            });
+                    await Devices.ReloadSelectedDevice(skipAnimation);
+                    Devices.SelectedTrackingDeviceGuid = failingOverrideGuid;
+                }));
 
         // Update general tab
-        if (General.ErrorWhatText != null)
+        if (General.ErrorWhatText is not null)
         {
             // Don't show device errors if we've got a server error
             if (!Interfacing.IsServerDriverPresent)
@@ -116,12 +117,12 @@ public static class TrackingDevices
 
             // Set the app state (optionally)
             if (Interfacing.CurrentPageTag == "devices")
-                Interfacing.CurrentAppState = 
-                    Devices.DevicesTreeView != null && overrideStatusOk &&
+                Interfacing.CurrentAppState =
+                    Devices.DevicesTreeView is not null && overrideStatusOk &&
                     AppData.Settings.OverrideDevicesGuidMap
                         .Contains(Devices.SelectedTrackingDeviceGuid)
-                    ? "overrides" // Currently managing overrides
-                    : "devices"; // Currently viewing tracking devices
+                        ? "overrides" // Currently managing overrides
+                        : "devices"; // Currently viewing tracking devices
         }
 
         // Update settings tab
@@ -236,7 +237,7 @@ public static class TrackingDevices
         // If this is the first time and happened runtime, also show the notification
         if (Interfacing.K2AppTrackersSpawned)
         {
-            if (Settings.RestartButton != null && showToasts)
+            if (Settings.RestartButton is not null && showToasts)
                 if (!Settings.RestartButton.IsEnabled)
                 {
                     Interfacing.ShowToast(
@@ -254,7 +255,7 @@ public static class TrackingDevices
                 }
 
             // Compare with saved settings and unlock the restart
-            if (Settings.RestartButton != null)
+            if (Settings.RestartButton is not null)
                 Settings.RestartButton.IsEnabled = true;
         }
 
@@ -328,7 +329,7 @@ public static class TrackingDevices
 
     // Vector of current devices' JSON resource roots & paths
     // Note: the size must be the same as TrackingDevicesVector's
-    public static SortedDictionary<string, 
+    public static SortedDictionary<string,
             (Windows.Data.Json.JsonObject ResourceRoot, string Directory)>
         TrackingDevicesLocalizationResourcesRootsVector = new();
 

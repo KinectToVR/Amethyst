@@ -70,6 +70,12 @@ public class TrackingDevice : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
     }
+
+    // MVVM stuff
+    public double BoolToOpacity(bool value) => value ? 1.0 : 0.0;
+
+    public bool StatusOk => Device.DeviceStatus == 0;
+    public bool StatusError => Device.DeviceStatus != 0;
 }
 
 public static class ICollectionExtensions

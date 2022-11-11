@@ -440,4 +440,7 @@ public class AppTracker : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
     }
+
+    // MVVM stuff
+    public string GetResourceString(string key) => Interfacing.LocalizedJsonString(key);
 }

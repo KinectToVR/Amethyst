@@ -1,7 +1,28 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using Amethyst.Classes;
 using Microsoft.UI.Xaml.Controls;
+using System.Threading.Tasks;
+using Windows.Media.Core;
+using Amethyst.Plugins.Contract;
+using Amethyst.Utils;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
+using Valve.VR;
+using Windows.System;
+using System.Diagnostics;
+using System.Linq;
+using System.Numerics;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Amethyst.MVVM;
+using static Amethyst.Classes.Shared.TeachingTips;
+using System.Xml.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -13,8 +34,1273 @@ namespace Amethyst.Pages;
 /// </summary>
 public sealed partial class General : Page
 {
+    private bool _showSkeletonPrevious = true;
+    private bool _generalPageLoadedOnce = false;
+    private static string _calibratingDeviceGuid = "";
+
+    private bool _calibrationPending = false;
+    private readonly bool AutoCalibration_StillPending = false;
+
+    private void SetSkeletonVisibility(bool visibility)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        Shared.General.ForceRenderCheckBox.IsEnabled = visibility;
+        Shared.General.SkeletonToggleButton.IsChecked = visibility;
+        Shared.General.ForceRenderText.Opacity = visibility ? 1.0 : 0.5;
+        Shared.General.SkeletonToggleButton.Content = visibility
+            ? Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Hide")
+            : Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Show");
+    }
+
+    private void SetSkeletonForce(bool visibility)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+        Shared.General.ForceRenderCheckBox.IsChecked = visibility;
+    }
+
+    private string CalibrationPointsFormat(string format, int p1, int p2)
+    {
+        return format.Replace("{1}", p1.ToString())
+            .Replace("{2}", p2.ToString());
+    }
+
+    private void AllowNavigation(bool allow)
+    {
+        Shared.Main.NavigationBlockerGrid.IsHitTestVisible = !allow;
+    }
+
     public General()
     {
         InitializeComponent();
+
+        Logger.Info($"Constructing page: '{GetType().FullName}'...");
+
+        Shared.General.ToggleTrackersButton = ToggleTrackersButton;
+        Shared.General.SkeletonToggleButton = SkeletonToggleButton;
+        Shared.General.ForceRenderCheckBox = ForceRenderCheckBox;
+        Shared.General.OffsetsButton = OffsetsButton;
+        Shared.General.CalibrationButton = CalibrationButton;
+        Shared.General.ReRegisterButton = ReRegisterButton;
+        Shared.General.ServerOpenDiscordButton = ServerOpenDiscordButton;
+        Shared.General.VersionLabel = VersionLabel;
+        Shared.General.DeviceNameLabel = SelectedDeviceNameLabel;
+        Shared.General.DeviceStatusLabel = TrackingDeviceStatusLabel;
+        Shared.General.ErrorWhatText = ErrorWhatText;
+        Shared.General.TrackingDeviceErrorLabel = TrackingDeviceErrorLabel;
+        Shared.General.ServerStatusLabel = ServerStatusLabel;
+        Shared.General.ServerErrorLabel = ServerErrorLabel;
+        Shared.General.ServerErrorWhatText = ServerErrorWhatText;
+        Shared.General.ForceRenderText = ForceRenderText;
+        Shared.General.OffsetsControlHostGrid = OffsetsControlHostGrid;
+        Shared.General.ErrorButtonsGrid = ErrorButtonsGrid;
+        Shared.General.ErrorWhatGrid = ErrorWhatGrid;
+        Shared.General.ServerErrorWhatGrid = ServerErrorWhatGrid;
+        Shared.General.ServerErrorButtonsGrid = ServerErrorButtonsGrid;
+        Shared.General.ToggleFreezeButton = ToggleFreezeButton;
+        Shared.General.FreezeOnlyLowerToggle = FreezeOnlyLowerToggle;
+        Shared.General.AdditionalDeviceErrorsHyperlink = AdditionalDeviceErrorsHyperlink;
+
+        Logger.Info($"Registering offsets MVVM for page: '{GetType().FullName}'...");
+        OffsetsControlPivot.ItemsSource = AppData.Settings.TrackersVector;
+
+        Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
+        TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesVector;
+
+        Logger.Info($"Setting graphical resources for: '{CalibrationPreviewMediaElement.GetType().FullName}'...");
+        CalibrationPreviewMediaElement.Source = MediaSource.CreateFromUri(
+            new Uri(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "CalibrationDirections.mp4")));
+
+        Logger.Info("Registering a detached binary semaphore " +
+                    $"reload handler for '{GetType().FullName}'...");
+
+        Task.Run(Task() =>
+        {
+            while (true)
+            {
+                // Wait for a reload signal (blocking)
+                Shared.Semaphores.ReloadInfoPageSemaphore.WaitOne();
+
+                // Reload & restart the waiting loop
+                if (_generalPageLoadedOnce)
+                    Shared.Main.DispatcherQueue.TryEnqueue(
+                        async () => { await Page_LoadedHandler(); });
+
+                Task.Delay(100); // Sleep a bit
+            }
+        });
+    }
+
+    private async void Page_Loaded(object sender, RoutedEventArgs e)
+    {
+        // Execute the handler
+        await Page_LoadedHandler();
+
+        // Mark as loaded
+        _generalPageLoadedOnce = true;
+    }
+
+    private async Task Page_LoadedHandler()
+    {
+        SaveOffsetsButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Save");
+        DiscardOffsetsButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Discard");
+        Calibration_Titles_Choose.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Titles/Choose");
+        Calibration_Titles_Device.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Titles/Device");
+        Calibration_Titles_Manual.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Titles/Manual");
+        Calibration_Captions_Manual.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Manual");
+        CancelCalibrationButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Cancel");
+        CancelCalibrationButton_Devices.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Cancel");
+        CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Start");
+        StartAutoCalibrationButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Calibration/Begin");
+        Calibration_Titles_Points.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Titles/Points");
+        Calibration_Captions_Points.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Points");
+        DiscardAutoCalibrationButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Cancel");
+        Calibration_Headers_Manual.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Headers/Manual");
+        DiscardCalibrationButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Cancel");
+        Titles_Trackers.Text = Interfacing.LocalizedJsonString("/GeneralPage/Titles/Trackers");
+        CalibrationButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Calibration/Begin");
+        OffsetsButton.Text = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Offsets");
+        ToggleTrackersButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/TrackersToggle/Connect");
+        Titles_Device.Text = Interfacing.LocalizedJsonString("/GeneralPage/Titles/Device");
+        Captions_Device_Name.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Device/Name");
+        Captions_Device_Status.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Device/Status");
+        OpenDiscordButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Help/Discord");
+        OpenDocsButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Help/Docs");
+        Titles_Status.Text = Interfacing.LocalizedJsonString("/GeneralPage/Titles/Status");
+        Captions_DriverStatus_Label.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/DriverStatus/Label");
+        ServerStatusLabel.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/DriverStatus");
+        ReRegisterButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Buttons/ReRegister");
+        Captions_VersionText.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/VersionText");
+        Captions_Preview_NoSkeleton.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeleton");
+        NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeletonText");
+        Captions_Preview_Disabled.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/Disabled");
+        Labels_Tracking.Text = Interfacing.LocalizedJsonString("/GeneralPage/Labels/Tracking");
+        Labels_Inferred.Text = Interfacing.LocalizedJsonString("/GeneralPage/Labels/Inferred");
+        SkeletonToggleButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Hide");
+        ForceRenderText.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/Force");
+        ToggleFreezeButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Freeze");
+        FreezeOnlyLowerToggle.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/FreezeLowerOnly");
+        DismissSetErrorButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Buttons/Error/Dismiss");
+        DeviceEntryView_Base_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Base");
+        DeviceEntryView_Override_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Override");
+        DeviceEntryView_Error_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Error");
+        ToggleTrackersTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip2/Title");
+        ToggleTrackersTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip2/Content");
+        ToggleTrackersTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
+        ToggleTrackersTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
+        CalibrationTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip3/Title");
+        CalibrationTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip3/Content");
+        CalibrationTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
+        CalibrationTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
+        StatusTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip4/Title");
+        StatusTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip4/Content");
+        StatusTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
+        StatusTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
+        NoCalibrationTeachingTip.Title = Interfacing.LocalizedJsonString("/GeneralPage/Tips/NoCalibration/Header");
+        NoCalibrationTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/GeneralPage/Tips/NoCalibration/Footer");
+        Captions_Preview_NoFocus.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoFocus");
+
+        Calibration_Headers_Automatic.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Headers/Automatic");
+        Calibration_Captions_Recommended.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Recommended");
+        Calibration_Titles_Automatic.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Titles/Automatic");
+        Calibration_Captions_Automatic.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Automatic");
+        Calibration_Labels_Brief_Left.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Brief/Left");
+        Calibration_LabelsWhat_Brief_Left.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/LabelsWhat/Brief/Left");
+        Calibration_Labels_Brief_Right.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Brief/Right");
+        Calibration_LabelsWhat_Brief_Right.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/LabelsWhat/Brief/Right");
+        Calibration_Labels_Grips_Left.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Grips/Left");
+        Calibration_Labels_Triggers_Left.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Triggers/Left");
+        Calibration_LabelsWhat_Grips_Left.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/LabelsWhat/Grips/Left");
+        Calibration_Labels_Grips_Right.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Grips/Right");
+        Calibration_Labels_Grips_Right.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Grips/Right");
+        Calibration_LabelsWhat_Grips_Right.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/LabelsWhat/Grips/Right");
+        Calibration_Labels_Triggers_Both.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Triggers/Both");
+        Calibration_LabelsWhat_Triggers.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/LabelsWhat/Triggers");
+        Calibration_Labels_InputsNotice.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/InputsNotice");
+        AdditionalDeviceErrorsHyperlink.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Captions/OtherErrors/Line1");
+        AdditionalDeviceErrorsHyperlink_Line2.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Captions/OtherErrors/Line2");
+        Captions_Preview_DisabledText.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/DisabledText");
+        Captions_Preview_NoFocusText.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoFocusText");
+        Captions_Preview_NoDashboard.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoDashboard");
+        Captions_Preview_NoDashboardText.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoDashboardText");
+
+        // Start the main loop since we're done with basic setup
+        Logger.Info("Basic setup done! Starting the main loop now...");
+        Shared.Devices.SmphSignalStartMain.Release();
+
+        // Update the internal version
+        VersionLabel.Text = $"v{AppData.K2InternalVersion}";
+
+        // Try auto-spawning trackers if stated so
+        if (!Shared.General.GeneralTabSetupFinished && // If first-time
+            Interfacing.IsServerDriverPresent && // If the driver's ok
+            AppData.Settings.AutoSpawnEnabledJoints) // If autospawn
+        {
+            if (await Interfacing.SpawnEnabledTrackers())
+            {
+                // Mark as spawned
+                ToggleTrackersButton.IsChecked = true;
+                CalibrationButton.IsEnabled = true;
+            }
+
+            // Cry about it
+            else
+            {
+                Interfacing.ServerDriverFailure = true; // WAAAAAAA
+                Interfacing.K2ServerDriverSetup(); // Refresh
+                Interfacing.ShowToast(
+                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"),
+                    true); // High priority - it's probably a server failure
+
+                Interfacing.ShowVRToast(
+                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
+            }
+        }
+
+        // Refresh the server status
+        Interfacing.K2ServerDriverRefresh();
+
+        // Update things
+        Interfacing.UpdateServerStatus();
+        TrackingDevices.UpdateTrackingDevicesInterface();
+
+        // Reload offset values
+        OffsetsControlPivot.GetBindingExpression(
+            ItemsControl.ItemsSourceProperty).UpdateSource();
+
+        // Notify of the setup's end
+        Shared.General.GeneralTabSetupFinished = true;
+
+        // Setup the preview button
+        SetSkeletonVisibility(AppData.Settings.SkeletonPreviewEnabled);
+        SetSkeletonForce(AppData.Settings.ForceSkeletonPreview);
+
+        // Setup the freeze button
+        ToggleFreezeButton.IsChecked = Interfacing.IsTrackingFrozen;
+        ToggleFreezeButton.Content = Interfacing.IsTrackingFrozen
+            ? Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Unfreeze")
+            : Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Freeze");
+        FreezeOnlyLowerToggle.IsChecked = AppData.Settings.FreezeLowerBodyOnly;
+
+        // Set up the co/re/disconnect button
+        if (Interfacing.K2AppTrackersSpawned)
+        {
+            ToggleTrackersButton.IsChecked = false;
+            ToggleTrackersButton.Content =
+                Interfacing.LocalizedJsonString("/GeneralPage/Buttons/TrackersToggle/Connect");
+        }
+        else
+        {
+            ToggleTrackersButton.IsChecked = Interfacing.K2AppTrackersInitialized;
+            ToggleTrackersButton.Content = Interfacing.K2AppTrackersInitialized
+                ? Interfacing.LocalizedJsonString("/GeneralPage/Buttons/TrackersToggle/Disconnect")
+                : Interfacing.LocalizedJsonString("/GeneralPage/Buttons/TrackersToggle/Reconnect");
+        }
+    }
+
+    private void NoCalibrationTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
+    {
+        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
+    }
+
+    private void CancelPaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
+    {
+        args.Cancel = true;
+    }
+
+    private void DiscardOffsetsButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Discard backend offsets' values by re-reading them from settings
+        AppData.Settings.ReadSettings();
+
+        // Reload offset values
+        OffsetsControlPivot.GetBindingExpression(
+            ItemsControl.ItemsSourceProperty).UpdateSource();
+
+        // Close the pane now
+        OffsetsView.DisplayMode = SplitViewDisplayMode.Overlay;
+        OffsetsView.IsPaneOpen = false;
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.GoBack);
+
+        AllowNavigation(true);
+        Interfacing.CurrentAppState = "general";
+    }
+
+    private void SaveOffsetsButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Close the pane now
+        OffsetsView.DisplayMode = SplitViewDisplayMode.Overlay;
+        OffsetsView.IsPaneOpen = false;
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+
+        AllowNavigation(true);
+        Interfacing.CurrentAppState = "general";
+
+        // Save backend offsets' values to settings/file
+        AppData.Settings.SaveSettings();
+    }
+
+    private async void TrackingDeviceTreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        var node = args.InvokedItem as TrackingDevice;
+
+        // Block erred device selects
+        if (node.StatusError)
+        {
+            // Set the correct target
+            NoCalibrationTeachingTip.Target =
+                (FrameworkElement)TrackingDeviceTreeView.ContainerFromItem(args.InvokedItem);
+
+            // Hide the tail and open the tip
+            NoCalibrationTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+            NoCalibrationTeachingTip.PreferredPlacement = TeachingTipPlacementMode.Bottom;
+
+            Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+            NoCalibrationTeachingTip.IsOpen = true;
+
+            await Task.Delay(300);
+            return; // Give up
+        }
+
+        // Show the calibration choose pane / calibration
+        AutoCalibrationPane.Visibility = Visibility.Collapsed;
+        ManualCalibrationPane.Visibility = Visibility.Collapsed;
+
+        CalibrationModeSelectView.DisplayMode = SplitViewDisplayMode.Inline;
+        CalibrationModeSelectView.IsPaneOpen = true;
+
+        CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Overlay;
+        CalibrationRunningView.IsPaneOpen = false;
+
+        AllowNavigation(false);
+
+        // Set the app state
+        Interfacing.CurrentAppState = "calibration";
+
+        // Set the calibration device
+        _calibratingDeviceGuid = node.Guid;
+
+        _showSkeletonPrevious = AppData.Settings.SkeletonPreviewEnabled; // Back up
+        AppData.Settings.SkeletonPreviewEnabled = true; // Change to show
+        SetSkeletonVisibility(true); // Change to show
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+
+        // If auto-calibration is not supported, proceed straight to manual
+        // Test: supports if the device provides a head joint / otherwise not
+        if (node.TrackedJoints.Any(x => x.Role != TrackedJointType.JointHead)) return;
+
+        // Still here? the test must have failed then
+        Logger.Info($"Device ({node.Name}, {node.Guid}) does not provide a {TrackedJointType.JointHead}" +
+                    "and can't be calibrated with automatic calibration! Proceeding to manual now...");
+
+        // Open the pane and start the calibration
+        await ExecuteManualCalibration();
+    }
+
+    private void AutoCalibrationButton_Click(object sender, RoutedEventArgs e)
+    {
+        ExecuteAutomaticCalibration();
+    }
+
+    private async void ManualCalibrationButton_Click(object sender, RoutedEventArgs e)
+    {
+        await ExecuteManualCalibration();
+    }
+
+    private void StartAutoCalibrationButton_Click(object sender, RoutedEventArgs e)
+    {
+        // TODO
+    }
+
+    private void CalibrationPointsNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        // Attempt automatic fixes
+        if (double.IsNaN(CalibrationPointsNumberBox.Value))
+            CalibrationPointsNumberBox.Value = AppData.Settings.CalibrationPointsNumber;
+
+        AppData.Settings.CalibrationPointsNumber = (uint)CalibrationPointsNumberBox.Value;
+        AppData.Settings.SaveSettings(); // Save it
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+    }
+
+    private void DiscardCalibrationButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Just exit
+        if (!_calibrationPending && !AutoCalibration_StillPending)
+        {
+            CalibrationDeviceSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
+            CalibrationDeviceSelectView.IsPaneOpen = false;
+
+            CalibrationModeSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
+            CalibrationModeSelectView.IsPaneOpen = false;
+
+            CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Overlay;
+            CalibrationRunningView.IsPaneOpen = false;
+
+            AllowNavigation(true);
+
+            // Play a sound
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+            Interfacing.CurrentAppState = "general";
+
+            NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeletonText");
+
+            AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious; // Change to whatever
+            SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
+        }
+        // Begin abort
+        else
+        {
+            _calibrationPending = false;
+        }
+    }
+
+    private void CalibrationTeachingTip_ActionButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        // Close the current tip
+        CalibrationTeachingTip.IsOpen = false;
+
+        // Show the previous one
+        ToggleTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        ToggleTrackersTeachingTip.IsOpen = true;
+    }
+
+    private void CalibrationTeachingTip_CloseButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        StatusTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        StatusTeachingTip.IsOpen = true;
+    }
+
+    private async void CalibrationButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Capture playspace details one more time before the calibration
+        var trackingOrigin = OpenVR.System.GetRawZeroPoseToStandingAbsoluteTrackingPose();
+        Interfacing.VrPlayspaceTranslation = TypeUtils.ExtractVrPosition(ref trackingOrigin);
+        Interfacing.VrPlayspaceOrientationQuaternion = TypeUtils.ExtractVrRotation(ref trackingOrigin);
+
+        // If no overrides
+        if (AppData.Settings.OverrideDevicesGuidMap.Count < 1)
+        {
+            // Get our current device
+            var trackingDevice = TrackingDevices.GetTrackingDevice();
+
+            // If the status isn't OK, cry about it
+            if (trackingDevice.StatusError)
+            {
+                // Set the correct target
+                NoCalibrationTeachingTip.Target = DeviceTitleContainer;
+
+                // Hide the tail and open the tip
+                NoCalibrationTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+                NoCalibrationTeachingTip.PreferredPlacement = TeachingTipPlacementMode.Top;
+
+                Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+                NoCalibrationTeachingTip.IsOpen = true;
+
+                await Task.Delay(300);
+                return; // Give up
+            }
+
+            // Show the calibration choose pane / calibration
+            AutoCalibrationPane.Visibility = Visibility.Collapsed;
+            ManualCalibrationPane.Visibility = Visibility.Collapsed;
+
+            CalibrationDeviceSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
+            CalibrationDeviceSelectView.IsPaneOpen = false;
+
+            CalibrationModeSelectView.DisplayMode = SplitViewDisplayMode.Inline;
+            CalibrationModeSelectView.IsPaneOpen = true;
+
+            CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Overlay;
+            CalibrationRunningView.IsPaneOpen = false;
+
+            AllowNavigation(false);
+
+            // Set the app state
+            Interfacing.CurrentAppState = "calibration";
+
+            // Set the calibration device
+            _calibratingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
+
+            _showSkeletonPrevious = AppData.Settings.SkeletonPreviewEnabled; // Back up
+            AppData.Settings.SkeletonPreviewEnabled = true; // Change to show
+            SetSkeletonVisibility(true); // Change to show
+
+            // Play a sound
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+
+            // If auto-calibration is not supported, proceed straight to manual
+            // Test: supports if the device provides a head joint / otherwise not
+            if (trackingDevice.TrackedJoints.Any(x => x.Role != TrackedJointType.JointHead)) return;
+
+            // Still here? the test must have failed then
+            Logger.Info($"Device ({trackingDevice.Name}, {trackingDevice.Guid}) " +
+                        $"does not provide a {TrackedJointType.JointHead}" +
+                        "and can't be calibrated with automatic calibration! Proceeding to manual now...");
+
+            // Open the pane and start the calibration
+            await ExecuteManualCalibration();
+        }
+        else
+        {
+            // Show the device selector pane
+            AutoCalibrationPane.Visibility = Visibility.Collapsed;
+            ManualCalibrationPane.Visibility = Visibility.Collapsed;
+
+
+            // If all used devices are erred: cry about it
+            if (TrackingDevices.TrackingDevicesVector.Values
+                .Where(plugin => plugin.IsBase || plugin.IsOverride)
+                .All(device => device.StatusError))
+            {
+                // Set the correct target
+                NoCalibrationTeachingTip.Target = DeviceTitleContainer;
+                NoCalibrationTeachingTip.PreferredPlacement = TeachingTipPlacementMode.Top;
+
+                // Hide the tail and open the tip
+                NoCalibrationTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+
+                Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+                NoCalibrationTeachingTip.IsOpen = true;
+
+                await Task.Delay(300);
+                return; // Give up
+            }
+
+            // Else proceed to calibration device pick
+            CalibrationDeviceSelectView.DisplayMode = SplitViewDisplayMode.Inline;
+            CalibrationDeviceSelectView.IsPaneOpen = true;
+
+            CalibrationModeSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
+            CalibrationModeSelectView.IsPaneOpen = false;
+
+            CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Overlay;
+            CalibrationRunningView.IsPaneOpen = false;
+            
+            AllowNavigation(false);
+            Interfacing.CurrentAppState = "calibration";
+
+            _showSkeletonPrevious = AppData.Settings.SkeletonPreviewEnabled; // Back up
+            AppData.Settings.SkeletonPreviewEnabled = true; // Change to show
+            SetSkeletonVisibility(true); // Change to show
+
+            // Play a sound
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+        }
+    }
+
+    private void ToggleFreezeButton_Click(object sender, RoutedEventArgs e)
+    {
+        Interfacing.IsTrackingFrozen = !Interfacing.IsTrackingFrozen;
+
+        ToggleFreezeButton.IsChecked = Interfacing.IsTrackingFrozen;
+        ToggleFreezeButton.Content =
+            Interfacing.IsTrackingFrozen
+                ? Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Unfreeze")
+                : Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Freeze");
+
+        // Play a sound
+        AppSounds.PlayAppSound(Interfacing.IsTrackingFrozen
+            ? AppSounds.AppSoundType.ToggleOff
+            : AppSounds.AppSoundType.ToggleOn);
+
+        // Optionally show the binding teaching tip
+        if (AppData.Settings.TeachingTipShownFreeze ||
+            Interfacing.CurrentPageTag != "general") return;
+
+        var header = Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Header");
+
+        // Change the tip depending on the currently connected controllers
+        var controllerModel = new StringBuilder(1024);
+        var error = ETrackedPropertyError.TrackedProp_Success;
+
+        OpenVR.System.GetStringTrackedDeviceProperty(
+            OpenVR.System.GetTrackedDeviceIndexForControllerRole(
+                ETrackedControllerRole.LeftHand),
+            ETrackedDeviceProperty.Prop_ModelNumber_String,
+            controllerModel, 1024, ref error);
+
+        if (controllerModel.ToString().Contains("knuckles", StringComparison.OrdinalIgnoreCase) ||
+            controllerModel.ToString().Contains("index", StringComparison.OrdinalIgnoreCase))
+            header = header.Replace("{0}",
+                Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Buttons/Index"));
+
+        else if (controllerModel.ToString().Contains("vive", StringComparison.OrdinalIgnoreCase))
+            header = header.Replace("{0}",
+                Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Buttons/VIVE"));
+
+        else if (controllerModel.ToString().Contains("mr", StringComparison.OrdinalIgnoreCase))
+            header = header.Replace("{0}",
+                Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Buttons/WMR"));
+
+        else
+            header = header.Replace("{0}",
+                Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Buttons/Oculus"));
+
+        FreezeTrackingTeachingTip.Title = header;
+        FreezeTrackingTeachingTip.Subtitle =
+            Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Footer");
+        FreezeTrackingTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+
+        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+        FreezeTrackingTeachingTip.IsOpen = true;
+
+        AppData.Settings.TeachingTipShownFreeze = true;
+        AppData.Settings.SaveSettings();
+    }
+
+    private void OffsetsButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Push saved offsets' by reading them from settings
+        AppData.Settings.ReadSettings();
+
+        // Reload offset values
+        OffsetsControlPivot.GetBindingExpression(
+            ItemsControl.ItemsSourceProperty).UpdateSource();
+
+        // Open the pane now
+        OffsetsView.DisplayMode = SplitViewDisplayMode.Inline;
+        OffsetsView.IsPaneOpen = true;
+        AllowNavigation(false);
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+        Interfacing.CurrentAppState = "offsets";
+    }
+
+    private void FreezeOnlyLowerToggle_Click(object sender, RoutedEventArgs e)
+    {
+        AppData.Settings.FreezeLowerBodyOnly = FreezeOnlyLowerToggle.IsChecked;
+        AppData.Settings.SaveSettings();
+
+        // Play a sound
+        AppSounds.PlayAppSound(FreezeOnlyLowerToggle.IsChecked
+            ? AppSounds.AppSoundType.ToggleOn
+            : AppSounds.AppSoundType.ToggleOff);
+    }
+
+    private async void ToggleTrackersButton_Checked(object sender, RoutedEventArgs e)
+    {
+        // Don't check if setup's finished since we're gonna emulate a click rather than change the state only
+        ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
+            "/GeneralPage/Buttons/TrackersToggle/Disconnect");
+
+        // Optionally spawn trackers
+        if (!Interfacing.K2AppTrackersSpawned)
+        {
+            if (!await Interfacing.SpawnEnabledTrackers()) // Mark as spawned
+            {
+                Interfacing.ServerDriverFailure = true; // WAAAAAAA
+                Interfacing.K2ServerDriverSetup(); // Refresh
+                Interfacing.ShowToast(
+                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"),
+                    true); // High priority - it's probably a server failure
+
+                Interfacing.ShowVRToast(
+                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
+            }
+
+            // Update things
+            Interfacing.UpdateServerStatus();
+        }
+
+        // Give up if failed
+        if (Interfacing.ServerDriverFailure) return;
+
+        // Mark trackers as active
+        Interfacing.K2AppTrackersInitialized = true;
+
+        // Request a check for already-added trackers
+        Interfacing.AlreadyAddedTrackersScanRequested = true;
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.TrackersConnected);
+
+        // Show additional controls
+        CalibrationButton.IsEnabled = true;
+    }
+
+    private void ToggleTrackersButton_Unchecked(object sender, RoutedEventArgs e)
+    {
+        // Don't check if setup's finished since we're gonna emulate a click rather than change the state only
+        ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
+            "/GeneralPage/Buttons/TrackersToggle/Reconnect");
+
+        // Mark trackers as inactive
+        Interfacing.K2AppTrackersInitialized = false;
+
+        // Request a check for already-added trackers
+        Interfacing.AlreadyAddedTrackersScanRequested = true;
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.TrackersDisconnected);
+
+        // Hide additional controls
+        CalibrationButton.IsEnabled = false;
+    }
+
+    private void ToggleTrackersTeachingTip_ActionButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        // Close the current tip
+        ToggleTrackersTeachingTip.IsOpen = false;
+
+        // Show the previous one
+        Shared.TeachingTips.Main.InitializerTeachingTip.IsOpen = true;
+    }
+
+    private void ToggleTrackersTeachingTip_CloseButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        CalibrationTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        CalibrationTeachingTip.IsOpen = true;
+    }
+
+    private void StatusTeachingTip_ActionButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        // Close the current tip
+        StatusTeachingTip.IsOpen = false;
+
+        // Show the previous one
+        CalibrationTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        CalibrationTeachingTip.IsOpen = true;
+    }
+
+    private async void StatusTeachingTip_CloseButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+        await Task.Delay(200);
+
+        // Reset the next page layout (if ever changed)
+        Shared.Settings.PageMainScrollViewer?.ScrollToVerticalOffset(0);
+
+        // Navigate to the settings page
+        Shared.Main.MainNavigationView.SelectedItem =
+            Shared.Main.MainNavigationView.MenuItems[1];
+
+        Shared.Main.NavigateToPage("settings",
+            new EntranceNavigationTransitionInfo());
+
+        await Task.Delay(500);
+
+        // Show the next tip
+        Shared.TeachingTips.Settings.ManageTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.Settings.ManageTrackersTeachingTip.IsOpen = true;
+    }
+
+    private async void OpenDiscordButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        await Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBQCRDG"));
+    }
+
+    private async void OpenDocsButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        var deviceErrorString = TrackingDeviceErrorLabel.Text;
+        var deviceName = SelectedDeviceNameLabel.Text;
+
+        switch (deviceName)
+        {
+            case "Xbox 360 Kinect":
+                await Launcher.LaunchUriAsync(new Uri(deviceErrorString switch
+                {
+                    "E_NUI_NOTPOWERED" =>
+                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notpowered/",
+                    "E_NUI_NOTREADY" =>
+                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notready/",
+                    "E_NUI_NOTGENUINE" =>
+                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notgenuine/",
+                    "E_NUI_INSUFFICIENTBANDWIDTH" =>
+                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/insufficientbandwidth",
+                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"
+                }));
+                break;
+
+            case "Xbox One Kinect":
+                await Launcher.LaunchUriAsync(new Uri(deviceErrorString switch
+                {
+                    "E_NOTAVAILABLE" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/one/troubleshooting/",
+                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"
+                }));
+                break;
+
+            case "PSMove Service":
+                await Launcher.LaunchUriAsync(new Uri(deviceErrorString switch
+                {
+                    "E_PSMS_NOT_RUNNING" =>
+                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/psmove/troubleshooting/",
+                    "E_PSMS_NO_JOINTS" =>
+                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/psmove/troubleshooting/",
+                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"
+                }));
+                break;
+
+            default:
+                await Launcher.LaunchUriAsync(
+                    new Uri($"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"));
+                break;
+        }
+    }
+
+    private void AdditionalDeviceErrorsHyperlink_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    {
+        Shared.General.AdditionalDeviceErrorsHyperlinkTappedEvent.Start();
+    }
+
+    private async void ServerOpenDocsButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        await Launcher.LaunchUriAsync(new Uri(Interfacing.ServerDriverStatusCode switch
+        {
+            -10 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#2",
+            -1 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#3",
+            _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#5"
+        }));
+    }
+
+    private void ReRegisterButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+                "K2CrashHandler", "K2CrashHandler.exe")))
+        {
+            Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+                "K2CrashHandler", "K2CrashHandler.exe"));
+        }
+        else
+        {
+            Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
+            SetErrorFlyoutText.Text = Interfacing.LocalizedJsonString("/SettingsPage/ReRegister/Error/NotFound");
+            SetErrorFlyout.ShowAt(ReRegisterButton, new FlyoutShowOptions
+            {
+                Placement = FlyoutPlacementMode.RightEdgeAlignedBottom
+            });
+        }
+    }
+
+    private void SkeletonDrawingCanvas_Loaded(object sender, RoutedEventArgs e)
+    {
+        // TODO RENDER SKELETON
+    }
+
+    private void SkeletonToggleButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        AppData.Settings.SkeletonPreviewEnabled = SkeletonToggleButton.IsChecked;
+        AppData.Settings.SaveSettings();
+
+        SkeletonToggleButton.Content = Interfacing.LocalizedJsonString(
+            AppData.Settings.SkeletonPreviewEnabled
+                ? "/GeneralPage/Buttons/Skeleton/Hide"
+                : "/GeneralPage/Buttons/Skeleton/Show");
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppData.Settings.SkeletonPreviewEnabled
+            ? AppSounds.AppSoundType.ToggleOn
+            : AppSounds.AppSoundType.ToggleOff);
+
+        ForceRenderCheckBox.IsEnabled =
+            SkeletonToggleButton.IsChecked;
+        ForceRenderText.Opacity =
+            SkeletonToggleButton.IsChecked ? 1.0 : 0.5;
+    }
+
+    private void ToggleButtonFlyout_Opening(object sender, object e)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    private void ToggleButtonFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+    }
+
+    private void ForceRenderCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        AppData.Settings.ForceSkeletonPreview = true;
+        SetSkeletonForce(AppData.Settings.ForceSkeletonPreview);
+        AppData.Settings.SaveSettings();
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOn);
+    }
+
+    private void ForceRenderCheckBox_Unchecked(object sender, RoutedEventArgs e)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        AppData.Settings.ForceSkeletonPreview = false;
+        SetSkeletonForce(AppData.Settings.ForceSkeletonPreview);
+        AppData.Settings.SaveSettings();
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOff);
+    }
+
+    private void DismissSetErrorButton_Click(object sender, RoutedEventArgs e)
+    {
+        SetErrorFlyout.Hide();
+    }
+
+    private void OffsetsValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        // Fix and reload the offset value
+        if (!double.IsNaN(sender.Value)) return;
+
+        sender.Value = 0; // Reset to 0
+        sender.GetBindingExpression(
+            ItemsControl.ItemsSourceProperty).UpdateSource();
+    }
+
+    private void SkPoint(Microsoft.UI.Xaml.Shapes.Ellipse ellipse,
+        TrackedJoint joint, (bool Position, bool Orientation) overrideStatus)
+    {
+        const double matWidthDefault = 700, matHeightDefault = 600;
+        double matWidth = SkeletonDrawingCanvas.ActualWidth,
+            matHeight = SkeletonDrawingCanvas.ActualHeight;
+
+        // Eventually fix sizes
+        if (matWidth < 1) matWidth = matWidthDefault;
+        if (matHeight < 1) matHeight = matHeightDefault;
+
+        // Where to scale by 1.0 in perspective
+        const double normalDistance = 3;
+        const double normalEllipseSize = 12,
+            normalEllipseStrokeSize = 2;
+
+        // Compose perspective constants, make it 70%
+        var multiply = .7 * (normalDistance /
+                             (joint.JointPosition.Z > 0.0
+                                 ? joint.JointPosition.Z
+                                 : 3.0));
+
+        var a = new AcrylicBrush
+        {
+            TintColor = new Windows.UI.ViewManagement.UISettings()
+                .GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent)
+        };
+
+        ellipse.StrokeThickness = normalEllipseStrokeSize;
+        ellipse.Width = normalEllipseSize;
+        ellipse.Height = normalEllipseSize;
+
+        if (joint.TrackingState != TrackedJointState.StateTracked)
+        {
+            ellipse.Stroke = a;
+            ellipse.Fill = a;
+        }
+        else
+        {
+            ellipse.Stroke = new SolidColorBrush(Microsoft.UI.Colors.White);
+            ellipse.Fill = new SolidColorBrush(Microsoft.UI.Colors.White);
+        }
+
+        // Change the stroke based on overrides
+        ellipse.Stroke = overrideStatus.Position switch
+        {
+            // Both
+            true when overrideStatus.Orientation => new SolidColorBrush(Microsoft.UI.Colors.BlueViolet),
+            // Rotation
+            true => new SolidColorBrush(Microsoft.UI.Colors.DarkOliveGreen),
+            // Position
+            false => new SolidColorBrush(Microsoft.UI.Colors.IndianRed)
+        };
+
+        // Select the smaller scale to preserve somewhat uniform skeleton scaling
+        double sScaleW = matWidth / matWidthDefault,
+            sScaleH = matHeight / matHeightDefault;
+
+        // Move the ellipse to the appropriate point
+        ellipse.Margin = new Thickness(
+            // Left
+            joint.JointPosition.X * 300.0 *
+            Math.Min(sScaleW, sScaleH) * multiply +
+            matWidth / 2.0 - (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
+
+            // Top
+            joint.JointPosition.Y * -300.0 *
+            Math.Min(sScaleW, sScaleH) * multiply +
+            matHeight / 3.0 - (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
+
+            // Not used
+            0, 0
+        );
+
+        ellipse.Visibility = Visibility.Visible;
+    }
+
+    private void ExecuteAutomaticCalibration()
+    {
+        // Setup the calibration image : reset and stop
+        CalibrationPreviewMediaElement.MediaPlayer.Position = TimeSpan.Zero;
+        CalibrationPreviewMediaElement.MediaPlayer.Pause();
+
+        AutoCalibrationPane.Visibility = Visibility.Visible;
+        ManualCalibrationPane.Visibility = Visibility.Collapsed;
+
+        CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Inline;
+        CalibrationRunningView.IsPaneOpen = true;
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+        Interfacing.CurrentAppState = "calibration_auto";
+
+        CalibrationPointsNumberBox.IsEnabled = true;
+        CalibrationPointsNumberBox.Value = AppData.Settings.CalibrationPointsNumber;
+
+        CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString(
+            "GeneralPage/Calibration/Captions/Start");
+        NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString(
+            "GeneralPage/Captions/Preview/NoSkeletonTextCalibrating");
+        DiscardAutoCalibrationButton.Content = Interfacing.LocalizedJsonString(
+            "GeneralPage/Buttons/Cancel");
+
+        CalibrationCountdownLabel.Text = "~";
+        return;
+    }
+
+    private async Task ExecuteManualCalibration()
+    {
+        // Swap trigger/grip if we're on index or vive
+        var controllerModel = new StringBuilder(1024);
+        var error = ETrackedPropertyError.TrackedProp_Success;
+
+        OpenVR.System.GetStringTrackedDeviceProperty(
+            OpenVR.System.GetTrackedDeviceIndexForControllerRole(
+                ETrackedControllerRole.LeftHand),
+            ETrackedDeviceProperty.Prop_ModelNumber_String,
+            controllerModel, 1024, ref error);
+
+        // Set up as default (just in case)
+        LabelFineTuneVive.Visibility = Visibility.Collapsed;
+        LabelFineTuneNormal.Visibility = Visibility.Visible;
+
+        // Swap (optionally)
+        if (controllerModel.ToString().Contains("knuckles", StringComparison.OrdinalIgnoreCase) ||
+            controllerModel.ToString().Contains("index", StringComparison.OrdinalIgnoreCase) ||
+            controllerModel.ToString().Contains("vive", StringComparison.OrdinalIgnoreCase))
+        {
+            LabelFineTuneVive.Visibility = Visibility.Visible;
+            LabelFineTuneNormal.Visibility = Visibility.Collapsed;
+        }
+
+        // Set up panels
+        AutoCalibrationPane.Visibility = Visibility.Collapsed;
+        ManualCalibrationPane.Visibility = Visibility.Visible;
+
+        CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Inline;
+        CalibrationRunningView.IsPaneOpen = true;
+
+        Interfacing.CurrentAppState = "calibration_manual";
+
+        // Set the [calibration pending] bool
+        _calibrationPending = true;
+
+        // Play a nice sound - starting
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationStart);
+
+        // Which calibration method did we use
+        AppData.Settings.DeviceAutoCalibration[_calibratingDeviceGuid] = false;
+
+        // Mark as calibrated for the preview
+        AppData.Settings.DeviceMatricesCalibrated[_calibratingDeviceGuid] = true;
+
+        // Set up (a lot of) helper variables
+        var calibrationFirstTime = true;
+        float tempYaw = 0, tempPitch = 0;
+
+        // pitch, yaw, roll
+        var anglesVector3 = Vector3.Zero;
+        var rotationQuaternion = Quaternion.CreateFromYawPitchRoll(
+            anglesVector3.Y, anglesVector3.X, anglesVector3.Z);
+
+        // Copy the empty matrices to settings
+        AppData.Settings.DeviceCalibrationRotationMatrices[_calibratingDeviceGuid] = rotationQuaternion;
+
+        // Loop over until finished
+        while (!Interfacing.CalibrationConfirm)
+        {
+            // Wait for a mode switch
+            while (!Interfacing.CalibrationModeSwap && !Interfacing.CalibrationConfirm)
+            {
+                var multiplexer = Interfacing.CalibrationFineTune ? .0015f : .015f;
+
+                // Compute the translation delta for the current calibration frame
+                var currentCalibrationTranslationNew = new Vector3(
+                    Interfacing.CalibrationJoystickPositions.LeftPosition.X, // Left X
+                    Interfacing.CalibrationJoystickPositions.RightPosition.Y, // Right Y
+                    -Interfacing.CalibrationJoystickPositions.LeftPosition.Y // Left Y (inv)
+                );
+
+                // Apply the multiplexer
+                currentCalibrationTranslationNew *= multiplexer;
+
+                // Un-rotate the translation (sometimes broken due to SteamVR playspace)
+                currentCalibrationTranslationNew = Vector3.Transform(currentCalibrationTranslationNew,
+                    Quaternion.Inverse(Interfacing.VrPlayspaceOrientationQuaternion));
+
+                // Apply to the global base
+                AppData.Settings.DeviceCalibrationTranslationVectors[_calibratingDeviceGuid] +=
+                    currentCalibrationTranslationNew;
+
+                await Task.Delay(5);
+
+                // Exit if aborted
+                if (!_calibrationPending) break;
+            }
+
+            // Play mode swap sound
+            if (_calibrationPending && !Interfacing.CalibrationConfirm)
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationPointCaptured);
+
+            // Set up the calibration origin
+            if (calibrationFirstTime)
+                AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] =
+                    Interfacing.DeviceRelativeTransformOrigin[_calibratingDeviceGuid];
+
+            // Cache the calibration first_time
+            calibrationFirstTime = false;
+            await Task.Delay(300);
+
+            // Wait for a mode switch
+            while (!Interfacing.CalibrationModeSwap && !Interfacing.CalibrationConfirm)
+            {
+                var multiplexer = Interfacing.CalibrationFineTune ? .1f : 1f;
+
+                tempYaw += Interfacing.CalibrationJoystickPositions.LeftPosition.X *
+                    float.Pi / 280f * multiplexer; // Left X
+                tempPitch += Interfacing.CalibrationJoystickPositions.RightPosition.Y *
+                    float.Pi / 280f * multiplexer; // Right Y
+
+                anglesVector3 = new Vector3(tempPitch, tempYaw, 0f);
+                rotationQuaternion = Quaternion.CreateFromYawPitchRoll(
+                    anglesVector3.Y, anglesVector3.X, anglesVector3.Z);
+
+                // Copy the empty matrices to settings
+                AppData.Settings.DeviceCalibrationRotationMatrices[_calibratingDeviceGuid] = rotationQuaternion;
+
+                await Task.Delay(5);
+
+                // Exit if aborted
+                if (!_calibrationPending) break;
+            }
+
+            await Task.Delay(300);
+
+            // Play mode swap sound
+            if (_calibrationPending && !Interfacing.CalibrationConfirm)
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationPointCaptured);
+
+            // Exit if aborted
+            if (!_calibrationPending) break;
+        }
+
+        // Reset by re-reading the settings if aborted
+        if (!_calibrationPending)
+        {
+            AppData.Settings.DeviceMatricesCalibrated[_calibratingDeviceGuid] = false;
+            AppData.Settings.ReadSettings();
+
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationAborted);
+        }
+        // Else save I guess
+        else
+        {
+            AppData.Settings.SaveSettings();
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
+            await Task.Delay(1000);
+        }
+
+        // Exit the pane and reset
+        CalibrationDeviceSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
+        CalibrationDeviceSelectView.IsPaneOpen = false;
+
+        CalibrationModeSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
+        CalibrationModeSelectView.IsPaneOpen = false;
+
+        CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Overlay;
+        CalibrationRunningView.IsPaneOpen = false;
+
+        AllowNavigation(true);
+        Interfacing.CurrentAppState = "general";
+        Interfacing.CalibrationConfirm = false;
+
+        _calibrationPending = false; // We're finished
+        AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious;
+        SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
     }
 }
