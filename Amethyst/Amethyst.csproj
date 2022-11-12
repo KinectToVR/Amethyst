@@ -72,6 +72,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AmethystDriverClient\Amethyst.Driver.Client.csproj" />
     <ProjectReference Include="..\AmethystPluginContract\Amethyst.Plugins.Contract.csproj" />
+    <ProjectReference Include="..\AmethystSupport\AmethystSupport.vcxproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="Assets\*">

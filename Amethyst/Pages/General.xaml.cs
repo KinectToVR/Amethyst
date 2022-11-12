@@ -39,7 +39,7 @@ public sealed partial class General : Page
     private static string _calibratingDeviceGuid = "";
 
     private bool _calibrationPending = false;
-    private readonly bool AutoCalibration_StillPending = false;
+    private bool _autoCalibration_StillPending = false;
 
     private void SetSkeletonVisibility(bool visibility)
     {
@@ -49,9 +49,8 @@ public sealed partial class General : Page
         Shared.General.ForceRenderCheckBox.IsEnabled = visibility;
         Shared.General.SkeletonToggleButton.IsChecked = visibility;
         Shared.General.ForceRenderText.Opacity = visibility ? 1.0 : 0.5;
-        Shared.General.SkeletonToggleButton.Content = visibility
-            ? Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Hide")
-            : Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Show");
+        Shared.General.SkeletonToggleButton.Content = Interfacing.LocalizedJsonString(
+            visibility ? "/GeneralPage/Buttons/Skeleton/Hide" : "/GeneralPage/Buttons/Skeleton/Show");
     }
 
     private void SetSkeletonForce(bool visibility)
@@ -61,7 +60,7 @@ public sealed partial class General : Page
         Shared.General.ForceRenderCheckBox.IsChecked = visibility;
     }
 
-    private string CalibrationPointsFormat(string format, int p1, int p2)
+    private string CalibrationPointsFormat(string format, int p1, uint p2)
     {
         return format.Replace("{1}", p1.ToString())
             .Replace("{2}", p2.ToString());
@@ -285,7 +284,7 @@ public sealed partial class General : Page
         }
 
         // Refresh the server status
-        Interfacing.K2ServerDriverRefresh();
+        await Interfacing.K2ServerDriverRefresh();
 
         // Update things
         Interfacing.UpdateServerStatus();
@@ -293,6 +292,10 @@ public sealed partial class General : Page
 
         // Reload offset values
         OffsetsControlPivot.GetBindingExpression(
+            ItemsControl.ItemsSourceProperty).UpdateSource();
+
+        // Reload tracking devices
+        TrackingDeviceTreeView.GetBindingExpression(
             ItemsControl.ItemsSourceProperty).UpdateSource();
 
         // Notify of the setup's end
@@ -304,10 +307,11 @@ public sealed partial class General : Page
 
         // Setup the freeze button
         ToggleFreezeButton.IsChecked = Interfacing.IsTrackingFrozen;
-        ToggleFreezeButton.Content = Interfacing.IsTrackingFrozen
-            ? Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Unfreeze")
-            : Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Freeze");
         FreezeOnlyLowerToggle.IsChecked = AppData.Settings.FreezeLowerBodyOnly;
+        ToggleFreezeButton.Content = Interfacing.LocalizedJsonString(
+            Interfacing.IsTrackingFrozen
+            ? "/GeneralPage/Buttons/Skeleton/Unfreeze"
+            : "/GeneralPage/Buttons/Skeleton/Freeze");
 
         // Set up the co/re/disconnect button
         if (Interfacing.K2AppTrackersSpawned)
@@ -319,9 +323,10 @@ public sealed partial class General : Page
         else
         {
             ToggleTrackersButton.IsChecked = Interfacing.K2AppTrackersInitialized;
-            ToggleTrackersButton.Content = Interfacing.K2AppTrackersInitialized
-                ? Interfacing.LocalizedJsonString("/GeneralPage/Buttons/TrackersToggle/Disconnect")
-                : Interfacing.LocalizedJsonString("/GeneralPage/Buttons/TrackersToggle/Reconnect");
+            ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
+                Interfacing.K2AppTrackersInitialized 
+                    ? "/GeneralPage/Buttons/TrackersToggle/Disconnect" 
+                    : "/GeneralPage/Buttons/TrackersToggle/Reconnect");
         }
     }
 
@@ -443,9 +448,172 @@ public sealed partial class General : Page
         await ExecuteManualCalibration();
     }
 
-    private void StartAutoCalibrationButton_Click(object sender, RoutedEventArgs e)
+    private async void StartAutoCalibrationButton_Click(object sender, RoutedEventArgs e)
     {
-        // TODO
+        // Setup the calibration image : start
+        CalibrationPreviewMediaElement.MediaPlayer.Play();
+
+        // Set the [calibration pending] bool
+        _calibrationPending = true;
+        _autoCalibration_StillPending = true;
+
+        // Play a nice sound - starting
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationStart);
+
+        // Disable the start button and change [cancel]'s text
+        StartAutoCalibrationButton.IsEnabled = false;
+        CalibrationPointsNumberBox.IsEnabled = false;
+
+        DiscardAutoCalibrationButton.Content =
+            Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Abort");
+
+        // Mark what are we doing
+        AppData.Settings.DeviceAutoCalibration[_calibratingDeviceGuid] = true;
+
+        // Mark as calibrated for no preview
+        AppData.Settings.DeviceMatricesCalibrated[_calibratingDeviceGuid] = false;
+
+        // Reset the origin
+        AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] = Vector3.Zero;
+
+        // Setup helper variables
+        List<Vector3> hmdPositions = new(), headPositions = new();
+        await Task.Delay(1000);
+
+        // Loop over total 3 points (by default)
+        for (var point = 0; point < AppData.Settings.CalibrationPointsNumber; point++)
+        {
+            // Wait for the user to move
+            CalibrationInstructionsLabel.Text = CalibrationPointsFormat(
+                Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Move"),
+                point + 1, AppData.Settings.CalibrationPointsNumber);
+
+            for (var i = 3; i >= 0; i--)
+            {
+                if (!_calibrationPending) break; // Check for exiting
+
+                // Update the countdown label
+                CalibrationCountdownLabel.Text = i.ToString();
+
+                // Exit if aborted
+                if (!_calibrationPending) break;
+
+                // Play a nice sound - tick / move
+                if (i > 0) // Don't play the last one!
+                    AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+
+                await Task.Delay(1000);
+                if (!_calibrationPending) break; // Check for exiting
+            }
+
+            CalibrationInstructionsLabel.Text = CalibrationPointsFormat(
+                Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Stand"),
+                point + 1, AppData.Settings.CalibrationPointsNumber);
+
+            for (var i = 3; i >= 0; i--)
+            {
+                if (!_calibrationPending) break; // Check for exiting
+
+                // Update the countdown label
+                CalibrationCountdownLabel.Text = i.ToString();
+
+                // Play a nice sound - tick / stand
+                if (i > 0) // Don't play the last one!
+                    AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+
+                // Capture user's position at t_end-1
+                switch (i)
+                {
+                    case 1:
+                        // Capture positions
+                        hmdPositions.Add(Interfacing.Plugins.GetHmdPoseCalibrated.Position);
+                        headPositions.Add(Interfacing.DeviceHookJointPosition[_calibratingDeviceGuid]);
+                        break;
+
+                    case 0:
+                        CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString(
+                            "/GeneralPage/Calibration/Captions/Captured");
+                        break;
+                }
+
+                await Task.Delay(1000);
+                if (!_calibrationPending) break; // Check for exiting
+            }
+
+            // Exit if aborted
+            if (!_calibrationPending) break;
+
+            // Play a nice sound - tick / captured
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationPointCaptured);
+
+            await Task.Delay(1000);
+            if (!_calibrationPending) break; // Check for exiting
+        }
+
+        // Do the actual calibration after capturing points
+        if (_calibrationPending)
+        {
+            // Calibrate (AmethystSupport/CLI)
+            var (translation, rotation) =
+                AmethystSupport.Calibration.SVD(headPositions, hmdPositions);
+
+            Logger.Info("Automatic calibration concluded!\n" +
+                        $"Head positions: {headPositions}\n" +
+                        $"HMD positions: {hmdPositions}\n" +
+                        $"Recovered t: {translation}\n" +
+                        $"Recovered R: {rotation}");
+
+            AppData.Settings.DeviceCalibrationRotationMatrices[_calibratingDeviceGuid] = rotation;
+            AppData.Settings.DeviceCalibrationTranslationVectors[_calibratingDeviceGuid] = translation;
+
+            AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] = Vector3.Zero;
+            AppData.Settings.DeviceMatricesCalibrated[_calibratingDeviceGuid] = true;
+        }
+
+        // Reset by re-reading the settings if aborted
+        if (!_calibrationPending)
+        {
+            AppData.Settings.DeviceMatricesCalibrated[_calibratingDeviceGuid] = false;
+            AppData.Settings.ReadSettings();
+
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationAborted);
+        }
+        // Else save I guess
+        else
+        {
+            AppData.Settings.SaveSettings();
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
+        }
+
+        // Notify that we're finished
+        CalibrationCountdownLabel.Text = "~";
+        CalibrationInstructionsLabel.Text =
+            Interfacing.LocalizedJsonString(_calibrationPending
+                ? "GeneralPage/Calibration/Captions/Done"
+                : "/GeneralPage/Calibration/Captions/Aborted");
+
+        await Task.Delay(2200);
+
+        // Exit the pane
+        CalibrationDeviceSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
+        CalibrationDeviceSelectView.IsPaneOpen = false;
+
+        CalibrationModeSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
+        CalibrationModeSelectView.IsPaneOpen = false;
+
+        CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Overlay;
+        CalibrationRunningView.IsPaneOpen = false;
+
+        AllowNavigation(true);
+        Interfacing.CurrentAppState = "general";
+
+        NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeletonText");
+
+        _calibrationPending = false; // We're finished
+        _autoCalibration_StillPending = false;
+
+        AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious; // Change to whatever
+        SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
     }
 
     private void CalibrationPointsNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
@@ -467,7 +635,7 @@ public sealed partial class General : Page
     private void DiscardCalibrationButton_Click(object sender, RoutedEventArgs e)
     {
         // Just exit
-        if (!_calibrationPending && !AutoCalibration_StillPending)
+        if (!_calibrationPending && !_autoCalibration_StillPending)
         {
             CalibrationDeviceSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
             CalibrationDeviceSelectView.IsPaneOpen = false;
@@ -623,7 +791,7 @@ public sealed partial class General : Page
 
             CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Overlay;
             CalibrationRunningView.IsPaneOpen = false;
-            
+
             AllowNavigation(false);
             Interfacing.CurrentAppState = "calibration";
 
@@ -641,11 +809,11 @@ public sealed partial class General : Page
         Interfacing.IsTrackingFrozen = !Interfacing.IsTrackingFrozen;
 
         ToggleFreezeButton.IsChecked = Interfacing.IsTrackingFrozen;
-        ToggleFreezeButton.Content =
-            Interfacing.IsTrackingFrozen
-                ? Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Unfreeze")
-                : Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Freeze");
-
+        ToggleFreezeButton.Content = Interfacing.LocalizedJsonString(
+            Interfacing.IsTrackingFrozen 
+                ? "/GeneralPage/Buttons/Skeleton/Unfreeze" 
+                : "/GeneralPage/Buttons/Skeleton/Freeze");
+        
         // Play a sound
         AppSounds.PlayAppSound(Interfacing.IsTrackingFrozen
             ? AppSounds.AppSoundType.ToggleOff
@@ -1020,10 +1188,7 @@ public sealed partial class General : Page
 
         // Fix and reload the offset value
         if (!double.IsNaN(sender.Value)) return;
-
-        sender.Value = 0; // Reset to 0
-        sender.GetBindingExpression(
-            ItemsControl.ItemsSourceProperty).UpdateSource();
+        sender.Value = 0; // Reset to 0, auto-updates
     }
 
     private void SkPoint(Microsoft.UI.Xaml.Shapes.Ellipse ellipse,

@@ -68,7 +68,7 @@ public static class Interfacing
 
     // Position helpers for k2 devices -> GUID, Pose
     public static SortedDictionary<string, Vector3>
-        KinectHeadPosition, // But this one's kinect-only
+        DeviceHookJointPosition, // For automatic calibration
         DeviceRelativeTransformOrigin; // This one applies to both
 
     // OpenVR playspace position

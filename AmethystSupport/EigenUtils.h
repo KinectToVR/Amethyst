@@ -273,8 +273,7 @@ namespace EigenUtils
 		//
 
 		// find rotation
-		Eigen::JacobiSVD<Eigen::Matrix3Xd> svd = H.jacobiSvd(
-			Eigen::DecompositionOptions::ComputeFullU | Eigen::DecompositionOptions::ComputeFullV);
+		const auto svd = H.jacobiSvd<Eigen::DecompositionOptions::ComputeFullU | Eigen::DecompositionOptions::ComputeFullV>();
 		const Eigen::Matrix3d& U = svd.matrixU();
 		Eigen::MatrixXd V = svd.matrixV();
 		Eigen::Matrix3d R = V * U.transpose();
