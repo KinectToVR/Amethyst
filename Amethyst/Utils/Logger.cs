@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -130,7 +131,9 @@ public static class Logger
             throw new InvalidOperationException("Tried logging something without calling Logger.Init()! Aborting...");
         File.AppendAllLines(LogFilePath, new[] { message });
 
-        //PageLogs.LogLine(message, ConsoleColor.White);
+#if DEBUG
+        Debug.WriteLine(message);
+#endif
     }
 
     private static void LogInternal(string message, ConsoleColor color)
@@ -141,7 +144,9 @@ public static class Logger
             throw new InvalidOperationException("Tried logging something without calling Logger.Init()! Aborting...");
         File.AppendAllLines(LogFilePath, new[] { message });
 
-        //PageLogs.LogLine(message, color);
+#if DEBUG
+        Debug.WriteLine(message);
+#endif
     }
 
     private static void LogInternalUniqueMessage(string message, string messageUi, ConsoleColor color)
@@ -152,7 +157,9 @@ public static class Logger
             throw new InvalidOperationException("Tried logging something without calling Logger.Init()! Aborting...");
         File.AppendAllLines(LogFilePath, new[] { message });
 
-        //PageLogs.LogLine(messageUI, color);
+#if DEBUG
+        Debug.WriteLine(message);
+#endif
     }
 
     #endregion
