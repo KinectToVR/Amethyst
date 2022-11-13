@@ -458,7 +458,7 @@ public sealed partial class MainWindow : Window
         {
             Logger.Info($"The saved base device ({AppData.Settings.TrackingDeviceGuid}) is invalid! " +
                         $"Resetting it to the first one: ({TrackingDevices.TrackingDevicesVector.First().Key})!");
-            AppData.Settings.TrackingDeviceGuid = TrackingDevices.TrackingDevicesVector.First().Key;;
+            AppData.Settings.TrackingDeviceGuid = TrackingDevices.TrackingDevicesVector.First().Key;
         }
 
         Logger.Info("Updating app settings for the selected base device...");

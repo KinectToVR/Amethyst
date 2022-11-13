@@ -7,12 +7,12 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Amethyst Device Plugin API (Contract)</Title>
     <FileVersion></FileVersion>
-    <Version>0.0.5</Version>
+    <Version>0.0.8</Version>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>Amethyst.Plugins.Contract</PackageId>
-    <Version>0.0.5</Version>
+    <Version>0.0.8</Version>
     <Authors>K2VR</Authors>
     <Company>K2VR</Company>
     <PackageTags>Amethyst;K2VR;KinectToVR;VR;OpenVR;Fullbody Tracking</PackageTags>
@@ -23,6 +23,8 @@
       The plugin and Amethyst API isn't live yet, please make sure to keep that in mind.
     </Description>
     <PackageIcon>ktvr.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
     <PlatformTarget>x64</PlatformTarget>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>

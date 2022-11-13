@@ -135,7 +135,7 @@ public interface IAmethystHost
     void RefreshStatusInterface();
 
     // Get Amethyst UI language
-    void RefreshLanguageCode();
+    string LanguageCode { get; }
 
     // Request a string from AME resources, empty for no match
     // Warning: The primarily searched resource is the device-provided one!

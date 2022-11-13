@@ -19,17 +19,17 @@ public static class DriverClient
 
     public static IEnumerable<(TrackerType Role, bool State)> UpdateTrackerStates(IEnumerable<(TrackerType Role, bool State)> states)
     {
-        return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
+        return states;
     }
 
     public static IEnumerable<(TrackerType Role, bool State)> UpdateTrackerPoses(IEnumerable<K2TrackerBase> trackerBases)
     {
-        return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
+        return trackerBases.ToList().Select(x => (x.Tracker, true));
     }
 
     public static IEnumerable<(TrackerType Role, bool State)> RefreshTrackerPoses(IEnumerable<TrackerType> trackers)
     {
-        return new List<(TrackerType, bool)> { new(TrackerType.TrackerHanded, true) };
+        return trackers.ToList().Select(x => (x, true));
     }
 
     public static bool RequestVrRestart(string reason)

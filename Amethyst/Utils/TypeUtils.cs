@@ -100,3 +100,14 @@ public static class TypeUtils
         return new Quaternion(q.X * -scale, q.Y * -scale, q.Z * -scale, q.W * scale);
     }
 }
+
+public static class SortedDictionaryExtensions
+{
+    public static Vector3 ValueOr(this SortedDictionary<string, Vector3> dictionary, 
+        string key, Vector3? fallbackValue = null)
+    {
+        return dictionary is not null && dictionary.TryGetValue(key, out var value)
+            ? value
+            : fallbackValue ?? Vector3.Zero;
+    }
+}

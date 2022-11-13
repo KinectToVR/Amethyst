@@ -106,7 +106,7 @@ public sealed partial class General : Page
         OffsetsControlPivot.ItemsSource = AppData.Settings.TrackersVector;
 
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
-        TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesVector;
+        TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesVector.Values;
 
         Logger.Info($"Setting graphical resources for: '{CalibrationPreviewMediaElement.GetType().FullName}'...");
         CalibrationPreviewMediaElement.Source = MediaSource.CreateFromUri(
@@ -249,8 +249,11 @@ public sealed partial class General : Page
             Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoDashboardText");
 
         // Start the main loop since we're done with basic setup
-        Logger.Info("Basic setup done! Starting the main loop now...");
-        Shared.Devices.SmphSignalStartMain.Release();
+        if (!_generalPageLoadedOnce)
+        {
+            Logger.Info("Basic setup done! Starting the main loop now...");
+            Shared.Devices.SmphSignalStartMain.Release();
+        }
 
         // Update the internal version
         VersionLabel.Text = $"v{AppData.K2InternalVersion}";
@@ -291,12 +294,12 @@ public sealed partial class General : Page
         TrackingDevices.UpdateTrackingDevicesInterface();
 
         // Reload offset values
-        OffsetsControlPivot.GetBindingExpression(
-            ItemsControl.ItemsSourceProperty).UpdateSource();
+        Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
+        AppData.Settings.TrackersVector.ForEach(x => x.OnPropertyChanged());
 
         // Reload tracking devices
-        TrackingDeviceTreeView.GetBindingExpression(
-            ItemsControl.ItemsSourceProperty).UpdateSource();
+        Logger.Info($"Force refreshing devices MVVM for page: '{GetType().FullName}'...");
+        TrackingDevices.TrackingDevicesVector.Values.ToList().ForEach(x => x.OnPropertyChanged());
 
         // Notify of the setup's end
         Shared.General.GeneralTabSetupFinished = true;
@@ -310,8 +313,8 @@ public sealed partial class General : Page
         FreezeOnlyLowerToggle.IsChecked = AppData.Settings.FreezeLowerBodyOnly;
         ToggleFreezeButton.Content = Interfacing.LocalizedJsonString(
             Interfacing.IsTrackingFrozen
-            ? "/GeneralPage/Buttons/Skeleton/Unfreeze"
-            : "/GeneralPage/Buttons/Skeleton/Freeze");
+                ? "/GeneralPage/Buttons/Skeleton/Unfreeze"
+                : "/GeneralPage/Buttons/Skeleton/Freeze");
 
         // Set up the co/re/disconnect button
         if (Interfacing.K2AppTrackersSpawned)
@@ -324,8 +327,8 @@ public sealed partial class General : Page
         {
             ToggleTrackersButton.IsChecked = Interfacing.K2AppTrackersInitialized;
             ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
-                Interfacing.K2AppTrackersInitialized 
-                    ? "/GeneralPage/Buttons/TrackersToggle/Disconnect" 
+                Interfacing.K2AppTrackersInitialized
+                    ? "/GeneralPage/Buttons/TrackersToggle/Disconnect"
                     : "/GeneralPage/Buttons/TrackersToggle/Reconnect");
         }
     }
@@ -344,11 +347,11 @@ public sealed partial class General : Page
     {
         // Discard backend offsets' values by re-reading them from settings
         AppData.Settings.ReadSettings();
-
+        
         // Reload offset values
-        OffsetsControlPivot.GetBindingExpression(
-            ItemsControl.ItemsSourceProperty).UpdateSource();
-
+        Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
+        AppData.Settings.TrackersVector.ForEach(x => x.OnPropertyChanged());
+        
         // Close the pane now
         OffsetsView.DisplayMode = SplitViewDisplayMode.Overlay;
         OffsetsView.IsPaneOpen = false;
@@ -527,7 +530,7 @@ public sealed partial class General : Page
                     case 1:
                         // Capture positions
                         hmdPositions.Add(Interfacing.Plugins.GetHmdPoseCalibrated.Position);
-                        headPositions.Add(Interfacing.DeviceHookJointPosition[_calibratingDeviceGuid]);
+                        headPositions.Add(Interfacing.DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid));
                         break;
 
                     case 0:
@@ -589,7 +592,7 @@ public sealed partial class General : Page
         CalibrationCountdownLabel.Text = "~";
         CalibrationInstructionsLabel.Text =
             Interfacing.LocalizedJsonString(_calibrationPending
-                ? "GeneralPage/Calibration/Captions/Done"
+                ? "/GeneralPage/Calibration/Captions/Done"
                 : "/GeneralPage/Calibration/Captions/Aborted");
 
         await Task.Delay(2200);
@@ -746,7 +749,7 @@ public sealed partial class General : Page
 
             // If auto-calibration is not supported, proceed straight to manual
             // Test: supports if the device provides a head joint / otherwise not
-            if (trackingDevice.TrackedJoints.Any(x => x.Role != TrackedJointType.JointHead)) return;
+            if (trackingDevice.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead)) return;
 
             // Still here? the test must have failed then
             Logger.Info($"Device ({trackingDevice.Name}, {trackingDevice.Guid}) " +
@@ -810,10 +813,10 @@ public sealed partial class General : Page
 
         ToggleFreezeButton.IsChecked = Interfacing.IsTrackingFrozen;
         ToggleFreezeButton.Content = Interfacing.LocalizedJsonString(
-            Interfacing.IsTrackingFrozen 
-                ? "/GeneralPage/Buttons/Skeleton/Unfreeze" 
+            Interfacing.IsTrackingFrozen
+                ? "/GeneralPage/Buttons/Skeleton/Unfreeze"
                 : "/GeneralPage/Buttons/Skeleton/Freeze");
-        
+
         // Play a sound
         AppSounds.PlayAppSound(Interfacing.IsTrackingFrozen
             ? AppSounds.AppSoundType.ToggleOff
@@ -868,11 +871,11 @@ public sealed partial class General : Page
     {
         // Push saved offsets' by reading them from settings
         AppData.Settings.ReadSettings();
-
+        
         // Reload offset values
-        OffsetsControlPivot.GetBindingExpression(
-            ItemsControl.ItemsSourceProperty).UpdateSource();
-
+        Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
+        AppData.Settings.TrackersVector.ForEach(x => x.OnPropertyChanged());
+        
         // Open the pane now
         OffsetsView.DisplayMode = SplitViewDisplayMode.Inline;
         OffsetsView.IsPaneOpen = true;
@@ -1288,14 +1291,13 @@ public sealed partial class General : Page
         CalibrationPointsNumberBox.Value = AppData.Settings.CalibrationPointsNumber;
 
         CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString(
-            "GeneralPage/Calibration/Captions/Start");
+            "/GeneralPage/Calibration/Captions/Start");
         NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString(
-            "GeneralPage/Captions/Preview/NoSkeletonTextCalibrating");
+            "/GeneralPage/Captions/Preview/NoSkeletonTextCalibrating");
         DiscardAutoCalibrationButton.Content = Interfacing.LocalizedJsonString(
-            "GeneralPage/Buttons/Cancel");
+            "/GeneralPage/Buttons/Cancel");
 
         CalibrationCountdownLabel.Text = "~";
-        return;
     }
 
     private async Task ExecuteManualCalibration()
@@ -1355,6 +1357,7 @@ public sealed partial class General : Page
 
         // Copy the empty matrices to settings
         AppData.Settings.DeviceCalibrationRotationMatrices[_calibratingDeviceGuid] = rotationQuaternion;
+        AppData.Settings.DeviceCalibrationTranslationVectors[_calibratingDeviceGuid] = Vector3.Zero;
 
         // Loop over until finished
         while (!Interfacing.CalibrationConfirm)
@@ -1395,7 +1398,7 @@ public sealed partial class General : Page
             // Set up the calibration origin
             if (calibrationFirstTime)
                 AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] =
-                    Interfacing.DeviceRelativeTransformOrigin[_calibratingDeviceGuid];
+                    Interfacing.DeviceRelativeTransformOrigin.ValueOr(_calibratingDeviceGuid);
 
             // Cache the calibration first_time
             calibrationFirstTime = false;

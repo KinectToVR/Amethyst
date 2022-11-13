@@ -18,6 +18,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace Amethyst.Classes;
 
@@ -68,8 +69,8 @@ public static class Interfacing
 
     // Position helpers for k2 devices -> GUID, Pose
     public static SortedDictionary<string, Vector3>
-        DeviceHookJointPosition, // For automatic calibration
-        DeviceRelativeTransformOrigin; // This one applies to both
+        DeviceHookJointPosition = new(), // For automatic calibration
+        DeviceRelativeTransformOrigin = new(); // This one applies to both
 
     // OpenVR playspace position
     public static Vector3 VrPlayspaceTranslation = new(0);
@@ -391,7 +392,7 @@ public static class Interfacing
                 }
 
             // If one or more trackers failed to spawn
-            if (spawned.Count > 0 && spawned.Contains(true))
+            if (spawned.Count > 0 && spawned.Contains(false))
             {
                 Logger.Info("One or more trackers couldn't be spawned after 3 tries. Giving up...");
 
@@ -1073,7 +1074,9 @@ public static class Interfacing
     }
 
     // Get a string from runtime JSON resources, language from settings
-    public static string LocalizedJsonString(string resourceKey)
+    public static string LocalizedJsonString(string resourceKey, 
+        [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
+        [CallerMemberName] string memberName = "")
     {
         try
         {
@@ -1086,7 +1089,9 @@ public static class Interfacing
         }
         catch (Exception e)
         {
-            Logger.Error($"JSON error at key: \"{resourceKey}\"! Message: {e.Message}");
+            Logger.Error($"JSON error at key: \"{resourceKey}\"! Message: {e.Message}\n" +
+                         "Path of the local caller that requested the localized resource string: " +
+                         $"{Path.GetFileName(filePath)}::{memberName}:{lineNumber}");
 
             // Else return they key alone
             return resourceKey;

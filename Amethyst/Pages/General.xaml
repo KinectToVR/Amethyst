@@ -8,7 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mvvm="using:Amethyst.MVVM" xmlns:classes="using:Amethyst.Classes"
-    Loaded="Page_Loaded"
+    Loaded="Page_Loaded" NavigationCacheMode="Required"
     mc:Ignorable="d" Background="Transparent">
 
     <Page.Resources>
@@ -31,13 +31,19 @@
                    CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
             <SplitView.Pane>
 
-                <Grid Margin="40,10" x:Name="OffsetsControlHostGrid">
+                <Grid Margin="40,15" x:Name="OffsetsControlHostGrid">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" MinHeight="580" />
                         <RowDefinition Height="75" />
                     </Grid.RowDefinitions>
 
-                    <Pivot x:Name="OffsetsControlPivot" Grid.Row="1">
+                    <Pivot x:Name="OffsetsControlPivot" Grid.Row="0">
+                        <Pivot.HeaderTemplate>
+                            <DataTemplate x:DataType="classes:AppTracker">
+                                <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}"
+                                           FontSize="26" FontWeight="Normal" Text="{x:Bind TrackerName}"/>
+                            </DataTemplate>
+                        </Pivot.HeaderTemplate>
                         <Pivot.ItemTemplate>
                             <DataTemplate x:DataType="classes:AppTracker">
                                 <Grid>
@@ -199,19 +205,17 @@
                     <Grid Grid.Row="1" Margin="0,0,0,10" VerticalAlignment="Top">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="7" />
                         </Grid.ColumnDefinitions>
 
                         <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="4"
-                                FontSize="14" HorizontalAlignment="Stretch" Padding="15,0"
-                                Height="50" Grid.Column="1" FontWeight="Medium" Margin="0,15,5,0" />
+                                FontSize="14" HorizontalAlignment="Stretch"
+                                Height="50" Grid.Column="0" FontWeight="Medium" Margin="0,15,10,0" />
 
                         <Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="4"
-                                FontSize="14" Height="50" Grid.Column="2" Style="{ThemeResource AccentButtonStyle}"
-                                FontWeight="Medium" Padding="15,0"
-                                Margin="5,15,5,0" HorizontalAlignment="Stretch" />
+                                FontSize="14" Height="50" Grid.Column="1" Style="{ThemeResource AccentButtonStyle}"
+                                FontWeight="Medium" Margin="10,15,5,0" HorizontalAlignment="Stretch" />
                     </Grid>
 
                 </Grid>

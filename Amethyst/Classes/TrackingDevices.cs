@@ -339,5 +339,5 @@ public static class TrackingDevices
             string GUID,
             PluginLoadError Status,
             string DeviceFolder)>
-        LoadAttemptedTrackingDevicesVector;
+        LoadAttemptedTrackingDevicesVector = new();
 }

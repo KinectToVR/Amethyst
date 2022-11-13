@@ -69,7 +69,7 @@ public class AppTracker : INotifyPropertyChanged
     public bool NoPositionFilteringRequested { get; set; } = false;
 
     // Override device's GUID
-    public string OverrideGuid { get; set; }
+    public string OverrideGuid { get; set; } = "";
 
     // If the joint is overridden, overrides' ids (computed)
     public uint OverrideJointId { get; set; } = 0;
@@ -80,7 +80,7 @@ public class AppTracker : INotifyPropertyChanged
     public uint SelectedTrackedJointId { get; set; } = 0;
 
     // Tracker data (inherited)
-    public string Serial { get; set; }
+    public string Serial { get; set; } = "";
 
     public JointRotationTrackingOption OrientationTrackingOption
     {
@@ -443,4 +443,5 @@ public class AppTracker : INotifyPropertyChanged
 
     // MVVM stuff
     public string GetResourceString(string key) => Interfacing.LocalizedJsonString(key);
+    public string TrackerName => Interfacing.LocalizedJsonString($"/SharedStrings/Joints/Enum/{(int)Role}");
 }

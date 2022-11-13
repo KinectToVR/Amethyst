@@ -27,7 +27,7 @@ public class AppSettings : INotifyPropertyChanged
 
     // Current tracking device: 0 is the default base device
     // First: Device's GUID / saved, Second: Index ID / generated
-    public string TrackingDeviceGuid { get; set; } // -> Always set
+    public string TrackingDeviceGuid { get; set; } = ""; // -> Always set
     public SortedSet<string> OverrideDevicesGuidMap { get; set; } = new();
 
     // Skeleton flip when facing away: One-For-All and on is the default
