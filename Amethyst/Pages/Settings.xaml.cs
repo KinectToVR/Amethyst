@@ -73,7 +73,7 @@ public sealed partial class Settings : Page
 
         Task.Run(Task() =>
         {
-            Shared.Semaphores.ReloadSettingsPageSemaphore = 
+            Shared.Semaphores.ReloadSettingsPageSemaphore =
                 new Semaphore(0, 1);
 
             while (true)
@@ -908,5 +908,59 @@ public sealed partial class Settings : Page
     private void DismissSetErrorButton_Click(object sender, RoutedEventArgs e)
     {
         SetErrorFlyout.Hide();
+    }
+
+    private async void TrackerToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+    {
+        // Don't react to pre-init signals
+        if (!Shared.Settings.SettingsLocalInitFinished) return;
+
+        var context = (sender as ToggleSwitch).DataContext;
+        var tracker = context as AppTracker;
+
+        if (Interfacing.K2AppTrackersInitialized)
+            // try 3 times cause why not
+            for (var i = 0; i < 3; i++)
+            {
+                // Update status in server
+                DriverClient.UpdateTrackerStates(new List<(TrackerType Role, bool State)>
+                    { (tracker.Role, (sender as ToggleSwitch).IsOn) });
+                await Task.Delay(20);
+            }
+
+        TrackingDevices.TrackersConfigChanged();
+
+        // Play a sound
+        AppSounds.PlayAppSound((sender as ToggleSwitch).IsOn
+            ? AppSounds.AppSoundType.ToggleOn
+            : AppSounds.AppSoundType.ToggleOff);
+
+        // Check if any trackers are enabled
+        if (!AppData.Settings.TrackersVector.Any(x => x.IsActive))
+        {
+            Logger.Warn("All trackers have been disabled, force-enabling the waist tracker!");
+            AppData.Settings.TrackersVector[0].IsActive = true;
+        }
+
+        // Request a check for already-added trackers
+        Logger.Info("Requesting a check for already-added trackers...");
+        Interfacing.AlreadyAddedTrackersScanRequested = true;
+        AppData.Settings.SaveSettings();
+    }
+
+    private void TrackerExpander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
+    {
+    }
+
+    private void TrackerPositionFilterOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if ((sender as ComboBox).SelectedIndex < 0)
+            (sender as ComboBox).SelectedItem = e.RemovedItems[0];
+    }
+
+    private void TrackerOrientationFilterOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if ((sender as ComboBox).SelectedIndex < 0)
+            (sender as ComboBox).SelectedItem = e.RemovedItems[0];
     }
 }

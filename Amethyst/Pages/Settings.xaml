@@ -154,8 +154,8 @@
                     </Grid>
 
                     <Slider Grid.Row="1" HorizontalAlignment="Right" Width="350" Minimum="0" Maximum="100"
-                            IsEnabled="{Binding ElementName=SoundsEnabledCheckBox, Path=IsChecked,TargetNullValue=False}"
-                            Value="{x:Bind classes:AppData.Settings.AppSoundsVolume}" Margin="30,11,0,0">
+                            IsEnabled="{x:Bind classes:AppData.Settings.EnableAppSounds, Mode=OneWay}"
+                            Value="{x:Bind classes:AppData.Settings.AppSoundsVolume, Mode=TwoWay}" Margin="30,11,0,0">
                         <Slider.Transitions>
                             <TransitionCollection>
                                 <RepositionThemeTransition />
@@ -210,7 +210,7 @@
                                   VerticalAlignment="Center" IsHitTestVisible="False"
                                   HorizontalAlignment="Right" />
 
-                            <ToggleSwitch IsOn="{x:Bind classes:AppData.Settings.IsFlipEnabled, Mode=TwoWay}" 
+                            <ToggleSwitch IsOn="{x:Bind classes:AppData.Settings.IsFlipEnabled, Mode=TwoWay}"
                                           x:Name="FlipToggle" Toggled="FlipToggle_Toggled"
                                           Grid.Column="1" Margin="0,0,-125,0"
                                           OnContent="" OffContent=""
@@ -257,7 +257,7 @@
                                                        Grid.Column="0" />
                                             <CheckBox x:Name="ExternalFlipCheckBox"
                                                       Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
-                                                      IsChecked="{x:Bind classes:AppData.Settings.IsExternalFlipEnabled}"
+                                                      IsChecked="{x:Bind classes:AppData.Settings.IsExternalFlipEnabled, Mode=TwoWay}"
                                                       HorizontalAlignment="Left" VerticalAlignment="Center"
                                                       MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
                                         </Grid>
@@ -480,17 +480,112 @@
                 <StackPanel x:Name="JointExpanderHostStackPanel" HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
 
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+
                     <!--<StackPanel.Transitions>
                         <TransitionCollection>
                             <EntranceThemeTransition />
                             <RepositionThemeTransition />
                             --><!--<AddDeleteThemeTransition />-->
-                            <!--<ContentThemeTransition />--><!--
+                    <!--<ContentThemeTransition />--><!--
                         </TransitionCollection>
                     </StackPanel.Transitions>-->
 
                     <ItemsRepeater x:Name="JointSettingsItemsRepeater">
+                        <DataTemplate x:DataType="classes:AppTracker">
+                            <Grid>
+                                <Grid.Transitions>
+                                    <TransitionCollection>
+                                        <RepositionThemeTransition />
+                                    </TransitionCollection>
+                                </Grid.Transitions>
 
+                                <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock FontWeight="SemiBold" Text="{x:Bind TrackerName, Mode=OneWay}"
+                                               FontSize="14" Margin="0,-3,0,0"
+                                               Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+                                    <ToggleSwitch IsOn="{x:Bind IsActive, Mode=TwoWay}" Toggled="TrackerToggleSwitch_Toggled"
+                                                  Grid.Column="1" Margin="0,0,-125,0" OnContent="" OffContent=""
+                                                  VerticalAlignment="Center" HorizontalAlignment="Right" DataContext="{x:Bind}" />
+                                </Grid>
+
+                                <Expander Margin="0,10,0,0" Expanding="TrackerExpander_Expanding"
+                                          IsEnabled="{x:Bind IsActive, Mode=OneWay}"
+                                          IsExpanded="{x:Bind IsTrackerExpanderOpen, Mode=TwoWay}"
+                                          ExpandDirection="Down" HorizontalAlignment="Stretch"
+                                          HorizontalContentAlignment="Stretch">
+                                    <Expander.Content>
+                                        <Grid Padding="0,-5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="80" />
+                                                <RowDefinition Height="80" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                                       Text="{x:Bind GetResourceString('/SettingsPage/Captions/Filters/Position'), Mode=OneWay}"
+                                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
+
+                                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" DataContext="{x:Bind}"
+                                                      SelectedIndex="{x:Bind PositionTrackingDisplayOption, Mode=TwoWay}"
+                                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                                      PlaceholderText="{x:Bind ManagingDevicePlaceholder, Mode=OneWay}"
+                                                      IsEnabled="{x:Bind InvertBool(NoPositionFilteringRequested), Mode=OneWay}"
+                                                      SelectionChanged="TrackerPositionFilterOptionBox_SelectionChanged"
+                                                      Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                                                <ComboBoxItem
+                                                    Content="{x:Bind GetResourceString('/SettingsPage/Filters/Position/LERP'), Mode=OneWay}" />
+                                                <ComboBoxItem
+                                                    Content="{x:Bind GetResourceString('/SettingsPage/Filters/Position/LowPass'), Mode=OneWay}" />
+                                                <ComboBoxItem
+                                                    Content="{x:Bind GetResourceString('/SettingsPage/Filters/Position/Kalman'), Mode=OneWay}" />
+                                                <ComboBoxItem
+                                                    Content="{x:Bind GetResourceString('/SettingsPage/Filters/Position/Off'), Mode=OneWay}" />
+                                            </ComboBox>
+
+                                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                                       Text="{x:Bind GetResourceString('/SettingsPage/Captions/Filters/Orientation'), Mode=OneWay}"
+                                                       Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
+
+                                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" DataContext="{x:Bind}"
+                                                      Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                                      PlaceholderText="{x:Bind ManagingDevicePlaceholder, Mode=OneWay}"
+                                                      SelectedIndex="{x:Bind OrientationTrackingDisplayOption, Mode=TwoWay}"
+                                                      SelectionChanged="TrackerOrientationFilterOptionBox_SelectionChanged"
+                                                      Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+                                                <ComboBoxItem
+                                                    Content="{x:Bind GetResourceString('/SettingsPage/Filters/Orientation/Device'), Mode=OneWay}" />
+                                                <ComboBoxItem
+                                                    Content="{x:Bind GetResourceString('/SettingsPage/Filters/Orientation/MathBased'), Mode=OneWay}"
+                                                    Visibility="{x:Bind AppOrientationSupported, Mode=OneWay}" />
+                                                <ComboBoxItem
+                                                    Content="{x:Bind GetResourceString('/SettingsPage/Filters/Orientation/MathBasedV2'), Mode=OneWay}"
+                                                    Visibility="{x:Bind AppOrientationSupported, Mode=OneWay}" />
+                                                <ComboBoxItem
+                                                    Content="{x:Bind GetResourceString('/SettingsPage/Filters/Orientation/HMD'), Mode=OneWay}" />
+                                                <ComboBoxItem
+                                                    Content="{x:Bind GetResourceString('/SettingsPage/Filters/Orientation/Off'), Mode=OneWay}" />
+                                            </ComboBox>
+
+                                        </Grid>
+                                    </Expander.Content>
+                                </Expander>
+                            </Grid>
+                        </DataTemplate>
                     </ItemsRepeater>
                 </StackPanel>
 
@@ -548,7 +643,7 @@
                     <Grid Grid.Column="0" Grid.Row="1" Margin="0,20,0,0">
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
                                    x:Name="Captions_TrackersAutoSpawn" Margin="30,0,0,10" />
-                        <CheckBox x:Name="AutoSpawnCheckBox" 
+                        <CheckBox x:Name="AutoSpawnCheckBox"
                                   Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
                                   IsChecked="{x:Bind classes:AppData.Settings.AutoSpawnEnabledJoints}"
                                   HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -558,7 +653,7 @@
                     <Grid Grid.Column="0" Grid.Row="2">
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
                                    x:Name="Captions_TrackersAutoCheck" Margin="30,0,0,10" />
-                        <CheckBox x:Name="CheckOverlapsCheckBox" 
+                        <CheckBox x:Name="CheckOverlapsCheckBox"
                                   Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
                                   IsChecked="{x:Bind classes:AppData.Settings.CheckForOverlappingTrackers}"
                                   HorizontalAlignment="Left" VerticalAlignment="Center"

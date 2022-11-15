@@ -66,7 +66,17 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     // Does the managing device request no pos filtering?
-    public bool NoPositionFilteringRequested { get; set; } = false;
+    private bool _noPositionFilteringRequested = false;
+
+    public bool NoPositionFilteringRequested
+    {
+        get => _noPositionFilteringRequested;
+        set
+        {
+            _noPositionFilteringRequested = value;
+            OnPropertyChanged();
+        }
+    }
 
     // Override device's GUID
     public string OverrideGuid { get; set; } = "";
@@ -442,6 +452,57 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     // MVVM stuff
-    public string GetResourceString(string key) => Interfacing.LocalizedJsonString(key);
+    public string GetResourceString(string key)
+    {
+        return Interfacing.LocalizedJsonString(key);
+    }
+
+    public bool InvertBool(bool v)
+    {
+        return !v;
+    }
+
     public string TrackerName => Interfacing.LocalizedJsonString($"/SharedStrings/Joints/Enum/{(int)Role}");
+
+    public int PositionTrackingDisplayOption
+    {
+        get => NoPositionFilteringRequested ? -1 : (int)PositionTrackingFilterOption;
+        set
+        {
+            PositionTrackingFilterOption = (JointPositionTrackingOption)value;
+            OnPropertyChanged("PositionTrackingDisplayOption");
+        }
+    }
+
+    public int OrientationTrackingDisplayOption
+    {
+        get => (int)OrientationTrackingOption;
+        set
+        {
+            OrientationTrackingOption = (JointRotationTrackingOption)value;
+            OnPropertyChanged("OrientationTrackingDisplayOption");
+        }
+    }
+
+    public bool AppOrientationSupported =>
+        Role is TrackerType.TrackerLeftFoot or TrackerType.TrackerRightFoot &&
+        TrackingDevices.GetTrackingDevice().IsAppOrientationSupported;
+
+    public string GetManagingDeviceGuid =>
+        IsPositionOverridden || IsRotationOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
+
+    public string ManagingDevicePlaceholder =>
+        GetResourceString("/SettingsPage/Filters/Managed").Replace("{0}", GetManagingDeviceGuid);
+
+    private bool _isTrackerExpanderOpen = false;
+
+    public bool IsTrackerExpanderOpen
+    {
+        get => _isTrackerExpanderOpen && IsActive;
+        set
+        {
+            _isTrackerExpanderOpen = value;
+            OnPropertyChanged("IsTrackerExpanderOpen");
+        }
+    }
 }

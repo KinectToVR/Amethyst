@@ -45,7 +45,7 @@ public class AppSettings : INotifyPropertyChanged
     public SortedSet<string> OverrideDevicesGuidMap { get; set; } = new();
 
     // Skeleton flip when facing away: One-For-All and on is the default
-    private bool _isFlipEnabled = false;
+    private bool _isFlipEnabled = true;
 
     public bool IsFlipEnabled
     {
