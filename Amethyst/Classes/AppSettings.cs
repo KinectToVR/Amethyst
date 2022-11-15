@@ -9,6 +9,9 @@ using Amethyst.Utils;
 using System.ComponentModel;
 using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
+using Microsoft.UI.Xaml.Controls;
+using System.Text;
+using Valve.VR;
 
 namespace Amethyst.Classes;
 
@@ -22,8 +25,19 @@ public class AppSettings : INotifyPropertyChanged
 
     // Current joints
     public List<AppTracker> TrackersVector { get; set; } = new();
-    public bool UseTrackerPairs { get; set; } = true; // Pair feet, elbows and knees
-    public bool CheckForOverlappingTrackers { get; set; } = true; // Check for overlapping roles
+    public bool UseTrackerPairs { get; set; } = false; // Pair feet, elbows and knees
+    private bool _checkForOverlappingTrackers = true; // Check for overlapping roles
+
+    public bool CheckForOverlappingTrackers
+    {
+        get => _checkForOverlappingTrackers;
+        set
+        {
+            _checkForOverlappingTrackers = value;
+            OnPropertyChanged("CheckForOverlappingTrackers");
+            AppData.Settings.SaveSettings();
+        }
+    }
 
     // Current tracking device: 0 is the default base device
     // First: Device's GUID / saved, Second: Index ID / generated
@@ -31,19 +45,77 @@ public class AppSettings : INotifyPropertyChanged
     public SortedSet<string> OverrideDevicesGuidMap { get; set; } = new();
 
     // Skeleton flip when facing away: One-For-All and on is the default
-    public bool IsFlipEnabled { get; set; } = true;
+    private bool _isFlipEnabled = false;
+
+    public bool IsFlipEnabled
+    {
+        get => _isFlipEnabled;
+        set
+        {
+            _isFlipEnabled = value;
+            TrackingDevices.CheckFlipSupport();
+
+            OnPropertyChanged("IsFlipEnabled");
+            AppData.Settings.SaveSettings();
+        }
+    }
 
     // Skeleton flip based on non-flip override devices' waist tracker
-    public bool IsExternalFlipEnabled { get; set; } = false;
+    private bool _isExternalFlipEnabled = false;
+
+    public bool IsExternalFlipEnabled
+    {
+        get => _isExternalFlipEnabled;
+        set
+        {
+            _isExternalFlipEnabled = value;
+            TrackingDevices.CheckFlipSupport();
+            OnPropertyChanged("IsExternalFlipEnabled");
+            AppData.Settings.SaveSettings();
+        }
+    }
 
     // Automatically spawn enabled trackers on startup and off is the default
-    public bool AutoSpawnEnabledJoints { get; set; } = false;
+    private bool _autoSpawnEnabledJoints = false;
+
+    public bool AutoSpawnEnabledJoints
+    {
+        get => _autoSpawnEnabledJoints;
+        set
+        {
+            _autoSpawnEnabledJoints = value;
+            OnPropertyChanged("AutoSpawnEnabledJoints");
+            AppData.Settings.SaveSettings();
+        }
+    }
 
     // Enable application sounds and on is the default
-    public bool EnableAppSounds { get; set; } = true;
+    private bool _enableAppSounds = true;
+
+    public bool EnableAppSounds
+    {
+        get => _enableAppSounds;
+        set
+        {
+            _enableAppSounds = value;
+            OnPropertyChanged("EnableAppSounds");
+            AppData.Settings.SaveSettings();
+        }
+    }
 
     // App sounds' volume and *nice* is the default
-    public uint AppSoundsVolume { get; set; } = 69; // Always 0<x<100
+    private uint _appSoundsVolume = 69; // Always 0<x<100
+
+    public uint AppSoundsVolume
+    {
+        get => _appSoundsVolume;
+        set
+        {
+            _appSoundsVolume = value;
+            OnPropertyChanged("AppSoundsVolume");
+            AppData.Settings.SaveSettings();
+        }
+    }
 
     // Calibration - if we're calibrated
     public SortedDictionary<string, bool> DeviceMatricesCalibrated { get; set; } = new();

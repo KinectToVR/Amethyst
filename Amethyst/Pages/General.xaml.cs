@@ -23,6 +23,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Amethyst.MVVM;
 using static Amethyst.Classes.Shared.TeachingTips;
 using System.Xml.Linq;
+using System.Threading;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,6 +37,7 @@ public sealed partial class General : Page
 {
     private bool _showSkeletonPrevious = true;
     private bool _generalPageLoadedOnce = false;
+    private bool _offsetsPageLoadedOnce = false;
     private static string _calibratingDeviceGuid = "";
 
     private bool _calibrationPending = false;
@@ -117,10 +119,13 @@ public sealed partial class General : Page
 
         Task.Run(Task() =>
         {
+            Shared.Semaphores.ReloadGeneralPageSemaphore = 
+                new Semaphore(0, 1);
+
             while (true)
             {
                 // Wait for a reload signal (blocking)
-                Shared.Semaphores.ReloadInfoPageSemaphore.WaitOne();
+                Shared.Semaphores.ReloadGeneralPageSemaphore.WaitOne();
 
                 // Reload & restart the waiting loop
                 if (_generalPageLoadedOnce)
@@ -1187,7 +1192,10 @@ public sealed partial class General : Page
     private void OffsetsValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
     {
         // Don't even care if we're not set up yet
-        if (!Shared.General.GeneralTabSetupFinished) return;
+        if (!_offsetsPageLoadedOnce) return;
+        
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         // Fix and reload the offset value
         if (!double.IsNaN(sender.Value)) return;
@@ -1470,5 +1478,18 @@ public sealed partial class General : Page
         _calibrationPending = false; // We're finished
         AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious;
         SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
+    }
+
+    private void Button_ClickSound(object sender, RoutedEventArgs e)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+    }
+
+    private void OffsetsView_PaneOpened(SplitView sender, object args)
+    {
+        _offsetsPageLoadedOnce = true;
     }
 }

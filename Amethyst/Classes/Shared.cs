@@ -15,11 +15,20 @@ public static class Shared
     public static class Semaphores
     {
         public static Semaphore
-            ReloadMainWindowSemaphore = new(0, 1),
-            ReloadGeneralPageSemaphore = new(0, 1),
-            ReloadSettingsPageSemaphore = new(0, 1),
-            ReloadDevicesPageSemaphore = new(0, 1),
-            ReloadInfoPageSemaphore = new(0, 1);
+            ReloadMainWindowSemaphore,
+            ReloadGeneralPageSemaphore,
+            ReloadSettingsPageSemaphore,
+            ReloadDevicesPageSemaphore,
+            ReloadInfoPageSemaphore;
+
+        public static void RequestInterfaceReload()
+        {
+            ReloadMainWindowSemaphore?.Release();
+            ReloadGeneralPageSemaphore?.Release();
+            ReloadSettingsPageSemaphore?.Release();
+            ReloadDevicesPageSemaphore?.Release();
+            ReloadInfoPageSemaphore?.Release();
+        }
     }
 
     public static class Main
@@ -236,13 +245,10 @@ public static class Shared
         public static Grid FlipDropDownGrid;
         public static ScrollViewer PageMainScrollViewer;
         public static ToggleSwitch FlipToggle;
-        public static Slider SoundsVolumeSlider;
         public static Expander FlipDropDown;
 
         public static CheckBox
             ExternalFlipCheckBox,
-            AutoSpawnCheckbox,
-            EnableSoundsCheckbox,
             AutoStartCheckBox,
             CheckOverlapsCheckBox;
 

@@ -25,7 +25,7 @@
     </Page.Resources>
 
     <Grid Background="Transparent">
-        <SplitView Canvas.ZIndex="1" x:Name="OffsetsView"
+        <SplitView Canvas.ZIndex="1" x:Name="OffsetsView" PaneOpened="OffsetsView_PaneOpened"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                    PaneClosing="CancelPaneClosing" IsPaneOpen="False" OpenPaneLength="520"
                    CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
@@ -1200,6 +1200,7 @@
                         </ToggleButton>
 
                         <Button FontWeight="SemiBold" VerticalAlignment="Stretch" Width="65" Height="65"
+                                Click="Button_ClickSound"
                                 IsEnabled="{Binding ElementName=CalibrationButton,Path=IsEnabled, TargetNullValue=False}"
                                 Margin="10" CornerRadius="4" Grid.Column="2" HorizontalAlignment="Stretch">
 

@@ -98,11 +98,7 @@ public partial class App : Application
                     .TrackingDevicesLocalizationResourcesRootsVector[plugin.Guid].Directory, plugin.Guid);
 
             // Request page reloads
-            Shared.Semaphores.ReloadMainWindowSemaphore.Release();
-            Shared.Semaphores.ReloadGeneralPageSemaphore.Release();
-            Shared.Semaphores.ReloadSettingsPageSemaphore.Release();
-            Shared.Semaphores.ReloadDevicesPageSemaphore.Release();
-            Shared.Semaphores.ReloadInfoPageSemaphore.Release();
+            Shared.Semaphores.RequestInterfaceReload();
         }
 
         // Add event handlers : local

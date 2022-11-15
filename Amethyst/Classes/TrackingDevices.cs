@@ -37,14 +37,6 @@ public static class TrackingDevices
         var overrideStatusOk = true;
         var failingOverrideGuid = "";
 
-        // Optionally disable flip
-        if (!currentDevice.IsFlipSupported &&
-            AppData.Settings.IsFlipEnabled)
-        {
-            AppData.Settings.IsFlipEnabled = false;
-            AppData.Settings.SaveSettings();
-        }
-
         foreach (var device in AppData.Settings.OverrideDevicesGuidMap
                      .Where(device => TrackingDevicesVector[device].DeviceStatus != 0))
         {
@@ -129,8 +121,6 @@ public static class TrackingDevices
         if (Settings.FlipDropDown is null) return;
 
         // Overwritten a bit earlier
-        Settings.FlipToggle.IsOn = AppData.Settings.IsFlipEnabled;
-
         Settings.FlipToggle.IsEnabled = currentDevice.IsFlipSupported;
         Settings.FlipDropDown.IsEnabled = currentDevice.IsFlipSupported;
         Settings.FlipDropDownGrid.Opacity = currentDevice.IsFlipSupported
@@ -138,7 +128,7 @@ public static class TrackingDevices
             : 0.5; // IF not : dim a bit (and probably hide)
 
         // Update extflip
-        CheckExternalFlip();
+        CheckFlipSupport();
     }
 
     public static void HandleDeviceRefresh(bool shouldReconnect)
@@ -175,9 +165,27 @@ public static class TrackingDevices
                Interfacing.FindVrTracker("waist", false).Found;
     }
 
-    public static void CheckExternalFlip()
+    public static void CheckFlipSupport()
     {
         if (Settings.ExternalFlipCheckBox is null) return;
+
+        Settings.FlipToggle.IsEnabled = GetTrackingDevice().IsFlipSupported;
+        Settings.FlipDropDown.IsEnabled = AppData.Settings.IsFlipEnabled
+                                          && Settings.FlipToggle.IsEnabled;
+
+        Settings.FlipDropDownGrid.Opacity = Settings.FlipToggle.IsEnabled ? 1.0 : 0.5;
+        Settings.FlipDropDownContainer.Visibility =
+            Settings.FlipToggle.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
+
+        if (!AppData.Settings.IsFlipEnabled)
+        {
+            Settings.FlipDropDown.IsEnabled = false;
+            Settings.FlipDropDown.IsExpanded = false;
+        }
+        else
+        {
+            Settings.FlipDropDown.IsEnabled = true;
+        }
 
         // Everything's fine
         if (IsExternalFlipSupportable() &&
@@ -204,26 +212,6 @@ public static class TrackingDevices
                 Interfacing.LocalizedJsonString("/SettingsPage/Captions/ExtFlipStatus/Disabled");
 
             Settings.ExternalFlipStatusStackPanel.Visibility = Visibility.Collapsed;
-        }
-    }
-
-    public static void UpdateIsFlipEnabled()
-    {
-        // Skip if not set up yet
-        if (Settings.FlipDropDown is null) return;
-
-        // Make expander opacity .5 and collapse it
-        // to imitate that it's disabled
-
-        // Flip
-        if (!AppData.Settings.IsFlipEnabled)
-        {
-            Settings.FlipDropDown.IsEnabled = false;
-            Settings.FlipDropDown.IsExpanded = false;
-        }
-        else
-        {
-            Settings.FlipDropDown.IsEnabled = true;
         }
     }
 
@@ -258,11 +246,9 @@ public static class TrackingDevices
             if (Settings.RestartButton is not null)
                 Settings.RestartButton.IsEnabled = true;
         }
-
-        // Enable/Disable combos
-        UpdateIsFlipEnabled();
-        // Enable/Disable ExtFlip
-        CheckExternalFlip();
+        
+        // Enable/Disable Flip
+        CheckFlipSupport();
     }
 
     public static void CheckOverrideIndexes(string guid)

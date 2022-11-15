@@ -180,6 +180,9 @@ public sealed partial class MainWindow : Window
 
         Task.Run(Task() =>
         {
+            Shared.Semaphores.ReloadMainWindowSemaphore = 
+                new Semaphore(0, 1);
+
             while (true)
             {
                 // Wait for a reload signal (blocking)
@@ -604,6 +607,9 @@ public sealed partial class MainWindow : Window
 
         // Register a theme watchdog
         NavView.XamlRoot.Content.As<Grid>().ActualThemeChanged += MainWindow_ActualThemeChanged;
+
+        // Mark as loaded
+        _mainPageLoadedOnce = true;
     }
 
     [LibraryImport("user32.dll")]
@@ -622,24 +628,9 @@ public sealed partial class MainWindow : Window
             Interfacing.ActualTheme == ElementTheme.Dark
                 ? Application.Current.Resources["NeutralBrush_Dark"].As<SolidColorBrush>()
                 : Application.Current.Resources["NeutralBrush_Light"].As<SolidColorBrush>();
-
-        if (Application.Current.Resources.ContainsKey("WindowCaptionForeground"))
-            Application.Current.Resources.Remove("WindowCaptionForeground");
-
-        Application.Current.Resources.Add("WindowCaptionForeground",
-            Interfacing.ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black);
-
-        // Trigger a titlebar repaint
-        if (Shared.Main.AppWindowId == Interfacing.GetActiveWindow())
-        {
-            SendMessage(Shared.Main.AppWindowId, 0x0006, new IntPtr(0), new IntPtr(0));
-            SendMessage(Shared.Main.AppWindowId, 0x0006, new IntPtr(1), new IntPtr(0));
-        }
-        else
-        {
-            SendMessage(Shared.Main.AppWindowId, 0x0006, new IntPtr(1), new IntPtr(0));
-            SendMessage(Shared.Main.AppWindowId, 0x0006, new IntPtr(0), new IntPtr(0));
-        }
+        
+        Application.Current.Resources["WindowCaptionForeground"] =
+            Interfacing.ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black;
 
         // Overwrite titlebar colors
         Shared.Main.AppWindow.TitleBar.ButtonForegroundColor =
@@ -653,14 +644,7 @@ public sealed partial class MainWindow : Window
             Shared.Main.AppWindow.TitleBar.ButtonPressedBackgroundColor;
 
         // Request page reloads
-        Shared.Semaphores.ReloadMainWindowSemaphore.Release();
-        Shared.Semaphores.ReloadGeneralPageSemaphore.Release();
-        Shared.Semaphores.ReloadSettingsPageSemaphore.Release();
-        Shared.Semaphores.ReloadDevicesPageSemaphore.Release();
-        Shared.Semaphores.ReloadInfoPageSemaphore.Release();
-
-        // Mark as loaded
-        _mainPageLoadedOnce = true;
+        Shared.Semaphores.RequestInterfaceReload();
     }
 
     private async Task MainGrid_LoadedHandler()

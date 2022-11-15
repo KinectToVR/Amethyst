@@ -7,8 +7,665 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" NavigationCacheMode="Required"
-    Background="Transparent">
+    xmlns:classes="using:Amethyst.Classes"
+    Loaded="Page_Loaded" NavigationCacheMode="Required"
+    mc:Ignorable="d" Background="Transparent">
 
-    <Grid />
+    <Grid Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="700" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid x:Name="DimGrid" Canvas.ZIndex="1" Opacity="0.0" IsHitTestVisible="False">
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+        </Grid>
+
+        <Grid Grid.Column="0" Canvas.ZIndex="1"
+              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+              Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
+              IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+        </Grid>
+
+        <Grid Grid.Column="1" Canvas.ZIndex="1"
+              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+              Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
+              IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+        </Grid>
+
+        <Grid Grid.Column="2" Canvas.ZIndex="1"
+              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+              Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
+              IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+        </Grid>
+
+        <ScrollViewer x:Name="PageMainScrollViewer"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
+                      VerticalScrollBarVisibility="Visible" Padding="00,-20,20,-20" Margin="-20,20,-20,20">
+
+            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        Padding="20,0,0,0" Orientation="Vertical">
+
+                <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+
+                      CornerRadius="4" Padding="15,15" Visibility="Collapsed"
+                      HorizontalAlignment="Stretch" Height="130" Margin="0,20,0,0" x:Name="ForeignLangGrid">
+                    <TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords" Margin="0,-3,0,0"
+                               HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                        We detected that your PC is running in a language that isn't currently localized in Amethyst.
+                        As always, all community contributions are more than welcome.
+                        The more languages Amethyst is available in, the more people can actually access and use it.
+                    </TextBlock>
+                    <HyperlinkButton Content="You can help us with that here."
+                                     NavigateUri="https://github.com/KinectToVR/Amethyst-Releases/wiki/Localizing-Amethyst"
+                                     VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                </Grid>
+
+                <TextBlock FontWeight="SemiBold" Text="Application"
+                           x:Name="Titles_Application"
+                           FontSize="25" Margin="0,30,0,0">
+                    <TextBlock.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </TextBlock.Transitions>
+                </TextBlock>
+
+                <Grid Margin="-20,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="5*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80" />
+                        <RowDefinition Height="80" />
+                    </Grid.RowDefinitions>
+
+                    <FontIcon Margin="0,3,0,0" Grid.Column="0" Grid.Row="0"
+                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                              FontSize="16" Glyph="&#xF2B7;">
+                        <FontIcon.TranslationTransition>
+                            <Vector3Transition />
+                        </FontIcon.TranslationTransition>
+                    </FontIcon>
+
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                               Name="Labels_DisplayLanguage"
+                               Margin="0,0,20,0" Grid.Column="1" Grid.Row="0" />
+
+                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                              Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                              x:Name="LanguageOptionBox" SelectionChanged="LanguageOptionBox_SelectionChanged"
+
+                              DropDownOpened="OptionBox_DropDownOpened"
+                              DropDownClosed="OptionBox_DropDownClosed"
+
+                              Grid.Column="2" Grid.Row="0" Margin="0,0,0,0">
+                        <ComboBoxItem Content="INVALID" />
+                    </ComboBox>
+
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                               Name="Labels_AppTheme"
+                               Margin="0,0,20,0" Grid.Column="1" Grid.Row="1" />
+
+                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                              Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                              x:Name="AppThemeOptionBox" SelectionChanged="AppThemeOptionBox_SelectionChanged"
+
+                              DropDownOpened="OptionBox_DropDownOpened"
+                              DropDownClosed="OptionBox_DropDownClosed"
+
+                              Grid.Column="2" Grid.Row="1" Margin="0,0,0,0">
+                        <ComboBoxItem Content="INVALID" />
+                    </ComboBox>
+
+                </Grid>
+
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid Grid.Column="0" Grid.Row="1" Margin="0,15,0,0">
+                        <Grid.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Grid.Transitions>
+
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+                                   x:Name="Captions_Sounds" Margin="30,0,0,10" />
+                        <CheckBox x:Name="SoundsEnabledCheckBox"
+                                  IsChecked="{x:Bind classes:AppData.Settings.EnableAppSounds, Mode=TwoWay}"
+                                  HorizontalAlignment="Left" VerticalAlignment="Center"
+                                  MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
+                    </Grid>
+
+                    <Slider Grid.Row="1" HorizontalAlignment="Right" Width="350" Minimum="0" Maximum="100"
+                            IsEnabled="{Binding ElementName=SoundsEnabledCheckBox, Path=IsChecked,TargetNullValue=False}"
+                            Value="{x:Bind classes:AppData.Settings.AppSoundsVolume}" Margin="30,11,0,0">
+                        <Slider.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Slider.Transitions>
+                    </Slider>
+                </Grid>
+
+                <Grid HorizontalAlignment="Stretch" Margin="0,5,0,0">
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                               FontWeight="Medium"
+                               x:Name="Captions_AutoStart" Margin="30,0,0,3" />
+                    <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
+                              Unchecked="AutoStartCheckBox_Unchecked"
+                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                              MinWidth="0" MinHeight="0" />
+
+                    <Grid.Resources>
+                        <TeachingTip x:Name="AutoStartTeachingTip"
+                                     Target="{Binding ElementName=Captions_AutoStart}"
+                                     Title="/AUTOSTART"
+                                     Subtitle="/TEXT"
+                                     PreferredPlacement="Bottom"
+                                     IsLightDismissEnabled="False"
+                                     ActionButtonContent="/BACK"
+                                     CloseButtonContent="/NEXT"
+                                     Style="{ThemeResource BigTeachingTipStyle}"
+                                     ActionButtonClick="AutoStartTeachingTip_ActionButtonClick"
+                                     CloseButtonClick="AutoStartTeachingTip_CloseButtonClick" />
+                    </Grid.Resources>
+                </Grid>
+
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
+                            x:Name="FlipDropDownContainer" Margin="0,20,0,10">
+
+                    <TextBlock FontWeight="SemiBold" x:Name="Titles_SkeletonFlip" FontSize="25" />
+
+                    <Grid x:Name="FlipDropDownGrid">
+                        <Grid Margin="20,15,60,0" VerticalAlignment="Top" Canvas.ZIndex="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock FontWeight="SemiBold" x:Name="Captions_SkeletonFlip"
+                                       FontSize="14" Margin="0,-3,0,0"
+                                       Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+                            <!--This is needed only for the teachingtip-->
+                            <Grid Grid.Column="1" Margin="0,0,-11,0"
+                                  Width="40" Height="22" x:Name="FlipToggleDummyGrid"
+                                  VerticalAlignment="Center" IsHitTestVisible="False"
+                                  HorizontalAlignment="Right" />
+
+                            <ToggleSwitch IsOn="{x:Bind classes:AppData.Settings.IsFlipEnabled, Mode=TwoWay}" 
+                                          x:Name="FlipToggle" Toggled="FlipToggle_Toggled"
+                                          Grid.Column="1" Margin="0,0,-125,0"
+                                          OnContent="" OffContent=""
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Right">
+                                <ToggleSwitch.Resources>
+                                    <TeachingTip x:Name="ToggleFlipTeachingTip"
+                                                 Closed="ToggleFlipTeachingTip_Closed"
+                                                 Target="{Binding ElementName=FlipToggleDummyGrid}"
+                                                 PreferredPlacement="Bottom"
+                                                 IsLightDismissEnabled="True"
+                                                 Title="[CONTENT NOT SET]"
+                                                 Subtitle="[CONTENT NOT SET]">
+                                        <TeachingTip.IconSource>
+                                            <FontIconSource Glyph="&#xE946;" />
+                                        </TeachingTip.IconSource>
+                                    </TeachingTip>
+                                </ToggleSwitch.Resources>
+                            </ToggleSwitch>
+                        </Grid>
+
+                        <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="FlipDropDown"
+                                  Expanding="FlipDropDown_Expanding"
+                                  Collapsed="FlipDropDown_Collapsed"
+                                  ExpandDirection="Down" HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Stretch" IsEnabled="False">
+
+                            <Expander.Content>
+                                <StackPanel Orientation="Vertical" Padding="0,-5">
+
+                                    <StackPanel Orientation="Horizontal" x:Name="ExternalFlipStackPanel"
+                                                Margin="0,-25,0,-20">
+
+                                        <Grid Margin="0,5,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="9*" />
+                                                <ColumnDefinition Width="2*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                       FontWeight="Medium"
+                                                       x:Name="ExternalFlipCheckBoxLabel"
+                                                       Margin="30,0,0,10"
+                                                       Grid.Column="0" />
+                                            <CheckBox x:Name="ExternalFlipCheckBox"
+                                                      Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
+                                                      IsChecked="{x:Bind classes:AppData.Settings.IsExternalFlipEnabled}"
+                                                      HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                      MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
+                                        </Grid>
+
+                                        <AppBarButton IsCompact="True" Width="35" Height="65" Margin="5,17,0,0"
+                                                      x:Name="ExtFlipAppBarButton"
+                                                      IsEnabled="{Binding ElementName=ExternalFlipCheckBox, 
+									                    Path=IsChecked,TargetNullValue=False}">
+                                            <AppBarButton.Flyout>
+                                                <MenuFlyout Opening="MenuFlyout_Opening"
+                                                            Closing="MenuFlyout_Closing">
+                                                    <MenuFlyoutItem x:Name="Captions_FaceTheKinect"
+                                                                    FontWeight="Medium"
+                                                                    IsHitTestVisible="False" />
+                                                    <MenuFlyoutItem x:Name="Captions_CalibrateExtFlip"
+                                                                    Tag="Calibrate"
+                                                                    Click="CalibrateExternalFlipMenuFlyoutItem_Click" />
+                                                </MenuFlyout>
+                                            </AppBarButton.Flyout>
+                                        </AppBarButton>
+
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Margin="30,0,0,5"
+                                                x:Name="ExtFlipStatusStackPanel">
+                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                   FontWeight="SemiBold"
+                                                   x:Name="Captions_Device_Status"
+                                                   Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                   Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
+									                    Path=Opacity,TargetNullValue=1.0}" />
+
+                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                   FontWeight="SemiBold"
+                                                   x:Name="ExtFlipStatusLabel" Text="[NOT_DEFINED]" Margin="5,0,0,0"
+                                                   Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
+									                    Path=Opacity,TargetNullValue=1.0}" />
+                                    </StackPanel>
+
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                               FontWeight="SemiBold"
+                                               x:Name="Captions_ExtFlip"
+                                               Margin="30,0,0,7" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                               Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
+									                    Path=Opacity,TargetNullValue=1.0}">
+                                        <TextBlock.Transitions>
+                                            <TransitionCollection>
+                                                <RepositionThemeTransition />
+                                            </TransitionCollection>
+                                        </TextBlock.Transitions>
+                                    </TextBlock>
+
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+
+                    </Grid>
+
+                </StackPanel>
+
+                <Grid>
+                    <Grid.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </Grid.Transitions>
+
+                    <Grid Margin="0,20,0,0" Grid.Row="0"
+                          x:Name="JointExpanderStackHeader">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.Resources>
+                            <TeachingTip x:Name="ManageTrackersTeachingTip"
+                                         Target="{Binding ElementName=JointExpanderStackHeader}"
+                                         Title="/MANAGE"
+                                         Subtitle="/TEXT"
+                                         PreferredPlacement="Top"
+                                         IsLightDismissEnabled="False"
+                                         ActionButtonContent="/BACK"
+                                         CloseButtonContent="/NEXT"
+                                         Style="{ThemeResource BigTeachingTipStyle}"
+                                         ActionButtonClick="ManageTrackersTeachingTip_ActionButtonClick"
+                                         CloseButtonClick="ManageTrackersTeachingTip_CloseButtonClick" />
+                        </Grid.Resources>
+
+                        <TextBlock FontWeight="SemiBold" FontSize="25" Grid.Column="0"
+                                   x:Name="Titles_TrackerConfig_Header" />
+
+                        <HyperlinkButton FontWeight="SemiBold" FontSize="16" Grid.Column="1"
+                                         HorizontalAlignment="Right"
+                                         x:Name="LearnAboutFiltersButton" Click="LearnAboutFiltersButton_Click">
+
+                            <FlyoutBase.AttachedFlyout>
+                                <Flyout Placement="Full" x:Name="LearnAboutFiltersFlyout"
+                                        Closed="LearnAboutFiltersFlyout_Closed"
+                                        Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
+
+                                    <Flyout.FlyoutPresenterStyle>
+                                        <Style TargetType="FlyoutPresenter">
+                                            <Setter Property="MaxHeight" Value="615" />
+                                            <Setter Property="MaxWidth" Value="720" />
+                                            <Setter Property="MinWidth" Value="720" />
+                                            <Setter Property="Margin" Value="30,15,0,0" />
+                                            <Setter Property="CornerRadius" Value="8" />
+                                            <Setter Property="Background"
+                                                    Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                        </Style>
+                                    </Flyout.FlyoutPresenterStyle>
+
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                Margin="10,0" MaxWidth="660">
+
+                                        <TextBlock x:Name="Titles_TrackerConfig" FontSize="24"
+                                                   FontWeight="SemiBold" Margin="0,10,0,20" />
+
+                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
+                                                   x:Name="Captions_TrackerConfig" />
+
+                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15"
+                                                   Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                   x:Name="Captions_TrackerConfigNote" />
+
+                                        <TextBlock FontSize="20" x:Name="Titles_FilterSettings"
+                                                   FontWeight="SemiBold" Margin="0,20,0,20" />
+
+                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10">
+
+                                            <Run x:Name="Captions_Filters_Names_LERP" />
+                                            <LineBreak />
+
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Name="Captions_Filters_Explanations_LERP" />
+                                            <LineBreak /><LineBreak />
+
+                                            <Run x:Name="Captions_Filters_Names_LowPass" />
+                                            <LineBreak />
+
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Name="Captions_Filters_Explanations_LowPass" />
+                                            <LineBreak /><LineBreak />
+
+                                            <Run x:Name="Captions_Filters_Names_EKF" />
+                                            <LineBreak />
+
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Name="Captions_Filters_Explanations_EKF" />
+                                            <LineBreak /><LineBreak />
+
+                                            <Run x:Name="Captions_Filters_Names_None" />
+                                            <LineBreak />
+
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Name="Captions_Filters_Explanations_None" />
+
+                                        </TextBlock>
+                                        <TextBlock x:Name="Titles_RotationSettings" FontSize="20"
+                                                   FontWeight="SemiBold" Margin="0,20,0,20" />
+
+                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10">
+
+                                            <Run x:Name="Captions_Orientation_Introduction" />
+                                            <LineBreak /><LineBreak />
+
+                                            <Run x:Name="Captions_Orientation_Names_Default" />
+                                            <LineBreak />
+
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Name="Captions_Orientation_Explanations_Default" />
+                                            <LineBreak /><LineBreak />
+
+                                            <Run x:Name="Captions_Orientation_Names_MathBased" />
+                                            <LineBreak />
+
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Name="Captions_Orientation_Explanations_MathBased" />
+                                            <LineBreak /><LineBreak />
+
+                                            <Run x:Name="Captions_Orientation_Names_MathBasedV2" />
+                                            <LineBreak />
+
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Name="Captions_Orientation_Explanations_MathBasedV2" />
+                                            <LineBreak /><LineBreak />
+
+                                            <Run x:Name="Captions_Orientation_Names_HMD" />
+                                            <LineBreak />
+
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Name="Captions_Orientation_Explanations_HMD" />
+                                            <LineBreak /><LineBreak />
+
+                                            <Run x:Name="Captions_Orientation_Names_None" />
+                                            <LineBreak />
+
+                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                                 x:Name="Captions_Orientation_Explanations_None" />
+
+                                        </TextBlock>
+
+                                        <TextBlock x:Name="Titles_ManageTrackers" FontSize="20"
+                                                   FontWeight="SemiBold" Margin="0,20,0,20" />
+
+                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
+                                                   x:Name="Captions_ManageTrackers" />
+
+                                    </StackPanel>
+
+                                </Flyout>
+                            </FlyoutBase.AttachedFlyout>
+
+                        </HyperlinkButton>
+                    </Grid>
+                </Grid>
+
+                <!--For the waist & pair trackers' expanders-->
+                <StackPanel x:Name="JointExpanderHostStackPanel" HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
+
+                    <!--<StackPanel.Transitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition />
+                            <RepositionThemeTransition />
+                            --><!--<AddDeleteThemeTransition />-->
+                            <!--<ContentThemeTransition />--><!--
+                        </TransitionCollection>
+                    </StackPanel.Transitions>-->
+
+                    <ItemsRepeater x:Name="JointSettingsItemsRepeater">
+
+                    </ItemsRepeater>
+                </StackPanel>
+
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="40" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </Grid.Transitions>
+
+                    <AppBarButton Grid.Column="0" x:Name="TrackerConfigButton" VerticalAlignment="Top"
+                                  Icon="Setting" Width="38" Height="46" Click="TrackerConfigButton_Click">
+
+                        <AppBarButton.Resources>
+                            <TeachingTip x:Name="AddTrackersTeachingTip"
+                                         Target="{Binding ElementName=TrackerConfigButton}"
+                                         Title="/MANAGE"
+                                         Subtitle="/TEXT"
+                                         PreferredPlacement="Right"
+                                         IsLightDismissEnabled="False"
+                                         ActionButtonContent="/BACK"
+                                         CloseButtonContent="/NEXT"
+                                         Style="{ThemeResource BigTeachingTipStyle}"
+                                         ActionButtonClick="AddTrackersTeachingTip_ActionButtonClick"
+                                         CloseButtonClick="AddTrackersTeachingTip_CloseButtonClick" />
+                        </AppBarButton.Resources>
+                    </AppBarButton>
+
+                    <Button Grid.Column="1" Grid.Row="0" Padding="15,0" Height="40"
+                            Style="{ThemeResource AccentButtonStyle}" x:Name="RestartButton"
+                            Click="RestartButton_Click" FontWeight="SemiBold"
+                            HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                            FontSize="16" IsEnabled="False" />
+
+                    <StackPanel Grid.Column="0" Orientation="Vertical" Margin="0,2,15,0" Grid.Row="0">
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   x:Name="Captions_TrackersRestart_Line1" FontWeight="SemiBold"
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   x:Name="Captions_TrackersRestart_Line2" FontWeight="SemiBold"
+                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
+                    </StackPanel>
+
+                    <Grid Grid.Column="0" Grid.Row="1" Margin="0,20,0,0">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+                                   x:Name="Captions_TrackersAutoSpawn" Margin="30,0,0,10" />
+                        <CheckBox x:Name="AutoSpawnCheckBox" 
+                                  Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
+                                  IsChecked="{x:Bind classes:AppData.Settings.AutoSpawnEnabledJoints}"
+                                  HorizontalAlignment="Left" VerticalAlignment="Center"
+                                  MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
+                    </Grid>
+
+                    <Grid Grid.Column="0" Grid.Row="2">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+                                   x:Name="Captions_TrackersAutoCheck" Margin="30,0,0,10" />
+                        <CheckBox x:Name="CheckOverlapsCheckBox" 
+                                  Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
+                                  IsChecked="{x:Bind classes:AppData.Settings.CheckForOverlappingTrackers}"
+                                  HorizontalAlignment="Left" VerticalAlignment="Center"
+                                  MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
+                    </Grid>
+                </Grid>
+
+                <TextBlock FontWeight="SemiBold" x:Name="Titles_Troubleshooting"
+                           FontSize="25" Margin="0,40,0,15">
+                    <TextBlock.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </TextBlock.Transitions>
+                </TextBlock>
+
+                <Grid x:Name="TroubleshootingControlsContainerGrid"
+                      HorizontalAlignment="Left" Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </Grid.Transitions>
+
+                    <StackPanel HorizontalAlignment="Stretch"
+                                Grid.Column="0" Orientation="Vertical">
+
+                        <Button Height="40" HorizontalAlignment="Stretch"
+                                Padding="20,0" Margin="0,0,35,10"
+                                FontSize="16" FontWeight="SemiBold"
+                                x:Name="ReNUXButton" Click="ReNUXButton_Click" />
+
+                        <Button Height="40" HorizontalAlignment="Stretch"
+                                Padding="20,0" Margin="0,0,35,10"
+                                FontSize="16" FontWeight="SemiBold"
+                                x:Name="ResetButton" Click="ResetButton_Click" />
+
+                        <Button Height="40" HorizontalAlignment="Stretch"
+                                Padding="20,0" Margin="0,0,35,10"
+                                FontSize="16" FontWeight="SemiBold"
+                                x:Name="ReRegisterButton" Click="ReRegisterButton_Click" />
+
+                        <Button Height="40" HorizontalAlignment="Stretch"
+                                Padding="20,0" Margin="0,0,35,10"
+                                FontSize="16" FontWeight="SemiBold"
+                                x:Name="ViewLogsButton" Click="ViewLogsButton_Click" />
+
+                        <Button Height="40" HorizontalAlignment="Stretch"
+                                Padding="20,0" Margin="0,0,35,10"
+                                FontSize="16" FontWeight="SemiBold"
+                                x:Name="ReManifestButton" Click="ReManifestButton_Click" />
+                    </StackPanel>
+                </Grid>
+
+                <!--Flyout for manifest and reregister errors-->
+                <FlyoutBase.AttachedFlyout>
+                    <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom"
+                            Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="CornerRadius" Value="8" />
+                                <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button FontSize="15" x:Name="DismissSetErrorButton"
+                                        Click="DismissSetErrorButton_Click"
+                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
+                            </Grid>
+
+                            <TextBlock FontSize="15" HorizontalAlignment="Stretch"
+                                       x:Name="SetErrorFlyoutText"
+                                       VerticalAlignment="Stretch"
+                                       Grid.Row="0" FontWeight="SemiBold"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       Text="[NO CONTENT SET]" />
+
+                        </Grid>
+                    </Flyout>
+                </FlyoutBase.AttachedFlyout>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+    </Grid>
+
 </Page>

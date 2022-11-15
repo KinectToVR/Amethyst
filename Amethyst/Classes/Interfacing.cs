@@ -493,7 +493,7 @@ public static class Interfacing
 
     public static uint InstallVrApplicationManifest()
     {
-        if (OpenVR.Applications.IsApplicationInstalled("KinectToVR.Amethyst"))
+        if (OpenVR.Applications.IsApplicationInstalled("K2VR.Amethyst"))
         {
             Logger.Info("Amethyst manifest is already installed");
             return 1;
@@ -521,7 +521,7 @@ public static class Interfacing
 
     public static void UninstallApplicationManifest()
     {
-        if (OpenVR.Applications.IsApplicationInstalled("KinectToVR.Amethyst"))
+        if (OpenVR.Applications.IsApplicationInstalled("K2VR.Amethyst"))
         {
             OpenVR.Applications.RemoveApplicationManifest(
                 Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest"));
@@ -530,7 +530,7 @@ public static class Interfacing
                 Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest")}");
         }
 
-        if (OpenVR.Applications.IsApplicationInstalled("KinectToVR.Amethyst"))
+        if (OpenVR.Applications.IsApplicationInstalled("K2VR.Amethyst"))
             Logger.Warn("Amethyst manifest removal failed! It may have been installed from somewhere else too");
         else
             Logger.Info("Amethyst manifest removal succeed");

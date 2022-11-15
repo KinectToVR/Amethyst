@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System.Threading;
 using System.Threading.Tasks;
 using Amethyst.Classes;
 using Amethyst.Utils;
@@ -33,6 +34,9 @@ public sealed partial class Info : Page
 
         Task.Run(Task() =>
         {
+            Shared.Semaphores.ReloadInfoPageSemaphore =
+                new Semaphore(0, 1);
+
             while (true)
             {
                 // Wait for a reload signal (blocking)
