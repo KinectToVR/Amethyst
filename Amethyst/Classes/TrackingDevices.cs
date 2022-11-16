@@ -137,12 +137,23 @@ public static class TrackingDevices
         if (Devices.JointBasisLabel is null) return;
 
         Devices.DevicesSignalJoints = false; // Block signals
-        var currentDevice = GetTrackingDevice();
+        var currentDevice = GetDevice(Devices.SelectedTrackingDeviceGuid);
 
-        if (shouldReconnect) currentDevice.Initialize();
+        if (shouldReconnect) currentDevice.Device.Initialize();
 
-        // Update the device name
-        Devices.DeviceNameLabel.Text = currentDevice.Name;
+        // Update the status
+        var statusOk = currentDevice.Device.StatusOk;
+        Devices.ErrorWhatText.Visibility = statusOk ? Visibility.Collapsed : Visibility.Visible;
+        Devices.DeviceErrorGrid.Visibility = statusOk ? Visibility.Collapsed : Visibility.Visible;
+        Devices.TrackingDeviceErrorLabel.Visibility = statusOk ? Visibility.Collapsed : Visibility.Visible;
+        Devices.TrackingDeviceChangePanel.Visibility = statusOk ? Visibility.Visible : Visibility.Collapsed;
+
+        // Update the device
+        var message = StringUtils.SplitStatusString(currentDevice.Device.DeviceStatusString);
+        Devices.DeviceNameLabel.Text = currentDevice.Device.Name;
+        Devices.DeviceStatusLabel.Text = message[0];
+        Devices.TrackingDeviceErrorLabel.Text = message[1];
+        Devices.ErrorWhatText.Text = message[2];
     }
 
     public static bool IsExternalFlipSupportable()
@@ -320,10 +331,6 @@ public static class TrackingDevices
         TrackingDevicesLocalizationResourcesRootsVector = new();
 
     // Written to at the first plugin load
-    public static List<(
-            string Name,
-            string GUID,
-            PluginLoadError Status,
-            string DeviceFolder)>
+    public static List<LoadAttemptedPlugin>
         LoadAttemptedTrackingDevicesVector = new();
 }

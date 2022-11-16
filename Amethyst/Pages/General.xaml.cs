@@ -43,36 +43,6 @@ public sealed partial class General : Page
     private bool _calibrationPending = false;
     private bool _autoCalibration_StillPending = false;
 
-    private void SetSkeletonVisibility(bool visibility)
-    {
-        // Don't even care if we're not set up yet
-        if (!Shared.General.GeneralTabSetupFinished) return;
-
-        Shared.General.ForceRenderCheckBox.IsEnabled = visibility;
-        Shared.General.SkeletonToggleButton.IsChecked = visibility;
-        Shared.General.ForceRenderText.Opacity = visibility ? 1.0 : 0.5;
-        Shared.General.SkeletonToggleButton.Content = Interfacing.LocalizedJsonString(
-            visibility ? "/GeneralPage/Buttons/Skeleton/Hide" : "/GeneralPage/Buttons/Skeleton/Show");
-    }
-
-    private void SetSkeletonForce(bool visibility)
-    {
-        // Don't even care if we're not set up yet
-        if (!Shared.General.GeneralTabSetupFinished) return;
-        Shared.General.ForceRenderCheckBox.IsChecked = visibility;
-    }
-
-    private string CalibrationPointsFormat(string format, int p1, uint p2)
-    {
-        return format.Replace("{1}", p1.ToString())
-            .Replace("{2}", p2.ToString());
-    }
-
-    private void AllowNavigation(bool allow)
-    {
-        Shared.Main.NavigationBlockerGrid.IsHitTestVisible = !allow;
-    }
-
     public General()
     {
         InitializeComponent();
@@ -117,7 +87,7 @@ public sealed partial class General : Page
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
 
-        Task.Run(Task() =>
+        Task.Run(() =>
         {
             Shared.Semaphores.ReloadGeneralPageSemaphore = 
                 new Semaphore(0, 1);
@@ -139,6 +109,9 @@ public sealed partial class General : Page
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
+        Logger.Info($"Re/Loading page: '{GetType().FullName}'...");
+        Interfacing.CurrentAppState = "general";
+
         // Execute the handler
         await Page_LoadedHandler();
 
@@ -257,7 +230,7 @@ public sealed partial class General : Page
         if (!_generalPageLoadedOnce)
         {
             Logger.Info("Basic setup done! Starting the main loop now...");
-            Shared.Devices.SmphSignalStartMain.Release();
+            Shared.Semaphores.SmphSignalStartMain.Release();
         }
 
         // Update the internal version
@@ -1491,5 +1464,35 @@ public sealed partial class General : Page
     private void OffsetsView_PaneOpened(SplitView sender, object args)
     {
         _offsetsPageLoadedOnce = true;
+    }
+
+    private void SetSkeletonVisibility(bool visibility)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        Shared.General.ForceRenderCheckBox.IsEnabled = visibility;
+        Shared.General.SkeletonToggleButton.IsChecked = visibility;
+        Shared.General.ForceRenderText.Opacity = visibility ? 1.0 : 0.5;
+        Shared.General.SkeletonToggleButton.Content = Interfacing.LocalizedJsonString(
+            visibility ? "/GeneralPage/Buttons/Skeleton/Hide" : "/GeneralPage/Buttons/Skeleton/Show");
+    }
+
+    private void SetSkeletonForce(bool visibility)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+        Shared.General.ForceRenderCheckBox.IsChecked = visibility;
+    }
+
+    private string CalibrationPointsFormat(string format, int p1, uint p2)
+    {
+        return format.Replace("{1}", p1.ToString())
+            .Replace("{2}", p2.ToString());
+    }
+
+    private void AllowNavigation(bool allow)
+    {
+        Shared.Main.NavigationBlockerGrid.IsHitTestVisible = !allow;
     }
 }

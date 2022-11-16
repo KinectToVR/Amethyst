@@ -32,7 +32,7 @@ public sealed partial class Info : Page
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
 
-        Task.Run(Task() =>
+        Task.Run(() =>
         {
             Shared.Semaphores.ReloadInfoPageSemaphore =
                 new Semaphore(0, 1);

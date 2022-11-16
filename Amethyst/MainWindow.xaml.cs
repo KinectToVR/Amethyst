@@ -36,6 +36,7 @@ using Windows.Data.Json;
 using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using System.Xml.Linq;
+using System.Text.Json;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -178,9 +179,9 @@ public sealed partial class MainWindow : Window
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
 
-        Task.Run(Task() =>
+        Task.Run(() =>
         {
-            Shared.Semaphores.ReloadMainWindowSemaphore = 
+            Shared.Semaphores.ReloadMainWindowSemaphore =
                 new Semaphore(0, 1);
 
             while (true)
@@ -190,7 +191,8 @@ public sealed partial class MainWindow : Window
 
                 // Reload & restart the waiting loop
                 if (_mainPageLoadedOnce)
-                    Shared.Main.DispatcherQueue.TryEnqueue(async () => { await MainGrid_LoadedHandler(); });
+                    Shared.Main.DispatcherQueue.TryEnqueue(
+                        async () => { await MainGrid_LoadedHandler(); });
 
                 // Rebuild devices' settings
                 // (Trick the device into rebuilding its interface)
@@ -270,7 +272,7 @@ public sealed partial class MainWindow : Window
 
         // Disable internal sounds
         ElementSoundPlayer.State = ElementSoundPlayerState.Off;
-        
+
         // Create the plugin directory (if not existent)
         Directory.CreateDirectory(Path.Combine(
             Interfacing.GetProgramLocation().DirectoryName, "Plugins"));
@@ -342,11 +344,31 @@ public sealed partial class MainWindow : Window
                         TrackingDevices.TrackingDevicesVector.ContainsKey(plugin.Metadata.Guid))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
-                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
-                            plugin.Metadata.Guid, TrackingDevices.PluginLoadError.BadOrDuplicateGuid, ""));
+                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                        {
+                            Name = plugin.Metadata.Name,
+                            Guid = plugin.Metadata.Guid,
+                            Status = TrackingDevices.PluginLoadError.BadOrDuplicateGuid
+                        });
 
                         Logger.Error($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                      "has a duplicate GUID value to another plugin, discarding it!");
+                        continue; // Give up on this one :(
+                    }
+
+                    // Check the plugin GUID against the ones we need to skip
+                    if (AppData.Settings.DisabledDevicesGuidSet.Contains(plugin.Metadata.Guid))
+                    {
+                        // Add the device to the 'attempted' list, mark as duplicate
+                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                        {
+                            Name = plugin.Metadata.Name,
+                            Guid = plugin.Metadata.Guid,
+                            Status = TrackingDevices.PluginLoadError.LoadingSkipped
+                        });
+
+                        Logger.Error($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                     "is requested to be skipped (via GUID), discarding it!");
                         continue; // Give up on this one :(
                     }
 
@@ -363,8 +385,12 @@ public sealed partial class MainWindow : Window
                                      $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
 
                         // Add the device to the 'attempted' list, mark as possibly missing deps
-                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
-                            plugin.Metadata.Guid, TrackingDevices.PluginLoadError.NoDeviceDependencyDll, ""));
+                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                        {
+                            Name = plugin.Metadata.Name,
+                            Guid = plugin.Metadata.Guid,
+                            Status = TrackingDevices.PluginLoadError.NoDeviceDependencyDll
+                        });
                         continue; // Give up on this one :(
                     }
                     catch (Exception e)
@@ -374,8 +400,12 @@ public sealed partial class MainWindow : Window
                                      $"Message: {e.Message}, Trace: {e.StackTrace}");
 
                         // Add the device to the 'attempted' list, mark as unknown
-                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
-                            plugin.Metadata.Guid, TrackingDevices.PluginLoadError.Other, ""));
+                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                        {
+                            Name = plugin.Metadata.Name,
+                            Guid = plugin.Metadata.Guid,
+                            Status = TrackingDevices.PluginLoadError.Other
+                        });
                         continue; // Give up on this one :(
                     }
 
@@ -386,8 +416,13 @@ public sealed partial class MainWindow : Window
                     // Add the device to the 'attempted' list, mark as all fine
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "to the load-attempted device plugins list (TrackingDevices)...");
-                    TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
-                        plugin.Metadata.Guid, TrackingDevices.PluginLoadError.NoError, pluginFolder));
+                    TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                    {
+                        Name = plugin.Metadata.Name,
+                        Guid = plugin.Metadata.Guid,
+                        DeviceFolder = pluginFolder,
+                        Status = TrackingDevices.PluginLoadError.NoError
+                    });
 
                     // Add the device resource root to the global list, create its context
                     Logger.Info($"Creating ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
@@ -406,6 +441,9 @@ public sealed partial class MainWindow : Window
                                 "to the global tracking device plugins list (TrackingDevices)...");
                     TrackingDevices.TrackingDevicesVector.Add(plugin.Metadata.Guid, new TrackingDevice(
                         plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation, plugin.Value));
+
+                    Logger.Info($"Loaded plugin: {JsonSerializer.Serialize(plugin,
+                        new JsonSerializerOptions { WriteIndented = true })}");
 
                     Logger.Info($"Device ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 $"with the device class library dll at: {pluginLocation}\n" +
@@ -434,8 +472,13 @@ public sealed partial class MainWindow : Window
                     Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                  "failed with a global outer caught exception. " +
                                  $"Provided exception Message: {e.Message}, Trace: {e.StackTrace}");
-                    TrackingDevices.LoadAttemptedTrackingDevicesVector.Add((plugin.Metadata.Name,
-                        plugin.Metadata.Guid, TrackingDevices.PluginLoadError.Other, ""));
+
+                    TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                    {
+                        Name = plugin.Metadata.Name,
+                        Guid = plugin.Metadata.Guid,
+                        Status = TrackingDevices.PluginLoadError.Other
+                    });
                 }
         }
         catch (CompositionException e)
@@ -541,7 +584,7 @@ public sealed partial class MainWindow : Window
 
             // All valid override devices
             AppData.Settings.OverrideDevicesGuidMap
-                .Where(x=> !TrackingDevices.GetDevice(x).Device.IsInitialized).ToList()
+                .Where(x => !TrackingDevices.GetDevice(x).Device.IsInitialized).ToList()
                 .ForEach(device => TrackingDevices.GetDevice(device).Device.Initialize());
         });
 
@@ -565,7 +608,8 @@ public sealed partial class MainWindow : Window
         };
 
         // Send a non-dismissible tip about reloading the app
-        static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs) =>
+        static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs)
+        {
             Shared.Main.DispatcherQueue.TryEnqueue(() =>
             {
                 Logger.Info("Device plugin tree has changed, you need to reload!");
@@ -574,6 +618,7 @@ public sealed partial class MainWindow : Window
 
                 Shared.TeachingTips.Main.ReloadTeachingTip.IsOpen = true;
             });
+        }
 
         // Add event handlers : local
         localWatcher.Changed += OnWatcherOnChanged;
@@ -586,7 +631,7 @@ public sealed partial class MainWindow : Window
         externalWatcher.Created += OnWatcherOnChanged;
         externalWatcher.Deleted += OnWatcherOnChanged;
         externalWatcher.Renamed += OnWatcherOnChanged;
-        
+
         // Notify of the setup end
         _mainPageInitFinished = true;
     }
@@ -628,7 +673,7 @@ public sealed partial class MainWindow : Window
             Interfacing.ActualTheme == ElementTheme.Dark
                 ? Application.Current.Resources["NeutralBrush_Dark"].As<SolidColorBrush>()
                 : Application.Current.Resources["NeutralBrush_Light"].As<SolidColorBrush>();
-        
+
         Application.Current.Resources["WindowCaptionForeground"] =
             Interfacing.ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black;
 

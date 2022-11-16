@@ -71,7 +71,7 @@ public sealed partial class Settings : Page
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
 
-        Task.Run(Task() =>
+        Task.Run(() =>
         {
             Shared.Semaphores.ReloadSettingsPageSemaphore =
                 new Semaphore(0, 1);
@@ -93,6 +93,9 @@ public sealed partial class Settings : Page
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
+        Logger.Info($"Re/Loading page: '{GetType().FullName}'...");
+        Interfacing.CurrentAppState = "settings";
+
         // Execute the handler
         Page_LoadedHandler();
 

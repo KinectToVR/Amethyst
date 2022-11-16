@@ -5,8 +5,10 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Amethyst.Utils;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using static System.Net.Mime.MediaTypeNames;
+using static Valve.VR.IVRBlockQueue;
 
 namespace Amethyst.Classes;
 
@@ -29,6 +31,10 @@ public static class Shared
             ReloadDevicesPageSemaphore?.Release();
             ReloadInfoPageSemaphore?.Release();
         }
+
+        public static Semaphore
+            SmphSignalCurrentUpdate = new(0, 1),
+            SmphSignalStartMain = new(0, 1);
     }
 
     public static class Main
@@ -109,25 +115,24 @@ public static class Shared
 
             // Switch bring back the current item to the base state
             if (!string.IsNullOrEmpty(preNavPageType?.Name))
-            {
                 switch (preNavPageType.Name)
                 {
                     case "Amethyst.Pages.General":
-                        NavigationItems.NavViewGeneralButtonIcon.Translation = new Vector3(0,-8,0);
+                        NavigationItems.NavViewGeneralButtonIcon.Translation = new Vector3(0, -8, 0);
                         NavigationItems.NavViewGeneralButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewGeneralButtonIcon.Foreground = NeutralBrush;
                         NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uE80F";
                         break;
                     case "Amethyst.Pages.Settings":
-                        NavigationItems.NavViewSettingsButtonIcon.Translation = new Vector3(0,-8,0);
+                        NavigationItems.NavViewSettingsButtonIcon.Translation = new Vector3(0, -8, 0);
                         NavigationItems.NavViewSettingsButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewSettingsButtonIcon.Foreground = NeutralBrush;
                         NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uE713";
                         break;
                     case "Amethyst.Pages.Devices":
-                        NavigationItems.NavViewDevicesButtonIcon.Translation = new Vector3(0,-8,0);
+                        NavigationItems.NavViewDevicesButtonIcon.Translation = new Vector3(0, -8, 0);
                         NavigationItems.NavViewDevicesButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewDevicesButtonIcon.Foreground = NeutralBrush;
@@ -136,18 +141,16 @@ public static class Shared
                         NavigationItems.NavViewDevicesButtonIcon.FontSize = 20;
                         break;
                     case "Amethyst.Pages.Info":
-                        NavigationItems.NavViewInfoButtonIcon.Translation = new Vector3(0,-8,0);
+                        NavigationItems.NavViewInfoButtonIcon.Translation = new Vector3(0, -8, 0);
                         NavigationItems.NavViewInfoButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewInfoButtonIcon.Foreground = NeutralBrush;
                         NavigationItems.NavViewInfoButtonIcon.Glyph = "\uE946";
                         break;
                 }
-            }
 
             // Switch the next navview item to the active state
             if (!string.IsNullOrEmpty(page.Name))
-            {
                 switch (page.Name)
                 {
                     case "Amethyst.GeneralPage":
@@ -181,7 +184,6 @@ public static class Shared
                         NavigationItems.NavViewInfoButtonIcon.Translation = Vector3.Zero;
                         break;
                 }
-            }
 
             Interfacing.CurrentPageTag = navItemTag; // Cache the current page tag
             Interfacing.CurrentPageClass = page.Name; // Cache the current page tag
@@ -271,6 +273,7 @@ public static class Shared
             DevicesTabReSetupFinished = false, // Other setup
             DevicesJointsSetupPending = false, // Overrides
             DevicesSignalJoints = true, // Optionally no signal
+            PluginsPageLoadedOnce = false, // Manager flyout
             DevicesModelSetupFinished = false; // MVVM setup done?
 
         public static TextBlock
@@ -301,10 +304,6 @@ public static class Shared
             SetAsBaseButton,
             DeselectDeviceButton;
 
-        public static Semaphore
-            SmphSignalCurrentUpdate = new(0, 1),
-            SmphSignalStartMain = new(0, 1);
-
         public static string PreviousSelectedTrackingDeviceGuid;
         public static string SelectedTrackingDeviceGuid;
 
@@ -319,9 +318,46 @@ public static class Shared
             SelectedDeviceSettingsRootLayoutPanel,
             OverridesExpanderHostStackPanel;
 
-        public static Task ReloadSelectedDevice(bool manual, bool reconnect = false)
+        public static async Task ReloadSelectedDevice(bool manual, bool reconnect = false)
         {
-            throw new NotImplementedException();
+            // Update the status here
+            TrackingDevices.HandleDeviceRefresh(reconnect);
+
+            // Update GeneralPage status
+            TrackingDevices.UpdateTrackingDevicesInterface();
+
+            // Refresh the device MVVM
+            TrackingDevices.TrackingDevicesVector[SelectedTrackingDeviceGuid].OnPropertyChanged();
+
+            if (TrackingDevices.IsBase(SelectedTrackingDeviceGuid))
+            {
+                Logger.Info($"Selected a base ({SelectedTrackingDeviceGuid})");
+                SetAsOverrideButton.IsEnabled = false;
+                SetAsBaseButton.IsEnabled = false;
+
+                DeselectDeviceButton.Visibility = Visibility.Collapsed;
+            }
+            else if (TrackingDevices.IsOverride(SelectedTrackingDeviceGuid))
+            {
+                Logger.Info($"Selected an override ({SelectedTrackingDeviceGuid})");
+                SetAsOverrideButton.IsEnabled = false;
+                SetAsBaseButton.IsEnabled = true;
+
+                DeselectDeviceButton.Visibility = Visibility.Visible;
+                if (DeviceErrorGrid.Visibility != Visibility.Visible)
+                    Interfacing.CurrentAppState = "overrides";
+            }
+            else
+            {
+                Logger.Info($"Selected a [none] ({SelectedTrackingDeviceGuid})");
+                SetAsOverrideButton.IsEnabled = true;
+                SetAsBaseButton.IsEnabled = true;
+
+                DeselectDeviceButton.Visibility = Visibility.Collapsed;
+            }
+
+            // Placeholder
+            await Task.Delay(0);
         }
     }
 

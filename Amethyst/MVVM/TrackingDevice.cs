@@ -191,18 +191,126 @@ public class PluginHost : IAmethystHost
     }
 
     // Request a refresh of the status/name/etc. interface
-    public void RefreshStatusInterface() => Interfacing.StatusUiRefreshRequestedUrgent = true;
+    public void RefreshStatusInterface()
+    {
+        Interfacing.StatusUiRefreshRequestedUrgent = true;
+    }
 
     // Get Amethyst UI language
     public string LanguageCode => AppData.Settings.AppLanguage;
 
     // Request a string from AME resources, empty for no match
     // Warning: The primarily searched resource is the device-provided one!
-    public string RequestLocalizedString(string key, string guid) => ""; // TODO
+    public string RequestLocalizedString(string key, string guid)
+    {
+        return "";
+        // TODO
+    }
 
     // Request a folder to be set as device's AME resources,
     // you can access these resources with the lower function later (after onLoad)
     // Warning: Resources are containerized and can't be accessed in-between devices!
     // Warning: The default root is "[device_folder_path]/resources/Strings"!
-    public bool SetLocalizationResourcesRoot(string path, string guid) => false; // TODO
+    public bool SetLocalizationResourcesRoot(string path, string guid)
+    {
+        return false;
+        // TODO
+    }
+}
+
+public class LoadAttemptedPlugin : INotifyPropertyChanged
+{
+    public string Name { get; set; } = "[UNKNOWN]";
+    public string Guid { get; set; } = "[INVALID]";
+
+    public string DeviceFolder { get; set; } = "[INVALID]";
+    public string DeviceProviderName { get; set; } = "[UNKNOWN]";
+    public string DeviceUpdateUri { get; set; } = "[UNKNOWN]";
+    public string DeviceVersion { get; set; } = "[UNKNOWN]";
+    public string DeviceApiVersion { get; set; } = "[INVALID]";
+
+    // MVVM stuff
+    public string GetResourceString(string key)
+    {
+        return Interfacing.LocalizedJsonString(key);
+    }
+
+    public TrackingDevices.PluginLoadError Status { get; set; } =
+        TrackingDevices.PluginLoadError.Unknown;
+
+    public bool LoadError => Status != TrackingDevices.PluginLoadError.NoError;
+    public bool LoadSuccess => Status == TrackingDevices.PluginLoadError.NoError;
+
+    private bool _isLoaded = false;
+
+    public bool IsLoaded
+    {
+        get => TrackingDevices.TrackingDevicesVector.ContainsKey(Guid);
+        set
+        {
+            if (_isLoaded == value) return; // No changes
+            _isLoaded = value; // Copy to the private container
+
+            // Disable/Enable this plugin
+            if (value) AppData.Settings.DisabledDevicesGuidSet.Remove(Guid);
+            else AppData.Settings.DisabledDevicesGuidSet.Add(Guid);
+
+            // Check if the change is valid
+            if (!_isLoaded)
+            {
+                SortedSet<string> loadedDeviceSet = new();
+
+                // Check which devices are loaded
+                if (TrackingDevices.TrackingDevicesVector.ContainsKey("K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV1"))
+                    loadedDeviceSet.Add("K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV1");
+                if (TrackingDevices.TrackingDevicesVector.ContainsKey("K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV2"))
+                    loadedDeviceSet.Add("K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV2");
+                if (TrackingDevices.TrackingDevicesVector.ContainsKey("K2VRTEAM-AME1-API1-DVCE-DVCEPSMOVEEX"))
+                    loadedDeviceSet.Add("K2VRTEAM-AME1-API1-DVCE-DVCEPSMOVEEX");
+                if (TrackingDevices.TrackingDevicesVector.ContainsKey("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK"))
+                    loadedDeviceSet.Add("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK");
+
+                // If we've just disabled the last loaded device, re-enable the first
+                if (TrackingDevices.TrackingDevicesVector.Keys.All(
+                        AppData.Settings.DisabledDevicesGuidSet.Contains) ||
+
+                    // If this device entry happens to be the last one of the official ones
+                    (loadedDeviceSet.Contains(Guid) && loadedDeviceSet.All(
+                        AppData.Settings.DisabledDevicesGuidSet.Contains)))
+                {
+                    AppData.Settings.DisabledDevicesGuidSet.Remove(Guid);
+                    _isLoaded = true; // Re-enable this device
+                }
+            }
+
+            // Show the reload tip on any valid changes
+            // == cause the upper check would make it different
+            // and it's already been assigned at the beginning
+            if (Shared.Devices.PluginsPageLoadedOnce && _isLoaded == value)
+                Shared.TeachingTips.Main.ReloadTeachingTip.IsOpen = true;
+
+            // Save settings
+            AppData.Settings.SaveSettings();
+            OnPropertyChanged("IsLoaded");
+        }
+    }
+
+    public string ErrorText => GetResourceString($"/DevicesPage/Devices/Manager/Labels/{(int)Status}");
+
+    public string TrimString(string s, int l)
+    {
+        return s[..Math.Min(s.Length, l)];
+    }
+
+    public void ShowDeviceFolder()
+    {
+        SystemShell.OpenFolderAndSelectItem(DeviceFolder);
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged(string propName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+    }
 }
