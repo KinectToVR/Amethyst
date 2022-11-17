@@ -167,7 +167,7 @@ public static class TrackingDevices
         foreach (var overrideDeviceGuid in AppData.Settings.OverrideDevicesGuidMap
                      .Where(overrideDeviceGuid =>
                          AppData.Settings.TrackersVector[0].IsActive &&
-                         AppData.Settings.TrackersVector[0].IsRotationOverridden &&
+                         AppData.Settings.TrackersVector[0].IsOrientationOverridden &&
                          AppData.Settings.TrackersVector[0].OverrideGuid == overrideDeviceGuid))
             return !TrackingDevicesVector[overrideDeviceGuid].IsFlipSupported;
 

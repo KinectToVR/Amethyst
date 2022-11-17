@@ -508,7 +508,7 @@ public sealed partial class Settings : Page
     private void CalibrateExternalFlipMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
         // If the extflip is from Amethyst
-        if (AppData.Settings.TrackersVector[0].IsRotationOverridden)
+        if (AppData.Settings.TrackersVector[0].IsOrientationOverridden)
             AppData.Settings.ExternalFlipCalibrationMatrix =
                 // Overriden tracker
                 Quaternion.Inverse(Interfacing.VrPlayspaceOrientationQuaternion) * // VR space offset
@@ -939,10 +939,12 @@ public sealed partial class Settings : Page
             : AppSounds.AppSoundType.ToggleOff);
 
         // Check if any trackers are enabled
-        if (!AppData.Settings.TrackersVector.Any(x => x.IsActive))
+        if (!(sender as ToggleSwitch).IsOn && !AppData.Settings.TrackersVector
+                .Where(x => x.Role != tracker.Role).Any(x => x.IsActive))
         {
-            Logger.Warn("All trackers have been disabled, force-enabling the waist tracker!");
-            AppData.Settings.TrackersVector[0].IsActive = true;
+            Logger.Warn("All trackers (except this one) have been disabled, force-re-enabling!");
+            tracker.IsActive = true; // Force re-enable this tracker
+            tracker.OnPropertyChanged("IsActive");
         }
 
         // Request a check for already-added trackers

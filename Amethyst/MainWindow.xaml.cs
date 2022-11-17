@@ -445,17 +445,17 @@ public sealed partial class MainWindow : Window
                     Logger.Info($"Loaded plugin: {JsonSerializer.Serialize(plugin,
                         new JsonSerializerOptions { WriteIndented = true })}");
 
-                    Logger.Info($"Device ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                    Logger.Info($"Device ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) \n" +
                                 $"with the device class library dll at: {pluginLocation}\n" +
-                                $"properties:\nStatus: {plugin.Value.DeviceStatus}\n" +
-                                $"Status String: {plugin.Value.DeviceStatusString}\n" +
-                                $"Supports Flip: {plugin.Value.IsFlipSupported}\n" +
-                                $"Initialized: {plugin.Value.IsInitialized}\n" +
-                                $"Overrides Physics: {plugin.Value.IsPhysicsOverrideEnabled}\n" +
-                                $"Blocks Filtering: {plugin.Value.IsPositionFilterBlockingEnabled}\n" +
-                                $"Updates By Itself: {plugin.Value.IsSelfUpdateEnabled}\n" +
-                                $"Supports Settings: {plugin.Value.IsSettingsDaemonSupported}\n" +
-                                $"Provides Prepended Joints: {plugin.Value.TrackedJoints.Count}");
+                                $"provides discoverable properties:\nStatus: {plugin.Value.DeviceStatus}\n" +
+                                $"- Status String: {plugin.Value.DeviceStatusString}\n" +
+                                $"- Supports Flip: {plugin.Value.IsFlipSupported}\n" +
+                                $"- Initialized: {plugin.Value.IsInitialized}\n" +
+                                $"- Overrides Physics: {plugin.Value.IsPhysicsOverrideEnabled}\n" +
+                                $"- Blocks Filtering: {plugin.Value.IsPositionFilterBlockingEnabled}\n" +
+                                $"- Updates By Itself: {plugin.Value.IsSelfUpdateEnabled}\n" +
+                                $"- Supports Settings: {plugin.Value.IsSettingsDaemonSupported}\n" +
+                                $"- Provides Prepended Joints: {plugin.Value.TrackedJoints.Count}");
 
                     // Check if the loaded device is used as anything (AppData.Settings)
                     Logger.Info($"Checking if ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) has any roles set...");
@@ -572,7 +572,7 @@ public sealed partial class MainWindow : Window
             // The override haven't gotten real :/ reset
             appTracker.OverrideGuid = "";
             appTracker.IsPositionOverridden = false;
-            appTracker.IsRotationOverridden = false;
+            appTracker.IsOrientationOverridden = false;
         }
 
         // Second check and try after 3 seconds

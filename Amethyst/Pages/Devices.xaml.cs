@@ -2,6 +2,8 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -22,7 +24,7 @@ namespace Amethyst.Pages;
 /// <summary>
 ///     An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class Devices : Page
+public sealed partial class Devices : Page, INotifyPropertyChanged
 {
     private bool _devicesPageLoadedOnce = false;
 
@@ -64,6 +66,16 @@ public sealed partial class Devices : Page
 
         Logger.Info($"Registering plugins MVVM for page: '{GetType().FullName}'...");
         PluginsItemsRepeater.ItemsSource = TrackingDevices.LoadAttemptedTrackingDevicesVector;
+
+        //Logger.Info($"Registering joint selectors MVVM for page: '{GetType().FullName}'...");
+        //WaistAndFeetTrackersExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
+        //KneesAndElbowsTrackersExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
+        //AdditionalTrackersExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
+
+        //Logger.Info($"Registering override selectors MVVM for page: '{GetType().FullName}'...");
+        //WaistAndFeetOverridesExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
+        //KneesAndElbowsOverridesExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
+        //AdditionalOverridesExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
 
         // Set currently tracking device & selected device
         Logger.Info("Overwriting the devices TreeView selected item...");
@@ -445,5 +457,33 @@ public sealed partial class Devices : Page
     private void PluginManagerFlyout_OnOpened(object sender, object e)
     {
         Shared.Devices.PluginsPageLoadedOnce = true;
+    }
+
+    private void JointsSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+    }
+
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged(string propName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+    
+    // Waist, LR Foot
+    public List<AppTracker> BasicTrackers => AppData.Settings.TrackersVector.ToArray()[..3].ToList();
+
+    // LR Knee, LR Elbow
+    public List<AppTracker> StandardTrackers => AppData.Settings.TrackersVector.ToArray()[3..7].ToList();
+
+    // Everything else
+    public List<AppTracker> AdditionalTrackers => AppData.Settings.TrackersVector.Count > 6
+        ? AppData.Settings.TrackersVector.ToArray()[7..].ToList()
+        : new List<AppTracker>(); // Dummy list with no items (at least not null)
+
+    private string GetResourceString(string key)
+    {
+        return Interfacing.LocalizedJsonString(key);
     }
 }

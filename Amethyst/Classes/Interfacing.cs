@@ -264,7 +264,7 @@ public static class Interfacing
                     // Focus on the restart button
                     Shared.Settings.RestartButton.Focus(FocusState.Keyboard);
                 });
-        
+
         // Else no click action requested ("none")
     }
 
@@ -341,7 +341,7 @@ public static class Interfacing
 
         throw new NotImplementedException("MVVM");
 
-       // Shared.Devices.DevicesJointsSetupPending = false;
+        // Shared.Devices.DevicesJointsSetupPending = false;
     }
 
     // Controllers' ID's (vr::k_unTrackedDeviceIndexInvalid for non-existent)
@@ -422,7 +422,7 @@ public static class Interfacing
 
         return true;
     }
-    
+
     public static bool OpenVrStartup()
     {
         Logger.Info("Attempting connection to VRSystem... ");
@@ -436,7 +436,7 @@ public static class Interfacing
             Logger.Info("Waiting for the VR System to initialize...");
             var eError = EVRInitError.None;
             OpenVR.Init(ref eError, EVRApplicationType.VRApplication_Overlay);
-                
+
             Logger.Info("The VRSystem finished initializing...");
             if (eError != EVRInitError.None)
             {
@@ -972,7 +972,8 @@ public static class Interfacing
 
             // If the language key is the current language, don't split the name
             if (AppData.Settings.AppLanguage == languageKey)
-                return jsonObject.GetNamedObject(AppData.Settings.AppLanguage).GetNamedString(AppData.Settings.AppLanguage);
+                return jsonObject.GetNamedObject(AppData.Settings.AppLanguage)
+                    .GetNamedString(AppData.Settings.AppLanguage);
 
             // Else split the same way as in docs
             return jsonObject.GetNamedObject(languageKey).GetNamedString(languageKey) +
@@ -1074,7 +1075,7 @@ public static class Interfacing
     }
 
     // Get a string from runtime JSON resources, language from settings
-    public static string LocalizedJsonString(string resourceKey, 
+    public static string LocalizedJsonString(string resourceKey,
         [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
         [CallerMemberName] string memberName = "")
     {
@@ -1097,6 +1098,30 @@ public static class Interfacing
             return resourceKey;
         }
     }
+
+    // Get a string from runtime JSON resources, language from settings : for XAML
+    public static string LocalizedResourceString(string resourceKey)
+    {
+        try
+        {
+            // Check if the resource root is fine
+            if (LocalResources is not null && LocalResources.Count > 0)
+                return LocalResources.GetNamedString(resourceKey);
+
+            Logger.Error("The current resource root is empty! App interface will be broken!");
+            return resourceKey; // Just give up
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"JSON error at key: \"{resourceKey}\"! Message: {e.Message}\n");
+
+            // Else return they key alone
+            return resourceKey;
+        }
+    }
+
+    // Does the tracker vector contain active trackers that aren't default?
+    public static bool AdditionalTrackersEnabled => AppData.Settings.TrackersVector.Count > 7;
 
     public static class Plugins
     {
@@ -1193,7 +1218,8 @@ public static class Interfacing
             {
                 // Check if the resource root is fine
                 if (TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector
-                        .TryGetValue(guid, out var value) && value.ResourceRoot is not null && value.ResourceRoot.Count > 0)
+                        .TryGetValue(guid, out var value) && value.ResourceRoot is not null &&
+                    value.ResourceRoot.Count > 0)
                     return TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector[guid]
                         .ResourceRoot.GetNamedString(key);
 

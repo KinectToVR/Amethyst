@@ -300,6 +300,6 @@ public class AppSettings : INotifyPropertyChanged
 
     public void OnPropertyChanged(string propName = null)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 }

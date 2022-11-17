@@ -1,7 +1,14 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Numerics;
+using Windows.Foundation;
 using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
+using Amethyst.Utils;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Amethyst.Classes;
 
@@ -46,7 +53,7 @@ public class AppTracker : INotifyPropertyChanged
 
     // Is this joint overridden?
     public bool IsPositionOverridden { get; set; } = false;
-    public bool IsRotationOverridden { get; set; } = false;
+    public bool IsOrientationOverridden { get; set; } = false;
 
     // Position filter update option
     private RotationTrackingFilterOption _orientationTrackingFilterOption =
@@ -73,6 +80,9 @@ public class AppTracker : INotifyPropertyChanged
         get => _noPositionFilteringRequested;
         set
         {
+            // Guard: don't do anything on actual no changes
+            if (_noPositionFilteringRequested == value) return;
+
             _noPositionFilteringRequested = value;
             OnPropertyChanged();
         }
@@ -81,13 +91,39 @@ public class AppTracker : INotifyPropertyChanged
     // Override device's GUID
     public string OverrideGuid { get; set; } = "";
 
-    // If the joint is overridden, overrides' ids (computed)
-    public uint OverrideJointId { get; set; } = 0;
-
     public TrackerType Role { get; set; } = TrackerType.TrackerHanded;
 
     // The assigned host joint if using manual joints
-    public uint SelectedTrackedJointId { get; set; } = 0;
+    private uint _selectedTrackedJointId = 0;
+
+    public uint SelectedTrackedJointId
+    {
+        get => _selectedTrackedJointId;
+        set
+        {
+            // Guard: don't do anything on no changes
+            if (_selectedTrackedJointId == value) return;
+
+            _selectedTrackedJointId = value;
+            OnPropertyChanged(); // All
+        }
+    }
+
+    // If the joint is overridden, overrides' ids (computed)
+    private uint _overrideJointId = 0;
+
+    public uint OverrideJointId
+    {
+        get => _overrideJointId;
+        set
+        {
+            // Guard: don't do anything on no changes
+            if (_overrideJointId == value) return;
+
+            _overrideJointId = value;
+            OnPropertyChanged(); // All
+        }
+    }
 
     // Tracker data (inherited)
     public string Serial { get; set; } = "";
@@ -97,6 +133,9 @@ public class AppTracker : INotifyPropertyChanged
         get => _orientationTrackingOption;
         set
         {
+            // Guard: don't do anything on actual no changes
+            if (_orientationTrackingOption == value) return;
+
             _orientationTrackingOption = value;
             OnPropertyChanged();
         }
@@ -107,6 +146,9 @@ public class AppTracker : INotifyPropertyChanged
         get => _positionTrackingFilterOption;
         set
         {
+            // Guard: don't do anything on actual no changes
+            if (_positionTrackingFilterOption == value) return;
+
             _positionTrackingFilterOption = value;
             OnPropertyChanged();
         }
@@ -117,6 +159,9 @@ public class AppTracker : INotifyPropertyChanged
         get => _orientationTrackingFilterOption;
         set
         {
+            // Guard: don't do anything on actual no changes
+            if (_orientationTrackingFilterOption == value) return;
+
             _orientationTrackingFilterOption = value;
             OnPropertyChanged();
         }
@@ -127,6 +172,9 @@ public class AppTracker : INotifyPropertyChanged
         get => _isActive;
         set
         {
+            // Don't do anything on no changes
+            if (_isActive == value) return;
+
             _isActive = value;
             OnPropertyChanged();
         }
@@ -137,6 +185,9 @@ public class AppTracker : INotifyPropertyChanged
         get => _overridePhysics;
         set
         {
+            // Don't do anything on no changes
+            if (_overridePhysics == value) return;
+
             _overridePhysics = value;
             OnPropertyChanged();
         }
@@ -448,8 +499,12 @@ public class AppTracker : INotifyPropertyChanged
 
     public void OnPropertyChanged(string propName = null)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
+
+    // OnPropertyChanged listener for containers
+    public EventHandler PropertyChangedEvent;
 
     // MVVM stuff
     public string GetResourceString(string key)
@@ -489,7 +544,7 @@ public class AppTracker : INotifyPropertyChanged
         TrackingDevices.GetTrackingDevice().IsAppOrientationSupported;
 
     public string GetManagingDeviceGuid =>
-        IsPositionOverridden || IsRotationOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
+        IsPositionOverridden || IsOrientationOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
 
     public string ManagingDevicePlaceholder =>
         GetResourceString("/SettingsPage/Filters/Managed").Replace("{0}", GetManagingDeviceGuid);
@@ -504,5 +559,107 @@ public class AppTracker : INotifyPropertyChanged
             _isTrackerExpanderOpen = value;
             OnPropertyChanged("IsTrackerExpanderOpen");
         }
+    }
+
+    // The assigned host joint if using manual joints
+    public int SelectedBaseTrackedJointId
+    {
+        get => IsActive ? (int)_selectedTrackedJointId : -1;
+        set
+        {
+            _selectedTrackedJointId = value >= 0 ? (uint)value : 0;
+            OnPropertyChanged(); // All
+        }
+    }
+
+    public int SelectedOverrideJointId
+    {
+        // '+ 1' and '- 1' cause '0' is 'No Override' in this case
+        // Note: use OverrideJointId for the "normal" (non-ui) one
+        get => IsActive ? (int)_overrideJointId + 1 : -1;
+        set
+        {
+            _overrideJointId = value > 0 ? (uint)(value - 1) : 0;
+            OnPropertyChanged(); // All
+        }
+    }
+
+    public int SelectedOverrideJointIdForSelectedDevice
+    {
+        // '+ 1' and '- 1' cause '0' is 'No Override' in this case
+        // Note: use OverrideJointId for the "normal" (non-ui) one
+        get => IsActive ? IsManagedBy(Shared.Devices.SelectedTrackingDeviceGuid) ? (int)_overrideJointId + 1 : 0 : -1;
+        set
+        {
+            // Update the override joint and the managing device
+            _overrideJointId = value > 0 ? (uint)(value - 1) : 0;
+            OverrideGuid = Shared.Devices.SelectedTrackingDeviceGuid;
+
+            // Enable at least 1 override
+            if (!IsOverriden)
+                IsPositionOverridden = true;
+
+            OnPropertyChanged(); // All
+        }
+    }
+
+    // Is force-updated by the base device
+    public bool IsAutoManaged => TrackingDevices.GetTrackingDevice().TrackedJoints.Any(x =>
+        x.Role != TrackedJointType.JointManual && TypeUtils.JointTrackerTypeDictionary[x.Role] == Role);
+
+    // Is NOT force-updated by the base device
+    public bool IsManuallyManaged => !IsAutoManaged;
+
+    // IsPositionOverridden || IsOrientationOverridden
+    public bool IsOverriden => IsPositionOverridden || IsOrientationOverridden;
+
+    public double BoolToOpacity(bool v)
+    {
+        return v ? 1.0 : 0.0;
+    }
+
+    // Is this joint overridden by the selected device? (pos)
+    public bool IsPositionOverriddenBySelectedDevice
+    {
+        get => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid && IsPositionOverridden;
+        set
+        {
+            // Update the managing and the override
+            OverrideGuid = Shared.Devices.SelectedTrackingDeviceGuid;
+            IsPositionOverridden = value;
+
+            // If not overridden yet (index=0)
+            if (_overrideJointId <= 0)
+                _overrideJointId = 1;
+
+            OnPropertyChanged(); // All
+
+        }
+    }
+
+    // Is this joint overridden by the selected device? (ori)
+    public bool IsOrientationOverriddenBySelectedDevice
+    {
+        get => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid && IsOrientationOverridden;
+        set
+        {
+            // Update the managing and the override
+            OverrideGuid = Shared.Devices.SelectedTrackingDeviceGuid;
+            IsOrientationOverridden = value;
+
+            // If not overridden yet (index=0)
+            if (_overrideJointId <= 0)
+                _overrideJointId = 1;
+
+            OnPropertyChanged(); // All
+
+        }
+    }
+    
+    public bool IsOverridenByOtherDevice => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid;
+
+    public bool IsManagedBy(string guid)
+    {
+        return guid == GetManagingDeviceGuid;
     }
 }
