@@ -25,7 +25,7 @@
     </Page.Resources>
 
     <Grid Background="Transparent">
-        <SplitView Canvas.ZIndex="1" x:Name="OffsetsView" PaneOpened="OffsetsView_PaneOpened"
+        <SplitView Canvas.ZIndex="1" x:Name="OffsetsView"
                    PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                    PaneClosing="CancelPaneClosing" IsPaneOpen="False" OpenPaneLength="520"
                    CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
@@ -37,11 +37,12 @@
                         <RowDefinition Height="75" />
                     </Grid.RowDefinitions>
 
-                    <Pivot x:Name="OffsetsControlPivot" Grid.Row="0">
+                    <Pivot x:Name="OffsetsControlPivot" Grid.Row="0"
+                           SelectionChanged="OffsetsControlPivot_SelectionChanged">
                         <Pivot.HeaderTemplate>
                             <DataTemplate x:DataType="classes:AppTracker">
                                 <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}"
-                                           FontSize="26" FontWeight="Normal" Text="{x:Bind TrackerName}"/>
+                                           FontSize="26" FontWeight="Normal" Text="{x:Bind TrackerName}" />
                             </DataTemplate>
                         </Pivot.HeaderTemplate>
                         <Pivot.ItemTemplate>
@@ -65,9 +66,10 @@
                                         <RowDefinition Height="50" />
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Orientation'), Mode=OneWay}"
-                                               Grid.Row="1" Grid.Column="0" FontSize="20" FontWeight="Medium"
-                                               ToolTipService.ToolTip="{x:Bind GetResourceString('/GeneralPage/Captions/Tooltips/Orientation'), Mode=OneWay}" />
+                                    <TextBlock
+                                        Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Orientation'), Mode=OneWay}"
+                                        Grid.Row="1" Grid.Column="0" FontSize="20" FontWeight="Medium"
+                                        ToolTipService.ToolTip="{x:Bind GetResourceString('/GeneralPage/Captions/Tooltips/Orientation'), Mode=OneWay}" />
 
                                     <Grid Grid.Column="0" Grid.Row="2">
                                         <Grid.ColumnDefinitions>
@@ -83,7 +85,8 @@
 
                                         <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
                                                    FontSize="26" FontWeight="Normal"
-                                                   Maximum="360" Minimum="0" Value="{x:Bind OrientationOffset.Z, Mode=TwoWay}"
+                                                   Maximum="360" Minimum="0"
+                                                   Value="{x:Bind OrientationOffset.Z, Mode=TwoWay}"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
                                                    SmallChange="1" LargeChange="10"
@@ -103,7 +106,8 @@
 
                                         <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
                                                    FontSize="26" FontWeight="Normal"
-                                                   Maximum="360" Minimum="0" Value="{x:Bind OrientationOffset.Y, Mode=TwoWay}"
+                                                   Maximum="360" Minimum="0"
+                                                   Value="{x:Bind OrientationOffset.Y, Mode=TwoWay}"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
                                                    SmallChange="1" LargeChange="10"
@@ -123,7 +127,8 @@
 
                                         <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
                                                    FontSize="26" FontWeight="Normal"
-                                                   Maximum="360" Minimum="0" Value="{x:Bind OrientationOffset.X, Mode=TwoWay}"
+                                                   Maximum="360" Minimum="0"
+                                                   Value="{x:Bind OrientationOffset.X, Mode=TwoWay}"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
                                                    SmallChange="1" LargeChange="10"
@@ -133,9 +138,10 @@
                                     <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20"
                                                FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters." />
 
-                                    <TextBlock Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Position'), Mode=OneWay}"
-                                               Grid.Row="8" Grid.Column="0" FontSize="20" FontWeight="Medium"
-                                               ToolTipService.ToolTip="{x:Bind GetResourceString('/GeneralPage/Captions/Tooltips/Position'), Mode=OneWay}" />
+                                    <TextBlock
+                                        Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Position'), Mode=OneWay}"
+                                        Grid.Row="8" Grid.Column="0" FontSize="20" FontWeight="Medium"
+                                        ToolTipService.ToolTip="{x:Bind GetResourceString('/GeneralPage/Captions/Tooltips/Position'), Mode=OneWay}" />
 
                                     <Grid Grid.Column="0" Grid.Row="9">
                                         <Grid.ColumnDefinitions>
@@ -151,7 +157,8 @@
 
                                         <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
                                                    FontSize="26" FontWeight="Normal"
-                                                   Maximum="1000" Minimum="-1000" Value="{x:Bind PositionOffset.X, Mode=TwoWay}"
+                                                   Maximum="1000" Minimum="-1000"
+                                                   Value="{x:Bind PositionOffset.X, Mode=TwoWay}"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
                                                    SmallChange="1" LargeChange="10"
@@ -171,7 +178,8 @@
 
                                         <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
                                                    FontSize="26" FontWeight="Normal"
-                                                   Maximum="1000" Minimum="-1000" Value="{x:Bind PositionOffset.Y, Mode=TwoWay}"
+                                                   Maximum="1000" Minimum="-1000"
+                                                   Value="{x:Bind PositionOffset.Y, Mode=TwoWay}"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
                                                    SmallChange="1" LargeChange="10"
@@ -191,7 +199,8 @@
 
                                         <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
                                                    FontSize="26" FontWeight="Normal"
-                                                   Maximum="1000" Minimum="-1000" Value="{x:Bind PositionOffset.Z, Mode=TwoWay}"
+                                                   Maximum="1000" Minimum="-1000"
+                                                   Value="{x:Bind PositionOffset.Z, Mode=TwoWay}"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
                                                    SmallChange="1" LargeChange="10"

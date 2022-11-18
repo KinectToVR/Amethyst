@@ -38,8 +38,6 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         Shared.Devices.DeviceStatusLabel = TrackingDeviceStatusLabel;
         Shared.Devices.ErrorWhatText = ErrorWhatText;
         Shared.Devices.TrackingDeviceErrorLabel = TrackingDeviceErrorLabel;
-        Shared.Devices.OverridesLabel = OverridesLabel;
-        Shared.Devices.JointBasisLabel = JointBasisLabel;
         Shared.Devices.DeviceErrorGrid = DeviceErrorGrid;
         Shared.Devices.TrackingDeviceChangePanel = TrackingDeviceChangePanel;
         Shared.Devices.DevicesMainContentGridOuter = DevicesMainContentGridOuter;
@@ -53,10 +51,8 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         Shared.Devices.SetAsBaseButton = SetAsBaseButton;
         Shared.Devices.DeselectDeviceButton = DeselectDeviceButton;
         Shared.Devices.DevicesMainContentScrollViewer = DevicesMainContentScrollViewer;
-        Shared.Devices.DevicesOverridesSelectorStackPanelOuter = DevicesOverridesSelectorStackPanelOuter;
-        Shared.Devices.DevicesOverridesSelectorStackPanelInner = DevicesOverridesSelectorStackPanelInner;
-        Shared.Devices.DevicesJointSelectorStackPanelOuter = DevicesJointsSelectorStackPanelOuter;
-        Shared.Devices.DevicesJointSelectorStackPanelInner = DevicesJointsSelectorStackPanelInner;
+        Shared.Devices.DevicesOverridesSelectorStackPanel = DevicesOverridesSelectorStackPanel;
+        Shared.Devices.DevicesJointSelectorStackPanel = DevicesJointsSelectorStackPanel;
         Shared.Devices.JointExpanderHostStackPanel = JointsExpanderHostStackPanel;
         Shared.Devices.SelectedDeviceSettingsRootLayoutPanel = SelectedDeviceSettingsRootLayoutPanel;
         Shared.Devices.OverridesExpanderHostStackPanel = OverridesExpanderHostStackPanel;
@@ -135,8 +131,6 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         SetAsBaseButton.Content = Interfacing.LocalizedJsonString("/DevicesPage/Buttons/SetAs/Base");
         SetAsOverrideButton.Content = Interfacing.LocalizedJsonString("/DevicesPage/Buttons/SetAs/Override");
         Titles_DeviceHasNoJoints.Text = Interfacing.LocalizedJsonString("/DevicesPage/Titles/DeviceHasNoJoints");
-        OverridesLabel.Text = Interfacing.LocalizedJsonString("/DevicesPage/Titles/Overrides/Header");
-        JointBasisLabel.Text = Interfacing.LocalizedJsonString("/DevicesPage/Titles/Joints/Assign");
         DeviceEntryView_Base_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Base");
         DeviceEntryView_Override_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Override");
         DeviceEntryView_Error_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Error");
@@ -170,6 +164,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         await Shared.Devices.ReloadSelectedDevice(true);
 
         // Notify of the setup's end
+        OnPropertyChanged(); // Just everything
         Shared.Devices.DevicesTabSetupFinished = true;
     }
 
@@ -470,7 +465,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
-    
+
     // Waist, LR Foot
     public List<AppTracker> BasicTrackers => AppData.Settings.TrackersVector.ToArray()[..3].ToList();
 
@@ -485,5 +480,10 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     private string GetResourceString(string key)
     {
         return Interfacing.LocalizedJsonString(key);
+    }
+
+    public Visibility CombineVisibility(Visibility v1, Visibility v2, Visibility v3)
+    {
+        return new[] { v1, v2, v3 }.Contains(Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
     }
 }

@@ -37,7 +37,6 @@ public sealed partial class General : Page
 {
     private bool _showSkeletonPrevious = true;
     private bool _generalPageLoadedOnce = false;
-    private bool _offsetsPageLoadedOnce = false;
     private static string _calibratingDeviceGuid = "";
 
     private bool _calibrationPending = false;
@@ -89,7 +88,7 @@ public sealed partial class General : Page
 
         Task.Run(() =>
         {
-            Shared.Semaphores.ReloadGeneralPageSemaphore = 
+            Shared.Semaphores.ReloadGeneralPageSemaphore =
                 new Semaphore(0, 1);
 
             while (true)
@@ -295,7 +294,7 @@ public sealed partial class General : Page
                 : "/GeneralPage/Buttons/Skeleton/Freeze");
 
         // Set up the co/re/disconnect button
-        if (Interfacing.K2AppTrackersSpawned)
+        if (!Interfacing.K2AppTrackersSpawned)
         {
             ToggleTrackersButton.IsChecked = false;
             ToggleTrackersButton.Content =
@@ -325,11 +324,11 @@ public sealed partial class General : Page
     {
         // Discard backend offsets' values by re-reading them from settings
         AppData.Settings.ReadSettings();
-        
+
         // Reload offset values
         Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
         AppData.Settings.TrackersVector.ForEach(x => x.OnPropertyChanged());
-        
+
         // Close the pane now
         OffsetsView.DisplayMode = SplitViewDisplayMode.Overlay;
         OffsetsView.IsPaneOpen = false;
@@ -849,11 +848,11 @@ public sealed partial class General : Page
     {
         // Push saved offsets' by reading them from settings
         AppData.Settings.ReadSettings();
-        
+
         // Reload offset values
         Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
         AppData.Settings.TrackersVector.ForEach(x => x.OnPropertyChanged());
-        
+
         // Open the pane now
         OffsetsView.DisplayMode = SplitViewDisplayMode.Inline;
         OffsetsView.IsPaneOpen = true;
@@ -1165,8 +1164,8 @@ public sealed partial class General : Page
     private void OffsetsValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
     {
         // Don't even care if we're not set up yet
-        if (!_offsetsPageLoadedOnce) return;
-        
+        if (!sender.IsLoaded) return;
+
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
@@ -1461,11 +1460,6 @@ public sealed partial class General : Page
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
     }
 
-    private void OffsetsView_PaneOpened(SplitView sender, object args)
-    {
-        _offsetsPageLoadedOnce = true;
-    }
-
     private void SetSkeletonVisibility(bool visibility)
     {
         // Don't even care if we're not set up yet
@@ -1494,5 +1488,39 @@ public sealed partial class General : Page
     private void AllowNavigation(bool allow)
     {
         Shared.Main.NavigationBlockerGrid.IsHitTestVisible = !allow;
+    }
+
+    private int _previousOffsetPageIndex = 0;
+    private bool _offsetsPageNavigated = false;
+
+    private void OffsetsControlPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // Don't even care if we're not set up yet
+        if (!(sender as Pivot).IsLoaded) return;
+
+        if (_offsetsPageNavigated)
+        {
+            // The last item
+            if ((sender as Pivot).SelectedIndex == (sender as Pivot).Items.Count - 1)
+                AppSounds.PlayAppSound(_previousOffsetPageIndex == 0
+                    ? AppSounds.AppSoundType.MovePrevious
+                    : AppSounds.AppSoundType.MoveNext);
+
+            // The first item
+            else if ((sender as Pivot).SelectedIndex == 0)
+                AppSounds.PlayAppSound(_previousOffsetPageIndex == (sender as Pivot).Items.Count - 1
+                    ? AppSounds.AppSoundType.MoveNext
+                    : AppSounds.AppSoundType.MovePrevious);
+
+            // Default
+            else
+                AppSounds.PlayAppSound((sender as Pivot).SelectedIndex > _previousOffsetPageIndex
+                    ? AppSounds.AppSoundType.MoveNext
+                    : AppSounds.AppSoundType.MovePrevious);
+        }
+
+        // Cache
+        _previousOffsetPageIndex = (sender as Pivot).SelectedIndex;
+        _offsetsPageNavigated = true;
     }
 }

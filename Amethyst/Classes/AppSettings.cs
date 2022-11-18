@@ -25,6 +25,7 @@ public class AppSettings : INotifyPropertyChanged
 
     // Current joints
     public List<AppTracker> TrackersVector { get; set; } = new();
+
     public bool UseTrackerPairs { get; set; } = false; // Pair feet, elbows and knees
     private bool _checkForOverlappingTrackers = true; // Check for overlapping roles
 

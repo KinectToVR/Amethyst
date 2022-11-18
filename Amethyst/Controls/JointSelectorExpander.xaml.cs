@@ -55,12 +55,16 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
             OnPropertyChanged(); // Trigger a complete refresh of the user control
         }
     }
-    
-    private bool IsAnyTrackerEnabled => Trackers.Any(x => x.IsActive && x.IsManuallyManaged);
 
-    private static List<string> GetBaseDeviceJointsList() =>
-        TrackingDevices.GetTrackingDevice().TrackedJoints.Select(x => x.Joint.JointName).ToList();
-    
+    private bool IsAnyTrackerEnabled =>
+        Shared.Devices.SelectedTrackingDeviceGuid == AppData.Settings.TrackingDeviceGuid &&
+        Trackers.Any(x => x.IsActive && x.IsManuallyManaged);
+
+    private static List<string> GetBaseDeviceJointsList()
+    {
+        return TrackingDevices.GetTrackingDevice().TrackedJoints.Select(x => x.Joint.JointName).ToList();
+    }
+
     private void JointsSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
     }

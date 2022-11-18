@@ -280,9 +280,7 @@ public static class Shared
             DeviceNameLabel,
             DeviceStatusLabel,
             ErrorWhatText,
-            TrackingDeviceErrorLabel,
-            OverridesLabel,
-            JointBasisLabel;
+            TrackingDeviceErrorLabel;
 
         public static Grid
             DeviceErrorGrid,
@@ -311,9 +309,9 @@ public static class Shared
 
         public static StackPanel
             DevicesOverridesSelectorStackPanelOuter,
-            DevicesOverridesSelectorStackPanelInner,
+            DevicesOverridesSelectorStackPanel,
             DevicesJointSelectorStackPanelOuter,
-            DevicesJointSelectorStackPanelInner,
+            DevicesJointSelectorStackPanel,
             JointExpanderHostStackPanel,
             SelectedDeviceSettingsRootLayoutPanel,
             OverridesExpanderHostStackPanel;

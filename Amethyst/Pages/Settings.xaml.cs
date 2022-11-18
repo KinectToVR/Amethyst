@@ -931,13 +931,6 @@ public sealed partial class Settings : Page
                 await Task.Delay(20);
             }
 
-        TrackingDevices.TrackersConfigChanged();
-
-        // Play a sound
-        AppSounds.PlayAppSound((sender as ToggleSwitch).IsOn
-            ? AppSounds.AppSoundType.ToggleOn
-            : AppSounds.AppSoundType.ToggleOff);
-
         // Check if any trackers are enabled
         if (!(sender as ToggleSwitch).IsOn && !AppData.Settings.TrackersVector
                 .Where(x => x.Role != tracker.Role).Any(x => x.IsActive))
@@ -946,6 +939,13 @@ public sealed partial class Settings : Page
             tracker.IsActive = true; // Force re-enable this tracker
             tracker.OnPropertyChanged("IsActive");
         }
+
+        TrackingDevices.TrackersConfigChanged();
+
+        // Play a sound
+        AppSounds.PlayAppSound((sender as ToggleSwitch).IsOn
+            ? AppSounds.AppSoundType.ToggleOn
+            : AppSounds.AppSoundType.ToggleOff);
 
         // Request a check for already-added trackers
         Logger.Info("Requesting a check for already-added trackers...");

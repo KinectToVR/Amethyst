@@ -9,6 +9,7 @@ using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media.Animation;
+using WinRT;
 using static Amethyst.Classes.Shared;
 
 namespace Amethyst.Classes;
@@ -134,7 +135,7 @@ public static class TrackingDevices
     public static void HandleDeviceRefresh(bool shouldReconnect)
     {
         // Just give up if not set up yet
-        if (Devices.JointBasisLabel is null) return;
+        if (Devices.ErrorWhatText is null) return;
 
         Devices.DevicesSignalJoints = false; // Block signals
         var currentDevice = GetDevice(Devices.SelectedTrackingDeviceGuid);
@@ -232,6 +233,10 @@ public static class TrackingDevices
         if (!Settings.SettingsLocalInitFinished) return;
         Logger.Info("Trackers configuration has been changed!");
         if (!showToasts) Logger.Info("Any toast won't be shown this time: force-disabled");
+
+        // Refresh trackers MVVM (everywhere)
+        AppData.Settings.OnPropertyChanged("TrackersVector");
+        Semaphores.ReloadDevicesPageSemaphore.Release();
 
         // If this is the first time and happened runtime, also show the notification
         if (Interfacing.K2AppTrackersSpawned)

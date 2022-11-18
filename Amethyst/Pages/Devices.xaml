@@ -890,41 +890,40 @@
                             <!--JointBasis Selector Part-->
 
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
-                                        x:Name="DevicesJointsSelectorStackPanelOuter">
+                                        Visibility="{x:Bind Mode=OneWay, Path=CombineVisibility(
+                                                WaistAndFeetTrackersExpander.Visibility, 
+                                                KneesAndElbowsTrackersExpander.Visibility, 
+                                                AdditionalTrackersExpander.Visibility)}"
+                                        x:Name="DevicesJointsSelectorStackPanel">
 
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
-                                            x:Name="DevicesJointsSelectorStackPanelInner">
-
-                                    <!--<StackPanel.Transitions>
+                                <!--<StackPanel.Transitions>
                                         <TransitionCollection>
                                             <EntranceThemeTransition IsStaggeringEnabled="True" />
                                         </TransitionCollection>
                                     </StackPanel.Transitions>-->
 
-                                    <TextBlock FontWeight="SemiBold" x:Name="JointBasisLabel"
-                                               FontSize="25" Margin="40,20,0,0" Visibility="Collapsed" />
+                                <TextBlock FontWeight="SemiBold" FontSize="25" Margin="40,20,0,0"
+                                           Text="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/Assign'), Mode=OneWay}" />
 
-                                    <StackPanel x:Name="JointsExpanderHostStackPanel" HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
-                                        <StackPanel.Transitions>
-                                            <TransitionCollection>
-                                                <EntranceThemeTransition />
-                                                <!--<AddDeleteThemeTransition />-->
-                                                <!--<ContentThemeTransition />-->
-                                            </TransitionCollection>
-                                        </StackPanel.Transitions>
+                                <StackPanel x:Name="JointsExpanderHostStackPanel" HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
+                                    <StackPanel.Transitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition />
+                                            <!--<AddDeleteThemeTransition />-->
+                                            <!--<ContentThemeTransition />-->
+                                        </TransitionCollection>
+                                    </StackPanel.Transitions>
 
-                                        <controls:JointSelectorExpander x:Name="WaistAndFeetTrackersExpander"
-                                                                        Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/WaistAndFeet'), Mode=OneWay}"
-                                                                        Trackers="{x:Bind BasicTrackers, Mode=OneWay}" />
-                                        <controls:JointSelectorExpander x:Name="KneesAndElbowsTrackersExpander"
-                                                                        Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/ElbowsAndKnees'), Mode=OneWay}"
-                                                                        Trackers="{x:Bind StandardTrackers, Mode=OneWay}" />
-                                        <controls:JointSelectorExpander x:Name="AdditionalTrackersExpander"
-                                                                        Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/Other'), Mode=OneWay}"
-                                                                        Trackers="{x:Bind AdditionalTrackers, Mode=OneWay}" />
-                                    </StackPanel>
-
+                                    <controls:JointSelectorExpander x:Name="WaistAndFeetTrackersExpander"
+                                                                    Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/WaistAndFeet'), Mode=OneWay}"
+                                                                    Trackers="{x:Bind BasicTrackers, Mode=OneWay}" />
+                                    <controls:JointSelectorExpander x:Name="KneesAndElbowsTrackersExpander"
+                                                                    Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/ElbowsAndKnees'), Mode=OneWay}"
+                                                                    Trackers="{x:Bind StandardTrackers, Mode=OneWay}" />
+                                    <controls:JointSelectorExpander x:Name="AdditionalTrackersExpander"
+                                                                    Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/Other'), Mode=OneWay}"
+                                                                    Trackers="{x:Bind AdditionalTrackers, Mode=OneWay}" />
                                 </StackPanel>
 
                             </StackPanel>
@@ -932,41 +931,40 @@
                             <!--Overrides Part-->
 
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
-                                        x:Name="DevicesOverridesSelectorStackPanelOuter">
+                                        Visibility="{x:Bind Mode=OneWay, Path=CombineVisibility(
+                                                WaistAndFeetOverridesExpander.Visibility, 
+                                                KneesAndElbowsOverridesExpander.Visibility, 
+                                                AdditionalOverridesExpander.Visibility)}"
+                                        x:Name="DevicesOverridesSelectorStackPanel">
 
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
-                                            x:Name="DevicesOverridesSelectorStackPanelInner">
-
-                                    <!--<StackPanel.Transitions>
+                                <!--<StackPanel.Transitions>
                                         <TransitionCollection>
                                             <EntranceThemeTransition IsStaggeringEnabled="True" />
                                         </TransitionCollection>
                                     </StackPanel.Transitions>-->
 
-                                    <TextBlock FontWeight="SemiBold" x:Name="OverridesLabel"
-                                               FontSize="25" Margin="40,20,0,0" Visibility="Collapsed" />
+                                <TextBlock FontWeight="SemiBold" FontSize="25" Margin="40,20,0,0"
+                                           Text="{x:Bind GetResourceString('/DevicesPage/Titles/Overrides/Header'), Mode=OneWay}" />
 
-                                    <StackPanel x:Name="OverridesExpanderHostStackPanel" HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
-                                        <StackPanel.Transitions>
-                                            <TransitionCollection>
-                                                <EntranceThemeTransition />
-                                                <!--<AddDeleteThemeTransition />-->
-                                                <!--<ContentThemeTransition />-->
-                                            </TransitionCollection>
-                                        </StackPanel.Transitions>
+                                <StackPanel x:Name="OverridesExpanderHostStackPanel" HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
+                                    <StackPanel.Transitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition />
+                                            <!--<AddDeleteThemeTransition />-->
+                                            <!--<ContentThemeTransition />-->
+                                        </TransitionCollection>
+                                    </StackPanel.Transitions>
 
-                                        <controls:OverrideExpander x:Name="WaistAndFeetOverridesExpander"
-                                                                   Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/WaistAndFeet'), Mode=OneWay}"
-                                                                   Trackers="{x:Bind BasicTrackers, Mode=OneWay}" />
-                                        <controls:OverrideExpander x:Name="KneesAndElbowsOverridesExpander"
-                                                                   Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/ElbowsAndKnees'), Mode=OneWay}"
-                                                                   Trackers="{x:Bind StandardTrackers, Mode=OneWay}" />
-                                        <controls:OverrideExpander x:Name="AdditionalOverridesExpander"
-                                                                   Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/Other'), Mode=OneWay}"
-                                                                   Trackers="{x:Bind AdditionalTrackers, Mode=OneWay}" />
-                                    </StackPanel>
-
+                                    <controls:OverrideExpander x:Name="WaistAndFeetOverridesExpander"
+                                                               Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/WaistAndFeet'), Mode=OneWay}"
+                                                               Trackers="{x:Bind BasicTrackers, Mode=OneWay}" />
+                                    <controls:OverrideExpander x:Name="KneesAndElbowsOverridesExpander"
+                                                               Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/ElbowsAndKnees'), Mode=OneWay}"
+                                                               Trackers="{x:Bind StandardTrackers, Mode=OneWay}" />
+                                    <controls:OverrideExpander x:Name="AdditionalOverridesExpander"
+                                                               Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/Other'), Mode=OneWay}"
+                                                               Trackers="{x:Bind AdditionalTrackers, Mode=OneWay}" />
                                 </StackPanel>
 
                             </StackPanel>
