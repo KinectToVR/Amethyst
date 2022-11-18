@@ -387,7 +387,7 @@ public static class Interfacing
                 for (var i = 0; i < 3; i++)
                 {
                     // Update tracker statuses in the server
-                    spawned.AddRange(DriverClient.UpdateTrackerStates(trackerStatuses).Select(x => x.State));
+                    spawned.AddRange((await DriverClient.UpdateTrackerStates(trackerStatuses))!.Select(x => x.State));
                     await Task.Delay(15);
                 }
 

@@ -918,7 +918,7 @@ public sealed partial class Settings : Page
         // Don't react to pre-init signals
         if (!Shared.Settings.SettingsLocalInitFinished) return;
 
-        var context = (sender as ToggleSwitch).DataContext;
+        var context = (sender as ToggleSwitch)!.DataContext;
         var tracker = context as AppTracker;
 
         if (Interfacing.K2AppTrackersInitialized)
@@ -926,24 +926,24 @@ public sealed partial class Settings : Page
             for (var i = 0; i < 3; i++)
             {
                 // Update status in server
-                DriverClient.UpdateTrackerStates(new List<(TrackerType Role, bool State)>
-                    { (tracker.Role, (sender as ToggleSwitch).IsOn) });
+                await DriverClient.UpdateTrackerStates(new List<(TrackerType Role, bool State)>
+                    { (tracker!.Role, (sender as ToggleSwitch)!.IsOn) });
                 await Task.Delay(20);
             }
 
         // Check if any trackers are enabled
-        if (!(sender as ToggleSwitch).IsOn && !AppData.Settings.TrackersVector
-                .Where(x => x.Role != tracker.Role).Any(x => x.IsActive))
+        if (!(sender as ToggleSwitch)!.IsOn && !AppData.Settings.TrackersVector
+                .Where(x => x.Role != tracker!.Role).Any(x => x.IsActive))
         {
             Logger.Warn("All trackers (except this one) have been disabled, force-re-enabling!");
-            tracker.IsActive = true; // Force re-enable this tracker
+            tracker!.IsActive = true; // Force re-enable this tracker
             tracker.OnPropertyChanged("IsActive");
         }
 
         TrackingDevices.TrackersConfigChanged();
 
         // Play a sound
-        AppSounds.PlayAppSound((sender as ToggleSwitch).IsOn
+        AppSounds.PlayAppSound((sender as ToggleSwitch)!.IsOn
             ? AppSounds.AppSoundType.ToggleOn
             : AppSounds.AppSoundType.ToggleOff);
 
@@ -959,13 +959,13 @@ public sealed partial class Settings : Page
 
     private void TrackerPositionFilterOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if ((sender as ComboBox).SelectedIndex < 0)
-            (sender as ComboBox).SelectedItem = e.RemovedItems[0];
+        if ((sender as ComboBox)!.SelectedIndex < 0)
+            (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
     }
 
     private void TrackerOrientationFilterOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if ((sender as ComboBox).SelectedIndex < 0)
-            (sender as ComboBox).SelectedItem = e.RemovedItems[0];
+        if ((sender as ComboBox)!.SelectedIndex < 0)
+            (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
     }
 }
