@@ -7,11 +7,16 @@ using Windows.Globalization;
 using Windows.System.UserProfile;
 using Amethyst.Utils;
 using System.ComponentModel;
+using System.Globalization;
 using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
 using Microsoft.UI.Xaml.Controls;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using Valve.VR;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Amethyst.Classes;
 
@@ -36,7 +41,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             _checkForOverlappingTrackers = value;
             OnPropertyChanged("CheckForOverlappingTrackers");
-            AppData.Settings.SaveSettings();
+            // AppData.Settings.SaveSettings();
         }
     }
 
@@ -57,7 +62,7 @@ public class AppSettings : INotifyPropertyChanged
             TrackingDevices.CheckFlipSupport();
 
             OnPropertyChanged("IsFlipEnabled");
-            AppData.Settings.SaveSettings();
+            // AppData.Settings.SaveSettings();
         }
     }
 
@@ -72,7 +77,7 @@ public class AppSettings : INotifyPropertyChanged
             _isExternalFlipEnabled = value;
             TrackingDevices.CheckFlipSupport();
             OnPropertyChanged("IsExternalFlipEnabled");
-            AppData.Settings.SaveSettings();
+            // AppData.Settings.SaveSettings();
         }
     }
 
@@ -86,7 +91,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             _autoSpawnEnabledJoints = value;
             OnPropertyChanged("AutoSpawnEnabledJoints");
-            AppData.Settings.SaveSettings();
+            // AppData.Settings.SaveSettings();
         }
     }
 
@@ -100,7 +105,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             _enableAppSounds = value;
             OnPropertyChanged("EnableAppSounds");
-            AppData.Settings.SaveSettings();
+            // AppData.Settings.SaveSettings();
         }
     }
 
@@ -114,7 +119,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             _appSoundsVolume = value;
             OnPropertyChanged("AppSoundsVolume");
-            AppData.Settings.SaveSettings();
+            // AppData.Settings.SaveSettings();
         }
     }
 
@@ -149,10 +154,7 @@ public class AppSettings : INotifyPropertyChanged
 
     // If the flip bindings teaching tip has been shown
     public bool TeachingTipShownFlip { get; set; } = false;
-
-    // Already shown toasts vector
-    public List<string> ShownToastsGuidVector = new();
-
+    
     // Disabled (by the user) devices set
     public SortedSet<string> DisabledDevicesGuidSet = new();
 
@@ -165,13 +167,33 @@ public class AppSettings : INotifyPropertyChanged
     // Save settings
     public void SaveSettings()
     {
-        // TODO IMPL
+        try
+        {
+            // Save application settings to $env:AppData/Amethyst/
+            File.WriteAllText(
+                Interfacing.GetK2AppDataFileDir("AmethystSettings.json"),
+                JsonConvert.SerializeObject(AppData.Settings, Formatting.Indented));
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Error saving application settings! Message: {e.Message}");
+        }
     }
 
     // Re/Load settings
     public void ReadSettings()
     {
-        // TODO IMPL
+        try
+        {
+            // Read application settings from $env:AppData/Amethyst/
+            AppData.Settings = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(
+                Interfacing.GetK2AppDataFileDir("AmethystSettings.json"))) ?? new AppSettings();
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Error reading application settings! Message: {e.Message}");
+            AppData.Settings ??= new AppSettings(); // Reset if null
+        }
 
         // Check if the trackers vector is broken
         var vectorBroken = TrackersVector.Count < 7;
@@ -295,6 +317,14 @@ public class AppSettings : INotifyPropertyChanged
         // If failed again, just give up
         if (!File.Exists(resourcePath))
             Logger.Warn($"Could not load language resources at \"{resourcePath}\", the app interface will be broken!");
+    }
+
+    public void CheckSettings()
+    {
+        // Check runtime settings:
+        // - joint IDs
+        // - override IDs
+        // - ...
     }
 
     public event PropertyChangedEventHandler PropertyChanged;

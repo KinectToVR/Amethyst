@@ -3,6 +3,7 @@ using Grpc.Net.Client;
 using Amethyst.Driver.API;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using System.Diagnostics;
 
 namespace Amethyst.Driver.Client;
 
@@ -148,13 +149,17 @@ public static class DriverClient
         try
         {
             // Grab the current time and send the message
+            var messageSendTimeStopwatch = new Stopwatch();
             var sendTime = DateTime.Now.Ticks;
+
+            messageSendTimeStopwatch.Start();
             var response = _service?.PingDriverService(new Empty());
+            messageSendTimeStopwatch.Stop();
 
             // Return tuple with response and elapsed time
-            var elapsedTime = Math.Clamp(DateTime.Now.Ticks - sendTime, 0, long.MaxValue);
-            return (new Status(StatusCode.OK, "Ok"), sendTime,
-                response?.ReceivedTimestamp.FromEpoch() ?? sendTime, elapsedTime);
+            return (new Status(StatusCode.OK, "Ok"),
+                sendTime, response?.ReceivedTimestamp.FromEpoch() ?? 0,
+                messageSendTimeStopwatch.ElapsedTicks);
         }
         catch (Exception)
         {

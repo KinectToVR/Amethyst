@@ -336,12 +336,53 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         AlternativeConnectionOptionsFlyout.Hide();
     }
 
-    private void SetAsBaseButton_Click(object sender, RoutedEventArgs e)
+    private async void SetAsBaseButton_Click(object sender, RoutedEventArgs e)
     {
+        var device = TrackingDevices.GetDevice(Shared.Devices.SelectedTrackingDeviceGuid).Device;
+        if (device?.TrackedJoints is null || device.TrackedJoints.Count < 1)
+        {
+            NoJointsFlyout.ShowAt(SelectedDeviceNameLabel);
+            return; // Better give up on this one
+        }
+
+        // Setup the new base
+        AppData.Settings.TrackingDeviceGuid = device.Guid;
+
+        // Remove an override if exists and overlaps
+        if (device.IsOverride) AppData.Settings.OverrideDevicesGuidMap.Remove(device.Guid);
+        Logger.Info($"Changed the current tracking device (Base) to: ({device.Name}, {device.Guid})");
+
+        // Update the status here
+        await Shared.Devices.ReloadSelectedDevice(true);
+
+        // Check the application config, save
+        AppData.Settings.CheckSettings();
+        AppData.Settings.SaveSettings();
+
+        SetDeviceTypeFlyout.Hide(); // Hide the flyout
     }
 
-    private void SetAsOverrideButton_Click(object sender, RoutedEventArgs e)
+    private async void SetAsOverrideButton_Click(object sender, RoutedEventArgs e)
     {
+        var device = TrackingDevices.GetDevice(Shared.Devices.SelectedTrackingDeviceGuid).Device;
+        if (device?.TrackedJoints is null || device.TrackedJoints.Count < 1)
+        {
+            NoJointsFlyout.ShowAt(SelectedDeviceNameLabel);
+            return; // Better give up on this one
+        }
+
+        // Setup the new override
+        AppData.Settings.OverrideDevicesGuidMap.Add(device.Guid);
+        Logger.Info($"Changed the current tracking device (Base) to: ({device.Name}, {device.Guid})");
+
+        // Update the status here
+        await Shared.Devices.ReloadSelectedDevice(true);
+
+        // Check the application config, save
+        AppData.Settings.CheckSettings();
+        AppData.Settings.SaveSettings();
+
+        SetDeviceTypeFlyout.Hide(); // Hide the flyout
     }
 
     private void DismissOverrideTipNoJointsButton_Click(object sender, RoutedEventArgs e)

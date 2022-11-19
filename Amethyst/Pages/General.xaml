@@ -8,6 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mvvm="using:Amethyst.MVVM" xmlns:classes="using:Amethyst.Classes"
+    xmlns:local="using:Amethyst.Pages"
     Loaded="Page_Loaded" NavigationCacheMode="Required"
     mc:Ignorable="d" Background="Transparent">
 
@@ -38,6 +39,7 @@
                     </Grid.RowDefinitions>
 
                     <Pivot x:Name="OffsetsControlPivot" Grid.Row="0"
+                           ItemsSource="{x:Bind EnabledTrackers, Mode=OneWay}"
                            SelectionChanged="OffsetsControlPivot_SelectionChanged">
                         <Pivot.HeaderTemplate>
                             <DataTemplate x:DataType="classes:AppTracker">
@@ -87,6 +89,7 @@
                                                    FontSize="26" FontWeight="Normal"
                                                    Maximum="360" Minimum="0"
                                                    Value="{x:Bind OrientationOffset.Z, Mode=TwoWay}"
+                                                   local:AttachedString.AttachedString="OZ"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
                                                    SmallChange="1" LargeChange="10"
@@ -108,6 +111,7 @@
                                                    FontSize="26" FontWeight="Normal"
                                                    Maximum="360" Minimum="0"
                                                    Value="{x:Bind OrientationOffset.Y, Mode=TwoWay}"
+                                                   local:AttachedString.AttachedString="OY"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
                                                    SmallChange="1" LargeChange="10"
@@ -129,6 +133,7 @@
                                                    FontSize="26" FontWeight="Normal"
                                                    Maximum="360" Minimum="0"
                                                    Value="{x:Bind OrientationOffset.X, Mode=TwoWay}"
+                                                   local:AttachedString.AttachedString="OX"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
                                                    SmallChange="1" LargeChange="10"
@@ -159,9 +164,10 @@
                                                    FontSize="26" FontWeight="Normal"
                                                    Maximum="1000" Minimum="-1000"
                                                    Value="{x:Bind PositionOffset.X, Mode=TwoWay}"
+                                                   local:AttachedString.AttachedString="PX"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
-                                                   SmallChange="1" LargeChange="10"
+                                                   SmallChange="0.01" LargeChange="0.1"
                                                    Margin="10,0,0,0" />
                                     </Grid>
                                     <Grid Grid.Column="0" Grid.Row="11">
@@ -180,9 +186,10 @@
                                                    FontSize="26" FontWeight="Normal"
                                                    Maximum="1000" Minimum="-1000"
                                                    Value="{x:Bind PositionOffset.Y, Mode=TwoWay}"
+                                                   local:AttachedString.AttachedString="PY"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
-                                                   SmallChange="1" LargeChange="10"
+                                                   SmallChange="0.01" LargeChange="0.1"
                                                    Margin="10,0,0,0" />
                                     </Grid>
                                     <Grid Grid.Column="0" Grid.Row="13">
@@ -201,9 +208,10 @@
                                                    FontSize="26" FontWeight="Normal"
                                                    Maximum="1000" Minimum="-1000"
                                                    Value="{x:Bind PositionOffset.Z, Mode=TwoWay}"
+                                                   local:AttachedString.AttachedString="PZ"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
-                                                   SmallChange="1" LargeChange="10"
+                                                   SmallChange="0.01" LargeChange="0.1"
                                                    Margin="10,0,0,0" />
                                     </Grid>
                                 </Grid>

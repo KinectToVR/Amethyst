@@ -414,7 +414,7 @@ public sealed partial class Settings : Page
         if (!AppData.Settings.TeachingTipShownFlip &&
             Interfacing.CurrentPageTag == "settings")
         {
-            var header = Interfacing.LocalizedJsonString("/GeneralPage/Tips/FlipToggle/Header");
+            var header = Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Header");
 
             // Change the tip depending on the currently connected controllers
             var controllerModel = new StringBuilder(1024);
@@ -429,23 +429,23 @@ public sealed partial class Settings : Page
             if (controllerModel.ToString().Contains("knuckles", StringComparison.OrdinalIgnoreCase) ||
                 controllerModel.ToString().Contains("index", StringComparison.OrdinalIgnoreCase))
                 header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/GeneralPage/Tips/FlipToggle/Buttons/Index"));
+                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/Index"));
 
             else if (controllerModel.ToString().Contains("vive", StringComparison.OrdinalIgnoreCase))
                 header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/GeneralPage/Tips/FlipToggle/Buttons/VIVE"));
+                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/VIVE"));
 
             else if (controllerModel.ToString().Contains("mr", StringComparison.OrdinalIgnoreCase))
                 header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/GeneralPage/Tips/FlipToggle/Buttons/WMR"));
+                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/WMR"));
 
             else
                 header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/GeneralPage/Tips/FlipToggle/Buttons/Oculus"));
+                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/Oculus"));
 
             ToggleFlipTeachingTip.Title = header;
             ToggleFlipTeachingTip.Subtitle =
-                Interfacing.LocalizedJsonString("/GeneralPage/Tips/FlipToggle/Footer");
+                Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Footer");
 
             ToggleFlipTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
 

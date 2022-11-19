@@ -24,6 +24,7 @@ using Amethyst.MVVM;
 using static Amethyst.Classes.Shared.TeachingTips;
 using System.Xml.Linq;
 using System.Threading;
+using Microsoft.UI.Xaml.Markup;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,6 +42,9 @@ public sealed partial class General : Page
 
     private bool _calibrationPending = false;
     private bool _autoCalibration_StillPending = false;
+
+    private IEnumerable<AppTracker> EnabledTrackers =>
+        AppData.Settings.TrackersVector.Where(x => x.IsActive);
 
     public General()
     {
@@ -72,9 +76,6 @@ public sealed partial class General : Page
         Shared.General.ToggleFreezeButton = ToggleFreezeButton;
         Shared.General.FreezeOnlyLowerToggle = FreezeOnlyLowerToggle;
         Shared.General.AdditionalDeviceErrorsHyperlink = AdditionalDeviceErrorsHyperlink;
-
-        Logger.Info($"Registering offsets MVVM for page: '{GetType().FullName}'...");
-        OffsetsControlPivot.ItemsSource = AppData.Settings.TrackersVector;
 
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
         TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesVector.Values;
@@ -1170,8 +1171,37 @@ public sealed partial class General : Page
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         // Fix and reload the offset value
-        if (!double.IsNaN(sender.Value)) return;
-        sender.Value = 0; // Reset to 0, auto-updates
+        if (double.IsNaN(sender.Value))
+            sender.Value = 0; // Reset to 0, auto-updates
+
+        // Round the value (floats are kinda bad...)
+        sender.Value = Math.Round(sender.Value, 2);
+
+        var tracker = AppData.Settings.TrackersVector.Where(
+            x => x.Role == (sender.DataContext as AppTracker)!.Role).ToList()[0];
+
+        // Manually overwrite the offset, use the custom property
+        switch (sender.GetValue(AttachedString.AttachedStringProperty))
+        {
+            case "OZ":
+                tracker.OrientationOffset.Z = (float)sender.Value;
+                break;
+            case "OY":
+                tracker.OrientationOffset.Y = (float)sender.Value;
+                break;
+            case "OX":
+                tracker.OrientationOffset.X = (float)sender.Value;
+                break;
+            case "PX":
+                tracker.PositionOffset.X = (float)sender.Value;
+                break;
+            case "PY":
+                tracker.PositionOffset.Y = (float)sender.Value;
+                break;
+            case "PZ":
+                tracker.PositionOffset.Z = (float)sender.Value;
+                break;
+        }
     }
 
     private void SkPoint(Microsoft.UI.Xaml.Shapes.Ellipse ellipse,
@@ -1522,5 +1552,26 @@ public sealed partial class General : Page
         // Cache
         _previousOffsetPageIndex = (sender as Pivot).SelectedIndex;
         _offsetsPageNavigated = true;
+    }
+}
+
+public class AttachedString : DependencyObject
+{
+    public static readonly DependencyProperty AttachedStringProperty =
+        DependencyProperty.RegisterAttached(
+            "AttachedString",
+            typeof(string),
+            typeof(AttachedString),
+            new PropertyMetadata(false)
+        );
+
+    public static void SetAttachedString(UIElement element, string value)
+    {
+        element.SetValue(AttachedStringProperty, value);
+    }
+
+    public static string GetAttachedString(UIElement element)
+    {
+        return (string)element.GetValue(AttachedStringProperty);
     }
 }

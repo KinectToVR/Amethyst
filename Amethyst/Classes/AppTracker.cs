@@ -9,6 +9,7 @@ using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Newtonsoft.Json;
 
 namespace Amethyst.Classes;
 
@@ -32,19 +33,29 @@ public class AppTracker : INotifyPropertyChanged
     private Quaternion _lastSlerpOrientation = new(0, 0, 0, 1);
     private Quaternion _lastSlerpSlowOrientation = new(0, 0, 0, 1);
 
+    [JsonIgnore]
     public Vector3 PoseVelocity { get; set; } = new(0, 0, 0);
+    [JsonIgnore]
     public Vector3 PoseAcceleration { get; set; } = new(0, 0, 0);
+    [JsonIgnore]
     public Vector3 PoseAngularAcceleration { get; set; } = new(0, 0, 0);
+    [JsonIgnore]
     public Vector3 PoseAngularVelocity { get; set; } = new(0, 0, 0);
 
     // Tracker pose (inherited)
+    [JsonIgnore]
     public Vector3 Position { get; set; } = new(0, 0, 0);
+    [JsonIgnore]
     public Quaternion Orientation { get; set; } = new(1, 0, 0, 0);
 
+    [JsonIgnore]
     public Vector3 PreviousPosition { get; set; } = new(0, 0, 0);
+    [JsonIgnore]
     public Quaternion PreviousOrientation { get; set; } = new(1, 0, 0, 0);
 
+    [JsonIgnore]
     public long PoseTimestamp { get; set; } = 0;
+    [JsonIgnore]
     public long PreviousPoseTimestamp { get; set; } = 0;
 
     // Internal data offset
@@ -75,6 +86,7 @@ public class AppTracker : INotifyPropertyChanged
     // Does the managing device request no pos filtering?
     private bool _noPositionFilteringRequested = false;
 
+    [JsonIgnore]
     public bool NoPositionFilteringRequested
     {
         get => _noPositionFilteringRequested;
@@ -180,6 +192,7 @@ public class AppTracker : INotifyPropertyChanged
         }
     }
 
+    [JsonIgnore]
     public bool OverridePhysics
     {
         get => _overridePhysics;
@@ -504,6 +517,7 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     // OnPropertyChanged listener for containers
+    [JsonIgnore]
     public EventHandler PropertyChangedEvent;
 
     // MVVM stuff
@@ -517,8 +531,10 @@ public class AppTracker : INotifyPropertyChanged
         return !v;
     }
 
+    [JsonIgnore]
     public string TrackerName => Interfacing.LocalizedJsonString($"/SharedStrings/Joints/Enum/{(int)Role}");
 
+    [JsonIgnore]
     public int PositionTrackingDisplayOption
     {
         get => NoPositionFilteringRequested ? -1 : (int)PositionTrackingFilterOption;
@@ -529,6 +545,7 @@ public class AppTracker : INotifyPropertyChanged
         }
     }
 
+    [JsonIgnore]
     public int OrientationTrackingDisplayOption
     {
         get => (int)OrientationTrackingOption;
@@ -539,18 +556,22 @@ public class AppTracker : INotifyPropertyChanged
         }
     }
 
+    [JsonIgnore]
     public bool AppOrientationSupported =>
         Role is TrackerType.TrackerLeftFoot or TrackerType.TrackerRightFoot &&
         TrackingDevices.GetTrackingDevice().IsAppOrientationSupported;
 
+    [JsonIgnore]
     public string GetManagingDeviceGuid =>
         IsPositionOverridden || IsOrientationOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
 
+    [JsonIgnore]
     public string ManagingDevicePlaceholder =>
         GetResourceString("/SettingsPage/Filters/Managed").Replace("{0}", GetManagingDeviceGuid);
 
     private bool _isTrackerExpanderOpen = false;
 
+    [JsonIgnore]
     public bool IsTrackerExpanderOpen
     {
         get => _isTrackerExpanderOpen && IsActive;
@@ -562,6 +583,7 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     // The assigned host joint if using manual joints
+    [JsonIgnore]
     public int SelectedBaseTrackedJointId
     {
         get => IsActive ? (int)_selectedTrackedJointId : -1;
@@ -572,6 +594,7 @@ public class AppTracker : INotifyPropertyChanged
         }
     }
 
+    [JsonIgnore]
     public int SelectedOverrideJointId
     {
         // '+ 1' and '- 1' cause '0' is 'No Override' in this case
@@ -584,6 +607,7 @@ public class AppTracker : INotifyPropertyChanged
         }
     }
 
+    [JsonIgnore]
     public int SelectedOverrideJointIdForSelectedDevice
     {
         // '+ 1' and '- 1' cause '0' is 'No Override' in this case
@@ -604,13 +628,16 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     // Is force-updated by the base device
+    [JsonIgnore]
     public bool IsAutoManaged => TrackingDevices.GetTrackingDevice().TrackedJoints.Any(x =>
         x.Role != TrackedJointType.JointManual && TypeUtils.JointTrackerTypeDictionary[x.Role] == Role);
 
     // Is NOT force-updated by the base device
+    [JsonIgnore]
     public bool IsManuallyManaged => !IsAutoManaged;
 
     // IsPositionOverridden || IsOrientationOverridden
+    [JsonIgnore]
     public bool IsOverriden => IsPositionOverridden || IsOrientationOverridden;
 
     public double BoolToOpacity(bool v)
@@ -619,6 +646,7 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     // Is this joint overridden by the selected device? (pos)
+    [JsonIgnore]
     public bool IsPositionOverriddenBySelectedDevice
     {
         get => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid && IsPositionOverridden;
@@ -638,6 +666,7 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     // Is this joint overridden by the selected device? (ori)
+    [JsonIgnore]
     public bool IsOrientationOverriddenBySelectedDevice
     {
         get => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid && IsOrientationOverridden;
@@ -655,7 +684,8 @@ public class AppTracker : INotifyPropertyChanged
 
         }
     }
-    
+
+    [JsonIgnore]
     public bool IsOverridenByOtherDevice => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid;
 
     public bool IsManagedBy(string guid)

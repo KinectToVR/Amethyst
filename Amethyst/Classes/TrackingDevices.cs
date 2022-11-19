@@ -236,7 +236,7 @@ public static class TrackingDevices
 
         // Refresh trackers MVVM (everywhere)
         AppData.Settings.OnPropertyChanged("TrackersVector");
-        Semaphores.ReloadDevicesPageSemaphore.Release();
+        Semaphores.ReloadDevicesPageSemaphore?.Release();
 
         // If this is the first time and happened runtime, also show the notification
         if (Interfacing.K2AppTrackersSpawned)
