@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using Amethyst.Classes;
@@ -34,7 +35,7 @@ namespace Amethyst.Pages;
 /// <summary>
 ///     An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class General : Page
+public sealed partial class General : Page, INotifyPropertyChanged
 {
     private bool _showSkeletonPrevious = true;
     private bool _generalPageLoadedOnce = false;
@@ -114,6 +115,7 @@ public sealed partial class General : Page
 
         // Execute the handler
         await Page_LoadedHandler();
+        OnPropertyChanged(); // All
 
         // Mark as loaded
         _generalPageLoadedOnce = true;
@@ -121,111 +123,6 @@ public sealed partial class General : Page
 
     private async Task Page_LoadedHandler()
     {
-        SaveOffsetsButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Save");
-        DiscardOffsetsButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Discard");
-        Calibration_Titles_Choose.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Titles/Choose");
-        Calibration_Titles_Device.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Titles/Device");
-        Calibration_Titles_Manual.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Titles/Manual");
-        Calibration_Captions_Manual.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Manual");
-        CancelCalibrationButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Cancel");
-        CancelCalibrationButton_Devices.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Cancel");
-        CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Start");
-        StartAutoCalibrationButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Calibration/Begin");
-        Calibration_Titles_Points.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Titles/Points");
-        Calibration_Captions_Points.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Points");
-        DiscardAutoCalibrationButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Cancel");
-        Calibration_Headers_Manual.Text = Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Headers/Manual");
-        DiscardCalibrationButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Cancel");
-        Titles_Trackers.Text = Interfacing.LocalizedJsonString("/GeneralPage/Titles/Trackers");
-        CalibrationButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Calibration/Begin");
-        OffsetsButton.Text = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Offsets");
-        ToggleTrackersButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/TrackersToggle/Connect");
-        Titles_Device.Text = Interfacing.LocalizedJsonString("/GeneralPage/Titles/Device");
-        Captions_Device_Name.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Device/Name");
-        Captions_Device_Status.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Device/Status");
-        OpenDiscordButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Help/Discord");
-        OpenDocsButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Help/Docs");
-        Titles_Status.Text = Interfacing.LocalizedJsonString("/GeneralPage/Titles/Status");
-        Captions_DriverStatus_Label.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/DriverStatus/Label");
-        ServerStatusLabel.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/DriverStatus");
-        ReRegisterButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Buttons/ReRegister");
-        Captions_VersionText.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/VersionText");
-        Captions_Preview_NoSkeleton.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeleton");
-        NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeletonText");
-        Captions_Preview_Disabled.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/Disabled");
-        Labels_Tracking.Text = Interfacing.LocalizedJsonString("/GeneralPage/Labels/Tracking");
-        Labels_Inferred.Text = Interfacing.LocalizedJsonString("/GeneralPage/Labels/Inferred");
-        SkeletonToggleButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Hide");
-        ForceRenderText.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/Force");
-        ToggleFreezeButton.Content = Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Freeze");
-        FreezeOnlyLowerToggle.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/FreezeLowerOnly");
-        DismissSetErrorButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Buttons/Error/Dismiss");
-        DeviceEntryView_Base_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Base");
-        DeviceEntryView_Override_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Override");
-        DeviceEntryView_Error_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Error");
-        ToggleTrackersTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip2/Title");
-        ToggleTrackersTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip2/Content");
-        ToggleTrackersTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        ToggleTrackersTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
-        CalibrationTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip3/Title");
-        CalibrationTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip3/Content");
-        CalibrationTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        CalibrationTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
-        StatusTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip4/Title");
-        StatusTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip4/Content");
-        StatusTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        StatusTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
-        NoCalibrationTeachingTip.Title = Interfacing.LocalizedJsonString("/GeneralPage/Tips/NoCalibration/Header");
-        NoCalibrationTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/GeneralPage/Tips/NoCalibration/Footer");
-        Captions_Preview_NoFocus.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoFocus");
-
-        Calibration_Headers_Automatic.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Headers/Automatic");
-        Calibration_Captions_Recommended.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Recommended");
-        Calibration_Titles_Automatic.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Titles/Automatic");
-        Calibration_Captions_Automatic.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Automatic");
-        Calibration_Labels_Brief_Left.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Brief/Left");
-        Calibration_LabelsWhat_Brief_Left.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/LabelsWhat/Brief/Left");
-        Calibration_Labels_Brief_Right.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Brief/Right");
-        Calibration_LabelsWhat_Brief_Right.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/LabelsWhat/Brief/Right");
-        Calibration_Labels_Grips_Left.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Grips/Left");
-        Calibration_Labels_Triggers_Left.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Triggers/Left");
-        Calibration_LabelsWhat_Grips_Left.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/LabelsWhat/Grips/Left");
-        Calibration_Labels_Grips_Right.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Grips/Right");
-        Calibration_Labels_Grips_Right.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Grips/Right");
-        Calibration_LabelsWhat_Grips_Right.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/LabelsWhat/Grips/Right");
-        Calibration_Labels_Triggers_Both.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/Triggers/Both");
-        Calibration_LabelsWhat_Triggers.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/LabelsWhat/Triggers");
-        Calibration_Labels_InputsNotice.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Labels/InputsNotice");
-        AdditionalDeviceErrorsHyperlink.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Captions/OtherErrors/Line1");
-        AdditionalDeviceErrorsHyperlink_Line2.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Captions/OtherErrors/Line2");
-        Captions_Preview_DisabledText.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/DisabledText");
-        Captions_Preview_NoFocusText.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoFocusText");
-        Captions_Preview_NoDashboard.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoDashboard");
-        Captions_Preview_NoDashboardText.Text =
-            Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoDashboardText");
-
         // Start the main loop since we're done with basic setup
         if (!_generalPageLoadedOnce)
         {
@@ -309,6 +206,12 @@ public sealed partial class General : Page
                     ? "/GeneralPage/Buttons/TrackersToggle/Disconnect"
                     : "/GeneralPage/Buttons/TrackersToggle/Reconnect");
         }
+
+        // Set uop the skeleton toggle button
+        SkeletonToggleButton.Content = Interfacing.LocalizedJsonString(
+            AppData.Settings.SkeletonPreviewEnabled
+                ? "/GeneralPage/Buttons/Skeleton/Hide"
+                : "/GeneralPage/Buttons/Skeleton/Show");
     }
 
     private void NoCalibrationTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
@@ -1175,7 +1078,12 @@ public sealed partial class General : Page
             sender.Value = 0; // Reset to 0, auto-updates
 
         // Round the value (floats are kinda bad...)
-        sender.Value = Math.Round(sender.Value, 2);
+        sender.Value = sender.GetValue(AttachedString
+                .AttachedStringProperty).ToString()![0] switch
+            {
+                'P' => Math.Round(sender.Value, 2),
+                'O' or _ => Math.Round(sender.Value, 0)
+            };
 
         var tracker = AppData.Settings.TrackersVector.Where(
             x => x.Role == (sender.DataContext as AppTracker)!.Role).ToList()[0];
@@ -1552,6 +1460,13 @@ public sealed partial class General : Page
         // Cache
         _previousOffsetPageIndex = (sender as Pivot).SelectedIndex;
         _offsetsPageNavigated = true;
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged(string propName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 }
 

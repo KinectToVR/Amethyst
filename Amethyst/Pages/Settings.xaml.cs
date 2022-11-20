@@ -266,6 +266,7 @@ public sealed partial class Settings : Page
                 .TrackingDevicesLocalizationResourcesRootsVector[plugin.Guid].Directory, plugin.Guid);
 
         // Request page reloads
+        Translator.Get.OnPropertyChanged();
         Shared.Semaphores.RequestInterfaceReload();
     }
 

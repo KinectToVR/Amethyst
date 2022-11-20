@@ -8,7 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mvvm="using:Amethyst.MVVM" xmlns:classes="using:Amethyst.Classes"
-    xmlns:local="using:Amethyst.Pages"
+    xmlns:local="using:Amethyst.Pages" xmlns:util="using:Amethyst.Utils"
     Loaded="Page_Loaded" NavigationCacheMode="Required"
     mc:Ignorable="d" Background="Transparent">
 
@@ -17,8 +17,8 @@
                      Closed="NoCalibrationTeachingTip_Closed"
                      PreferredPlacement="Top"
                      IsLightDismissEnabled="True"
-                     Title="[CONTENT NOT SET]"
-                     Subtitle="[CONTENT NOT SET]">
+                     Title="{x:Bind util:Translator.Get.String('/GeneralPage/Tips/NoCalibration/Header'), Mode=OneWay}"
+                     Subtitle="{x:Bind util:Translator.Get.String('/GeneralPage/Tips/NoCalibration/Footer'), Mode=OneWay}">
             <TeachingTip.IconSource>
                 <FontIconSource Glyph="&#xE7BA;" />
             </TeachingTip.IconSource>
@@ -38,8 +38,7 @@
                         <RowDefinition Height="75" />
                     </Grid.RowDefinitions>
 
-                    <Pivot x:Name="OffsetsControlPivot" Grid.Row="0"
-                           ItemsSource="{x:Bind EnabledTrackers, Mode=OneWay}"
+                    <Pivot Grid.Row="0" ItemsSource="{x:Bind EnabledTrackers, Mode=OneWay}"
                            SelectionChanged="OffsetsControlPivot_SelectionChanged">
                         <Pivot.HeaderTemplate>
                             <DataTemplate x:DataType="classes:AppTracker">
@@ -226,11 +225,13 @@
                             <ColumnDefinition Width="7" />
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="DiscardOffsetsButton" Click="DiscardOffsetsButton_Click" CornerRadius="4"
-                                FontSize="14" HorizontalAlignment="Stretch"
-                                Height="50" Grid.Column="0" FontWeight="Medium" Margin="0,15,10,0" />
+                        <Button Click="DiscardOffsetsButton_Click" Grid.Column="0"
+                                Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Discard'), Mode=OneWay}"
+                                FontSize="14" HorizontalAlignment="Stretch" Height="50" FontWeight="Medium"
+                                CornerRadius="4" Margin="0,15,10,0" />
 
-                        <Button x:Name="SaveOffsetsButton" Click="SaveOffsetsButton_Click" CornerRadius="4"
+                        <Button Click="SaveOffsetsButton_Click" CornerRadius="4"
+                                Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Save'), Mode=OneWay}"
                                 FontSize="14" Height="50" Grid.Column="1" Style="{ThemeResource AccentButtonStyle}"
                                 FontWeight="Medium" Margin="10,15,5,0" HorizontalAlignment="Stretch" />
                     </Grid>
@@ -246,16 +247,17 @@
                    CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
             <SplitView.Pane>
                 <Grid>
-                    <Grid x:Name="DeviceSelectionPane">
+                    <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="60" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock x:Name="Calibration_Titles_Device"
-                                   Margin="0,15,0,0" HorizontalAlignment="Center"
-                                   FontSize="26" VerticalAlignment="Center"
-                                   Style="{ThemeResource BaseTextBlockStyle}" />
+                        <TextBlock
+                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Titles/Device'), Mode=OneWay}"
+                            Margin="0,15,0,0" HorizontalAlignment="Center"
+                            FontSize="26" VerticalAlignment="Center"
+                            Style="{ThemeResource BaseTextBlockStyle}" />
 
                         <Grid Grid.Row="1" CornerRadius="5" Margin="40,10,30,20">
                             <Grid.RowDefinitions>
@@ -264,9 +266,12 @@
                             </Grid.RowDefinitions>
 
                             <!--String copy resource-->
-                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Base_Text" />
-                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Override_Text" />
-                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Error_Text" />
+                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Base_Text"
+                                       Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Base'), Mode=OneWay}" />
+                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Override_Text"
+                                       Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Override'), Mode=OneWay}" />
+                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Error_Text"
+                                       Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Error'), Mode=OneWay}" />
 
                             <TreeView x:Name="TrackingDeviceTreeView" CornerRadius="5"
                                       VerticalAlignment="Top" HorizontalAlignment="Stretch"
@@ -294,8 +299,7 @@
                                                     <ScalarTransition />
                                                 </Border.OpacityTransition>
 
-                                                <TextBlock
-                                                    Text="{Binding ElementName=DeviceEntryView_Base_Text, Path=Text}"
+                                                <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Base'), Mode=OneWay}"
                                                     FontWeight="Medium" Margin="0,-2,0,0"
                                                     Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                             </Border>
@@ -310,8 +314,7 @@
                                                     <ScalarTransition />
                                                 </Border.OpacityTransition>
 
-                                                <TextBlock
-                                                    Text="{Binding ElementName=DeviceEntryView_Override_Text, Path=Text}"
+                                                <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Override'), Mode=OneWay}"
                                                     FontWeight="Medium" Margin="0,-2,0,0"
                                                     Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                             </Border>
@@ -326,8 +329,7 @@
                                                     <ScalarTransition />
                                                 </Border.OpacityTransition>
 
-                                                <TextBlock
-                                                    Text="{Binding ElementName=DeviceEntryView_Error_Text, Path=Text}"
+                                                <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Error'), Mode=OneWay}"
                                                     FontWeight="Medium" Margin="0,-2,0,0"
                                                     Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                             </Border>
@@ -680,8 +682,8 @@
                                 </TreeView.Resources>
                             </TreeView>
 
-                            <Button x:Name="CancelCalibrationButton_Devices" Grid.Row="1"
-                                    Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
+                            <Button Grid.Row="1" Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
+                                    Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Cancel'), Mode=OneWay}"
                                     Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" HorizontalAlignment="Right" />
                         </Grid>
@@ -696,16 +698,17 @@
                    CompactPaneLength="0" DisplayMode="Inline" CornerRadius="10,0,0,0">
             <SplitView.Pane>
                 <Grid>
-                    <Grid x:Name="CalibrationSelectionPane">
+                    <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="60" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock x:Name="Calibration_Titles_Choose"
-                                   Margin="0,15,0,0" HorizontalAlignment="Center"
-                                   FontSize="26" VerticalAlignment="Center"
-                                   Style="{ThemeResource BaseTextBlockStyle}" />
+                        <TextBlock
+                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Titles/Choose'), Mode=OneWay}"
+                            Margin="0,15,0,0" HorizontalAlignment="Center"
+                            FontSize="26" VerticalAlignment="Center"
+                            Style="{ThemeResource BaseTextBlockStyle}" />
 
                         <Grid Grid.Row="1" CornerRadius="5" Margin="0,0,0,20">
                             <Grid.RowDefinitions>
@@ -714,17 +717,18 @@
                                 <RowDefinition Height="50" />
                             </Grid.RowDefinitions>
 
-                            <Button x:Name="AutoCalibrationButton" Grid.Row="0" Margin="20,20,20,10" Width="460"
+                            <Button Grid.Row="0" Margin="20,20,20,10" Width="460"
                                     Click="AutoCalibrationButton_Click" HorizontalAlignment="Stretch">
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="260"
-                                      Width="435" Opacity="1.0" x:Name="AutoCalibrationButtonDecorations">
+                                      Width="435" Opacity="1.0">
                                     <Border Height="20" CornerRadius="3" Padding="5,0"
                                             BorderBrush="{ThemeResource SystemFillColorAttentionBrush}"
                                             Background="{ThemeResource SystemFillColorAttentionBrush}"
                                             VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,7,0,0">
-                                        <TextBlock x:Name="Calibration_Captions_Recommended"
-                                                   FontWeight="Medium"
-                                                   Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                        <TextBlock
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Captions/Recommended'), Mode=OneWay}"
+                                            FontWeight="Medium"
+                                            Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                     </Border>
 
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
@@ -751,14 +755,16 @@
                                             </Grid>
                                         </Viewbox>
 
-                                        <TextBlock x:Name="Calibration_Titles_Automatic"
-                                                   HorizontalAlignment="Center" FontSize="26" FontWeight="SemiBold" />
-                                        <TextBlock x:Name="Calibration_Captions_Automatic" Margin="0,20,0,0"
+                                        <TextBlock
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Titles/Automatic'), Mode=OneWay}"
+                                            HorizontalAlignment="Center" FontSize="26" FontWeight="SemiBold" />
+                                        <TextBlock Margin="0,20,0,0"
+                                                   Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Captions/Automatic'), Mode=OneWay}"
                                                    HorizontalAlignment="Center" FontSize="16" FontWeight="Medium" />
                                     </StackPanel>
                                 </Grid>
                             </Button>
-                            <Button x:Name="ManualCalibrationButton" Grid.Row="1" Margin="20,10,20,20" Width="460"
+                            <Button Grid.Row="1" Margin="20,10,20,20" Width="460"
                                     Click="ManualCalibrationButton_Click" HorizontalAlignment="Stretch">
                                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
                                             VerticalAlignment="Stretch" Height="260">
@@ -770,14 +776,17 @@
                                             Stroke="#00000000" />
                                     </Viewbox>
 
-                                    <TextBlock x:Name="Calibration_Titles_Manual"
-                                               HorizontalAlignment="Center" FontSize="26"
-                                               FontWeight="SemiBold" />
-                                    <TextBlock x:Name="Calibration_Captions_Manual" Margin="0,20,0,0"
+                                    <TextBlock
+                                        Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Titles/Manual'), Mode=OneWay}"
+                                        HorizontalAlignment="Center" FontSize="26" FontWeight="SemiBold" />
+
+                                    <TextBlock Margin="0,20,0,0"
+                                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Captions/Manual'), Mode=OneWay}"
                                                HorizontalAlignment="Center" FontSize="16" FontWeight="Medium" />
                                 </StackPanel>
                             </Button>
-                            <Button x:Name="CancelCalibrationButton" Grid.Row="2"
+                            <Button Grid.Row="2"
+                                    Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Cancel'), Mode=OneWay}"
                                     Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
                                     Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
@@ -799,10 +808,11 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock x:Name="Calibration_Headers_Automatic"
-                                   Margin="0,15,0,0" HorizontalAlignment="Center"
-                                   FontSize="26" VerticalAlignment="Center"
-                                   Style="{ThemeResource BaseTextBlockStyle}" />
+                        <TextBlock
+                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Headers/Automatic'), Mode=OneWay}"
+                            Margin="0,15,0,0" HorizontalAlignment="Center"
+                            FontSize="26" VerticalAlignment="Center"
+                            Style="{ThemeResource BaseTextBlockStyle}" />
 
                         <Grid Grid.Row="1" CornerRadius="5" Margin="0,20,0,20">
                             <Grid.RowDefinitions>
@@ -851,6 +861,7 @@
                                                        Text="~" FontSize="48" FontWeight="Bold" />
 
                                             <TextBlock x:Name="CalibrationInstructionsLabel" Grid.Column="1"
+                                                       Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Captions/Start'), Mode=OneWay}"
                                                        VerticalAlignment="Center" Margin="0,0,0,5"
                                                        HorizontalAlignment="Stretch" FontSize="26"
                                                        FontWeight="SemiBold" />
@@ -861,10 +872,10 @@
                                 </Grid>
                             </Border>
 
-                            <Button x:Name="StartAutoCalibrationButton"
-                                    Click="StartAutoCalibrationButton_Click"
+                            <Button x:Name="StartAutoCalibrationButton" Click="StartAutoCalibrationButton_Click"
                                     HorizontalAlignment="Stretch" Height="50"
                                     Grid.Row="1" Margin="20,0,20,0" Width="460"
+                                    Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Calibration/Begin'), Mode=OneWay}"
                                     Style="{ThemeResource AccentButtonStyle}" FontWeight="SemiBold" />
 
                             <Grid Margin="20,0,20,0" Width="460"
@@ -876,8 +887,9 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" IsTabStop="True"
+                                           FontWeight="SemiBold"
                                            Margin="0,0,0,3" Grid.Column="0" HorizontalTextAlignment="Center"
-                                           x:Name="Calibration_Titles_Points" FontWeight="SemiBold" />
+                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Titles/Points'), Mode=OneWay}" />
 
                                 <NumberBox Minimum="3" Maximum="5" Value="3" Grid.Column="1"
                                            x:Name="CalibrationPointsNumberBox"
@@ -891,13 +903,14 @@
                             <Grid Margin="20,0,20,0" Width="460"
                                   HorizontalAlignment="Stretch" Grid.Row="5">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Name="Calibration_Captions_Points"
+                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Captions/Points'), Mode=OneWay}"
                                            Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}"
                                            TextWrapping="WrapWholeWords" />
                             </Grid>
 
                             <Button x:Name="DiscardAutoCalibrationButton" Grid.Row="7"
                                     Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
+                                    Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Cancel'), Mode=OneWay}"
                                     Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
@@ -909,10 +922,11 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock x:Name="Calibration_Headers_Manual"
-                                   Margin="0,15,0,0" HorizontalAlignment="Center"
-                                   FontSize="26" VerticalAlignment="Center"
-                                   Style="{ThemeResource BaseTextBlockStyle}" />
+                        <TextBlock
+                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Headers/Manual'), Mode=OneWay}"
+                            Margin="0,15,0,0" HorizontalAlignment="Center"
+                            FontSize="26" VerticalAlignment="Center"
+                            Style="{ThemeResource BaseTextBlockStyle}" />
 
                         <Grid Grid.Row="1" Margin="0,0,0,20">
                             <Grid.RowDefinitions>
@@ -946,16 +960,17 @@
                                             HorizontalAlignment="Center" VerticalAlignment="Center"
                                             Grid.Row="0" CornerRadius="100" BorderThickness="5"
                                             BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
-                                        <TextBlock x:Name="Calibration_Labels_Brief_Left"
-                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/Brief/Left'), Mode=OneWay}"
+                                            FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/LabelsWhat/Brief/Left'), Mode=OneWay}"
                                                HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1"
-                                               Style="{ThemeResource BaseTextBlockStyle}"
-                                               x:Name="Calibration_LabelsWhat_Brief_Left" />
+                                               Style="{ThemeResource BaseTextBlockStyle}" />
                                 </Grid>
                             </Border>
 
@@ -977,16 +992,17 @@
                                             HorizontalAlignment="Center" VerticalAlignment="Center"
                                             Grid.Row="0" CornerRadius="100" BorderThickness="5"
                                             BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
-                                        <TextBlock x:Name="Calibration_Labels_Brief_Right"
-                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/Brief/Right'), Mode=OneWay}"
+                                            FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/LabelsWhat/Brief/Right'), Mode=OneWay}"
                                                HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1"
-                                               Style="{ThemeResource BaseTextBlockStyle}"
-                                               x:Name="Calibration_LabelsWhat_Brief_Right" />
+                                               Style="{ThemeResource BaseTextBlockStyle}" />
                                 </Grid>
                             </Border>
 
@@ -1009,9 +1025,10 @@
                                             HorizontalAlignment="Center" VerticalAlignment="Center"
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5"
                                             BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
-                                        <TextBlock x:Name="Calibration_Labels_Grips_Left"
-                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/Grips/Left'), Mode=OneWay}"
+                                            FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
                                     <Border x:Name="LabelFineTuneVive" Visibility="Collapsed"
@@ -1019,16 +1036,17 @@
                                             HorizontalAlignment="Center" VerticalAlignment="Center"
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5"
                                             BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
-                                        <TextBlock x:Name="Calibration_Labels_Triggers_Left"
-                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/Triggers/Left'), Mode=OneWay}"
+                                            FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
                                                HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1"
                                                Style="{ThemeResource BaseTextBlockStyle}"
-                                               x:Name="Calibration_LabelsWhat_Grips_Left" />
+                                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/LabelsWhat/Grips/Left'), Mode=OneWay}" />
                                 </Grid>
                             </Border>
 
@@ -1051,9 +1069,10 @@
                                             HorizontalAlignment="Center" VerticalAlignment="Center"
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5"
                                             BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
-                                        <TextBlock x:Name="Calibration_Labels_Grips_Right"
-                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/Grips/Right'), Mode=OneWay}"
+                                            FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
                                     <Border Visibility="{Binding ElementName=LabelFineTuneVive, Path=Visibility}"
@@ -1062,16 +1081,16 @@
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5"
                                             BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
                                         <TextBlock
-                                            Text="{Binding ElementName=Calibration_Labels_Grips_Right, Path=Text}"
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/Grips/Right'), Mode=OneWay}"
                                             FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
                                             HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/LabelsWhat/Grips/Right'), Mode=OneWay}"
                                                HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1"
-                                               Style="{ThemeResource BaseTextBlockStyle}"
-                                               x:Name="Calibration_LabelsWhat_Grips_Right" />
+                                               Style="{ThemeResource BaseTextBlockStyle}" />
                                 </Grid>
                             </Border>
 
@@ -1094,9 +1113,10 @@
                                             HorizontalAlignment="Center" VerticalAlignment="Center"
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5"
                                             BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
-                                        <TextBlock x:Name="Calibration_Labels_Triggers_Both"
-                                                   FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/Triggers/Both'), Mode=OneWay}"
+                                            FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
                                     <Border Visibility="{Binding ElementName=LabelFineTuneVive, Path=Visibility}"
@@ -1105,29 +1125,29 @@
                                             Grid.Row="0" CornerRadius="4" BorderThickness="5"
                                             BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
                                         <TextBlock
-                                            Text="{Binding ElementName=Calibration_Labels_Triggers_Both, Path=Text}"
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/Triggers/Both'), Mode=OneWay}"
                                             FontWeight="Bold" FontSize="27" Margin="0,0,0,4"
                                             HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
 
                                     <TextBlock TextWrapping="WrapWholeWords" Margin="15,0,0,5"
+                                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/LabelsWhat/Triggers'), Mode=OneWay}"
                                                HorizontalAlignment="Stretch" FontSize="23"
                                                VerticalAlignment="Center" Grid.Column="1"
-                                               Style="{ThemeResource BaseTextBlockStyle}"
-                                               x:Name="Calibration_LabelsWhat_Triggers" />
+                                               Style="{ThemeResource BaseTextBlockStyle}" />
                                 </Grid>
                             </Border>
 
                             <Grid Margin="20,0,20,0" Width="460"
                                   HorizontalAlignment="Stretch" Grid.Row="6">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Name="Calibration_Labels_InputsNotice"
+                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/InputsNotice'), Mode=OneWay}"
                                            Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}"
                                            TextWrapping="WrapWholeWords" />
                             </Grid>
 
-                            <Button x:Name="DiscardCalibrationButton" Grid.Row="8"
-                                    Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
+                            <Button Grid.Row="8" Click="DiscardCalibrationButton_Click" CornerRadius="4" FontSize="14"
+                                    Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Cancel'), Mode=OneWay}"
                                     Height="50" Grid.Column="0" Width="170"
                                     FontWeight="Medium" Margin="0,0,30,0" HorizontalAlignment="Right" />
                         </Grid>
@@ -1153,8 +1173,8 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock FontWeight="SemiBold" x:Name="Titles_Trackers"
-                           FontSize="25" Margin="40,20,0,0" Grid.Row="0" />
+                <TextBlock FontWeight="SemiBold" FontSize="25" Margin="40,20,0,0" Grid.Row="0"
+                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Titles/Trackers'), Mode=OneWay}" />
 
                 <Grid HorizontalAlignment="Stretch" Grid.Row="1">
                     <Grid.ColumnDefinitions>
@@ -1176,18 +1196,19 @@
                         <Grid.Resources>
                             <TeachingTip x:Name="CalibrationTeachingTip"
                                          Target="{Binding ElementName=ContextGridContainer}"
-                                         Title="/CALIBRATION"
-                                         Subtitle="/TEXT"
+                                         Title="{x:Bind util:Translator.Get.String('/NUX/Tip3/Title'), Mode=OneWay}"
+                                         Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip3/Content'), Mode=OneWay}"
+                                         CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+                                         ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
                                          PreferredPlacement="Bottom"
                                          IsLightDismissEnabled="False"
-                                         ActionButtonContent="/BACK"
-                                         CloseButtonContent="/NEXT"
                                          Style="{ThemeResource BigTeachingTipStyle}"
                                          ActionButtonClick="CalibrationTeachingTip_ActionButtonClick"
                                          CloseButtonClick="CalibrationTeachingTip_CloseButtonClick" />
                         </Grid.Resources>
 
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
+                                Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Calibration/Begin'), Mode=OneWay}"
                                 IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
                                 Margin="10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
@@ -1236,14 +1257,16 @@
 
                             <Button.Flyout>
                                 <MenuFlyout>
-                                    <MenuFlyoutItem x:Name="OffsetsButton" Click="OffsetsButton_Click" Tag="offsets">
+                                    <MenuFlyoutItem x:Name="OffsetsButton" Click="OffsetsButton_Click" Tag="offsets"
+                                                    Text="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Offsets'), Mode=OneWay}">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xECC6;" />
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
                                     <MenuFlyoutSeparator />
                                     <ToggleMenuFlyoutItem x:Name="FreezeOnlyLowerToggle"
-                                                          Click="FreezeOnlyLowerToggle_Click" Tag="freeze">
+                                                          Click="FreezeOnlyLowerToggle_Click" Tag="freeze"
+                                                          Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/FreezeLowerOnly'), Mode=OneWay}">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xF439;" />
                                         </MenuFlyoutItem.Icon>
@@ -1266,12 +1289,12 @@
                         <ToggleButton.Resources>
                             <TeachingTip x:Name="ToggleTrackersTeachingTip"
                                          Target="{Binding ElementName=ToggleTrackersButton}"
-                                         Title="/TOGGLETRACKERS"
-                                         Subtitle="/TEXT"
+                                         Title="{x:Bind util:Translator.Get.String('/NUX/Tip2/Title'), Mode=OneWay}"
+                                         Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip2/Content'), Mode=OneWay}"
+                                         CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+                                         ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
                                          PreferredPlacement="Bottom"
                                          IsLightDismissEnabled="False"
-                                         ActionButtonContent="/BACK"
-                                         CloseButtonContent="/NEXT"
                                          Style="{ThemeResource BigTeachingTipStyle}"
                                          ActionButtonClick="ToggleTrackersTeachingTip_ActionButtonClick"
                                          CloseButtonClick="ToggleTrackersTeachingTip_CloseButtonClick" />
@@ -1284,24 +1307,24 @@
 
                     <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,0,0,20">
 
-                        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom"
-                                    x:Name="DeviceContextContainerPanel" Margin="0,0,5,0">
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,0,5,0">
                             <StackPanel.Resources>
                                 <TeachingTip x:Name="StatusTeachingTip"
                                              Target="{Binding ElementName=DeviceTitleContainer}"
-                                             Title="/STATUS"
-                                             Subtitle="/TEXT"
+                                             Title="{x:Bind util:Translator.Get.String('/NUX/Tip4/Title'), Mode=OneWay}"
+                                             Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip4/Content'), Mode=OneWay}"
+                                             CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+                                             ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
                                              PreferredPlacement="Top"
                                              IsLightDismissEnabled="False"
-                                             ActionButtonContent="/BACK"
-                                             CloseButtonContent="/NEXT"
                                              Style="{ThemeResource BigTeachingTipStyle}"
                                              ActionButtonClick="StatusTeachingTip_ActionButtonClick"
                                              CloseButtonClick="StatusTeachingTip_CloseButtonClick" />
                             </StackPanel.Resources>
 
                             <Grid x:Name="DeviceTitleContainer" HorizontalAlignment="Stretch">
-                                <TextBlock FontWeight="SemiBold" x:Name="Titles_Device" FontSize="25"
+                                <TextBlock FontWeight="SemiBold" FontSize="25"
+                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Titles/Device'), Mode=OneWay}"
                                            Margin="40,20,0,10" HorizontalAlignment="Left" />
                             </Grid>
 
@@ -1309,7 +1332,7 @@
 
                             <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Name="Captions_Device_Name"
+                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Device/Name'), Mode=OneWay}"
                                            Margin="0,0,0,0" Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_DEVICE]" Margin="5,0,0,0"
@@ -1318,8 +1341,8 @@
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Name="Captions_Device_Status" Margin="0,0,0,0"
-                                           Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
+                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Device/Status'), Mode=OneWay}"
+                                           Margin="0,0,0,0" Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_STATUS]" Margin="5,0,0,0" x:Name="TrackingDeviceStatusLabel" />
                             </StackPanel>
@@ -1352,11 +1375,13 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Button FontSize="15" x:Name="OpenDiscordButton" Click="OpenDiscordButton_Click"
+                                        Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Help/Discord'), Mode=OneWay}"
                                         Height="65" VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Margin="40,10,10,10" CornerRadius="4" Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
                                 <Button FontSize="15" x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
+                                        Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Help/Docs'), Mode=OneWay}"
                                         Height="65" VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Margin="10,10,40,10" CornerRadius="4" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
@@ -1365,33 +1390,35 @@
 
                             <!--Override Status Error-->
                             <TextBlock x:Name="AdditionalDeviceErrorsHyperlink"
+                                       Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/OtherErrors/Line1'), Mode=OneWay}"
                                        Margin="40,10,20,0" HorizontalAlignment="Left" Visibility="Collapsed"
                                        Tapped="AdditionalDeviceErrorsHyperlink_Tapped" FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
-                            <TextBlock x:Name="AdditionalDeviceErrorsHyperlink_Line2"
-                                       Margin="40,2,20,0" HorizontalAlignment="Left"
-                                       Visibility="{Binding ElementName=AdditionalDeviceErrorsHyperlink, 
+                            <TextBlock
+                                Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/OtherErrors/Line2'), Mode=OneWay}"
+                                Margin="40,2,20,0" HorizontalAlignment="Left"
+                                Visibility="{Binding ElementName=AdditionalDeviceErrorsHyperlink, 
                                                     Path=Visibility, TargetNullValue=Collapsed}"
-                                       Tapped="AdditionalDeviceErrorsHyperlink_Tapped"
-                                       FontWeight="SemiBold" TextDecorations="Underline"
-                                       Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+                                Tapped="AdditionalDeviceErrorsHyperlink_Tapped"
+                                FontWeight="SemiBold" TextDecorations="Underline"
+                                Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
                         </StackPanel>
 
                         <Grid Height="60" VerticalAlignment="Bottom">
-                            <TextBlock FontWeight="SemiBold" x:Name="Titles_Status" FontSize="25"
-                                       Margin="40,20,0,0"
-                                       Grid.Row="5" />
+                            <TextBlock FontWeight="SemiBold" FontSize="25" Margin="40,20,0,0"
+                                       Text="{x:Bind util:Translator.Get.String('/GeneralPage/Titles/Status'), Mode=OneWay}" />
                         </Grid>
 
                         <StackPanel Orientation="Vertical" Margin="0,5,0,0" VerticalAlignment="Bottom">
 
                             <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Name="Captions_DriverStatus_Label"
+                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/DriverStatus/Label'), Mode=OneWay}"
                                            Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Margin="5,0,0,0" x:Name="ServerStatusLabel" />
+                                           Margin="5,0,0,0" x:Name="ServerStatusLabel"
+                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/DriverStatus'), Mode=OneWay}" />
                             </StackPanel>
 
                             <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
@@ -1430,7 +1457,7 @@
                                         Margin="40,10,10,10" CornerRadius="4" Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
-                                <Button FontSize="15" x:Name="ServerOpenDocsButton" Click="ServerOpenDocsButton_Click"
+                                <Button FontSize="15" Click="ServerOpenDocsButton_Click"
                                         Height="{Binding ElementName=ServerOpenDiscordButton, Path=Height}"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Content="{Binding ElementName=OpenDocsButton, Path=Content}"
@@ -1442,12 +1469,15 @@
                             <!--If this button is visible, set the (upper two)'s height to 40-->
                             <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold"
+                                    Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/ReRegister'), Mode=OneWay}"
                                     Margin="40,10" FontSize="15" Visibility="Collapsed" />
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           x:Name="Captions_VersionText" Margin="0,0,0,0"
+                                           Margin="0,0,0,0"
+                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/VersionText'), Mode=OneWay}"
                                            Foreground="{ThemeResource ControlDisplayTextBrush}" />
+
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Text="[DUM_VERSION_STRING]" Margin="5,0,0,0" x:Name="VersionLabel" />
                             </StackPanel>
@@ -1472,10 +1502,6 @@
                 </Canvas.Clip>
             </Canvas>
 
-            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                  Grid.Column="1" Canvas.ZIndex="1" IsHitTestVisible="False"
-                  x:Name="InterfaceBlockerGrid" Background="Transparent" />
-
             <!--Background-->
             <Grid Background="Black" Grid.Column="1" Canvas.ZIndex="-2"
                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
@@ -1483,19 +1509,19 @@
             <!--No Skeleton-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel x:Name="NotTrackedNotice" Opacity="1.0"
-                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                <StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
                     </StackPanel.OpacityTransition>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" Foreground="White" />
-                        <TextBlock Margin="10,0,0,7" x:Name="Captions_Preview_NoSkeleton"
-                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
+                        <TextBlock Margin="10,0,0,7" FontSize="50" FontWeight="SemiBold" Foreground="White"
+                                   Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/NoSkeleton'), Mode=OneWay}" />
                     </StackPanel>
 
                     <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/NoSkeletonText'), Mode=OneWay}"
                                x:Name="NoSkeletonTextNotice" HorizontalTextAlignment="Center" Foreground="White" />
                 </StackPanel>
             </Viewbox>
@@ -1503,82 +1529,79 @@
             <!--Skeleton Disabled-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel x:Name="SkeletonHiddenNotice" Opacity="0.0"
-                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
                     </StackPanel.OpacityTransition>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
-                        <TextBlock Margin="10,0,0,7" x:Name="Captions_Preview_Disabled"
-                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
+                        <TextBlock Margin="10,0,0,7" FontSize="50" FontWeight="SemiBold" Foreground="White"
+                                   Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/Disabled'), Mode=OneWay}" />
                     </StackPanel>
 
                     <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
-                               Foreground="White" x:Name="Captions_Preview_DisabledText"
-                               HorizontalTextAlignment="Center" />
+                               Foreground="White" HorizontalTextAlignment="Center"
+                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/DisabledText'), Mode=OneWay}" />
                 </StackPanel>
             </Viewbox>
 
             <!--Outta focus-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel x:Name="NotInFocusNotice" Opacity="0.0"
-                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
                     </StackPanel.OpacityTransition>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
-                        <TextBlock Margin="10,0,0,7" x:Name="Captions_Preview_NoFocus"
-                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
+                        <TextBlock Margin="10,0,0,7" FontSize="50" FontWeight="SemiBold" Foreground="White"
+                                   Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/NoFocus'), Mode=OneWay}" />
                     </StackPanel>
 
                     <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
-                               Foreground="White" x:Name="Captions_Preview_NoFocusText"
-                               HorizontalTextAlignment="Center" />
+                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/NoFocusText'), Mode=OneWay}"
+                               Foreground="White" HorizontalTextAlignment="Center" />
                 </StackPanel>
             </Viewbox>
 
             <!--Dashboard is closed-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel x:Name="DashboardClosedNotice" Opacity="0.0"
-                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
                     </StackPanel.OpacityTransition>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
-                        <TextBlock Margin="10,0,0,7" x:Name="Captions_Preview_NoDashboard"
-                                   FontSize="50" FontWeight="SemiBold" Foreground="White" />
+                        <TextBlock Margin="10,0,0,7" FontSize="50" FontWeight="SemiBold" Foreground="White"
+                                   Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/NoDashboard'), Mode=OneWay}" />
                     </StackPanel>
 
                     <TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
-                               Foreground="White" x:Name="Captions_Preview_NoDashboardText"
-                               HorizontalTextAlignment="Center" />
+                               Foreground="White" HorizontalTextAlignment="Center"
+                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/NoDashboardText'), Mode=OneWay}" />
                 </StackPanel>
             </Viewbox>
 
             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,0,20,20"
-                        x:Name="TrackingStateLabelsPanel" Opacity="0.0"
-                        VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                        Opacity="0.0" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                 <StackPanel.OpacityTransition>
                     <ScalarTransition />
                 </StackPanel.OpacityTransition>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock x:Name="Labels_Tracking" Foreground="White"
+                    <TextBlock Foreground="White"
+                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Labels/Tracking'), Mode=OneWay}"
                                FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2" />
                     <Border Height="16" Width="16" Background="White" CornerRadius="10" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
-                    <TextBlock x:Name="Labels_Inferred" Foreground="White"
-                               FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2" />
+                    <TextBlock Foreground="White" FontSize="13" FontWeight="SemiBold" Margin="0,0,8,2"
+                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Labels/Inferred'), Mode=OneWay}" />
                     <Border Height="16" Width="16" Background="{ThemeResource SystemFillColorAttentionBrush}"
                             CornerRadius="10" />
                 </StackPanel>
@@ -1625,6 +1648,7 @@
 
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Opacity="1"
                                                FontWeight="Medium" Margin="30,0,0,0"
+                                               Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/Force'), Mode=OneWay}"
                                                Grid.Column="0" x:Name="ForceRenderText" />
                                     <CheckBox x:Name="ForceRenderCheckBox"
                                               Checked="ForceRenderCheckBox_Checked"
@@ -1665,13 +1689,12 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <Button FontSize="15" x:Name="DismissSetErrorButton"
-                                        Click="DismissSetErrorButton_Click"
+                                <Button FontSize="15" Click="DismissSetErrorButton_Click"
+                                        Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/Error/Dismiss'), Mode=OneWay}"
                                         VerticalContentAlignment="Center" FontWeight="SemiBold"
                                         Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch" />
-
                             </Grid>
 
                             <TextBlock FontSize="15" HorizontalAlignment="Stretch"
