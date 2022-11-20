@@ -509,24 +509,6 @@ public sealed partial class MainWindow : Window
 
         Logger.Info("Updating app settings for the selected base device...");
 
-        // Check orientation option configs : left foot
-        Logger.Info("Checking left foot orientation settings...");
-        if (AppData.Settings.TrackersVector[1].OrientationTrackingOption is
-                JointRotationTrackingOption.SoftwareCalculatedRotation or
-                JointRotationTrackingOption.SoftwareCalculatedRotationV2 &&
-            !TrackingDevices.GetTrackingDevice().IsAppOrientationSupported)
-            AppData.Settings.TrackersVector[1].OrientationTrackingOption =
-                JointRotationTrackingOption.DeviceInferredRotation;
-
-        // Check orientation option configs : right foot
-        Logger.Info("Checking right foot orientation settings...");
-        if (AppData.Settings.TrackersVector[2].OrientationTrackingOption is
-                JointRotationTrackingOption.SoftwareCalculatedRotation or
-                JointRotationTrackingOption.SoftwareCalculatedRotationV2 &&
-            !TrackingDevices.GetTrackingDevice().IsAppOrientationSupported)
-            AppData.Settings.TrackersVector[2].OrientationTrackingOption =
-                JointRotationTrackingOption.DeviceInferredRotation;
-
         // Initialize the loaded base device now
         Logger.Info("Initializing the selected base device...");
         TrackingDevices.GetTrackingDevice().Initialize();
@@ -558,22 +540,8 @@ public sealed partial class MainWindow : Window
             TrackingDevices.GetDevice(overrideGuid).Device.Initialize();
         }
 
-        Logger.Info("Checking if saved tracker overrides exist in loaded overrides...");
-        foreach (var appTracker in AppData.Settings.TrackersVector)
-        {
-            Logger.Info($"Checking if tracker {appTracker.Serial} override " +
-                        $"({appTracker.OverrideGuid}) exists in loaded plugins...");
-
-            // Check if the override specified by the tracker is real
-            if (TrackingDevices.TrackingDevicesVector.ContainsKey(appTracker.OverrideGuid)) continue;
-            Logger.Info($"The saved tracker {appTracker.Serial} override " +
-                        $"({appTracker.OverrideGuid}) is invalid! Resetting it to NONE!");
-
-            // The override haven't gotten real :/ reset
-            appTracker.OverrideGuid = "";
-            appTracker.IsPositionOverridden = false;
-            appTracker.IsOrientationOverridden = false;
-        }
+        Logger.Info("Checking application settings config for loaded tracking devices...");
+        AppData.Settings.CheckSettings();
 
         // Second check and try after 3 seconds
         Task.Run(() =>

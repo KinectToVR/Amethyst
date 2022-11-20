@@ -407,8 +407,9 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         // Update other statuses
         TrackingDevices.UpdateTrackingDevicesInterface();
         AlternativeConnectionOptionsFlyout.Hide();
-
-        // Save settings
+        
+        // Check the application config, save
+        AppData.Settings.CheckSettings();
         AppData.Settings.SaveSettings();
     }
 

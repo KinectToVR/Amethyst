@@ -154,7 +154,7 @@ public class AppSettings : INotifyPropertyChanged
 
     // If the flip bindings teaching tip has been shown
     public bool TeachingTipShownFlip { get; set; } = false;
-    
+
     // Disabled (by the user) devices set
     public SortedSet<string> DisabledDevicesGuidSet = new();
 
@@ -322,9 +322,107 @@ public class AppSettings : INotifyPropertyChanged
     public void CheckSettings()
     {
         // Check runtime settings:
+        // - filter indexes
         // - joint IDs
+        // - override GUIDs
         // - override IDs
         // - ...
+
+        Logger.Info("Checking AppSettings [runtime] configuration...");
+        var trackingDevice = TrackingDevices.GetTrackingDevice();
+
+        // Check orientation option configs : left foot
+        Logger.Info("Checking left foot orientation settings...");
+        if (AppData.Settings.TrackersVector[1].OrientationTrackingOption is
+                JointRotationTrackingOption.SoftwareCalculatedRotation or
+                JointRotationTrackingOption.SoftwareCalculatedRotationV2 &&
+            trackingDevice.IsAppOrientationSupported)
+            AppData.Settings.TrackersVector[1].OrientationTrackingOption =
+                JointRotationTrackingOption.DeviceInferredRotation;
+
+        // Check orientation option configs : right foot
+        Logger.Info("Checking right foot orientation settings...");
+        if (AppData.Settings.TrackersVector[2].OrientationTrackingOption is
+                JointRotationTrackingOption.SoftwareCalculatedRotation or
+                JointRotationTrackingOption.SoftwareCalculatedRotationV2 &&
+            trackingDevice.IsAppOrientationSupported)
+            AppData.Settings.TrackersVector[2].OrientationTrackingOption =
+                JointRotationTrackingOption.DeviceInferredRotation;
+
+        // Check joint and override GUID & IDs
+        Logger.Info("Checking if saved tracker overrides exist in loaded overrides...");
+        foreach (var appTracker in AppData.Settings.TrackersVector)
+        {
+            // Joint ID check
+            Logger.Info($"Checking if tracker {appTracker.Serial} bound joint ID " +
+                        $"({appTracker.SelectedTrackedJointId}) is valid for loaded plugins...");
+
+            // Check if the specified index is valid
+            if (trackingDevice.TrackedJoints.Count < appTracker.SelectedTrackedJointId)
+            {
+                Logger.Info($"The saved tracker {appTracker.Serial} bound joint ID " +
+                            $"({appTracker.SelectedTrackedJointId}) is invalid! Resetting it to the first one!");
+
+                // The joint ID haven't gotten real :/ reset
+                // (Joint ID 0 should be safe in most cases)
+                appTracker.SelectedTrackedJointId = 0;
+            }
+
+            // Joint ID check
+            Logger.Info($"Checking if device ({trackingDevice.Name}, {trackingDevice.Name}) " +
+                        $"provides a pre-selected joint for tracker {appTracker.Serial} ({appTracker.Role})...");
+
+            // Check if the device joints contain such a role
+            var preselectedRoleJointIndex = trackingDevice.TrackedJoints.FindIndex(
+                x => x.Role != TrackedJointType.JointManual &&
+                     TypeUtils.JointTrackerTypeDictionary[x.Role] == appTracker.Role);
+
+            // Overwrite the base selected joint if valid
+            if (preselectedRoleJointIndex >= 0)
+            {
+                Logger.Info($"Device ({trackingDevice.Name}, {trackingDevice.Name}) " +
+                            $"provides a pre-selected joint for tracker {appTracker.Serial} ({appTracker.Role})! " +
+                            $"Setting the {nameof(appTracker.SelectedTrackedJointId)} property to it!");
+
+                // The preselected joint ID got real O.O
+                appTracker.SelectedTrackedJointId = (uint)preselectedRoleJointIndex;
+            }
+
+            // ReSharper disable once InvertIf | Override GUID check
+            if (appTracker.IsOverriden)
+            {
+                Logger.Info($"Checking if tracker {appTracker.Serial} override " +
+                            $"({appTracker.OverrideGuid}) exists in loaded plugins...");
+
+                // Check if the override specified by the tracker is real
+                if (!TrackingDevices.TrackingDevicesVector.ContainsKey(appTracker.OverrideGuid))
+                {
+                    Logger.Info($"The saved tracker {appTracker.Serial} override " +
+                                $"({appTracker.OverrideGuid}) is invalid! Resetting it to NONE!");
+
+                    // The override haven't gotten real :/ reset
+                    appTracker.OverrideGuid = "";
+                    appTracker.IsPositionOverridden = false;
+                    appTracker.IsOrientationOverridden = false;
+                }
+
+                // Override joint ID check
+                Logger.Info($"Checking if tracker {appTracker.Serial} bound override joint ID " +
+                            $"({appTracker.SelectedTrackedJointId}) is valid for loaded plugins...");
+
+                // ReSharper disable once InvertIf | Check if the specified override index is valid
+                if (TrackingDevices.GetDevice(appTracker.OverrideGuid)
+                        .Device.TrackedJoints.Count < appTracker.SelectedTrackedJointId)
+                {
+                    Logger.Info($"The saved tracker {appTracker.Serial} bound joint ID " +
+                                $"({appTracker.OverrideJointId}) is invalid! Resetting it to the first one!");
+
+                    // The joint ID haven't gotten real :/ reset
+                    // (Joint ID 0 should be safe in most cases)
+                    appTracker.OverrideJointId = 0;
+                }
+            }
+        }
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
