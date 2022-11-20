@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security;
+using Windows.System;
 
 namespace Amethyst.Utils;
 
@@ -45,6 +48,18 @@ public static class SystemShell
         if (nativeFile != IntPtr.Zero) Marshal.FreeCoTaskMem(nativeFile);
     }
 
+    /// <summary>TimeBeginPeriod(). See the Windows API documentation for details.</summary>
+    [SuppressMessage("Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible")]
+    [SuppressUnmanagedCodeSecurity]
+    [DllImport("winmm.dll", EntryPoint = "timeBeginPeriod", SetLastError = true)]
+    public static extern uint TimeBeginPeriod(uint uMilliseconds);
+
+    /// <summary>TimeEndPeriod(). See the Windows API documentation for details.</summary>
+    [SuppressMessage("Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible")]
+    [SuppressUnmanagedCodeSecurity]
+    [DllImport("winmm.dll", EntryPoint = "timeEndPeriod", SetLastError = true)]
+    public static extern uint TimeEndPeriod(uint uMilliseconds);
+
     private enum SIGDN : uint
     {
         NORMALDISPLAY = 0x00000000,
@@ -61,13 +76,7 @@ public static class SystemShell
 
 internal class WindowsSystemDispatcherQueueHelper
 {
-    [StructLayout(LayoutKind.Sequential)]
-    private struct DispatcherQueueOptions
-    {
-        internal int dwSize;
-        internal int threadType;
-        internal int apartmentType;
-    }
+    private object _mDispatcherQueueController;
 
     [DllImport("CoreMessaging.dll")]
     private static extern int CreateDispatcherQueueController(
@@ -75,11 +84,9 @@ internal class WindowsSystemDispatcherQueueHelper
         [In] [Out] [MarshalAs(UnmanagedType.IUnknown)]
         ref object dispatcherQueueController);
 
-    private object _mDispatcherQueueController;
-
     public void EnsureWindowsSystemDispatcherQueueController()
     {
-        if (Windows.System.DispatcherQueue.GetForCurrentThread() is not null)
+        if (DispatcherQueue.GetForCurrentThread() is not null)
             // one already exists, so we'll just use it.
             return;
 
@@ -90,5 +97,13 @@ internal class WindowsSystemDispatcherQueueHelper
         options.apartmentType = 2; // DQTAT_COM_STA
 
         CreateDispatcherQueueController(options, ref _mDispatcherQueueController);
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct DispatcherQueueOptions
+    {
+        internal int dwSize;
+        internal int threadType;
+        internal int apartmentType;
     }
 }

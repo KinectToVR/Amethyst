@@ -628,7 +628,7 @@ public sealed partial class Settings : Page
         //                if (AppData.Settings.TrackersVector[t].Role == currentTracker)
         //                {
         //                    // Make actual changes
-        //                    if (AppData.Settings.TrackersVector[t].IsActive && Interfacing.K2AppTrackersInitialized)
+        //                    if (AppData.Settings.TrackersVector[t].IsActive && Interfacing.AppTrackersInitialized)
         //                        DriverClient.UpdateTrackerStates(new List<(TrackerType Role, bool State)>
         //                        {
         //                            (AppData.Settings.TrackersVector[t].Role, false)
@@ -792,7 +792,7 @@ public sealed partial class Settings : Page
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         // Mark trackers as inactive
-        Interfacing.K2AppTrackersInitialized = false;
+        Interfacing.AppTrackersInitialized = false;
         if (Shared.General.ToggleTrackersButton is not null)
             Shared.General.ToggleTrackersButton.IsChecked = false;
 
@@ -925,7 +925,7 @@ public sealed partial class Settings : Page
         var context = (sender as ToggleSwitch)!.DataContext;
         var tracker = context as AppTracker;
 
-        if (Interfacing.K2AppTrackersInitialized)
+        if (Interfacing.AppTrackersInitialized)
             // try 3 times cause why not
             for (var i = 0; i < 3; i++)
             {

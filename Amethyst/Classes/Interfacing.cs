@@ -100,7 +100,7 @@ public static class Interfacing
 
     // If trackers are added / initialized
     public static bool K2AppTrackersSpawned = false,
-        K2AppTrackersInitialized = false;
+        AppTrackersInitialized = false;
 
     // Is the tracking paused
     public static bool IsTrackingFrozen = false;
@@ -275,7 +275,7 @@ public static class Interfacing
         Logger.Info("AppWindow.Closing handler called, starting the shutdown routine...");
 
         // Mark trackers as inactive
-        K2AppTrackersInitialized = false;
+        AppTrackersInitialized = false;
 
         // Wait a moment & exit
         Logger.Info($"Shutdown actions completed, disconnecting devices and exiting in {sleepMillis}ms...");
@@ -400,7 +400,7 @@ public static class Interfacing
                 // Cause not checking anymore
                 ServerDriverFailure = true;
                 K2AppTrackersSpawned = false;
-                K2AppTrackersInitialized = false;
+                AppTrackersInitialized = false;
 
                 return false;
             }
@@ -408,7 +408,7 @@ public static class Interfacing
 
         // Notify that we're good now
         K2AppTrackersSpawned = true;
-        K2AppTrackersInitialized = true;
+        AppTrackersInitialized = true;
 
         /*
          * Trackers are stealing input from controllers when first added,
@@ -417,9 +417,9 @@ public static class Interfacing
          */
 
         await Task.Delay(100);
-        K2AppTrackersInitialized = false;
+        AppTrackersInitialized = false;
         await Task.Delay(500);
-        K2AppTrackersInitialized = true;
+        AppTrackersInitialized = true;
 
         return true;
     }

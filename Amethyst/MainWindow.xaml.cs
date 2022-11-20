@@ -1210,7 +1210,7 @@ public sealed partial class MainWindow : Window
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         // Mark trackers as inactive
-        Interfacing.K2AppTrackersInitialized = false;
+        Interfacing.AppTrackersInitialized = false;
         if (Shared.General.ToggleTrackersButton is not null)
             Shared.General.ToggleTrackersButton.IsChecked = false;
 

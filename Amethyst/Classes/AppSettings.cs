@@ -195,6 +195,14 @@ public class AppSettings : INotifyPropertyChanged
             AppData.Settings ??= new AppSettings(); // Reset if null
         }
 
+        CheckSettings(true);
+    }
+
+    public void CheckSettings(bool partial = false)
+    {
+        // Basic config: global and pre-setup settings
+        Logger.Info("Checking AppSettings [global] configuration...");
+
         // Check if the trackers vector is broken
         var vectorBroken = TrackersVector.Count < 7;
 
@@ -317,17 +325,11 @@ public class AppSettings : INotifyPropertyChanged
         // If failed again, just give up
         if (!File.Exists(resourcePath))
             Logger.Warn($"Could not load language resources at \"{resourcePath}\", the app interface will be broken!");
-    }
 
-    public void CheckSettings()
-    {
-        // Check runtime settings:
-        // - filter indexes
-        // - joint IDs
-        // - override GUIDs
-        // - override IDs
-        // - ...
+        // That's all for basic config!
+        if (partial) return;
 
+        // Advanced config: runtime and tracking settings
         Logger.Info("Checking AppSettings [runtime] configuration...");
         var trackingDevice = TrackingDevices.GetTrackingDevice();
 

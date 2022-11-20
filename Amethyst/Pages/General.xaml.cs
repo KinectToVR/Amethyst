@@ -203,9 +203,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
         }
         else
         {
-            ToggleTrackersButton.IsChecked = Interfacing.K2AppTrackersInitialized;
+            ToggleTrackersButton.IsChecked = Interfacing.AppTrackersInitialized;
             ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
-                Interfacing.K2AppTrackersInitialized
+                Interfacing.AppTrackersInitialized
                     ? "/GeneralPage/Buttons/TrackersToggle/Disconnect"
                     : "/GeneralPage/Buttons/TrackersToggle/Reconnect");
         }
@@ -812,7 +812,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (Interfacing.ServerDriverFailure) return;
 
         // Mark trackers as active
-        Interfacing.K2AppTrackersInitialized = true;
+        Interfacing.AppTrackersInitialized = true;
 
         // Request a check for already-added trackers
         Interfacing.AlreadyAddedTrackersScanRequested = true;
@@ -831,7 +831,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             "/GeneralPage/Buttons/TrackersToggle/Reconnect");
 
         // Mark trackers as inactive
-        Interfacing.K2AppTrackersInitialized = false;
+        Interfacing.AppTrackersInitialized = false;
 
         // Request a check for already-added trackers
         Interfacing.AlreadyAddedTrackersScanRequested = true;

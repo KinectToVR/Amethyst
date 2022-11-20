@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
@@ -103,7 +104,7 @@ public static class TypeUtils
 
 public static class SortedDictionaryExtensions
 {
-    public static Vector3 ValueOr(this SortedDictionary<string, Vector3> dictionary, 
+    public static Vector3 ValueOr(this SortedDictionary<string, Vector3> dictionary,
         string key, Vector3? fallbackValue = null)
     {
         return dictionary is not null && dictionary.TryGetValue(key, out var value)

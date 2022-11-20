@@ -127,9 +127,18 @@ public static class Logger
     {
         Console.ResetColor();
         Console.WriteLine(message);
+
         if (LogFilePath is null)
             throw new InvalidOperationException("Tried logging something without calling Logger.Init()! Aborting...");
-        File.AppendAllLines(LogFilePath, new[] { message });
+
+        try
+        {
+            File.AppendAllLines(LogFilePath, new[] { message });
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
 
 #if DEBUG
         Debug.WriteLine(message);
@@ -142,7 +151,15 @@ public static class Logger
         Console.WriteLine(message);
         if (LogFilePath is null)
             throw new InvalidOperationException("Tried logging something without calling Logger.Init()! Aborting...");
-        File.AppendAllLines(LogFilePath, new[] { message });
+
+        try
+        {
+            File.AppendAllLines(LogFilePath, new[] { message });
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
 
 #if DEBUG
         Debug.WriteLine(message);
@@ -155,7 +172,15 @@ public static class Logger
         Console.WriteLine(message);
         if (LogFilePath is null)
             throw new InvalidOperationException("Tried logging something without calling Logger.Init()! Aborting...");
-        File.AppendAllLines(LogFilePath, new[] { message });
+
+        try
+        {
+            File.AppendAllLines(LogFilePath, new[] { message });
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
 
 #if DEBUG
         Debug.WriteLine(message);

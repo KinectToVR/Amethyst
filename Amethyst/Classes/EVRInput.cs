@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Amethyst.Utils;
 using Valve.VR;
@@ -179,7 +178,7 @@ public static class EVRInput
             var error = OpenVR.Input.GetAnalogActionData(
                 m_LeftJoystickHandler,
                 ref m_LeftJoystickHandlerData,
-                (uint)Unsafe.SizeOf<InputAnalogActionData_t>(),
+                (uint)Marshal.SizeOf<InputAnalogActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
             // Return OK
@@ -196,7 +195,7 @@ public static class EVRInput
             var error = OpenVR.Input.GetAnalogActionData(
                 m_RightJoystickHandler,
                 ref m_RightJoystickHandlerData,
-                (uint)Unsafe.SizeOf<InputAnalogActionData_t>(),
+                (uint)Marshal.SizeOf<InputAnalogActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
             // Return OK
@@ -213,7 +212,7 @@ public static class EVRInput
             var error = OpenVR.Input.GetDigitalActionData(
                 m_ConfirmAndSaveHandler,
                 ref m_ConfirmAndSaveData,
-                (uint)Unsafe.SizeOf<InputDigitalActionData_t>(),
+                (uint)Marshal.SizeOf<InputDigitalActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
             // Return OK
@@ -230,7 +229,7 @@ public static class EVRInput
             var error = OpenVR.Input.GetDigitalActionData(
                 m_ModeSwapHandler,
                 ref m_ModeSwapData,
-                (uint)Unsafe.SizeOf<InputDigitalActionData_t>(),
+                (uint)Marshal.SizeOf<InputDigitalActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
             // Return OK
@@ -264,7 +263,7 @@ public static class EVRInput
             var error = OpenVR.Input.GetDigitalActionData(
                 m_TrackerFreezeHandler,
                 ref m_TrackerFreezeData,
-                (uint)Unsafe.SizeOf<InputDigitalActionData_t>(),
+                (uint)Marshal.SizeOf<InputDigitalActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
             // Return OK
@@ -281,7 +280,7 @@ public static class EVRInput
             var error = OpenVR.Input.GetDigitalActionData(
                 m_FlipToggleHandler,
                 ref m_FlipToggleData,
-                (uint)Unsafe.SizeOf<InputDigitalActionData_t>(),
+                (uint)Marshal.SizeOf<InputDigitalActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
             // Return OK
@@ -295,13 +294,21 @@ public static class EVRInput
         public bool UpdateActionStates()
         {
             /**********************************************/
+            // Check if VR controllers are valid
+            /**********************************************/
+
+            if (Interfacing.VrControllerIndexes.Left == OpenVR.k_unTrackedDeviceIndexInvalid ||
+                Interfacing.VrControllerIndexes.Right == OpenVR.k_unTrackedDeviceIndexInvalid)
+                return true; // Say it's all good, refuse to elaborate, leave
+
+            /**********************************************/
             // Here, update main action sets' handles
             /**********************************************/
 
             // Update Default ActionSet states
             var error = OpenVR.Input.UpdateActionState(
                 new[] { m_defaultActionSet },
-                (uint)Unsafe.SizeOf<VRActiveActionSet_t>());
+                (uint)Marshal.SizeOf<VRActiveActionSet_t>());
 
             if (error != EVRInputError.None)
             {
@@ -357,40 +364,19 @@ public static class EVRInput
         }
 
         // Analog data poll
-        public InputAnalogActionData_t LeftJoystickActionData()
-        {
-            return m_LeftJoystickHandlerData;
-        }
+        public InputAnalogActionData_t LeftJoystickActionData => m_LeftJoystickHandlerData;
 
-        public InputAnalogActionData_t RightJoystickActionData()
-        {
-            return m_RightJoystickHandlerData;
-        }
+        public InputAnalogActionData_t RightJoystickActionData => m_RightJoystickHandlerData;
 
         // Digital data poll
-        public InputDigitalActionData_t ConfirmAndSaveActionData()
-        {
-            return m_ConfirmAndSaveData;
-        }
+        public InputDigitalActionData_t ConfirmAndSaveActionData => m_ConfirmAndSaveData;
 
-        public InputDigitalActionData_t ModeSwapActionData()
-        {
-            return m_ModeSwapData;
-        }
+        public InputDigitalActionData_t ModeSwapActionData => m_ModeSwapData;
 
-        public InputDigitalActionData_t FineTuneActionData()
-        {
-            return m_FineTuneData;
-        }
+        public InputDigitalActionData_t FineTuneActionData => m_FineTuneData;
 
-        public InputDigitalActionData_t TrackerFreezeActionData()
-        {
-            return m_TrackerFreezeData;
-        }
+        public InputDigitalActionData_t TrackerFreezeActionData => m_TrackerFreezeData;
 
-        public InputDigitalActionData_t TrackerFlipToggleData()
-        {
-            return m_FlipToggleData;
-        }
+        public InputDigitalActionData_t TrackerFlipToggleData => m_FlipToggleData;
     }
 }

@@ -10,6 +10,7 @@ using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Amethyst.Classes;
 
@@ -33,30 +34,20 @@ public class AppTracker : INotifyPropertyChanged
     private Quaternion _lastSlerpOrientation = new(0, 0, 0, 1);
     private Quaternion _lastSlerpSlowOrientation = new(0, 0, 0, 1);
 
-    [JsonIgnore]
-    public Vector3 PoseVelocity { get; set; } = new(0, 0, 0);
-    [JsonIgnore]
-    public Vector3 PoseAcceleration { get; set; } = new(0, 0, 0);
-    [JsonIgnore]
-    public Vector3 PoseAngularAcceleration { get; set; } = new(0, 0, 0);
-    [JsonIgnore]
-    public Vector3 PoseAngularVelocity { get; set; } = new(0, 0, 0);
+    [JsonIgnore] public Vector3 PoseVelocity { get; set; } = new(0, 0, 0);
+    [JsonIgnore] public Vector3 PoseAcceleration { get; set; } = new(0, 0, 0);
+    [JsonIgnore] public Vector3 PoseAngularAcceleration { get; set; } = new(0, 0, 0);
+    [JsonIgnore] public Vector3 PoseAngularVelocity { get; set; } = new(0, 0, 0);
 
     // Tracker pose (inherited)
-    [JsonIgnore]
-    public Vector3 Position { get; set; } = new(0, 0, 0);
-    [JsonIgnore]
-    public Quaternion Orientation { get; set; } = new(1, 0, 0, 0);
+    [JsonIgnore] public Vector3 Position { get; set; } = new(0, 0, 0);
+    [JsonIgnore] public Quaternion Orientation { get; set; } = new(1, 0, 0, 0);
 
-    [JsonIgnore]
-    public Vector3 PreviousPosition { get; set; } = new(0, 0, 0);
-    [JsonIgnore]
-    public Quaternion PreviousOrientation { get; set; } = new(1, 0, 0, 0);
+    [JsonIgnore] public Vector3 PreviousPosition { get; set; } = new(0, 0, 0);
+    [JsonIgnore] public Quaternion PreviousOrientation { get; set; } = new(1, 0, 0, 0);
 
-    [JsonIgnore]
-    public long PoseTimestamp { get; set; } = 0;
-    [JsonIgnore]
-    public long PreviousPoseTimestamp { get; set; } = 0;
+    [JsonIgnore] public long PoseTimestamp { get; set; } = 0;
+    [JsonIgnore] public long PreviousPoseTimestamp { get; set; } = 0;
 
     // Internal data offset
     public Vector3 PositionOffset = new(0, 0, 0);
@@ -301,114 +292,30 @@ public class AppTracker : INotifyPropertyChanged
     // and to select it, the filter number must be < 0
     // Additionally, this adds the offsets
     // Offset will be added after translation
-    public Vector3 GetCalibratedVector(Vector3 positionVector,
-        Quaternion calibrationRotation, Vector3 calibrationTranslation,
-        Vector3? calibrationOrigin = null)
+    public Vector3 GetCalibratedVector(Vector3 positionVector)
     {
         // Construct the calibrated pose
-        return Vector3.Transform(positionVector -
-                calibrationOrigin ?? Vector3.Zero, calibrationRotation) +
-            calibrationTranslation + calibrationOrigin ?? Vector3.Zero +
-            PositionOffset; // Unwrap, rotate, transform, wrap, offset
-    }
-
-    // Get tracker base
-    // This is for updating the server with
-    // exclusive filtered data from K2AppTracker
-    // By default, the saved filter is selected
-    // Offsets are added inside called methods
-    public K2TrackerBase GetTrackerBase(Quaternion calibrationRotation,
-        Vector3 calibrationTranslation, Vector3 calibrationOrigin,
-        JointPositionTrackingOption? posFilter = null,
-        RotationTrackingFilterOption? oriFilter = null)
-    {
-        // Check if matrices are empty
-        var notCalibrated = calibrationRotation.IsIdentity &&
-                            calibrationTranslation.Equals(Vector3.Zero) &&
-                            calibrationOrigin.Equals(Vector3.Zero);
-
-        // Construct the return type
-        var trackerBase = new K2TrackerBase()
-        {
-            Data = new K2TrackerData { IsActive = IsActive, Role = Role, Serial = Serial },
-            Tracker = Role
-        };
-
-        var fullOrientation = notCalibrated
-            ? GetFullOrientation(oriFilter)
-            : GetFullCalibratedOrientation(
-                calibrationRotation, oriFilter);
-
-        var fullPosition = notCalibrated
-            ? GetFullPosition(posFilter)
-            : GetFullCalibratedPosition(calibrationRotation,
-                calibrationTranslation, calibrationOrigin, posFilter);
-
-        trackerBase.Pose.Orientation = new K2Quaternion
-        {
-            W = fullOrientation.W, X = fullOrientation.X, Y = fullOrientation.Y, Z = fullOrientation.Z
-        };
-
-        trackerBase.Pose.Position = new K2Vector3
-        {
-            X = fullPosition.X, Y = fullPosition.Y, Z = fullPosition.Z
-        };
-
-        if (!OverridePhysics) return trackerBase;
-
-        var fullVelocity = notCalibrated
-            ? PoseVelocity
-            : GetCalibratedVector(
-                PoseVelocity, calibrationRotation,
-                calibrationTranslation, calibrationOrigin);
-
-        var fullAcceleration = notCalibrated
-            ? PoseAcceleration
-            : GetCalibratedVector(
-                PoseAcceleration, calibrationRotation,
-                calibrationTranslation, calibrationOrigin);
-
-        var fullAngularVelocity = notCalibrated
-            ? PoseAngularVelocity
-            : GetCalibratedVector(
-                PoseAngularVelocity, calibrationRotation,
-                calibrationTranslation, calibrationOrigin);
-
-        var fullAngularAcceleration = notCalibrated
-            ? PoseAngularAcceleration
-            : GetCalibratedVector(
-                PoseAngularAcceleration, calibrationRotation,
-                calibrationTranslation, calibrationOrigin);
-
-        trackerBase.Pose.Physics.Velocity = new K2Vector3
-        {
-            X = fullVelocity.X,
-            Y = fullVelocity.Y,
-            Z = fullVelocity.Z
-        };
-
-        trackerBase.Pose.Physics.Acceleration = new K2Vector3
-        {
-            X = fullAcceleration.X,
-            Y = fullAcceleration.Y,
-            Z = fullAcceleration.Z
-        };
-
-        trackerBase.Pose.Physics.AngularVelocity = new K2Vector3
-        {
-            X = fullAngularVelocity.X,
-            Y = fullAngularVelocity.Y,
-            Z = fullAngularVelocity.Z
-        };
-
-        trackerBase.Pose.Physics.AngularAcceleration = new K2Vector3
-        {
-            X = fullAngularAcceleration.X,
-            Y = fullAngularAcceleration.Y,
-            Z = fullAngularAcceleration.Z
-        };
-
-        return trackerBase;
+        return Vector3.Transform(
+                   // Input
+                   positionVector -
+                   // Position
+                   (IsPositionOverridden
+                       ? AppData.Settings.DeviceCalibrationOrigins[OverrideGuid] // The one passed from ths
+                       : AppData.Settings.DeviceCalibrationOrigins[AppData.Settings.TrackingDeviceGuid]),
+                   // Rotation
+                   IsPositionOverridden
+                       ? AppData.Settings.DeviceCalibrationRotationMatrices[OverrideGuid] // The one passed from ths
+                       : AppData.Settings.DeviceCalibrationRotationMatrices[AppData.Settings.TrackingDeviceGuid]) +
+               // Translation
+               (IsPositionOverridden
+                   ? AppData.Settings.DeviceCalibrationTranslationVectors[OverrideGuid] // The one passed from ths
+                   : AppData.Settings.DeviceCalibrationTranslationVectors[AppData.Settings.TrackingDeviceGuid]) +
+               // Origin
+               (IsPositionOverridden
+                   ? AppData.Settings.DeviceCalibrationOrigins[OverrideGuid] // The one passed from ths
+                   : AppData.Settings.DeviceCalibrationOrigins[AppData.Settings.TrackingDeviceGuid]) +
+               // Offset
+               PositionOffset;
     }
 
     // Get tracker base
@@ -420,59 +327,99 @@ public class AppTracker : INotifyPropertyChanged
         JointPositionTrackingOption? posFilter = null,
         RotationTrackingFilterOption? oriFilter = null)
     {
+        // Check if matrices are empty
+        var notCalibrated = !AppData.Settings.DeviceMatricesCalibrated
+            .TryGetValue(OverrideGuid, out var calibrated) || !calibrated;
+
+        var fullOrientation = notCalibrated
+            ? GetFullOrientation(oriFilter)
+            : GetFullCalibratedOrientation(
+                IsOrientationOverridden
+                    ? AppData.Settings.DeviceCalibrationRotationMatrices[OverrideGuid] // The one passed from ths
+                    : AppData.Settings.DeviceCalibrationRotationMatrices[AppData.Settings.TrackingDeviceGuid],
+                oriFilter);
+
+        var fullPosition = notCalibrated
+            ? GetFullPosition(posFilter)
+            : GetFullCalibratedPosition(
+                IsPositionOverridden
+                    ? AppData.Settings.DeviceCalibrationRotationMatrices[OverrideGuid] // The one passed from ths
+                    : AppData.Settings.DeviceCalibrationRotationMatrices[AppData.Settings.TrackingDeviceGuid],
+                IsPositionOverridden
+                    ? AppData.Settings.DeviceCalibrationTranslationVectors[OverrideGuid] // The one passed from ths
+                    : AppData.Settings.DeviceCalibrationTranslationVectors[AppData.Settings.TrackingDeviceGuid],
+                IsPositionOverridden
+                    ? AppData.Settings.DeviceCalibrationOrigins[OverrideGuid] // The one passed from ths
+                    : AppData.Settings.DeviceCalibrationOrigins[AppData.Settings.TrackingDeviceGuid],
+                posFilter);
+
         // Construct the return type
-        var trackerBase = new K2TrackerBase()
+        var trackerBase = new K2TrackerBase
         {
             Data = new K2TrackerData { IsActive = IsActive, Role = Role, Serial = Serial },
-            Tracker = Role
-        };
-
-        var fullOrientation = GetFullOrientation(oriFilter);
-        var fullPosition = GetFullPosition(posFilter);
-
-        trackerBase.Pose.Orientation = new K2Quaternion
-        {
-            W = fullOrientation.W,
-            X = fullOrientation.X,
-            Y = fullOrientation.Y,
-            Z = fullOrientation.Z
-        };
-
-        trackerBase.Pose.Position = new K2Vector3
-        {
-            X = fullPosition.X,
-            Y = fullPosition.Y,
-            Z = fullPosition.Z
+            Tracker = Role,
+            Pose = new K2TrackerPose
+            {
+                Orientation = new K2Quaternion
+                {
+                    W = fullOrientation.W,
+                    X = fullOrientation.X,
+                    Y = fullOrientation.Y,
+                    Z = fullOrientation.Z
+                },
+                Position = new K2Vector3
+                {
+                    X = fullPosition.X,
+                    Y = fullPosition.Y,
+                    Z = fullPosition.Z
+                }
+            }
         };
 
         if (!OverridePhysics) return trackerBase;
 
-        trackerBase.Pose.Physics.Velocity = new K2Vector3
-        {
-            X = PoseVelocity.X,
-            Y = PoseVelocity.Y,
-            Z = PoseVelocity.Z
-        };
+        var fullVelocity = notCalibrated
+            ? PoseVelocity
+            : GetCalibratedVector(PoseVelocity);
 
-        trackerBase.Pose.Physics.Acceleration = new K2Vector3
-        {
-            X = PoseAcceleration.X,
-            Y = PoseAcceleration.Y,
-            Z = PoseAcceleration.Z
-        };
+        var fullAcceleration = notCalibrated
+            ? PoseAcceleration
+            : GetCalibratedVector(PoseAcceleration);
 
-        trackerBase.Pose.Physics.AngularVelocity = new K2Vector3
-        {
-            X = PoseAngularVelocity.X,
-            Y = PoseAngularVelocity.Y,
-            Z = PoseAngularVelocity.Z
-        };
+        var fullAngularVelocity = notCalibrated
+            ? PoseAngularVelocity
+            : GetCalibratedVector(PoseAngularVelocity);
 
-        trackerBase.Pose.Physics.AngularAcceleration = new K2Vector3
+        var fullAngularAcceleration = notCalibrated
+            ? PoseAngularAcceleration
+            : GetCalibratedVector(PoseAngularAcceleration);
+
+        trackerBase.Pose.Physics = new K2TrackerPhysics
         {
-            X = PoseAngularAcceleration.X,
-            Y = PoseAngularAcceleration.Y,
-            Z = PoseAngularAcceleration.Z
+            Velocity = new K2Vector3
+            {
+                X = fullVelocity.X,
+                Y = fullVelocity.Y,
+                Z = fullVelocity.Z
+            },
+            Acceleration = new K2Vector3
+            {
+                X = fullAcceleration.X,
+                Y = fullAcceleration.Y,
+                Z = fullAcceleration.Z
+            },
+            AngularVelocity = new K2Vector3
+            {
+                X = fullAngularVelocity.X,
+                Y = fullAngularVelocity.Y,
+                Z = fullAngularVelocity.Z
+            },
+            AngularAcceleration = new K2Vector3
+            {
+                X = fullAngularAcceleration.X,
+                Y = fullAngularAcceleration.Y,
+                Z = fullAngularAcceleration.Z
+            }
         };
 
         return trackerBase;
@@ -517,8 +464,7 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     // OnPropertyChanged listener for containers
-    [JsonIgnore]
-    public EventHandler PropertyChangedEvent;
+    [JsonIgnore] public EventHandler PropertyChangedEvent;
 
     // MVVM stuff
     public string GetResourceString(string key)
@@ -633,12 +579,10 @@ public class AppTracker : INotifyPropertyChanged
         x.Role != TrackedJointType.JointManual && TypeUtils.JointTrackerTypeDictionary[x.Role] == Role);
 
     // Is NOT force-updated by the base device
-    [JsonIgnore]
-    public bool IsManuallyManaged => !IsAutoManaged;
+    [JsonIgnore] public bool IsManuallyManaged => !IsAutoManaged;
 
     // IsPositionOverridden || IsOrientationOverridden
-    [JsonIgnore]
-    public bool IsOverriden => IsPositionOverridden || IsOrientationOverridden;
+    [JsonIgnore] public bool IsOverriden => IsPositionOverridden || IsOrientationOverridden;
 
     public double BoolToOpacity(bool v)
     {
@@ -661,7 +605,6 @@ public class AppTracker : INotifyPropertyChanged
                 _overrideJointId = 1;
 
             OnPropertyChanged(); // All
-
         }
     }
 
@@ -681,12 +624,10 @@ public class AppTracker : INotifyPropertyChanged
                 _overrideJointId = 1;
 
             OnPropertyChanged(); // All
-
         }
     }
 
-    [JsonIgnore]
-    public bool IsOverridenByOtherDevice => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid;
+    [JsonIgnore] public bool IsOverridenByOtherDevice => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid;
 
     public bool IsManagedBy(string guid)
     {

@@ -73,7 +73,15 @@ public class TrackingDevice : INotifyPropertyChanged
     public bool IsSelfUpdateEnabled => Device.IsSelfUpdateEnabled;
     public bool IsFlipSupported => Device.IsFlipSupported;
     public bool IsSettingsDaemonSupported => Device.IsSettingsDaemonSupported;
-    public bool IsAppOrientationSupported => Device.IsAppOrientationSupported;
+
+    public bool IsAppOrientationSupported =>
+        Device.IsAppOrientationSupported && // The device must declare it actually consists
+        Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointAnkleLeft) &&
+        Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointAnkleRight) &&
+        Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointFootLeft) &&
+        Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointFootRight) &&
+        Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointKneeLeft) &&
+        Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointKneeRight);
 
     public object SettingsInterfaceRoot => Device.SettingsInterfaceRoot;
     public int DeviceStatus => Device.DeviceStatus;
@@ -205,13 +213,19 @@ public class PluginHost : IAmethystHost
 
     // Request a string from AME resources, empty for no match
     // Warning: The primarily searched resource is the device-provided one!
-    public string RequestLocalizedString(string key, string guid) => Interfacing.Plugins.RequestLocalizedString(key, guid);
+    public string RequestLocalizedString(string key, string guid)
+    {
+        return Interfacing.Plugins.RequestLocalizedString(key, guid);
+    }
 
     // Request a folder to be set as device's AME resources,
     // you can access these resources with the lower function later (after onLoad)
     // Warning: Resources are containerized and can't be accessed in-between devices!
     // Warning: The default root is "[device_folder_path]/resources/Strings"!
-    public bool SetLocalizationResourcesRoot(string path, string guid) => Interfacing.Plugins.SetLocalizationResourcesRoot(path, guid);
+    public bool SetLocalizationResourcesRoot(string path, string guid)
+    {
+        return Interfacing.Plugins.SetLocalizationResourcesRoot(path, guid);
+    }
 }
 
 public class LoadAttemptedPlugin : INotifyPropertyChanged
