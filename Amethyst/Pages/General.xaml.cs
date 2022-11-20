@@ -78,8 +78,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.General.FreezeOnlyLowerToggle = FreezeOnlyLowerToggle;
         Shared.General.AdditionalDeviceErrorsHyperlink = AdditionalDeviceErrorsHyperlink;
 
+        Shared.TeachingTips.GeneralPage.ToggleTrackersTeachingTip = ToggleTrackersTeachingTip;
+        Shared.TeachingTips.GeneralPage.StatusTeachingTip = StatusTeachingTip;
+
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
-        TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesVector.Values;
+        TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesList.Values;
 
         Logger.Info($"Setting graphical resources for: '{CalibrationPreviewMediaElement.GetType().FullName}'...");
         CalibrationPreviewMediaElement.Source = MediaSource.CreateFromUri(
@@ -155,7 +158,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                     Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"),
                     true); // High priority - it's probably a server failure
 
-                Interfacing.ShowVRToast(
+                Interfacing.ShowVrToast(
                     Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
                     Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
             }
@@ -174,7 +177,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Reload tracking devices
         Logger.Info($"Force refreshing devices MVVM for page: '{GetType().FullName}'...");
-        TrackingDevices.TrackingDevicesVector.Values.ToList().ForEach(x => x.OnPropertyChanged());
+        TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnPropertyChanged());
 
         // Notify of the setup's end
         Shared.General.GeneralTabSetupFinished = true;
@@ -648,7 +651,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
 
             // If all used devices are erred: cry about it
-            if (TrackingDevices.TrackingDevicesVector.Values
+            if (TrackingDevices.TrackingDevicesList.Values
                 .Where(plugin => plugin.IsBase || plugin.IsOverride)
                 .All(device => device.StatusError))
             {
@@ -796,7 +799,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                     Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"),
                     true); // High priority - it's probably a server failure
 
-                Interfacing.ShowVRToast(
+                Interfacing.ShowVrToast(
                     Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
                     Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
             }
@@ -849,7 +852,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         ToggleTrackersTeachingTip.IsOpen = false;
 
         // Show the previous one
-        Shared.TeachingTips.Main.InitializerTeachingTip.IsOpen = true;
+        Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = true;
     }
 
     private void ToggleTrackersTeachingTip_CloseButtonClick(TeachingTip sender, object args)
@@ -893,8 +896,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
         await Task.Delay(500);
 
         // Show the next tip
-        Shared.TeachingTips.Settings.ManageTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.Settings.ManageTrackersTeachingTip.IsOpen = true;
+        Shared.TeachingTips.SettingsPage.ManageTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.SettingsPage.ManageTrackersTeachingTip.IsOpen = true;
     }
 
     private async void OpenDiscordButton_Click(object sender, RoutedEventArgs e)

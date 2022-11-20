@@ -395,7 +395,7 @@ public class AppSettings : INotifyPropertyChanged
                             $"({appTracker.OverrideGuid}) exists in loaded plugins...");
 
                 // Check if the override specified by the tracker is real
-                if (!TrackingDevices.TrackingDevicesVector.ContainsKey(appTracker.OverrideGuid))
+                if (!TrackingDevices.TrackingDevicesList.ContainsKey(appTracker.OverrideGuid))
                 {
                     Logger.Info($"The saved tracker {appTracker.Serial} override " +
                                 $"({appTracker.OverrideGuid}) is invalid! Resetting it to NONE!");

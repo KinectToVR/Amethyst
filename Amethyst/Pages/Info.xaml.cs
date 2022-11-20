@@ -27,7 +27,7 @@ public sealed partial class Info : Page
         InitializeComponent();
 
         Logger.Info($"Constructing page: '{GetType().FullName}'...");
-        Shared.TeachingTips.Info.HelpTeachingTip = HelpTeachingTip;
+        Shared.TeachingTips.InfoPage.HelpTeachingTip = HelpTeachingTip;
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
@@ -123,8 +123,8 @@ public sealed partial class Info : Page
         await Task.Delay(500);
 
         // Show the next tip
-        Shared.TeachingTips.Devices.DeviceControlsTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.Devices.DeviceControlsTeachingTip.IsOpen = true;
+        Shared.TeachingTips.DevicesPage.DeviceControlsTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.DevicesPage.DeviceControlsTeachingTip.IsOpen = true;
     }
 
     private void HelpTeachingTip_CloseButtonClick(TeachingTip sender, object args)

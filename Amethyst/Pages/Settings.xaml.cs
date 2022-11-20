@@ -26,6 +26,7 @@ using System.Linq;
 using Amethyst.Driver.API;
 using System.Reflection;
 using System.Threading;
+using Amethyst.MVVM;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -61,6 +62,9 @@ public sealed partial class Settings : Page
         Shared.Settings.JointExpanderHostStackPanel = JointExpanderHostStackPanel;
         Shared.Settings.ExternalFlipStatusStackPanel = ExtFlipStatusStackPanel;
         Shared.Settings.FlipDropDownContainer = FlipDropDownContainer;
+
+        Shared.TeachingTips.SettingsPage.AutoStartTeachingTip = AutoStartTeachingTip;
+        Shared.TeachingTips.SettingsPage.ManageTrackersTeachingTip = ManageTrackersTeachingTip;
 
         Logger.Info($"Registering settings MVVM for page: '{GetType().FullName}'...");
         DataContext = AppData.Settings; // Set this settings instance as the context
@@ -261,9 +265,8 @@ public sealed partial class Settings : Page
         Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
 
         // Reload plugins' language resources
-        foreach (var plugin in TrackingDevices.TrackingDevicesVector.Values)
-            Interfacing.Plugins.SetLocalizationResourcesRoot(TrackingDevices
-                .TrackingDevicesLocalizationResourcesRootsVector[plugin.Guid].Directory, plugin.Guid);
+        foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
+            Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
         // Request page reloads
         Translator.Get.OnPropertyChanged();
@@ -402,8 +405,8 @@ public sealed partial class Settings : Page
         PageMainScrollViewer.ScrollToVerticalOffset(0);
 
         // Show the next tip
-        Shared.TeachingTips.Devices.DevicesListTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.Devices.DevicesListTeachingTip.IsOpen = true;
+        Shared.TeachingTips.DevicesPage.DevicesListTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.DevicesPage.DevicesListTeachingTip.IsOpen = true;
     }
 
     private void FlipToggle_Toggled(object sender, RoutedEventArgs e)
@@ -546,8 +549,8 @@ public sealed partial class Settings : Page
         await Task.Delay(500);
 
         // Show the next tip
-        Shared.TeachingTips.General.StatusTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.General.StatusTeachingTip.IsOpen = true;
+        Shared.TeachingTips.GeneralPage.StatusTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.GeneralPage.StatusTeachingTip.IsOpen = true;
     }
 
     private async void ManageTrackersTeachingTip_CloseButtonClick(TeachingTip sender, object args)
@@ -777,7 +780,7 @@ public sealed partial class Settings : Page
         Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
         Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
 
-        Shared.TeachingTips.Main.InitializerTeachingTip.IsOpen = true;
+        Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = true;
         Interfacing.IsNuxPending = true;
     }
 
@@ -834,7 +837,7 @@ public sealed partial class Settings : Page
         Interfacing.ShowToast(
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
-        Interfacing.ShowVRToast(
+        Interfacing.ShowVrToast(
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
     }

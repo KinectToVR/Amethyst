@@ -57,8 +57,11 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         Shared.Devices.SelectedDeviceSettingsRootLayoutPanel = SelectedDeviceSettingsRootLayoutPanel;
         Shared.Devices.OverridesExpanderHostStackPanel = OverridesExpanderHostStackPanel;
 
+        Shared.TeachingTips.DevicesPage.DeviceControlsTeachingTip = DeviceControlsTeachingTip;
+        Shared.TeachingTips.DevicesPage.DevicesListTeachingTip = DevicesListTeachingTip;
+
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
-        TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesVector.Values;
+        TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesList.Values;
 
         Logger.Info($"Registering plugins MVVM for page: '{GetType().FullName}'...");
         PluginsItemsRepeater.ItemsSource = TrackingDevices.LoadAttemptedTrackingDevicesVector;
@@ -75,7 +78,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
         // Set currently tracking device & selected device
         Logger.Info("Overwriting the devices TreeView selected item...");
-        var devicesListIndex = TrackingDevices.TrackingDevicesVector.Keys.ToList()
+        var devicesListIndex = TrackingDevices.TrackingDevicesList.Keys.ToList()
             .IndexOf(AppData.Settings.TrackingDeviceGuid);
         TrackingDeviceTreeView.SelectedNode = TrackingDeviceTreeView.RootNodes[devicesListIndex];
 
@@ -190,8 +193,8 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         await Task.Delay(500);
 
         // Show the next tip
-        Shared.TeachingTips.Settings.AutoStartTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.Settings.AutoStartTeachingTip.IsOpen = true;
+        Shared.TeachingTips.SettingsPage.AutoStartTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.SettingsPage.AutoStartTeachingTip.IsOpen = true;
     }
 
     private void DevicesListTeachingTip_CloseButtonClick(TeachingTip sender, object args)
@@ -316,15 +319,15 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         await Task.Delay(500);
 
         // Show the next tip
-        Shared.TeachingTips.Info.HelpTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.Info.HelpTeachingTip.IsOpen = true;
+        Shared.TeachingTips.InfoPage.HelpTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.InfoPage.HelpTeachingTip.IsOpen = true;
     }
 
     private void DisconnectDeviceButton_Click(object sender, RoutedEventArgs e)
     {
         Logger.Info($"Now disconnecting tracking device {Shared.Devices.SelectedTrackingDeviceGuid}...");
 
-        if (TrackingDevices.TrackingDevicesVector.TryGetValue(
+        if (TrackingDevices.TrackingDevicesList.TryGetValue(
                 Shared.Devices.SelectedTrackingDeviceGuid, out var device))
             device.Shutdown();
 

@@ -61,8 +61,8 @@ public sealed partial class MainWindow : Window
         TrySetMicaBackdrop();
 
         // Cache needed UI elements
-        Shared.TeachingTips.Main.InitializerTeachingTip = InitializerTeachingTip;
-        Shared.TeachingTips.Main.ReloadTeachingTip = ReloadTeachingTip;
+        Shared.TeachingTips.MainPage.InitializerTeachingTip = InitializerTeachingTip;
+        Shared.TeachingTips.MainPage.ReloadTeachingTip = ReloadTeachingTip;
 
         Shared.Main.MainNavigationView = NavView;
         Shared.Main.AppTitleLabel = AppTitleLabel;
@@ -196,7 +196,7 @@ public sealed partial class MainWindow : Window
 
                 // Rebuild devices' settings
                 // (Trick the device into rebuilding its interface)
-                TrackingDevices.TrackingDevicesVector.Values.ToList()
+                TrackingDevices.TrackingDevicesList.Values.ToList()
                     .ForEach(plugin => plugin.OnLoad());
 
                 Task.Delay(100); // Sleep a bit
@@ -341,7 +341,7 @@ public sealed partial class MainWindow : Window
 
                     // Check the plugin GUID against others loaded, INVALID and null
                     if (string.IsNullOrEmpty(plugin.Metadata.Guid) || plugin.Metadata.Guid == "INVALID" ||
-                        TrackingDevices.TrackingDevicesVector.ContainsKey(plugin.Metadata.Guid))
+                        TrackingDevices.TrackingDevicesList.ContainsKey(plugin.Metadata.Guid))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
                         TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
@@ -424,23 +424,20 @@ public sealed partial class MainWindow : Window
                         Status = TrackingDevices.PluginLoadError.NoError
                     });
 
-                    // Add the device resource root to the global list, create its context
-                    Logger.Info($"Creating ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                "localized strings resource context (TrackingDevices)...");
-                    TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector.Add(
-                        plugin.Metadata.Guid, (new JsonObject(), pluginFolder));
+                    // Add the device to the global device list, add the plugin folder path
+                    Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "to the global tracking device plugins list (TrackingDevices)...");
+                    TrackingDevices.TrackingDevicesList.Add(plugin.Metadata.Guid, new TrackingDevice(
+                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation, plugin.Value)
+                    {
+                        LocalizationResourcesRoot = (new JsonObject(), pluginFolder)
+                    });
 
                     // Set the device's string resources root to its provided folder
                     // (If it wants to change it, it's gonna need to do that after OnLoad anyway)
                     Logger.Info($"Registering ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "default root language resource context (TrackingDevices)...");
                     Interfacing.Plugins.SetLocalizationResourcesRoot(pluginFolder, plugin.Metadata.Guid);
-
-                    // Add the device to the global device list, add the plugin folder path
-                    Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                "to the global tracking device plugins list (TrackingDevices)...");
-                    TrackingDevices.TrackingDevicesVector.Add(plugin.Metadata.Guid, new TrackingDevice(
-                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation, plugin.Value));
 
                     Logger.Info($"Loaded plugin: {JsonSerializer.Serialize(plugin,
                         new JsonSerializerOptions { WriteIndented = true })}");
@@ -489,22 +486,22 @@ public sealed partial class MainWindow : Window
         }
 
         // Check if we have enough plugins to run the app
-        if (TrackingDevices.TrackingDevicesVector.Count < 1)
+        if (TrackingDevices.TrackingDevicesList.Count < 1)
         {
             Logger.Fatal("No plugins (tracking devices) loaded! Shutting down...");
             Interfacing.Fail(-12); // Exit and cause the crash handler to appear
         }
 
         Logger.Info("Registration of tracking device plugins has ended, there are " +
-                    $"{TrackingDevices.TrackingDevicesVector.Count} valid plugins in total.");
+                    $"{TrackingDevices.TrackingDevicesList.Count} valid plugins in total.");
 
         // Validate the saved base plugin guid
         Logger.Info("Checking if the saved base device exists in loaded plugins...");
-        if (!TrackingDevices.TrackingDevicesVector.ContainsKey(AppData.Settings.TrackingDeviceGuid))
+        if (!TrackingDevices.TrackingDevicesList.ContainsKey(AppData.Settings.TrackingDeviceGuid))
         {
             Logger.Info($"The saved base device ({AppData.Settings.TrackingDeviceGuid}) is invalid! " +
-                        $"Resetting it to the first one: ({TrackingDevices.TrackingDevicesVector.First().Key})!");
-            AppData.Settings.TrackingDeviceGuid = TrackingDevices.TrackingDevicesVector.First().Key;
+                        $"Resetting it to the first one: ({TrackingDevices.TrackingDevicesList.First().Key})!");
+            AppData.Settings.TrackingDeviceGuid = TrackingDevices.TrackingDevicesList.First().Key;
         }
 
         Logger.Info("Updating app settings for the selected base device...");
@@ -518,7 +515,7 @@ public sealed partial class MainWindow : Window
         foreach (var overrideGuid in AppData.Settings.OverrideDevicesGuidMap)
         {
             Logger.Info($"Checking if override ({overrideGuid}) exists in loaded plugins...");
-            if (!TrackingDevices.TrackingDevicesVector.ContainsKey(overrideGuid))
+            if (!TrackingDevices.TrackingDevicesList.ContainsKey(overrideGuid))
             {
                 // This override guid is invalid or missing
                 Logger.Info($"The saved override device ({overrideGuid}) is invalid! Resetting it to NONE!");
@@ -584,7 +581,7 @@ public sealed partial class MainWindow : Window
                 Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
                 Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
 
-                Shared.TeachingTips.Main.ReloadTeachingTip.IsOpen = true;
+                Shared.TeachingTips.MainPage.ReloadTeachingTip.IsOpen = true;
             });
         }
 
@@ -1177,7 +1174,7 @@ public sealed partial class MainWindow : Window
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         // Dismiss the current tip
-        Shared.TeachingTips.Main.InitializerTeachingTip.IsOpen = false;
+        Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = false;
 
         // Just dismiss the tip
         Shared.Main.InterfaceBlockerGrid.Opacity = 0.0;
@@ -1191,7 +1188,7 @@ public sealed partial class MainWindow : Window
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         // Dismiss the current tip
-        Shared.TeachingTips.Main.InitializerTeachingTip.IsOpen = false;
+        Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = false;
 
         // Navigate to the general page
         Shared.Main.MainNavigationView.SelectedItem =
@@ -1201,8 +1198,8 @@ public sealed partial class MainWindow : Window
             new EntranceNavigationTransitionInfo());
 
         // Show the next tip (general page)
-        Shared.TeachingTips.General.ToggleTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.General.ToggleTrackersTeachingTip.IsOpen = true;
+        Shared.TeachingTips.GeneralPage.ToggleTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.GeneralPage.ToggleTrackersTeachingTip.IsOpen = true;
     }
 
     private async void ReloadTeachingTip_CloseButtonClick(TeachingTip sender, object args)
@@ -1255,7 +1252,7 @@ public sealed partial class MainWindow : Window
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
 
-        Interfacing.ShowVRToast(
+        Interfacing.ShowVrToast(
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
     }
@@ -1324,7 +1321,7 @@ public sealed partial class MainWindow : Window
             Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
             Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
 
-            Shared.TeachingTips.Main.InitializerTeachingTip.IsOpen = true;
+            Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = true;
             Interfacing.IsNuxPending = true;
         }
 

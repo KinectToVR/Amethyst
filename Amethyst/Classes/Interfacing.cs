@@ -152,7 +152,7 @@ public static class Interfacing
     }
 
     // Show SteamVR toast / notification
-    public static void ShowVRToast(string header, string text)
+    public static void ShowVrToast(string header, string text)
     {
         if (VrOverlayHandle == OpenVR.k_ulOverlayHandleInvalid ||
             string.IsNullOrEmpty(header) ||
@@ -226,9 +226,9 @@ public static class Interfacing
                     }
 
                     Shared.Settings.PageMainScrollViewer.UpdateLayout();
-                    Shared.Settings.PageMainScrollViewer.ChangeView(
-                        0, Shared.Settings.PageMainScrollViewer.ExtentHeight, 0);
-
+                    Shared.Settings.PageMainScrollViewer.ChangeView(null,
+                        Shared.Settings.PageMainScrollViewer.ExtentHeight / 2.0, null);
+                    
                     await Task.Delay(500);
 
                     // Focus on the restart button
@@ -256,8 +256,8 @@ public static class Interfacing
                     }
 
                     Shared.Settings.PageMainScrollViewer.UpdateLayout();
-                    Shared.Settings.PageMainScrollViewer.ChangeView(
-                        0, Shared.Settings.PageMainScrollViewer.ExtentHeight, 0);
+                    Shared.Settings.PageMainScrollViewer.ChangeView(null,
+                        Shared.Settings.PageMainScrollViewer.ExtentHeight, null);
 
                     await Task.Delay(500);
 
@@ -308,7 +308,8 @@ public static class Interfacing
         try
         {
             // Disconnect all loaded devices
-            throw new NotImplementedException("Devices");
+            TrackingDevices.TrackingDevicesList.Values
+                .ToList().ForEach(device => device.Shutdown());
         }
         catch (Exception)
         {
@@ -481,7 +482,7 @@ public static class Interfacing
         if (!EvrInput.InitInputActions())
         {
             Logger.Error("Could not set up Input Actions. Please check the upper log for further information.");
-            ShowVRToast("EVR Input Actions Init Failure!",
+            ShowVrToast("EVR Input Actions Init Failure!",
                 "Couldn't set up Input Actions. Please check the log file for further information.");
 
             return false;
@@ -1125,26 +1126,6 @@ public static class Interfacing
 
     public static class Plugins
     {
-        public static void Log(string message, LogSeverity severity)
-        {
-            switch (severity)
-            {
-                case LogSeverity.Warning:
-                    Logger.Warn(message);
-                    break;
-                case LogSeverity.Error:
-                    Logger.Error(message);
-                    break;
-                case LogSeverity.Fatal:
-                    Logger.Fatal(message);
-                    break;
-                default:
-                case LogSeverity.Info:
-                    Logger.Info(message);
-                    break;
-            }
-        }
-
         public static (Vector3 Position, Quaternion Orientation) GetHmdPose => RawVrHmdPose;
 
         public static (Vector3 Position, Quaternion Orientation) GetHmdPoseCalibrated => (
@@ -1197,68 +1178,56 @@ public static class Interfacing
                     Quaternion.Inverse(VrPlayspaceOrientationQuaternion)),
                 Quaternion.Inverse(VrPlayspaceOrientationQuaternion) * orientation);
         }
-
-        public static List<TrackedJoint> GetAppJointPoses()
-        {
-            return AppData.Settings.TrackersVector.Select(
-                tracker => tracker.GetTrackedJoint()).ToList();
-        }
-
-        public static void RequestStatusUiRefresh()
-        {
-            // Request an explicit status UI refresh
-            StatusUiRefreshRequested = true;
-        }
-
-        public static string RequestLanguageCode => AppData.Settings.AppLanguage;
-
+        
         public static string RequestLocalizedString(string key, string guid)
         {
             try
             {
+                if (string.IsNullOrEmpty(guid) || !TrackingDevices.TrackingDevicesList.ContainsKey(guid))
+                {
+                    Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
+                                "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
+                    return Interfacing.LocalizedJsonString(key); // Just give up
+                }
+
                 // Check if the resource root is fine
-                if (TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector
-                        .TryGetValue(guid, out var value) && value.ResourceRoot is not null &&
-                    value.ResourceRoot.Count > 0)
-                    return TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector[guid]
-                        .ResourceRoot.GetNamedString(key);
+                var resourceRoot = TrackingDevices.GetDevice(guid).Device.LocalizationResourcesRoot.Root;
+                if (resourceRoot is not null && resourceRoot.Count > 0)
+                    return resourceRoot.GetNamedString(key);
 
-                // If the first try failed
-                Logger.Error(
-                    $"[Requested by device with guid {guid}] " +
-                    $"The device GUID {guid}s resource root is empty! Its interface will be broken! " +
-                    "Falling back to Amethyst string resources!");
-
-                return LocalizedJsonString(key); // Fallback to AME
+                Logger.Error($"The resource root of device {guid} is empty! Its interface will be broken!");
+                return Interfacing.LocalizedJsonString(key); // Just give up
             }
             catch (Exception e)
             {
-                Logger.Error(
-                    $"[Requested by device with guid {guid}] " +
-                    $"JSON error at key: \"{key}\"! Message: {e.Message}");
+                Logger.Error($"JSON error at key: \"{key}\"! Message: {e.Message}\n" +
+                             $"GUID of the {{ get; }} caller device: {guid}");
 
                 // Else return they key alone
                 return key;
             }
         }
-
+        
         public static bool SetLocalizationResourcesRoot(string path, string guid)
         {
             try
             {
-                Logger.Info(
-                    $"[Requested by device with guid {guid}] " +
-                    "Searching for language resources with key " +
-                    $"\"{AppData.Settings.AppLanguage}\" in \"{path}\"...");
+                Logger.Info($"[Requested by device with GUID {guid}] " +
+                            $"Searching for language resources with key \"{AppData.Settings.AppLanguage}\"...");
 
-                if (!Directory.Exists(path))
+                if (string.IsNullOrEmpty(guid) || !TrackingDevices.TrackingDevicesList.ContainsKey(guid))
                 {
-                    Logger.Error(
-                        $"[Requested by device with guid {guid}] " +
-                        "Could not find any language enumeration resources in " +
-                        $"\"{path}\", the device GUID {{guid}}s interface may be broken!");
+                    Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
+                                "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
+                    return false; // Just give up
+                }
 
-                    return false; // Give up on trying
+                if (Directory.Exists(path))
+                {
+                    Logger.Info($"[Requested by device with GUID {guid}] " +
+                                $"Could not find any language enumeration resources in \"{path}\"! " +
+                                $"Interface of device {guid} will be broken!");
+                    return false; // Just give up
                 }
 
                 var resourcePath = Path.Join(path, AppData.Settings.AppLanguage + ".json");
@@ -1266,55 +1235,47 @@ public static class Interfacing
                 // If the specified language doesn't exist somehow, fallback to 'en'
                 if (!File.Exists(resourcePath))
                 {
-                    Logger.Warn(
-                        $"[Requested by device with guid {guid}] " +
-                        "Could not load language resources at " +
-                        $"\"{resourcePath}\", falling back to 'en' (en.json)!");
+                    Logger.Warn($"[Requested by device with GUID {guid}] " +
+                                "Could not load language resources at " +
+                                $"\"{resourcePath}\", falling back to 'en' (en.json)!");
 
-                    resourcePath = Path.Join(GetProgramLocation()
-                        .DirectoryName, "Assets", "Strings", "en.json");
+                    resourcePath = Path.Join(path, "en.json");
                 }
 
-                // If failed again, just give up (we'll do fallbacks later)
+                // If failed again, just give up
                 if (!File.Exists(resourcePath))
                 {
-                    Logger.Error(
-                        $"[Requested by device with guid {guid}] " +
-                        "Could not load language resources at " +
-                        $"\"{resourcePath}\", app interface will be broken!");
-
+                    Logger.Error($"[Requested by device with GUID {guid}] " +
+                                 $"Could not load language resources at \"{resourcePath}\"," +
+                                 $"for device {guid}! Its interface will be broken!");
                     return false; // Just give up
                 }
 
                 // If everything's ok, load the resources into the current resource tree
 
-
                 // Parse the loaded json
-                var jsonObject = Windows.Data.Json.JsonObject.Parse(File.ReadAllText(resourcePath));
+                TrackingDevices.GetDevice(guid).Device.LocalizationResourcesRoot =
+                    (Windows.Data.Json.JsonObject.Parse(File.ReadAllText(resourcePath)), resourcePath);
 
                 // Check if the resource root is fine
-                if (jsonObject is null || jsonObject.Count <= 0)
-                    Logger.Error(
-                        $"[Requested by device with guid {guid}] " +
-                        "The current resource root is empty! App interface will be broken!");
-                else
-                    Logger.Error(
-                        $"[Requested by device with guid {guid}] " +
-                        $"Successfully loaded language resources with key \"{AppData.Settings.AppLanguage}\"!");
+                var resourceRoot = TrackingDevices.GetDevice(guid).Device.LocalizationResourcesRoot.Root;
+                if (resourceRoot is null || resourceRoot.Count <= 0)
+                {
+                    Logger.Error($"[Requested by device with GUID {guid}] " +
+                                 $"Could not load language resources at \"{resourcePath}\"," +
+                                 $"for device {guid}! Its interface will be broken!");
+                    return false; // Just give up
+                }
 
-                // If everything's ok, change the root
-                if (TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector.ContainsKey(guid))
-                    TrackingDevices.TrackingDevicesLocalizationResourcesRootsVector[guid] = (jsonObject, path);
-
-                return true; // We're good
+                // Still here? 
+                Logger.Info($"[Requested by device with GUID {guid}] " +
+                            $"Successfully loaded language resources with key \"{AppData.Settings.AppLanguage}\"!");
+                return true; // Winning it, yay!
             }
             catch (Exception e)
             {
-                Logger.Warn(
-                    $"[Requested by device with guid {guid}] " +
-                    $"JSON error at key: \"{AppData.Settings.AppLanguage}\"! " +
-                    $"Message: {e.Message}");
-
+                Logger.Error($"[Requested by device with GUID {guid}] " +
+                             $"JSON error at key: \"{AppData.Settings.AppLanguage}\"! Message: {e.Message}");
                 return false; // Just give up
             }
         }

@@ -325,7 +325,7 @@ public static class Shared
             TrackingDevices.UpdateTrackingDevicesInterface();
 
             // Refresh the device MVVM
-            TrackingDevices.TrackingDevicesVector[SelectedTrackingDeviceGuid].OnPropertyChanged();
+            TrackingDevices.TrackingDevicesList[SelectedTrackingDeviceGuid].OnPropertyChanged();
 
             if (TrackingDevices.IsBase(SelectedTrackingDeviceGuid))
             {
@@ -361,31 +361,31 @@ public static class Shared
 
     public static class TeachingTips
     {
-        public static class Main
+        public static class MainPage
         {
             public static TeachingTip
                 InitializerTeachingTip, ReloadTeachingTip;
         }
 
-        public static class General
+        public static class GeneralPage
         {
             public static TeachingTip
                 ToggleTrackersTeachingTip, StatusTeachingTip;
         }
 
-        public static class Settings
+        public static class SettingsPage
         {
             public static TeachingTip
                 ManageTrackersTeachingTip, AutoStartTeachingTip;
         }
 
-        public static class Devices
+        public static class DevicesPage
         {
             public static TeachingTip
                 DevicesListTeachingTip, DeviceControlsTeachingTip;
         }
 
-        public static class Info
+        public static class InfoPage
         {
             public static TeachingTip
                 HelpTeachingTip;

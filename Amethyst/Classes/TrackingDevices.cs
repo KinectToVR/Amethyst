@@ -16,21 +16,21 @@ namespace Amethyst.Classes;
 
 public static class TrackingDevices
 {
-    public static SortedDictionary<string, TrackingDevice> TrackingDevicesVector = new();
+    public static SortedDictionary<string, TrackingDevice> TrackingDevicesList = new();
 
     public static TrackingDevice GetTrackingDevice()
     {
-        return TrackingDevicesVector[AppData.Settings.TrackingDeviceGuid];
+        return TrackingDevicesList[AppData.Settings.TrackingDeviceGuid];
     }
 
     public static (bool Exists, TrackingDevice Device) GetDevice(string guid)
     {
-        return (TrackingDevicesVector.TryGetValue(guid, out var device), device);
+        return (TrackingDevicesList.TryGetValue(guid, out var device), device);
     }
 
     public static void UpdateTrackingDevicesInterface()
     {
-        if (TrackingDevicesVector.Count < 1) return; // Just give up
+        if (TrackingDevicesList.Count < 1) return; // Just give up
 
         var currentDevice = GetTrackingDevice();
         var baseStatusOk = currentDevice.DeviceStatus == 0;
@@ -39,7 +39,7 @@ public static class TrackingDevices
         var failingOverrideGuid = "";
 
         foreach (var device in AppData.Settings.OverrideDevicesGuidMap
-                     .Where(device => TrackingDevicesVector[device].DeviceStatus != 0))
+                     .Where(device => TrackingDevicesList[device].DeviceStatus != 0))
         {
             overrideStatusOk = false;
             failingOverrideGuid = device;
@@ -63,7 +63,7 @@ public static class TrackingDevices
 
                     // Should already be init-ed after 500ms, but check anyway
                     if (Devices.DevicesTreeView is null) return;
-                    var devicesListIndex = TrackingDevicesVector.Keys.ToList().IndexOf(failingOverrideGuid);
+                    var devicesListIndex = TrackingDevicesList.Keys.ToList().IndexOf(failingOverrideGuid);
                     var devicesListNode = Devices.DevicesTreeView.RootNodes[devicesListIndex];
 
                     var skipAnimation = Devices.DevicesTreeView.SelectedNode == devicesListNode;
@@ -170,7 +170,7 @@ public static class TrackingDevices
                          AppData.Settings.TrackersVector[0].IsActive &&
                          AppData.Settings.TrackersVector[0].IsOrientationOverridden &&
                          AppData.Settings.TrackersVector[0].OverrideGuid == overrideDeviceGuid))
-            return !TrackingDevicesVector[overrideDeviceGuid].IsFlipSupported;
+            return !TrackingDevicesList[overrideDeviceGuid].IsFlipSupported;
 
         // If still not, then also check if the waist is disabled by any chance
         return !AppData.Settings.TrackersVector[0].IsActive &&
@@ -251,7 +251,7 @@ public static class TrackingDevices
                             "/SharedStrings/Toasts/TrackersConfigChanged"),
                         false, "focus_restart");
 
-                    Interfacing.ShowVRToast(
+                    Interfacing.ShowVrToast(
                         Interfacing.LocalizedJsonString(
                             "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
                         Interfacing.LocalizedJsonString(
@@ -273,7 +273,7 @@ public static class TrackingDevices
         var settingsChangesMade = false;
 
         // Check if all joints have valid IDs
-        if (TrackingDevicesVector.TryGetValue(guid, out var device))
+        if (TrackingDevicesList.TryGetValue(guid, out var device))
             foreach (var tracker in AppData.Settings.TrackersVector.Where(tracker =>
                          tracker.OverrideGuid == guid &&
                          tracker.OverrideJointId >= device.TrackedJoints.Count))
@@ -328,13 +328,7 @@ public static class TrackingDevices
         InvalidFactory, // Device factory just gave up, now cry
         Other // Check logs, MEF probably gave us up again...
     }
-
-    // Vector of current devices' JSON resource roots & paths
-    // Note: the size must be the same as TrackingDevicesVector's
-    public static SortedDictionary<string,
-            (Windows.Data.Json.JsonObject ResourceRoot, string Directory)>
-        TrackingDevicesLocalizationResourcesRootsVector = new();
-
+    
     // Written to at the first plugin load
     public static List<LoadAttemptedPlugin>
         LoadAttemptedTrackingDevicesVector = new();

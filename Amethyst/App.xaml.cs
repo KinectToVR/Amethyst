@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using ABI.Windows.Media.Capture;
 using Amethyst.Classes;
+using Amethyst.MVVM;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -93,9 +94,8 @@ public partial class App : Application
             Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
 
             // Reload plugins' language resources
-            foreach (var plugin in TrackingDevices.TrackingDevicesVector.Values)
-                Interfacing.Plugins.SetLocalizationResourcesRoot(TrackingDevices
-                    .TrackingDevicesLocalizationResourcesRootsVector[plugin.Guid].Directory, plugin.Guid);
+            foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
+                Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
             // Request page reloads
             Shared.Semaphores.RequestInterfaceReload();

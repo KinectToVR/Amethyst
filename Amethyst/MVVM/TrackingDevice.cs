@@ -44,6 +44,8 @@ public class TrackingDevice : INotifyPropertyChanged
 
     public List<(TrackedJointType Role, TrackedJoint Joint)> TrackedJoints => Device.TrackedJoints;
 
+    public (Windows.Data.Json.JsonObject Root, string Directory) LocalizationResourcesRoot { get; set; } = new();
+
     public void OnLoad()
     {
         Device.OnLoad();
@@ -140,10 +142,12 @@ public class PluginHost : IAmethystHost
         AppData.Settings.TrackersVector.Select(x => x.GetTrackedJoint()).ToList();
 
     // Get the HMD Yaw (exclusively)
-    public double HmdOrientationYaw { get; } = 0; // TODO
+    public double HmdOrientationYaw =>
+        AmethystSupport.Calibration.QuaternionYaw(Interfacing.Plugins.GetHmdPose.Orientation);
 
     // Get the HMD Yaw (exclusively), but un-wrapped aka "calibrated" using the VR room center
-    public double HmdOrientationYawCalibrated { get; } = 0; // TODO
+    public double HmdOrientationYawCalibrated =>
+        AmethystSupport.Calibration.QuaternionYaw(Interfacing.Plugins.GetHmdPoseCalibrated.Orientation);
 
     // Get the raw OpenVRs HMD pose
     public (Vector3 Position, Quaternion Orientation) HmdPose => Interfacing.Plugins.GetHmdPose;
@@ -201,33 +205,25 @@ public class PluginHost : IAmethystHost
 
     // Request a string from AME resources, empty for no match
     // Warning: The primarily searched resource is the device-provided one!
-    public string RequestLocalizedString(string key, string guid)
-    {
-        return "";
-        // TODO
-    }
+    public string RequestLocalizedString(string key, string guid) => Interfacing.Plugins.RequestLocalizedString(key, guid);
 
     // Request a folder to be set as device's AME resources,
     // you can access these resources with the lower function later (after onLoad)
     // Warning: Resources are containerized and can't be accessed in-between devices!
     // Warning: The default root is "[device_folder_path]/resources/Strings"!
-    public bool SetLocalizationResourcesRoot(string path, string guid)
-    {
-        return false;
-        // TODO
-    }
+    public bool SetLocalizationResourcesRoot(string path, string guid) => Interfacing.Plugins.SetLocalizationResourcesRoot(path, guid);
 }
 
 public class LoadAttemptedPlugin : INotifyPropertyChanged
 {
-    public string Name { get; set; } = "[UNKNOWN]";
-    public string Guid { get; set; } = "[INVALID]";
+    public string Name { get; init; } = "[UNKNOWN]";
+    public string Guid { get; init; } = "[INVALID]";
 
-    public string DeviceFolder { get; set; } = "[INVALID]";
-    public string DeviceProviderName { get; set; } = "[UNKNOWN]";
-    public string DeviceUpdateUri { get; set; } = "[UNKNOWN]";
-    public string DeviceVersion { get; set; } = "[UNKNOWN]";
-    public string DeviceApiVersion { get; set; } = "[INVALID]";
+    public string DeviceFolder { get; init; } = "[INVALID]";
+    public string DeviceProviderName { get; init; } = "[UNKNOWN]";
+    public string DeviceUpdateUri { get; init; } = "[UNKNOWN]";
+    public string DeviceVersion { get; init; } = "[UNKNOWN]";
+    public string DeviceApiVersion { get; init; } = "[INVALID]";
 
     // MVVM stuff
     public string GetResourceString(string key)
@@ -235,7 +231,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         return Interfacing.LocalizedJsonString(key);
     }
 
-    public TrackingDevices.PluginLoadError Status { get; set; } =
+    public TrackingDevices.PluginLoadError Status { get; init; } =
         TrackingDevices.PluginLoadError.Unknown;
 
     public bool LoadError => Status != TrackingDevices.PluginLoadError.NoError;
@@ -245,7 +241,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public bool IsLoaded
     {
-        get => TrackingDevices.TrackingDevicesVector.ContainsKey(Guid);
+        get => TrackingDevices.TrackingDevicesList.ContainsKey(Guid);
         set
         {
             if (_isLoaded == value) return; // No changes
@@ -261,17 +257,17 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
                 SortedSet<string> loadedDeviceSet = new();
 
                 // Check which devices are loaded
-                if (TrackingDevices.TrackingDevicesVector.ContainsKey("K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV1"))
+                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV1"))
                     loadedDeviceSet.Add("K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV1");
-                if (TrackingDevices.TrackingDevicesVector.ContainsKey("K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV2"))
+                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV2"))
                     loadedDeviceSet.Add("K2VRTEAM-AME1-API1-DVCE-DVCEKINECTV2");
-                if (TrackingDevices.TrackingDevicesVector.ContainsKey("K2VRTEAM-AME1-API1-DVCE-DVCEPSMOVEEX"))
+                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-AME1-API1-DVCE-DVCEPSMOVEEX"))
                     loadedDeviceSet.Add("K2VRTEAM-AME1-API1-DVCE-DVCEPSMOVEEX");
-                if (TrackingDevices.TrackingDevicesVector.ContainsKey("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK"))
+                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK"))
                     loadedDeviceSet.Add("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK");
 
                 // If we've just disabled the last loaded device, re-enable the first
-                if (TrackingDevices.TrackingDevicesVector.Keys.All(
+                if (TrackingDevices.TrackingDevicesList.Keys.All(
                         AppData.Settings.DisabledDevicesGuidSet.Contains) ||
 
                     // If this device entry happens to be the last one of the official ones
@@ -287,7 +283,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             // == cause the upper check would make it different
             // and it's already been assigned at the beginning
             if (Shared.Devices.PluginsPageLoadedOnce && _isLoaded == value)
-                Shared.TeachingTips.Main.ReloadTeachingTip.IsOpen = true;
+                Shared.TeachingTips.MainPage.ReloadTeachingTip.IsOpen = true;
 
             // Save settings
             AppData.Settings.SaveSettings();

@@ -13,6 +13,22 @@ namespace AmethystSupport
 	public ref class Calibration sealed
 	{
 	public:
+		static double QuaternionYaw(Quaternion q)
+		{
+			// Get current yaw angle
+			Eigen::Vector3f projected_orientation_forward_vector =
+				Eigen::Quaternionf(q.W, q.X, q.Y, q.Z) * Eigen::Vector3f(0, 0, 1);
+
+			// Nullify [y] to ort-project the vector
+			projected_orientation_forward_vector.y() = 0;
+
+			// Get current yaw angle (.y)
+			return Eigen::Quaternionf::FromTwoVectors(
+				Eigen::Vector3f(0, 0, 1), // To-Front
+				projected_orientation_forward_vector // To-Base
+			).toRotationMatrix().eulerAngles(0, 1, 2).y();
+		}
+
 		static Tuple<Vector3, Quaternion>^ SVD(
 			List<Vector3>^ head_positions, List<Vector3>^ hmd_positions)
 		{
