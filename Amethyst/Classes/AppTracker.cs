@@ -541,6 +541,17 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     [JsonIgnore]
+    public int SelectedOverrideTrackedJointId
+    {
+        get => IsActive ? (int)_overrideJointId : -1;
+        set
+        {
+            _overrideJointId = value >= 0 ? (uint)value : 0;
+            OnPropertyChanged(); // All
+        }
+    }
+
+    [JsonIgnore]
     public int SelectedOverrideJointId
     {
         // '+ 1' and '- 1' cause '0' is 'No Override' in this case

@@ -79,6 +79,41 @@ public static class TypeUtils
         { TrackedJointType.JointHandRight, TrackerType.TrackerKeyboard }
     };
 
+    public static SortedDictionary<TrackedJointType, TrackedJointType> FlippedJointTypeDictionary = new()
+    {
+        { TrackedJointType.JointHead, TrackedJointType.JointHead },
+        { TrackedJointType.JointNeck, TrackedJointType.JointNeck },
+        { TrackedJointType.JointSpineShoulder, TrackedJointType.JointSpineShoulder },
+        { TrackedJointType.JointShoulderLeft, TrackedJointType.JointShoulderRight },
+        { TrackedJointType.JointElbowLeft, TrackedJointType.JointElbowRight },
+        { TrackedJointType.JointWristLeft, TrackedJointType.JointWristRight },
+        { TrackedJointType.JointHandLeft, TrackedJointType.JointHandRight },
+        { TrackedJointType.JointHandTipLeft, TrackedJointType.JointHandTipRight },
+        { TrackedJointType.JointThumbLeft, TrackedJointType.JointThumbRight },
+        { TrackedJointType.JointShoulderRight, TrackedJointType.JointShoulderLeft },
+        { TrackedJointType.JointElbowRight, TrackedJointType.JointElbowLeft },
+        { TrackedJointType.JointWristRight, TrackedJointType.JointWristLeft },
+        { TrackedJointType.JointHandRight, TrackedJointType.JointHandLeft },
+        { TrackedJointType.JointHandTipRight, TrackedJointType.JointHandTipLeft },
+        { TrackedJointType.JointThumbRight, TrackedJointType.JointThumbLeft },
+        { TrackedJointType.JointSpineMiddle, TrackedJointType.JointSpineMiddle },
+        { TrackedJointType.JointSpineWaist, TrackedJointType.JointSpineWaist },
+        { TrackedJointType.JointHipLeft, TrackedJointType.JointHipRight },
+        { TrackedJointType.JointKneeLeft, TrackedJointType.JointKneeRight },
+        { TrackedJointType.JointAnkleLeft, TrackedJointType.JointAnkleRight },
+        { TrackedJointType.JointFootLeft, TrackedJointType.JointFootRight },
+        { TrackedJointType.JointHipRight, TrackedJointType.JointHipLeft },
+        { TrackedJointType.JointKneeRight, TrackedJointType.JointKneeLeft },
+        { TrackedJointType.JointAnkleRight, TrackedJointType.JointAnkleLeft },
+        { TrackedJointType.JointFootRight, TrackedJointType.JointFootLeft },
+        { TrackedJointType.JointManual, TrackedJointType.JointManual }
+    };
+
+    public static TrackedJointType FlipJointType(TrackedJointType joint, bool flip)
+    {
+        return flip ? FlippedJointTypeDictionary[joint] : joint;
+    }
+
     // @OpenVR.NET@Extensions
     public static Vector3 ExtractVrPosition(ref HmdMatrix34_t mat)
     {
@@ -110,5 +145,13 @@ public static class SortedDictionaryExtensions
         return dictionary is not null && dictionary.TryGetValue(key, out var value)
             ? value
             : fallbackValue ?? Vector3.Zero;
+    }
+}
+
+public static class QuaternionExtensions
+{
+    public static Quaternion Inversed(this Quaternion q, bool inverse = true)
+    {
+        return inverse ? Quaternion.Inverse(q) : q;
     }
 }

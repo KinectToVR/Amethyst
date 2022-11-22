@@ -798,7 +798,7 @@ public static class Interfacing
     }
 
     public static (Vector3 Position, Quaternion Orientation)
-        GetVRTrackerPoseCalibrated(string nameContains, bool log)
+        GetVrTrackerPoseCalibrated(string nameContains, bool log = false)
     {
         var devicePose = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
         OpenVR.System.GetDeviceToAbsoluteTrackingPose(

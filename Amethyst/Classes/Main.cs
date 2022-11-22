@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -376,7 +377,294 @@ public static class Main
     // Update trackers inside the app here
     private static void UpdateAppTrackers()
     {
-        // TODO update in-app trackers
+        // This is where we do EVERYTHING pose related.
+        // All positions and rotations are calculated here,
+        // depending on calibration val and configuration
+
+        // Calculate ALL poses for the base (first) device here
+
+        // We can precompute the threshold as a dot product value
+        // as the dot product is also defined as |a||b|cos(x)
+        // and since we're using unit vectors... |a||b| = 1
+        const double flipThreshold = 0.4226182; // cos(65°)
+
+        // Base device
+        {
+            // Get the currently tracking device
+            var device = TrackingDevices.GetTrackingDevice();
+
+            var extFlip =
+                AppData.Settings.IsFlipEnabled &&
+                AppData.Settings.IsExternalFlipEnabled;
+
+            var extFlipInternal =
+                AppData.Settings.TrackersVector[0].IsActive &&
+                AppData.Settings.TrackersVector[0].IsOrientationOverridden;
+
+            // Compose flip
+            var dotFacing =
+                AmethystSupport.Calibration.OrientationDot(
+                    // Check for external-flip
+                    extFlip
+
+                        // Check for internal overrides
+                        ? extFlipInternal
+
+                            // Overriden internal amethyst tracker
+                            ? Quaternion.Inverse(Interfacing.VrPlayspaceOrientationQuaternion) *
+                              AppData.Settings.TrackersVector[0].Orientation
+
+                            // External VR waist tracker
+                            : Interfacing.GetVrTrackerPoseCalibrated("waist").Orientation
+
+                        // Default: VR HMD orientation
+                        : Interfacing.Plugins.GetHmdPoseCalibrated.Orientation,
+
+                    // Check for external-flip
+                    extFlip
+
+                        // If ExtFlip is enabled compare to its calibration
+                        ? AppData.Settings.ExternalFlipCalibrationMatrix
+
+                        // Default: use the default calibration rotation
+                        : AppData.Settings.DeviceCalibrationRotationMatrices.FirstOrDefault(
+                            x => x.Key == AppData.Settings.TrackingDeviceGuid).Value);
+
+            // Not in transition angle area, can compute
+            if (Math.Abs(dotFacing) >= flipThreshold)
+                Interfacing.BaseFlip = dotFacing < 0.0;
+
+            // Overwrite flip value depending on the device & settings
+            // (Device type check should have already been done tho...)
+            if (!AppData.Settings.IsFlipEnabled || !device.IsFlipSupported) Interfacing.BaseFlip = false;
+
+            // Loop over all the added app-wise trackers
+            foreach (var tracker in AppData.Settings.TrackersVector)
+            {
+                // Compute flip for this one joint
+                var isJointFlipped = Interfacing.BaseFlip && // The device is flipped
+                                     device.TrackedJoints[tracker.SelectedBaseTrackedJointId].Role !=
+                                     TrackedJointType.JointManual; // The joint role isn't manual
+
+                // Get the bound joint used for this tracker
+                var joint = isJointFlipped
+
+                    // If flip : the device contains a joint for the mirrored role
+                    ? device.TrackedJoints.FirstOrDefault(
+                        x => x.Role == TypeUtils.FlippedJointTypeDictionary[
+                            device.TrackedJoints[tracker.SelectedBaseTrackedJointId].Role],
+                        // Otherwise, default to the non-flipped (selected one)
+                        device.TrackedJoints[tracker.SelectedBaseTrackedJointId]).Joint
+
+                    // If no flip
+                    : device.TrackedJoints[tracker.SelectedBaseTrackedJointId].Joint;
+
+                // Copy the orientation to the tracker
+                tracker.Orientation = tracker.OrientationTrackingOption switch
+                {
+                    // Optionally overwrite the rotation with HMD orientation
+                    // Not the "calibrated" variant, as the fix will be applied after everything else
+                    JointRotationTrackingOption.FollowHmdRotation =>
+                        Quaternion.CreateFromYawPitchRoll((float)AmethystSupport.Calibration.QuaternionYaw(
+                            Interfacing.Plugins.GetHmdPoseCalibrated.Orientation), 0, 0),
+
+                    // Optionally overwrite the rotation with NONE
+                    JointRotationTrackingOption.DisableJointRotation => Quaternion.Identity,
+
+                    // Default
+                    _ => isJointFlipped
+                        ? Quaternion.Inverse(joint.JointOrientation)
+                        : joint.JointOrientation
+                };
+
+                // Copy the previous orientation to the tracker
+                tracker.PreviousOrientation = tracker.OrientationTrackingOption switch
+                {
+                    // Optionally overwrite the rotation with HMD orientation
+                    // Not the "calibrated" variant, as the fix will be applied after everything else
+                    JointRotationTrackingOption.FollowHmdRotation =>
+                        Quaternion.CreateFromYawPitchRoll((float)AmethystSupport.Calibration.QuaternionYaw(
+                            Interfacing.Plugins.GetHmdPoseCalibrated.Orientation), 0, 0),
+
+                    // Optionally overwrite the rotation with NONE
+                    JointRotationTrackingOption.DisableJointRotation => Quaternion.Identity,
+
+                    // Default
+                    _ => isJointFlipped
+                        ? Quaternion.Inverse(joint.PreviousJointOrientation)
+                        : joint.PreviousJointOrientation
+                };
+
+                // If math-based orientation is supported, overwrite the orientation with it
+                if (device.IsAppOrientationSupported &&
+                    tracker.Role is TrackerType.TrackerLeftFoot or TrackerType.TrackerRightFoot)
+                    tracker.Orientation = tracker.OrientationTrackingOption switch
+                    {
+                        JointRotationTrackingOption.SoftwareCalculatedRotation =>
+                            AmethystSupport.Calibration.FeetSoftwareOrientation(
+                                    device.TrackedJoints.First(x =>
+                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointAnkleLeft,
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint,
+                                    device.TrackedJoints.First(x =>
+                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint,
+                                    device.TrackedJoints.First(x =>
+                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointKneeLeft,
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint)
+                                .Inversed(isJointFlipped), // Also inverse if flipped (via an extension)
+
+                        JointRotationTrackingOption.SoftwareCalculatedRotationV2 =>
+                            AmethystSupport.Calibration.FeetSoftwareOrientationV2(
+                                    device.TrackedJoints.First(x =>
+                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointAnkleLeft,
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint,
+                                    device.TrackedJoints.First(x =>
+                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint,
+                                    device.TrackedJoints.First(x =>
+                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointKneeLeft,
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint)
+                                .Inversed(isJointFlipped), // Also inverse if flipped (via an extension)
+
+                        _ => tracker.Orientation
+                    };
+
+                // Apply calibration-related flipped orientation fixes
+                if (isJointFlipped && tracker.OrientationTrackingOption
+                    != JointRotationTrackingOption.FollowHmdRotation)
+                {
+                    // Note: only in flip mode
+                    tracker.Orientation = AmethystSupport.Calibration
+                        .FixFlippedOrientation(tracker.Orientation);
+                    tracker.PreviousOrientation = AmethystSupport.Calibration
+                        .FixFlippedOrientation(tracker.PreviousOrientation);
+                }
+
+                // Apply playspace-related orientation fixes
+                if (tracker.OrientationTrackingOption ==
+                    JointRotationTrackingOption.FollowHmdRotation)
+                {
+                    // Offset to fit the playspace
+                    tracker.Orientation =
+                        Quaternion.Inverse(Interfacing.VrPlayspaceOrientationQuaternion) * tracker.Orientation;
+                    tracker.PreviousOrientation =
+                        Quaternion.Inverse(Interfacing.VrPlayspaceOrientationQuaternion) * tracker.PreviousOrientation;
+                }
+
+                // Push raw positions and timestamps
+                tracker.Position = joint.JointPosition;
+                tracker.PreviousPosition = joint.PreviousJointPosition;
+
+                tracker.PoseTimestamp = joint.PoseTimestamp;
+                tracker.PreviousPoseTimestamp = joint.PreviousPoseTimestamp;
+
+                // Optionally disable position filtering (on-demand)
+                tracker.NoPositionFilteringRequested = device.IsPositionFilterBlockingEnabled;
+
+                // Push raw physics (if valid)
+                if (device.IsPhysicsOverrideEnabled)
+                {
+                    tracker.PoseVelocity = joint.JointVelocity;
+                    tracker.PoseAcceleration = joint.JointAcceleration;
+                    tracker.PoseAngularVelocity = joint.JointAngularVelocity;
+                    tracker.PoseAngularAcceleration = joint.JointAngularAcceleration;
+
+                    tracker.OverridePhysics = true;
+                }
+                // If not and the tracker is not overriden
+                else if (!tracker.IsPositionOverridden)
+                {
+                    tracker.OverridePhysics = false;
+                }
+            }
+        }
+
+        // Override devices, loop over all overrides
+        foreach (var device in TrackingDevices.TrackingDevicesList.Values.Where(
+                     device => AppData.Settings.OverrideDevicesGuidMap.Contains(device.Guid)))
+        {
+            // Strategy:
+            //  overwrite base device's poses, optionally apply flip
+            //  note that unlike in legacy versions, flip isn't anymore
+            //  applied on pose pushes; this will allow us to apply
+            //  two (or even more) independent flips, after the base
+
+            // Currently, flipping override devices IS NOT supported
+            Interfacing.OverrideFlip = false; // SHOULD WE ENABLE???
+            // Currently, flipping override devices IS NOT supported
+
+            // Loop over all the added app-wise trackers
+            // which are overridden in any way (pos || ori)
+            // and are managed by the current override device
+            foreach (var tracker in AppData.Settings.TrackersVector
+                         .Where(tracker => tracker.IsOverriden &&
+                                           tracker.OverrideGuid == device.Guid))
+            {
+                // Compute flip for this one joint
+                var isJointFlipped = Interfacing.OverrideFlip && // The device is flipped
+                                     device.TrackedJoints[tracker.SelectedOverrideTrackedJointId].Role !=
+                                     TrackedJointType.JointManual; // The joint role isn't manual
+
+                // Get the bound joint used for this tracker
+                var joint = isJointFlipped
+
+                    // If flip : the device contains a joint for the mirrored role
+                    ? device.TrackedJoints.FirstOrDefault(
+                        x => x.Role == TypeUtils.FlippedJointTypeDictionary[
+                            device.TrackedJoints[tracker.SelectedOverrideTrackedJointId].Role],
+                        // Otherwise, default to the non-flipped (selected one)
+                        device.TrackedJoints[tracker.SelectedOverrideTrackedJointId]).Joint
+
+                    // If no flip
+                    : device.TrackedJoints[tracker.SelectedOverrideTrackedJointId].Joint;
+
+                // If overridden w/ orientation and the selected option is 'device'
+                if (tracker.IsOrientationOverridden && tracker.OrientationTrackingOption ==
+                    JointRotationTrackingOption.DeviceInferredRotation)
+                {
+                    // Standard, also apply calibration-related flipped orientation fixes
+                    tracker.Orientation = AmethystSupport.Calibration
+                        .FixFlippedOrientation(isJointFlipped
+                            ? Quaternion.Inverse(joint.JointOrientation)
+                            : joint.JointOrientation);
+
+                    tracker.PreviousOrientation = AmethystSupport.Calibration
+                        .FixFlippedOrientation(isJointFlipped
+                            ? Quaternion.Inverse(joint.PreviousJointOrientation)
+                            : joint.PreviousJointOrientation);
+                }
+
+                // ReSharper disable once InvertIf | If overridden w/ position
+                if (tracker.IsPositionOverridden)
+                {
+                    // Push raw positions and timestamps
+                    tracker.Position = joint.JointPosition;
+                    tracker.PreviousPosition = joint.PreviousJointPosition;
+
+                    tracker.PoseTimestamp = joint.PoseTimestamp;
+                    tracker.PreviousPoseTimestamp = joint.PreviousPoseTimestamp;
+
+                    // Optionally disable position filtering (on-demand)
+                    tracker.NoPositionFilteringRequested = device.IsPositionFilterBlockingEnabled;
+
+                    // Push raw physics (if valid)
+                    if (device.IsPhysicsOverrideEnabled)
+                    {
+                        tracker.PoseVelocity = joint.JointVelocity;
+                        tracker.PoseAcceleration = joint.JointAcceleration;
+                        tracker.PoseAngularVelocity = joint.JointAngularVelocity;
+                        tracker.PoseAngularAcceleration = joint.JointAngularAcceleration;
+
+                        tracker.OverridePhysics = true;
+                    }
+                    else
+                    {
+                        // Else entirely disable physics
+                        tracker.OverridePhysics = false;
+                    }
+                }
+            }
+        }
     }
 
     // The main program loop

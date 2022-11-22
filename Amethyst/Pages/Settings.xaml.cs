@@ -521,7 +521,7 @@ public sealed partial class Settings : Page
         // If it's from an external tracker
         else
             AppData.Settings.ExternalFlipCalibrationMatrix =
-                Interfacing.GetVRTrackerPoseCalibrated("waist", true).Orientation;
+                Interfacing.GetVrTrackerPoseCalibrated("waist", true).Orientation;
 
         Logger.Info($"Captured orientation for external flip: {
             AppData.Settings.ExternalFlipCalibrationMatrix}");
