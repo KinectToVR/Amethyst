@@ -27,7 +27,7 @@ public interface ITrackingDevice
 {
     // Joints' list / you need to (should) update at every update() call
     // Each must have its own role or _Manual to force user's manual set
-    List<(TrackedJointType Role, TrackedJoint Joint)> TrackedJoints { get; }
+    List<TrackedJoint> TrackedJoints { get; }
 
     // This is called after the app loads the plugin
     void OnLoad();

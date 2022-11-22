@@ -1,13 +1,19 @@
-﻿using System.Numerics;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 
 namespace Amethyst.Plugins.Contract;
 
 public class TrackedJoint
 {
-    public TrackedJoint(string jointName)
+    [SetsRequiredMembers]
+    public TrackedJoint()
     {
-        JointName = jointName;
+        JointName = "INVALID";
+        Role = TrackedJointType.JointManual;
     }
+
+    public required string JointName { get; init; }
+    public required TrackedJointType Role { get; init; }
 
     public Vector3 JointPosition
     {
@@ -21,22 +27,21 @@ public class TrackedJoint
         }
     }
 
-    public Quaternion JointOrientation { get; set; } = new();
+    public Quaternion JointOrientation { get; set; } = Quaternion.Identity;
 
-    public Vector3 PreviousJointPosition { get; set; } = new();
-    public Quaternion PreviousJointOrientation { get; set; } = new();
+    public Vector3 PreviousJointPosition { get; set; } = Vector3.Zero;
+    public Quaternion PreviousJointOrientation { get; set; } = Quaternion.Identity;
 
-    public Vector3 JointVelocity { get; set; } = new();
-    public Vector3 JointAcceleration { get; set; } = new();
+    public Vector3 JointVelocity { get; set; } = Vector3.Zero;
+    public Vector3 JointAcceleration { get; set; } = Vector3.Zero;
 
-    public Vector3 JointAngularVelocity { get; set; } = new();
-    public Vector3 JointAngularAcceleration { get; set; } = new();
+    public Vector3 JointAngularVelocity { get; set; } = Vector3.Zero;
+    public Vector3 JointAngularAcceleration { get; set; } = Vector3.Zero;
 
     public TrackedJointState TrackingState { get; set; } = TrackedJointState.StateTracked;
 
     public long PoseTimestamp { get; private set; }
     public long PreviousPoseTimestamp { get; private set; }
-    public string JointName { get; }
 
-    private Vector3 _jointPosition;
+    private Vector3 _jointPosition = Vector3.Zero;
 }

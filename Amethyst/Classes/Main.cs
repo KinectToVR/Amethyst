@@ -208,11 +208,11 @@ public static class Main
 
         Interfacing.DeviceHookJointPosition[TrackingDevices.GetTrackingDevice().Guid] =
             TrackingDevices.GetTrackingDevice().TrackedJoints
-                .FirstOrDefault(x => x.Role == TrackedJointType.JointHead).Joint.JointPosition;
+                .FirstOrDefault(x => x.Role == TrackedJointType.JointHead, new TrackedJoint()).JointPosition;
 
         Interfacing.DeviceHookJointPosition[TrackingDevices.GetTrackingDevice().Guid] =
             TrackingDevices.GetTrackingDevice().TrackedJoints
-                .FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist).Joint.JointPosition;
+                .FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist, new TrackedJoint()).JointPosition;
 
         // Update override devices (optionally)
         foreach (var device in AppData.Settings.OverrideDevicesGuidMap.Select(overrideGuid =>
@@ -222,11 +222,11 @@ public static class Main
 
             Interfacing.DeviceHookJointPosition[device.Guid] =
                 device.TrackedJoints.FirstOrDefault(x =>
-                    x.Role == TrackedJointType.JointHead).Joint.JointPosition;
+                    x.Role == TrackedJointType.JointHead, new TrackedJoint()).JointPosition;
 
             Interfacing.DeviceHookJointPosition[device.Guid] =
                 device.TrackedJoints.FirstOrDefault(x =>
-                    x.Role == TrackedJointType.JointSpineWaist).Joint.JointPosition;
+                    x.Role == TrackedJointType.JointSpineWaist, new TrackedJoint()).JointPosition;
         }
     }
 
@@ -443,7 +443,7 @@ public static class Main
             {
                 // Compute flip for this one joint
                 var isJointFlipped = Interfacing.BaseFlip && // The device is flipped
-                                     device.TrackedJoints[tracker.SelectedBaseTrackedJointId].Role !=
+                                     device.TrackedJoints[(int)tracker.SelectedTrackedJointId].Role !=
                                      TrackedJointType.JointManual; // The joint role isn't manual
 
                 // Get the bound joint used for this tracker
@@ -452,12 +452,12 @@ public static class Main
                     // If flip : the device contains a joint for the mirrored role
                     ? device.TrackedJoints.FirstOrDefault(
                         x => x.Role == TypeUtils.FlippedJointTypeDictionary[
-                            device.TrackedJoints[tracker.SelectedBaseTrackedJointId].Role],
+                            device.TrackedJoints[(int)tracker.SelectedTrackedJointId].Role],
                         // Otherwise, default to the non-flipped (selected one)
-                        device.TrackedJoints[tracker.SelectedBaseTrackedJointId]).Joint
+                        device.TrackedJoints[(int)tracker.SelectedTrackedJointId])
 
                     // If no flip
-                    : device.TrackedJoints[tracker.SelectedBaseTrackedJointId].Joint;
+                    : device.TrackedJoints[(int)tracker.SelectedTrackedJointId];
 
                 // Copy the orientation to the tracker
                 tracker.Orientation = tracker.OrientationTrackingOption switch
@@ -504,26 +504,26 @@ public static class Main
                             AmethystSupport.Calibration.FeetSoftwareOrientation(
                                     device.TrackedJoints.First(x =>
                                         x.Role == TypeUtils.FlipJointType(TrackedJointType.JointAnkleLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint,
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)),
                                     device.TrackedJoints.First(x =>
                                         x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint,
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)),
                                     device.TrackedJoints.First(x =>
                                         x.Role == TypeUtils.FlipJointType(TrackedJointType.JointKneeLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint)
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)))
                                 .Inversed(isJointFlipped), // Also inverse if flipped (via an extension)
 
                         JointRotationTrackingOption.SoftwareCalculatedRotationV2 =>
                             AmethystSupport.Calibration.FeetSoftwareOrientationV2(
                                     device.TrackedJoints.First(x =>
                                         x.Role == TypeUtils.FlipJointType(TrackedJointType.JointAnkleLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint,
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)),
                                     device.TrackedJoints.First(x =>
                                         x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint,
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)),
                                     device.TrackedJoints.First(x =>
                                         x.Role == TypeUtils.FlipJointType(TrackedJointType.JointKneeLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Joint)
+                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)))
                                 .Inversed(isJointFlipped), // Also inverse if flipped (via an extension)
 
                         _ => tracker.Orientation
@@ -602,7 +602,7 @@ public static class Main
             {
                 // Compute flip for this one joint
                 var isJointFlipped = Interfacing.OverrideFlip && // The device is flipped
-                                     device.TrackedJoints[tracker.SelectedOverrideTrackedJointId].Role !=
+                                     device.TrackedJoints[(int)tracker.OverrideJointId].Role !=
                                      TrackedJointType.JointManual; // The joint role isn't manual
 
                 // Get the bound joint used for this tracker
@@ -611,12 +611,12 @@ public static class Main
                     // If flip : the device contains a joint for the mirrored role
                     ? device.TrackedJoints.FirstOrDefault(
                         x => x.Role == TypeUtils.FlippedJointTypeDictionary[
-                            device.TrackedJoints[tracker.SelectedOverrideTrackedJointId].Role],
+                            device.TrackedJoints[(int)tracker.OverrideJointId].Role],
                         // Otherwise, default to the non-flipped (selected one)
-                        device.TrackedJoints[tracker.SelectedOverrideTrackedJointId]).Joint
+                        device.TrackedJoints[(int)tracker.OverrideJointId])
 
                     // If no flip
-                    : device.TrackedJoints[tracker.SelectedOverrideTrackedJointId].Joint;
+                    : device.TrackedJoints[(int)tracker.OverrideJointId];
 
                 // If overridden w/ orientation and the selected option is 'device'
                 if (tracker.IsOrientationOverridden && tracker.OrientationTrackingOption ==

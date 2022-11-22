@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.0.7</Version>
+    <Version>0.0.8</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +20,7 @@
 
   <PropertyGroup>
     <PackageId>Amethyst.Driver.Client</PackageId>
-    <Version>0.0.7</Version>
+    <Version>0.0.8</Version>
     <Authors>K2VR</Authors>
     <Company>K2VR</Company>
     <PackageTags>Amethyst;K2VR;KinectToVR;VR;OpenVR;Fullbody Tracking</PackageTags>

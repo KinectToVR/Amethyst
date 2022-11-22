@@ -42,7 +42,7 @@ public class TrackingDevice : INotifyPropertyChanged
 
     private ITrackingDevice Device { get; init; }
 
-    public List<(TrackedJointType Role, TrackedJoint Joint)> TrackedJoints => Device.TrackedJoints;
+    public List<TrackedJoint> TrackedJoints => Device.TrackedJoints;
 
     public (Windows.Data.Json.JsonObject Root, string Directory) LocalizationResourcesRoot { get; set; } = new();
 

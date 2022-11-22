@@ -360,7 +360,7 @@ public class AppSettings : INotifyPropertyChanged
                         $"({appTracker.SelectedTrackedJointId}) is valid for loaded plugins...");
 
             // Check if the specified index is valid
-            if (trackingDevice.TrackedJoints.Count < appTracker.SelectedTrackedJointId)
+            if (trackingDevice.TrackedJoints.Count <= appTracker.SelectedTrackedJointId)
             {
                 Logger.Info($"The saved tracker {appTracker.Serial} bound joint ID " +
                             $"({appTracker.SelectedTrackedJointId}) is invalid! Resetting it to the first one!");
@@ -414,7 +414,7 @@ public class AppSettings : INotifyPropertyChanged
 
                 // ReSharper disable once InvertIf | Check if the specified override index is valid
                 if (TrackingDevices.GetDevice(appTracker.OverrideGuid)
-                        .Device.TrackedJoints.Count < appTracker.SelectedTrackedJointId)
+                        .Device.TrackedJoints.Count <= appTracker.SelectedTrackedJointId)
                 {
                     Logger.Info($"The saved tracker {appTracker.Serial} bound joint ID " +
                                 $"({appTracker.OverrideJointId}) is invalid! Resetting it to the first one!");

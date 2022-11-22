@@ -62,7 +62,7 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
 
     private static List<string> GetBaseDeviceJointsList()
     {
-        return TrackingDevices.GetTrackingDevice().TrackedJoints.Select(x => x.Joint.JointName).ToList();
+        return TrackingDevices.GetTrackingDevice().TrackedJoints.Select(x => x.JointName).ToList();
     }
 
     private void JointsSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

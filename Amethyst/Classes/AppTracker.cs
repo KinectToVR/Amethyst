@@ -441,8 +441,9 @@ public class AppTracker : INotifyPropertyChanged
 
     public TrackedJoint GetTrackedJoint()
     {
-        return new TrackedJoint(Serial)
-        {
+        return new TrackedJoint{
+            JointName= Serial, 
+            Role = TypeUtils.TrackerTypeJointDictionary[Role],
             JointAcceleration = PoseAcceleration,
             JointAngularAcceleration = PoseAngularAcceleration,
             JointAngularVelocity = PoseAngularVelocity,

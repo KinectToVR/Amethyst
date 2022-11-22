@@ -62,7 +62,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     private static List<string> GetManagingDeviceJointsList(string guid)
     {
         var jointsList = TrackingDevices.GetDevice(guid).Device.TrackedJoints
-            .Select(x => x.Joint.JointName).ToList();
+            .Select(x => x.JointName).ToList();
 
         jointsList.Insert(0, Interfacing.LocalizedJsonString(""));
         return jointsList;

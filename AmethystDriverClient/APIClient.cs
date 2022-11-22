@@ -78,7 +78,7 @@ public static class DriverClient
     {
         try
         {
-            var call = _service?.SetTrackerStateVector();
+            using var call = _service?.SetTrackerStateVector();
             if (call is null) return wantReply ? new List<(TrackerType Role, bool State)>() : null;
 
             foreach (var tracker in trackerBases)
@@ -106,7 +106,7 @@ public static class DriverClient
     {
         try
         {
-            var call = _service?.SetTrackerStateVector();
+            using var call = _service?.SetTrackerStateVector();
             if (call is null) return wantReply ? new List<(TrackerType Role, bool State)>() : null;
 
             foreach (var role in trackers)

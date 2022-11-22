@@ -7,12 +7,12 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Amethyst Device Plugin API (Contract)</Title>
     <FileVersion></FileVersion>
-    <Version>0.0.8</Version>
+    <Version>0.0.9</Version>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>Amethyst.Plugins.Contract</PackageId>
-    <Version>0.0.8</Version>
+    <Version>0.0.9</Version>
     <Authors>K2VR</Authors>
     <Company>K2VR</Company>
     <PackageTags>Amethyst;K2VR;KinectToVR;VR;OpenVR;Fullbody Tracking</PackageTags>
