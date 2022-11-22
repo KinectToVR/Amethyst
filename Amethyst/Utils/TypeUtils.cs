@@ -67,6 +67,8 @@ public static class TypeUtils
         { TrackedJointType.JointHandLeft, TrackerType.TrackerHanded },
         { TrackedJointType.JointAnkleLeft, TrackerType.TrackerLeftFoot },
         { TrackedJointType.JointAnkleRight, TrackerType.TrackerRightFoot },
+        { TrackedJointType.JointFootLeft, TrackerType.TrackerLeftFoot },
+        { TrackedJointType.JointFootRight, TrackerType.TrackerRightFoot },
         { TrackedJointType.JointShoulderLeft, TrackerType.TrackerLeftShoulder },
         { TrackedJointType.JointShoulderRight, TrackerType.TrackerRightShoulder },
         { TrackedJointType.JointElbowLeft, TrackerType.TrackerLeftElbow },

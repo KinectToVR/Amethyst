@@ -377,7 +377,8 @@ public class AppSettings : INotifyPropertyChanged
             // Check if the device joints contain such a role
             var preselectedRoleJointIndex = trackingDevice.TrackedJoints.FindIndex(
                 x => x.Role != TrackedJointType.JointManual &&
-                     TypeUtils.JointTrackerTypeDictionary[x.Role] == appTracker.Role);
+                     TypeUtils.JointTrackerTypeDictionary.TryGetValue(
+                         x.Role, out var gotRole) && gotRole == appTracker.Role);
 
             // Overwrite the base selected joint if valid
             if (preselectedRoleJointIndex >= 0)

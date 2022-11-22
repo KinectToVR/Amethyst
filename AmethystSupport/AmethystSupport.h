@@ -10,6 +10,28 @@ using namespace Collections::Generic;
 
 using namespace Amethyst::Plugins::Contract;
 
+// The upper bound of the fog volume along the y-axis (height)
+// This defines how far up the fog extends from the floor plane
+// This is hard coded because all V2 sensors are the same (afaik, I don't know if the fog height changes depending on room conditions though)
+constexpr float SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD = 0.4f;
+
+template <typename Derived>
+Derived Lerp(Derived from, Derived to, const Derived delta)
+{
+	return from * (1 - delta) + to * delta;
+}
+
+template <typename Derived>
+Eigen::Quaternion<typename Derived::Scalar> EulersToQuat(const Derived& eulers)
+{
+	using Vector3 = Eigen::Matrix<typename Derived::Scalar, 3, 1>;
+
+	return Eigen::Quaternion<typename Derived::Scalar>(
+		Eigen::AngleAxis<typename Derived::Scalar>(eulers(0), Vector3::UnitX())
+		* Eigen::AngleAxis<typename Derived::Scalar>(eulers(1), Vector3::UnitY())
+		* Eigen::AngleAxis<typename Derived::Scalar>(eulers(2), Vector3::UnitZ()));
+}
+
 namespace AmethystSupport
 {
 	public ref class Calibration sealed
@@ -116,8 +138,8 @@ namespace AmethystSupport
 			 *     (i.e. → ↑ ) the dot product is 0
 			 */
 
-			 // Now we have transformed the rotations ->
-			 // we can compute the dot product outta them
+			// Now we have transformed the rotations ->
+			// we can compute the dot product outta them
 			return from_vector.dot(to_vector); // return
 		}
 
@@ -167,13 +189,132 @@ namespace AmethystSupport
 		static Quaternion FeetSoftwareOrientation(
 			TrackedJoint^ ankle, TrackedJoint^ foot, TrackedJoint^ knee)
 		{
-			return Quaternion::Identity;
+			// Capture needed joints' positions
+			const Eigen::Vector3f
+				forward(0, 0, 1),
+				ankleLeftPose(ankle->JointPosition.X, ankle->JointPosition.Y, ankle->JointPosition.Z),
+				footLeftPose(foot->JointPosition.X, foot->JointPosition.Y, foot->JointPosition.Z),
+				kneeLeftPose(knee->JointPosition.X, knee->JointPosition.Y, knee->JointPosition.Z);
+
+			// Calculate euler yaw foot orientation, we'll need it later
+			Eigen::Vector3f footLeftRawOrientation =
+				Eigen::Quaternionf::FromTwoVectors(
+					forward, Eigen::Vector3f(footLeftPose.x(), 0.f, footLeftPose.z()) -
+					Eigen::Vector3f(ankleLeftPose.x(), 0.f, ankleLeftPose.z()))
+				.toRotationMatrix().eulerAngles(0, 1, 2);
+
+			// Flip the yaw around, without reversing it -> we need it basing to 0
+			// (what an irony that we actually need to reverse it...)
+			footLeftRawOrientation.y() *= -1.f;
+			footLeftRawOrientation.y() += static_cast<float>(Math::PI);
+
+			// Make the yaw less sensitive
+			// Decided to go for radians for the read-ability
+			// (Although my code is shit anyway, and there'll be none in the end)
+			float lsFixedYaw = footLeftRawOrientation.y() *
+				180.f / static_cast<float>(Math::PI);
+
+			if (lsFixedYaw > 180.f && lsFixedYaw < 360.f)
+				lsFixedYaw = 360.f - abs(lsFixedYaw - 360.f) * .5f;
+			else if (lsFixedYaw < 180.f && lsFixedYaw > 0.f)
+				lsFixedYaw *= .5f;
+
+			// Apply to the base // Back to the RAD format
+			footLeftRawOrientation.y() = lsFixedYaw * static_cast<float>(Math::PI) / 180.f;
+
+			// Calculate the knee-ankle orientation, aka "Tibia"
+			// We aren't disabling look-thorough yaw, since it'll be 0
+			Eigen::Quaternionf knee_ankleLeftOrientationQuaternion =
+				Eigen::Quaternionf::FromTwoVectors(forward, ankleLeftPose - kneeLeftPose);
+
+			// Now adjust some values like playspace yaw and pitch, additional rotations
+			// -> they're facing purely down and Z / Y are flipped
+			// Apply the fine-tuning to global variable
+			knee_ankleLeftOrientationQuaternion = EulersToQuat(Eigen::Vector3f(
+				static_cast<float>(Math::PI) / 5.f, 0.f, 0.f)) * knee_ankleLeftOrientationQuaternion;
+
+			// Grab original orientations and make them euler angles
+			Eigen::Vector3f left_knee_ori_full = knee_ankleLeftOrientationQuaternion
+			                                     .toRotationMatrix().eulerAngles(0, 1, 2);
+
+			// Try to fix yaw and roll mismatch, caused by XYZ XZY mismatch
+			knee_ankleLeftOrientationQuaternion = EulersToQuat(Eigen::Vector3f(
+				left_knee_ori_full.x() - static_cast<float>(Math::PI) / 1.6f,
+				0.f, -left_knee_ori_full.y()));
+
+			// All the rotations
+			Eigen::Quaternionf calculatedLeftFootOrientation =
+				EulersToQuat(footLeftRawOrientation) * knee_ankleLeftOrientationQuaternion;
+
+			// Now adjust some values like playspace yaw and pitch, additional rotations
+			calculatedLeftFootOrientation = EulersToQuat(
+				Eigen::Vector3f(2.8623399733f, 0.f, 0.f)) * calculatedLeftFootOrientation;
+
+			// Apply fixes
+
+			// Grab original orientations and make them euler angles
+			Eigen::Vector3f left_ori_vector = calculatedLeftFootOrientation
+			                                  .toRotationMatrix().eulerAngles(0, 1, 2);
+
+			// Kind of a solution for flipping at too big X
+			// Found out during testing,
+			// no other known mathematical reason (maybe except gimbal lock)
+			if (left_ori_vector.y() <= 0.f
+				&& left_ori_vector.y() >= -1.f
+				&& left_ori_vector.z() <= -1.f
+				&& left_ori_vector.z() >= -static_cast<float>(Math::PI))
+				left_ori_vector.y() += -static_cast<float>(Math::PI);
+
+			// Apply to the base
+			calculatedLeftFootOrientation = EulersToQuat(left_ori_vector);
+
+			// Compose and return
+			return Quaternion(
+				calculatedLeftFootOrientation.x(), calculatedLeftFootOrientation.y(),
+				calculatedLeftFootOrientation.z(), calculatedLeftFootOrientation.w());
 		}
 
 		static Quaternion FeetSoftwareOrientationV2(
 			TrackedJoint^ ankle, TrackedJoint^ foot, TrackedJoint^ knee)
 		{
-			return Quaternion::Identity;
+			// Capture needed joints' positions
+			const Eigen::Vector3f
+				anklePose(ankle->JointPosition.X, ankle->JointPosition.Y, ankle->JointPosition.Z),
+				kneePose(knee->JointPosition.X, knee->JointPosition.Y, knee->JointPosition.Z);
+
+			// The improved approach for fixing foot rotation on the Xbox One Kinect
+			// Thigh rotation is copied onto the foot, this is due to the fact that more often than not, 
+			// the thigh is facing the same direction as your foot.  
+			// Given the foot is an unreliable mess due to the fog on the Xbox One Kinect, 
+			// The ankle position is stable though, so we can use it.
+			Eigen::Vector3f legsDir = kneePose - anklePose;
+
+			// Normalize the direction to have a length of 1
+			legsDir.normalize();
+
+			// tend towards 0 below the fog threshold
+			// Remove the pitch entirely if within the fog area
+			legsDir.y() = // smoothly interpolate between 0 and y^2
+				Lerp(legsDir.y(),
+
+				     // from 0 to y^2 (where 1 is fog threshold)
+				     Lerp(0.f, legsDir.y() * legsDir.y(),
+
+				          // such that we remap the y direction relative to the threshold between 0 and 1
+				          std::max(std::min(SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD,
+				                            legsDir.y()), 0.f) / SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD),
+
+				     // from 0.8 * fog threshold to 1.2 * fog threshold
+				     std::min(1.f, std::max(0.f, 0.4f * SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD
+				                            * legsDir.y() - 0.8f * SOFTWARE_CALCULATED_ROTATION_FOG_THRESHOLD)));
+
+			legsDir.normalize(); // Normalize the direction to have a length of 1
+			auto calculatedLeftFootOrientation = Eigen::Quaternionf::
+				FromTwoVectors(Eigen::Vector3f::UnitX(), legsDir - Eigen::Vector3f::UnitX());
+
+			return Quaternion(
+				calculatedLeftFootOrientation.x(), calculatedLeftFootOrientation.y(),
+				calculatedLeftFootOrientation.z(), calculatedLeftFootOrientation.w());
 		}
 	};
 }

@@ -519,7 +519,9 @@
                                                   VerticalAlignment="Center" HorizontalAlignment="Right" DataContext="{x:Bind}" />
                                 </Grid>
 
-                                <Expander Margin="0,10,0,0" Expanding="TrackerExpander_Expanding"
+                                <Expander Margin="0,10,0,0" 
+                                          Expanding="TrackerExpander_Expanding"
+                                          Collapsed="TrackerExpander_Collapsed"
                                           IsEnabled="{x:Bind IsActive, Mode=OneWay}"
                                           IsExpanded="{x:Bind IsTrackerExpanderOpen, Mode=TwoWay}"
                                           ExpandDirection="Down" HorizontalAlignment="Stretch"

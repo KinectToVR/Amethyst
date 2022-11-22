@@ -277,7 +277,7 @@ public sealed partial class Settings : Page
     {
         // Don't react to pre-init signals
         if (!Shared.Settings.SettingsLocalInitFinished) return;
-
+        
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
     }
@@ -959,6 +959,20 @@ public sealed partial class Settings : Page
 
     private void TrackerExpander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
     {
+        // Don't react to pre-init signals
+        if (!Shared.Settings.SettingsLocalInitFinished) return;
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    private void TrackerExpander_Collapsed(Expander sender, ExpanderCollapsedEventArgs args)
+    {
+        // Don't react to pre-init signals
+        if (!Shared.Settings.SettingsLocalInitFinished) return;
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
     private void TrackerPositionFilterOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
