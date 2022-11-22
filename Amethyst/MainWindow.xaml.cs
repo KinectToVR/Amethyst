@@ -1530,6 +1530,7 @@ public sealed partial class MainWindow : Window
 
         // Finally allow exits
         args.Handled = false;
+        Environment.Exit(0);
     }
 
     private void Window_ThemeChanged(FrameworkElement sender, object args)
