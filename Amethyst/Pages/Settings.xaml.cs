@@ -27,6 +27,7 @@ using Amethyst.Driver.API;
 using System.Reflection;
 using System.Threading;
 using Amethyst.MVVM;
+using System.ComponentModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,7 +37,7 @@ namespace Amethyst.Pages;
 /// <summary>
 ///     An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class Settings : Page
+public sealed partial class Settings : Page, INotifyPropertyChanged
 {
     private bool _settingsPageLoadedOnce = false;
     private List<string> _languageList = new();
@@ -109,98 +110,8 @@ public sealed partial class Settings : Page
 
     private void Page_LoadedHandler()
     {
-        Titles_Application.Text = Interfacing.LocalizedJsonString("/SettingsPage/Titles/Application");
-        Labels_DisplayLanguage.Text = Interfacing.LocalizedJsonString("/SettingsPage/Labels/DisplayLanguage");
-        Labels_AppTheme.Text = Interfacing.LocalizedJsonString("/SettingsPage/Labels/AppTheme");
-        Captions_Sounds.Text = Interfacing.LocalizedJsonString("/SettingsPage/Captions/Sounds");
-        Titles_SkeletonFlip.Text = Interfacing.LocalizedJsonString("/SettingsPage/Titles/SkeletonFlip");
-        Captions_SkeletonFlip.Text = Interfacing.LocalizedJsonString("/SettingsPage/Captions/SkeletonFlip");
-        ExternalFlipCheckBoxLabel.Text = Interfacing.LocalizedJsonString("/SettingsPage/Titles/ExtFlip");
-        Captions_FaceTheKinect.Text = Interfacing.LocalizedJsonString("/SettingsPage/Captions/FaceTheKinect");
-        Captions_CalibrateExtFlip.Text = Interfacing.LocalizedJsonString("/SettingsPage/Captions/CalibrateExtFlip");
-        Captions_Device_Status.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Device/Status");
-        Captions_ExtFlip.Text = Interfacing.LocalizedJsonString("/SettingsPage/Captions/ExtFlip");
-        Titles_TrackerConfig_Header.Text = Interfacing.LocalizedJsonString("/SettingsPage/Titles/TrackerConfig/Header");
-        LearnAboutFiltersButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Titles/TrackerConfig/Learn");
-        Titles_TrackerConfig.Text = Interfacing.LocalizedJsonString("/SettingsLearn/Titles/TrackerConfig");
-        Captions_TrackerConfig.Text = Interfacing.LocalizedJsonString("/SettingsLearn/Captions/TrackerConfig");
-        Captions_TrackerConfigNote.Text = Interfacing.LocalizedJsonString("/SettingsLearn/Captions/TrackerConfigNote");
-        Titles_FilterSettings.Text = Interfacing.LocalizedJsonString("/SettingsLearn/Titles/FilterSettings");
-        Captions_Filters_Names_LERP.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Filters/Names/LERP");
-        Captions_Filters_Explanations_LERP.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Filters/Explanations/LERP");
-        Captions_Filters_Names_LowPass.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Filters/Names/LowPass");
-        Captions_Filters_Explanations_LowPass.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Filters/Explanations/LowPass");
-        Captions_Filters_Names_EKF.Text = Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Filters/Names/EKF");
-        Captions_Filters_Explanations_EKF.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Filters/Explanations/EKF");
-        Captions_Filters_Names_None.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Filters/Names/None");
-        Captions_Filters_Explanations_None.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Filters/Explanations/None");
-        Titles_RotationSettings.Text = Interfacing.LocalizedJsonString("/SettingsLearn/Titles/RotationSettings");
-        Captions_Orientation_Introduction.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Introduction");
-        Captions_Orientation_Names_Default.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Names/Default");
-        Captions_Orientation_Explanations_Default.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Explanations/Default");
-        Captions_Orientation_Names_MathBased.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Names/MathBased");
-        Captions_Orientation_Explanations_MathBased.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Explanations/MathBased");
-        Captions_Orientation_Names_MathBasedV2.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Names/MathBasedV2");
-        Captions_Orientation_Explanations_MathBasedV2.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Explanations/MathBasedV2");
-        Captions_Orientation_Names_HMD.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Names/HMD");
-        Captions_Orientation_Explanations_HMD.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Explanations/HMD");
-        Captions_Orientation_Names_None.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Names/None");
-        Captions_Orientation_Explanations_None.Text =
-            Interfacing.LocalizedJsonString("/SettingsLearn/Captions/Orientation/Explanations/None");
-        Titles_ManageTrackers.Text = Interfacing.LocalizedJsonString("/SettingsLearn/Titles/ManageTrackers");
-        Captions_ManageTrackers.Text = Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers");
-        RestartButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Buttons/RestartSteamVR");
-        Captions_TrackersRestart_Line1.Text =
-            Interfacing.LocalizedJsonString("/SettingsPage/Captions/TrackersRestart/Line1");
-        Captions_TrackersRestart_Line2.Text =
-            Interfacing.LocalizedJsonString("/SettingsPage/Captions/TrackersRestart/Line2");
-        Captions_TrackersAutoSpawn.Text = Interfacing.LocalizedJsonString("/SettingsPage/Captions/TrackersAutoSpawn");
-        Captions_TrackersAutoCheck.Text = Interfacing.LocalizedJsonString("/SettingsPage/Captions/TrackersAutoCheck");
-        Titles_Troubleshooting.Text = Interfacing.LocalizedJsonString("/SettingsPage/Titles/Troubleshooting");
-        ReNUXButton.Content = Interfacing.LocalizedJsonString("/NUX/Replay");
-        ResetButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Buttons/Reset");
-        ReRegisterButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Buttons/ReRegister");
-        ViewLogsButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Buttons/ViewLogs");
-        ReManifestButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Buttons/ReManifest");
-        Captions_AutoStart.Text = Interfacing.LocalizedJsonString("/SettingsPage/Captions/AutoStart");
-        DismissSetErrorButton.Content = Interfacing.LocalizedJsonString("/SettingsPage/Buttons/Error/Dismiss");
-        ManageTrackersTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip5/Title");
-        ManageTrackersTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip5/Content");
-        ManageTrackersTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        ManageTrackersTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
-        AddTrackersTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip6/Title");
-        AddTrackersTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip6/Content");
-        AddTrackersTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        AddTrackersTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
-        AutoStartTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip7/Title");
-        AutoStartTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip7/Content");
-        AutoStartTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        AutoStartTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
-
-        ToolTipService.SetToolTip(FlipToggle,
-            Interfacing.LocalizedJsonString("/SettingsPage/Elements/FlipToggle/ToolTip"));
-        ToolTipService.SetToolTip(ExtFlipAppBarButton,
-            Interfacing.LocalizedJsonString("/SettingsPage/Elements/ExtFlipCalibration/ToolTip"));
-
         // Notify of the setup beginning
-        Shared.Settings.SettingsLocalInitFinished = false;
+        Shared.Settings.SettingsTabSetupFinished = false;
 
         // Clear available languages' list
         LanguageOptionBox.Items.Clear();
@@ -242,14 +153,15 @@ public sealed partial class Settings : Page
         // Enable/Disable Ext/Flip
         TrackingDevices.CheckFlipSupport();
 
-        // Notify of the setup end
-        Shared.Settings.SettingsLocalInitFinished = true;
+        // Notify of the setup's end
+        OnPropertyChanged(); // Just everything
+        Shared.Settings.SettingsTabSetupFinished = true;
     }
 
     private void LanguageOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         if (LanguageOptionBox.SelectedIndex < 0)
             LanguageOptionBox.SelectedItem = e.RemovedItems[0];
@@ -276,7 +188,7 @@ public sealed partial class Settings : Page
     private void OptionBox_DropDownOpened(object sender, object e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
         
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
@@ -285,7 +197,7 @@ public sealed partial class Settings : Page
     private void OptionBox_DropDownClosed(object sender, object e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
@@ -294,7 +206,7 @@ public sealed partial class Settings : Page
     private void AppThemeOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         if (AppThemeOptionBox.SelectedIndex < 0)
             AppThemeOptionBox.SelectedItem = e.RemovedItems[0];
@@ -317,7 +229,7 @@ public sealed partial class Settings : Page
     private void AutoStartCheckBox_Checked(object sender, RoutedEventArgs e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         Interfacing.InstallVrApplicationManifest(); // Just in case
 
@@ -334,7 +246,7 @@ public sealed partial class Settings : Page
     private void AutoStartCheckBox_Unchecked(object sender, RoutedEventArgs e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         Interfacing.InstallVrApplicationManifest(); // Just in case
 
@@ -351,7 +263,7 @@ public sealed partial class Settings : Page
     private void CheckBox_CheckedSound(object sender, RoutedEventArgs e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOn);
@@ -360,7 +272,7 @@ public sealed partial class Settings : Page
     private void CheckBox_UncheckedSound(object sender, RoutedEventArgs e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOff);
@@ -412,7 +324,7 @@ public sealed partial class Settings : Page
     private void FlipToggle_Toggled(object sender, RoutedEventArgs e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         // Optionally show the binding teaching tip
         if (!AppData.Settings.TeachingTipShownFlip &&
@@ -474,7 +386,7 @@ public sealed partial class Settings : Page
     private void FlipDropDown_Expanding(Expander sender, ExpanderExpandingEventArgs args)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
         TrackingDevices.CheckFlipSupport();
 
         // Play a sound
@@ -484,7 +396,7 @@ public sealed partial class Settings : Page
     private void FlipDropDown_Collapsed(Expander sender, ExpanderCollapsedEventArgs args)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
@@ -493,7 +405,7 @@ public sealed partial class Settings : Page
     private void MenuFlyout_Opening(object sender, object e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
@@ -503,7 +415,7 @@ public sealed partial class Settings : Page
         FlyoutBaseClosingEventArgs args)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
@@ -612,7 +524,7 @@ public sealed partial class Settings : Page
         //    menuTrackerToggleItem.Click += async (parent, _) =>
         //    {
         //        // Notify of the setup end
-        //        Shared.Settings.SettingsLocalInitFinished = false;
+        //        Shared.Settings.SettingsTabSetupFinished = false;
 
         //        // Create a new tracker / Remove the unchecked one
         //        if (parent.As<ToggleMenuFlyoutItem>().IsChecked)
@@ -641,13 +553,13 @@ public sealed partial class Settings : Page
         //                    if (AppData.Settings.TrackersVector[t].IsActive)
         //                    {
         //                        // Boiler
-        //                        Shared.Settings.SettingsLocalInitFinished = true;
+        //                        Shared.Settings.SettingsTabSetupFinished = true;
 
         //                        // Show the notifications and rebuild
         //                        TrackingDevices.TrackersConfigChanged();
 
         //                        // Boiler end
-        //                        Shared.Settings.SettingsLocalInitFinished = false;
+        //                        Shared.Settings.SettingsTabSetupFinished = false;
         //                    }
 
         //                    // Save settings
@@ -659,7 +571,7 @@ public sealed partial class Settings : Page
         //        TrackingDevices.CheckFlipSupport();
 
         //        // Notify of the setup end
-        //        Shared.Settings.SettingsLocalInitFinished = true;
+        //        Shared.Settings.SettingsTabSetupFinished = true;
         //        AppData.Settings.SaveSettings();
 
         //        // Check if any trackers are enabled
@@ -688,7 +600,7 @@ public sealed partial class Settings : Page
 
         ////     menuPairsToggleItem.Click += (_, _) =>
         ////     {
-        ////Shared.Settings.SettingsLocalInitFinished = false;
+        ////Shared.Settings.SettingsTabSetupFinished = false;
         ////         AppData.Settings.UseTrackerPairs = sender.As<ToggleMenuFlyoutItem>().IsChecked;
 
         ////         // TODO tracker pairs
@@ -696,7 +608,7 @@ public sealed partial class Settings : Page
         ////TrackingDevices.CheckFlipSupport();
 
         ////         // Notify of the setup end
-        ////         Shared.Settings.SettingsLocalInitFinished = true;
+        ////         Shared.Settings.SettingsTabSetupFinished = true;
         ////         AppData.Settings.SaveSettings();
         ////         AppData.Settings.ReadSettings(); // Config check
         ////     };
@@ -920,11 +832,11 @@ public sealed partial class Settings : Page
     private async void TrackerToggleSwitch_Toggled(object sender, RoutedEventArgs e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
-
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
         var context = (sender as ToggleSwitch)!.DataContext;
-        var tracker = context as AppTracker;
 
+        // Don't react to pre-init signals
+        if (context is not AppTracker tracker) return;
         if (Interfacing.AppTrackersInitialized)
             // try 3 times cause why not
             for (var i = 0; i < 3; i++)
@@ -960,7 +872,7 @@ public sealed partial class Settings : Page
     private void TrackerExpander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
@@ -969,7 +881,7 @@ public sealed partial class Settings : Page
     private void TrackerExpander_Collapsed(Expander sender, ExpanderCollapsedEventArgs args)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsLocalInitFinished) return;
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
@@ -985,5 +897,13 @@ public sealed partial class Settings : Page
     {
         if ((sender as ComboBox)!.SelectedIndex < 0)
             (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
+    }
+
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged(string propName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 }

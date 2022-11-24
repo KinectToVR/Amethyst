@@ -41,7 +41,7 @@ public partial class App : Application
             $"Amethyst_{DateTime.Now:yyyyMMdd-HHmmss.ffffff}.log"));
 
         // Create an empty file for checking for crashes
-        Interfacing.CrashFile = new FileInfo(Path.Combine(Interfacing.GetProgramLocation().DirectoryName, ".crash"));
+        Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.GetProgramLocation().DirectoryName, ".crash"));
         Interfacing.CrashFile.Create(); // Create the file
 
         try
@@ -64,7 +64,7 @@ public partial class App : Application
         AppData.Settings.ReadSettings();
 
         // Create the strings directory in case it doesn't exist yet
-        Directory.CreateDirectory(Path.Combine(
+        Directory.CreateDirectory(Path.Join(
             Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings"));
 
         // Load language resources
@@ -72,9 +72,9 @@ public partial class App : Application
         Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
 
         // Setup string hot reload watchdog
-        var resourceWatcher = new FileSystemWatcher
+        ResourceWatcher = new FileSystemWatcher
         {
-            Path = Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings"),
+            Path = Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings"),
             NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName |
                            NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
             IncludeSubdirectories = true,
@@ -82,30 +82,11 @@ public partial class App : Application
             EnableRaisingEvents = true
         };
 
-        // Send a non-dismissible tip about reloading the app
-        static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs)
-        {
-            Logger.Info("String resource files have changed, reloading!");
-            Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
-            Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
-
-            // Reload language resources
-            Interfacing.LoadJsonStringResourcesEnglish();
-            Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
-
-            // Reload plugins' language resources
-            foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
-                Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
-
-            // Request page reloads
-            Shared.Semaphores.RequestInterfaceReload();
-        }
-
         // Add event handlers : local
-        resourceWatcher.Changed += OnWatcherOnChanged;
-        resourceWatcher.Created += OnWatcherOnChanged;
-        resourceWatcher.Deleted += OnWatcherOnChanged;
-        resourceWatcher.Renamed += OnWatcherOnChanged;
+        ResourceWatcher.Changed += OnWatcherOnChanged;
+        ResourceWatcher.Created += OnWatcherOnChanged;
+        ResourceWatcher.Deleted += OnWatcherOnChanged;
+        ResourceWatcher.Renamed += OnWatcherOnChanged;
     }
 
     /// <summary>
@@ -118,4 +99,25 @@ public partial class App : Application
         _mWindow = new MainWindow();
         _mWindow.Activate();
     }
+
+    // Send a non-dismissible tip about reloading the app
+    static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs)
+    {
+        Logger.Info("String resource files have changed, reloading!");
+        Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
+        Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
+
+        // Reload language resources
+        Interfacing.LoadJsonStringResourcesEnglish();
+        Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
+
+        // Reload plugins' language resources
+        foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
+            Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
+
+        // Request page reloads
+        Shared.Semaphores.RequestInterfaceReload();
+    }
+
+    private FileSystemWatcher ResourceWatcher { get; }
 }

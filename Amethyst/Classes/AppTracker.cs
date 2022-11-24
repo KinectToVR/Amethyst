@@ -441,8 +441,9 @@ public class AppTracker : INotifyPropertyChanged
 
     public TrackedJoint GetTrackedJoint()
     {
-        return new TrackedJoint{
-            JointName= Serial, 
+        return new TrackedJoint
+        {
+            JointName = Serial,
             Role = TypeUtils.TrackerTypeJointDictionary[Role],
             JointAcceleration = PoseAcceleration,
             JointAngularAcceleration = PoseAngularAcceleration,
@@ -468,11 +469,6 @@ public class AppTracker : INotifyPropertyChanged
     [JsonIgnore] public EventHandler PropertyChangedEvent;
 
     // MVVM stuff
-    public string GetResourceString(string key)
-    {
-        return Interfacing.LocalizedJsonString(key);
-    }
-
     public bool InvertBool(bool v)
     {
         return !v;
@@ -514,7 +510,7 @@ public class AppTracker : INotifyPropertyChanged
 
     [JsonIgnore]
     public string ManagingDevicePlaceholder =>
-        GetResourceString("/SettingsPage/Filters/Managed").Replace("{0}", GetManagingDeviceGuid);
+        Interfacing.LocalizedJsonString("/SettingsPage/Filters/Managed").Replace("{0}", GetManagingDeviceGuid);
 
     private bool _isTrackerExpanderOpen = false;
 
@@ -588,7 +584,7 @@ public class AppTracker : INotifyPropertyChanged
     // Is force-updated by the base device
     [JsonIgnore]
     public bool IsAutoManaged => TrackingDevices.GetTrackingDevice().TrackedJoints.Any(x =>
-        x.Role != TrackedJointType.JointManual && TypeUtils.JointTrackerTypeDictionary[x.Role] == Role);
+        x.Role != TrackedJointType.JointManual && x.Role == TypeUtils.TrackerTypeJointDictionary[Role]);
 
     // Is NOT force-updated by the base device
     [JsonIgnore] public bool IsManuallyManaged => !IsAutoManaged;

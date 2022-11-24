@@ -200,7 +200,7 @@ public static class Interfacing
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetForegroundWindow(IntPtr hWnd);
+    private static extern bool SetForegroundWindow(nint hWnd);
 
     public static void ProcessToastArguments(
         Microsoft.Windows.AppNotifications.AppNotificationActivatedEventArgs eventArgs)
@@ -228,7 +228,7 @@ public static class Interfacing
                     Shared.Settings.PageMainScrollViewer.UpdateLayout();
                     Shared.Settings.PageMainScrollViewer.ChangeView(null,
                         Shared.Settings.PageMainScrollViewer.ExtentHeight / 2.0, null);
-                    
+
                     await Task.Delay(500);
 
                     // Focus on the restart button
@@ -347,10 +347,6 @@ public static class Interfacing
 
     // Controllers' ID's (vr::k_unTrackedDeviceIndexInvalid for non-existent)
     public static (uint Left, uint Right) VrControllerIndexes;
-
-    // Devices may request an explicit status refresh
-    public static bool StatusUiRefreshRequested = false;
-    public static bool StatusUiRefreshRequestedUrgent = false;
 
     // Is NUX currently opened?
     public static bool IsNuxPending = false;
@@ -904,7 +900,7 @@ public static class Interfacing
     }
 
     [DllImport("user32.dll")]
-    public static extern IntPtr GetActiveWindow();
+    public static extern nint GetActiveWindow();
 
     public static bool IsCurrentWindowActive()
     {
@@ -1099,28 +1095,7 @@ public static class Interfacing
             return resourceKey;
         }
     }
-
-    // Get a string from runtime JSON resources, language from settings : for XAML
-    public static string LocalizedResourceString(string resourceKey)
-    {
-        try
-        {
-            // Check if the resource root is fine
-            if (LocalResources is not null && LocalResources.Count > 0)
-                return LocalResources.GetNamedString(resourceKey);
-
-            Logger.Error("The current resource root is empty! App interface will be broken!");
-            return resourceKey; // Just give up
-        }
-        catch (Exception e)
-        {
-            Logger.Error($"JSON error at key: \"{resourceKey}\"! Message: {e.Message}\n");
-
-            // Else return they key alone
-            return resourceKey;
-        }
-    }
-
+    
     // Does the tracker vector contain active trackers that aren't default?
     public static bool AdditionalTrackersEnabled => AppData.Settings.TrackersVector.Count > 7;
 
@@ -1178,7 +1153,7 @@ public static class Interfacing
                     Quaternion.Inverse(VrPlayspaceOrientationQuaternion)),
                 Quaternion.Inverse(VrPlayspaceOrientationQuaternion) * orientation);
         }
-        
+
         public static string RequestLocalizedString(string key, string guid)
         {
             try
@@ -1187,7 +1162,7 @@ public static class Interfacing
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
-                    return Interfacing.LocalizedJsonString(key); // Just give up
+                    return LocalizedJsonString(key); // Just give up
                 }
 
                 // Check if the resource root is fine
@@ -1196,7 +1171,7 @@ public static class Interfacing
                     return resourceRoot.GetNamedString(key);
 
                 Logger.Error($"The resource root of device {guid} is empty! Its interface will be broken!");
-                return Interfacing.LocalizedJsonString(key); // Just give up
+                return LocalizedJsonString(key); // Just give up
             }
             catch (Exception e)
             {
@@ -1207,7 +1182,7 @@ public static class Interfacing
                 return key;
             }
         }
-        
+
         public static bool SetLocalizationResourcesRoot(string path, string guid)
         {
             try
@@ -1222,7 +1197,7 @@ public static class Interfacing
                     return false; // Just give up
                 }
 
-                if (Directory.Exists(path))
+                if (!Directory.Exists(path))
                 {
                     Logger.Info($"[Requested by device with GUID {guid}] " +
                                 $"Could not find any language enumeration resources in \"{path}\"! " +
@@ -1278,6 +1253,20 @@ public static class Interfacing
                              $"JSON error at key: \"{AppData.Settings.AppLanguage}\"! Message: {e.Message}");
                 return false; // Just give up
             }
+        }
+
+        public static void RefreshApplicationInterface()
+        {
+            // Parse the request - update
+            Shared.Main.DispatcherQueue.TryEnqueue(() =>
+            {
+                // Force refresh all the valid pages
+                Shared.Semaphores.RequestInterfaceReload();
+
+                // Update other components (may be moved to MVVM)
+                TrackingDevices.HandleDeviceRefresh(false);
+                TrackingDevices.UpdateTrackingDevicesInterface();
+            });
         }
     }
 }

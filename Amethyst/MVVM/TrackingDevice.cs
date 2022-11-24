@@ -117,7 +117,7 @@ public static class ICollectionExtensions
         foreach (var fileInfo in item.GetFiles("*.dll"))
             try
             {
-                var assemblyFile = Assembly.LoadFile(fileInfo.FullName);
+                var assemblyFile = Assembly.LoadFrom(fileInfo.FullName);
                 var assemblyCatalog = new AssemblyCatalog(assemblyFile);
 
                 if (!assemblyCatalog.Parts.Any(x => x.ExportDefinitions
@@ -203,10 +203,8 @@ public class PluginHost : IAmethystHost
     }
 
     // Request a refresh of the status/name/etc. interface
-    public void RefreshStatusInterface()
-    {
-        Interfacing.StatusUiRefreshRequestedUrgent = true;
-    }
+    public void RefreshStatusInterface() => 
+        Interfacing.Plugins.RefreshApplicationInterface();
 
     // Get Amethyst UI language
     public string LanguageCode => AppData.Settings.AppLanguage;
@@ -240,11 +238,6 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public string DeviceApiVersion { get; init; } = "[INVALID]";
 
     // MVVM stuff
-    public string GetResourceString(string key)
-    {
-        return Interfacing.LocalizedJsonString(key);
-    }
-
     public TrackingDevices.PluginLoadError Status { get; init; } =
         TrackingDevices.PluginLoadError.Unknown;
 
@@ -305,7 +298,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         }
     }
 
-    public string ErrorText => GetResourceString($"/DevicesPage/Devices/Manager/Labels/{(int)Status}");
+    public string ErrorText => Interfacing.LocalizedJsonString($"/DevicesPage/Devices/Manager/Labels/{(int)Status}");
 
     public string TrimString(string s, int l)
     {

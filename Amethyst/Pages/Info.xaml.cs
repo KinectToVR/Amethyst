@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using Amethyst.Classes;
@@ -18,7 +19,7 @@ namespace Amethyst.Pages;
 /// <summary>
 ///     An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class Info : Page
+public sealed partial class Info : Page, INotifyPropertyChanged
 {
     private bool _infoPageLoadedOnce;
 
@@ -53,6 +54,9 @@ public sealed partial class Info : Page
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
+        Logger.Info($"Re/Loading page: '{GetType().FullName}'...");
+        Interfacing.CurrentAppState = "info";
+
         // Execute the handler
         Page_LoadedHandler();
 
@@ -62,43 +66,7 @@ public sealed partial class Info : Page
 
     private void Page_LoadedHandler()
     {
-        AppTitle.Text = Interfacing.LocalizedJsonString("/InfoPage/AppTitle");
-        AppCaption.Text = Interfacing.LocalizedJsonString("/InfoPage/AppCaption");
-
-        CreditsMainTeamRolesAkaya.Text =
-            Interfacing.LocalizedJsonString("/InfoPage/Credits/MainTeam/Roles/Akaya");
-        CreditsMainTeamRolesElla.Text =
-            Interfacing.LocalizedJsonString("/InfoPage/Credits/MainTeam/Roles/Ella");
-        CreditsMainTeamRolesHekky.Text =
-            Interfacing.LocalizedJsonString("/InfoPage/Credits/MainTeam/Roles/Hekky");
-        CreditsMainTeamRolesHimbeer.Text =
-            Interfacing.LocalizedJsonString("/InfoPage/Credits/MainTeam/Roles/Himbeer");
-        CreditsMainTeamRolesArtemis.Text =
-            Interfacing.LocalizedJsonString("/InfoPage/Credits/MainTeam/Roles/Artemis");
-        CreditsMainTeamRolesOllie.Text =
-            Interfacing.LocalizedJsonString("/InfoPage/Credits/MainTeam/Roles/Ollie");
-
-        CreditsHeader.Text = Interfacing.LocalizedJsonString("/InfoPage/Credits/Header");
-        CreditsMainTeamTitle.Text = Interfacing.LocalizedJsonString("/InfoPage/Credits/MainTeam/Title");
-        CreditsMainTeamRolesAria.Text = Interfacing.LocalizedJsonString("/InfoPage/Credits/MainTeam/Roles/Aria");
-        CreditsTranslatorsTitle.Text = Interfacing.LocalizedJsonString("/InfoPage/Credits/Translators/Title");
-        CreditsHelpersTitle.Text = Interfacing.LocalizedJsonString("/InfoPage/Credits/Helpers/Title");
-        CreditsCommunity.Text = Interfacing.LocalizedJsonString("/InfoPage/Credits/Community");
-
-        HelpTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip11/Title");
-        HelpTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip11/Content");
-        HelpTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        HelpTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
-
-        EndingTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip12/Title");
-        EndingTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip12/Content");
-        EndingTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Finish");
-    }
-
-    private void Grid_Loaded(object sender, RoutedEventArgs e)
-    {
-        Logger.Info($"Re/Loading page: '{GetType().FullName}'...");
-        Interfacing.CurrentAppState = "info";
+        OnPropertyChanged(); // Just everything
     }
 
     private async void HelpTeachingTip_ActionButtonClick(TeachingTip sender, object args)
@@ -166,4 +134,13 @@ public sealed partial class Info : Page
     {
         // Show a console-text-box popup
     }
+
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged(string propName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
 }

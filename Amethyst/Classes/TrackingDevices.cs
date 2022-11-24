@@ -130,6 +130,9 @@ public static class TrackingDevices
 
         // Update extflip
         CheckFlipSupport();
+
+        // Force refresh pages
+
     }
 
     public static void HandleDeviceRefresh(bool shouldReconnect)
@@ -151,6 +154,9 @@ public static class TrackingDevices
 
         // Update the device
         var message = StringUtils.SplitStatusString(currentDevice.Device.DeviceStatusString);
+        if (message is null || message.Length < 3)
+            message = new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" };
+
         Devices.DeviceNameLabel.Text = currentDevice.Device.Name;
         Devices.DeviceStatusLabel.Text = message[0];
         Devices.TrackingDeviceErrorLabel.Text = message[1];
@@ -230,7 +236,7 @@ public static class TrackingDevices
     public static void TrackersConfigChanged(bool showToasts = true)
     {
         // Don't react to pre-init signals
-        if (!Settings.SettingsLocalInitFinished) return;
+        if (!Settings.SettingsTabSetupFinished) return;
         Logger.Info("Trackers configuration has been changed!");
         if (!showToasts) Logger.Info("Any toast won't be shown this time: force-disabled");
 
@@ -262,7 +268,7 @@ public static class TrackingDevices
             if (Settings.RestartButton is not null)
                 Settings.RestartButton.IsEnabled = true;
         }
-        
+
         // Enable/Disable Flip
         CheckFlipSupport();
     }
@@ -328,7 +334,7 @@ public static class TrackingDevices
         InvalidFactory, // Device factory just gave up, now cry
         Other // Check logs, MEF probably gave us up again...
     }
-    
+
     // Written to at the first plugin load
     public static List<LoadAttemptedPlugin>
         LoadAttemptedTrackingDevicesVector = new();

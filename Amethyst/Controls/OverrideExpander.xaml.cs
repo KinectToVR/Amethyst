@@ -95,9 +95,4 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
             ? AppSounds.AppSoundType.ToggleOn
             : AppSounds.AppSoundType.ToggleOff);
     }
-
-    private string GetResourceString(string key)
-    {
-        return Interfacing.LocalizedJsonString(key);
-    }
 }

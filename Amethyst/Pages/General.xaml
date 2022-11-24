@@ -68,9 +68,9 @@
                                     </Grid.RowDefinitions>
 
                                     <TextBlock
-                                        Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Orientation'), Mode=OneWay}"
+                                        Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/Orientation'), Mode=OneWay}"
                                         Grid.Row="1" Grid.Column="0" FontSize="20" FontWeight="Medium"
-                                        ToolTipService.ToolTip="{x:Bind GetResourceString('/GeneralPage/Captions/Tooltips/Orientation'), Mode=OneWay}" />
+                                        ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Tooltips/Orientation'), Mode=OneWay}" />
 
                                     <Grid Grid.Column="0" Grid.Row="2">
                                         <Grid.ColumnDefinitions>
@@ -79,7 +79,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock
-                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Orientation/Z'), Mode=OneWay}"
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Offsets/Orientation/Z'), Mode=OneWay}"
                                             VerticalAlignment="Center" HorizontalAlignment="Left"
                                             Grid.Column="0" Margin="20,0,0,0"
                                             FontSize="17" FontWeight="SemiBold" />
@@ -101,7 +101,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock
-                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Orientation/Y'), Mode=OneWay}"
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Offsets/Orientation/Y'), Mode=OneWay}"
                                             VerticalAlignment="Center" HorizontalAlignment="Left"
                                             Grid.Column="0" Margin="20,0,0,0"
                                             FontSize="17" FontWeight="SemiBold" />
@@ -123,7 +123,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock
-                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Orientation/X'), Mode=OneWay}"
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Offsets/Orientation/X'), Mode=OneWay}"
                                             VerticalAlignment="Center" HorizontalAlignment="Left"
                                             Grid.Column="0" Margin="20,0,0,0"
                                             FontSize="17" FontWeight="SemiBold" />
@@ -139,13 +139,10 @@
                                                    Margin="10,0,0,0" />
                                     </Grid>
 
-                                    <TextBlock Text="Position:" Grid.Row="8" Grid.Column="0" FontSize="20"
-                                               FontWeight="Medium" ToolTipService.ToolTip="Position is in centimeters." />
-
                                     <TextBlock
-                                        Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Position'), Mode=OneWay}"
+                                        Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/Position'), Mode=OneWay}"
                                         Grid.Row="8" Grid.Column="0" FontSize="20" FontWeight="Medium"
-                                        ToolTipService.ToolTip="{x:Bind GetResourceString('/GeneralPage/Captions/Tooltips/Position'), Mode=OneWay}" />
+                                        ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Tooltips/Position'), Mode=OneWay}" />
 
                                     <Grid Grid.Column="0" Grid.Row="9">
                                         <Grid.ColumnDefinitions>
@@ -154,7 +151,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock
-                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Position/X'), Mode=OneWay}"
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Offsets/Position/X'), Mode=OneWay}"
                                             VerticalAlignment="Center" HorizontalAlignment="Left"
                                             Grid.Column="0" Margin="20,0,0,0"
                                             FontSize="17" FontWeight="SemiBold" />
@@ -176,7 +173,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock
-                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Position/Y'), Mode=OneWay}"
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Offsets/Position/Y'), Mode=OneWay}"
                                             VerticalAlignment="Center" HorizontalAlignment="Left"
                                             Grid.Column="0" Margin="20,0,0,0"
                                             FontSize="17" FontWeight="SemiBold" />
@@ -198,7 +195,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock
-                                            Text="{x:Bind GetResourceString('/GeneralPage/Captions/Offsets/Position/Z'), Mode=OneWay}"
+                                            Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Offsets/Position/Z'), Mode=OneWay}"
                                             VerticalAlignment="Center" HorizontalAlignment="Left"
                                             Grid.Column="0" Margin="20,0,0,0"
                                             FontSize="17" FontWeight="SemiBold" />

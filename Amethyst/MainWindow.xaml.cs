@@ -430,17 +430,22 @@ public sealed partial class MainWindow : Window
                     TrackingDevices.TrackingDevicesList.Add(plugin.Metadata.Guid, new TrackingDevice(
                         plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation, plugin.Value)
                     {
-                        LocalizationResourcesRoot = (new JsonObject(), pluginFolder)
+                        LocalizationResourcesRoot = (new JsonObject(), Path.Join(pluginFolder, "Assets", "Strings"))
                     });
 
                     // Set the device's string resources root to its provided folder
                     // (If it wants to change it, it's gonna need to do that after OnLoad anyway)
                     Logger.Info($"Registering ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "default root language resource context (TrackingDevices)...");
-                    Interfacing.Plugins.SetLocalizationResourcesRoot(pluginFolder, plugin.Metadata.Guid);
+                    Interfacing.Plugins.SetLocalizationResourcesRoot(
+                        Path.Join(pluginFolder, "Assets", "Strings"), plugin.Metadata.Guid);
 
                     Logger.Info($"Loaded plugin: {JsonSerializer.Serialize(plugin,
                         new JsonSerializerOptions { WriteIndented = true })}");
+
+                    Logger.Info($"Telling ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "this it's just been loaded into the core app domain...");
+                    plugin.Value.OnLoad(); // Call the OnLoad handler for the first time
 
                     Logger.Info($"Device ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) \n" +
                                 $"with the device class library dll at: {pluginLocation}\n" +
@@ -623,7 +628,7 @@ public sealed partial class MainWindow : Window
     }
 
     [LibraryImport("user32.dll")]
-    private static partial int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+    private static partial int SendMessage(nint hWnd, int wMsg, nint wParam, nint lParam);
 
     private void MainWindow_ActualThemeChanged(FrameworkElement sender, object args)
     {

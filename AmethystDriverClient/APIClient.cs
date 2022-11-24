@@ -78,7 +78,7 @@ public static class DriverClient
     {
         try
         {
-            using var call = _service?.SetTrackerStateVector();
+            using var call = _service?.UpdateTrackerVector();
             if (call is null) return wantReply ? new List<(TrackerType Role, bool State)>() : null;
 
             foreach (var tracker in trackerBases)

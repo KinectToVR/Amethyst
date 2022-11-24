@@ -118,9 +118,9 @@ public static class Main
             if (Shared.Settings.FlipToggle is not null)
                 Shared.Main.DispatcherQueue.TryEnqueue(() =>
                 {
-                    Shared.Settings.SettingsLocalInitFinished = false; // Boiler
+                    Shared.Settings.SettingsTabSetupFinished = false; // Boiler
                     Shared.Settings.FlipToggle.IsOn = AppData.Settings.IsFlipEnabled;
-                    Shared.Settings.SettingsLocalInitFinished = true; // Boiler end
+                    Shared.Settings.SettingsTabSetupFinished = true; // Boiler end
                 });
 
             var header = Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Header_Short");
@@ -672,59 +672,8 @@ public static class Main
     {
         // Warning: this is meant to work as fire-and-forget
         Logger.Info("[Main] Waiting for the start sem to open..");
-        Shared.Semaphores.SmphSignalStartMain.WaitOne();
-
-        Logger.Info("[Main] Starting the status updater loop now...");
-#pragma warning disable CS4014
-        Task.Run(async () =>
-#pragma warning restore CS4014
-        {
-            while (true)
-                if (!Interfacing.IsExitingNow)
-                {
-                    // Parse the request - update
-                    Shared.Main.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        Interfacing.StatusUiRefreshRequested = false;
-                        Interfacing.StatusUiRefreshRequestedUrgent = false;
-
-                        // Update only the currently needed one
-                        // (Will run only if anything has changed)
-                        if (Interfacing.CurrentPageTag == "devices")
-                        {
-                            TrackingDevices.HandleDeviceRefresh(false);
-                            if (Shared.Devices.DeviceErrorGrid.Visibility == Visibility.Visible)
-                                Interfacing.StatusUiRefreshRequested = true; // Redo
-                        }
-                        else
-                        {
-                            TrackingDevices.UpdateTrackingDevicesInterface();
-                            if (Shared.General.ErrorWhatGrid.Visibility == Visibility.Visible)
-                                Interfacing.StatusUiRefreshRequested = true; // Redo
-                        }
-                    });
-
-                    // Wait 14s until the next refresh (or until a request)
-                    for (var i = 0; i < 8; i++)
-                    {
-                        for (var j = 0; j < 4; j++)
-                        {
-                            // In an inner loop for shorter cooldown-s
-                            if (Interfacing.StatusUiRefreshRequestedUrgent) break;
-                            await Task.Delay(500); // Sleep a bit for now
-                        }
-
-                        // In an outer loop for longer cooldown-s
-                        if (Interfacing.StatusUiRefreshRequested) break;
-                    }
-                }
-                else
-                {
-                    // Sleep a bit for now
-                    await Task.Delay(1000);
-                }
-        });
-
+        Shared.Semaphores.SemSignalStartMain.WaitOne();
+        
         Logger.Info("[Main] Starting the main app loop now...");
 
         // For limiting loop 'fps'
@@ -750,7 +699,7 @@ public static class Main
                     // Update things here
 
                     UpdateVrPositions(); // Update HMD poses
-                    UpdateInputBindings(); // Update input
+                    //UpdateInputBindings(); // Update input
                     await ParseVrEvents(); // Parse VR events
 
                     // Skip some things if we're getting ready to exit
@@ -763,7 +712,8 @@ public static class Main
                     await UpdateServerTrackers(); // Send it to the server
 
                     // Wait until certain loop time has passed
-                    if (loopStopWatch.ElapsedTicks < vrFrameRate)
+                    var diffTicks = vrFrameRate - loopStopWatch.ElapsedTicks;
+                    if (diffTicks > 0)
                     {
 #pragma warning disable CA1806 // Do not ignore method results
                         SystemShell.TimeBeginPeriod(1);
@@ -774,7 +724,7 @@ public static class Main
                         {
                             serverLoops = 0; // Reset the counter for the next 10'000 service loops
                             var elapsedTicks = loopStopWatch.ElapsedTicks; // Cache the elapsed time
-                            await Task.Delay(TimeSpan.FromTicks(vrFrameRate - loopStopWatch.ElapsedTicks));
+                            await Task.Delay(TimeSpan.FromTicks(diffTicks));
 
                             Logger.Info($"10000 loops have passed: this loop took {elapsedTicks}, " +
                                         $"the loop's time after time correction (sleep) is: {loopStopWatch.ElapsedTicks}ns");
@@ -782,7 +732,7 @@ public static class Main
                         else
                         {
                             serverLoops++; // Else increase passed loops counter and wait
-                            await Task.Delay(TimeSpan.FromTicks(vrFrameRate - loopStopWatch.ElapsedTicks));
+                            await Task.Delay(TimeSpan.FromTicks(diffTicks));
                         }
 
 #pragma warning disable CA1806 // Do not ignore method results

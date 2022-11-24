@@ -78,9 +78,4 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
-
-    private string GetResourceString(string key)
-    {
-        return Interfacing.LocalizedJsonString(key);
-    }
 }

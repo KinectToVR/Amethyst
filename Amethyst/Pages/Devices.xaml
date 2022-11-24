@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mvvm="using:Amethyst.MVVM"
     xmlns:controls="using:Amethyst.Controls"
+    xmlns:util="using:Amethyst.Utils"
     Loaded="Page_Loaded" NavigationCacheMode="Required"
     mc:Ignorable="d" Background="Transparent">
 
@@ -34,26 +35,25 @@
 
                 <Grid HorizontalAlignment="Stretch"
                       Margin="40,20,0,0" Grid.Row="0">
-                    <TextBlock FontWeight="SemiBold" x:Name="Titles_Devices" FontSize="25">
+                    <TextBlock FontWeight="SemiBold" FontSize="25"
+                               Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Devices'), Mode=OneWay}">
                         <TextBlock.Resources>
                             <TeachingTip x:Name="DevicesListTeachingTip"
                                          Target="{Binding ElementName=DevicesListTipDummyContextDummy}"
-                                         Title="/DEVICES"
-                                         Subtitle="/TEXT"
+                                         Title="{x:Bind util:Translator.Get.String('/NUX/Tip8/Title'), Mode=OneWay}"
+                                         Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip8/Content'), Mode=OneWay}"
+                                         CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+                                         ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
                                          PreferredPlacement="BottomRight"
                                          IsLightDismissEnabled="False"
-                                         ActionButtonContent="/BACK"
-                                         CloseButtonContent="/NEXT"
                                          Style="{ThemeResource BigTeachingTipStyle}"
                                          ActionButtonClick="DevicesListTeachingTip_ActionButtonClick"
                                          CloseButtonClick="DevicesListTeachingTip_CloseButtonClick" />
                         </TextBlock.Resources>
                     </TextBlock>
 
-                    <Button Content="Manage" Margin="0,0,44,0"
-                            x:Name="Manage_Device_Plugins_Open"
-                            FontWeight="SemiBold"
-                            HorizontalAlignment="Right">
+                    <Button Margin="0,0,44,0" FontWeight="SemiBold" HorizontalAlignment="Right"
+                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Open'), Mode=OneWay}">
                         <Button.Flyout>
                             <Flyout Placement="Full" x:Name="PluginManagerFlyout"
                                     Opening="PluginManagerFlyout_Opening"
@@ -74,9 +74,8 @@
                                 </Flyout.FlyoutPresenterStyle>
 
                                 <StackPanel Padding="0,0,0,10">
-                                    <TextBlock x:Name="Manage_Device_Plugins_Title"
-                                               FontWeight="SemiBold" FontSize="25"
-                                               Margin="20,15" />
+                                    <TextBlock FontWeight="SemiBold" FontSize="25" Margin="20,15"
+                                               Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Title'), Mode=OneWay}" />
 
                                     <ItemsRepeater x:Name="PluginsItemsRepeater" HorizontalAlignment="Stretch"
                                                    Margin="20,0,20,20" AllowDrop="False">
@@ -145,13 +144,13 @@
                                                                     <TextBlock VerticalAlignment="Center"
                                                                                FontWeight="SemiBold"
                                                                                TextWrapping="WrapWholeWords"
-                                                                               Text="{x:Bind GetResourceString('/DevicesPage/Devices/Manager/Labels/Blocked'), Mode=OneWay}" />
+                                                                               Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Blocked'), Mode=OneWay}" />
 
                                                                     <StackPanel Orientation="Horizontal"
                                                                         Margin="0,7,0,7">
                                                                         <TextBlock VerticalAlignment="Top"
                                                                             FontWeight="SemiBold" Opacity="0.5"
-                                                                            Text="{x:Bind GetResourceString('/DevicesPage/Devices/Manager/Labels/Reason'), Mode=OneWay}"
+                                                                            Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Reason'), Mode=OneWay}"
                                                                             Margin="0,0,7,0" />
                                                                         <TextBlock VerticalAlignment="Top"
                                                                             FontWeight="SemiBold" Width="560"
@@ -172,7 +171,7 @@
                                                                     <TextBlock VerticalAlignment="Center"
                                                                                FontWeight="SemiBold" Opacity="0.5"
                                                                                Margin="0,0,7,0"
-                                                                               Text="{x:Bind GetResourceString('/DevicesPage/Devices/Manager/Labels/GUID'), Mode=OneWay}" />
+                                                                               Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/GUID'), Mode=OneWay}" />
                                                                     <TextBlock VerticalAlignment="Center"
                                                                                FontWeight="SemiBold"
                                                                                Text="{x:Bind TrimString(Guid, 77), Mode=OneWay}"
@@ -189,7 +188,7 @@
                                                                     <TextBlock VerticalAlignment="Center"
                                                                                FontWeight="SemiBold" Opacity="0.5"
                                                                                Margin="0,0,7,0"
-                                                                               Text="{x:Bind GetResourceString('/DevicesPage/Devices/Manager/Labels/Location'), Mode=OneWay}" />
+                                                                               Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Location'), Mode=OneWay}" />
 
                                                                     <TextBlock VerticalAlignment="Center"
                                                                                FontWeight="SemiBold"
@@ -213,11 +212,6 @@
                     </Button>
                 </Grid>
 
-                <!--String copy resource-->
-                <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Base_Text" />
-                <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Override_Text" />
-                <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Error_Text" />
-
                 <TreeView x:Name="TrackingDeviceTreeView" Grid.Column="1" CornerRadius="5"
                           VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="1"
 
@@ -240,7 +234,7 @@
                                         <ScalarTransition />
                                     </Border.OpacityTransition>
 
-                                    <TextBlock Text="{Binding ElementName=DeviceEntryView_Base_Text, Path=Text}"
+                                    <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Base'), Mode=OneWay}"
                                                FontWeight="Medium" Margin="0,-2,0,0"
                                                Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                 </Border>
@@ -255,7 +249,7 @@
                                         <ScalarTransition />
                                     </Border.OpacityTransition>
 
-                                    <TextBlock Text="{Binding ElementName=DeviceEntryView_Override_Text, Path=Text}"
+                                    <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Override'), Mode=OneWay}"
                                                FontWeight="Medium" Margin="0,-2,0,0"
                                                Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                 </Border>
@@ -270,7 +264,7 @@
                                         <ScalarTransition />
                                     </Border.OpacityTransition>
 
-                                    <TextBlock Text="{Binding ElementName=DeviceEntryView_Error_Text, Path=Text}"
+                                    <TextBlock Visibility="Collapsed" Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Error'), Mode=OneWay}"
                                                FontWeight="Medium" Margin="0,-2,0,0"
                                                Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                 </Border>
@@ -627,12 +621,12 @@
                                 <TextBlock.Resources>
                                     <TeachingTip x:Name="DeviceStatusTeachingTip"
                                                  Target="{Binding ElementName=SelectedDeviceNameLabel}"
-                                                 Title="/SELECTED"
-                                                 Subtitle="/TEXT"
+                                                 Title="{x:Bind util:Translator.Get.String('/NUX/Tip9/Title'), Mode=OneWay}"
+                                                 Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip9/Content'), Mode=OneWay}"
+                                                 CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+                                                 ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
                                                  PreferredPlacement="LeftBottom"
                                                  IsLightDismissEnabled="False"
-                                                 ActionButtonContent="/BACK"
-                                                 CloseButtonContent="/NEXT"
                                                  Style="{ThemeResource BigTeachingTipStyle}"
                                                  ActionButtonClick="DeviceStatusTeachingTip_ActionButtonClick"
                                                  CloseButtonClick="DeviceStatusTeachingTip_CloseButtonClick" />
@@ -651,8 +645,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0">
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="SemiBold" x:Name="Titles_DeviceStatus"
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" 
+                                               Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/DeviceStatus'), Mode=OneWay}"
                                                Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
                                                FontWeight="SemiBold"
@@ -662,17 +656,18 @@
                                     <SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
                                                  Margin="0,0,3,0" CornerRadius="4" Height="35" Width="160"
                                                  HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                 Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Reconnect'), Mode=OneWay}"
                                                  x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click">
 
                                         <SplitButton.Resources>
                                             <TeachingTip x:Name="DeviceControlsTeachingTip"
                                                          Target="{Binding ElementName=ReconnectDeviceButton}"
-                                                         Title="/CONTROLS"
-                                                         Subtitle="/TEXT"
+                                                         Title="{x:Bind util:Translator.Get.String('/NUX/Tip10/Title'), Mode=OneWay}"
+                                                         Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip10/Content'), Mode=OneWay}"
+                                                         CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+                                                         ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
                                                          PreferredPlacement="LeftBottom"
                                                          IsLightDismissEnabled="False"
-                                                         ActionButtonContent="/BACK"
-                                                         CloseButtonContent="/NEXT"
                                                          Style="{ThemeResource BigTeachingTipStyle}"
                                                          ActionButtonClick="DeviceControlsTeachingTip_ActionButtonClick"
                                                          CloseButtonClick="DeviceControlsTeachingTip_CloseButtonClick" />
@@ -691,6 +686,7 @@
 
                                                 <StackPanel Orientation="Vertical">
                                                     <Button CornerRadius="4" Height="35" HorizontalAlignment="Stretch"
+                                                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Disconnect'), Mode=OneWay}"
                                                             x:Name="DisconnectDeviceButton" FontWeight="SemiBold"
                                                             Click="DisconnectDeviceButton_Click" />
                                                 </StackPanel>
@@ -712,12 +708,14 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0">
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="SemiBold" x:Name="Titles_SetAsDevice"
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                               Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/SetAsDevice'), Mode=OneWay}"
                                                Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
 
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                             Margin="0,0,3,0" CornerRadius="4"
+                                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/SetAs/Header'), Mode=OneWay}"
+                                            ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/SetAs/Header/ToolTip'), Mode=OneWay}"
                                             Height="35" Width="160" x:Name="SetThisDeviceAsButton"
                                             HorizontalAlignment="Right" VerticalAlignment="Top">
 
@@ -737,12 +735,15 @@
                                                             Style="{ThemeResource AccentButtonStyle}"
                                                             HorizontalAlignment="Stretch"
                                                             CornerRadius="4" Height="35" Margin="0,0,0,15"
+                                                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/SetAs/Base'), Mode=OneWay}"
+                                                            ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/SetAs/Base/ToolTip'), Mode=OneWay}"
                                                             x:Name="SetAsBaseButton" Click="SetAsBaseButton_Click" />
                                                     <Button FontWeight="SemiBold"
                                                             HorizontalAlignment="Stretch"
                                                             CornerRadius="4" Height="35"
-                                                            x:Name="SetAsOverrideButton"
-                                                            Click="SetAsOverrideButton_Click" />
+                                                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/SetAs/Override'), Mode=OneWay}"
+                                                            ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/SetAs/Override/ToolTip'), Mode=OneWay}"
+                                                            x:Name="SetAsOverrideButton" Click="SetAsOverrideButton_Click" />
                                                 </StackPanel>
                                             </Flyout>
                                         </Button.Flyout>
@@ -774,8 +775,8 @@
                                                         <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
 
-                                                    <Button FontSize="15" x:Name="DismissOverrideTipNoJointsButton"
-                                                            Click="DismissOverrideTipNoJointsButton_Click"
+                                                    <Button FontSize="15" Click="DismissOverrideTipNoJointsButton_Click"
+                                                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/NoJoints/Dismiss'), Mode=OneWay}"
                                                             VerticalContentAlignment="Center" FontWeight="SemiBold"
                                                             Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
                                                             HorizontalAlignment="Stretch"
@@ -784,10 +785,9 @@
                                                 </Grid>
 
                                                 <TextBlock FontSize="15" HorizontalAlignment="Stretch"
-                                                           VerticalAlignment="Stretch"
-                                                           Grid.Row="0" FontWeight="SemiBold"
+                                                           VerticalAlignment="Stretch" Grid.Row="0" FontWeight="SemiBold"
                                                            Style="{ThemeResource BaseTextBlockStyle}"
-                                                           x:Name="Titles_DeviceHasNoJoints" />
+                                                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/DeviceHasNoJoints'), Mode=OneWay}" />
 
                                             </Grid>
                                         </Flyout>
@@ -811,6 +811,8 @@
                                     <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                             Margin="0,0,3,0" CornerRadius="4"
                                             VerticalAlignment="Top" HorizontalAlignment="Right"
+                                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Deselect'), Mode=OneWay}"
+                                            ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Deselect/ToolTip'), Mode=OneWay}"
                                             Height="35" Width="160" x:Name="DeselectDeviceButton"
                                             Click="DeselectDeviceButton_Click" />
                                 </Grid>
@@ -855,14 +857,15 @@
                                     <StackPanel Grid.Column="2" Orientation="Vertical">
                                         <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                                 Margin="0,0,3,5" CornerRadius="4"
-                                                x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
-                                                Height="55" Width="160" Style="{ThemeResource AccentButtonStyle}"
+                                                Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/ViewDocs'), Mode=OneWay}"
+                                                Click="OpenDocsButton_Click" Height="55" Width="160" 
+                                                Style="{ThemeResource AccentButtonStyle}"
                                                 HorizontalAlignment="Right" VerticalAlignment="Top" />
 
                                         <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                                 Margin="0,0,3,0" CornerRadius="4"
-                                                Height="55" Width="160" x:Name="OpenDiscordButton"
-                                                Click="OpenDiscordButton_Click"
+                                                Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/JoinDiscord'), Mode=OneWay}"
+                                                Height="55" Width="160" Click="OpenDiscordButton_Click"
                                                 HorizontalAlignment="Right" VerticalAlignment="Top" />
                                     </StackPanel>
                                 </Grid>
@@ -903,7 +906,7 @@
                                     </StackPanel.Transitions>-->
 
                                 <TextBlock FontWeight="SemiBold" FontSize="25" Margin="40,20,0,0"
-                                           Text="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/Assign'), Mode=OneWay}" />
+                                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Joints/Assign'), Mode=OneWay}" />
 
                                 <StackPanel x:Name="JointsExpanderHostStackPanel" HorizontalAlignment="Stretch"
                                             VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
@@ -916,13 +919,13 @@
                                     </StackPanel.Transitions>
 
                                     <controls:JointSelectorExpander x:Name="WaistAndFeetTrackersExpander"
-                                                                    Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/WaistAndFeet'), Mode=OneWay}"
+                                                                    Header="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Joints/WaistAndFeet'), Mode=OneWay}"
                                                                     Trackers="{x:Bind BasicTrackers, Mode=OneWay}" />
                                     <controls:JointSelectorExpander x:Name="KneesAndElbowsTrackersExpander"
-                                                                    Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/ElbowsAndKnees'), Mode=OneWay}"
+                                                                    Header="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Joints/ElbowsAndKnees'), Mode=OneWay}"
                                                                     Trackers="{x:Bind StandardTrackers, Mode=OneWay}" />
                                     <controls:JointSelectorExpander x:Name="AdditionalTrackersExpander"
-                                                                    Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/Other'), Mode=OneWay}"
+                                                                    Header="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Joints/Other'), Mode=OneWay}"
                                                                     Trackers="{x:Bind AdditionalTrackers, Mode=OneWay}" />
                                 </StackPanel>
 
@@ -944,7 +947,7 @@
                                     </StackPanel.Transitions>-->
 
                                 <TextBlock FontWeight="SemiBold" FontSize="25" Margin="40,20,0,0"
-                                           Text="{x:Bind GetResourceString('/DevicesPage/Titles/Overrides/Header'), Mode=OneWay}" />
+                                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Overrides/Header'), Mode=OneWay}" />
 
                                 <StackPanel x:Name="OverridesExpanderHostStackPanel" HorizontalAlignment="Stretch"
                                             VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
@@ -957,13 +960,13 @@
                                     </StackPanel.Transitions>
 
                                     <controls:OverrideExpander x:Name="WaistAndFeetOverridesExpander"
-                                                               Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/WaistAndFeet'), Mode=OneWay}"
+                                                               Header="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Joints/WaistAndFeet'), Mode=OneWay}"
                                                                Trackers="{x:Bind BasicTrackers, Mode=OneWay}" />
                                     <controls:OverrideExpander x:Name="KneesAndElbowsOverridesExpander"
-                                                               Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/ElbowsAndKnees'), Mode=OneWay}"
+                                                               Header="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Joints/ElbowsAndKnees'), Mode=OneWay}"
                                                                Trackers="{x:Bind StandardTrackers, Mode=OneWay}" />
                                     <controls:OverrideExpander x:Name="AdditionalOverridesExpander"
-                                                               Header="{x:Bind GetResourceString('/DevicesPage/Titles/Joints/Other'), Mode=OneWay}"
+                                                               Header="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Joints/Other'), Mode=OneWay}"
                                                                Trackers="{x:Bind AdditionalTrackers, Mode=OneWay}" />
                                 </StackPanel>
 

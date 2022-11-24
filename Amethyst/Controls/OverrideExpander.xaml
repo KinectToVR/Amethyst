@@ -9,7 +9,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Visibility="{x:Bind IsAnyTrackerEnabled, Mode=OneWay}"
     xmlns:local="using:Amethyst.Controls"
-    xmlns:classes="using:Amethyst.Classes" mc:Ignorable="d">
+    xmlns:classes="using:Amethyst.Classes"
+    xmlns:util="using:Amethyst.Utils"
+    mc:Ignorable="d">
 
     <Expander Margin="40,17,30,0"
               IsExpanded="False" ExpandDirection="Down" x:Name="OverridesItemsExpander"
@@ -35,23 +37,27 @@
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
 
-                <MenuFlyoutSeparator Grid.Column="0" Grid.Row="1" Margin="4,0"/>
-                <MenuFlyoutSeparator Grid.Column="1" Grid.Row="1" Margin="4,0"/>
-                <MenuFlyoutSeparator Grid.Column="2" Grid.Row="1" Margin="4,0"/>
-                <MenuFlyoutSeparator Grid.Column="3" Grid.Row="1" Margin="4,0"/>
-                <MenuFlyoutSeparator Grid.Column="4" Grid.Row="1" Margin="4,0"/>
-                <MenuFlyoutSeparator Grid.Column="5" Grid.Row="1" Margin="4,0"/>
-                <MenuFlyoutSeparator Grid.Column="6" Grid.Row="1" Margin="4,0"/>
+                <MenuFlyoutSeparator Grid.Column="0" Grid.Row="1" Margin="4,0" />
+                <MenuFlyoutSeparator Grid.Column="1" Grid.Row="1" Margin="4,0" />
+                <MenuFlyoutSeparator Grid.Column="2" Grid.Row="1" Margin="4,0" />
+                <MenuFlyoutSeparator Grid.Column="3" Grid.Row="1" Margin="4,0" />
+                <MenuFlyoutSeparator Grid.Column="4" Grid.Row="1" Margin="4,0" />
+                <MenuFlyoutSeparator Grid.Column="5" Grid.Row="1" Margin="4,0" />
+                <MenuFlyoutSeparator Grid.Column="6" Grid.Row="1" Margin="4,0" />
 
                 <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontWeight="SemiBold" Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Tracker')}"/>
+                           FontWeight="SemiBold"
+                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/Tracker'), Mode=OneWay}" />
                 <TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontWeight="SemiBold" Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/DeviceOverride')}"/>
+                           FontWeight="SemiBold"
+                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/DeviceOverride'), Mode=OneWay}" />
 
                 <TextBlock Grid.Column="4" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontWeight="SemiBold" Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Position')}"/>
+                           FontWeight="SemiBold"
+                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/Position'), Mode=OneWay}" />
                 <TextBlock Grid.Column="6" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontWeight="SemiBold" Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Orientation')}"/>
+                           FontWeight="SemiBold"
+                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/Orientation'), Mode=OneWay}" />
             </Grid>
 
             <ItemsRepeater x:Name="JointsItemsRepeater" ItemsSource="{x:Bind Trackers}">
@@ -74,59 +80,59 @@
                         <!--Title Container-->
                         <Grid Grid.Column="0">
                             <TextBlock FontWeight="SemiBold" FontSize="14"
-                                   Margin="0,-3,0,0"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   HorizontalTextAlignment="Center"
-                                   Text="{x:Bind TrackerName, Mode=OneWay}" />
+                                       Margin="0,-3,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Text="{x:Bind TrackerName, Mode=OneWay}" />
 
                             <InfoBadge
-                            Background="{ThemeResource SystemFillColorAttentionBrush}"
-                            HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Margin="0,0,-12,-10" Width="17" Height="17"
-                            ToolTipService.ToolTip="{x:Bind GetResourceString('/DevicesPage/ToolTips/Overrides/Overlapping')}"
-                            Opacity="{x:Bind BoolToOpacity(IsOverridenByOtherDevice)}">
+                                Background="{ThemeResource SystemFillColorAttentionBrush}"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Margin="0,0,-12,-10" Width="17" Height="17"
+                                ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/DevicesPage/ToolTips/Overrides/Overlapping'), Mode=OneWay}"
+                                Opacity="{x:Bind BoolToOpacity(IsOverridenByOtherDevice)}">
                                 <InfoBadge.OpacityTransition>
                                     <ScalarTransition />
                                 </InfoBadge.OpacityTransition>
                                 <InfoBadge.IconSource>
                                     <FontIconSource Foreground="{ThemeResource NoThemeColorSolidColorBrush}"
-                                                Glyph="&#xEDAD;"/>
+                                                    Glyph="&#xEDAD;" />
                                 </InfoBadge.IconSource>
                             </InfoBadge>
                         </Grid>
 
                         <!--Tracker Combo-->
                         <ComboBox Grid.Column="2" x:Name="OverrideTrackerCombo"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              Height="45" MinWidth="150"
-                              FontSize="15" FontWeight="SemiBold"
-                              DropDownOpened="OverrideTrackerCombo_OnDropDownOpened"
-                              DropDownClosed="OverrideTrackerCombo_OnDropDownClosed"
-                              SelectionChanged="OverrideTrackerComboBox_SelectionChanged"
-                              PlaceholderText="{x:Bind GetResourceString('/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText'), Mode=OneWay}"
-                              ItemsSource="{x:Bind local:OverrideExpander.GetManagingDeviceJointsList(OverrideGuid), Mode=OneWay}"
-                              IsEnabled="{x:Bind IsActive, Mode=OneWay}"
-                              SelectedIndex="{x:Bind SelectedOverrideJointIdForSelectedDevice, Mode=TwoWay}" />
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Height="45" MinWidth="150"
+                                  FontSize="15" FontWeight="SemiBold"
+                                  DropDownOpened="OverrideTrackerCombo_OnDropDownOpened"
+                                  DropDownClosed="OverrideTrackerCombo_OnDropDownClosed"
+                                  SelectionChanged="OverrideTrackerComboBox_SelectionChanged"
+                                  PlaceholderText="{x:Bind util:Translator.Get.String('/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText'), Mode=OneWay}"
+                                  ItemsSource="{x:Bind local:OverrideExpander.GetManagingDeviceJointsList(OverrideGuid), Mode=OneWay}"
+                                  IsEnabled="{x:Bind IsActive, Mode=OneWay}"
+                                  SelectedIndex="{x:Bind SelectedOverrideJointIdForSelectedDevice, Mode=TwoWay}" />
 
                         <!--Position toggle-->
                         <ToggleSwitch Grid.Column="4" x:Name="OverridePositionSwitch"
-                                  IsOn="{x:Bind IsPositionOverriddenBySelectedDevice, Mode=TwoWay}"
-                                  Toggled="OverridePositionSwitch_Toggled"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  Margin="0,0,-107,0"
-                                  OnContent="" OffContent=""/>
+                                      IsOn="{x:Bind IsPositionOverriddenBySelectedDevice, Mode=TwoWay}"
+                                      Toggled="OverridePositionSwitch_Toggled"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,-107,0"
+                                      OnContent="" OffContent="" />
 
                         <!--Orientation toggle-->
                         <ToggleSwitch Grid.Column="6" x:Name="OverrideOrientationSwitch"
-                                  IsOn="{x:Bind IsOrientationOverriddenBySelectedDevice, Mode=TwoWay}"
-                                  Toggled="OverrideOrientationSwitch_Toggled"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  Margin="0,0,-107,0"
-                                  OnContent="" OffContent=""/>
+                                      IsOn="{x:Bind IsOrientationOverriddenBySelectedDevice, Mode=TwoWay}"
+                                      Toggled="OverrideOrientationSwitch_Toggled"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,-107,0"
+                                      OnContent="" OffContent="" />
                     </Grid>
                 </DataTemplate>
             </ItemsRepeater>

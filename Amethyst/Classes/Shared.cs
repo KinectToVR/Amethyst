@@ -25,6 +25,9 @@ public static class Shared
 
         public static void RequestInterfaceReload()
         {
+            if (!General.GeneralTabSetupFinished)
+                return; // Not ready yet oof
+
             ReloadMainWindowSemaphore?.Release();
             ReloadGeneralPageSemaphore?.Release();
             ReloadSettingsPageSemaphore?.Release();
@@ -32,9 +35,8 @@ public static class Shared
             ReloadInfoPageSemaphore?.Release();
         }
 
-        public static Semaphore
-            SmphSignalCurrentUpdate = new(0, 1),
-            SmphSignalStartMain = new(0, 1);
+        public static readonly Semaphore
+            SemSignalStartMain = new(0, 1);
     }
 
     public static class Main
@@ -241,7 +243,7 @@ public static class Shared
     public static class Settings
     {
         // Settings Page
-        public static bool SettingsLocalInitFinished = false;
+        public static bool SettingsTabSetupFinished = false;
 
         public static Button RestartButton;
         public static Grid FlipDropDownGrid;

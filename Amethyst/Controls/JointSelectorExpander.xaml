@@ -9,7 +9,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Visibility="{x:Bind IsAnyTrackerEnabled, Mode=OneWay}"
     xmlns:local="using:Amethyst.Controls"
-    xmlns:classes="using:Amethyst.Classes" mc:Ignorable="d">
+    xmlns:classes="using:Amethyst.Classes"
+    xmlns:util="using:Amethyst.Utils"
+    mc:Ignorable="d">
 
     <Expander Margin="40,17,30,0"
               IsExpanded="False" ExpandDirection="Down" x:Name="JointsItemsExpander"
@@ -36,10 +38,11 @@
                 <MenuFlyoutSeparator Grid.Column="2" Grid.Row="1" Margin="4,0" />
 
                 <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontWeight="SemiBold" Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/Tracker')}" />
+                           FontWeight="SemiBold"
+                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/Tracker'), Mode=OneWay}" />
                 <TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                            FontWeight="SemiBold"
-                           Text="{x:Bind GetResourceString('/DevicesPage/Titles/Set/TrackedJoint')}" />
+                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/TrackedJoint'), Mode=OneWay}" />
             </Grid>
 
             <ItemsRepeater x:Name="JointsItemsRepeater" ItemsSource="{x:Bind Trackers}">
@@ -88,7 +91,7 @@
                                   DropDownOpened="JointTrackerCombo_OnDropDownOpened"
                                   DropDownClosed="JointTrackerCombo_OnDropDownClosed"
                                   SelectionChanged="JointsSelectorComboBox_SelectionChanged"
-                                  PlaceholderText="{x:Bind GetResourceString('/DevicesPage/Placeholders/Joints/Disabled/PlaceholderText'), Mode=OneWay}"
+                                  PlaceholderText="{x:Bind util:Translator.Get.String('/DevicesPage/Placeholders/Joints/Disabled/PlaceholderText'), Mode=OneWay}"
                                   ItemsSource="{x:Bind local:JointSelectorExpander.GetBaseDeviceJointsList(), Mode=OneWay}"
                                   IsEnabled="{x:Bind IsActive, Mode=OneWay}"
                                   SelectedIndex="{x:Bind SelectedBaseTrackedJointId, Mode=TwoWay}" />

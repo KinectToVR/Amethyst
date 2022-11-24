@@ -78,8 +78,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.General.FreezeOnlyLowerToggle = FreezeOnlyLowerToggle;
         Shared.General.AdditionalDeviceErrorsHyperlink = AdditionalDeviceErrorsHyperlink;
 
-        Shared.TeachingTips.GeneralPage.ToggleTrackersTeachingTip = ToggleTrackersTeachingTip;
-        Shared.TeachingTips.GeneralPage.StatusTeachingTip = StatusTeachingTip;
+        GeneralPage.ToggleTrackersTeachingTip = ToggleTrackersTeachingTip;
+        GeneralPage.StatusTeachingTip = StatusTeachingTip;
 
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
         TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesList.Values;
@@ -118,7 +118,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Execute the handler
         await Page_LoadedHandler();
-        OnPropertyChanged(); // All
 
         // Mark as loaded
         _generalPageLoadedOnce = true;
@@ -130,42 +129,41 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (!_generalPageLoadedOnce)
         {
             Logger.Info("Basic setup done! Starting the main loop now...");
-            Shared.Semaphores.SmphSignalStartMain.Release();
+            Shared.Semaphores.SemSignalStartMain.Release();
+
+            // Refresh the server status
+            await Interfacing.K2ServerDriverRefresh();
+
+            // Try auto-spawning trackers if stated so
+            if (Interfacing.IsServerDriverPresent && // If the driver's ok
+                AppData.Settings.AutoSpawnEnabledJoints) // If autospawn
+            {
+                if (await Interfacing.SpawnEnabledTrackers())
+                {
+                    // Mark as spawned
+                    ToggleTrackersButton.IsChecked = true;
+                    CalibrationButton.IsEnabled = true;
+                }
+
+                // Cry about it
+                else
+                {
+                    Interfacing.ServerDriverFailure = true; // WAAAAAAA
+                    Interfacing.K2ServerDriverSetup(); // Refresh
+                    Interfacing.ShowToast(
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"),
+                        true); // High priority - it's probably a server failure
+
+                    Interfacing.ShowVrToast(
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
+                }
+            }
         }
 
         // Update the internal version
         VersionLabel.Text = $"v{AppData.K2InternalVersion}";
-
-        // Try auto-spawning trackers if stated so
-        if (!Shared.General.GeneralTabSetupFinished && // If first-time
-            Interfacing.IsServerDriverPresent && // If the driver's ok
-            AppData.Settings.AutoSpawnEnabledJoints) // If autospawn
-        {
-            if (await Interfacing.SpawnEnabledTrackers())
-            {
-                // Mark as spawned
-                ToggleTrackersButton.IsChecked = true;
-                CalibrationButton.IsEnabled = true;
-            }
-
-            // Cry about it
-            else
-            {
-                Interfacing.ServerDriverFailure = true; // WAAAAAAA
-                Interfacing.K2ServerDriverSetup(); // Refresh
-                Interfacing.ShowToast(
-                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
-                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"),
-                    true); // High priority - it's probably a server failure
-
-                Interfacing.ShowVrToast(
-                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
-                    Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
-            }
-        }
-
-        // Refresh the server status
-        await Interfacing.K2ServerDriverRefresh();
 
         // Update things
         Interfacing.UpdateServerStatus();
@@ -178,43 +176,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Reload tracking devices
         Logger.Info($"Force refreshing devices MVVM for page: '{GetType().FullName}'...");
         TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnPropertyChanged());
-
+        
         // Notify of the setup's end
+        OnPropertyChanged(); // Just everything
         Shared.General.GeneralTabSetupFinished = true;
-
-        // Setup the preview button
-        SetSkeletonVisibility(AppData.Settings.SkeletonPreviewEnabled);
-        SetSkeletonForce(AppData.Settings.ForceSkeletonPreview);
-
-        // Setup the freeze button
-        ToggleFreezeButton.IsChecked = Interfacing.IsTrackingFrozen;
-        FreezeOnlyLowerToggle.IsChecked = AppData.Settings.FreezeLowerBodyOnly;
-        ToggleFreezeButton.Content = Interfacing.LocalizedJsonString(
-            Interfacing.IsTrackingFrozen
-                ? "/GeneralPage/Buttons/Skeleton/Unfreeze"
-                : "/GeneralPage/Buttons/Skeleton/Freeze");
-
-        // Set up the co/re/disconnect button
-        if (!Interfacing.K2AppTrackersSpawned)
-        {
-            ToggleTrackersButton.IsChecked = false;
-            ToggleTrackersButton.Content =
-                Interfacing.LocalizedJsonString("/GeneralPage/Buttons/TrackersToggle/Connect");
-        }
-        else
-        {
-            ToggleTrackersButton.IsChecked = Interfacing.AppTrackersInitialized;
-            ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
-                Interfacing.AppTrackersInitialized
-                    ? "/GeneralPage/Buttons/TrackersToggle/Disconnect"
-                    : "/GeneralPage/Buttons/TrackersToggle/Reconnect");
-        }
-
-        // Set uop the skeleton toggle button
-        SkeletonToggleButton.Content = Interfacing.LocalizedJsonString(
-            AppData.Settings.SkeletonPreviewEnabled
-                ? "/GeneralPage/Buttons/Skeleton/Hide"
-                : "/GeneralPage/Buttons/Skeleton/Show");
     }
 
     private void NoCalibrationTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
@@ -1208,6 +1173,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
         Interfacing.CurrentAppState = "calibration_auto";
 
+        StartAutoCalibrationButton.IsEnabled = true;
         CalibrationPointsNumberBox.IsEnabled = true;
         CalibrationPointsNumberBox.Value = AppData.Settings.CalibrationPointsNumber;
 
@@ -1470,6 +1436,46 @@ public sealed partial class General : Page, INotifyPropertyChanged
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
+        // Setup boiler
+        Shared.General.GeneralTabSetupFinished = false;
+
+        // Setup the preview button
+        SetSkeletonVisibility(AppData.Settings.SkeletonPreviewEnabled);
+        SetSkeletonForce(AppData.Settings.ForceSkeletonPreview);
+
+        // Setup the freeze button
+        ToggleFreezeButton.IsChecked = Interfacing.IsTrackingFrozen;
+        FreezeOnlyLowerToggle.IsChecked = AppData.Settings.FreezeLowerBodyOnly;
+        ToggleFreezeButton.Content = Interfacing.LocalizedJsonString(
+            Interfacing.IsTrackingFrozen
+                ? "/GeneralPage/Buttons/Skeleton/Unfreeze"
+                : "/GeneralPage/Buttons/Skeleton/Freeze");
+
+        // Set up the co/re/disconnect button
+        if (!Interfacing.K2AppTrackersSpawned)
+        {
+            ToggleTrackersButton.IsChecked = false;
+            ToggleTrackersButton.Content =
+                Interfacing.LocalizedJsonString("/GeneralPage/Buttons/TrackersToggle/Connect");
+        }
+        else
+        {
+            ToggleTrackersButton.IsChecked = Interfacing.AppTrackersInitialized;
+            ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
+                Interfacing.AppTrackersInitialized
+                    ? "/GeneralPage/Buttons/TrackersToggle/Disconnect"
+                    : "/GeneralPage/Buttons/TrackersToggle/Reconnect");
+        }
+
+        // Set uop the skeleton toggle button
+        SkeletonToggleButton.Content = Interfacing.LocalizedJsonString(
+            AppData.Settings.SkeletonPreviewEnabled
+                ? "/GeneralPage/Buttons/Skeleton/Hide"
+                : "/GeneralPage/Buttons/Skeleton/Show");
+
+        // Setup end
+        Shared.General.GeneralTabSetupFinished = true;
     }
 }
 

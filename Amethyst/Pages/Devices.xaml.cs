@@ -122,47 +122,6 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
     private async Task Page_LoadedHandler()
     {
-        Titles_Devices.Text = Interfacing.LocalizedJsonString("/DevicesPage/Titles/Devices");
-        Titles_DeviceStatus.Text = Interfacing.LocalizedJsonString("/DevicesPage/Titles/DeviceStatus");
-        ReconnectDeviceButton.Content = Interfacing.LocalizedJsonString("/DevicesPage/Buttons/Reconnect");
-        DisconnectDeviceButton.Content = Interfacing.LocalizedJsonString("/DevicesPage/Buttons/Disconnect");
-        DeselectDeviceButton.Content = Interfacing.LocalizedJsonString("/DevicesPage/Buttons/Deselect");
-        OpenDocsButton.Content = Interfacing.LocalizedJsonString("/DevicesPage/Buttons/ViewDocs");
-        OpenDiscordButton.Content = Interfacing.LocalizedJsonString("/DevicesPage/Buttons/JoinDiscord");
-        Titles_SetAsDevice.Text = Interfacing.LocalizedJsonString("/DevicesPage/Titles/SetAsDevice");
-        SetThisDeviceAsButton.Content = Interfacing.LocalizedJsonString("/DevicesPage/Buttons/SetAs/Header");
-        SetAsBaseButton.Content = Interfacing.LocalizedJsonString("/DevicesPage/Buttons/SetAs/Base");
-        SetAsOverrideButton.Content = Interfacing.LocalizedJsonString("/DevicesPage/Buttons/SetAs/Override");
-        Titles_DeviceHasNoJoints.Text = Interfacing.LocalizedJsonString("/DevicesPage/Titles/DeviceHasNoJoints");
-        DeviceEntryView_Base_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Base");
-        DeviceEntryView_Override_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Override");
-        DeviceEntryView_Error_Text.Text = Interfacing.LocalizedJsonString("/DevicesPage/Badges/Devices/Error");
-        DevicesListTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip8/Title");
-        DevicesListTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip8/Content");
-        DevicesListTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        DevicesListTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
-        DeviceStatusTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip9/Title");
-        DeviceStatusTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip9/Content");
-        DeviceStatusTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        DeviceStatusTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
-        DeviceControlsTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip10/Title");
-        DeviceControlsTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip10/Content");
-        DeviceControlsTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        DeviceControlsTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Prev");
-        Manage_Device_Plugins_Open.Content = Interfacing.LocalizedJsonString("/DevicesPage/Devices/Manager/Open");
-        Manage_Device_Plugins_Title.Text = Interfacing.LocalizedJsonString("/DevicesPage/Devices/Manager/Title");
-        DismissOverrideTipNoJointsButton.Content =
-            Interfacing.LocalizedJsonString("/DevicesPage/Buttons/NoJoints/Dismiss");
-
-        ToolTipService.SetToolTip(DeselectDeviceButton,
-            Interfacing.LocalizedJsonString("/DevicesPage/Buttons/Deselect/ToolTip"));
-        ToolTipService.SetToolTip(SetThisDeviceAsButton,
-            Interfacing.LocalizedJsonString("/DevicesPage/Buttons/SetAs/Header/ToolTip"));
-        ToolTipService.SetToolTip(SetAsBaseButton,
-            Interfacing.LocalizedJsonString("/DevicesPage/Buttons/SetAs/Base/ToolTip"));
-        ToolTipService.SetToolTip(SetAsOverrideButton,
-            Interfacing.LocalizedJsonString("/DevicesPage/Buttons/SetAs/Override/ToolTip"));
-
         // Reconnect and update the status here
         await Shared.Devices.ReloadSelectedDevice(true);
 
@@ -521,12 +480,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     public List<AppTracker> AdditionalTrackers => AppData.Settings.TrackersVector.Count > 6
         ? AppData.Settings.TrackersVector.ToArray()[7..].ToList()
         : new List<AppTracker>(); // Dummy list with no items (at least not null)
-
-    private string GetResourceString(string key)
-    {
-        return Interfacing.LocalizedJsonString(key);
-    }
-
+    
     public Visibility CombineVisibility(Visibility v1, Visibility v2, Visibility v3)
     {
         return new[] { v1, v2, v3 }.Contains(Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
