@@ -197,7 +197,7 @@
     "/DevicesPage/Titles/Check/Position": "Position",
     "/DevicesPage/Titles/CurrentDevice": "Currently Tracking",
     "/DevicesPage/Titles/DeviceBase": "Device:",
-    "/DevicesPage/Titles/DeviceHasNoJoints": "This device doesn't provide any joints\nYou won't be able to use it as an override.",
+    "/DevicesPage/Titles/DeviceHasNoJoints": "This device doesn't provide any joints\nYou won't be able to set or use it!",
     "/DevicesPage/Titles/DeviceOverride": "Override:",
     "/DevicesPage/Titles/Devices": "Devices",
     "/DevicesPage/Titles/DeviceSettings": "Device-Provided Settings",

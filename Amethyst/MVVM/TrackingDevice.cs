@@ -10,8 +10,13 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Runtime.Loader;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Amethyst.Classes;
 using Amethyst.Utils;
+using Windows.Storage;
+using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
 
@@ -114,12 +119,18 @@ public static class ICollectionExtensions
 {
     public static bool AddPlugin<T>(this ICollection<T> collection, DirectoryInfo item) where T : ComposablePartCatalog
     {
+        // Delete the vendor plugin contract, just in case
+        item.GetFiles("Amethyst.Plugins.Contract.dll").FirstOrDefault()?.Delete();
+
+        // Loop over all the files, load into a separate appdomain/context
+        var loadContext = new AssemblyLoadContext(item.FullName);
         foreach (var fileInfo in item.GetFiles("*.dll"))
             try
             {
-                var assemblyFile = Assembly.LoadFrom(fileInfo.FullName);
+                var assemblyFile = loadContext.LoadFromAssemblyPath(fileInfo.FullName);
                 var assemblyCatalog = new AssemblyCatalog(assemblyFile);
 
+                // Check if it's the plugin we're searching for
                 if (!assemblyCatalog.Parts.Any(x => x.ExportDefinitions
                         .Any(y => y.ContractName == typeof(ITrackingDevice).FullName))) continue;
 
@@ -133,7 +144,7 @@ public static class ICollectionExtensions
             }
             catch (Exception e)
             {
-                Logger.Error($"Loading {fileInfo} failed with an exception: Message: {e.Message}" +
+                Logger.Error($"Loading {fileInfo} failed with an exception: Message: {e.Message} " +
                              "Probably some assembly referenced by this plugin is missing.");
             }
 
@@ -203,8 +214,10 @@ public class PluginHost : IAmethystHost
     }
 
     // Request a refresh of the status/name/etc. interface
-    public void RefreshStatusInterface() => 
+    public void RefreshStatusInterface()
+    {
         Interfacing.Plugins.RefreshApplicationInterface();
+    }
 
     // Get Amethyst UI language
     public string LanguageCode => AppData.Settings.AppLanguage;
@@ -298,7 +311,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         }
     }
 
-    public string ErrorText => Interfacing.LocalizedJsonString($"/DevicesPage/Devices/Manager/Labels/{(int)Status}");
+    public string ErrorText => LocalizedJsonString($"/DevicesPage/Devices/Manager/Labels/{(int)Status}");
 
     public string TrimString(string s, int l)
     {

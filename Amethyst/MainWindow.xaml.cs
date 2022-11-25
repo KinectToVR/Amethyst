@@ -37,6 +37,7 @@ using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using System.Xml.Linq;
 using System.Text.Json;
+using System.Runtime.Loader;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -283,11 +284,14 @@ public sealed partial class MainWindow : Window
         // Add the current assembly to support invoke method exports
         Logger.Info("Exporting the plugin host plugin...");
         catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
-
+        
         // Iterate over all directories in .\Plugins dir and add all Plugin* dirs to catalogs
         var pluginDirectoryList = Directory.EnumerateDirectories(
             Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "Plugins"),
             "*", SearchOption.TopDirectoryOnly).ToList();
+
+        AssemblyLoadContext.Default.LoadFromAssemblyPath(
+            Assembly.GetAssembly(typeof(ITrackingDevice))!.Location);
 
         // Search for local plugins
         Logger.Info("Searching for local devices now...");
@@ -331,6 +335,9 @@ public sealed partial class MainWindow : Window
         {
             // Match Imports with corresponding exports in all catalogs in the container
             using var container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
+
+            container.ComposeExportedValue(typeof(IAmethystHost));
+
             var plugins = container.GetExports<ITrackingDevice, ITrackingDeviceMetadata>().ToList();
             Logger.Info($"Found {plugins.Count} potentially valid plugins...");
 

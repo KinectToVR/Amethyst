@@ -16,7 +16,7 @@ namespace Amethyst.Classes;
 
 public static class TrackingDevices
 {
-    public static SortedDictionary<string, TrackingDevice> TrackingDevicesList = new();
+    public static readonly SortedDictionary<string, TrackingDevice> TrackingDevicesList = new();
 
     public static TrackingDevice GetTrackingDevice()
     {
@@ -88,6 +88,9 @@ public static class TrackingDevices
 
             // Split status and message by \n
             var message = StringUtils.SplitStatusString(currentDevice.DeviceStatusString);
+            if (message is null || message.Length < 3)
+                message = new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" };
+
             General.DeviceNameLabel.Text = currentDevice.Name;
             General.DeviceStatusLabel.Text = message[0];
             General.TrackingDeviceErrorLabel.Text = message[1];

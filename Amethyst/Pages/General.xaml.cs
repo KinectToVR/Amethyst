@@ -410,8 +410,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 AmethystSupport.Calibration.SVD(headPositions, hmdPositions);
 
             Logger.Info("Automatic calibration concluded!\n" +
-                        $"Head positions: {headPositions}\n" +
-                        $"HMD positions: {hmdPositions}\n" +
+                        $"Head positions: {headPositions.ToArray()}\n" +
+                        $"HMD positions: {hmdPositions.ToArray()}\n" +
                         $"Recovered t: {translation}\n" +
                         $"Recovered R: {rotation}");
 
