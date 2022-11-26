@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using AmethystSupport;
 
 namespace Amethyst.Classes;
 
@@ -22,8 +23,6 @@ public class AppTracker : INotifyPropertyChanged
 
     // Internal filters' data
     private Vector3 _kalmanPosition = new(0);
-
-    // LERP data's backup
     private Vector3 _lowPassPosition = new(0);
     private Vector3 _predictedPosition = new(0);
     private Vector3 _lerpPosition = new(0);
@@ -33,6 +32,9 @@ public class AppTracker : INotifyPropertyChanged
     private Quaternion _slerpSlowOrientation = new(0, 0, 0, 1);
     private Quaternion _lastSlerpOrientation = new(0, 0, 0, 1);
     private Quaternion _lastSlerpSlowOrientation = new(0, 0, 0, 1);
+
+    private readonly Filtering.KalmanFilter _kalmanFilter = new();
+    private readonly Filtering.LowPassFilter _lowPassFilter = new(7.2, .005);
 
     [JsonIgnore] public Vector3 PoseVelocity { get; set; } = new(0, 0, 0);
     [JsonIgnore] public Vector3 PoseAcceleration { get; set; } = new(0, 0, 0);
@@ -68,12 +70,7 @@ public class AppTracker : INotifyPropertyChanged
     // Position filter option
     private JointPositionTrackingOption _positionTrackingFilterOption =
         JointPositionTrackingOption.PositionTrackingFilterLerp;
-
-    public AppTracker()
-    {
-        InitializeFilters();
-    }
-
+    
     // Does the managing device request no pos filtering?
     private bool _noPositionFilteringRequested = false;
 
@@ -196,11 +193,7 @@ public class AppTracker : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-
-    // Internal position filters
-    //private LowPassFilter[] _lowPassFilter = new LowPassFilter[3];
-    //private KalmanFilter _kalmanFilter = new KalmanFilter();
-
+    
     public event PropertyChangedEventHandler PropertyChanged;
 
     // Get filtered data
@@ -424,19 +417,28 @@ public class AppTracker : INotifyPropertyChanged
 
         return trackerBase;
     }
-
-    public void InitializeFilters()
-    {
-        // Low pass filter initialization
-
-        // Kalman filter initialization
-    }
-
+    
     public void UpdateFilters()
     {
-        // Low pass filter initialization
+        // Update LowPass and Kalman filters
+        _lowPassPosition = _lowPassFilter.Update(Position);
+        _kalmanPosition = _kalmanFilter.Update(Position);
 
-        // Kalman filter initialization
+        // Update the LERP (mix) filter
+        _lerpPosition = Vector3.Lerp(_lastLerpPosition, Position, 0.31f);
+        _lastLerpPosition = _lerpPosition; // Backup the position
+        
+        // Update the standard SLERP filter
+        _slerpOrientation = Quaternion.Slerp(
+            Quaternion.Normalize(_lastSlerpOrientation), 
+            Quaternion.Normalize(Orientation), 0.25f);
+        _lastSlerpOrientation = _slerpOrientation; // Backup
+
+        // Update the 'slower' SLERP filter
+        _slerpSlowOrientation = Quaternion.Slerp(
+            Quaternion.Normalize(_lastSlerpSlowOrientation),
+            Quaternion.Normalize(Orientation), 0.15f);
+        _lastSlerpSlowOrientation = _slerpSlowOrientation; // Backup
     }
 
     public TrackedJoint GetTrackedJoint()
