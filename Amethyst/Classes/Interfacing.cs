@@ -316,35 +316,7 @@ public static class Interfacing
             // ignored
         }
     }
-
-    public static void CheckDisabledJoints()
-    {
-        // Ditch this if not loaded yet
-        if (Shared.Devices.JointExpanderHostStackPanel is null) return;
-        //Shared.Devices.DevicesJointsSetupPending = true;
-
-        // Optionally fix combos for disabled trackers -> joint selectors for base
-        //foreach (const auto&expander : jointSelectorExpanders)
-        //for (std::shared_ptr<JointSelectorRow> & row : *expander->JointSelectorRows())
-        //{
-        //    Helpers::SetComboBoxIsEnabled_Safe(
-        //        row->TrackerCombo(),
-        //        row->Tracker()->data_isActive);
-
-        //    if (!row->Tracker()->data_isActive)
-        //        Helpers::SelectComboBoxItem_Safe(
-        //            row->TrackerCombo(), -1); // Placeholder
-        //}
-
-        //// Optionally fix combos for disabled trackers -> joint selectors for override
-        //for (const auto&expander : overrideSelectorExpanders)
-        //expander->UpdateIsEnabled();
-
-        throw new NotImplementedException("MVVM");
-
-        // Shared.Devices.DevicesJointsSetupPending = false;
-    }
-
+    
     // Controllers' ID's (vr::k_unTrackedDeviceIndexInvalid for non-existent)
     public static (uint Left, uint Right) VrControllerIndexes;
 

@@ -392,7 +392,7 @@ public class AppSettings : INotifyPropertyChanged
             }
 
             // ReSharper disable once InvertIf | Override GUID check
-            if (appTracker.IsOverriden)
+            if (appTracker.IsOverridden)
             {
                 Logger.Info($"Checking if tracker {appTracker.Serial} override " +
                             $"({appTracker.OverrideGuid}) exists in loaded plugins...");

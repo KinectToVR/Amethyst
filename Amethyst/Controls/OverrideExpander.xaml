@@ -91,7 +91,7 @@
                                 HorizontalAlignment="Right" VerticalAlignment="Center"
                                 Margin="0,0,-12,-10" Width="17" Height="17"
                                 ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/DevicesPage/ToolTips/Overrides/Overlapping'), Mode=OneWay}"
-                                Opacity="{x:Bind BoolToOpacity(IsOverridenByOtherDevice)}">
+                                Opacity="{x:Bind BoolToOpacity(IsOverriddenByOtherDevice)}">
                                 <InfoBadge.OpacityTransition>
                                     <ScalarTransition />
                                 </InfoBadge.OpacityTransition>

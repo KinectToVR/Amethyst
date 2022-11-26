@@ -574,7 +574,7 @@ public class AppTracker : INotifyPropertyChanged
             OverrideGuid = Shared.Devices.SelectedTrackingDeviceGuid;
 
             // Enable at least 1 override
-            if (!IsOverriden)
+            if (!IsOverridden)
                 IsPositionOverridden = true;
 
             OnPropertyChanged(); // All
@@ -590,7 +590,11 @@ public class AppTracker : INotifyPropertyChanged
     [JsonIgnore] public bool IsManuallyManaged => !IsAutoManaged;
 
     // IsPositionOverridden || IsOrientationOverridden
-    [JsonIgnore] public bool IsOverriden => IsPositionOverridden || IsOrientationOverridden;
+    [JsonIgnore] public bool IsOverridden => IsPositionOverridden || IsOrientationOverridden;
+
+    // IsPositionOverridden, IsOrientationOverridden
+    [JsonIgnore] public (bool Position, bool Orientation) IsOverriddenPair 
+        => (IsPositionOverridden, IsOrientationOverridden);
 
     public double BoolToOpacity(bool v)
     {
@@ -635,7 +639,7 @@ public class AppTracker : INotifyPropertyChanged
         }
     }
 
-    [JsonIgnore] public bool IsOverridenByOtherDevice => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid;
+    [JsonIgnore] public bool IsOverriddenByOtherDevice => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid;
 
     public bool IsManagedBy(string guid)
     {

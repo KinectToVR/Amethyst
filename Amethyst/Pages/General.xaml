@@ -1506,7 +1506,8 @@
             <!--No Skeleton-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                <StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                            x:Name="NoSkeletonNotice" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
                     </StackPanel.OpacityTransition>
@@ -1526,7 +1527,8 @@
             <!--Skeleton Disabled-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                            x:Name="PreviewDisabledNotice" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
                     </StackPanel.OpacityTransition>
@@ -1546,7 +1548,8 @@
             <!--Outta focus-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                            x:Name="OutOfFocusNotice" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
                     </StackPanel.OpacityTransition>
@@ -1566,7 +1569,8 @@
             <!--Dashboard is closed-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-10,0,0">
+                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                            x:Name="DashboardClosedNotice" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
                     </StackPanel.OpacityTransition>
@@ -1583,7 +1587,8 @@
                 </StackPanel>
             </Viewbox>
 
-            <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,0,20,20"
+            <StackPanel Orientation="Vertical" x:Name="TrackingStateLabelsPanel"
+                        Grid.Column="1" Margin="0,0,20,20"
                         Opacity="0.0" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                 <StackPanel.OpacityTransition>
                     <ScalarTransition />

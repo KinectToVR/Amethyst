@@ -323,7 +323,7 @@ public static class TrackingDevices
     {
         return AppData.Settings.OverrideDevicesGuidMap.Contains(guid);
     }
-
+    
     public enum PluginLoadError
     {
         Unknown, // We literally don't know what's happened

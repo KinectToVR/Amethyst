@@ -71,7 +71,7 @@
                                 Background="{ThemeResource SystemFillColorAttentionBrush}"
                                 HorizontalAlignment="Right" VerticalAlignment="Center"
                                 Margin="0,0,-12,-10" Width="17" Height="17"
-                                Opacity="{x:Bind BoolToOpacity(IsOverriden)}">
+                                Opacity="{x:Bind BoolToOpacity(IsOverridden)}">
                                 <InfoBadge.OpacityTransition>
                                     <ScalarTransition />
                                 </InfoBadge.OpacityTransition>

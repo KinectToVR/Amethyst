@@ -597,7 +597,7 @@ public static class Main
             // which are overridden in any way (pos || ori)
             // and are managed by the current override device
             foreach (var tracker in AppData.Settings.TrackersVector
-                         .Where(tracker => tracker.IsOverriden &&
+                         .Where(tracker => tracker.IsOverridden &&
                                            tracker.OverrideGuid == device.Guid))
             {
                 // Compute flip for this one joint

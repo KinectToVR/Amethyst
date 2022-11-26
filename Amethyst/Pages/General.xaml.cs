@@ -26,6 +26,9 @@ using static Amethyst.Classes.Shared.TeachingTips;
 using System.Xml.Linq;
 using System.Threading;
 using Microsoft.UI.Xaml.Markup;
+using Microsoft.UI.Xaml.Shapes;
+using Path = System.IO.Path;
+using Windows.ApplicationModel.Calls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -176,7 +179,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Reload tracking devices
         Logger.Info($"Force refreshing devices MVVM for page: '{GetType().FullName}'...");
         TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnPropertyChanged());
-        
+
         // Notify of the setup's end
         OnPropertyChanged(); // Just everything
         Shared.General.GeneralTabSetupFinished = true;
@@ -233,10 +236,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Don't even care if we're not set up yet
         if (!Shared.General.GeneralTabSetupFinished) return;
 
-        var node = args.InvokedItem as TrackingDevice;
-
         // Block erred device selects
-        if (node.StatusError)
+        if (args.InvokedItem is not TrackingDevice node || node.StatusError)
         {
             // Set the correct target
             NoCalibrationTeachingTip.Target =
@@ -817,7 +818,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         ToggleTrackersTeachingTip.IsOpen = false;
 
         // Show the previous one
-        Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = true;
+        MainPage.InitializerTeachingTip.IsOpen = true;
     }
 
     private void ToggleTrackersTeachingTip_CloseButtonClick(TeachingTip sender, object args)
@@ -861,8 +862,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
         await Task.Delay(500);
 
         // Show the next tip
-        Shared.TeachingTips.SettingsPage.ManageTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.SettingsPage.ManageTrackersTeachingTip.IsOpen = true;
+        SettingsPage.ManageTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        SettingsPage.ManageTrackersTeachingTip.IsOpen = true;
     }
 
     private async void OpenDiscordButton_Click(object sender, RoutedEventArgs e)
@@ -961,9 +962,214 @@ public sealed partial class General : Page, INotifyPropertyChanged
         }
     }
 
+    private List<Line> BoneLines { get; set; } = new(24);
+    private List<Ellipse> JointPoints { get; set; } = new(60);
+
+    private bool _skeletonDrawingCanvassLoadedOnce = false;
+    private bool _isCurrentWindowActiveBackup = false;
+
     private void SkeletonDrawingCanvas_Loaded(object sender, RoutedEventArgs e)
     {
-        // TODO RENDER SKELETON
+        // Don't handle reloads
+        if (_skeletonDrawingCanvassLoadedOnce) return;
+        SkeletonDrawingCanvas.Children.Clear();
+
+        // Manual init is necessary (XAML something something)
+        for (var i = 0; i < BoneLines.Capacity; i++)
+        {
+            BoneLines.Add(new Line());
+            SkeletonDrawingCanvas.Children.Add(BoneLines[i]);
+        }
+
+        // Manual init is necessary (XAML something something)
+        for (var i = 0; i < JointPoints.Capacity; i++)
+        {
+            JointPoints.Add(new Ellipse());
+            SkeletonDrawingCanvas.Children.Add(JointPoints[i]);
+        }
+        
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
+        timer.Tick += (_, _) =>
+        {
+            var windowActive = Interfacing.IsCurrentWindowActive();
+            var dashboardVisible = Interfacing.IsDashboardOpen();
+
+            if (_isCurrentWindowActiveBackup != windowActive &&
+                Shared.Main.AppTitleLabel is not null)
+            {
+                Shared.Main.AppTitleLabel.Opacity = windowActive ? 1.0 : 0.5;
+                _isCurrentWindowActiveBackup = windowActive;
+            }
+
+            // If we've disabled the preview
+            if (!AppData.Settings.SkeletonPreviewEnabled)
+            {
+                // Hide the UI, only show that viewing is disabled
+                (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (0, 0);
+                (NoSkeletonNotice.Opacity, OutOfFocusNotice.Opacity) = (0, 0);
+                (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity) = (0, 1);
+                return; // Nothing more to do anyway
+            }
+
+            // If the preview isn't forced
+            if (!AppData.Settings.ForceSkeletonPreview)
+            {
+                // If the dashboard's closed
+                if (!dashboardVisible)
+                {
+                    // Hide the UI, only show that viewing is disabled
+                    (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (0, 0);
+                    (NoSkeletonNotice.Opacity, OutOfFocusNotice.Opacity) = (0, 0);
+                    (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity) = (1, 0);
+                    return; // Nothing more to do anyway
+                }
+
+                // If we're out of focus (skip if we're gonna do a VROverlay)
+                if (!windowActive)
+                {
+                    // Hide the UI, only show that viewing is disabled
+                    (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (0, 0);
+                    (NoSkeletonNotice.Opacity, OutOfFocusNotice.Opacity) = (0, 1);
+                    (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity) = (0, 0);
+                    return; // Nothing more to do anyway
+                }
+            }
+
+            // Else hide the notices
+            (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity,
+                OutOfFocusNotice.Opacity) = (0, 0, 0); // Only these for now
+
+            var trackingDevice = TrackingDevices.GetTrackingDevice();
+            var joints = trackingDevice.TrackedJoints;
+
+            // Okay to do this here => the preview is forced on calibration
+            StartAutoCalibrationButton.IsEnabled =
+                trackingDevice.IsSkeletonTracked
+                && !_calibrationPending && !_autoCalibration_StillPending;
+
+            if (!trackingDevice.IsSkeletonTracked)
+            {
+                // Hide the UI, only show that viewing is disabled
+                (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (0, 0);
+                NoSkeletonNotice.Opacity = 1.0; // Say it
+                return; // Nothing more to do anyway
+            }
+
+            // Show the UI
+            (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (1, 1);
+            NoSkeletonNotice.Opacity = 0.0; // Say it
+
+            // Clear visibilities
+            BoneLines.ForEach(x => x.Visibility = Visibility.Collapsed);
+            JointPoints.ForEach(x => x.Visibility = Visibility.Collapsed);
+
+            // Draw the skeleton with from-to lines
+            // Head
+            SkBone(BoneLines[0], JointPoints[0], ref joints,
+                TrackedJointType.JointHead, TrackedJointType.JointNeck);
+            SkBone(BoneLines[1], JointPoints[1], ref joints,
+                TrackedJointType.JointNeck, TrackedJointType.JointSpineShoulder);
+
+            // Upper left limb
+            SkBone(BoneLines[2], JointPoints[2], ref joints,
+                TrackedJointType.JointSpineShoulder, TrackedJointType.JointShoulderLeft);
+            SkBone(BoneLines[3], JointPoints[3], ref joints,
+                TrackedJointType.JointShoulderLeft, TrackedJointType.JointElbowLeft);
+            SkBone(BoneLines[4], JointPoints[4], ref joints,
+                TrackedJointType.JointElbowLeft, TrackedJointType.JointWristLeft);
+            SkBone(BoneLines[5], JointPoints[5], ref joints,
+                TrackedJointType.JointWristLeft, TrackedJointType.JointHandLeft);
+            SkBone(BoneLines[6], JointPoints[6], ref joints,
+                TrackedJointType.JointHandLeft, TrackedJointType.JointHandTipLeft);
+            SkBone(BoneLines[7], JointPoints[7], ref joints,
+                TrackedJointType.JointHandLeft, TrackedJointType.JointThumbLeft);
+
+            // Upper right limb
+            SkBone(BoneLines[8], JointPoints[8], ref joints,
+                TrackedJointType.JointSpineShoulder, TrackedJointType.JointShoulderRight);
+            SkBone(BoneLines[9], JointPoints[9], ref joints,
+                TrackedJointType.JointShoulderRight, TrackedJointType.JointElbowRight);
+            SkBone(BoneLines[10], JointPoints[10], ref joints,
+                TrackedJointType.JointElbowRight, TrackedJointType.JointWristRight);
+            SkBone(BoneLines[11], JointPoints[11], ref joints,
+                TrackedJointType.JointWristRight, TrackedJointType.JointHandRight);
+            SkBone(BoneLines[12], JointPoints[12], ref joints,
+                TrackedJointType.JointHandRight, TrackedJointType.JointHandTipRight);
+            SkBone(BoneLines[13], JointPoints[13], ref joints,
+                TrackedJointType.JointHandRight, TrackedJointType.JointThumbRight);
+
+            // Spine
+            SkBone(BoneLines[14], JointPoints[14], ref joints,
+                TrackedJointType.JointSpineShoulder, TrackedJointType.JointSpineMiddle);
+            SkBone(BoneLines[15], JointPoints[15], ref joints,
+                TrackedJointType.JointSpineMiddle, TrackedJointType.JointSpineWaist);
+
+            // Lower left limb
+            SkBone(BoneLines[16], JointPoints[16], ref joints,
+                TrackedJointType.JointSpineWaist, TrackedJointType.JointHipLeft);
+            SkBone(BoneLines[17], JointPoints[17], ref joints,
+                TrackedJointType.JointHipLeft, TrackedJointType.JointKneeLeft);
+            SkBone(BoneLines[18], JointPoints[18], ref joints,
+                TrackedJointType.JointKneeLeft, TrackedJointType.JointAnkleLeft);
+            SkBone(BoneLines[19], JointPoints[19], ref joints,
+                TrackedJointType.JointAnkleLeft, TrackedJointType.JointFootLeft);
+
+            // Lower right limb
+            SkBone(BoneLines[20], JointPoints[20], ref joints,
+                TrackedJointType.JointSpineWaist, TrackedJointType.JointHipRight);
+            SkBone(BoneLines[21], JointPoints[21], ref joints,
+                TrackedJointType.JointHipRight, TrackedJointType.JointKneeRight);
+            SkBone(BoneLines[22], JointPoints[22], ref joints,
+                TrackedJointType.JointKneeRight, TrackedJointType.JointAnkleRight);
+            SkBone(BoneLines[23], JointPoints[23], ref joints,
+                TrackedJointType.JointAnkleRight, TrackedJointType.JointFootRight);
+
+            // Waist
+            SkPoint(JointPoints[24], joints.FirstOrDefault(x =>
+                    x.Role == TrackedJointType.JointSpineWaist, null),
+                AppData.Settings.TrackersVector[0].IsOverriddenPair);
+
+            // Left Foot
+            SkPoint(JointPoints[25], joints.FirstOrDefault(x =>
+                    x.Role == TrackedJointType.JointAnkleLeft, null),
+                AppData.Settings.TrackersVector[1].IsOverriddenPair);
+
+            // Right Foot
+            SkPoint(JointPoints[26], joints.FirstOrDefault(x =>
+                    x.Role == TrackedJointType.JointAnkleRight, null),
+                AppData.Settings.TrackersVector[2].IsOverriddenPair);
+
+            // Left Elbow
+            SkPoint(JointPoints[27], joints.FirstOrDefault(x =>
+                    x.Role == TrackedJointType.JointElbowLeft, null),
+                AppData.Settings.TrackersVector[3].IsOverriddenPair);
+
+            // Right Elbow
+            SkPoint(JointPoints[28], joints.FirstOrDefault(x =>
+                    x.Role == TrackedJointType.JointElbowRight, null),
+                AppData.Settings.TrackersVector[4].IsOverriddenPair);
+
+            // Left Knee
+            SkPoint(JointPoints[29], joints.FirstOrDefault(x =>
+                    x.Role == TrackedJointType.JointKneeLeft, null),
+                AppData.Settings.TrackersVector[5].IsOverriddenPair);
+
+            // Right Knee
+            SkPoint(JointPoints[30], joints.FirstOrDefault(x =>
+                    x.Role == TrackedJointType.JointKneeRight, null),
+                AppData.Settings.TrackersVector[6].IsOverriddenPair);
+
+            // The rest
+            var jointPointIndex = 31;
+            foreach (var trackedJoint in joints.Where(x => x.Role == TrackedJointType.JointManual))
+            {
+                if (JointPoints.Count <= jointPointIndex) return; // Too much, oof!
+                SkPoint(JointPoints[jointPointIndex++], trackedJoint, (false, false));
+            }
+        };
+
+        timer.Start();
+        _skeletonDrawingCanvassLoadedOnce = true;
     }
 
     private void SkeletonToggleButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
@@ -1080,9 +1286,16 @@ public sealed partial class General : Page, INotifyPropertyChanged
         }
     }
 
-    private void SkPoint(Microsoft.UI.Xaml.Shapes.Ellipse ellipse,
-        TrackedJoint joint, (bool Position, bool Orientation) overrideStatus)
+    private void SkPoint(Ellipse ellipse, TrackedJoint joint,
+        (bool Position, bool Orientation) overrideStatus)
     {
+        // Give up, no such joint
+        if (joint is null)
+        {
+            ellipse.Visibility = Visibility.Collapsed;
+            return;
+        }
+
         const double matWidthDefault = 700, matHeightDefault = 600;
         double matWidth = SkeletonDrawingCanvas.ActualWidth,
             matHeight = SkeletonDrawingCanvas.ActualHeight;
@@ -1098,9 +1311,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Compose perspective constants, make it 70%
         var multiply = .7 * (normalDistance /
-                             (joint.JointPosition.Z > 0.0
-                                 ? joint.JointPosition.Z
-                                 : 3.0));
+                             (joint.JointPosition.Z > 0.0 ? joint.JointPosition.Z : 3.0));
 
         var a = new AcrylicBrush
         {
@@ -1128,10 +1339,12 @@ public sealed partial class General : Page, INotifyPropertyChanged
         {
             // Both
             true when overrideStatus.Orientation => new SolidColorBrush(Microsoft.UI.Colors.BlueViolet),
-            // Rotation
-            true => new SolidColorBrush(Microsoft.UI.Colors.DarkOliveGreen),
             // Position
-            false => new SolidColorBrush(Microsoft.UI.Colors.IndianRed)
+            true => new SolidColorBrush(Microsoft.UI.Colors.DarkOliveGreen),
+            // Orientation
+            false when overrideStatus.Orientation => new SolidColorBrush(Microsoft.UI.Colors.IndianRed),
+            // None
+            _ => null
         };
 
         // Select the smaller scale to preserve somewhat uniform skeleton scaling
@@ -1155,6 +1368,83 @@ public sealed partial class General : Page, INotifyPropertyChanged
         );
 
         ellipse.Visibility = Visibility.Visible;
+    }
+
+    private bool SkLine(Line line, TrackedJoint fromJoint, TrackedJoint toJoint)
+    {
+        // Give up, no such bone/joints
+        if (fromJoint is null || toJoint is null)
+        {
+            line.Visibility = Visibility.Collapsed;
+            return false;
+        }
+
+        const double matWidthDefault = 700, matHeightDefault = 600;
+        double matWidth = SkeletonDrawingCanvas.ActualWidth,
+            matHeight = SkeletonDrawingCanvas.ActualHeight;
+
+        // Eventually fix sizes
+        if (matWidth < 1) matWidth = matWidthDefault;
+        if (matHeight < 1) matHeight = matHeightDefault;
+
+        // Where to scale by 1.0 in perspective
+        const double normalDistance = 3;
+        const double normalLineStrokeSize = 3;
+
+        // Compose perspective constants, make it 70%
+        var fromMultiply = .7 * (normalDistance /
+                                 (fromJoint.JointPosition.Z > 0.0 ? fromJoint.JointPosition.Z : 3.0));
+        var toMultiply = .7 * (normalDistance /
+                               (toJoint.JointPosition.Z > 0.0 ? toJoint.JointPosition.Z : 3.0));
+
+        line.StrokeThickness = normalLineStrokeSize;
+        if (fromJoint.TrackingState != TrackedJointState.StateTracked ||
+            toJoint.TrackingState != TrackedJointState.StateTracked)
+            line.Stroke = new AcrylicBrush
+            {
+                TintColor = new Windows.UI.ViewManagement.UISettings()
+                    .GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent)
+            };
+        else
+            line.Stroke = new SolidColorBrush(Microsoft.UI.Colors.White);
+
+        // Select the smaller scale to preserve somewhat uniform skeleton scaling
+        double sScaleW = matWidth / matWidthDefault,
+            sScaleH = matHeight / matHeightDefault;
+
+        // Move the line to the appropriate point
+        line.X1 = fromJoint.JointPosition.X * 300.0 *
+            Math.Min(sScaleW, sScaleH) * fromMultiply + matWidth / 2.0;
+        line.Y1 = fromJoint.JointPosition.Y * -300.0 *
+            Math.Min(sScaleW, sScaleH) * fromMultiply + matHeight / 3.0;
+
+        line.X2 = toJoint.JointPosition.X * 300.0 *
+            Math.Min(sScaleW, sScaleH) * toMultiply + matWidth / 2.0;
+        line.Y2 = toJoint.JointPosition.Y * -300.0 *
+            Math.Min(sScaleW, sScaleH) * toMultiply + matHeight / 3.0;
+
+        line.Visibility = Visibility.Visible;
+        return true; // All good
+    }
+
+    private void SkBone(Line line, Ellipse point,
+        ref List<TrackedJoint> joints,
+        TrackedJointType jointTypeStart,
+        TrackedJointType jointTypeEnd)
+    {
+        // Search for the desired joints
+        var fromJoint = joints.FirstOrDefault(
+            x => x.Role == jointTypeStart, null);
+        var toJoint = joints.FirstOrDefault(
+            x => x.Role == jointTypeEnd, null);
+
+        // Try drawing a full bone line
+        // Redirect to points if failed
+        if (SkLine(line, fromJoint, toJoint)) return;
+
+        // Auto-handles (hides) if null
+        SkPoint(point, fromJoint, (false, false));
+        SkPoint(point, toJoint, (false, false));
     }
 
     private void ExecuteAutomaticCalibration()
@@ -1403,31 +1693,31 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private void OffsetsControlPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if (!(sender as Pivot).IsLoaded) return;
+        if (!((sender as Pivot)?.IsLoaded ?? false)) return;
 
         if (_offsetsPageNavigated)
         {
             // The last item
-            if ((sender as Pivot).SelectedIndex == (sender as Pivot).Items.Count - 1)
+            if (((Pivot)sender).SelectedIndex == ((Pivot)sender).Items.Count - 1)
                 AppSounds.PlayAppSound(_previousOffsetPageIndex == 0
                     ? AppSounds.AppSoundType.MovePrevious
                     : AppSounds.AppSoundType.MoveNext);
 
             // The first item
-            else if ((sender as Pivot).SelectedIndex == 0)
-                AppSounds.PlayAppSound(_previousOffsetPageIndex == (sender as Pivot).Items.Count - 1
+            else if (((Pivot)sender).SelectedIndex == 0)
+                AppSounds.PlayAppSound(_previousOffsetPageIndex == ((Pivot)sender).Items.Count - 1
                     ? AppSounds.AppSoundType.MoveNext
                     : AppSounds.AppSoundType.MovePrevious);
 
             // Default
             else
-                AppSounds.PlayAppSound((sender as Pivot).SelectedIndex > _previousOffsetPageIndex
+                AppSounds.PlayAppSound(((Pivot)sender).SelectedIndex > _previousOffsetPageIndex
                     ? AppSounds.AppSoundType.MoveNext
                     : AppSounds.AppSoundType.MovePrevious);
         }
 
         // Cache
-        _previousOffsetPageIndex = (sender as Pivot).SelectedIndex;
+        _previousOffsetPageIndex = ((Pivot)sender).SelectedIndex;
         _offsetsPageNavigated = true;
     }
 
