@@ -135,7 +135,7 @@ public static class TrackingDevices
         CheckFlipSupport();
 
         // Force refresh pages
-
+        // TODO refresh without relaoding strings
     }
 
     public static void HandleDeviceRefresh(bool shouldReconnect)

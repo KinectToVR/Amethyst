@@ -28,6 +28,8 @@ using System.Reflection;
 using System.Threading;
 using Amethyst.MVVM;
 using System.ComponentModel;
+using Amethyst.Plugins.Contract;
+using Google.Protobuf.WellKnownTypes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -64,14 +66,11 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Shared.Settings.ExternalFlipStatusStackPanel = ExtFlipStatusStackPanel;
         Shared.Settings.FlipDropDownContainer = FlipDropDownContainer;
 
-        Shared.TeachingTips.SettingsPage.AutoStartTeachingTip = AutoStartTeachingTip;
-        Shared.TeachingTips.SettingsPage.ManageTrackersTeachingTip = ManageTrackersTeachingTip;
+        SettingsPage.AutoStartTeachingTip = AutoStartTeachingTip;
+        SettingsPage.ManageTrackersTeachingTip = ManageTrackersTeachingTip;
 
         Logger.Info($"Registering settings MVVM for page: '{GetType().FullName}'...");
         DataContext = AppData.Settings; // Set this settings instance as the context
-
-        Logger.Info($"Registering trackers MVVM for page: '{GetType().FullName}'...");
-        JointSettingsItemsRepeater.ItemsSource = AppData.Settings.TrackersVector;
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
@@ -189,7 +188,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     {
         // Don't react to pre-init signals
         if (!Shared.Settings.SettingsTabSetupFinished) return;
-        
+
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
     }
@@ -317,8 +316,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         PageMainScrollViewer.ScrollToVerticalOffset(0);
 
         // Show the next tip
-        Shared.TeachingTips.DevicesPage.DevicesListTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.DevicesPage.DevicesListTeachingTip.IsOpen = true;
+        DevicesPage.DevicesListTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        DevicesPage.DevicesListTeachingTip.IsOpen = true;
     }
 
     private void FlipToggle_Toggled(object sender, RoutedEventArgs e)
@@ -461,8 +460,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         await Task.Delay(500);
 
         // Show the next tip
-        Shared.TeachingTips.GeneralPage.StatusTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.GeneralPage.StatusTeachingTip.IsOpen = true;
+        GeneralPage.StatusTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        GeneralPage.StatusTeachingTip.IsOpen = true;
     }
 
     private async void ManageTrackersTeachingTip_CloseButtonClick(TeachingTip sender, object args)
@@ -692,7 +691,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
         Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
 
-        Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = true;
+        MainPage.InitializerTeachingTip.IsOpen = true;
         Interfacing.IsNuxPending = true;
     }
 
@@ -717,7 +716,6 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Read settings after reset
         AppData.Settings = new AppSettings(); // Reset settings
         AppData.Settings.SaveSettings(); // Save empty settings
-        AppData.Settings.ReadSettings(); // Reload empty settings
 
         /* Restart */
 
@@ -739,7 +737,10 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             await Interfacing.HandleAppExit(500);
 
             // Restart and exit with code 0
-            Process.Start(Interfacing.GetProgramLocation().FullName);
+            Process.Start(Interfacing.GetProgramLocation()
+                .FullName.Replace(".dll", ".exe"));
+
+            // Exit without re-handling everything
             Environment.Exit(0);
         }
 
@@ -905,5 +906,87 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
+    public List<AppTrackerEntry> ToggleableTrackerEntries => System.Enum.GetValues<TrackerType>()
+        // Pick all non-default (additional) trackers
+        .Where(x => x is not TrackerType.TrackerWaist and not
+            TrackerType.TrackerLeftFoot and not TrackerType.TrackerRightFoot and not
+            TrackerType.TrackerLeftKnee and not TrackerType.TrackerRightKnee and not
+            TrackerType.TrackerLeftElbow and not TrackerType.TrackerRightElbow)
+        // Convert to an entry, passing the filtered tracker role
+        .Select(x => new AppTrackerEntry { TrackerRole = x }).ToList();
+
+    private async void TrackerToggleMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        // Don't react to pre-init signals
+        if (!Shared.Settings.SettingsTabSetupFinished) return;
+
+        // Play a sound
+        AppSounds.PlayAppSound((sender as ToggleMenuFlyoutItem)!.IsChecked
+            ? AppSounds.AppSoundType.ToggleOn
+            : AppSounds.AppSoundType.ToggleOff);
+
+        // Notify of the setup end
+        Shared.Settings.SettingsTabSetupFinished = false;
+
+        // Find out who asked
+        var role = ((sender as ToggleMenuFlyoutItem)!
+            .DataContext as AppTrackerEntry)!.TrackerRole;
+        
+        // Create a new tracker
+        if ((sender as ToggleMenuFlyoutItem)!.IsChecked)
+        {
+            AppData.Settings.TrackersVector.Add(new AppTracker
+            {
+                Role = role,
+                Serial = TypeUtils.TrackerTypeRoleSerialDictionary[role]
+            });
+        }
+
+        // If the tracker was unchecked
+        else
+        {
+            // Find the removed tracker
+            var removedTracker = AppData.Settings.TrackersVector
+                .FirstOrDefault(x => x.Role == role, null);
+            if (removedTracker is null) return; // False alarm?
+
+            // Make actual changes
+            if (removedTracker.IsActive && Interfacing.AppTrackersInitialized)
+                await DriverClient.UpdateTrackerStates(new List<(TrackerType Role, bool State)>
+                        { (removedTracker.Role, false) });
+
+            await Task.Delay(20);
+            AppData.Settings.TrackersVector.Remove(removedTracker);
+
+            // If the tracker was on and then removed
+            if (removedTracker.IsActive)
+            {
+                // Show the notifications and rebuild (boiler-ed)
+                Shared.Settings.SettingsTabSetupFinished = true;
+                TrackingDevices.TrackersConfigChanged();
+                Shared.Settings.SettingsTabSetupFinished = false;
+            }
+        }
+
+        // Notify of the setup end
+        Shared.Settings.SettingsTabSetupFinished = true;
+        TrackingDevices.CheckFlipSupport();
+
+        AppData.Settings.CheckSettings();
+        AppData.Settings.SaveSettings();
+        AppData.Settings.OnPropertyChanged();
+
+        // Reload pages for the new changes
+        Shared.Semaphores.RequestInterfaceReload();
+
+        Logger.Info("Requesting a check for already-added trackers...");
+        Interfacing.AlreadyAddedTrackersScanRequested = true;
+        ToggleTrackersFlyout.Hide(); // Hide the flyout
+    }
+
+    private void PairsToggleMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
     }
 }

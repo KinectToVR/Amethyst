@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -29,7 +30,7 @@ public class AppSettings : INotifyPropertyChanged
     public uint AppTheme { get; set; }
 
     // Current joints
-    public List<AppTracker> TrackersVector { get; set; } = new();
+    public ObservableCollection<AppTracker> TrackersVector { get; set; } = new();
 
     public bool UseTrackerPairs { get; set; } = false; // Pair feet, elbows and knees
     private bool _checkForOverlappingTrackers = true; // Check for overlapping roles

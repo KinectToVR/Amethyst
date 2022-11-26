@@ -58,8 +58,8 @@ public static class TypeUtils
         { TrackerType.TrackerRightKnee, TrackedJointType.JointKneeRight },
         { TrackerType.TrackerWaist, TrackedJointType.JointSpineWaist },
         { TrackerType.TrackerChest, TrackedJointType.JointSpineMiddle },
-        { TrackerType.TrackerCamera, TrackedJointType.JointHead },
-        { TrackerType.TrackerKeyboard, TrackedJointType.JointHandRight }
+        { TrackerType.TrackerCamera, TrackedJointType.JointManual },
+        { TrackerType.TrackerKeyboard, TrackedJointType.JointManual }
     };
 
     public static SortedDictionary<TrackedJointType, TrackerType> JointTrackerTypeDictionary = new()

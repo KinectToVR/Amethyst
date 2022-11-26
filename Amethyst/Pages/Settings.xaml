@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:classes="using:Amethyst.Classes"
     xmlns:util="using:Amethyst.Utils"
+    xmlns:mvvm="using:Amethyst.MVVM"
     Loaded="Page_Loaded" NavigationCacheMode="Required"
     mc:Ignorable="d" Background="Transparent">
 
@@ -267,7 +268,8 @@
                                                       MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
                                         </Grid>
 
-                                        <AppBarButton IsCompact="True" Width="35" Height="65" Margin="5,17,0,0" x:Name="ExtFlipAppBarButton"
+                                        <AppBarButton IsCompact="True" Width="35" Height="65" Margin="5,17,0,0"
+                                                      x:Name="ExtFlipAppBarButton"
                                                       ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/SettingsPage/Elements/ExtFlipCalibration/ToolTip'), Mode=OneWay}"
                                                       IsEnabled="{Binding ElementName=ExternalFlipCheckBox, Path=IsChecked,TargetNullValue=False}">
                                             <AppBarButton.Flyout>
@@ -512,16 +514,17 @@
                         <TransitionCollection>
                             <EntranceThemeTransition />
                             <RepositionThemeTransition />
-                            --><!--<AddDeleteThemeTransition />-->
-                    <!--<ContentThemeTransition />--><!--
+                            <AddDeleteThemeTransition />
+                            <ContentThemeTransition />
                         </TransitionCollection>
                     </StackPanel.Transitions>-->
 
-                    <ItemsRepeater x:Name="JointSettingsItemsRepeater">
+                    <ItemsRepeater ItemsSource="{x:Bind classes:AppData.Settings.TrackersVector, Mode=OneWay}">
                         <DataTemplate x:DataType="classes:AppTracker">
                             <Grid>
                                 <Grid.Transitions>
                                     <TransitionCollection>
+                                        <ContentThemeTransition />
                                         <RepositionThemeTransition />
                                     </TransitionCollection>
                                 </Grid.Transitions>
@@ -550,6 +553,7 @@
                                           IsExpanded="{x:Bind IsTrackerExpanderOpen, Mode=TwoWay}"
                                           ExpandDirection="Down" HorizontalAlignment="Stretch"
                                           HorizontalContentAlignment="Stretch">
+
                                     <Expander.Content>
                                         <Grid Padding="0,-5">
                                             <Grid.ColumnDefinitions>
@@ -582,7 +586,7 @@
                                                 <ComboBoxItem
                                                     Content="{x:Bind util:Translator.Get.String('/SettingsPage/Filters/Position/Kalman'), Mode=OneWay}" />
                                                 <ComboBoxItem Visibility="Collapsed"
-                                                    Content="{x:Bind util:Translator.Get.String('/SettingsPage/Filters/Position/Prediction'), Mode=OneWay}" />
+                                                              Content="{x:Bind util:Translator.Get.String('/SettingsPage/Filters/Position/Prediction'), Mode=OneWay}" />
                                                 <ComboBoxItem
                                                     Content="{x:Bind util:Translator.Get.String('/SettingsPage/Filters/Position/Off'), Mode=OneWay}" />
                                             </ComboBox>
@@ -655,6 +659,24 @@
                                          ActionButtonClick="AddTrackersTeachingTip_ActionButtonClick"
                                          CloseButtonClick="AddTrackersTeachingTip_CloseButtonClick" />
                         </AppBarButton.Resources>
+
+                        <AppBarButton.Flyout>
+                            <Flyout x:Name="ToggleTrackersFlyout">
+                                <StackPanel Orientation="Vertical" Padding="-10">
+                                    <ItemsRepeater ItemsSource="{x:Bind ToggleableTrackerEntries, Mode=OneWay}">
+                                        <DataTemplate x:DataType="mvvm:AppTrackerEntry">
+                                            <ToggleMenuFlyoutItem Text="{x:Bind Name}" DataContext="{x:Bind}"
+                                                                  IsChecked="{x:Bind IsEnabled, Mode=OneWay}"
+                                                                  Click="TrackerToggleMenuFlyoutItem_Click"/>
+                                        </DataTemplate>
+                                    </ItemsRepeater>
+                                    <MenuFlyoutSeparator />
+                                    <ToggleMenuFlyoutItem
+                                        Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/TrackerPairs'), Mode=OneWay}"
+                                        x:Name="PairsToggleMenuFlyoutItem" Click="PairsToggleMenuFlyoutItem_Click" />
+                                </StackPanel>
+                            </Flyout>
+                        </AppBarButton.Flyout>
                     </AppBarButton>
 
                     <Button Grid.Column="1" Grid.Row="0" Padding="15,0" Height="40"

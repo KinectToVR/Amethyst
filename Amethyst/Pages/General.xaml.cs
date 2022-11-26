@@ -174,7 +174,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Reload offset values
         Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
-        AppData.Settings.TrackersVector.ForEach(x => x.OnPropertyChanged());
+        AppData.Settings.TrackersVector.ToList().ForEach(x => x.OnPropertyChanged());
 
         // Reload tracking devices
         Logger.Info($"Force refreshing devices MVVM for page: '{GetType().FullName}'...");
@@ -202,7 +202,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Reload offset values
         Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
-        AppData.Settings.TrackersVector.ForEach(x => x.OnPropertyChanged());
+        AppData.Settings.TrackersVector.ToList().ForEach(x => x.OnPropertyChanged());
 
         // Close the pane now
         OffsetsView.DisplayMode = SplitViewDisplayMode.Overlay;
@@ -724,7 +724,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Reload offset values
         Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
-        AppData.Settings.TrackersVector.ForEach(x => x.OnPropertyChanged());
+        AppData.Settings.TrackersVector.ToList().ForEach(x => x.OnPropertyChanged());
 
         // Open the pane now
         OffsetsView.DisplayMode = SplitViewDisplayMode.Inline;
@@ -991,6 +991,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
         timer.Tick += (_, _) =>
         {
+            if (Interfacing.IsExitingNow) return;
             var windowActive = Interfacing.IsCurrentWindowActive();
             var dashboardVisible = Interfacing.IsDashboardOpen();
 

@@ -256,7 +256,7 @@
 
                                 <Border Height="20" CornerRadius="3" Padding="5,0"
                                         Margin="0,0,15,-18"
-                                        Opacity="{x:Bind BoolToOpacity(StatusError), Mode=OneWay, FallbackValue=0.0}"
+                                        Opacity="{x:Bind BoolToOpacityMultiple(StatusError, IsUsed), Mode=OneWay, FallbackValue=0.0}"
                                         BorderBrush="{ThemeResource SystemFillColorCriticalBrush}"
                                         Background="{ThemeResource SystemFillColorCriticalBrush}"
                                         VerticalAlignment="Bottom" HorizontalAlignment="Right">
@@ -264,8 +264,8 @@
                                         <ScalarTransition />
                                     </Border.OpacityTransition>
 
-                                    <TextBlock Visibility="Collapsed" Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Error'), Mode=OneWay}"
-                                               FontWeight="Medium" Margin="0,-2,0,0"
+                                    <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Error'), Mode=OneWay}"
+                                               FontWeight="Medium" Margin="0,-2,0,0" 
                                                Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                 </Border>
 

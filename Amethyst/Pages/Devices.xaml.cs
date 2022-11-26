@@ -238,15 +238,16 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     {
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
-        // Reconnect the device
-        TrackingDevices.HandleDeviceRefresh(true);
-
-        // Update other statuses
-        TrackingDevices.UpdateTrackingDevicesInterface();
-
-        // Reload the tracking device UI
+        
+        // Reload the tracking device
         await Shared.Devices.ReloadSelectedDevice(true);
+
+        // Check the application config, save
+        AppData.Settings.CheckSettings();
+        AppData.Settings.SaveSettings();
+
+        // Update the page UI
+        OnPropertyChanged();
     }
 
     private void DeviceControlsTeachingTip_ActionButtonClick(TeachingTip sender, object args)
@@ -296,6 +297,9 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         // Update other statuses
         TrackingDevices.UpdateTrackingDevicesInterface();
         AlternativeConnectionOptionsFlyout.Hide();
+
+        // Update the page UI
+        OnPropertyChanged();
     }
 
     private async void SetAsBaseButton_Click(object sender, RoutedEventArgs e)
@@ -322,6 +326,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         AppData.Settings.SaveSettings();
 
         SetDeviceTypeFlyout.Hide(); // Hide the flyout
+        OnPropertyChanged(); // Update the page UI
     }
 
     private async void SetAsOverrideButton_Click(object sender, RoutedEventArgs e)
@@ -345,6 +350,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         AppData.Settings.SaveSettings();
 
         SetDeviceTypeFlyout.Hide(); // Hide the flyout
+        OnPropertyChanged(); // Update the page UI
     }
 
     private void DismissOverrideTipNoJointsButton_Click(object sender, RoutedEventArgs e)
@@ -373,6 +379,9 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         // Check the application config, save
         AppData.Settings.CheckSettings();
         AppData.Settings.SaveSettings();
+
+        // Update the page UI
+        OnPropertyChanged();
     }
 
     private async void OpenDocsButton_Click(object sender, RoutedEventArgs e)

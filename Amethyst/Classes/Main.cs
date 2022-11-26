@@ -258,7 +258,7 @@ public static class Main
         else
         {
             // Update position & orientation filters
-            AppData.Settings.TrackersVector.ForEach(tracker => tracker.UpdateFilters());
+            AppData.Settings.TrackersVector.ToList().ForEach(tracker => tracker.UpdateFilters());
 
             // Update pose w/ filtering, options and calibration
             // Note: only position gets calibrated INSIDE trackers

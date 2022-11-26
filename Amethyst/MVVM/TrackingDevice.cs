@@ -13,9 +13,13 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using Amethyst.Classes;
 using Amethyst.Utils;
 using Windows.Storage;
+using Amethyst.Driver.API;
+using Amethyst.Driver.Client;
 using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
@@ -111,8 +115,14 @@ public class TrackingDevice : INotifyPropertyChanged
         return value ? 1.0 : 0.0;
     }
 
+    public double BoolToOpacityMultiple(bool v1, bool v2)
+    {
+        return v1 && v2 ? 1.0 : 0.0;
+    }
+
     public bool StatusOk => Device.DeviceStatus == 0;
     public bool StatusError => Device.DeviceStatus != 0;
+    public bool IsUsed => IsBase || IsOverride;
 }
 
 public static class ICollectionExtensions
@@ -329,4 +339,11 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
+}
+
+public class AppTrackerEntry
+{
+    public TrackerType TrackerRole { get; set; } = TrackerType.TrackerHanded;
+    public string Name => LocalizedJsonString($"/SharedStrings/Joints/Enum/{(int)TrackerRole}");
+    public bool IsEnabled => AppData.Settings.TrackersVector.Any(x => x.Role == TrackerRole);
 }

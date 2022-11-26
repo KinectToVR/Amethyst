@@ -262,14 +262,6 @@
                                 <RowDefinition Height="50" />
                             </Grid.RowDefinitions>
 
-                            <!--String copy resource-->
-                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Base_Text"
-                                       Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Base'), Mode=OneWay}" />
-                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Override_Text"
-                                       Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Override'), Mode=OneWay}" />
-                            <TextBlock Visibility="Collapsed" x:Name="DeviceEntryView_Error_Text"
-                                       Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Error'), Mode=OneWay}" />
-
                             <TreeView x:Name="TrackingDeviceTreeView" CornerRadius="5"
                                       VerticalAlignment="Top" HorizontalAlignment="Stretch"
 
