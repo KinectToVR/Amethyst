@@ -316,7 +316,7 @@ public static class Interfacing
             // ignored
         }
     }
-    
+
     // Controllers' ID's (vr::k_unTrackedDeviceIndexInvalid for non-existent)
     public static (uint Left, uint Right) VrControllerIndexes;
 
@@ -427,8 +427,8 @@ public static class Interfacing
 
         // Since we're ok, capture playspace details
         var trackingOrigin = OpenVR.System.GetRawZeroPoseToStandingAbsoluteTrackingPose();
-        VrPlayspaceTranslation = TypeUtils.ExtractVrPosition(ref trackingOrigin);
-        VrPlayspaceOrientationQuaternion = TypeUtils.ExtractVrRotation(ref trackingOrigin);
+        VrPlayspaceTranslation = trackingOrigin.GetPosition();
+        VrPlayspaceOrientationQuaternion = trackingOrigin.GetOrientation();
 
         // Rescan controller ids
         VrControllerIndexes = (
@@ -780,13 +780,11 @@ public static class Interfacing
             var waistPose = devicePose[waistPair.Index];
 
             // Get pos & rot
-            return (
-                Vector3.Transform(TypeUtils.ExtractVrPosition(
-                        ref waistPose.mDeviceToAbsoluteTracking) - VrPlayspaceTranslation,
+            return (Vector3.Transform(
+                    waistPose.mDeviceToAbsoluteTracking.GetPosition() - VrPlayspaceTranslation,
                     Quaternion.Inverse(VrPlayspaceOrientationQuaternion)),
                 Quaternion.Inverse(VrPlayspaceOrientationQuaternion) *
-                TypeUtils.ExtractVrRotation(ref waistPose.mDeviceToAbsoluteTracking)
-            );
+                waistPose.mDeviceToAbsoluteTracking.GetOrientation());
         }
 
         if (log)
@@ -862,13 +860,13 @@ public static class Interfacing
 
         // Assert that HMD is at index 0
         if (OpenVR.System.GetTrackedDeviceClass(0) == ETrackedDeviceClass.HMD)
-            RawVrHmdPose = (TypeUtils.ExtractVrPosition(ref devicePose[0].mDeviceToAbsoluteTracking),
-                TypeUtils.ExtractVrRotation(ref devicePose[0].mDeviceToAbsoluteTracking));
+            RawVrHmdPose = (devicePose[0].mDeviceToAbsoluteTracking.GetPosition(),
+                devicePose[0].mDeviceToAbsoluteTracking.GetOrientation());
 
         // Capture play-space details
         var trackingOrigin = OpenVR.System.GetRawZeroPoseToStandingAbsoluteTrackingPose();
-        VrPlayspaceTranslation = TypeUtils.ExtractVrPosition(ref trackingOrigin);
-        VrPlayspaceOrientationQuaternion = TypeUtils.ExtractVrRotation(ref trackingOrigin);
+        VrPlayspaceTranslation = trackingOrigin.GetPosition();
+        VrPlayspaceOrientationQuaternion = trackingOrigin.GetOrientation();
     }
 
     [DllImport("user32.dll")]
@@ -1067,7 +1065,7 @@ public static class Interfacing
             return resourceKey;
         }
     }
-    
+
     // Does the tracker vector contain active trackers that aren't default?
     public static bool AdditionalTrackersEnabled => AppData.Settings.TrackersVector.Count > 7;
 
@@ -1088,9 +1086,8 @@ public static class Interfacing
 
             // Get pos & rot -> EigenUtils' gonna do this stuff for us
             if (VrControllerIndexes.Left != OpenVR.k_unTrackedDeviceIndexInvalid)
-                return (
-                    TypeUtils.ExtractVrPosition(ref devicePose[VrControllerIndexes.Left].mDeviceToAbsoluteTracking),
-                    TypeUtils.ExtractVrRotation(ref devicePose[VrControllerIndexes.Left].mDeviceToAbsoluteTracking));
+                return (devicePose[VrControllerIndexes.Left].mDeviceToAbsoluteTracking.GetPosition(),
+                    devicePose[VrControllerIndexes.Left].mDeviceToAbsoluteTracking.GetOrientation());
 
             return (Vector3.Zero, Quaternion.Identity); // else
         }
@@ -1111,9 +1108,8 @@ public static class Interfacing
 
             // Get pos & rot -> EigenUtils' gonna do this stuff for us
             if (VrControllerIndexes.Right != OpenVR.k_unTrackedDeviceIndexInvalid)
-                return (
-                    TypeUtils.ExtractVrPosition(ref devicePose[VrControllerIndexes.Right].mDeviceToAbsoluteTracking),
-                    TypeUtils.ExtractVrRotation(ref devicePose[VrControllerIndexes.Right].mDeviceToAbsoluteTracking));
+                return (devicePose[VrControllerIndexes.Right].mDeviceToAbsoluteTracking.GetPosition(), 
+                    devicePose[VrControllerIndexes.Right].mDeviceToAbsoluteTracking.GetOrientation());
 
             return (Vector3.Zero, Quaternion.Identity); // else
         }

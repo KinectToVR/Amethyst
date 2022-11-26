@@ -458,7 +458,7 @@ public static class Main
 
                     // If no flip
                     : device.TrackedJoints[(int)tracker.SelectedTrackedJointId];
-
+                
                 // Copy the orientation to the tracker
                 tracker.Orientation = tracker.OrientationTrackingOption switch
                 {

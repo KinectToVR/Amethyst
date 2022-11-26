@@ -543,8 +543,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
     {
         // Capture playspace details one more time before the calibration
         var trackingOrigin = OpenVR.System.GetRawZeroPoseToStandingAbsoluteTrackingPose();
-        Interfacing.VrPlayspaceTranslation = TypeUtils.ExtractVrPosition(ref trackingOrigin);
-        Interfacing.VrPlayspaceOrientationQuaternion = TypeUtils.ExtractVrRotation(ref trackingOrigin);
+        Interfacing.VrPlayspaceTranslation = trackingOrigin.GetPosition();
+        Interfacing.VrPlayspaceOrientationQuaternion = trackingOrigin.GetOrientation();
 
         // If no overrides
         if (AppData.Settings.OverrideDevicesGuidMap.Count < 1)

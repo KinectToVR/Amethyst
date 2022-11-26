@@ -115,28 +115,6 @@ public static class TypeUtils
     {
         return flip ? FlippedJointTypeDictionary[joint] : joint;
     }
-
-    // @OpenVR.NET@Extensions
-    public static Vector3 ExtractVrPosition(ref HmdMatrix34_t mat)
-    {
-        return new Vector3(mat.m3, mat.m7, -mat.m11);
-    }
-
-    // @OpenVR.NET@Extensions
-    public static Quaternion ExtractVrRotation(ref HmdMatrix34_t mat)
-    {
-        Quaternion q = default;
-        q.W = MathF.Sqrt(MathF.Max(0, 1 + mat.m0 + mat.m5 + mat.m10)) / 2;
-        q.X = MathF.Sqrt(MathF.Max(0, 1 + mat.m0 - mat.m5 - mat.m10)) / 2;
-        q.Y = MathF.Sqrt(MathF.Max(0, 1 - mat.m0 + mat.m5 - mat.m10)) / 2;
-        q.Z = MathF.Sqrt(MathF.Max(0, 1 - mat.m0 - mat.m5 + mat.m10)) / 2;
-        q.X = MathF.CopySign(q.X, mat.m9 - mat.m6);
-        q.Y = MathF.CopySign(q.Y, mat.m2 - mat.m8);
-        q.Z = MathF.CopySign(q.Z, mat.m1 - mat.m4);
-
-        var scale = 1 / q.LengthSquared();
-        return new Quaternion(q.X * -scale, q.Y * -scale, q.Z * -scale, q.W * scale);
-    }
 }
 
 public static class SortedDictionaryExtensions
@@ -155,5 +133,37 @@ public static class QuaternionExtensions
     public static Quaternion Inversed(this Quaternion q, bool inverse = true)
     {
         return inverse ? Quaternion.Inverse(q) : q;
+    }
+}
+
+public static class OvrExtensions
+{
+    public static Vector3 GetPosition(this HmdMatrix34_t mat)
+    {
+        return new Vector3(mat.m3, mat.m7, mat.m11);
+    }
+
+    private static bool IsOrientationValid(this HmdMatrix34_t mat)
+    {
+        return (mat.m2 != 0 || mat.m6 != 0 || mat.m10 != 0) &&
+               (mat.m1 != 0 || mat.m5 != 0 || mat.m9 != 0);
+    }
+
+    public static Quaternion GetOrientation(this HmdMatrix34_t mat)
+    {
+        if (!mat.IsOrientationValid()) return Quaternion.Identity;
+
+        var q = new Quaternion
+        {
+            W = MathF.Sqrt(MathF.Max(0, 1 + mat.m0 + mat.m5 + mat.m10)) / 2,
+            X = MathF.Sqrt(MathF.Max(0, 1 + mat.m0 - mat.m5 - mat.m10)) / 2,
+            Y = MathF.Sqrt(MathF.Max(0, 1 - mat.m0 + mat.m5 - mat.m10)) / 2,
+            Z = MathF.Sqrt(MathF.Max(0, 1 - mat.m0 - mat.m5 + mat.m10)) / 2
+        };
+
+        q.X = MathF.CopySign(q.X, mat.m9 - mat.m6);
+        q.Y = MathF.CopySign(q.Y, mat.m2 - mat.m8);
+        q.Z = MathF.CopySign(q.Z, mat.m4 - mat.m1);
+        return q; // Extracted, fixed ovr quaternion!
     }
 }

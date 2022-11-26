@@ -34,7 +34,7 @@ public class AppTracker : INotifyPropertyChanged
     private Quaternion _lastSlerpSlowOrientation = new(0, 0, 0, 1);
 
     private readonly Filtering.KalmanFilter _kalmanFilter = new();
-    private readonly Filtering.LowPassFilter _lowPassFilter = new(7.2, .005);
+    private readonly Filtering.LowPassFilter _lowPassFilter = new(6.9, .005);
 
     [JsonIgnore] public Vector3 PoseVelocity { get; set; } = new(0, 0, 0);
     [JsonIgnore] public Vector3 PoseAcceleration { get; set; } = new(0, 0, 0);
@@ -487,6 +487,7 @@ public class AppTracker : INotifyPropertyChanged
         {
             PositionTrackingFilterOption = (JointPositionTrackingOption)value;
             OnPropertyChanged("PositionTrackingDisplayOption");
+            AppData.Settings.SaveSettings(); // Save it!
         }
     }
 
@@ -498,6 +499,7 @@ public class AppTracker : INotifyPropertyChanged
         {
             OrientationTrackingOption = (JointRotationTrackingOption)value;
             OnPropertyChanged("OrientationTrackingDisplayOption");
+            AppData.Settings.SaveSettings(); // Save it!
         }
     }
 
@@ -512,7 +514,8 @@ public class AppTracker : INotifyPropertyChanged
 
     [JsonIgnore]
     public string ManagingDevicePlaceholder =>
-        Interfacing.LocalizedJsonString("/SettingsPage/Filters/Managed").Replace("{0}", GetManagingDeviceGuid);
+        Interfacing.LocalizedJsonString("/SettingsPage/Filters/Managed")
+            .Replace("{0}", GetManagingDeviceGuid);
 
     private bool _isTrackerExpanderOpen = false;
 
@@ -535,6 +538,9 @@ public class AppTracker : INotifyPropertyChanged
         set
         {
             _selectedTrackedJointId = value >= 0 ? (uint)value : 0;
+
+            AppData.Settings.CheckSettings(); // Full
+            AppData.Settings.SaveSettings(); // Save it!
             OnPropertyChanged(); // All
         }
     }
@@ -546,6 +552,9 @@ public class AppTracker : INotifyPropertyChanged
         set
         {
             _overrideJointId = value >= 0 ? (uint)value : 0;
+
+            AppData.Settings.CheckSettings(); // Full
+            AppData.Settings.SaveSettings(); // Save it!
             OnPropertyChanged(); // All
         }
     }
@@ -559,6 +568,9 @@ public class AppTracker : INotifyPropertyChanged
         set
         {
             _overrideJointId = value > 0 ? (uint)(value - 1) : 0;
+
+            AppData.Settings.CheckSettings(); // Full
+            AppData.Settings.SaveSettings(); // Save it!
             OnPropertyChanged(); // All
         }
     }
@@ -579,6 +591,8 @@ public class AppTracker : INotifyPropertyChanged
             if (!IsOverridden)
                 IsPositionOverridden = true;
 
+            AppData.Settings.CheckSettings(); // Full
+            AppData.Settings.SaveSettings(); // Save it!
             OnPropertyChanged(); // All
         }
     }
