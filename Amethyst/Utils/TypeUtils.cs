@@ -62,6 +62,40 @@ public static class TypeUtils
         { TrackerType.TrackerKeyboard, TrackedJointType.JointManual }
     };
 
+    public static SortedDictionary<TrackerType, TrackerType?> PairedTrackerTypeDictionary = new()
+    {
+        { TrackerType.TrackerHanded, null },
+        { TrackerType.TrackerLeftFoot, TrackerType.TrackerRightFoot },
+        { TrackerType.TrackerRightFoot, null },
+        { TrackerType.TrackerLeftShoulder, TrackerType.TrackerRightShoulder },
+        { TrackerType.TrackerRightShoulder, null },
+        { TrackerType.TrackerLeftElbow, TrackerType.TrackerRightElbow },
+        { TrackerType.TrackerRightElbow, null },
+        { TrackerType.TrackerLeftKnee, TrackerType.TrackerRightKnee },
+        { TrackerType.TrackerRightKnee, null },
+        { TrackerType.TrackerWaist, null },
+        { TrackerType.TrackerChest, null },
+        { TrackerType.TrackerCamera, null },
+        { TrackerType.TrackerKeyboard, null }
+    };
+
+    public static SortedDictionary<TrackerType, TrackerType?> PairedTrackerTypeDictionaryReverse = new()
+    {
+        { TrackerType.TrackerHanded, null },
+        { TrackerType.TrackerLeftFoot, null },
+        { TrackerType.TrackerRightFoot, TrackerType.TrackerLeftFoot },
+        { TrackerType.TrackerLeftShoulder, null },
+        { TrackerType.TrackerRightShoulder, TrackerType.TrackerLeftShoulder },
+        { TrackerType.TrackerLeftElbow, null },
+        { TrackerType.TrackerRightElbow, TrackerType.TrackerLeftElbow },
+        { TrackerType.TrackerLeftKnee, null },
+        { TrackerType.TrackerRightKnee, TrackerType.TrackerLeftKnee },
+        { TrackerType.TrackerWaist, null },
+        { TrackerType.TrackerChest, null },
+        { TrackerType.TrackerCamera, null },
+        { TrackerType.TrackerKeyboard, null }
+    };
+
     public static SortedDictionary<TrackedJointType, TrackerType> JointTrackerTypeDictionary = new()
     {
         { TrackedJointType.JointHandLeft, TrackerType.TrackerHanded },

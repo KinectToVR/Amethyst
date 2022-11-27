@@ -34,6 +34,10 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     public JointSelectorExpander()
     {
         InitializeComponent();
+
+        // Register for any pending changes
+        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
+        Trackers.ForEach(x => x.PropertyChanged += (_, _) => { OnPropertyChanged(); });
     }
 
     public void OnPropertyChanged(string propName = null)
@@ -51,13 +55,12 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
         set
         {
             _trackers = value;
-            Trackers.ForEach(x => x.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); });
             OnPropertyChanged(); // Trigger a complete refresh of the user control
         }
     }
 
     private bool IsAnyTrackerEnabled =>
-        Shared.Devices.SelectedTrackingDeviceGuid == AppData.Settings.TrackingDeviceGuid &&
+        AppData.Settings.SelectedTrackingDeviceGuid == AppData.Settings.TrackingDeviceGuid &&
         Trackers.Any(x => x.IsActive && x.IsManuallyManaged);
 
     private static List<string> GetBaseDeviceJointsList()

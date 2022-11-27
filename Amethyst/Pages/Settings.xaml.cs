@@ -830,76 +830,6 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         SetErrorFlyout.Hide();
     }
 
-    private async void TrackerToggleSwitch_Toggled(object sender, RoutedEventArgs e)
-    {
-        // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsTabSetupFinished) return;
-        var context = (sender as ToggleSwitch)!.DataContext;
-
-        // Don't react to pre-init signals
-        if (context is not AppTracker tracker) return;
-        if (Interfacing.AppTrackersInitialized)
-            // try 3 times cause why not
-            for (var i = 0; i < 3; i++)
-            {
-                // Update status in server
-                await DriverClient.UpdateTrackerStates(new List<(TrackerType Role, bool State)>
-                    { (tracker!.Role, (sender as ToggleSwitch)!.IsOn) });
-                await Task.Delay(20);
-            }
-
-        // Check if any trackers are enabled
-        if (!(sender as ToggleSwitch)!.IsOn && !AppData.Settings.TrackersVector
-                .Where(x => x.Role != tracker!.Role).Any(x => x.IsActive))
-        {
-            Logger.Warn("All trackers (except this one) have been disabled, force-re-enabling!");
-            tracker!.IsActive = true; // Force re-enable this tracker
-            tracker.OnPropertyChanged("IsActive");
-        }
-
-        TrackingDevices.TrackersConfigChanged();
-
-        // Play a sound
-        AppSounds.PlayAppSound((sender as ToggleSwitch)!.IsOn
-            ? AppSounds.AppSoundType.ToggleOn
-            : AppSounds.AppSoundType.ToggleOff);
-
-        // Request a check for already-added trackers
-        Logger.Info("Requesting a check for already-added trackers...");
-        Interfacing.AlreadyAddedTrackersScanRequested = true;
-        AppData.Settings.SaveSettings();
-    }
-
-    private void TrackerExpander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
-    {
-        // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsTabSetupFinished) return;
-
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
-    }
-
-    private void TrackerExpander_Collapsed(Expander sender, ExpanderCollapsedEventArgs args)
-    {
-        // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsTabSetupFinished) return;
-
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
-    }
-
-    private void TrackerPositionFilterOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if ((sender as ComboBox)!.SelectedIndex < 0)
-            (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
-    }
-
-    private void TrackerOrientationFilterOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if ((sender as ComboBox)!.SelectedIndex < 0)
-            (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
-    }
-
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -984,9 +914,35 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Logger.Info("Requesting a check for already-added trackers...");
         Interfacing.AlreadyAddedTrackersScanRequested = true;
         ToggleTrackersFlyout.Hide(); // Hide the flyout
+
+        await Task.Delay(10);
+        AppData.Settings.OnPropertyChanged();
+        OnPropertyChanged(); // Retry 1
+
+        await Task.Delay(100);
+        AppData.Settings.OnPropertyChanged();
+        OnPropertyChanged(); // Retry 2
     }
 
-    private void PairsToggleMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+    private async void PairsToggleMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
+        // Second copy just in case
+        AppData.Settings.UseTrackerPairs = 
+            (sender as ToggleMenuFlyoutItem)!.IsChecked;
+
+        AppData.Settings.CheckSettings();
+        AppData.Settings.SaveSettings();
+
+        // Reload pages for the new changes
+        AppData.Settings.OnPropertyChanged();
+        ToggleTrackersFlyout.Hide(); // Hide the flyout
+
+        await Task.Delay(10);
+        AppData.Settings.OnPropertyChanged();
+        OnPropertyChanged(); // Retry 1
+
+        await Task.Delay(100);
+        AppData.Settings.OnPropertyChanged();
+        OnPropertyChanged(); // Retry 2
     }
 }

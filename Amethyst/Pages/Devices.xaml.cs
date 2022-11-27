@@ -82,8 +82,8 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
             .IndexOf(AppData.Settings.TrackingDeviceGuid);
         TrackingDeviceTreeView.SelectedNode = TrackingDeviceTreeView.RootNodes[devicesListIndex];
 
-        Shared.Devices.SelectedTrackingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
-        Shared.Devices.PreviousSelectedTrackingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
+        AppData.Settings.SelectedTrackingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
+        AppData.Settings.PreviousSelectedTrackingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
@@ -128,6 +128,15 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         // Notify of the setup's end
         OnPropertyChanged(); // Just everything
         Shared.Devices.DevicesTabSetupFinished = true;
+
+        await Task.Delay(10);
+        WaistAndFeetTrackersExpander.InvalidateMeasure();
+        KneesAndElbowsTrackersExpander.InvalidateMeasure();
+        AdditionalTrackersExpander.InvalidateMeasure();
+
+        WaistAndFeetOverridesExpander.InvalidateMeasure();
+        KneesAndElbowsOverridesExpander.InvalidateMeasure();
+        AdditionalOverridesExpander.InvalidateMeasure();
     }
 
     private async void DevicesListTeachingTip_ActionButtonClick(TeachingTip sender, object args)
@@ -199,17 +208,16 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         var node = args.InvokedItem as MVVM.TrackingDevice;
-        Shared.Devices.SelectedTrackingDeviceGuid = node?.Guid;
+        AppData.Settings.SelectedTrackingDeviceGuid = node?.Guid;
 
-        Logger.Info($"Selected device: {JsonSerializer.Serialize(
-            node, new JsonSerializerOptions { WriteIndented = true })}");
+        Logger.Info($"Selected device: ({node!.Name}, {node!.Guid})");
 
         // Reload the tracking device UI (no animations if unchanged)
         await Shared.Devices.ReloadSelectedDevice(
-            Shared.Devices.SelectedTrackingDeviceGuid == Shared.Devices.PreviousSelectedTrackingDeviceGuid);
+            AppData.Settings.SelectedTrackingDeviceGuid == AppData.Settings.PreviousSelectedTrackingDeviceGuid);
 
         // Backup
-        Shared.Devices.PreviousSelectedTrackingDeviceGuid = Shared.Devices.SelectedTrackingDeviceGuid;
+        AppData.Settings.PreviousSelectedTrackingDeviceGuid = AppData.Settings.SelectedTrackingDeviceGuid;
     }
 
     private void DeviceStatusTeachingTip_ActionButtonClick(TeachingTip sender, object args)
@@ -238,7 +246,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     {
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-        
+
         // Reload the tracking device
         await Shared.Devices.ReloadSelectedDevice(true);
 
@@ -248,6 +256,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
         // Update the page UI
         OnPropertyChanged();
+        await Page_LoadedHandler();
     }
 
     private void DeviceControlsTeachingTip_ActionButtonClick(TeachingTip sender, object args)
@@ -285,10 +294,10 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
     private void DisconnectDeviceButton_Click(object sender, RoutedEventArgs e)
     {
-        Logger.Info($"Now disconnecting tracking device {Shared.Devices.SelectedTrackingDeviceGuid}...");
+        Logger.Info($"Now disconnecting tracking device {AppData.Settings.SelectedTrackingDeviceGuid}...");
 
         if (TrackingDevices.TrackingDevicesList.TryGetValue(
-                Shared.Devices.SelectedTrackingDeviceGuid, out var device))
+                AppData.Settings.SelectedTrackingDeviceGuid, out var device))
             device.Shutdown();
 
         // Update the status here
@@ -304,7 +313,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
     private async void SetAsBaseButton_Click(object sender, RoutedEventArgs e)
     {
-        var device = TrackingDevices.GetDevice(Shared.Devices.SelectedTrackingDeviceGuid).Device;
+        var device = TrackingDevices.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device;
         if (device?.TrackedJoints is null || device.TrackedJoints.Count < 1)
         {
             NoJointsFlyout.ShowAt(SelectedDeviceNameLabel);
@@ -331,7 +340,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
     private async void SetAsOverrideButton_Click(object sender, RoutedEventArgs e)
     {
-        var device = TrackingDevices.GetDevice(Shared.Devices.SelectedTrackingDeviceGuid).Device;
+        var device = TrackingDevices.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device;
         if (device?.TrackedJoints is null || device.TrackedJoints.Count < 1)
         {
             NoJointsFlyout.ShowAt(SelectedDeviceNameLabel);
@@ -360,14 +369,14 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
     private void DeselectDeviceButton_Click(object sender, RoutedEventArgs e)
     {
-        Logger.Info($"Now disconnecting tracking device {Shared.Devices.SelectedTrackingDeviceGuid}...");
+        Logger.Info($"Now disconnecting tracking device {AppData.Settings.SelectedTrackingDeviceGuid}...");
 
         SetAsOverrideButton.IsEnabled = true;
         SetAsBaseButton.IsEnabled = true;
         DeselectDeviceButton.Visibility = Visibility.Collapsed;
 
         // Deselect the device
-        AppData.Settings.OverrideDevicesGuidMap.Remove(Shared.Devices.SelectedTrackingDeviceGuid);
+        AppData.Settings.OverrideDevicesGuidMap.Remove(AppData.Settings.SelectedTrackingDeviceGuid);
 
         // Update the status here
         TrackingDevices.HandleDeviceRefresh(false);
@@ -375,7 +384,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         // Update other statuses
         TrackingDevices.UpdateTrackingDevicesInterface();
         AlternativeConnectionOptionsFlyout.Hide();
-        
+
         // Check the application config, save
         AppData.Settings.CheckSettings();
         AppData.Settings.SaveSettings();
@@ -489,7 +498,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     public List<AppTracker> AdditionalTrackers => AppData.Settings.TrackersVector.Count > 6
         ? AppData.Settings.TrackersVector.ToArray()[7..].ToList()
         : new List<AppTracker>(); // Dummy list with no items (at least not null)
-    
+
     public Visibility CombineVisibility(Visibility v1, Visibility v2, Visibility v3)
     {
         return new[] { v1, v2, v3 }.Contains(Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;

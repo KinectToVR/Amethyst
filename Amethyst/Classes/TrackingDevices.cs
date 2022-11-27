@@ -70,7 +70,7 @@ public static class TrackingDevices
                     Devices.DevicesTreeView.SelectedNode = devicesListNode;
 
                     await Devices.ReloadSelectedDevice(skipAnimation);
-                    Devices.SelectedTrackingDeviceGuid = failingOverrideGuid;
+                    AppData.Settings.SelectedTrackingDeviceGuid = failingOverrideGuid;
                 }));
 
         // Update general tab
@@ -116,7 +116,7 @@ public static class TrackingDevices
                 Interfacing.CurrentAppState =
                     Devices.DevicesTreeView is not null && overrideStatusOk &&
                     AppData.Settings.OverrideDevicesGuidMap
-                        .Contains(Devices.SelectedTrackingDeviceGuid)
+                        .Contains(AppData.Settings.SelectedTrackingDeviceGuid)
                         ? "overrides" // Currently managing overrides
                         : "devices"; // Currently viewing tracking devices
         }
@@ -144,7 +144,7 @@ public static class TrackingDevices
         if (Devices.ErrorWhatText is null) return;
 
         Devices.DevicesSignalJoints = false; // Block signals
-        var currentDevice = GetDevice(Devices.SelectedTrackingDeviceGuid);
+        var currentDevice = GetDevice(AppData.Settings.SelectedTrackingDeviceGuid);
 
         if (shouldReconnect) currentDevice.Device.Initialize();
 

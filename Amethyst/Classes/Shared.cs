@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
@@ -304,9 +305,6 @@ public static class Shared
             SetAsBaseButton,
             DeselectDeviceButton;
 
-        public static string PreviousSelectedTrackingDeviceGuid;
-        public static string SelectedTrackingDeviceGuid;
-
         public static ScrollViewer DevicesMainContentScrollViewer;
 
         public static StackPanel
@@ -327,19 +325,19 @@ public static class Shared
             TrackingDevices.UpdateTrackingDevicesInterface();
 
             // Refresh the device MVVM
-            TrackingDevices.TrackingDevicesList[SelectedTrackingDeviceGuid].OnPropertyChanged();
+            TrackingDevices.TrackingDevicesList[AppData.Settings.SelectedTrackingDeviceGuid].OnPropertyChanged();
 
-            if (TrackingDevices.IsBase(SelectedTrackingDeviceGuid))
+            if (TrackingDevices.IsBase(AppData.Settings.SelectedTrackingDeviceGuid))
             {
-                Logger.Info($"Selected a base ({SelectedTrackingDeviceGuid})");
+                Logger.Info($"Selected a base ({AppData.Settings.SelectedTrackingDeviceGuid})");
                 SetAsOverrideButton.IsEnabled = false;
                 SetAsBaseButton.IsEnabled = false;
 
                 DeselectDeviceButton.Visibility = Visibility.Collapsed;
             }
-            else if (TrackingDevices.IsOverride(SelectedTrackingDeviceGuid))
+            else if (TrackingDevices.IsOverride(AppData.Settings.SelectedTrackingDeviceGuid))
             {
-                Logger.Info($"Selected an override ({SelectedTrackingDeviceGuid})");
+                Logger.Info($"Selected an override ({AppData.Settings.SelectedTrackingDeviceGuid})");
                 SetAsOverrideButton.IsEnabled = false;
                 SetAsBaseButton.IsEnabled = true;
 
@@ -349,7 +347,7 @@ public static class Shared
             }
             else
             {
-                Logger.Info($"Selected a [none] ({SelectedTrackingDeviceGuid})");
+                Logger.Info($"Selected a [none] ({AppData.Settings.SelectedTrackingDeviceGuid})");
                 SetAsOverrideButton.IsEnabled = true;
                 SetAsBaseButton.IsEnabled = true;
 

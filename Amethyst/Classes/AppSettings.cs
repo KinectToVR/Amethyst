@@ -13,8 +13,6 @@ using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
 using Microsoft.UI.Xaml.Controls;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Valve.VR;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -32,7 +30,7 @@ public class AppSettings : INotifyPropertyChanged
     // Current joints
     public ObservableCollection<AppTracker> TrackersVector { get; set; } = new();
 
-    public bool UseTrackerPairs { get; set; } = false; // Pair feet, elbows and knees
+    public bool UseTrackerPairs { get; set; } = true; // Pair feet, elbows and knees
     private bool _checkForOverlappingTrackers = true; // Check for overlapping roles
 
     public bool CheckForOverlappingTrackers
@@ -429,10 +427,25 @@ public class AppSettings : INotifyPropertyChanged
         }
     }
 
+    // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
+    [JsonIgnore] public string PreviousSelectedTrackingDeviceGuid;
+    [JsonIgnore] private string _selectedTrackingDeviceGuid;
+
+    [JsonIgnore]
+    public string SelectedTrackingDeviceGuid
+    {
+        get => _selectedTrackingDeviceGuid;
+        set
+        {
+            _selectedTrackingDeviceGuid = value;
+            OnPropertyChanged("SelectedTrackingDeviceGuid");
+        }
     }
 }

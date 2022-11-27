@@ -34,6 +34,10 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     public OverrideExpander()
     {
         InitializeComponent();
+
+        // Register for any pending changes
+        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
+        Trackers.ForEach(x => x.PropertyChanged += (_, _) => { OnPropertyChanged(); });
     }
 
     public void OnPropertyChanged(string propName = null)
@@ -51,13 +55,12 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
         set
         {
             _trackers = value;
-            Trackers.ForEach(x => x.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); });
             OnPropertyChanged(); // Trigger a complete refresh of the user control
         }
     }
 
     private bool IsAnyTrackerEnabled =>
-        Trackers.Any(x => x.IsActive && x.OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid);
+        Trackers.Any(x => x.IsActive && x.OverrideGuid == AppData.Settings.SelectedTrackingDeviceGuid);
 
     private static List<string> GetManagingDeviceJointsList(string guid)
     {

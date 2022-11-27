@@ -106,6 +106,7 @@ public class AppTracker : INotifyPropertyChanged
 
             _selectedTrackedJointId = value;
             OnPropertyChanged(); // All
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -122,6 +123,7 @@ public class AppTracker : INotifyPropertyChanged
 
             _overrideJointId = value;
             OnPropertyChanged(); // All
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -138,6 +140,7 @@ public class AppTracker : INotifyPropertyChanged
 
             _orientationTrackingOption = value;
             OnPropertyChanged();
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -151,6 +154,7 @@ public class AppTracker : INotifyPropertyChanged
 
             _positionTrackingFilterOption = value;
             OnPropertyChanged();
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -164,6 +168,7 @@ public class AppTracker : INotifyPropertyChanged
 
             _orientationTrackingFilterOption = value;
             OnPropertyChanged();
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -177,6 +182,7 @@ public class AppTracker : INotifyPropertyChanged
 
             _isActive = value;
             OnPropertyChanged();
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -580,12 +586,12 @@ public class AppTracker : INotifyPropertyChanged
     {
         // '+ 1' and '- 1' cause '0' is 'No Override' in this case
         // Note: use OverrideJointId for the "normal" (non-ui) one
-        get => IsActive ? IsManagedBy(Shared.Devices.SelectedTrackingDeviceGuid) ? (int)_overrideJointId + 1 : 0 : -1;
+        get => IsActive ? IsManagedBy(AppData.Settings.SelectedTrackingDeviceGuid) ? (int)_overrideJointId + 1 : 0 : -1;
         set
         {
             // Update the override joint and the managing device
             _overrideJointId = value > 0 ? (uint)(value - 1) : 0;
-            OverrideGuid = Shared.Devices.SelectedTrackingDeviceGuid;
+            OverrideGuid = AppData.Settings.SelectedTrackingDeviceGuid;
 
             // Enable at least 1 override
             if (!IsOverridden)
@@ -621,11 +627,11 @@ public class AppTracker : INotifyPropertyChanged
     [JsonIgnore]
     public bool IsPositionOverriddenBySelectedDevice
     {
-        get => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid && IsPositionOverridden;
+        get => OverrideGuid == AppData.Settings.SelectedTrackingDeviceGuid && IsPositionOverridden;
         set
         {
             // Update the managing and the override
-            OverrideGuid = Shared.Devices.SelectedTrackingDeviceGuid;
+            OverrideGuid = AppData.Settings.SelectedTrackingDeviceGuid;
             IsPositionOverridden = value;
 
             // If not overridden yet (index=0)
@@ -640,11 +646,11 @@ public class AppTracker : INotifyPropertyChanged
     [JsonIgnore]
     public bool IsOrientationOverriddenBySelectedDevice
     {
-        get => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid && IsOrientationOverridden;
+        get => OverrideGuid == AppData.Settings.SelectedTrackingDeviceGuid && IsOrientationOverridden;
         set
         {
             // Update the managing and the override
-            OverrideGuid = Shared.Devices.SelectedTrackingDeviceGuid;
+            OverrideGuid = AppData.Settings.SelectedTrackingDeviceGuid;
             IsOrientationOverridden = value;
 
             // If not overridden yet (index=0)
@@ -655,7 +661,7 @@ public class AppTracker : INotifyPropertyChanged
         }
     }
 
-    [JsonIgnore] public bool IsOverriddenByOtherDevice => OverrideGuid == Shared.Devices.SelectedTrackingDeviceGuid;
+    [JsonIgnore] public bool IsOverriddenByOtherDevice => OverrideGuid == AppData.Settings.SelectedTrackingDeviceGuid;
 
     public bool IsManagedBy(string guid)
     {

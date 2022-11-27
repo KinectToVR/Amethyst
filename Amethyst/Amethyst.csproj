@@ -52,6 +52,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\JointSelectorExpander.xaml" />
+    <None Remove="Controls\JointSettingsExpander.xaml" />
     <None Remove="Controls\OverrideExpander.xaml" />
     <None Remove="Pages\Devices.xaml" />
     <None Remove="Pages\General.xaml" />
@@ -81,6 +82,11 @@
     <Content Update="Assets\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\JointSettingsExpander.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\OverrideExpander.xaml">
