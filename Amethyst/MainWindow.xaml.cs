@@ -447,9 +447,6 @@ public sealed partial class MainWindow : Window
                     Interfacing.Plugins.SetLocalizationResourcesRoot(
                         Path.Join(pluginFolder, "Assets", "Strings"), plugin.Metadata.Guid);
 
-                    Logger.Info($"Loaded plugin: {JsonSerializer.Serialize(plugin,
-                        new JsonSerializerOptions { WriteIndented = true })}");
-
                     Logger.Info($"Telling ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "this it's just been loaded into the core app domain...");
                     plugin.Value.OnLoad(); // Call the OnLoad handler for the first time

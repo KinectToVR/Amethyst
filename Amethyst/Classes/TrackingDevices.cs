@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +7,7 @@ using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media.Animation;
 using WinRT;
@@ -164,6 +165,14 @@ public static class TrackingDevices
         Devices.DeviceStatusLabel.Text = message[0];
         Devices.TrackingDeviceErrorLabel.Text = message[1];
         Devices.ErrorWhatText.Text = message[2];
+
+        // Update device-provided settings
+        Devices.SelectedDeviceSettingsRootLayoutPanel.Visibility =
+            currentDevice.Device.IsSettingsDaemonSupported ? Visibility.Visible : Visibility.Collapsed;
+
+        Devices.SelectedDeviceSettingsRootLayoutPanel.Children.Clear();
+        if (currentDevice.Device.SettingsInterfaceRoot is Page root)
+            Devices.SelectedDeviceSettingsRootLayoutPanel.Children.Add(root);
     }
 
     public static bool IsExternalFlipSupportable()
@@ -323,7 +332,7 @@ public static class TrackingDevices
     {
         return AppData.Settings.OverrideDevicesGuidMap.Contains(guid);
     }
-    
+
     public enum PluginLoadError
     {
         Unknown, // We literally don't know what's happened

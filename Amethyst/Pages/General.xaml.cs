@@ -1390,7 +1390,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Where to scale by 1.0 in perspective
         const double normalDistance = 3;
-        const double normalLineStrokeSize = 3;
+        const double normalLineStrokeSize = 5;
 
         // Compose perspective constants, make it 70%
         var fromMultiply = .7 * (normalDistance /

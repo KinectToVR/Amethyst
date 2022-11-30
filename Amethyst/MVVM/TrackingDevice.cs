@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Amethyst.Plugins.Contract;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -131,9 +131,16 @@ public static class ICollectionExtensions
     {
         // Delete the vendor plugin contract, just in case
         item.GetFiles("Amethyst.Plugins.Contract.dll").FirstOrDefault()?.Delete();
+        item.GetFiles("Microsoft.Windows.SDK.NET.dll").FirstOrDefault()?.Delete();
+        item.GetFiles("Microsoft.WinUI.dll").FirstOrDefault()?.Delete();
+        item.GetFiles("WinRT.Runtime.dll").FirstOrDefault()?.Delete();
+        
+        //Directory.GetFiles(GetProgramLocation().DirectoryName!).ToList()
+        //    .ForEach(x => item.GetFiles(new FileInfo(x).Name).ToList()
+        //        .ForEach(y => y.Delete()));
 
         // Loop over all the files, load into a separate appdomain/context
-        var loadContext = new AssemblyLoadContext(item.FullName);
+        var loadContext = new PluginLoadContext(item.FullName);
         foreach (var fileInfo in item.GetFiles("*.dll"))
             try
             {
@@ -159,6 +166,30 @@ public static class ICollectionExtensions
             }
 
         return true; // Nah, not this time
+    }
+}
+
+internal class PluginLoadContext : AssemblyLoadContext
+{
+    private readonly AssemblyDependencyResolver _resolver;
+
+    public PluginLoadContext(string pluginAssemblyPath) : base(false)
+    {
+        _resolver = new AssemblyDependencyResolver(pluginAssemblyPath);
+    }
+
+    protected override Assembly Load(AssemblyName assemblyName)
+    {
+        var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
+        return assemblyPath != null ? LoadFromAssemblyPath(assemblyPath) :
+            null; // return null to use the default AssemblyLoadContext
+    }
+
+    protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
+    {
+        var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+        return libraryPath != null ? LoadUnmanagedDllFromPath(libraryPath) :
+            IntPtr.Zero; // return IntPtr.Zero to use the default AssemblyLoadContext
     }
 }
 
