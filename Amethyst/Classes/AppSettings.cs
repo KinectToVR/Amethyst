@@ -13,6 +13,7 @@ using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
 using Microsoft.UI.Xaml.Controls;
 using System.Text;
+using Amethyst.MVVM;
 using Newtonsoft.Json;
 using Valve.VR;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -197,7 +198,7 @@ public class AppSettings : INotifyPropertyChanged
         CheckSettings(true);
     }
 
-    public void CheckSettings(bool partial = false)
+    public void CheckSettings(bool partial = false, TrackingDevice device = null)
     {
         // Basic config: global and pre-setup settings
         Logger.Info("Checking AppSettings [global] configuration...");
@@ -330,7 +331,7 @@ public class AppSettings : INotifyPropertyChanged
 
         // Advanced config: runtime and tracking settings
         Logger.Info("Checking AppSettings [runtime] configuration...");
-        var trackingDevice = TrackingDevices.GetTrackingDevice();
+        var trackingDevice = device?? TrackingDevices.GetTrackingDevice();
 
         // Check orientation option configs : left foot
         Logger.Info("Checking left foot orientation settings...");
