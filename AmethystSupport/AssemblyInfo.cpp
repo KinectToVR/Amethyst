@@ -1,18 +1,19 @@
-#include "pch.h"
+// ReSharper disable once CppUnusedIncludeDirective
+#include "AmethystSupport.h"
 
 using namespace System;
-using namespace System::Reflection;
-using namespace System::Runtime::CompilerServices;
-using namespace System::Runtime::InteropServices;
-using namespace System::Security::Permissions;
+using namespace Reflection;
+using namespace Runtime::CompilerServices;
+using namespace Runtime::InteropServices;
+using namespace Security::Permissions;
 
 [assembly:AssemblyTitleAttribute(L"AmethystSupport")];
-[assembly:AssemblyDescriptionAttribute(L"")];
+[assembly:AssemblyDescriptionAttribute(L"Amethyst native for CLR wrapper")];
 [assembly:AssemblyConfigurationAttribute(L"")];
-[assembly:AssemblyCompanyAttribute(L"")];
+[assembly:AssemblyCompanyAttribute(L"K2VR Team")];
 [assembly:AssemblyProductAttribute(L"AmethystSupport")];
-[assembly:AssemblyCopyrightAttribute(L"Copyright (c)  2022")];
-[assembly:AssemblyTrademarkAttribute(L"")];
+[assembly:AssemblyCopyrightAttribute(L"Copyright (c) 2022 K2VR Team")];
+[assembly:AssemblyTrademarkAttribute(L"K2VR")];
 [assembly:AssemblyCultureAttribute(L"")];
 
 [assembly:AssemblyVersionAttribute(L"1.0.*")];
