@@ -987,7 +987,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             JointPoints.Add(new Ellipse());
             SkeletonDrawingCanvas.Children.Add(JointPoints[i]);
         }
-        
+
         var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
         timer.Tick += (_, _) =>
         {
@@ -1066,10 +1066,20 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
             // Draw the skeleton with from-to lines
             // Head
-            SkBone(BoneLines[0], JointPoints[0], ref joints,
-                TrackedJointType.JointHead, TrackedJointType.JointNeck);
-            SkBone(BoneLines[1], JointPoints[1], ref joints,
-                TrackedJointType.JointNeck, TrackedJointType.JointSpineShoulder);
+            if (joints.Any(x => x.Role == TrackedJointType.JointNeck))
+            {
+                // If extended (like kinect v2)
+                SkBone(BoneLines[0], JointPoints[0], ref joints,
+                    TrackedJointType.JointHead, TrackedJointType.JointNeck);
+                SkBone(BoneLines[1], JointPoints[1], ref joints,
+                    TrackedJointType.JointNeck, TrackedJointType.JointSpineShoulder);
+            }
+            else
+            {
+                // Else skip neck and try with spine-shoulder
+                SkBone(BoneLines[0], JointPoints[0], ref joints,
+                    TrackedJointType.JointHead, TrackedJointType.JointSpineShoulder);
+            }
 
             // Upper left limb
             SkBone(BoneLines[2], JointPoints[2], ref joints,
@@ -1291,11 +1301,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         (bool Position, bool Orientation) overrideStatus)
     {
         // Give up, no such joint
-        if (joint is null)
-        {
-            ellipse.Visibility = Visibility.Collapsed;
-            return;
-        }
+        if (joint is null) return;
 
         const double matWidthDefault = 700, matHeightDefault = 600;
         double matWidth = SkeletonDrawingCanvas.ActualWidth,
