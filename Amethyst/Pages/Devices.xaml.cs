@@ -248,7 +248,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         // Reload the tracking device
-        await Shared.Devices.ReloadSelectedDevice(true);
+        await Shared.Devices.ReloadSelectedDevice(true, true);
 
         // Check the application config, save
         AppData.Settings.CheckSettings();
@@ -321,6 +321,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         }
 
         // Setup the new base
+        AppData.Settings.CheckSettings(false, device);
         AppData.Settings.TrackingDeviceGuid = device.Guid;
 
         // Remove an override if exists and overlaps
