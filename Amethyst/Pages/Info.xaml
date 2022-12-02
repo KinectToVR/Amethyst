@@ -98,7 +98,7 @@
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
-                            <Run Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Ella'), Mode=OneWay}" />
+                            <Run Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Noelle'), Mode=OneWay}" />
                             <Run />
                             <Hyperlink NavigateUri="https://github.com/AuroraNemoia" UnderlineStyle="None">AuroraNemoia</Hyperlink>
                         </TextBlock>
@@ -143,7 +143,7 @@
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
-                            <Run xml:space="preserve">"Ella"</Run>
+                            <Run xml:space="preserve">"Noelle"</Run>
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
@@ -173,7 +173,7 @@
                            Margin="0,17,0,0" />
 
                 <TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords">
-                    <Run xml:space="preserve">Ella (AuroraNemoia)    </Run>
+                    <Run xml:space="preserve">Noelle (AuroraNemoia)    </Run>
                     <Run xml:space="preserve">Skye (DergnNamedSkye)    </Run>
                     <Run xml:space="preserve">Sara the Maid    </Run>
                     <Run xml:space="preserve">m1nt_ (Rubber Duck Shobe)    </Run>

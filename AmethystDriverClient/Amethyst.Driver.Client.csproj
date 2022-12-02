@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>0.0.8</Version>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

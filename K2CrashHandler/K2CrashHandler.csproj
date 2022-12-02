@@ -9,7 +9,7 @@
 		<RootNamespace>K2CrashHandler</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x64</Platforms>
-		<RuntimeIdentifier>win</RuntimeIdentifier>
+    	<RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
