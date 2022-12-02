@@ -206,13 +206,17 @@ public static class Main
         if (!TrackingDevices.GetTrackingDevice().IsSelfUpdateEnabled)
             TrackingDevices.GetTrackingDevice().Update();
 
+        // Copy the hook joint [head] position, or the 1st one, or none
         Interfacing.DeviceHookJointPosition[TrackingDevices.GetTrackingDevice().Guid] =
             TrackingDevices.GetTrackingDevice().TrackedJoints
-                .FirstOrDefault(x => x.Role == TrackedJointType.JointHead, new TrackedJoint()).JointPosition;
+                .FirstOrDefault(x => x.Role == TrackedJointType.JointHead,
+                    TrackingDevices.GetTrackingDevice().TrackedJoints.FirstOrDefault(new TrackedJoint())).JointPosition;
 
-        Interfacing.DeviceHookJointPosition[TrackingDevices.GetTrackingDevice().Guid] =
+        // Copy the relative hook joint [waist] position, or the 1st one, or none
+        Interfacing.DeviceRelativeTransformOrigin[TrackingDevices.GetTrackingDevice().Guid] =
             TrackingDevices.GetTrackingDevice().TrackedJoints
-                .FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist, new TrackedJoint()).JointPosition;
+                .FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist,
+                    TrackingDevices.GetTrackingDevice().TrackedJoints.FirstOrDefault(new TrackedJoint())).JointPosition;
 
         // Update override devices (optionally)
         foreach (var device in AppData.Settings.OverrideDevicesGuidMap.Select(overrideGuid =>
@@ -220,13 +224,15 @@ public static class Main
         {
             if (!device.IsSelfUpdateEnabled) device.Update();
 
+            // Copy the hook joint [head] position, or the 1st one, or none
             Interfacing.DeviceHookJointPosition[device.Guid] =
-                device.TrackedJoints.FirstOrDefault(x =>
-                    x.Role == TrackedJointType.JointHead, new TrackedJoint()).JointPosition;
+                device.TrackedJoints.FirstOrDefault(x => x.Role == TrackedJointType.JointHead,
+                    device.TrackedJoints.FirstOrDefault(new TrackedJoint())).JointPosition;
 
-            Interfacing.DeviceHookJointPosition[device.Guid] =
-                device.TrackedJoints.FirstOrDefault(x =>
-                    x.Role == TrackedJointType.JointSpineWaist, new TrackedJoint()).JointPosition;
+            // Copy the relative hook joint [waist] position, or the 1st one, or none
+            Interfacing.DeviceRelativeTransformOrigin[device.Guid] =
+                device.TrackedJoints.FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist,
+                    device.TrackedJoints.FirstOrDefault(new TrackedJoint())).JointPosition;
         }
     }
 
@@ -428,7 +434,8 @@ public static class Main
 
                         // Default: use the default calibration rotation
                         : AppData.Settings.DeviceCalibrationRotationMatrices.FirstOrDefault(
-                            x => x.Key == AppData.Settings.TrackingDeviceGuid).Value);
+                            x => x.Key == AppData.Settings.TrackingDeviceGuid, 
+                            new KeyValuePair<string, Quaternion>("", Quaternion.Identity)).Value);
 
             // Not in transition angle area, can compute
             if (Math.Abs(dotFacing) >= flipThreshold)
@@ -458,7 +465,7 @@ public static class Main
 
                     // If no flip
                     : device.TrackedJoints[(int)tracker.SelectedTrackedJointId];
-                
+
                 // Copy the orientation to the tracker
                 tracker.Orientation = tracker.OrientationTrackingOption switch
                 {
@@ -673,7 +680,7 @@ public static class Main
         // Warning: this is meant to work as fire-and-forget
         Logger.Info("[Main] Waiting for the start sem to open..");
         Shared.Events.SemSignalStartMain.WaitOne();
-        
+
         Logger.Info("[Main] Starting the main app loop now...");
 
         // For limiting loop 'fps'

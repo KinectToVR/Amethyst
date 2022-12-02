@@ -371,20 +371,18 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 // Update the countdown label
                 CalibrationCountdownLabel.Text = i.ToString();
 
-                // Play a nice sound - tick / stand
-                if (i > 0) // Don't play the last one!
-                    AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
-
-                // Capture user's position at t_end-1
                 switch (i)
                 {
-                    case 1:
-                        // Capture positions
-                        hmdPositions.Add(Interfacing.Plugins.GetHmdPoseCalibrated.Position);
-                        headPositions.Add(Interfacing.DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid));
+                    // Play a nice sound - tick / stand (w/o the last one!)
+                    case > 0:
+                        AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
                         break;
 
+                    // Capture user's position at t_end-1, update the label text
                     case 0:
+                        hmdPositions.Add(Interfacing.Plugins.GetHmdPoseCalibrated.Position);
+                        headPositions.Add(Interfacing.DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid));
+
                         CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString(
                             "/GeneralPage/Calibration/Captions/Captured");
                         break;
