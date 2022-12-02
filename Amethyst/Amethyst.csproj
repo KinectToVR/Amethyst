@@ -84,6 +84,44 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+	  <ContentWithTargetPath Include="..\vendor\app_resources\action_manifest.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <PackageCopyToOutput>true</PackageCopyToOutput>
+		  <TargetPath>action_manifest.json</TargetPath>
+	  </ContentWithTargetPath>
+	  <ContentWithTargetPath Include="..\vendor\app_resources\Amethyst.vrmanifest">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <PackageCopyToOutput>true</PackageCopyToOutput>
+		  <TargetPath>Amethyst.vrmanifest</TargetPath>
+	  </ContentWithTargetPath>
+	  <!-- Input bindings -->
+	  <ContentWithTargetPath Include="..\vendor\app_resources\input_profiles\k2vr.amethyst_holographic_controller.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <PackageCopyToOutput>true</PackageCopyToOutput>
+		  <TargetPath>input_profiles\k2vr.amethyst_holographic_controller.json</TargetPath>
+	  </ContentWithTargetPath>
+	  <ContentWithTargetPath Include="..\vendor\app_resources\input_profiles\k2vr.amethyst_hpmotioncontroller.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <PackageCopyToOutput>true</PackageCopyToOutput>
+		  <TargetPath>input_profiles\k2vr.amethyst_hpmotioncontroller.json</TargetPath>
+	  </ContentWithTargetPath>
+	  <ContentWithTargetPath Include="..\vendor\app_resources\input_profiles\k2vr.amethyst_knuckles.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <PackageCopyToOutput>true</PackageCopyToOutput>
+		  <TargetPath>input_profiles\k2vr.amethyst_knuckles.json</TargetPath>
+	  </ContentWithTargetPath>
+	  <ContentWithTargetPath Include="..\vendor\app_resources\input_profiles\k2vr.amethyst_oculus_touch.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <PackageCopyToOutput>true</PackageCopyToOutput>
+		  <TargetPath>input_profiles\k2vr.amethyst_oculus_touch.json</TargetPath>
+	  </ContentWithTargetPath>
+	  <ContentWithTargetPath Include="..\vendor\app_resources\input_profiles\k2vr.amethyst_vive_controller.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <PackageCopyToOutput>true</PackageCopyToOutput>
+		  <TargetPath>input_profiles\k2vr.amethyst_vive_controller.json</TargetPath>
+	  </ContentWithTargetPath>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Controls\JointSettingsExpander.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
