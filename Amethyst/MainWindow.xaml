@@ -8,7 +8,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:util="using:Amethyst.Utils">
 
     <!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
     <Grid Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
@@ -77,21 +78,21 @@
             <Grid.Resources>
                 <TeachingTip x:Name="InitializerTeachingTip"
                              Canvas.ZIndex="100"
-                             Title="/WELCOME"
-                             Subtitle="/TEXT"
+                             Title="{x:Bind util:Translator.Get.String('/NUX/Tip1/Title'), Mode=OneWay}"
+                             Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip1/Content'), Mode=OneWay}"
+                             CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+                             ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Skip'), Mode=OneWay}"
                              PreferredPlacement="Top"
                              PlacementMargin="20"
                              IsLightDismissEnabled="False"
-                             ActionButtonContent="/SKIP"
-                             CloseButtonContent="/NEXT"
                              Style="{ThemeResource BigTeachingTipStyle}"
                              ActionButtonClick="InitializerTeachingTip_ActionButtonClick"
                              CloseButtonClick="InitializerTeachingTip_CloseButtonClick" />
 
                 <TeachingTip x:Name="ShutdownTeachingTip"
                              Canvas.ZIndex="100"
-                             Title="/SHUTDOWN"
-                             Subtitle="/TEXT"
+                             Title="{x:Bind util:Translator.Get.String('/NUX/Tip0/Title'), Mode=OneWay}"
+                             Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip0/Content'), Mode=OneWay}"
                              PreferredPlacement="TopRight"
                              PlacementMargin="0,29,-8,0"
                              Style="{ThemeResource BigTeachingTipStyle}"
@@ -99,11 +100,11 @@
 
                 <TeachingTip x:Name="ReloadTeachingTip"
                              Canvas.ZIndex="100"
-                             Title="/RELOAD"
-                             Subtitle="/TEXT"
+                             Title="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Title'), Mode=OneWay}"
+                             Subtitle="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Content'), Mode=OneWay}"
+                             CloseButtonContent="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Restart'), Mode=OneWay}"
                              PreferredPlacement="TopRight"
                              PlacementMargin="0,29,-8,0"
-                             CloseButtonContent="/RESTART"
                              CloseButtonClick="ReloadTeachingTip_CloseButtonClick"
                              Style="{ThemeResource BigTeachingTipStyle}"
                              IsLightDismissEnabled="False" />
@@ -154,8 +155,8 @@
                         </FontIcon>
 
                         <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock HorizontalAlignment="Center"
-                                       x:Name="NavViewGeneralButtonLabel" Opacity="0.0"
+                            <TextBlock HorizontalAlignment="Center" Opacity="0.0" x:Name="NavViewGeneralButtonLabel"
+                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/General'), Mode=OneWay}"
                                        Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                 <TextBlock.OpacityTransition>
                                     <ScalarTransition />
@@ -176,8 +177,8 @@
                         </FontIcon>
 
                         <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock HorizontalAlignment="Center"
-                                       x:Name="NavViewSettingsButtonLabel"
+                            <TextBlock HorizontalAlignment="Center" x:Name="NavViewSettingsButtonLabel"
+                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Settings'), Mode=OneWay}"
                                        Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                 <TextBlock.OpacityTransition>
                                     <ScalarTransition />
@@ -198,8 +199,8 @@
                         </FontIcon>
 
                         <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock HorizontalAlignment="Center"
-                                       x:Name="NavViewDevicesButtonLabel"
+                            <TextBlock HorizontalAlignment="Center" x:Name="NavViewDevicesButtonLabel"
+                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Devices'), Mode=OneWay}"
                                        Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                 <TextBlock.OpacityTransition>
                                     <ScalarTransition />
@@ -220,8 +221,8 @@
                         </FontIcon>
 
                         <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock HorizontalAlignment="Center"
-                                       x:Name="NavViewInfoButtonLabel"
+                            <TextBlock HorizontalAlignment="Center" x:Name="NavViewInfoButtonLabel"
+                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Info'), Mode=OneWay}"
                                        Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                 <TextBlock.OpacityTransition>
                                     <ScalarTransition />
@@ -295,8 +296,8 @@
                             </Grid>
 
                             <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                                <TextBlock x:Name="UpdateIconText" Opacity="1.0"
-                                           HorizontalAlignment="Center"
+                                <TextBlock Opacity="1.0" HorizontalAlignment="Center" x:Name="UpdateIconText"
+                                           Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Header'), Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                     <TextBlock.OpacityTransition>
                                         <ScalarTransition />
@@ -345,8 +346,8 @@
                             </Grid>
 
                             <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                                <TextBlock x:Name="HelpIconText" Opacity="1.0"
-                                           HorizontalAlignment="Center"
+                                <TextBlock Opacity="1.0" HorizontalAlignment="Center"
+                                           Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Help/Header'), Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                     <TextBlock.OpacityTransition>
                                         <ScalarTransition />
@@ -391,9 +392,11 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click"
+                                Content="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Skip'), Mode=OneWay}"
                                 Grid.Column="0" Margin="0,0,5,0"
                                 HorizontalAlignment="Stretch" />
                         <Button x:Name="InstallNowButton" Click="InstallNowButton_Click"
+                                Content="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Install'), Mode=OneWay}"
                                 Grid.Column="1" Margin="5,0,0,0"
                                 Style="{ThemeResource AccentButtonStyle}"
                                 HorizontalAlignment="Stretch" />
@@ -415,12 +418,14 @@
                 <StackPanel x:Name="UpdatePendingFlyoutMainStack"
                             Orientation="Vertical">
                     <TextBlock x:Name="UpdatePendingFlyoutHeader" FontSize="17"
+                               Text="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Headers/Downloading'), Mode=OneWay}"
                                Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
-                    <TextBlock Text="Amethyisht [version_string]"
+                    <TextBlock Text="Amethyst [version_string]"
                                x:Name="UpdatePendingFlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
 
                     <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
                         <TextBlock Margin="0,0,7,0" x:Name="UpdatePendingFlyoutStatusLabel"
+                                   Text="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Headers/Status'), Mode=OneWay}"
                                    Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
                         <TextBlock x:Name="UpdatePendingFlyoutStatusContent" Margin="0,0,0,0" />
                     </StackPanel>
@@ -448,24 +453,24 @@
                 </MenuFlyoutItem>
 
                 <!--Discord-->
-                <MenuFlyoutItem x:Name="HelpFlyoutDiscordButton"
-                                Click="HelpFlyoutDiscordButton_Click">
+                <MenuFlyoutItem Click="HelpFlyoutDiscordButton_Click"
+                                Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Help/Discord'), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE8F2;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
 
                 <!--GitHub / Dev Docs-->
-                <MenuFlyoutItem x:Name="HelpFlyoutDevButton"
-                                Click="HelpFlyoutDevButton_Click">
+                <MenuFlyoutItem Click="HelpFlyoutDevButton_Click"
+                                Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Help/Developers'), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE943;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
 
                 <!--Licenses-->
-                <MenuFlyoutItem x:Name="HelpFlyoutLicensesButton"
-                                Click="HelpFlyoutLicensesButton_Click">
+                <MenuFlyoutItem Click="HelpFlyoutLicensesButton_Click"
+                                Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Help/Licenses'), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xF000;" />
                     </MenuFlyoutItem.Icon>

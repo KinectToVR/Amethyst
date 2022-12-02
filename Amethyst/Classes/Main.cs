@@ -672,7 +672,7 @@ public static class Main
     {
         // Warning: this is meant to work as fire-and-forget
         Logger.Info("[Main] Waiting for the start sem to open..");
-        Shared.Semaphores.SemSignalStartMain.WaitOne();
+        Shared.Events.SemSignalStartMain.WaitOne();
         
         Logger.Info("[Main] Starting the main app loop now...");
 

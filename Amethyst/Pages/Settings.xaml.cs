@@ -77,19 +77,20 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         Task.Run(() =>
         {
-            Shared.Semaphores.ReloadSettingsPageSemaphore =
-                new Semaphore(0, 1);
+            Shared.Events.ReloadSettingsPageEvent =
+                new ManualResetEvent(false);
 
             while (true)
             {
                 // Wait for a reload signal (blocking)
-                Shared.Semaphores.ReloadSettingsPageSemaphore.WaitOne();
+                Shared.Events.ReloadSettingsPageEvent.WaitOne();
 
                 // Reload & restart the waiting loop
                 if (_settingsPageLoadedOnce)
                     Shared.Main.DispatcherQueue.TryEnqueue(Page_LoadedHandler);
 
-                Task.Delay(100); // Sleep a bit
+                // Reset the event
+                Shared.Events.ReloadSettingsPageEvent.Reset();
             }
         });
     }
@@ -181,7 +182,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Request page reloads
         Translator.Get.OnPropertyChanged();
-        Shared.Semaphores.RequestInterfaceReload();
+        Shared.Events.RequestInterfaceReload();
     }
 
     private void OptionBox_DropDownOpened(object sender, object e)
@@ -909,7 +910,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         AppData.Settings.OnPropertyChanged();
 
         // Reload pages for the new changes
-        Shared.Semaphores.RequestInterfaceReload();
+        Shared.Events.RequestInterfaceReload();
 
         Logger.Info("Requesting a check for already-added trackers...");
         Interfacing.AlreadyAddedTrackersScanRequested = true;

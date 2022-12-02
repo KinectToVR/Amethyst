@@ -35,19 +35,20 @@ public sealed partial class Info : Page, INotifyPropertyChanged
 
         Task.Run(() =>
         {
-            Shared.Semaphores.ReloadInfoPageSemaphore =
-                new Semaphore(0, 1);
+            Shared.Events.ReloadInfoPageEvent =
+                new ManualResetEvent(false);
 
             while (true)
             {
                 // Wait for a reload signal (blocking)
-                Shared.Semaphores.ReloadInfoPageSemaphore.WaitOne();
+                Shared.Events.ReloadInfoPageEvent.WaitOne();
 
                 // Reload & restart the waiting loop
                 if (_infoPageLoadedOnce)
                     Shared.Main.DispatcherQueue.TryEnqueue(Page_LoadedHandler);
 
-                Task.Delay(100); // Sleep a bit
+                // Reset the event
+                Shared.Events.ReloadInfoPageEvent.Reset();
             }
         });
     }

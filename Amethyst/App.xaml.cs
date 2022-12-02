@@ -116,7 +116,7 @@ public partial class App : Application
             Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
         // Request page reloads
-        Shared.Semaphores.RequestInterfaceReload();
+        Shared.Events.RequestInterfaceReload();
     }
 
     private FileSystemWatcher ResourceWatcher { get; }

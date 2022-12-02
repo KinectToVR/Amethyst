@@ -568,7 +568,7 @@
                                     <ItemsRepeater ItemsSource="{x:Bind ToggleableTrackerEntries, Mode=OneWay}">
                                         <DataTemplate x:DataType="mvvm:AppTrackerEntry">
                                             <ToggleMenuFlyoutItem Text="{x:Bind Name}" DataContext="{x:Bind}"
-                                                                  IsChecked="{x:Bind IsEnabled, Mode=OneWay}"
+                                                                  IsChecked="{x:Bind IsEnabled}"
                                                                   Click="TrackerToggleMenuFlyoutItem_Click"/>
                                         </DataTemplate>
                                     </ItemsRepeater>

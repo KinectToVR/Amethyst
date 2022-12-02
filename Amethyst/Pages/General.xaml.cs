@@ -96,20 +96,21 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         Task.Run(() =>
         {
-            Shared.Semaphores.ReloadGeneralPageSemaphore =
-                new Semaphore(0, 1);
+            Shared.Events.ReloadGeneralPageEvent =
+                new ManualResetEvent(false);
 
             while (true)
             {
                 // Wait for a reload signal (blocking)
-                Shared.Semaphores.ReloadGeneralPageSemaphore.WaitOne();
+                Shared.Events.ReloadGeneralPageEvent.WaitOne();
 
                 // Reload & restart the waiting loop
                 if (_generalPageLoadedOnce)
                     Shared.Main.DispatcherQueue.TryEnqueue(
                         async () => { await Page_LoadedHandler(); });
 
-                Task.Delay(100); // Sleep a bit
+                // Reset the event
+                Shared.Events.ReloadGeneralPageEvent.Reset();
             }
         });
     }
@@ -132,7 +133,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (!_generalPageLoadedOnce)
         {
             Logger.Info("Basic setup done! Starting the main loop now...");
-            Shared.Semaphores.SemSignalStartMain.Release();
+            Shared.Events.SemSignalStartMain.Release();
 
             // Refresh the server status
             await Interfacing.K2ServerDriverRefresh();

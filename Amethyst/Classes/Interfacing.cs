@@ -68,8 +68,11 @@ public static class Interfacing
         UpdatingNow = false;
 
     // Position helpers for k2 devices -> GUID, Pose
-    public static SortedDictionary<string, Vector3>
-        DeviceHookJointPosition = new(), // For automatic calibration
+    public static readonly SortedDictionary<string, Vector3>
+        DeviceHookJointPosition = new(); // This one applies to both
+
+    public static readonly SortedDictionary<string, Vector3>
+        // For automatic calibration
         DeviceRelativeTransformOrigin = new(); // This one applies to both
 
     // OpenVR playspace position
@@ -80,7 +83,7 @@ public static class Interfacing
 
     // Current page string
     public static string CurrentPageTag = "general";
-    public static string CurrentPageClass = "Amethyst.GeneralPage";
+    public static string CurrentPageClass = "Amethyst.Pages.General";
 
     // Current app state string (e.g. "general", "calibration_manual")
     public static string CurrentAppState = "general";
@@ -1229,7 +1232,7 @@ public static class Interfacing
             Shared.Main.DispatcherQueue.TryEnqueue(() =>
             {
                 // Force refresh all the valid pages
-                Shared.Semaphores.RequestInterfaceReload();
+                Shared.Events.RequestInterfaceReload(false);
 
                 // Update other components (may be moved to MVVM)
                 TrackingDevices.HandleDeviceRefresh(false);

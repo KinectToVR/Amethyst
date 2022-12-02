@@ -15,25 +15,25 @@ namespace Amethyst.Classes;
 
 public static class Shared
 {
-    public static class Semaphores
+    public static class Events
     {
-        public static Semaphore
-            ReloadMainWindowSemaphore,
-            ReloadGeneralPageSemaphore,
-            ReloadSettingsPageSemaphore,
-            ReloadDevicesPageSemaphore,
-            ReloadInfoPageSemaphore;
+        public static ManualResetEvent
+            ReloadMainWindowEvent,
+            ReloadGeneralPageEvent,
+            ReloadSettingsPageEvent,
+            ReloadDevicesPageEvent,
+            ReloadInfoPageEvent;
 
-        public static void RequestInterfaceReload()
+        public static void RequestInterfaceReload(bool all = true)
         {
             if (!General.GeneralTabSetupFinished)
                 return; // Not ready yet oof
 
-            ReloadMainWindowSemaphore?.Release();
-            ReloadGeneralPageSemaphore?.Release();
-            ReloadSettingsPageSemaphore?.Release();
-            ReloadDevicesPageSemaphore?.Release();
-            ReloadInfoPageSemaphore?.Release();
+            if (all) ReloadMainWindowEvent?.Set();
+            ReloadGeneralPageEvent?.Set();
+            ReloadSettingsPageEvent?.Set();
+            ReloadDevicesPageEvent?.Set();
+            ReloadInfoPageEvent?.Set();
         }
 
         public static readonly Semaphore
@@ -56,7 +56,7 @@ public static class Shared
 
         public static Mutex ApplicationMultiInstanceMutex;
 
-        public static Microsoft.UI.Xaml.Window Window;
+        public static Window Window;
         public static Microsoft.UI.Windowing.AppWindow AppWindow;
         public static IntPtr AppWindowId;
         public static Microsoft.UI.Dispatching.DispatcherQueue DispatcherQueue;
@@ -118,7 +118,7 @@ public static class Shared
 
             // Switch bring back the current item to the base state
             if (!string.IsNullOrEmpty(preNavPageType?.Name))
-                switch (preNavPageType.Name)
+                switch (preNavPageType.FullName)
                 {
                     case "Amethyst.Pages.General":
                         NavigationItems.NavViewGeneralButtonIcon.Translation = new Vector3(0, -8, 0);
@@ -154,23 +154,23 @@ public static class Shared
 
             // Switch the next navview item to the active state
             if (!string.IsNullOrEmpty(page.Name))
-                switch (page.Name)
+                switch (page.FullName)
                 {
-                    case "Amethyst.GeneralPage":
+                    case "Amethyst.Pages.General":
                         NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uEA8A";
                         NavigationItems.NavViewGeneralButtonIcon.Foreground = AttentionBrush;
 
                         NavigationItems.NavViewGeneralButtonLabel.Opacity = 0.0;
                         NavigationItems.NavViewGeneralButtonIcon.Translation = Vector3.Zero;
                         break;
-                    case "Amethyst.SettingsPage":
+                    case "Amethyst.Pages.Settings":
                         NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uF8B0";
                         NavigationItems.NavViewSettingsButtonIcon.Foreground = AttentionBrush;
 
                         NavigationItems.NavViewSettingsButtonLabel.Opacity = 0.0;
                         NavigationItems.NavViewSettingsButtonIcon.Translation = Vector3.Zero;
                         break;
-                    case "Amethyst.DevicesPage":
+                    case "Amethyst.Pages.Devices":
                         NavigationItems.NavViewDevicesButtonLabel.Opacity = 0.0;
                         NavigationItems.NavViewDevicesButtonIcon.Translation = Vector3.Zero;
 
@@ -179,7 +179,7 @@ public static class Shared
                         NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uEBD2";
                         NavigationItems.NavViewDevicesButtonIcon.FontSize = 23;
                         break;
-                    case "Amethyst.InfoPage":
+                    case "Amethyst.Pages.Info":
                         NavigationItems.NavViewInfoButtonIcon.Glyph = "\uF167";
                         NavigationItems.NavViewInfoButtonIcon.Foreground = AttentionBrush;
 
@@ -189,7 +189,7 @@ public static class Shared
                 }
 
             Interfacing.CurrentPageTag = navItemTag; // Cache the current page tag
-            Interfacing.CurrentPageClass = page.Name; // Cache the current page tag
+            Interfacing.CurrentPageClass = page.FullName; // Cache the current page tag
 
             MainContentFrame.Navigate(page, null, transitionInfo);
         }

@@ -90,20 +90,21 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
         Task.Run(() =>
         {
-            Shared.Semaphores.ReloadDevicesPageSemaphore =
-                new Semaphore(0, 1);
+            Shared.Events.ReloadDevicesPageEvent =
+                new ManualResetEvent(false);
 
             while (true)
             {
                 // Wait for a reload signal (blocking)
-                Shared.Semaphores.ReloadDevicesPageSemaphore.WaitOne();
+                Shared.Events.ReloadDevicesPageEvent.WaitOne();
 
                 // Reload & restart the waiting loop
                 if (_devicesPageLoadedOnce)
                     Shared.Main.DispatcherQueue.TryEnqueue(
                         async () => { await Page_LoadedHandler(); });
 
-                Task.Delay(100); // Sleep a bit
+                // Reset the event
+                Shared.Events.ReloadDevicesPageEvent.Reset();
             }
         });
     }

@@ -254,7 +254,7 @@ public static class TrackingDevices
 
         // Refresh trackers MVVM (everywhere)
         AppData.Settings.OnPropertyChanged("TrackersVector");
-        Semaphores.ReloadDevicesPageSemaphore?.Release();
+        Events.ReloadDevicesPageEvent?.Set();
 
         // If this is the first time and happened runtime, also show the notification
         if (Interfacing.K2AppTrackersSpawned)
@@ -348,6 +348,6 @@ public static class TrackingDevices
     }
 
     // Written to at the first plugin load
-    public static List<LoadAttemptedPlugin>
+    public static readonly List<LoadAttemptedPlugin>
         LoadAttemptedTrackingDevicesVector = new();
 }

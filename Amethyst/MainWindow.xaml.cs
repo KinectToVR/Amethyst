@@ -38,6 +38,7 @@ using Amethyst.Plugins.Contract;
 using System.Xml.Linq;
 using System.Text.Json;
 using System.Runtime.Loader;
+using System.ComponentModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -47,7 +48,7 @@ namespace Amethyst;
 /// <summary>
 ///     An empty window that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class MainWindow : Window
+public sealed partial class MainWindow : Window, INotifyPropertyChanged
 {
     private bool _mainPageLoadedOnce = false, _mainPageInitFinished = false;
     private string remoteVersionString = AppData.K2InternalVersion;
@@ -182,13 +183,13 @@ public sealed partial class MainWindow : Window
 
         Task.Run(() =>
         {
-            Shared.Semaphores.ReloadMainWindowSemaphore =
-                new Semaphore(0, 1);
+            Shared.Events.ReloadMainWindowEvent =
+                new ManualResetEvent(false);
 
             while (true)
             {
                 // Wait for a reload signal (blocking)
-                Shared.Semaphores.ReloadMainWindowSemaphore.WaitOne();
+                Shared.Events.ReloadMainWindowEvent.WaitOne();
 
                 // Reload & restart the waiting loop
                 if (_mainPageLoadedOnce)
@@ -200,7 +201,8 @@ public sealed partial class MainWindow : Window
                 TrackingDevices.TrackingDevicesList.Values.ToList()
                     .ForEach(plugin => plugin.OnLoad());
 
-                Task.Delay(100); // Sleep a bit
+                // Reset the event
+                Shared.Events.ReloadMainWindowEvent.Reset();
             }
         });
 
@@ -663,115 +665,17 @@ public sealed partial class MainWindow : Window
             Shared.Main.AppWindow.TitleBar.ButtonPressedBackgroundColor;
 
         // Request page reloads
-        Shared.Semaphores.RequestInterfaceReload();
+        Shared.Events.RequestInterfaceReload();
     }
 
     private async Task MainGrid_LoadedHandler()
     {
-        NavViewGeneralButtonLabel.Text = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/General");
-        NavViewSettingsButtonLabel.Text = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/Settings");
-        NavViewDevicesButtonLabel.Text = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/Devices");
-        NavViewInfoButtonLabel.Text = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/Info");
+        OnPropertyChanged(); // All
+        ReloadNavigationIcons();
 
-        UpdateIconText.Text = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/Updates/Header");
-        HelpIconText.Text = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/Help/Header");
-
-        InstallLaterButton.Content = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/Updates/Skip");
-        InstallNowButton.Content = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/Updates/Install");
-
-        HelpFlyoutDiscordButton.Text = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/Help/Discord");
-        HelpFlyoutDevButton.Text = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/Help/Developers");
-        HelpFlyoutLicensesButton.Text = Interfacing.LocalizedJsonString("/SharedStrings/Buttons/Help/Licenses");
-
-        ShutdownTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip0/Title");
-        ShutdownTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip0/Content");
-
-        ReloadTeachingTip.Title = Interfacing.LocalizedJsonString("/DevicesPage/Devices/Reload/Title");
-        ReloadTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/DevicesPage/Devices/Reload/Content");
-        ReloadTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/DevicesPage/Devices/Reload/Restart");
-
-        InitializerTeachingTip.Title = Interfacing.LocalizedJsonString("/NUX/Tip1/Title");
-        InitializerTeachingTip.Subtitle = Interfacing.LocalizedJsonString("/NUX/Tip1/Content");
-        InitializerTeachingTip.CloseButtonContent = Interfacing.LocalizedJsonString("/NUX/Next");
-        InitializerTeachingTip.ActionButtonContent = Interfacing.LocalizedJsonString("/NUX/Skip");
-
-        UpdatePendingFlyoutHeader.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading");
-        UpdatePendingFlyoutStatusLabel.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Status");
-
-        if (Interfacing.CurrentPageClass == "Amethyst.GeneralPage")
-        {
-            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uEA8A";
-            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Foreground = Shared.Main.AttentionBrush;
-
-            Shared.Main.NavigationItems.NavViewGeneralButtonLabel.Opacity = 0.0;
-            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Translation = Vector3.Zero;
-        }
-        else
-        {
-            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Translation = new Vector3(0, -8, 0);
-            Shared.Main.NavigationItems.NavViewGeneralButtonLabel.Opacity = 1.0;
-
-            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Foreground = Shared.Main.NeutralBrush;
-            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uE80F";
-        }
-
-        if (Interfacing.CurrentPageClass == "Amethyst.SettingsPage")
-        {
-            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uF8B0";
-            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Foreground = Shared.Main.AttentionBrush;
-
-            Shared.Main.NavigationItems.NavViewSettingsButtonLabel.Opacity = 0.0;
-            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Translation = Vector3.Zero;
-        }
-        else
-        {
-            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Translation = new Vector3(0, -8, 0);
-            Shared.Main.NavigationItems.NavViewSettingsButtonLabel.Opacity = 1.0;
-
-            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Foreground = Shared.Main.NeutralBrush;
-            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uE713";
-        }
-
-        if (Interfacing.CurrentPageClass == "Amethyst.DevicesPage")
-        {
-            Shared.Main.NavigationItems.NavViewDevicesButtonLabel.Opacity = 0.0;
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Translation = Vector3.Zero;
-
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Foreground = Shared.Main.AttentionBrush;
-
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uEBD2";
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.FontSize = 23;
-        }
-        else
-        {
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Translation = new Vector3(0, -8, 0);
-            Shared.Main.NavigationItems.NavViewDevicesButtonLabel.Opacity = 1.0;
-
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Foreground = Shared.Main.NeutralBrush;
-
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uF158";
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.FontSize = 20;
-        }
-
-        if (Interfacing.CurrentPageClass == "Amethyst.InfoPage")
-        {
-            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Glyph = "\uF167";
-            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Foreground = Shared.Main.AttentionBrush;
-
-            Shared.Main.NavigationItems.NavViewInfoButtonLabel.Opacity = 0.0;
-            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Translation = Vector3.Zero;
-        }
-        else
-        {
-            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Translation = new Vector3(0, -8, 0);
-            Shared.Main.NavigationItems.NavViewInfoButtonLabel.Opacity = 1.0;
-
-            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Foreground = Shared.Main.NeutralBrush;
-            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Glyph = "\uE946";
-        }
-
-        UpdateIcon.Foreground = Interfacing.CheckingUpdatesNow ? Shared.Main.AttentionBrush : Shared.Main.NeutralBrush;
-        var oppositeTheme = Interfacing.ActualTheme == ElementTheme.Dark ? ElementTheme.Light : ElementTheme.Dark;
+        var oppositeTheme = Interfacing.ActualTheme == ElementTheme.Dark 
+            ? ElementTheme.Light 
+            : ElementTheme.Dark;
 
         await Task.Delay(30);
         HelpButton.RequestedTheme = oppositeTheme;
@@ -792,6 +696,83 @@ public sealed partial class MainWindow : Window
         NavViewOkashiButtonLabel.RequestedTheme = Interfacing.ActualTheme;
         UpdateIconText.RequestedTheme = Interfacing.ActualTheme;
         PreviewBadgeLabel.RequestedTheme = Interfacing.ActualTheme;
+    }
+
+    private void ReloadNavigationIcons()
+    {
+        if (Interfacing.CurrentPageClass == "Amethyst.Pages.General")
+        {
+            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uEA8A";
+            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Foreground = Shared.Main.AttentionBrush;
+
+            Shared.Main.NavigationItems.NavViewGeneralButtonLabel.Opacity = 0.0;
+            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Translation = Vector3.Zero;
+        }
+        else
+        {
+            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Translation = new Vector3(0, -8, 0);
+            Shared.Main.NavigationItems.NavViewGeneralButtonLabel.Opacity = 1.0;
+
+            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Foreground = Shared.Main.NeutralBrush;
+            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uE80F";
+        }
+
+        if (Interfacing.CurrentPageClass == "Amethyst.Pages.Settings")
+        {
+            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uF8B0";
+            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Foreground = Shared.Main.AttentionBrush;
+
+            Shared.Main.NavigationItems.NavViewSettingsButtonLabel.Opacity = 0.0;
+            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Translation = Vector3.Zero;
+        }
+        else
+        {
+            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Translation = new Vector3(0, -8, 0);
+            Shared.Main.NavigationItems.NavViewSettingsButtonLabel.Opacity = 1.0;
+
+            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Foreground = Shared.Main.NeutralBrush;
+            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uE713";
+        }
+
+        if (Interfacing.CurrentPageClass == "Amethyst.Pages.Devices")
+        {
+            Shared.Main.NavigationItems.NavViewDevicesButtonLabel.Opacity = 0.0;
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Translation = Vector3.Zero;
+
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Foreground = Shared.Main.AttentionBrush;
+
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uEBD2";
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.FontSize = 23;
+        }
+        else
+        {
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Translation = new Vector3(0, -8, 0);
+            Shared.Main.NavigationItems.NavViewDevicesButtonLabel.Opacity = 1.0;
+
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Foreground = Shared.Main.NeutralBrush;
+
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uF158";
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.FontSize = 20;
+        }
+
+        if (Interfacing.CurrentPageClass == "Amethyst.Pages.Info")
+        {
+            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Glyph = "\uF167";
+            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Foreground = Shared.Main.AttentionBrush;
+
+            Shared.Main.NavigationItems.NavViewInfoButtonLabel.Opacity = 0.0;
+            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Translation = Vector3.Zero;
+        }
+        else
+        {
+            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Translation = new Vector3(0, -8, 0);
+            Shared.Main.NavigationItems.NavViewInfoButtonLabel.Opacity = 1.0;
+
+            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Foreground = Shared.Main.NeutralBrush;
+            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Glyph = "\uE946";
+        }
+
+        UpdateIcon.Foreground = Interfacing.CheckingUpdatesNow ? Shared.Main.AttentionBrush : Shared.Main.NeutralBrush;
     }
 
     private async Task ExecuteUpdates()
@@ -1556,5 +1537,13 @@ public sealed partial class MainWindow : Window
             ElementTheme.Default => Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default,
             _ => m_configurationSource.Theme
         };
+    }
+
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged(string propName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 }

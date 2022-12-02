@@ -156,7 +156,7 @@ public class AppSettings : INotifyPropertyChanged
     public bool TeachingTipShownFlip { get; set; } = false;
 
     // Disabled (by the user) devices set
-    public SortedSet<string> DisabledDevicesGuidSet = new();
+    public readonly SortedSet<string> DisabledDevicesGuidSet = new();
 
     // If the first-launch guide's been shown
     public bool FirstTimeTourShown { get; set; } = false;
