@@ -349,5 +349,5 @@ public static class TrackingDevices
 
     // Written to at the first plugin load
     public static readonly List<LoadAttemptedPlugin>
-        LoadAttemptedTrackingDevicesVector = new();
+        LoadAttemptedPluginsList = new();
 }

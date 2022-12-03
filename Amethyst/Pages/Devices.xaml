@@ -10,6 +10,7 @@
     xmlns:mvvm="using:Amethyst.MVVM"
     xmlns:controls="using:Amethyst.Controls"
     xmlns:util="using:Amethyst.Utils"
+    xmlns:classes="using:Amethyst.Classes"
     Loaded="Page_Loaded" NavigationCacheMode="Required"
     mc:Ignorable="d" Background="Transparent">
 
@@ -78,6 +79,7 @@
                                                Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Title'), Mode=OneWay}" />
 
                                     <ItemsRepeater x:Name="PluginsItemsRepeater" HorizontalAlignment="Stretch"
+                                                   ItemsSource="{x:Bind classes:TrackingDevices.LoadAttemptedPluginsList}"
                                                    Margin="20,0,20,20" AllowDrop="False">
 
                                         <ItemsRepeater.ItemTemplate>
@@ -234,9 +236,10 @@
                                         <ScalarTransition />
                                     </Border.OpacityTransition>
 
-                                    <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Base'), Mode=OneWay}"
-                                               FontWeight="Medium" Margin="0,-2,0,0"
-                                               Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                    <TextBlock
+                                        Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Base'), Mode=OneWay}"
+                                        FontWeight="Medium" Margin="0,-2,0,0"
+                                        Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                 </Border>
 
                                 <Border Height="20" CornerRadius="3" Padding="5,0"
@@ -249,9 +252,10 @@
                                         <ScalarTransition />
                                     </Border.OpacityTransition>
 
-                                    <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Override'), Mode=OneWay}"
-                                               FontWeight="Medium" Margin="0,-2,0,0"
-                                               Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                    <TextBlock
+                                        Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Override'), Mode=OneWay}"
+                                        FontWeight="Medium" Margin="0,-2,0,0"
+                                        Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                 </Border>
 
                                 <Border Height="20" CornerRadius="3" Padding="5,0"
@@ -264,9 +268,10 @@
                                         <ScalarTransition />
                                     </Border.OpacityTransition>
 
-                                    <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Error'), Mode=OneWay}"
-                                               FontWeight="Medium" Margin="0,-2,0,0" 
-                                               Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                    <TextBlock
+                                        Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Error'), Mode=OneWay}"
+                                        FontWeight="Medium" Margin="0,-2,0,0"
+                                        Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                 </Border>
 
                                 <TextBlock Text="{x:Bind Name, Mode=OneWay}"
@@ -645,7 +650,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0">
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" 
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                               FontWeight="SemiBold"
                                                Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/DeviceStatus'), Mode=OneWay}"
                                                Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -708,7 +714,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0">
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                               FontWeight="SemiBold"
                                                Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/SetAsDevice'), Mode=OneWay}"
                                                Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
 
@@ -743,7 +750,8 @@
                                                             CornerRadius="4" Height="35"
                                                             Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/SetAs/Override'), Mode=OneWay}"
                                                             ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/SetAs/Override/ToolTip'), Mode=OneWay}"
-                                                            x:Name="SetAsOverrideButton" Click="SetAsOverrideButton_Click" />
+                                                            x:Name="SetAsOverrideButton"
+                                                            Click="SetAsOverrideButton_Click" />
                                                 </StackPanel>
                                             </Flyout>
                                         </Button.Flyout>
@@ -775,7 +783,8 @@
                                                         <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
 
-                                                    <Button FontSize="15" Click="DismissOverrideTipNoJointsButton_Click"
+                                                    <Button FontSize="15"
+                                                            Click="DismissOverrideTipNoJointsButton_Click"
                                                             Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/NoJoints/Dismiss'), Mode=OneWay}"
                                                             VerticalContentAlignment="Center" FontWeight="SemiBold"
                                                             Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
@@ -785,7 +794,8 @@
                                                 </Grid>
 
                                                 <TextBlock FontSize="15" HorizontalAlignment="Stretch"
-                                                           VerticalAlignment="Stretch" Grid.Row="0" FontWeight="SemiBold"
+                                                           VerticalAlignment="Stretch" Grid.Row="0"
+                                                           FontWeight="SemiBold"
                                                            Style="{ThemeResource BaseTextBlockStyle}"
                                                            Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/DeviceHasNoJoints'), Mode=OneWay}" />
 
@@ -858,7 +868,7 @@
                                         <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
                                                 Margin="0,0,3,5" CornerRadius="4"
                                                 Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/ViewDocs'), Mode=OneWay}"
-                                                Click="OpenDocsButton_Click" Height="55" Width="160" 
+                                                Click="OpenDocsButton_Click" Height="55" Width="160"
                                                 Style="{ThemeResource AccentButtonStyle}"
                                                 HorizontalAlignment="Right" VerticalAlignment="Top" />
 
@@ -893,10 +903,7 @@
                             <!--JointBasis Selector Part-->
 
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
-                                        Visibility="{x:Bind Mode=OneWay, Path=CombineVisibility(
-                                                WaistAndFeetTrackersExpander.Visibility, 
-                                                KneesAndElbowsTrackersExpander.Visibility, 
-                                                AdditionalTrackersExpander.Visibility)}"
+                                        Visibility="{x:Bind Mode=OneWay, Path=CombineVisibility(WaistAndFeetTrackersExpander.Visibility, KneesAndElbowsTrackersExpander.Visibility, AdditionalTrackersExpander.Visibility)}"
                                         x:Name="DevicesJointsSelectorStackPanel">
 
                                 <!--<StackPanel.Transitions>
@@ -934,10 +941,7 @@
                             <!--Overrides Part-->
 
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
-                                        Visibility="{x:Bind Mode=OneWay, Path=CombineVisibility(
-                                                WaistAndFeetOverridesExpander.Visibility, 
-                                                KneesAndElbowsOverridesExpander.Visibility, 
-                                                AdditionalOverridesExpander.Visibility)}"
+                                        Visibility="{x:Bind Mode=OneWay, Path=CombineVisibility(WaistAndFeetOverridesExpander.Visibility, KneesAndElbowsOverridesExpander.Visibility, AdditionalOverridesExpander.Visibility)}"
                                         x:Name="DevicesOverridesSelectorStackPanel">
 
                                 <!--<StackPanel.Transitions>

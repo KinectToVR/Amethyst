@@ -353,7 +353,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         TrackingDevices.TrackingDevicesList.ContainsKey(plugin.Metadata.Guid))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
-                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
@@ -369,7 +369,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     if (AppData.Settings.DisabledDevicesGuidSet.Contains(plugin.Metadata.Guid))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
-                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
@@ -394,7 +394,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                                      $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
 
                         // Add the device to the 'attempted' list, mark as possibly missing deps
-                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
@@ -409,7 +409,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                                      $"Message: {e.Message}, Trace: {e.StackTrace}");
 
                         // Add the device to the 'attempted' list, mark as unknown
-                        TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
@@ -425,7 +425,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     // Add the device to the 'attempted' list, mark as all fine
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "to the load-attempted device plugins list (TrackingDevices)...");
-                    TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                    TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                     {
                         Name = plugin.Metadata.Name,
                         Guid = plugin.Metadata.Guid,
@@ -481,7 +481,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                                  "failed with a global outer caught exception. " +
                                  $"Provided exception Message: {e.Message}, Trace: {e.StackTrace}");
 
-                    TrackingDevices.LoadAttemptedTrackingDevicesVector.Add(new LoadAttemptedPlugin
+                    TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                     {
                         Name = plugin.Metadata.Name,
                         Guid = plugin.Metadata.Guid,

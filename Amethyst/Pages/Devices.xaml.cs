@@ -63,9 +63,6 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
         TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesList.Values;
 
-        Logger.Info($"Registering plugins MVVM for page: '{GetType().FullName}'...");
-        PluginsItemsRepeater.ItemsSource = TrackingDevices.LoadAttemptedTrackingDevicesVector;
-
         //Logger.Info($"Registering joint selectors MVVM for page: '{GetType().FullName}'...");
         //WaistAndFeetTrackersExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
         //KneesAndElbowsTrackersExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
@@ -321,16 +318,24 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
             return; // Better give up on this one
         }
 
-        // Setup the new base
-        AppData.Settings.CheckSettings(false, device);
-        AppData.Settings.TrackingDeviceGuid = device.Guid;
+        // Stop the pose composer for now
+        lock (Interfacing.UpdateLock)
+        {
+            // Setup the new base
+            AppData.Settings.CheckSettings(false, device);
+            AppData.Settings.TrackingDeviceGuid = device.Guid;
 
-        // Remove an override if exists and overlaps
-        if (device.IsOverride) AppData.Settings.OverrideDevicesGuidMap.Remove(device.Guid);
-        Logger.Info($"Changed the current tracking device (Base) to: ({device.Name}, {device.Guid})");
+            // Remove an override if exists and overlaps
+            if (device.IsOverride) AppData.Settings.OverrideDevicesGuidMap.Remove(device.Guid);
+            Logger.Info($"Changed the current tracking device (Base) to: ({device.Name}, {device.Guid})");
+        }
 
         // Update the status here
         await Shared.Devices.ReloadSelectedDevice(true);
+
+        // Make all the devices refresh their props
+        TrackingDevices.TrackingDevicesList.ToList()
+            .ForEach(x => x.Value.OnPropertyChanged());
 
         // Check the application config, save
         AppData.Settings.CheckSettings();
@@ -349,12 +354,23 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
             return; // Better give up on this one
         }
 
-        // Setup the new override
-        AppData.Settings.OverrideDevicesGuidMap.Add(device.Guid);
-        Logger.Info($"Changed the current tracking device (Base) to: ({device.Name}, {device.Guid})");
+        // Stop the pose composer for now
+        lock (Interfacing.UpdateLock)
+        {
+            // Setup the new override
+            AppData.Settings.OverrideDevicesGuidMap.Add(device.Guid);
+            Logger.Info($"Changed the current tracking device (Base) to: ({device.Name}, {device.Guid})");
+
+            // Additionally check settings
+            AppData.Settings.CheckSettings();
+        }
 
         // Update the status here
         await Shared.Devices.ReloadSelectedDevice(true);
+
+        // Make all the devices refresh their props
+        TrackingDevices.TrackingDevicesList.ToList()
+            .ForEach(x => x.Value.OnPropertyChanged());
 
         // Check the application config, save
         AppData.Settings.CheckSettings();
@@ -377,11 +393,20 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         SetAsBaseButton.IsEnabled = true;
         DeselectDeviceButton.Visibility = Visibility.Collapsed;
 
-        // Deselect the device
-        AppData.Settings.OverrideDevicesGuidMap.Remove(AppData.Settings.SelectedTrackingDeviceGuid);
+        // Stop the pose composer for now
+        lock (Interfacing.UpdateLock)
+        {
+            // Deselect the device, update status
+            AppData.Settings.OverrideDevicesGuidMap.Remove(AppData.Settings.SelectedTrackingDeviceGuid);
+            TrackingDevices.HandleDeviceRefresh(false);
 
-        // Update the status here
-        TrackingDevices.HandleDeviceRefresh(false);
+            // Additionally check settings
+            AppData.Settings.CheckSettings();
+        }
+
+        // Make all the devices refresh their props
+        TrackingDevices.TrackingDevicesList.ToList()
+            .ForEach(x => x.Value.OnPropertyChanged());
 
         // Update other statuses
         TrackingDevices.UpdateTrackingDevicesInterface();
