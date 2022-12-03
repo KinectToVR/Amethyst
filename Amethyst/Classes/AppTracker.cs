@@ -70,7 +70,7 @@ public class AppTracker : INotifyPropertyChanged
     // Position filter option
     private JointPositionTrackingOption _positionTrackingFilterOption =
         JointPositionTrackingOption.PositionTrackingFilterLerp;
-    
+
     // Does the managing device request no pos filtering?
     private bool _noPositionFilteringRequested = false;
 
@@ -199,7 +199,7 @@ public class AppTracker : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     // Get filtered data
@@ -295,26 +295,18 @@ public class AppTracker : INotifyPropertyChanged
     {
         // Construct the calibrated pose
         return Vector3.Transform(
-                   // Input
-                   positionVector -
-                   // Position
-                   (IsPositionOverridden
-                       ? AppData.Settings.DeviceCalibrationOrigins[OverrideGuid] // The one passed from ths
-                       : AppData.Settings.DeviceCalibrationOrigins[AppData.Settings.TrackingDeviceGuid]),
+                   // Input, position
+                   positionVector - AppData.Settings.DeviceCalibrationOrigins
+                       .GetValueOrDefault(PositionManagingDeviceGuid, Vector3.Zero),
                    // Rotation
-                   IsPositionOverridden
-                       ? AppData.Settings.DeviceCalibrationRotationMatrices[OverrideGuid] // The one passed from ths
-                       : AppData.Settings.DeviceCalibrationRotationMatrices[AppData.Settings.TrackingDeviceGuid]) +
+                   AppData.Settings.DeviceCalibrationRotationMatrices
+                       .GetValueOrDefault(OrientationManagingDeviceGuid, Quaternion.Identity)) +
                // Translation
-               (IsPositionOverridden
-                   ? AppData.Settings.DeviceCalibrationTranslationVectors[OverrideGuid] // The one passed from ths
-                   : AppData.Settings.DeviceCalibrationTranslationVectors[AppData.Settings.TrackingDeviceGuid]) +
+               AppData.Settings.DeviceCalibrationTranslationVectors
+                   .GetValueOrDefault(PositionManagingDeviceGuid, Vector3.Zero) +
                // Origin
-               (IsPositionOverridden
-                   ? AppData.Settings.DeviceCalibrationOrigins[OverrideGuid] // The one passed from ths
-                   : AppData.Settings.DeviceCalibrationOrigins[AppData.Settings.TrackingDeviceGuid]) +
-               // Offset
-               PositionOffset;
+               AppData.Settings.DeviceCalibrationOrigins
+                   .GetValueOrDefault(PositionManagingDeviceGuid, Vector3.Zero) + PositionOffset;
     }
 
     // Get tracker base
@@ -326,31 +318,19 @@ public class AppTracker : INotifyPropertyChanged
         JointPositionTrackingOption? posFilter = null,
         RotationTrackingFilterOption? oriFilter = null)
     {
-        // Check if matrices are empty
-        var notCalibrated = !AppData.Settings.DeviceMatricesCalibrated
-            .TryGetValue(OverrideGuid, out var calibrated) || !calibrated;
+        // Get the calibrated ori, checking if matrices are empty
+        var fullOrientation = GetFullCalibratedOrientation(
+            AppData.Settings.DeviceCalibrationRotationMatrices
+                .GetValueOrDefault(OrientationManagingDeviceGuid, Quaternion.Identity), oriFilter);
 
-        var fullOrientation = notCalibrated
-            ? GetFullOrientation(oriFilter)
-            : GetFullCalibratedOrientation(
-                IsOrientationOverridden
-                    ? AppData.Settings.DeviceCalibrationRotationMatrices[OverrideGuid] // The one passed from ths
-                    : AppData.Settings.DeviceCalibrationRotationMatrices[AppData.Settings.TrackingDeviceGuid],
-                oriFilter);
-
-        var fullPosition = notCalibrated
-            ? GetFullPosition(posFilter)
-            : GetFullCalibratedPosition(
-                IsPositionOverridden
-                    ? AppData.Settings.DeviceCalibrationRotationMatrices[OverrideGuid] // The one passed from ths
-                    : AppData.Settings.DeviceCalibrationRotationMatrices[AppData.Settings.TrackingDeviceGuid],
-                IsPositionOverridden
-                    ? AppData.Settings.DeviceCalibrationTranslationVectors[OverrideGuid] // The one passed from ths
-                    : AppData.Settings.DeviceCalibrationTranslationVectors[AppData.Settings.TrackingDeviceGuid],
-                IsPositionOverridden
-                    ? AppData.Settings.DeviceCalibrationOrigins[OverrideGuid] // The one passed from ths
-                    : AppData.Settings.DeviceCalibrationOrigins[AppData.Settings.TrackingDeviceGuid],
-                posFilter);
+        // Get the calibrated pos, checking if matrices are empty
+        var fullPosition = GetFullCalibratedPosition(
+            AppData.Settings.DeviceCalibrationRotationMatrices
+                .GetValueOrDefault(OrientationManagingDeviceGuid, Quaternion.Identity),
+            AppData.Settings.DeviceCalibrationTranslationVectors
+                .GetValueOrDefault(PositionManagingDeviceGuid, Vector3.Zero),
+            AppData.Settings.DeviceCalibrationOrigins
+                .GetValueOrDefault(PositionManagingDeviceGuid, Vector3.Zero), posFilter);
 
         // Construct the return type
         var trackerBase = new K2TrackerBase
@@ -377,21 +357,10 @@ public class AppTracker : INotifyPropertyChanged
 
         if (!OverridePhysics) return trackerBase;
 
-        var fullVelocity = notCalibrated
-            ? PoseVelocity
-            : GetCalibratedVector(PoseVelocity);
-
-        var fullAcceleration = notCalibrated
-            ? PoseAcceleration
-            : GetCalibratedVector(PoseAcceleration);
-
-        var fullAngularVelocity = notCalibrated
-            ? PoseAngularVelocity
-            : GetCalibratedVector(PoseAngularVelocity);
-
-        var fullAngularAcceleration = notCalibrated
-            ? PoseAngularAcceleration
-            : GetCalibratedVector(PoseAngularAcceleration);
+        var fullVelocity = GetCalibratedVector(PoseVelocity);
+        var fullAcceleration = GetCalibratedVector(PoseAcceleration);
+        var fullAngularVelocity = GetCalibratedVector(PoseAngularVelocity);
+        var fullAngularAcceleration = GetCalibratedVector(PoseAngularAcceleration);
 
         trackerBase.Pose.Physics = new K2TrackerPhysics
         {
@@ -423,7 +392,7 @@ public class AppTracker : INotifyPropertyChanged
 
         return trackerBase;
     }
-    
+
     public void UpdateFilters()
     {
         // Update LowPass and Kalman filters
@@ -433,10 +402,10 @@ public class AppTracker : INotifyPropertyChanged
         // Update the LERP (mix) filter
         _lerpPosition = Vector3.Lerp(_lastLerpPosition, Position, 0.31f);
         _lastLerpPosition = _lerpPosition; // Backup the position
-        
+
         // Update the standard SLERP filter
         _slerpOrientation = Quaternion.Slerp(
-            Quaternion.Normalize(_lastSlerpOrientation), 
+            Quaternion.Normalize(_lastSlerpOrientation),
             Quaternion.Normalize(Orientation), 0.25f);
         _lastSlerpOrientation = _slerpOrientation; // Backup
 
@@ -515,13 +484,21 @@ public class AppTracker : INotifyPropertyChanged
         TrackingDevices.GetTrackingDevice().IsAppOrientationSupported;
 
     [JsonIgnore]
-    public string GetManagingDeviceGuid =>
-        IsPositionOverridden || IsOrientationOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
+    public string ManagingDeviceGuid =>
+        IsOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
+
+    [JsonIgnore]
+    public string PositionManagingDeviceGuid =>
+        IsPositionOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
+
+    [JsonIgnore]
+    public string OrientationManagingDeviceGuid =>
+        IsPositionOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
 
     [JsonIgnore]
     public string ManagingDevicePlaceholder =>
         Interfacing.LocalizedJsonString("/SettingsPage/Filters/Managed")
-            .Replace("{0}", GetManagingDeviceGuid);
+            .Replace("{0}", ManagingDeviceGuid);
 
     private bool _isTrackerExpanderOpen = false;
 
@@ -615,7 +592,8 @@ public class AppTracker : INotifyPropertyChanged
     [JsonIgnore] public bool IsOverridden => IsPositionOverridden || IsOrientationOverridden;
 
     // IsPositionOverridden, IsOrientationOverridden
-    [JsonIgnore] public (bool Position, bool Orientation) IsOverriddenPair 
+    [JsonIgnore]
+    public (bool Position, bool Orientation) IsOverriddenPair
         => (IsPositionOverridden, IsOrientationOverridden);
 
     public double BoolToOpacity(bool v)
@@ -665,6 +643,6 @@ public class AppTracker : INotifyPropertyChanged
 
     public bool IsManagedBy(string guid)
     {
-        return guid == GetManagingDeviceGuid;
+        return guid == ManagingDeviceGuid;
     }
 }
