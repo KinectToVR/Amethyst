@@ -5,16 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.System;
 using Amethyst.Classes;
+using Amethyst.MVVM;
 using Amethyst.Utils;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Animation;
-using Windows.System;
-using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,7 +26,7 @@ namespace Amethyst.Pages;
 /// </summary>
 public sealed partial class Devices : Page, INotifyPropertyChanged
 {
-    private bool _devicesPageLoadedOnce = false;
+    private bool _devicesPageLoadedOnce;
 
     public Devices()
     {
@@ -40,39 +40,18 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         Shared.Devices.TrackingDeviceErrorLabel = TrackingDeviceErrorLabel;
         Shared.Devices.DeviceErrorGrid = DeviceErrorGrid;
         Shared.Devices.TrackingDeviceChangePanel = TrackingDeviceChangePanel;
-        Shared.Devices.DevicesMainContentGridOuter = DevicesMainContentGridOuter;
-        Shared.Devices.DevicesMainContentGridInner = DevicesMainContentGridInner;
-        Shared.Devices.SelectedDeviceSettingsHostContainer = SelectedDeviceSettingsHostContainer;
         Shared.Devices.DevicesTreeView = TrackingDeviceTreeView;
-        Shared.Devices.PluginsItemsRepeater = PluginsItemsRepeater;
-        Shared.Devices.NoJointsFlyout = NoJointsFlyout;
-        Shared.Devices.SetDeviceTypeFlyout = SetDeviceTypeFlyout;
         Shared.Devices.SetAsOverrideButton = SetAsOverrideButton;
         Shared.Devices.SetAsBaseButton = SetAsBaseButton;
         Shared.Devices.DeselectDeviceButton = DeselectDeviceButton;
-        Shared.Devices.DevicesMainContentScrollViewer = DevicesMainContentScrollViewer;
-        Shared.Devices.DevicesOverridesSelectorStackPanel = DevicesOverridesSelectorStackPanel;
-        Shared.Devices.DevicesJointSelectorStackPanel = DevicesJointsSelectorStackPanel;
-        Shared.Devices.JointExpanderHostStackPanel = JointsExpanderHostStackPanel;
         Shared.Devices.SelectedDeviceSettingsRootLayoutPanel = SelectedDeviceSettingsRootLayoutPanel;
-        Shared.Devices.OverridesExpanderHostStackPanel = OverridesExpanderHostStackPanel;
 
         Shared.TeachingTips.DevicesPage.DeviceControlsTeachingTip = DeviceControlsTeachingTip;
         Shared.TeachingTips.DevicesPage.DevicesListTeachingTip = DevicesListTeachingTip;
 
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
         TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesList.Values;
-
-        //Logger.Info($"Registering joint selectors MVVM for page: '{GetType().FullName}'...");
-        //WaistAndFeetTrackersExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
-        //KneesAndElbowsTrackersExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
-        //AdditionalTrackersExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
-
-        //Logger.Info($"Registering override selectors MVVM for page: '{GetType().FullName}'...");
-        //WaistAndFeetOverridesExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
-        //KneesAndElbowsOverridesExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
-        //AdditionalOverridesExpander.PropertyChangedEvent += (_, _) => { OnPropertyChanged(); };
-
+        
         // Set currently tracking device & selected device
         Logger.Info("Overwriting the devices TreeView selected item...");
         var devicesListIndex = TrackingDevices.TrackingDevicesList.Keys.ToList()
@@ -105,6 +84,20 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
             }
         });
     }
+
+    // Waist, LR Foot
+    public List<AppTracker> BasicTrackers => AppData.Settings.TrackersVector.ToArray()[..3].ToList();
+
+    // LR Knee, LR Elbow
+    public List<AppTracker> StandardTrackers => AppData.Settings.TrackersVector.ToArray()[3..7].ToList();
+
+    // Everything else
+    public List<AppTracker> AdditionalTrackers => AppData.Settings.TrackersVector.Count > 6
+        ? AppData.Settings.TrackersVector.ToArray()[7..].ToList()
+        : new List<AppTracker>(); // Dummy list with no items (at least not null)
+
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
@@ -205,7 +198,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
-        var node = args.InvokedItem as MVVM.TrackingDevice;
+        var node = args.InvokedItem as TrackingDevice;
         AppData.Settings.SelectedTrackingDeviceGuid = node?.Guid;
 
         Logger.Info($"Selected device: ({node!.Name}, {node!.Guid})");
@@ -507,24 +500,10 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     {
     }
 
-    // MVVM stuff
-    public event PropertyChangedEventHandler PropertyChanged;
-
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
-
-    // Waist, LR Foot
-    public List<AppTracker> BasicTrackers => AppData.Settings.TrackersVector.ToArray()[..3].ToList();
-
-    // LR Knee, LR Elbow
-    public List<AppTracker> StandardTrackers => AppData.Settings.TrackersVector.ToArray()[3..7].ToList();
-
-    // Everything else
-    public List<AppTracker> AdditionalTrackers => AppData.Settings.TrackersVector.Count > 6
-        ? AppData.Settings.TrackersVector.ToArray()[7..].ToList()
-        : new List<AppTracker>(); // Dummy list with no items (at least not null)
 
     public Visibility CombineVisibility(Visibility v1, Visibility v2, Visibility v3)
     {

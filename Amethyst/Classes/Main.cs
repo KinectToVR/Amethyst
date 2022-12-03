@@ -10,15 +10,15 @@ using Amethyst.Driver.API;
 using Amethyst.Driver.Client;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
-using Microsoft.UI.Xaml;
+using AmethystSupport;
 using Valve.VR;
 
 namespace Amethyst.Classes;
 
 public static class Main
 {
-    private static int _pFrozenLoops = 0; // Loops passed since last frozen update
-    private static bool _bInitialized = false; // Backup initialized? value
+    private static int _pFrozenLoops; // Loops passed since last frozen update
+    private static bool _bInitialized; // Backup initialized? value
 
     private static void UpdateVrPositions()
     {
@@ -409,7 +409,7 @@ public static class Main
 
             // Compose flip
             var dotFacing =
-                AmethystSupport.Calibration.OrientationDot(
+                Calibration.OrientationDot(
                     // Check for external-flip
                     extFlip
 
@@ -471,7 +471,7 @@ public static class Main
                     // Optionally overwrite the rotation with HMD orientation
                     // Not the "calibrated" variant, as the fix will be applied after everything else
                     JointRotationTrackingOption.FollowHmdRotation =>
-                        Quaternion.CreateFromYawPitchRoll((float)AmethystSupport.Calibration.QuaternionYaw(
+                        Quaternion.CreateFromYawPitchRoll((float)Calibration.QuaternionYaw(
                             Interfacing.Plugins.GetHmdPoseCalibrated.Orientation), 0, 0),
 
                     // Optionally overwrite the rotation with NONE
@@ -489,7 +489,7 @@ public static class Main
                     // Optionally overwrite the rotation with HMD orientation
                     // Not the "calibrated" variant, as the fix will be applied after everything else
                     JointRotationTrackingOption.FollowHmdRotation =>
-                        Quaternion.CreateFromYawPitchRoll((float)AmethystSupport.Calibration.QuaternionYaw(
+                        Quaternion.CreateFromYawPitchRoll((float)Calibration.QuaternionYaw(
                             Interfacing.Plugins.GetHmdPoseCalibrated.Orientation), 0, 0),
 
                     // Optionally overwrite the rotation with NONE
@@ -507,7 +507,7 @@ public static class Main
                     tracker.Orientation = tracker.OrientationTrackingOption switch
                     {
                         JointRotationTrackingOption.SoftwareCalculatedRotation =>
-                            AmethystSupport.Calibration.FeetSoftwareOrientation(
+                            Calibration.FeetSoftwareOrientation(
                                     device.TrackedJoints.First(x =>
                                         x.Role == TypeUtils.FlipJointType(TrackedJointType.JointAnkleLeft,
                                             (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)),
@@ -520,7 +520,7 @@ public static class Main
                                 .Inversed(isJointFlipped), // Also inverse if flipped (via an extension)
 
                         JointRotationTrackingOption.SoftwareCalculatedRotationV2 =>
-                            AmethystSupport.Calibration.FeetSoftwareOrientationV2(
+                            Calibration.FeetSoftwareOrientationV2(
                                     device.TrackedJoints.First(x =>
                                         x.Role == TypeUtils.FlipJointType(TrackedJointType.JointAnkleLeft,
                                             (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)),
@@ -540,9 +540,9 @@ public static class Main
                     != JointRotationTrackingOption.FollowHmdRotation)
                 {
                     // Note: only in flip mode
-                    tracker.Orientation = AmethystSupport.Calibration
+                    tracker.Orientation = Calibration
                         .FixFlippedOrientation(tracker.Orientation);
-                    tracker.PreviousOrientation = AmethystSupport.Calibration
+                    tracker.PreviousOrientation = Calibration
                         .FixFlippedOrientation(tracker.PreviousOrientation);
                 }
 
@@ -629,12 +629,12 @@ public static class Main
                     JointRotationTrackingOption.DeviceInferredRotation)
                 {
                     // Standard, also apply calibration-related flipped orientation fixes
-                    tracker.Orientation = AmethystSupport.Calibration
+                    tracker.Orientation = Calibration
                         .FixFlippedOrientation(isJointFlipped
                             ? Quaternion.Inverse(joint.JointOrientation)
                             : joint.JointOrientation);
 
-                    tracker.PreviousOrientation = AmethystSupport.Calibration
+                    tracker.PreviousOrientation = Calibration
                         .FixFlippedOrientation(isJointFlipped
                             ? Quaternion.Inverse(joint.PreviousJointOrientation)
                             : joint.PreviousJointOrientation);

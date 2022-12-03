@@ -1,27 +1,21 @@
-﻿using Amethyst.Classes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using Amethyst.Classes;
 
-namespace Amethyst.Utils
+namespace Amethyst.Utils;
+
+public class Translator : INotifyPropertyChanged
 {
-    public class Translator : INotifyPropertyChanged
+    public static Translator Get { get; } = new();
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string String(string key)
     {
-        public static Translator Get { get; } = new();
+        return Interfacing.LocalizedJsonString(key);
+    }
 
-        public string String(string key)
-        {
-            return Interfacing.LocalizedJsonString(key);
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged(string propName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        }
+    public void OnPropertyChanged(string propName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 }

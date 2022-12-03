@@ -1,23 +1,36 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Amethyst.MVVM;
-using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media.Animation;
-using WinRT;
 using static Amethyst.Classes.Shared;
 
 namespace Amethyst.Classes;
 
 public static class TrackingDevices
 {
+    public enum PluginLoadError
+    {
+        Unknown, // We literally don't know what's happened
+        NoError, // Everything's fine, celebration time!
+        LoadingSkipped, // This device is disabled by the user
+        NoDeviceFolder, // No device folder w/ files found
+        NoDeviceDll, // Device dll not found at proper path
+        NoDeviceDependencyDll, // Dep dll/s not found or invalid
+        DeviceDllLinkError, // Could not link for some reason
+        BadOrDuplicateGuid, // Empty/Bad/Duplicate device GUID
+        InvalidFactory, // Device factory just gave up, now cry
+        Other // Check logs, MEF probably gave us up again...
+    }
+
     public static readonly SortedDictionary<string, TrackingDevice> TrackingDevicesList = new();
+
+    // Written to at the first plugin load
+    public static readonly List<LoadAttemptedPlugin>
+        LoadAttemptedPluginsList = new();
 
     public static TrackingDevice GetTrackingDevice()
     {
@@ -134,9 +147,6 @@ public static class TrackingDevices
 
         // Update extflip
         CheckFlipSupport();
-
-        // Force refresh pages
-        // TODO refresh without relaoding strings
     }
 
     public static void HandleDeviceRefresh(bool shouldReconnect)
@@ -332,22 +342,4 @@ public static class TrackingDevices
     {
         return AppData.Settings.OverrideDevicesGuidMap.Contains(guid);
     }
-
-    public enum PluginLoadError
-    {
-        Unknown, // We literally don't know what's happened
-        NoError, // Everything's fine, celebration time!
-        LoadingSkipped, // This device is disabled by the user
-        NoDeviceFolder, // No device folder w/ files found
-        NoDeviceDll, // Device dll not found at proper path
-        NoDeviceDependencyDll, // Dep dll/s not found or invalid
-        DeviceDllLinkError, // Could not link for some reason
-        BadOrDuplicateGuid, // Empty/Bad/Duplicate device GUID
-        InvalidFactory, // Device factory just gave up, now cry
-        Other // Check logs, MEF probably gave us up again...
-    }
-
-    // Written to at the first plugin load
-    public static readonly List<LoadAttemptedPlugin>
-        LoadAttemptedPluginsList = new();
 }

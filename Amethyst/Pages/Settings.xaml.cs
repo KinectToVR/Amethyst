@@ -1,35 +1,30 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Windows.Globalization;
+using Windows.System.UserProfile;
 using Amethyst.Classes;
+using Amethyst.Driver.API;
+using Amethyst.Driver.Client;
+using Amethyst.MVVM;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.Threading.Tasks;
-using Windows.Media.Core;
-using Valve.VR;
-using Windows.Globalization;
-using Windows.System.UserProfile;
-using WinRT;
-using Microsoft.UI.Xaml.Media.Animation;
-using System.Text;
-using System;
-using ABI.System.Numerics;
-using Amethyst.Driver.Client;
-using static Amethyst.Classes.Shared.TeachingTips;
-using Quaternion = System.Numerics.Quaternion;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using System.Diagnostics;
-using System.Linq;
-using Amethyst.Driver.API;
-using System.Reflection;
-using System.Threading;
-using Amethyst.MVVM;
-using System.ComponentModel;
-using Amethyst.Plugins.Contract;
-using Google.Protobuf.WellKnownTypes;
+using Microsoft.UI.Xaml.Media.Animation;
+using Valve.VR;
+using WinRT;
+using static Amethyst.Classes.Shared.TeachingTips;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,8 +36,8 @@ namespace Amethyst.Pages;
 /// </summary>
 public sealed partial class Settings : Page, INotifyPropertyChanged
 {
-    private bool _settingsPageLoadedOnce = false;
-    private List<string> _languageList = new();
+    private readonly List<string> _languageList = new();
+    private bool _settingsPageLoadedOnce;
 
     public Settings()
     {
@@ -56,13 +51,9 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Shared.Settings.FlipToggle = FlipToggle;
         Shared.Settings.FlipDropDown = FlipDropDown;
         Shared.Settings.ExternalFlipCheckBox = ExternalFlipCheckBox;
-        Shared.Settings.AutoStartCheckBox = AutoStartCheckBox;
         Shared.Settings.CheckOverlapsCheckBox = CheckOverlapsCheckBox;
-        Shared.Settings.ExternalFlipCheckBoxLabel = ExternalFlipCheckBoxLabel;
         Shared.Settings.SetErrorFlyoutText = SetErrorFlyoutText;
         Shared.Settings.ExternalFlipStatusLabel = ExtFlipStatusLabel;
-        Shared.Settings.ExternalFlipStackPanel = ExternalFlipStackPanel;
-        Shared.Settings.JointExpanderHostStackPanel = JointExpanderHostStackPanel;
         Shared.Settings.ExternalFlipStatusStackPanel = ExtFlipStatusStackPanel;
         Shared.Settings.FlipDropDownContainer = FlipDropDownContainer;
 
@@ -94,6 +85,18 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             }
         });
     }
+
+    public List<AppTrackerEntry> ToggleableTrackerEntries => Enum.GetValues<TrackerType>()
+        // Pick all non-default (additional) trackers
+        .Where(x => x is not TrackerType.TrackerWaist and not
+            TrackerType.TrackerLeftFoot and not TrackerType.TrackerRightFoot and not
+            TrackerType.TrackerLeftKnee and not TrackerType.TrackerRightKnee and not
+            TrackerType.TrackerLeftElbow and not TrackerType.TrackerRightElbow)
+        // Convert to an entry, passing the filtered tracker role
+        .Select(x => new AppTrackerEntry { TrackerRole = x }).ToList();
+
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
 
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -236,8 +239,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         var appError = OpenVR.Applications.SetApplicationAutoLaunch("K2VR.Amethyst", true);
 
         if (appError != EVRApplicationError.None)
-            Logger.Warn($"Amethyst manifest not installed! Error: {
-                OpenVR.Applications.GetApplicationsErrorNameFromEnum(appError)}");
+            Logger.Warn(
+                $"Amethyst manifest not installed! Error: {OpenVR.Applications.GetApplicationsErrorNameFromEnum(appError)}");
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOn);
@@ -253,8 +256,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         var appError = OpenVR.Applications.SetApplicationAutoLaunch("K2VR.Amethyst", false);
 
         if (appError != EVRApplicationError.None)
-            Logger.Warn($"Amethyst manifest not installed! Error: {
-                OpenVR.Applications.GetApplicationsErrorNameFromEnum(appError)}");
+            Logger.Warn(
+                $"Amethyst manifest not installed! Error: {OpenVR.Applications.GetApplicationsErrorNameFromEnum(appError)}");
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOff);
@@ -435,8 +438,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             AppData.Settings.ExternalFlipCalibrationMatrix =
                 Interfacing.GetVrTrackerPoseCalibrated("waist", true).Orientation;
 
-        Logger.Info($"Captured orientation for external flip: {
-            AppData.Settings.ExternalFlipCalibrationMatrix}");
+        Logger.Info($"Captured orientation for external flip: {AppData.Settings.ExternalFlipCalibrationMatrix}");
 
         AppData.Settings.SaveSettings();
     }
@@ -831,22 +833,10 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         SetErrorFlyout.Hide();
     }
 
-    // MVVM stuff
-    public event PropertyChangedEventHandler PropertyChanged;
-
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
-
-    public List<AppTrackerEntry> ToggleableTrackerEntries => System.Enum.GetValues<TrackerType>()
-        // Pick all non-default (additional) trackers
-        .Where(x => x is not TrackerType.TrackerWaist and not
-            TrackerType.TrackerLeftFoot and not TrackerType.TrackerRightFoot and not
-            TrackerType.TrackerLeftKnee and not TrackerType.TrackerRightKnee and not
-            TrackerType.TrackerLeftElbow and not TrackerType.TrackerRightElbow)
-        // Convert to an entry, passing the filtered tracker role
-        .Select(x => new AppTrackerEntry { TrackerRole = x }).ToList();
 
     private async void TrackerToggleMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
@@ -864,7 +854,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Find out who asked
         var role = ((sender as ToggleMenuFlyoutItem)!
             .DataContext as AppTrackerEntry)!.TrackerRole;
-        
+
         // Create a new tracker
         if ((sender as ToggleMenuFlyoutItem)!.IsChecked)
         {
@@ -886,7 +876,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             // Make actual changes
             if (removedTracker.IsActive && Interfacing.AppTrackersInitialized)
                 await DriverClient.UpdateTrackerStates(new List<(TrackerType Role, bool State)>
-                        { (removedTracker.Role, false) });
+                    { (removedTracker.Role, false) });
 
             await Task.Delay(20);
             AppData.Settings.TrackersVector.Remove(removedTracker);
@@ -928,7 +918,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     private async void PairsToggleMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
         // Second copy just in case
-        AppData.Settings.UseTrackerPairs = 
+        AppData.Settings.UseTrackerPairs =
             (sender as ToggleMenuFlyoutItem)!.IsChecked;
 
         AppData.Settings.CheckSettings();

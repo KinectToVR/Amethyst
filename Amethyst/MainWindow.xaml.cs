@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
@@ -10,35 +11,37 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Loader;
 using System.Threading;
+using System.Threading.Tasks;
+using Windows.Data.Json;
 using Windows.Graphics;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.System;
+using Windows.Web.Http;
 using Amethyst.Classes;
+using Amethyst.MVVM;
+using Amethyst.Pages;
+using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.AppNotifications;
 using WinRT;
 using WinRT.Interop;
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.ApplicationSettings;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Runtime.InteropServices;
-using System.Timers;
-using Windows.Storage.Streams;
-using Windows.System;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Data.Json;
-using Amethyst.MVVM;
-using Amethyst.Plugins.Contract;
-using System.Xml.Linq;
-using System.Text.Json;
-using System.Runtime.Loader;
-using System.ComponentModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -50,12 +53,13 @@ namespace Amethyst;
 /// </summary>
 public sealed partial class MainWindow : Window, INotifyPropertyChanged
 {
-    private bool _mainPageLoadedOnce = false, _mainPageInitFinished = false;
-    private string remoteVersionString = AppData.K2InternalVersion;
+    private bool _mainPageLoadedOnce;
+    private readonly bool _mainPageInitFinished;
+    private SystemBackdropConfiguration m_configurationSource;
+    private MicaController m_micaController;
 
     private WindowsSystemDispatcherQueueHelper m_wsdqHelper; // See separate sample below for implementation
-    private Microsoft.UI.Composition.SystemBackdrops.MicaController m_micaController;
-    private Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration m_configurationSource;
+    private string remoteVersionString = AppData.K2InternalVersion;
 
     public MainWindow()
     {
@@ -68,38 +72,20 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         Shared.Main.MainNavigationView = NavView;
         Shared.Main.AppTitleLabel = AppTitleLabel;
-        Shared.Main.FlyoutHeader = FlyoutHeader;
-        Shared.Main.FlyoutFooter = FlyoutFooter;
-        Shared.Main.FlyoutContent = FlyoutContent;
 
         Shared.Main.InterfaceBlockerGrid = InterfaceBlockerGrid;
         Shared.Main.NavigationBlockerGrid = NavigationBlockerGrid;
-
         Shared.Main.MainContentFrame = ContentFrame;
-        Shared.Main.UpdateIconDot = UpdateIconDot;
-        Shared.Main.UpdateFlyout = UpdateFlyout;
-
-        Shared.Main.InstallNowButton = InstallNowButton;
-        Shared.Main.InstallLaterButton = InstallLaterButton;
-
-        Shared.Main.GeneralItem = GeneralItem;
-        Shared.Main.SettingsItem = SettingsItem;
-        Shared.Main.DevicesItem = DevicesItem;
-        Shared.Main.InfoItem = InfoItem;
-        Shared.Main.ConsoleItem = ConsoleItem;
-        Shared.Main.HelpButton = HelpButton;
 
         Shared.Main.NavigationItems.NavViewGeneralButtonIcon = NavViewGeneralButtonIcon;
         Shared.Main.NavigationItems.NavViewSettingsButtonIcon = NavViewSettingsButtonIcon;
         Shared.Main.NavigationItems.NavViewDevicesButtonIcon = NavViewDevicesButtonIcon;
         Shared.Main.NavigationItems.NavViewInfoButtonIcon = NavViewInfoButtonIcon;
-        Shared.Main.NavigationItems.NavViewOkashiButtonIcon = NavViewOkashiButtonIcon;
 
         Shared.Main.NavigationItems.NavViewGeneralButtonLabel = NavViewGeneralButtonLabel;
         Shared.Main.NavigationItems.NavViewSettingsButtonLabel = NavViewSettingsButtonLabel;
         Shared.Main.NavigationItems.NavViewDevicesButtonLabel = NavViewDevicesButtonLabel;
         Shared.Main.NavigationItems.NavViewInfoButtonLabel = NavViewInfoButtonLabel;
-        Shared.Main.NavigationItems.NavViewOkashiButtonLabel = NavViewOkashiButtonLabel;
 
         // Set up
         Title = "Amethyst";
@@ -163,8 +149,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.Main.NotificationManager.Register();
 
         Logger.Info("Creating and registering the default resource manager...");
-        Shared.Main.ResourceManager = new Microsoft.Windows.ApplicationModel
-            .Resources.ResourceManager("resources.pri");
+        Shared.Main.ResourceManager = new ResourceManager("resources.pri");
 
         Logger.Info("Creating and registering the default resource context...");
         Shared.Main.ResourceContext = Shared.Main.ResourceManager.CreateResourceContext();
@@ -172,10 +157,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Pushing control pages the global collection...");
         Shared.Main.Pages = new List<(string Tag, Type Page)>
         {
-            ("general", typeof(Pages.General)),
-            ("settings", typeof(Pages.Settings)),
-            ("devices", typeof(Pages.Devices)),
-            ("info", typeof(Pages.Info))
+            ("general", typeof(General)),
+            ("settings", typeof(Settings)),
+            ("devices", typeof(Devices)),
+            ("info", typeof(Info))
         };
 
         Logger.Info("Registering a detached binary semaphore " +
@@ -286,7 +271,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Add the current assembly to support invoke method exports
         Logger.Info("Exporting the plugin host plugin...");
         catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
-        
+
         // Iterate over all directories in .\Plugins dir and add all Plugin* dirs to catalogs
         var pluginDirectoryList = Directory.EnumerateDirectories(
             Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "Plugins"),
@@ -611,6 +596,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         _mainPageInitFinished = true;
     }
 
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
+
     private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
     {
         // Load theme config
@@ -672,8 +660,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         OnPropertyChanged(); // All
         ReloadNavigationIcons();
 
-        var oppositeTheme = Interfacing.ActualTheme == ElementTheme.Dark 
-            ? ElementTheme.Light 
+        var oppositeTheme = Interfacing.ActualTheme == ElementTheme.Dark
+            ? ElementTheme.Light
             : ElementTheme.Dark;
 
         await Task.Delay(30);
@@ -792,7 +780,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
 
         if (!Interfacing.IsNuxPending)
-            UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions()
+            UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions
             {
                 Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
                 ShowMode = FlyoutShowMode.Transient
@@ -815,7 +803,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         try
         {
-            using var client = new Windows.Web.Http.HttpClient();
+            using var client = new HttpClient();
             var installerUri = "";
 
             Logger.Info("Checking out the updater version... [GET]");
@@ -858,16 +846,16 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             if (!updateError)
                 try
                 {
-                    var thisFolder = await Windows.Storage.StorageFolder
+                    var thisFolder = await StorageFolder
                         .GetFolderFromPathAsync(Interfacing.GetK2AppDataTempDir().FullName);
 
                     // To save downloaded image to local storage
                     var installerFile = await thisFolder.CreateFileAsync(
-                        "Amethyst-Installer.exe", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+                        "Amethyst-Installer.exe", CreationCollisionOption.ReplaceExisting);
 
-                    using var fsInstallerFile = await installerFile.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite);
+                    using var fsInstallerFile = await installerFile.OpenAsync(FileAccessMode.ReadWrite);
                     using var response = await client.GetAsync(new Uri(installerUri),
-                        Windows.Web.Http.HttpCompletionOption.ResponseHeadersRead);
+                        HttpCompletionOption.ResponseHeadersRead);
 
                     using var stream = await response.Content.ReadAsInputStreamAsync();
 
@@ -962,7 +950,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             {
                 // Show the updater progress flyout
                 if (!Interfacing.IsNuxPending)
-                    UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions()
+                    UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions
                     {
                         Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
                         ShowMode = FlyoutShowMode.Transient
@@ -999,7 +987,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 // Check for updates
                 try
                 {
-                    using var client = new Windows.Web.Http.HttpClient();
+                    using var client = new HttpClient();
                     string getReleaseVersion = "", getDocsLanguages = "en";
 
                     // Release
@@ -1146,7 +1134,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // If an update was found, show it
             // (or if the check was manual)
             if ((Interfacing.UpdateFound || show) && !Interfacing.IsNuxPending)
-                UpdateFlyout.ShowAt(HelpButton, new FlyoutShowOptions()
+                UpdateFlyout.ShowAt(HelpButton, new FlyoutShowOptions
                 {
                     Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
                     ShowMode = FlyoutShowMode.Transient
@@ -1290,7 +1278,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             ContentFrame.GoBack();
     }
 
-    private async void UpdateButton_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    private async void UpdateButton_Tapped(object sender, TappedRoutedEventArgs e)
     {
         // Check for updates (and show)
         if (Interfacing.CheckingUpdatesNow) return;
@@ -1318,7 +1306,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         await CheckUpdates(false, 2000);
     }
 
-    private void HelpButton_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    private void HelpButton_Tapped(object sender, TappedRoutedEventArgs e)
     {
         // Change the docs button's text
         HelpFlyoutDocsButton.Text = Interfacing.CurrentAppState switch
@@ -1345,14 +1333,14 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         };
 
         // Show the help flyout
-        HelpFlyout.ShowAt(HelpButton, new FlyoutShowOptions()
+        HelpFlyout.ShowAt(HelpButton, new FlyoutShowOptions
         {
             Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
             ShowMode = FlyoutShowMode.Transient
         });
     }
 
-    private void ContentFrame_NavigationFailed(object sender, Microsoft.UI.Xaml.Navigation.NavigationFailedEventArgs e)
+    private void ContentFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
     {
         throw new Exception($"Failed to load page{e.SourcePageType.AssemblyQualifiedName}");
     }
@@ -1438,7 +1426,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private bool TrySetMicaBackdrop()
     {
-        if (!Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+        if (!MicaController.IsSupported())
         {
             Logger.Info("Mica is not supported! Time to update Windows, man!");
             return false; // Mica is not supported on this system
@@ -1448,7 +1436,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
 
         // Hooking up the policy object
-        m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
+        m_configurationSource = new SystemBackdropConfiguration();
         Activated += Window_Activated;
         Closed += Window_Closed;
         ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
@@ -1457,12 +1445,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         m_configurationSource.IsInputActive = true;
         SetConfigurationSourceTheme();
 
-        m_micaController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
+        m_micaController = new MicaController();
 
         // Enable the system backdrop.
         // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
         m_micaController.AddSystemBackdropTarget(this
-            .As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
+            .As<ICompositionSupportsSystemBackdrop>());
         m_micaController.SetSystemBackdropConfiguration(m_configurationSource);
 
         // Change the window background to support mica
@@ -1531,15 +1519,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         m_configurationSource.Theme = ((FrameworkElement)Content).ActualTheme switch
         {
-            ElementTheme.Dark => Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark,
-            ElementTheme.Light => Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light,
-            ElementTheme.Default => Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default,
+            ElementTheme.Dark => SystemBackdropTheme.Dark,
+            ElementTheme.Light => SystemBackdropTheme.Light,
+            ElementTheme.Default => SystemBackdropTheme.Default,
             _ => m_configurationSource.Theme
         };
     }
-
-    // MVVM stuff
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public void OnPropertyChanged(string propName = null)
     {

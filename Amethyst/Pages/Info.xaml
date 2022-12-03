@@ -5,7 +5,6 @@
     x:Class="Amethyst.Pages.Info"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Amethyst.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:util="using:Amethyst.Utils"
@@ -26,26 +25,26 @@
 
             <Grid.Resources>
                 <TeachingTip x:Name="HelpTeachingTip"
-                         Target="{Binding ElementName=HelpButtonDummyGrid}"
-                         Title="{x:Bind util:Translator.Get.String('/NUX/Tip11/Title'), Mode=OneWay}"
-                         Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip11/Content'), Mode=OneWay}"
-                         CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
-                         ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
-                         PreferredPlacement="RightBottom"
-                         IsLightDismissEnabled="False"
-                         Style="{ThemeResource BigTeachingTipStyle}"
-                         ActionButtonClick="HelpTeachingTip_ActionButtonClick"
-                         CloseButtonClick="HelpTeachingTip_CloseButtonClick" />
+                             Target="{Binding ElementName=HelpButtonDummyGrid}"
+                             Title="{x:Bind util:Translator.Get.String('/NUX/Tip11/Title'), Mode=OneWay}"
+                             Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip11/Content'), Mode=OneWay}"
+                             CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+                             ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
+                             PreferredPlacement="RightBottom"
+                             IsLightDismissEnabled="False"
+                             Style="{ThemeResource BigTeachingTipStyle}"
+                             ActionButtonClick="HelpTeachingTip_ActionButtonClick"
+                             CloseButtonClick="HelpTeachingTip_CloseButtonClick" />
 
                 <TeachingTip x:Name="EndingTeachingTip"
-                         Target="{Binding ElementName=HelpButtonDummyGrid}"
-                         Title="{x:Bind util:Translator.Get.String('/NUX/Tip12/Title'), Mode=OneWay}"
-                         Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip12/Content'), Mode=OneWay}"
-                         CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Finish'), Mode=OneWay}"
-                         PreferredPlacement="RightBottom"
-                         IsLightDismissEnabled="False"
-                         Style="{ThemeResource BigTeachingTipStyle}"
-                         CloseButtonClick="EndingTeachingTip_CloseButtonClick" />
+                             Target="{Binding ElementName=HelpButtonDummyGrid}"
+                             Title="{x:Bind util:Translator.Get.String('/NUX/Tip12/Title'), Mode=OneWay}"
+                             Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip12/Content'), Mode=OneWay}"
+                             CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Finish'), Mode=OneWay}"
+                             PreferredPlacement="RightBottom"
+                             IsLightDismissEnabled="False"
+                             Style="{ThemeResource BigTeachingTipStyle}"
+                             CloseButtonClick="EndingTeachingTip_CloseButtonClick" />
             </Grid.Resources>
         </Grid>
 
@@ -64,7 +63,8 @@
 
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
                                 Margin="30,35,0,0">
-                        <TextBlock Margin="0,0,0,0" FontSize="85" VerticalAlignment="Center" HorizontalAlignment="Right"
+                        <TextBlock Margin="0,0,0,0" FontSize="85" VerticalAlignment="Center"
+                                   HorizontalAlignment="Right"
                                    Text="{x:Bind util:Translator.Get.String('/InfoPage/AppTitle'), Mode=OneWay}"
                                    ToolTipService.ToolTip="Pls donate if you like us! ˶ᵔ ᵕ ᵔ˶" />
                         <TextBlock Margin="0,-15,-80,0" FontSize="22"
@@ -77,7 +77,7 @@
                 <TextBlock FontWeight="SemiBold" FontSize="25" Margin="0,50,0,0"
                            Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/Header'), Mode=OneWay}" />
 
-                <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}" 
+                <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
                            Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Title'), Mode=OneWay}"
                            Margin="0,17,0,0" />
 
@@ -92,44 +92,51 @@
                                 Grid.Column="0" Orientation="Vertical">
 
                         <TextBlock FontWeight="SemiBold">
-                            <Run Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Akaya'), Mode=OneWay}" />
+                            <Run
+                                Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Akaya'), Mode=OneWay}" />
                             <Run />
                             <Hyperlink NavigateUri="https://github.com/KimihikoAkayasaki" UnderlineStyle="None">KimihikoAkayasaki</Hyperlink>
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
-                            <Run Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Noelle'), Mode=OneWay}" />
+                            <Run
+                                Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Noelle'), Mode=OneWay}" />
                             <Run />
                             <Hyperlink NavigateUri="https://github.com/AuroraNemoia" UnderlineStyle="None">AuroraNemoia</Hyperlink>
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
-                            <Run Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Hekky'), Mode=OneWay}" />
+                            <Run
+                                Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Hekky'), Mode=OneWay}" />
                             <Run />
                             <Hyperlink NavigateUri="https://github.com/hyblocker" UnderlineStyle="None">hyblocker</Hyperlink>
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
-                            <Run Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Himbeer'), Mode=OneWay}" />
+                            <Run
+                                Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Himbeer'), Mode=OneWay}" />
                             <Run />
                             <Hyperlink NavigateUri="https://github.com/HimbeersaftLP" UnderlineStyle="None">himbeersaft</Hyperlink>
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
-                            <Run Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Artemis'), Mode=OneWay}" />
+                            <Run
+                                Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Artemis'), Mode=OneWay}" />
                             <Run />
                             <Hyperlink NavigateUri="https://github.com/ArtemisMax" UnderlineStyle="None">ArtemisMax</Hyperlink>
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
-                            <Run Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Ollie'), Mode=OneWay}" />
+                            <Run
+                                Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Ollie'), Mode=OneWay}" />
                             <Run />
                             <Hyperlink NavigateUri="https://github.com/i386sh" UnderlineStyle="None">i386sh</Hyperlink>
                             <Run xml:space="preserve">/ notzer0</Run>
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
-                            <Run Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Aria'), Mode=OneWay}" />
+                            <Run
+                                Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Aria'), Mode=OneWay}" />
                             <Run />
                             <Hyperlink NavigateUri="https://github.com/conatsera" UnderlineStyle="None">conatsera</Hyperlink>
                         </TextBlock>

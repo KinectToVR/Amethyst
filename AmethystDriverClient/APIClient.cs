@@ -1,9 +1,7 @@
-﻿using Amethyst.Plugins.Contract;
-using Grpc.Net.Client;
+﻿using System.Diagnostics;
 using Amethyst.Driver.API;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using System.Diagnostics;
 
 namespace Amethyst.Driver.Client;
 
@@ -13,7 +11,7 @@ public static class DriverClient
     private static IK2DriverService.IK2DriverServiceClient? _service;
 
     /// <summary>
-    /// Connects socket object to selected port, AME uses 7135
+    ///     Connects socket object to selected port, AME uses 7135
     /// </summary>
     /// <param name="target">AME Server Driver IP:Port</param>
     /// <returns>0: OK, -1: Exception, -2: Channel fail, -3: Stub failure</returns>

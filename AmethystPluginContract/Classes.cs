@@ -5,6 +5,8 @@ namespace Amethyst.Plugins.Contract;
 
 public class TrackedJoint
 {
+    private Vector3 _jointPosition = Vector3.Zero;
+
     [SetsRequiredMembers]
     public TrackedJoint()
     {
@@ -42,6 +44,4 @@ public class TrackedJoint
 
     public long PoseTimestamp { get; private set; }
     public long PreviousPoseTimestamp { get; private set; }
-
-    private Vector3 _jointPosition = Vector3.Zero;
 }

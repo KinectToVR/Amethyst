@@ -1,27 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using Windows.Globalization;
 using Windows.System.UserProfile;
-using Amethyst.Utils;
-using System.ComponentModel;
-using System.Globalization;
 using Amethyst.Driver.API;
-using Amethyst.Plugins.Contract;
-using Microsoft.UI.Xaml.Controls;
-using System.Text;
 using Amethyst.MVVM;
+using Amethyst.Plugins.Contract;
+using Amethyst.Utils;
 using Newtonsoft.Json;
-using Valve.VR;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Amethyst.Classes;
 
 public class AppSettings : INotifyPropertyChanged
 {
+    // Disabled (by the user) devices set
+    public readonly SortedSet<string> DisabledDevicesGuidSet = new();
+
+    // App sounds' volume and *nice* is the default
+    private uint _appSoundsVolume = 69; // Always 0<x<100
+
+    // Automatically spawn enabled trackers on startup and off is the default
+    private bool _autoSpawnEnabledJoints;
+    private bool _checkForOverlappingTrackers = true; // Check for overlapping roles
+
+    // Enable application sounds and on is the default
+    private bool _enableAppSounds = true;
+
+    // Skeleton flip based on non-flip override devices' waist tracker
+    private bool _isExternalFlipEnabled;
+
+    // Skeleton flip when facing away: One-For-All and on is the default
+    private bool _isFlipEnabled = true;
+    [JsonIgnore] private string _selectedTrackingDeviceGuid;
+
+    // External flip device's calibration rotation
+    public Quaternion ExternalFlipCalibrationMatrix = new();
+
+    [JsonIgnore] public string PreviousSelectedTrackingDeviceGuid;
+
     // Current language & theme
     public string AppLanguage { get; set; } = "en";
 
@@ -32,7 +52,6 @@ public class AppSettings : INotifyPropertyChanged
     public ObservableCollection<AppTracker> TrackersVector { get; set; } = new();
 
     public bool UseTrackerPairs { get; set; } = true; // Pair feet, elbows and knees
-    private bool _checkForOverlappingTrackers = true; // Check for overlapping roles
 
     public bool CheckForOverlappingTrackers
     {
@@ -50,9 +69,6 @@ public class AppSettings : INotifyPropertyChanged
     public string TrackingDeviceGuid { get; set; } = ""; // -> Always set
     public SortedSet<string> OverrideDevicesGuidMap { get; set; } = new();
 
-    // Skeleton flip when facing away: One-For-All and on is the default
-    private bool _isFlipEnabled = true;
-
     public bool IsFlipEnabled
     {
         get => _isFlipEnabled;
@@ -66,9 +82,6 @@ public class AppSettings : INotifyPropertyChanged
         }
     }
 
-    // Skeleton flip based on non-flip override devices' waist tracker
-    private bool _isExternalFlipEnabled = false;
-
     public bool IsExternalFlipEnabled
     {
         get => _isExternalFlipEnabled;
@@ -81,9 +94,6 @@ public class AppSettings : INotifyPropertyChanged
         }
     }
 
-    // Automatically spawn enabled trackers on startup and off is the default
-    private bool _autoSpawnEnabledJoints = false;
-
     public bool AutoSpawnEnabledJoints
     {
         get => _autoSpawnEnabledJoints;
@@ -94,9 +104,6 @@ public class AppSettings : INotifyPropertyChanged
             AppData.Settings.SaveSettings();
         }
     }
-
-    // Enable application sounds and on is the default
-    private bool _enableAppSounds = true;
 
     public bool EnableAppSounds
     {
@@ -109,9 +116,6 @@ public class AppSettings : INotifyPropertyChanged
         }
     }
 
-    // App sounds' volume and *nice* is the default
-    private uint _appSoundsVolume = 69; // Always 0<x<100
-
     public uint AppSoundsVolume
     {
         get => _appSoundsVolume;
@@ -122,13 +126,7 @@ public class AppSettings : INotifyPropertyChanged
             AppData.Settings.SaveSettings();
         }
     }
-
-    // Calibration - if we're calibrated
-    public SortedDictionary<string, bool> DeviceMatricesCalibrated { get; set; } = new();
-
-    // Calibration helpers - calibration method: auto? : GUID/Data
-    public SortedDictionary<string, bool> DeviceAutoCalibration { get; set; } = new();
-
+    
     // Calibration matrices : GUID/Data
     public SortedDictionary<string, Quaternion> DeviceCalibrationRotationMatrices { get; set; } = new();
     public SortedDictionary<string, Vector3> DeviceCalibrationTranslationVectors { get; set; } = new();
@@ -143,9 +141,6 @@ public class AppSettings : INotifyPropertyChanged
     // If we wanna dismiss all warnings during the preview
     public bool ForceSkeletonPreview { get; set; } = false;
 
-    // External flip device's calibration rotation
-    public Quaternion ExternalFlipCalibrationMatrix = new();
-
     // If we wanna freeze only lower body trackers or all
     public bool FreezeLowerBodyOnly { get; set; } = false;
 
@@ -155,14 +150,25 @@ public class AppSettings : INotifyPropertyChanged
     // If the flip bindings teaching tip has been shown
     public bool TeachingTipShownFlip { get; set; } = false;
 
-    // Disabled (by the user) devices set
-    public readonly SortedSet<string> DisabledDevicesGuidSet = new();
-
     // If the first-launch guide's been shown
     public bool FirstTimeTourShown { get; set; } = false;
 
     // If the shutdown warning has been shown
     public bool FirstShutdownTipShown { get; set; } = false;
+
+    [JsonIgnore]
+    public string SelectedTrackingDeviceGuid
+    {
+        get => _selectedTrackingDeviceGuid;
+        set
+        {
+            _selectedTrackingDeviceGuid = value;
+            OnPropertyChanged("SelectedTrackingDeviceGuid");
+        }
+    }
+
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
 
     // Save settings
     public void SaveSettings()
@@ -331,7 +337,7 @@ public class AppSettings : INotifyPropertyChanged
 
         // Advanced config: runtime and tracking settings
         Logger.Info("Checking AppSettings [runtime] configuration...");
-        var trackingDevice = device?? TrackingDevices.GetTrackingDevice();
+        var trackingDevice = device ?? TrackingDevices.GetTrackingDevice();
 
         // Check orientation option configs : left foot
         Logger.Info("Checking left foot orientation settings...");
@@ -428,25 +434,8 @@ public class AppSettings : INotifyPropertyChanged
         }
     }
 
-    // MVVM stuff
-    public event PropertyChangedEventHandler PropertyChanged;
-
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-    }
-
-    [JsonIgnore] public string PreviousSelectedTrackingDeviceGuid;
-    [JsonIgnore] private string _selectedTrackingDeviceGuid;
-
-    [JsonIgnore]
-    public string SelectedTrackingDeviceGuid
-    {
-        get => _selectedTrackingDeviceGuid;
-        set
-        {
-            _selectedTrackingDeviceGuid = value;
-            OnPropertyChanged("SelectedTrackingDeviceGuid");
-        }
     }
 }

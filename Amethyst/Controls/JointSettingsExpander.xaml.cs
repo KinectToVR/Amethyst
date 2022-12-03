@@ -40,8 +40,7 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
         AppData.Settings.UseTrackerPairs && x.Role == TypeUtils.PairedTrackerTypeDictionary[Role])).ToList();
 
     private string Header => Interfacing.LocalizedJsonString(
-        $"/SharedStrings/Joints/{(Trackers.Count > 1 ? "Pairs" : "Enum")}/{
-            (int)(Trackers.FirstOrDefault()?.Role ?? TrackerType.TrackerHanded)}");
+        $"/SharedStrings/Joints/{(Trackers.Count > 1 ? "Pairs" : "Enum")}/{(int)(Trackers.FirstOrDefault()?.Role ?? TrackerType.TrackerHanded)}");
 
     private bool IsActive
     {

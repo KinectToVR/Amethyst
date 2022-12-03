@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace K2CrashHandler.Helpers;
 
 internal class OpenVrPaths
 {
     private static readonly string Path =
-        Environment.ExpandEnvironmentVariables(System.IO.Path.Combine("%LocalAppData%", "openvr", "openvrpaths.vrpath"));
+        Environment.ExpandEnvironmentVariables(System.IO.Path.Combine("%LocalAppData%", "openvr",
+            "openvrpaths.vrpath"));
 
     public static OpenVrPaths Read()
     {

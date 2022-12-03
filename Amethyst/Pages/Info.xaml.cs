@@ -53,6 +53,9 @@ public sealed partial class Info : Page, INotifyPropertyChanged
         });
     }
 
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
+
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
         Logger.Info($"Re/Loading page: '{GetType().FullName}'...");
@@ -136,12 +139,8 @@ public sealed partial class Info : Page, INotifyPropertyChanged
         // Show a console-text-box popup
     }
 
-    // MVVM stuff
-    public event PropertyChangedEventHandler PropertyChanged;
-
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
-
 }

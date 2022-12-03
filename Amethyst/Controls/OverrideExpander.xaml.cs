@@ -3,21 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Amethyst.Classes;
+using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Amethyst.Classes;
-using System.ComponentModel;
-using Amethyst.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,9 +18,9 @@ namespace Amethyst.Controls;
 public sealed partial class OverrideExpander : UserControl, INotifyPropertyChanged
 {
     private List<AppTracker> _trackers = new();
-    public event PropertyChangedEventHandler PropertyChanged;
 
-    public string Header { get; set; } = "";
+    // OnPropertyChanged listener for containers
+    public EventHandler PropertyChangedEvent;
 
     public OverrideExpander()
     {
@@ -40,14 +31,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
         Trackers.ForEach(x => x.PropertyChanged += (_, _) => { OnPropertyChanged(); });
     }
 
-    public void OnPropertyChanged(string propName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propName));
-    }
-
-    // OnPropertyChanged listener for containers
-    public EventHandler PropertyChangedEvent;
+    public string Header { get; set; } = "";
 
     public List<AppTracker> Trackers
     {
@@ -61,6 +45,14 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
 
     private bool IsAnyTrackerEnabled =>
         Trackers.Any(x => x.IsActive && x.OverrideGuid == AppData.Settings.SelectedTrackingDeviceGuid);
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged(string propName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
 
     private static List<string> GetManagingDeviceJointsList(string guid)
     {

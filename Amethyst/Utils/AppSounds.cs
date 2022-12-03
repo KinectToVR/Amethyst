@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Amethyst.Classes;
 
 namespace Amethyst.Utils;
@@ -43,9 +44,9 @@ public static class AppSounds
                         "Assets", "Sounds", sound + ".wav")))
                 {
                     // Load the sound file into a player
-                    new Windows.Media.Playback.MediaPlayer
+                    new MediaPlayer
                     {
-                        Source = Windows.Media.Core.MediaSource.CreateFromUri(
+                        Source = MediaSource.CreateFromUri(
                             new Uri(Path.Join(Interfacing.GetProgramLocation().Directory.ToString(),
                                 "Assets", "Sounds", sound + ".wav"))),
 
@@ -58,9 +59,9 @@ public static class AppSounds
                 }
                 else
                 {
-                    Logger.Warn($"Sound file {Path.Join(
-                        Interfacing.GetProgramLocation().Directory.ToString(), "Assets", "Sounds", sound + ".wav")}" +
-                                $"could not be played because it does not exist, please check if it's there.");
+                    Logger.Warn(
+                        $"Sound file {Path.Join(Interfacing.GetProgramLocation().Directory.ToString(), "Assets", "Sounds", sound + ".wav")}" +
+                        "could not be played because it does not exist, please check if it's there.");
                 }
             }
             catch (Exception e)

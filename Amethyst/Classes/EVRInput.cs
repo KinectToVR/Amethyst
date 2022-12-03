@@ -5,61 +5,78 @@ using Valve.VR;
 
 namespace Amethyst.Classes;
 
-public static class EVRInput
+public static class EvrInput
 {
     // Action strings set in action_manifest.json
 
     // Required
-    private const string k_actionSetDefault = "/actions/default"; // Default
+    private const string KActionSetDefault = "/actions/default"; // Default
 
-    private const string k_actionLeftJoystick = "/actions/default/in/LeftJoystick"; // Left-hand Move/Rotate Controls
-    private const string k_actionRightJoystick = "/actions/default/in/RightJoystick"; // Right-hand Move/Rotate Controls
+    private const string KActionLeftJoystick = "/actions/default/in/LeftJoystick"; // Left-hand Move/Rotate Controls
+    private const string KActionRightJoystick = "/actions/default/in/RightJoystick"; // Right-hand Move/Rotate Controls
 
-    private const string k_actionConfirmAndSave = "/actions/default/in/ConfirmAndSave"; // Confirm and Save
-    private const string k_actionModeSwap = "/actions/default/in/ModeSwap"; // Swap Move/Rotate Modes
-    private const string k_actionFineTune = "/actions/default/in/FineTune"; // Fine-tuning
+    private const string KActionConfirmAndSave = "/actions/default/in/ConfirmAndSave"; // Confirm and Save
+    private const string KActionModeSwap = "/actions/default/in/ModeSwap"; // Swap Move/Rotate Modes
+    private const string KActionFineTune = "/actions/default/in/FineTune"; // Fine-tuning
 
     // Optional
-    private const string k_actionTrackerFreeze = "/actions/default/in/TrackerFreeze"; // Freeze Trackers
-    private const string k_actionFlipToggle = "/actions/default/in/FlipToggle"; // Toggle Flip
+    private const string KActionTrackerFreeze = "/actions/default/in/TrackerFreeze"; // Freeze Trackers
+    private const string KActionFlipToggle = "/actions/default/in/FlipToggle"; // Toggle Flip
 
     // Main SteamEVRInput class
-    public class SteamEVRInput
+    public class SteamEvrInput
     {
         // Action manifest path
-        private const string m_actionManifestPath = "action_manifest.json";
-
-        private ulong m_ConfirmAndSaveHandler = 0;
-        private ulong m_FineTuneHandler = 0;
-        private ulong m_FlipToggleHandler = 0;
-
-        // Calibration actions
-        private ulong m_LeftJoystickHandler = 0;
-        private ulong m_ModeSwapHandler = 0;
-        private ulong m_RightJoystickHandler = 0;
-
-        // Tracking freeze actions
-        private ulong m_TrackerFreezeHandler = 0;
+        private const string MActionManifestPath = "action_manifest.json";
 
         // Buttons data
         private InputDigitalActionData_t
-            m_ConfirmAndSaveData,
-            m_ModeSwapData,
-            m_FineTuneData,
-            m_TrackerFreezeData,
-            m_FlipToggleData;
+            _mConfirmAndSaveData,
+            _mModeSwapData,
+            _mFineTuneData,
+            _mTrackerFreezeData,
+            _mFlipToggleData;
+
+        private ulong _mConfirmAndSaveHandler;
 
         // The action sets
         private VRActiveActionSet_t
-            m_defaultActionSet = new();
+            _mDefaultActionSet;
 
         // Tracking Default set
-        private ulong m_DefaultSetHandler = 0;
+        private ulong _mDefaultSetHandler;
+        private ulong _mFineTuneHandler;
+        private ulong _mFlipToggleHandler;
+
+        // Calibration actions
+        private ulong _mLeftJoystickHandler;
 
         // Analogs data
         private InputAnalogActionData_t
-            m_LeftJoystickHandlerData,
-            m_RightJoystickHandlerData;
+            _mLeftJoystickHandlerData,
+            _mRightJoystickHandlerData;
+
+        private ulong _mModeSwapHandler;
+        private ulong _mRightJoystickHandler;
+
+        // Tracking freeze actions
+        private ulong _mTrackerFreezeHandler;
+
+        // Analog data poll
+        public InputAnalogActionData_t LeftJoystickActionData => _mLeftJoystickHandlerData;
+
+        public InputAnalogActionData_t RightJoystickActionData => _mRightJoystickHandlerData;
+
+        // Digital data poll
+        public InputDigitalActionData_t ConfirmAndSaveActionData => _mConfirmAndSaveData;
+
+        public InputDigitalActionData_t ModeSwapActionData => _mModeSwapData;
+
+        public InputDigitalActionData_t FineTuneActionData => _mFineTuneData;
+
+        public InputDigitalActionData_t TrackerFreezeActionData => _mTrackerFreezeData;
+
+        public InputDigitalActionData_t TrackerFlipToggleData => _mFlipToggleData;
 
         // Note: SteamVR must be initialized beforehand.
         // Preferred type is (vr::VRApplication_Scene)
@@ -67,7 +84,7 @@ public static class EVRInput
         {
             // Find the absolute path of manifest
             var absoluteManifestPath =
-                Path.Join(Interfacing.GetProgramLocation().DirectoryName, m_actionManifestPath);
+                Path.Join(Interfacing.GetProgramLocation().DirectoryName, MActionManifestPath);
 
             if (!File.Exists(absoluteManifestPath))
             {
@@ -90,7 +107,7 @@ public static class EVRInput
             /**********************************************/
 
             // Get action handle for Left Joystick
-            error = OpenVR.Input.GetActionHandle(k_actionLeftJoystick, ref m_LeftJoystickHandler);
+            error = OpenVR.Input.GetActionHandle(KActionLeftJoystick, ref _mLeftJoystickHandler);
             if (error != EVRInputError.None)
             {
                 Logger.Error("Action handle error: {error}");
@@ -98,7 +115,7 @@ public static class EVRInput
             }
 
             // Get action handle for Right Joystick
-            error = OpenVR.Input.GetActionHandle(k_actionRightJoystick, ref m_RightJoystickHandler);
+            error = OpenVR.Input.GetActionHandle(KActionRightJoystick, ref _mRightJoystickHandler);
             if (error != EVRInputError.None)
             {
                 Logger.Error("Action handle error: {error}");
@@ -106,7 +123,7 @@ public static class EVRInput
             }
 
             // Get action handle for Confirm And Save
-            error = OpenVR.Input.GetActionHandle(k_actionConfirmAndSave, ref m_ConfirmAndSaveHandler);
+            error = OpenVR.Input.GetActionHandle(KActionConfirmAndSave, ref _mConfirmAndSaveHandler);
             if (error != EVRInputError.None)
             {
                 Logger.Error("Action handle error: {error}");
@@ -114,7 +131,7 @@ public static class EVRInput
             }
 
             // Get action handle for Mode Swap
-            error = OpenVR.Input.GetActionHandle(k_actionModeSwap, ref m_ModeSwapHandler);
+            error = OpenVR.Input.GetActionHandle(KActionModeSwap, ref _mModeSwapHandler);
             if (error != EVRInputError.None)
             {
                 Logger.Error("Action handle error: {error}");
@@ -122,7 +139,7 @@ public static class EVRInput
             }
 
             // Get action handle for Fine-tuning
-            error = OpenVR.Input.GetActionHandle(k_actionFineTune, ref m_FineTuneHandler);
+            error = OpenVR.Input.GetActionHandle(KActionFineTune, ref _mFineTuneHandler);
             if (error != EVRInputError.None)
             {
                 Logger.Error("Action handle error: {error}");
@@ -130,7 +147,7 @@ public static class EVRInput
             }
 
             // Get action handle for Tracker Freeze
-            error = OpenVR.Input.GetActionHandle(k_actionTrackerFreeze, ref m_TrackerFreezeHandler);
+            error = OpenVR.Input.GetActionHandle(KActionTrackerFreeze, ref _mTrackerFreezeHandler);
             if (error != EVRInputError.None)
             {
                 Logger.Error("Action handle error: {error}");
@@ -138,7 +155,7 @@ public static class EVRInput
             }
 
             // Get action handle for Flip Toggle
-            error = OpenVR.Input.GetActionHandle(k_actionFlipToggle, ref m_FlipToggleHandler);
+            error = OpenVR.Input.GetActionHandle(KActionFlipToggle, ref _mFlipToggleHandler);
             if (error != EVRInputError.None)
             {
                 Logger.Error("Action handle error: {error}");
@@ -150,7 +167,7 @@ public static class EVRInput
             /**********************************************/
 
             // Get set handle Default Set
-            error = OpenVR.Input.GetActionSetHandle(k_actionSetDefault, ref m_DefaultSetHandler);
+            error = OpenVR.Input.GetActionSetHandle(KActionSetDefault, ref _mDefaultSetHandler);
             if (error != EVRInputError.None)
             {
                 Logger.Error("ActionSet handle error: {error}");
@@ -162,9 +179,9 @@ public static class EVRInput
             /**********************************************/
 
             // Default Set
-            m_defaultActionSet.ulActionSet = m_DefaultSetHandler;
-            m_defaultActionSet.ulRestrictedToDevice = OpenVR.k_ulInvalidInputValueHandle;
-            m_defaultActionSet.nPriority = 0;
+            _mDefaultActionSet.ulActionSet = _mDefaultSetHandler;
+            _mDefaultActionSet.ulRestrictedToDevice = OpenVR.k_ulInvalidInputValueHandle;
+            _mDefaultActionSet.nPriority = 0;
 
             // Return OK
             Logger.Info("EVR Input Actions initialized OK");
@@ -176,8 +193,8 @@ public static class EVRInput
         {
             // Update the action and grab data
             var error = OpenVR.Input.GetAnalogActionData(
-                m_LeftJoystickHandler,
-                ref m_LeftJoystickHandlerData,
+                _mLeftJoystickHandler,
+                ref _mLeftJoystickHandlerData,
                 (uint)Marshal.SizeOf<InputAnalogActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
@@ -193,8 +210,8 @@ public static class EVRInput
         {
             // Update the action and grab data
             var error = OpenVR.Input.GetAnalogActionData(
-                m_RightJoystickHandler,
-                ref m_RightJoystickHandlerData,
+                _mRightJoystickHandler,
+                ref _mRightJoystickHandlerData,
                 (uint)Marshal.SizeOf<InputAnalogActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
@@ -210,8 +227,8 @@ public static class EVRInput
         {
             // Update the action and grab data
             var error = OpenVR.Input.GetDigitalActionData(
-                m_ConfirmAndSaveHandler,
-                ref m_ConfirmAndSaveData,
+                _mConfirmAndSaveHandler,
+                ref _mConfirmAndSaveData,
                 (uint)Marshal.SizeOf<InputDigitalActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
@@ -227,8 +244,8 @@ public static class EVRInput
         {
             // Update the action and grab data
             var error = OpenVR.Input.GetDigitalActionData(
-                m_ModeSwapHandler,
-                ref m_ModeSwapData,
+                _mModeSwapHandler,
+                ref _mModeSwapData,
                 (uint)Marshal.SizeOf<InputDigitalActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
@@ -244,8 +261,8 @@ public static class EVRInput
         {
             // Update the action and grab data
             var error = OpenVR.Input.GetDigitalActionData(
-                m_FineTuneHandler,
-                ref m_FineTuneData,
+                _mFineTuneHandler,
+                ref _mFineTuneData,
                 (uint)Marshal.SizeOf(typeof(InputDigitalActionData_t)),
                 OpenVR.k_ulInvalidInputValueHandle);
 
@@ -261,8 +278,8 @@ public static class EVRInput
         {
             // Update the action and grab data
             var error = OpenVR.Input.GetDigitalActionData(
-                m_TrackerFreezeHandler,
-                ref m_TrackerFreezeData,
+                _mTrackerFreezeHandler,
+                ref _mTrackerFreezeData,
                 (uint)Marshal.SizeOf<InputDigitalActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
@@ -278,8 +295,8 @@ public static class EVRInput
         {
             // Update the action and grab data
             var error = OpenVR.Input.GetDigitalActionData(
-                m_FlipToggleHandler,
-                ref m_FlipToggleData,
+                _mFlipToggleHandler,
+                ref _mFlipToggleData,
                 (uint)Marshal.SizeOf<InputDigitalActionData_t>(),
                 OpenVR.k_ulInvalidInputValueHandle);
 
@@ -307,7 +324,7 @@ public static class EVRInput
 
             // Update Default ActionSet states
             var error = OpenVR.Input.UpdateActionState(
-                new[] { m_defaultActionSet },
+                new[] { _mDefaultActionSet },
                 (uint)Marshal.SizeOf<VRActiveActionSet_t>());
 
             if (error != EVRInputError.None)
@@ -362,21 +379,5 @@ public static class EVRInput
             // Return OK
             return true;
         }
-
-        // Analog data poll
-        public InputAnalogActionData_t LeftJoystickActionData => m_LeftJoystickHandlerData;
-
-        public InputAnalogActionData_t RightJoystickActionData => m_RightJoystickHandlerData;
-
-        // Digital data poll
-        public InputDigitalActionData_t ConfirmAndSaveActionData => m_ConfirmAndSaveData;
-
-        public InputDigitalActionData_t ModeSwapActionData => m_ModeSwapData;
-
-        public InputDigitalActionData_t FineTuneActionData => m_FineTuneData;
-
-        public InputDigitalActionData_t TrackerFreezeActionData => m_TrackerFreezeData;
-
-        public InputDigitalActionData_t TrackerFlipToggleData => m_FlipToggleData;
     }
 }

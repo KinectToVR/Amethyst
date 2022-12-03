@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Numerics;
-using System.Reflection;
 
 namespace Amethyst.Plugins.Contract;
 
@@ -10,17 +9,17 @@ public interface ITrackingDeviceMetadata
     string Guid { get; }
 }
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class)]
 public sealed class TrackingDeviceMetadataAttribute : Attribute, ITrackingDeviceMetadata
 {
-    public string Name { get; set; }
-    public string Guid { get; set; }
-
     public TrackingDeviceMetadataAttribute(string name, string guid)
     {
         Name = name;
         Guid = guid;
     }
+
+    public string Name { get; set; }
+    public string Guid { get; set; }
 }
 
 public interface ITrackingDevice
@@ -28,18 +27,6 @@ public interface ITrackingDevice
     // Joints' list / you need to (should) update at every update() call
     // Each must have its own role or _Manual to force user's manual set
     List<TrackedJoint> TrackedJoints { get; }
-
-    // This is called after the app loads the plugin
-    void OnLoad();
-
-    // This initializes/connects the device
-    void Initialize();
-
-    // This is called when the device is closed
-    void Shutdown();
-
-    // This is called to update the device (each loop)
-    void Update();
 
     // Is the device connected/started?
     [DefaultValue(false)] bool IsInitialized { get; }
@@ -71,7 +58,7 @@ public interface ITrackingDevice
     // Should be set up at construction
     // This will allow Amethyst to calculate rotations by itself, additionally
     [DefaultValue(false)] bool IsAppOrientationSupported { get; }
-    
+
     // To support settings daemon and register the layout root,
     // the device must properly report it first
     // -> will lead to showing an additional 'settings' button
@@ -92,6 +79,18 @@ public interface ITrackingDevice
     // Device status string: to get system locale/language, use GetUserDefaultUILanguage
     [DefaultValue("Not Defined\nE_NOT_DEFINED\nstatusResultWString behaviour not defined")]
     string DeviceStatusString { get; }
+
+    // This is called after the app loads the plugin
+    void OnLoad();
+
+    // This initializes/connects the device
+    void Initialize();
+
+    // This is called when the device is closed
+    void Shutdown();
+
+    // This is called to update the device (each loop)
+    void Update();
 
     // Signal the joint eg psm_id0 that it's been selected
     void SignalJoint(int jointId);
@@ -128,14 +127,14 @@ public interface IAmethystHost
     // Get the OpenVRs right controller pose, but un-wrapped aka "calibrated" using the vr room center
     (Vector3 Position, Quaternion Orientation) RightControllerPoseCalibrated { get; }
 
+    // Get Amethyst UI language
+    string LanguageCode { get; }
+
     // Log a message to Amethyst logs : handler
     void Log(string message, LogSeverity severity);
 
     // Request a refresh of the status/name/etc. interface
     void RefreshStatusInterface();
-
-    // Get Amethyst UI language
-    string LanguageCode { get; }
 
     // Request a string from AME resources, empty for no match
     // Warning: The primarily searched resource is the device-provided one!

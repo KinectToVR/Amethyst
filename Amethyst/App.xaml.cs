@@ -1,16 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Windows.Foundation;
-using Windows.UI.ViewManagement;
-using Amethyst.Utils;
-using Microsoft.UI.Xaml;
-using Microsoft.VisualBasic;
 using System;
 using System.IO;
-using ABI.Windows.Media.Capture;
+using Windows.Foundation;
+using Windows.UI.ViewManagement;
 using Amethyst.Classes;
-using Amethyst.MVVM;
+using Amethyst.Utils;
+using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -89,6 +86,8 @@ public partial class App : Application
         ResourceWatcher.Renamed += OnWatcherOnChanged;
     }
 
+    private FileSystemWatcher ResourceWatcher { get; }
+
     /// <summary>
     ///     Invoked when the application is launched normally by the end user.  Other entry points
     ///     will be used such as when the application is launched to open a specific file.
@@ -101,7 +100,7 @@ public partial class App : Application
     }
 
     // Send a non-dismissible tip about reloading the app
-    static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs)
+    private static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs)
     {
         Logger.Info("String resource files have changed, reloading!");
         Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
@@ -118,6 +117,4 @@ public partial class App : Application
         // Request page reloads
         Shared.Events.RequestInterfaceReload();
     }
-
-    private FileSystemWatcher ResourceWatcher { get; }
 }

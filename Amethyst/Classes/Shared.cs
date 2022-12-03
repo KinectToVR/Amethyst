@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Amethyst.Utils;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using static System.Net.Mime.MediaTypeNames;
-using static Valve.VR.IVRBlockQueue;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.Windows.ApplicationModel.Resources;
+using Microsoft.Windows.AppNotifications;
 
 namespace Amethyst.Classes;
 
@@ -24,6 +28,9 @@ public static class Shared
             ReloadDevicesPageEvent,
             ReloadInfoPageEvent;
 
+        public static readonly Semaphore
+            SemSignalStartMain = new(0, 1);
+
         public static void RequestInterfaceReload(bool all = true)
         {
             if (!General.GeneralTabSetupFinished)
@@ -35,9 +42,6 @@ public static class Shared
             ReloadDevicesPageEvent?.Set();
             ReloadInfoPageEvent?.Set();
         }
-
-        public static readonly Semaphore
-            SemSignalStartMain = new(0, 1);
     }
 
     public static class Main
@@ -46,66 +50,30 @@ public static class Shared
         public static List<(string Tag, Type Page)> Pages;
 
         // Main Window
-        public static NavigationViewItem
-            GeneralItem,
-            SettingsItem,
-            DevicesItem,
-            InfoItem,
-            ConsoleItem,
-            HelpButton;
-
         public static Mutex ApplicationMultiInstanceMutex;
 
         public static Window Window;
-        public static Microsoft.UI.Windowing.AppWindow AppWindow;
+        public static AppWindow AppWindow;
         public static IntPtr AppWindowId;
-        public static Microsoft.UI.Dispatching.DispatcherQueue DispatcherQueue;
+        public static DispatcherQueue DispatcherQueue;
 
-        public static Microsoft.Windows.AppNotifications.AppNotificationManager NotificationManager;
-        public static Microsoft.Windows.ApplicationModel.Resources.ResourceManager ResourceManager;
-        public static Microsoft.Windows.ApplicationModel.Resources.ResourceContext ResourceContext;
-
-        public static TextBlock
-            AppTitleLabel,
-            FlyoutHeader,
-            FlyoutFooter,
-            FlyoutContent;
+        public static AppNotificationManager NotificationManager;
+        public static ResourceManager ResourceManager;
+        public static ResourceContext ResourceContext;
 
         public static Grid
             InterfaceBlockerGrid, NavigationBlockerGrid;
 
         public static NavigationView MainNavigationView;
         public static Frame MainContentFrame;
-
-        public static FontIcon UpdateIconDot;
-        public static Flyout UpdateFlyout;
-
-        public static Button
-            InstallNowButton, InstallLaterButton;
-
-        public static Microsoft.UI.Xaml.Media.SolidColorBrush
+        public static TextBlock AppTitleLabel;
+        
+        public static SolidColorBrush
             AttentionBrush, NeutralBrush;
-
-        public static class NavigationItems
-        {
-            public static FontIcon
-                NavViewGeneralButtonIcon,
-                NavViewSettingsButtonIcon,
-                NavViewDevicesButtonIcon,
-                NavViewInfoButtonIcon,
-                NavViewOkashiButtonIcon;
-
-            public static TextBlock
-                NavViewGeneralButtonLabel,
-                NavViewSettingsButtonLabel,
-                NavViewDevicesButtonLabel,
-                NavViewInfoButtonLabel,
-                NavViewOkashiButtonLabel;
-        }
 
         // Navigate the main view (w/ animations)
         public static void NavigateToPage(string navItemTag,
-            Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo transitionInfo)
+            NavigationTransitionInfo transitionInfo)
         {
             Logger.Info($"Navigation requested! Page tag: {navItemTag}");
 
@@ -193,13 +161,28 @@ public static class Shared
 
             MainContentFrame.Navigate(page, null, transitionInfo);
         }
+
+        public static class NavigationItems
+        {
+            public static FontIcon
+                NavViewGeneralButtonIcon,
+                NavViewSettingsButtonIcon,
+                NavViewDevicesButtonIcon,
+                NavViewInfoButtonIcon;
+
+            public static TextBlock
+                NavViewGeneralButtonLabel,
+                NavViewSettingsButtonLabel,
+                NavViewDevicesButtonLabel,
+                NavViewInfoButtonLabel;
+        }
     }
 
     public static class General
     {
         // General Page
         public static bool GeneralTabSetupFinished = false;
-        public static Microsoft.UI.Xaml.Controls.Primitives.ToggleButton ToggleTrackersButton;
+        public static ToggleButton ToggleTrackersButton;
         public static ToggleSplitButton SkeletonToggleButton;
         public static CheckBox ForceRenderCheckBox;
         public static MenuFlyoutItem OffsetsButton;
@@ -208,7 +191,6 @@ public static class Shared
             CalibrationButton, ReRegisterButton, ServerOpenDiscordButton;
 
         public static TextBlock
-            VersionLabel,
             DeviceNameLabel,
             DeviceStatusLabel,
             ErrorWhatText,
@@ -219,18 +201,14 @@ public static class Shared
             ForceRenderText;
 
         public static Grid
-            OffsetsControlHostGrid,
             ErrorButtonsGrid,
             ErrorWhatGrid,
             ServerErrorWhatGrid,
             ServerErrorButtonsGrid;
 
-        public static Microsoft.UI.Xaml.Controls.Primitives.ToggleButton
+        public static ToggleButton
             ToggleFreezeButton;
-
-        public static ToggleMenuFlyoutItem
-            FreezeOnlyLowerToggle;
-
+        
         public static TextBlock
             AdditionalDeviceErrorsHyperlink;
 
@@ -254,17 +232,13 @@ public static class Shared
 
         public static CheckBox
             ExternalFlipCheckBox,
-            AutoStartCheckBox,
             CheckOverlapsCheckBox;
 
         public static TextBlock
-            ExternalFlipCheckBoxLabel,
             SetErrorFlyoutText,
             ExternalFlipStatusLabel;
 
         public static StackPanel
-            ExternalFlipStackPanel,
-            JointExpanderHostStackPanel,
             ExternalFlipStatusStackPanel,
             FlipDropDownContainer;
     }
@@ -273,11 +247,8 @@ public static class Shared
     {
         // Devices Page
         public static bool DevicesTabSetupFinished = false, // On-load setup
-            DevicesTabReSetupFinished = false, // Other setup
-            DevicesJointsSetupPending = false, // Overrides
             DevicesSignalJoints = true, // Optionally no signal
-            PluginsPageLoadedOnce = false, // Manager flyout
-            DevicesModelSetupFinished = false; // MVVM setup done?
+            PluginsPageLoadedOnce = false; // Manager flyout
 
         public static TextBlock
             DeviceNameLabel,
@@ -287,34 +258,15 @@ public static class Shared
 
         public static Grid
             DeviceErrorGrid,
-            TrackingDeviceChangePanel,
-            DevicesMainContentGridOuter,
-            DevicesMainContentGridInner,
-            SelectedDeviceSettingsHostContainer;
-
-        public static TreeView DevicesTreeView;
-
-        public static ItemsRepeater PluginsItemsRepeater;
-
-        public static Flyout
-            NoJointsFlyout,
-            SetDeviceTypeFlyout;
+            TrackingDeviceChangePanel;
 
         public static Button
             SetAsOverrideButton,
             SetAsBaseButton,
             DeselectDeviceButton;
 
-        public static ScrollViewer DevicesMainContentScrollViewer;
-
-        public static StackPanel
-            DevicesOverridesSelectorStackPanelOuter,
-            DevicesOverridesSelectorStackPanel,
-            DevicesJointSelectorStackPanelOuter,
-            DevicesJointSelectorStackPanel,
-            JointExpanderHostStackPanel,
-            SelectedDeviceSettingsRootLayoutPanel,
-            OverridesExpanderHostStackPanel;
+        public static TreeView DevicesTreeView;
+        public static StackPanel SelectedDeviceSettingsRootLayoutPanel;
 
         public static async Task ReloadSelectedDevice(bool manual, bool reconnect = false)
         {

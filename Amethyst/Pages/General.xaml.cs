@@ -4,31 +4,32 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Text;
-using Amethyst.Classes;
-using Microsoft.UI.Xaml.Controls;
-using System.Threading.Tasks;
-using Windows.Media.Core;
-using Amethyst.Plugins.Contract;
-using Amethyst.Utils;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
-using Valve.VR;
-using Windows.System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Numerics;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Amethyst.MVVM;
-using static Amethyst.Classes.Shared.TeachingTips;
-using System.Xml.Linq;
+using System.Text;
 using System.Threading;
-using Microsoft.UI.Xaml.Markup;
+using System.Threading.Tasks;
+using Windows.Media.Core;
+using Windows.System;
+using Windows.UI.ViewManagement;
+using Amethyst.Classes;
+using Amethyst.MVVM;
+using Amethyst.Plugins.Contract;
+using Amethyst.Utils;
+using AmethystSupport;
+using Microsoft.UI;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Shapes;
+using Valve.VR;
+using static Amethyst.Classes.Shared.TeachingTips;
 using Path = System.IO.Path;
-using Windows.ApplicationModel.Calls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,15 +41,18 @@ namespace Amethyst.Pages;
 /// </summary>
 public sealed partial class General : Page, INotifyPropertyChanged
 {
-    private bool _showSkeletonPrevious = true;
-    private bool _generalPageLoadedOnce = false;
     private static string _calibratingDeviceGuid = "";
+    private bool _autoCalibration_StillPending;
 
-    private bool _calibrationPending = false;
-    private bool _autoCalibration_StillPending = false;
+    private bool _calibrationPending;
+    private bool _generalPageLoadedOnce;
+    private bool _isCurrentWindowActiveBackup;
+    private bool _offsetsPageNavigated;
 
-    private IEnumerable<AppTracker> EnabledTrackers =>
-        AppData.Settings.TrackersVector.Where(x => x.IsActive);
+    private int _previousOffsetPageIndex;
+    private bool _showSkeletonPrevious = true;
+
+    private bool _skeletonDrawingCanvassLoadedOnce;
 
     public General()
     {
@@ -63,7 +67,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.General.CalibrationButton = CalibrationButton;
         Shared.General.ReRegisterButton = ReRegisterButton;
         Shared.General.ServerOpenDiscordButton = ServerOpenDiscordButton;
-        Shared.General.VersionLabel = VersionLabel;
         Shared.General.DeviceNameLabel = SelectedDeviceNameLabel;
         Shared.General.DeviceStatusLabel = TrackingDeviceStatusLabel;
         Shared.General.ErrorWhatText = ErrorWhatText;
@@ -72,13 +75,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.General.ServerErrorLabel = ServerErrorLabel;
         Shared.General.ServerErrorWhatText = ServerErrorWhatText;
         Shared.General.ForceRenderText = ForceRenderText;
-        Shared.General.OffsetsControlHostGrid = OffsetsControlHostGrid;
         Shared.General.ErrorButtonsGrid = ErrorButtonsGrid;
         Shared.General.ErrorWhatGrid = ErrorWhatGrid;
         Shared.General.ServerErrorWhatGrid = ServerErrorWhatGrid;
         Shared.General.ServerErrorButtonsGrid = ServerErrorButtonsGrid;
         Shared.General.ToggleFreezeButton = ToggleFreezeButton;
-        Shared.General.FreezeOnlyLowerToggle = FreezeOnlyLowerToggle;
         Shared.General.AdditionalDeviceErrorsHyperlink = AdditionalDeviceErrorsHyperlink;
 
         GeneralPage.ToggleTrackersTeachingTip = ToggleTrackersTeachingTip;
@@ -114,6 +115,14 @@ public sealed partial class General : Page, INotifyPropertyChanged
             }
         });
     }
+
+    private IEnumerable<AppTracker> EnabledTrackers =>
+        AppData.Settings.TrackersVector.Where(x => x.IsActive);
+
+    private List<Line> BoneLines { get; } = new(24);
+    private List<Ellipse> JointPoints { get; } = new(60);
+
+    public event PropertyChangedEventHandler PropertyChanged;
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
@@ -320,13 +329,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         DiscardAutoCalibrationButton.Content =
             Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Abort");
-
-        // Mark what are we doing
-        AppData.Settings.DeviceAutoCalibration[_calibratingDeviceGuid] = true;
-
-        // Mark as calibrated for no preview
-        AppData.Settings.DeviceMatricesCalibrated[_calibratingDeviceGuid] = false;
-
+        
         // Reset the origin
         AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] = Vector3.Zero;
 
@@ -407,7 +410,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         {
             // Calibrate (AmethystSupport/CLI)
             var (translation, rotation) =
-                AmethystSupport.Calibration.SVD(headPositions, hmdPositions);
+                Calibration.SVD(headPositions, hmdPositions);
 
             Logger.Info("Automatic calibration concluded!\n" +
                         $"Head positions: {headPositions.ToArray()}\n" +
@@ -417,17 +420,13 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
             AppData.Settings.DeviceCalibrationRotationMatrices[_calibratingDeviceGuid] = rotation;
             AppData.Settings.DeviceCalibrationTranslationVectors[_calibratingDeviceGuid] = translation;
-
             AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] = Vector3.Zero;
-            AppData.Settings.DeviceMatricesCalibrated[_calibratingDeviceGuid] = true;
         }
 
         // Reset by re-reading the settings if aborted
         if (!_calibrationPending)
         {
-            AppData.Settings.DeviceMatricesCalibrated[_calibratingDeviceGuid] = false;
             AppData.Settings.ReadSettings();
-
             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationAborted);
         }
         // Else save I guess
@@ -924,7 +923,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         }
     }
 
-    private void AdditionalDeviceErrorsHyperlink_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    private void AdditionalDeviceErrorsHyperlink_Tapped(object sender, TappedRoutedEventArgs e)
     {
         Shared.General.AdditionalDeviceErrorsHyperlinkTappedEvent.Start();
     }
@@ -960,12 +959,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
             });
         }
     }
-
-    private List<Line> BoneLines { get; set; } = new(24);
-    private List<Ellipse> JointPoints { get; set; } = new(60);
-
-    private bool _skeletonDrawingCanvassLoadedOnce = false;
-    private bool _isCurrentWindowActiveBackup = false;
 
     private void SkeletonDrawingCanvas_Loaded(object sender, RoutedEventArgs e)
     {
@@ -1321,8 +1314,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         var a = new AcrylicBrush
         {
-            TintColor = new Windows.UI.ViewManagement.UISettings()
-                .GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent)
+            TintColor = new UISettings()
+                .GetColorValue(UIColorType.Accent)
         };
 
         ellipse.StrokeThickness = normalEllipseStrokeSize;
@@ -1336,19 +1329,19 @@ public sealed partial class General : Page, INotifyPropertyChanged
         }
         else
         {
-            ellipse.Stroke = new SolidColorBrush(Microsoft.UI.Colors.White);
-            ellipse.Fill = new SolidColorBrush(Microsoft.UI.Colors.White);
+            ellipse.Stroke = new SolidColorBrush(Colors.White);
+            ellipse.Fill = new SolidColorBrush(Colors.White);
         }
 
         // Change the stroke based on overrides
         ellipse.Stroke = overrideStatus.Position switch
         {
             // Both
-            true when overrideStatus.Orientation => new SolidColorBrush(Microsoft.UI.Colors.BlueViolet),
+            true when overrideStatus.Orientation => new SolidColorBrush(Colors.BlueViolet),
             // Position
-            true => new SolidColorBrush(Microsoft.UI.Colors.DarkOliveGreen),
+            true => new SolidColorBrush(Colors.DarkOliveGreen),
             // Orientation
-            false when overrideStatus.Orientation => new SolidColorBrush(Microsoft.UI.Colors.IndianRed),
+            false when overrideStatus.Orientation => new SolidColorBrush(Colors.IndianRed),
             // None
             _ => null
         };
@@ -1408,11 +1401,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
             toJoint.TrackingState != TrackedJointState.StateTracked)
             line.Stroke = new AcrylicBrush
             {
-                TintColor = new Windows.UI.ViewManagement.UISettings()
-                    .GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent)
+                TintColor = new UISettings()
+                    .GetColorValue(UIColorType.Accent)
             };
         else
-            line.Stroke = new SolidColorBrush(Microsoft.UI.Colors.White);
+            line.Stroke = new SolidColorBrush(Colors.White);
 
         // Select the smaller scale to preserve somewhat uniform skeleton scaling
         double sScaleW = matWidth / matWidthDefault,
@@ -1522,13 +1515,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Play a nice sound - starting
         AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationStart);
-
-        // Which calibration method did we use
-        AppData.Settings.DeviceAutoCalibration[_calibratingDeviceGuid] = false;
-
-        // Mark as calibrated for the preview
-        AppData.Settings.DeviceMatricesCalibrated[_calibratingDeviceGuid] = true;
-
+        
         // Set up (a lot of) helper variables
         var calibrationFirstTime = true;
         float tempYaw = 0, tempPitch = 0;
@@ -1623,9 +1610,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Reset by re-reading the settings if aborted
         if (!_calibrationPending)
         {
-            AppData.Settings.DeviceMatricesCalibrated[_calibratingDeviceGuid] = false;
             AppData.Settings.ReadSettings();
-
             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationAborted);
         }
         // Else save I guess
@@ -1693,9 +1678,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.Main.NavigationBlockerGrid.IsHitTestVisible = !allow;
     }
 
-    private int _previousOffsetPageIndex = 0;
-    private bool _offsetsPageNavigated = false;
-
     private void OffsetsControlPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Don't even care if we're not set up yet
@@ -1726,8 +1708,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
         _previousOffsetPageIndex = ((Pivot)sender).SelectedIndex;
         _offsetsPageNavigated = true;
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public void OnPropertyChanged(string propName = null)
     {

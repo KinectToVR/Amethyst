@@ -2,60 +2,32 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Windows.Data.Json;
 using Amethyst.Driver.API;
-using Microsoft.UI.Xaml.Media.Animation;
-using Valve.VR;
-using Amethyst.Plugins.Contract;
 using Amethyst.Driver.Client;
 using Amethyst.Utils;
 using Grpc.Core;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Documents;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Runtime.CompilerServices;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.Windows.AppNotifications;
+using Valve.VR;
 
 namespace Amethyst.Classes;
 
 public static class Interfacing
 {
-    public static FileInfo GetProgramLocation()
-    {
-        return new FileInfo(Assembly.GetExecutingAssembly().Location);
-    }
-
-    public static DirectoryInfo GetK2AppDataTempDir()
-    {
-        return Directory.CreateDirectory(Path.GetTempPath() + "Amethyst");
-    }
-
-    public static string GetK2AppDataFileDir(string relativeFilePath)
-    {
-        Directory.CreateDirectory(Path.Join(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst"));
-
-        return Path.Join(Environment.GetFolderPath(
-            Environment.SpecialFolder.ApplicationData), "Amethyst", relativeFilePath);
-    }
-
-    public static string GetK2AppDataLogFileDir(string relativeFolderName, string relativeFilePath)
-    {
-        Directory.CreateDirectory(Path.Join(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Amethyst", "logs", relativeFolderName));
-
-        return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Amethyst", "logs", relativeFolderName, relativeFilePath);
-    }
+    public const uint MaxPingCheckingThreads = 3;
 
     public static bool
-        IsExitingNow = false, // App closing check
-        IsExitHandled = false; // If actions have been done
+        IsExitingNow, // App closing check
+        IsExitHandled; // If actions have been done
 
     public static readonly object UpdateLock = new();
 
@@ -95,33 +67,32 @@ public static class Interfacing
 
     // VR Overlay handle
     public static ulong VrOverlayHandle = OpenVR.k_ulOverlayHandleInvalid;
-    public static uint VrNotificationId = 0;
+    public static uint VrNotificationId;
 
     // The actual app theme (ONLY dark/light)
     public static ElementTheme ActualTheme = ElementTheme.Dark;
 
     // Input actions' handler
-    public static readonly EVRInput.SteamEVRInput EvrInput = new();
+    public static readonly EvrInput.SteamEvrInput EvrInput = new();
 
     // If trackers are added / initialized
-    public static bool K2AppTrackersSpawned = false,
-        AppTrackersInitialized = false;
+    public static bool K2AppTrackersSpawned,
+        AppTrackersInitialized;
 
     // Is the tracking paused
     public static bool IsTrackingFrozen = false;
 
     // Server checking threads number, max num of them
-    public static uint PingCheckingThreadsNumber = 0;
-    public const uint MaxPingCheckingThreads = 3;
+    public static uint PingCheckingThreadsNumber;
 
     // Server interfacing data
-    public static int ServerDriverStatusCode = 0;
-    public static int ServerRpcStatusCode = 0;
+    public static int ServerDriverStatusCode;
+    public static int ServerRpcStatusCode;
 
-    public static long PingTime = 0, ParsingTime = 0;
+    public static long PingTime, ParsingTime;
 
-    public static bool IsServerDriverPresent = false,
-        ServerDriverFailure = false;
+    public static bool IsServerDriverPresent,
+        ServerDriverFailure;
 
     public static string ServerStatusString = " \n \n ";
 
@@ -146,8 +117,49 @@ public static class Interfacing
         RawVrHmdPose = new(Vector3.Zero, Quaternion.Identity);
 
     // Amethyst language resource trees
-    public static Windows.Data.Json.JsonObject
+    public static JsonObject
         LocalResources = new(), EnglishResources = new(), LanguageEnum = new();
+
+    // Controllers' ID's (vr::k_unTrackedDeviceIndexInvalid for non-existent)
+    public static (uint Left, uint Right) VrControllerIndexes;
+
+    // Is NUX currently opened?
+    public static bool IsNuxPending = false;
+
+    // Flip defines for the base device - iteration persistent
+    public static bool BaseFlip = false; // Assume non flipped
+
+    // Flip defines for the override device - iteration persistent
+    public static bool OverrideFlip = false; // Assume non flipped
+    
+    public static FileInfo GetProgramLocation()
+    {
+        return new FileInfo(Assembly.GetExecutingAssembly().Location);
+    }
+
+    public static DirectoryInfo GetK2AppDataTempDir()
+    {
+        return Directory.CreateDirectory(Path.GetTempPath() + "Amethyst");
+    }
+
+    public static string GetK2AppDataFileDir(string relativeFilePath)
+    {
+        Directory.CreateDirectory(Path.Join(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst"));
+
+        return Path.Join(Environment.GetFolderPath(
+            Environment.SpecialFolder.ApplicationData), "Amethyst", relativeFilePath);
+    }
+
+    public static string GetK2AppDataLogFileDir(string relativeFolderName, string relativeFilePath)
+    {
+        Directory.CreateDirectory(Path.Join(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Amethyst", "logs", relativeFolderName));
+
+        return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Amethyst", "logs", relativeFolderName, relativeFilePath);
+    }
 
     // Fail with an exit code (don't delete .crash)
     public static void Fail(int code)
@@ -191,13 +203,13 @@ public static class Interfacing
             $"<text>{text}</text>" +
             "</binding></visual></toast>";
 
-        Microsoft.Windows.AppNotifications.AppNotification toast = new(payload)
+        AppNotification toast = new(payload)
         {
             Tag = "Tag_AmethystNotifications",
             Group = "Group_AmethystNotifications",
             Priority = highPriority
-                ? Microsoft.Windows.AppNotifications.AppNotificationPriority.High
-                : Microsoft.Windows.AppNotifications.AppNotificationPriority.Default
+                ? AppNotificationPriority.High
+                : AppNotificationPriority.Default
         };
 
         Shared.Main.NotificationManager.Show(toast);
@@ -208,7 +220,7 @@ public static class Interfacing
     private static extern bool SetForegroundWindow(nint hWnd);
 
     public static void ProcessToastArguments(
-        Microsoft.Windows.AppNotifications.AppNotificationActivatedEventArgs eventArgs)
+        AppNotificationActivatedEventArgs eventArgs)
     {
         // When a tracker's been auto-disabled
         if (eventArgs.Argument.Contains("focus_trackers"))
@@ -321,18 +333,6 @@ public static class Interfacing
             // ignored
         }
     }
-
-    // Controllers' ID's (vr::k_unTrackedDeviceIndexInvalid for non-existent)
-    public static (uint Left, uint Right) VrControllerIndexes;
-
-    // Is NUX currently opened?
-    public static bool IsNuxPending = false;
-
-    // Flip defines for the base device - iteration persistent
-    public static bool BaseFlip = false; // Assume non flipped
-
-    // Flip defines for the override device - iteration persistent
-    public static bool OverrideFlip = false; // Assume non flipped
 
     // Function to spawn default' enabled trackers
     public static async Task<bool> SpawnEnabledTrackers()
@@ -484,8 +484,8 @@ public static class Interfacing
                 return 2;
             }
 
-            Logger.Info($"Amethyst manifest installed at: {
-                Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest")}");
+            Logger.Info(
+                $"Amethyst manifest installed at: {Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest")}");
             return 1;
         }
 
@@ -500,8 +500,8 @@ public static class Interfacing
             OpenVR.Applications.RemoveApplicationManifest(
                 Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest"));
 
-            Logger.Info($"ttempted to remove Amethyst manifest at: {
-                Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest")}");
+            Logger.Info(
+                $"ttempted to remove Amethyst manifest at: {Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest")}");
         }
 
         if (OpenVR.Applications.IsApplicationInstalled("K2VR.Amethyst"))
@@ -529,8 +529,8 @@ public static class Interfacing
                 ParsingTime = result.ReceiveTimestamp - result.SendTimestamp;
 
                 // Log ?success
-                Logger.Info($"Connection test has ended, [result: {
-                    (result.Status.StatusCode == StatusCode.OK ? "success" : "fail")}]");
+                Logger.Info(
+                    $"Connection test has ended, [result: {(result.Status.StatusCode == StatusCode.OK ? "success" : "fail")}]");
 
                 // Log some data if needed
                 Logger.Info($"\nTested ping time: {PingTime} [ticks], " +
@@ -575,8 +575,7 @@ public static class Interfacing
             var initCode = DriverClient.InitAmethystServer();
             Status serverStatus = new();
 
-            Logger.Info($"Server IPC initialization {
-                (initCode == 0 ? "succeed" : "failed")}, exit code: {initCode}");
+            Logger.Info($"Server IPC initialization {(initCode == 0 ? "succeed" : "failed")}, exit code: {initCode}");
 
             /* Connection test and display ping */
             // We may wait a bit for it though...
@@ -801,10 +800,6 @@ public static class Interfacing
 
     public static void UpdateServerStatus()
     {
-        // Disable UI (partially) if we've encountered an error
-        if (Shared.Main.DevicesItem is not null)
-            Shared.Main.DevicesItem.IsEnabled = IsServerDriverPresent;
-
         // Check with this one, should be the same for all anyway
         if (Shared.General.ServerErrorWhatText is not null)
         {
@@ -932,7 +927,7 @@ public static class Interfacing
             }
 
             // Parse the loaded json
-            var jsonObject = Windows.Data.Json.JsonObject.Parse(File.ReadAllText(resourcePath));
+            var jsonObject = JsonObject.Parse(File.ReadAllText(resourcePath));
 
             // Check if the resource root is fine
             if (jsonObject is null || jsonObject.Count <= 0)
@@ -974,7 +969,7 @@ public static class Interfacing
             // If the specified language doesn't exist somehow, fallback to 'en'
             if (!File.Exists(resourcePath))
             {
-                Logger.Warn($"Could not load language resources at " +
+                Logger.Warn("Could not load language resources at " +
                             $"\"{resourcePath}\", falling back to 'en' (en.json)!");
 
                 resourcePath = Path.Join(
@@ -985,7 +980,7 @@ public static class Interfacing
             // If failed again, just give up
             if (!File.Exists(resourcePath))
             {
-                Logger.Warn($"Could not load language resources at " +
+                Logger.Warn("Could not load language resources at " +
                             $"\"{resourcePath}\", the app interface will be broken!");
                 return; // Just give up
             }
@@ -993,7 +988,7 @@ public static class Interfacing
             // If everything's ok, load the resources into the current resource tree
 
             // Parse the loaded json
-            LocalResources = Windows.Data.Json.JsonObject.Parse(File.ReadAllText(resourcePath));
+            LocalResources = JsonObject.Parse(File.ReadAllText(resourcePath));
 
             // Check if the resource root is fine
             if (LocalResources is null || LocalResources.Count <= 0)
@@ -1032,7 +1027,7 @@ public static class Interfacing
             // If everything's ok, load the resources into the current resource tree
 
             // Parse the loaded json
-            EnglishResources = Windows.Data.Json.JsonObject.Parse(File.ReadAllText(resourcePath));
+            EnglishResources = JsonObject.Parse(File.ReadAllText(resourcePath));
 
             // Check if the resource root is fine
             if (EnglishResources is null || EnglishResources.Count <= 0)
@@ -1070,9 +1065,6 @@ public static class Interfacing
             return resourceKey;
         }
     }
-
-    // Does the tracker vector contain active trackers that aren't default?
-    public static bool AdditionalTrackersEnabled => AppData.Settings.TrackersVector.Count > 7;
 
     public static class Plugins
     {
@@ -1113,7 +1105,7 @@ public static class Interfacing
 
             // Get pos & rot -> EigenUtils' gonna do this stuff for us
             if (VrControllerIndexes.Right != OpenVR.k_unTrackedDeviceIndexInvalid)
-                return (devicePose[VrControllerIndexes.Right].mDeviceToAbsoluteTracking.GetPosition(), 
+                return (devicePose[VrControllerIndexes.Right].mDeviceToAbsoluteTracking.GetPosition(),
                     devicePose[VrControllerIndexes.Right].mDeviceToAbsoluteTracking.GetOrientation());
 
             return (Vector3.Zero, Quaternion.Identity); // else
@@ -1203,7 +1195,7 @@ public static class Interfacing
 
                 // Parse the loaded json
                 TrackingDevices.GetDevice(guid).Device.LocalizationResourcesRoot =
-                    (Windows.Data.Json.JsonObject.Parse(File.ReadAllText(resourcePath)), resourcePath);
+                    (JsonObject.Parse(File.ReadAllText(resourcePath)), resourcePath);
 
                 // Check if the resource root is fine
                 var resourceRoot = TrackingDevices.GetDevice(guid).Device.LocalizationResourcesRoot.Root;

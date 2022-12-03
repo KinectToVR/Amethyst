@@ -288,7 +288,8 @@
                                                     <ScalarTransition />
                                                 </Border.OpacityTransition>
 
-                                                <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Base'), Mode=OneWay}"
+                                                <TextBlock
+                                                    Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Base'), Mode=OneWay}"
                                                     FontWeight="Medium" Margin="0,-2,0,0"
                                                     Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                             </Border>
@@ -303,7 +304,8 @@
                                                     <ScalarTransition />
                                                 </Border.OpacityTransition>
 
-                                                <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Override'), Mode=OneWay}"
+                                                <TextBlock
+                                                    Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Override'), Mode=OneWay}"
                                                     FontWeight="Medium" Margin="0,-2,0,0"
                                                     Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                             </Border>
@@ -318,7 +320,8 @@
                                                     <ScalarTransition />
                                                 </Border.OpacityTransition>
 
-                                                <TextBlock Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Error'), Mode=OneWay}"
+                                                <TextBlock
+                                                    Text="{x:Bind util:Translator.Get.String('/DevicesPage/Badges/Devices/Error'), Mode=OneWay}"
                                                     FontWeight="Medium" Margin="0,-2,0,0"
                                                     Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                             </Border>
@@ -1498,7 +1501,7 @@
             <!--No Skeleton-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center"
                             x:Name="NoSkeletonNotice" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
@@ -1519,7 +1522,7 @@
             <!--Skeleton Disabled-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center"
                             x:Name="PreviewDisabledNotice" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
@@ -1540,7 +1543,7 @@
             <!--Outta focus-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center"
                             x:Name="OutOfFocusNotice" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />
@@ -1561,7 +1564,7 @@
             <!--Dashboard is closed-->
             <Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
                      VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center"
                             x:Name="DashboardClosedNotice" Margin="0,-10,0,0">
                     <StackPanel.OpacityTransition>
                         <ScalarTransition />

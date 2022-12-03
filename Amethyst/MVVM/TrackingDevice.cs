@@ -1,25 +1,19 @@
 using System;
-using Amethyst.Plugins.Contract;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Reflection;
 using System.Runtime.Loader;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
+using Windows.Data.Json;
 using Amethyst.Classes;
-using Amethyst.Utils;
-using Windows.Storage;
 using Amethyst.Driver.API;
-using Amethyst.Driver.Client;
+using Amethyst.Plugins.Contract;
+using Amethyst.Utils;
+using AmethystSupport;
 using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
@@ -49,31 +43,11 @@ public class TrackingDevice : INotifyPropertyChanged
     // Get Path
     [DefaultValue("UNKNOWN")] public string Location { get; }
 
-    private ITrackingDevice Device { get; init; }
+    private ITrackingDevice Device { get; }
 
     public List<TrackedJoint> TrackedJoints => Device.TrackedJoints;
 
-    public (Windows.Data.Json.JsonObject Root, string Directory) LocalizationResourcesRoot { get; set; } = new();
-
-    public void OnLoad()
-    {
-        Device.OnLoad();
-    }
-
-    public void Initialize()
-    {
-        Device.Initialize();
-    }
-
-    public void Shutdown()
-    {
-        Device.Shutdown();
-    }
-
-    public void Update()
-    {
-        Device.Update();
-    }
+    public (JsonObject Root, string Directory) LocalizationResourcesRoot { get; set; } = new();
 
     public bool IsInitialized => Device.IsInitialized;
     public bool IsSkeletonTracked => Device.IsSkeletonTracked;
@@ -96,13 +70,37 @@ public class TrackingDevice : INotifyPropertyChanged
     public int DeviceStatus => Device.DeviceStatus;
     public string DeviceStatusString => Device.DeviceStatusString;
 
+    public bool StatusOk => Device.DeviceStatus == 0;
+    public bool StatusError => Device.DeviceStatus != 0;
+    public bool IsUsed => IsBase || IsOverride;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnLoad()
+    {
+        Device.OnLoad();
+    }
+
+    public void Initialize()
+    {
+        Device.Initialize();
+    }
+
+    public void Shutdown()
+    {
+        Device.Shutdown();
+    }
+
+    public void Update()
+    {
+        Device.Update();
+    }
+
     // Signal the joint eg psm_id0 that it's been selected
     public void SignalJoint(int jointId)
     {
         Device.SignalJoint(jointId);
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public void OnPropertyChanged(string propName = null)
     {
@@ -119,10 +117,6 @@ public class TrackingDevice : INotifyPropertyChanged
     {
         return v1 && v2 ? 1.0 : 0.0;
     }
-
-    public bool StatusOk => Device.DeviceStatus == 0;
-    public bool StatusError => Device.DeviceStatus != 0;
-    public bool IsUsed => IsBase || IsOverride;
 }
 
 public static class ICollectionExtensions
@@ -182,11 +176,11 @@ public class PluginHost : IAmethystHost
 
     // Get the HMD Yaw (exclusively)
     public double HmdOrientationYaw =>
-        AmethystSupport.Calibration.QuaternionYaw(Interfacing.Plugins.GetHmdPose.Orientation);
+        Calibration.QuaternionYaw(Interfacing.Plugins.GetHmdPose.Orientation);
 
     // Get the HMD Yaw (exclusively), but un-wrapped aka "calibrated" using the VR room center
     public double HmdOrientationYawCalibrated =>
-        AmethystSupport.Calibration.QuaternionYaw(Interfacing.Plugins.GetHmdPoseCalibrated.Orientation);
+        Calibration.QuaternionYaw(Interfacing.Plugins.GetHmdPoseCalibrated.Orientation);
 
     // Get the raw OpenVRs HMD pose
     public (Vector3 Position, Quaternion Orientation) HmdPose => Interfacing.Plugins.GetHmdPose;
@@ -261,6 +255,7 @@ public class PluginHost : IAmethystHost
 
 public class LoadAttemptedPlugin : INotifyPropertyChanged
 {
+    private bool _isLoaded;
     public string Name { get; init; } = "[UNKNOWN]";
     public string Guid { get; init; } = "[INVALID]";
 
@@ -276,8 +271,6 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public bool LoadError => Status != TrackingDevices.PluginLoadError.NoError;
     public bool LoadSuccess => Status == TrackingDevices.PluginLoadError.NoError;
-
-    private bool _isLoaded = false;
 
     public bool IsLoaded
     {
@@ -333,6 +326,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string ErrorText => LocalizedJsonString($"/DevicesPage/Devices/Manager/Labels/{(int)Status}");
 
+    public event PropertyChangedEventHandler PropertyChanged;
+
     public string TrimString(string s, int l)
     {
         return s[..Math.Min(s.Length, l)] +
@@ -343,8 +338,6 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     {
         SystemShell.OpenFolderAndSelectItem(DeviceFolder);
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public void OnPropertyChanged(string propName = null)
     {
