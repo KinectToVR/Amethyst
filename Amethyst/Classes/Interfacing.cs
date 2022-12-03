@@ -777,7 +777,7 @@ public static class Interfacing
         OpenVR.System.GetDeviceToAbsoluteTrackingPose(
             ETrackingUniverseOrigin.TrackingUniverseStanding, 0, devicePose);
 
-        var waistPair = FindVrTracker(nameContains, true, log);
+        var waistPair = FindVrTracker(nameContains, false, log);
         if (waistPair.Found)
         {
             // Extract pose from the returns
@@ -796,7 +796,7 @@ public static class Interfacing
             Logger.Warn("Either waist tracker doesn't exist or its role hint (Prop_ControllerType_String) was invalid");
 
         // We've failed if the executor got here
-        return (Vector3.Zero, Quaternion.Identity);
+        return (Vector3.Zero, Plugins.GetHmdPoseCalibrated.Orientation);
     }
 
     public static void UpdateServerStatus()

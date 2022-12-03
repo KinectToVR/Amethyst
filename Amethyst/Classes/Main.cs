@@ -433,9 +433,8 @@ public static class Main
                         ? AppData.Settings.ExternalFlipCalibrationMatrix
 
                         // Default: use the default calibration rotation
-                        : AppData.Settings.DeviceCalibrationRotationMatrices.FirstOrDefault(
-                            x => x.Key == AppData.Settings.TrackingDeviceGuid,
-                            new KeyValuePair<string, Quaternion>("", Quaternion.Identity)).Value);
+                        : AppData.Settings.DeviceCalibrationRotationMatrices.GetValueOrDefault(
+                            AppData.Settings.TrackingDeviceGuid, Quaternion.Identity));
 
             // Not in transition angle area, can compute
             if (Math.Abs(dotFacing) >= flipThreshold)

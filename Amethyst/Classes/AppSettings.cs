@@ -62,7 +62,7 @@ public class AppSettings : INotifyPropertyChanged
             TrackingDevices.CheckFlipSupport();
 
             OnPropertyChanged("IsFlipEnabled");
-            // AppData.Settings.SaveSettings();
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -77,7 +77,7 @@ public class AppSettings : INotifyPropertyChanged
             _isExternalFlipEnabled = value;
             TrackingDevices.CheckFlipSupport();
             OnPropertyChanged("IsExternalFlipEnabled");
-            // AppData.Settings.SaveSettings();
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -91,7 +91,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             _autoSpawnEnabledJoints = value;
             OnPropertyChanged("AutoSpawnEnabledJoints");
-            // AppData.Settings.SaveSettings();
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -105,7 +105,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             _enableAppSounds = value;
             OnPropertyChanged("EnableAppSounds");
-            // AppData.Settings.SaveSettings();
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -119,7 +119,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             _appSoundsVolume = value;
             OnPropertyChanged("AppSoundsVolume");
-            // AppData.Settings.SaveSettings();
+            AppData.Settings.SaveSettings();
         }
     }
 

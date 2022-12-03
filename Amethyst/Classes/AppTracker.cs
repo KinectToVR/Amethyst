@@ -61,7 +61,7 @@ public class AppTracker : INotifyPropertyChanged
 
     // Position filter update option
     private RotationTrackingFilterOption _orientationTrackingFilterOption =
-        RotationTrackingFilterOption.OrientationTrackingFilterSlerp;
+        RotationTrackingFilterOption.OrientationTrackingFilterSlerpSlow;
 
     // Orientation tracking option
     private JointRotationTrackingOption _orientationTrackingOption =
