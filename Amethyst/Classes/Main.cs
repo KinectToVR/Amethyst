@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -434,7 +434,7 @@ public static class Main
 
                         // Default: use the default calibration rotation
                         : AppData.Settings.DeviceCalibrationRotationMatrices.FirstOrDefault(
-                            x => x.Key == AppData.Settings.TrackingDeviceGuid, 
+                            x => x.Key == AppData.Settings.TrackingDeviceGuid,
                             new KeyValuePair<string, Quaternion>("", Quaternion.Identity)).Value);
 
             // Not in transition angle area, can compute
@@ -711,10 +711,11 @@ public static class Main
 
                     // Skip some things if we're getting ready to exit
                     if (!Interfacing.IsExitingNow)
-                    {
-                        UpdateTrackingDevices(); // Update actual tracking
-                        UpdateAppTrackers(); // Track joints from raw data
-                    }
+                        lock (Interfacing.UpdateLock)
+                        {
+                            UpdateTrackingDevices(); // Update actual tracking
+                            UpdateAppTrackers(); // Track joints from raw data
+                        }
 
                     await UpdateServerTrackers(); // Send it to the server
 

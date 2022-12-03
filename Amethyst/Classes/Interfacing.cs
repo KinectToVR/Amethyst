@@ -57,6 +57,8 @@ public static class Interfacing
         IsExitingNow = false, // App closing check
         IsExitHandled = false; // If actions have been done
 
+    public static readonly object UpdateLock = new();
+
     // App crash check
     public static FileInfo CrashFile;
 
