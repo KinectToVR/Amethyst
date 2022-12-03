@@ -337,7 +337,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         {
             // Match Imports with corresponding exports in all catalogs in the container
             using var container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
-
             container.ComposeExportedValue(typeof(IAmethystHost));
 
             var plugins = container.GetExports<ITrackingDevice, ITrackingDeviceMetadata>().ToList();

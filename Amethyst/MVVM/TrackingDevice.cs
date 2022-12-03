@@ -134,13 +134,9 @@ public static class ICollectionExtensions
         item.GetFiles("Microsoft.Windows.SDK.NET.dll").FirstOrDefault()?.Delete();
         item.GetFiles("Microsoft.WinUI.dll").FirstOrDefault()?.Delete();
         item.GetFiles("WinRT.Runtime.dll").FirstOrDefault()?.Delete();
-        
-        //Directory.GetFiles(GetProgramLocation().DirectoryName!).ToList()
-        //    .ForEach(x => item.GetFiles(new FileInfo(x).Name).ToList()
-        //        .ForEach(y => y.Delete()));
 
         // Loop over all the files, load into a separate appdomain/context
-        var loadContext = new PluginLoadContext(item.FullName);
+        var loadContext = new AssemblyLoadContext(item.FullName);
         foreach (var fileInfo in item.GetFiles("*.dll"))
             try
             {
@@ -156,40 +152,23 @@ public static class ICollectionExtensions
             }
             catch (CompositionException e)
             {
-                Logger.Error($"Loading {fileInfo} failed with a composition exception: " +
-                             $"Message: {e.Message}\nErrors occurred: {e.Errors}\nPossible causes: {e.RootCauses}");
+                if (fileInfo.Name.StartsWith("plugin"))
+                    Logger.Error($"Loading {fileInfo} failed with a composition exception: " +
+                                 $"Message: {e.Message}\nErrors occurred: {e.Errors}\nPossible causes: {e.RootCauses}");
+                else
+                    Logger.Warn($"[Non-critical] Loading {fileInfo} failed with a composition exception: " +
+                                $"Message: {e.Message}\nErrors occurred: {e.Errors}\nPossible causes: {e.RootCauses}");
             }
             catch (Exception e)
             {
-                Logger.Error($"Loading {fileInfo} failed with an exception: Message: {e.Message} " +
-                             "Probably some assembly referenced by this plugin is missing.");
+                if (fileInfo.Name.StartsWith("plugin"))
+                    Logger.Error($"Loading {fileInfo} failed with an exception: Message: {e.Message} " +
+                                 "Probably some assembly referenced by this plugin is missing.");
+                else
+                    Logger.Warn($"[Non-critical] Loading {fileInfo} failed with an exception: {e.Message}");
             }
 
         return true; // Nah, not this time
-    }
-}
-
-internal class PluginLoadContext : AssemblyLoadContext
-{
-    private readonly AssemblyDependencyResolver _resolver;
-
-    public PluginLoadContext(string pluginAssemblyPath) : base(false)
-    {
-        _resolver = new AssemblyDependencyResolver(pluginAssemblyPath);
-    }
-
-    protected override Assembly Load(AssemblyName assemblyName)
-    {
-        var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
-        return assemblyPath != null ? LoadFromAssemblyPath(assemblyPath) :
-            null; // return null to use the default AssemblyLoadContext
-    }
-
-    protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
-    {
-        var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
-        return libraryPath != null ? LoadUnmanagedDllFromPath(libraryPath) :
-            IntPtr.Zero; // return IntPtr.Zero to use the default AssemblyLoadContext
     }
 }
 
