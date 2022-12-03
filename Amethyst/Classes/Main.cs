@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -706,7 +706,7 @@ public static class Main
                     // Update things here
 
                     UpdateVrPositions(); // Update HMD poses
-                    //UpdateInputBindings(); // Update input
+                    UpdateInputBindings(); // Update input
                     await ParseVrEvents(); // Parse VR events
 
                     // Skip some things if we're getting ready to exit
