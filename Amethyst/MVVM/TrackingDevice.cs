@@ -335,7 +335,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string TrimString(string s, int l)
     {
-        return s[..Math.Min(s.Length, l)];
+        return s[..Math.Min(s.Length, l)] +
+               (s.Length > l ? "..." : "");
     }
 
     public void ShowDeviceFolder()
