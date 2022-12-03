@@ -15,6 +15,7 @@ using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
 using static Amethyst.Classes.Interfacing;
+using Windows.System;
 
 namespace Amethyst.MVVM;
 
@@ -258,6 +259,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     private bool _isLoaded;
     public string Name { get; init; } = "[UNKNOWN]";
     public string Guid { get; init; } = "[INVALID]";
+    public string Publisher { get; init; }
+    public string Website { get; init; }
 
     public string DeviceFolder { get; init; } = "[INVALID]";
     public string DeviceProviderName { get; init; } = "[UNKNOWN]";
@@ -330,14 +333,29 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string TrimString(string s, int l)
     {
-        return s[..Math.Min(s.Length, l)] +
-               (s.Length > l ? "..." : "");
+        return s?[..Math.Min(s.Length, l)] +
+               (s?.Length > l ? "..." : "");
     }
 
     public void ShowDeviceFolder()
     {
         SystemShell.OpenFolderAndSelectItem(DeviceFolder);
     }
+
+    public async void OpenDeviceWebsite()
+    {
+        try
+        {
+            await Launcher.LaunchUriAsync(new Uri(Website));
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+    }
+
+    public bool PublisherValid => !string.IsNullOrEmpty(Publisher);
+    public bool WebsiteValid => !string.IsNullOrEmpty(Website);
 
     public void OnPropertyChanged(string propName = null)
     {

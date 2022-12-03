@@ -341,6 +341,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
+                            Publisher = plugin.Metadata.Publisher,
+                            Website = plugin.Metadata.Website,
                             Status = TrackingDevices.PluginLoadError.BadOrDuplicateGuid
                         });
 
@@ -357,6 +359,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
+                            Publisher = plugin.Metadata.Publisher,
+                            Website = plugin.Metadata.Website,
                             Status = TrackingDevices.PluginLoadError.LoadingSkipped
                         });
 
@@ -382,6 +386,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
+                            Publisher = plugin.Metadata.Publisher,
+                            Website = plugin.Metadata.Website,
                             Status = TrackingDevices.PluginLoadError.NoDeviceDependencyDll
                         });
                         continue; // Give up on this one :(
@@ -397,6 +403,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
+                            Publisher = plugin.Metadata.Publisher,
+                            Website = plugin.Metadata.Website,
                             Status = TrackingDevices.PluginLoadError.Other
                         });
                         continue; // Give up on this one :(
@@ -413,6 +421,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     {
                         Name = plugin.Metadata.Name,
                         Guid = plugin.Metadata.Guid,
+                        Publisher = plugin.Metadata.Publisher,
+                        Website = plugin.Metadata.Website,
                         DeviceFolder = pluginFolder,
                         Status = TrackingDevices.PluginLoadError.NoError
                     });
@@ -469,6 +479,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     {
                         Name = plugin.Metadata.Name,
                         Guid = plugin.Metadata.Guid,
+                        Publisher = plugin.Metadata.Publisher,
+                        Website = plugin.Metadata.Website,
                         Status = TrackingDevices.PluginLoadError.Other
                     });
                 }

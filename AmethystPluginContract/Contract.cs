@@ -7,19 +7,9 @@ public interface ITrackingDeviceMetadata
 {
     string Name { get; }
     string Guid { get; }
-}
 
-[AttributeUsage(AttributeTargets.Class)]
-public sealed class TrackingDeviceMetadataAttribute : Attribute, ITrackingDeviceMetadata
-{
-    public TrackingDeviceMetadataAttribute(string name, string guid)
-    {
-        Name = name;
-        Guid = guid;
-    }
-
-    public string Name { get; set; }
-    public string Guid { get; set; }
+    [DefaultValue(null)] string Publisher { get; }
+    [DefaultValue(null)] string Website { get; }
 }
 
 public interface ITrackingDevice

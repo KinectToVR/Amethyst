@@ -117,6 +117,24 @@
                                                                        Text="{x:Bind Name, Mode=OneWay}"
                                                                        HorizontalAlignment="Left"
                                                                        VerticalAlignment="Center" />
+
+                                                            <StackPanel Orientation="Horizontal"
+                                                                        VerticalAlignment="Bottom"
+                                                                        Margin="7,0,0,10"
+                                                                        Visibility="{x:Bind PublisherValid, Mode=OneWay}">
+                                                                <TextBlock VerticalAlignment="Center"
+                                                                           FontWeight="SemiBold" Opacity="0.5"
+                                                                           Margin="0,0,3,0" FontSize="12"
+                                                                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Publisher'), Mode=OneWay}" />
+
+                                                                <TextBlock VerticalAlignment="Center"
+                                                                           FontWeight="SemiBold" FontSize="12"
+                                                                           Opacity="0.5"
+                                                                           Text="{x:Bind TrimString(Publisher, 37)}"
+                                                                           Tapped="{x:Bind ShowDeviceFolder}"
+                                                                           ToolTipService.ToolTip="{x:Bind DeviceFolder, Mode=OneWay}"
+                                                                           ToolTipService.Placement="Bottom" />
+                                                            </StackPanel>
                                                         </StackPanel>
 
                                                         <ToggleSwitch IsOn="{x:Bind IsLoaded, Mode=TwoWay}"
@@ -197,6 +215,29 @@
                                                                                Text="{x:Bind TrimString(DeviceFolder, 77)}"
                                                                                Tapped="{x:Bind ShowDeviceFolder}"
                                                                                ToolTipService.ToolTip="{x:Bind DeviceFolder, Mode=OneWay}"
+                                                                               ToolTipService.Placement="Bottom" />
+                                                                </StackPanel>
+
+                                                                <StackPanel Orientation="Horizontal"
+                                                                            Visibility="{x:Bind WebsiteValid, Mode=OneWay}">
+                                                                    <StackPanel.Transitions>
+                                                                        <TransitionCollection>
+                                                                            <RepositionThemeTransition />
+                                                                        </TransitionCollection>
+                                                                    </StackPanel.Transitions>
+
+                                                                    <TextBlock VerticalAlignment="Center"
+                                                                               FontWeight="SemiBold" Opacity="0.5"
+                                                                               Margin="0,0,7,0"
+                                                                               Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Website'), Mode=OneWay}" />
+
+                                                                    <TextBlock VerticalAlignment="Center"
+                                                                               FontWeight="SemiBold"
+                                                                               Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                                                               TextDecorations="Underline"
+                                                                               Text="{x:Bind TrimString(Website, 77)}"
+                                                                               Tapped="{x:Bind OpenDeviceWebsite}"
+                                                                               ToolTipService.ToolTip="{x:Bind Website, Mode=OneWay}"
                                                                                ToolTipService.Placement="Bottom" />
                                                                 </StackPanel>
 
