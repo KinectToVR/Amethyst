@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
-using Valve.VR;
 
 namespace Amethyst.Utils;
 
@@ -166,37 +164,5 @@ public static class QuaternionExtensions
     public static Quaternion Inversed(this Quaternion q, bool inverse = true)
     {
         return inverse ? Quaternion.Inverse(q) : q;
-    }
-}
-
-public static class OvrExtensions
-{
-    public static Vector3 GetPosition(this HmdMatrix34_t mat)
-    {
-        return new Vector3(mat.m3, mat.m7, mat.m11);
-    }
-
-    private static bool IsOrientationValid(this HmdMatrix34_t mat)
-    {
-        return (mat.m2 != 0 || mat.m6 != 0 || mat.m10 != 0) &&
-               (mat.m1 != 0 || mat.m5 != 0 || mat.m9 != 0);
-    }
-
-    public static Quaternion GetOrientation(this HmdMatrix34_t mat)
-    {
-        if (!mat.IsOrientationValid()) return Quaternion.Identity;
-
-        var q = new Quaternion
-        {
-            W = MathF.Sqrt(MathF.Max(0, 1 + mat.m0 + mat.m5 + mat.m10)) / 2,
-            X = MathF.Sqrt(MathF.Max(0, 1 + mat.m0 - mat.m5 - mat.m10)) / 2,
-            Y = MathF.Sqrt(MathF.Max(0, 1 - mat.m0 + mat.m5 - mat.m10)) / 2,
-            Z = MathF.Sqrt(MathF.Max(0, 1 - mat.m0 - mat.m5 + mat.m10)) / 2
-        };
-
-        q.X = MathF.CopySign(q.X, mat.m9 - mat.m6);
-        q.Y = MathF.CopySign(q.Y, mat.m2 - mat.m8);
-        q.Z = MathF.CopySign(q.Z, mat.m4 - mat.m1);
-        return q; // Extracted, fixed ovr quaternion!
     }
 }

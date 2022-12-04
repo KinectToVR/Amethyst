@@ -28,7 +28,7 @@
                        FontSize="14" Margin="0,-3,0,0"
                        Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
-            <ToggleSwitch IsOn="{x:Bind IsActive, Mode=TwoWay}"
+            <ToggleSwitch IsOn="{x:Bind IsActiveEnabled, Mode=TwoWay}"
                           Toggled="TrackerToggleSwitch_Toggled"
                           Grid.Column="1" Margin="0,0,-125,0" OnContent="" OffContent=""
                           VerticalAlignment="Center" HorizontalAlignment="Right"

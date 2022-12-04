@@ -23,12 +23,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.Core" Version="2.46.5" />
-    <PackageReference Include="Grpc.Core.Api" Version="2.50.0" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.50.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221116.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25231-preview" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="System.ComponentModel.Composition" Version="7.0.0" />
     <PackageReference Include="System.ComponentModel.Composition.Registration" Version="7.0.0" />
     <Manifest Include="$(ApplicationManifest)" />
@@ -61,21 +58,9 @@
     <None Remove="Pages\Settings.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\vendor\openvr\headers\openvr_api.cs" Link="Vendor\openvr_api.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="MVVM\" />
-    <Folder Include="Vendor\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\vendor\openvr\bin\win64\openvr_api.dll" Link="openvr_api.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AmethystDriverClient\Amethyst.Driver.Client.csproj" />
     <ProjectReference Include="..\AmethystPluginContract\Amethyst.Plugins.Contract.csproj" />
     <ProjectReference Include="..\AmethystSupport\AmethystSupport.vcxproj" />
   </ItemGroup>
@@ -121,6 +106,9 @@
 		  <PackageCopyToOutput>true</PackageCopyToOutput>
 		  <TargetPath>input_profiles\k2vr.amethyst_vive_controller.json</TargetPath>
 	  </ContentWithTargetPath>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\JointSettingsExpander.xaml">

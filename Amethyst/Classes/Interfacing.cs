@@ -10,14 +10,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Data.Json;
-using Amethyst.Driver.API;
-using Amethyst.Driver.Client;
 using Amethyst.Utils;
-using Grpc.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
-using Valve.VR;
+using Microsoft.UI.Xaml.Controls;
+using System.Diagnostics;
 
 namespace Amethyst.Classes;
 
@@ -49,12 +47,6 @@ public static class Interfacing
         // For automatic calibration
         DeviceRelativeTransformOrigin = new(); // This one applies to both
 
-    // OpenVR playspace position
-    public static Vector3 VrPlayspaceTranslation = new(0);
-
-    // OpenVR playspace rotation
-    public static Quaternion VrPlayspaceOrientationQuaternion = new(0, 0, 0, 1);
-
     // Current page string
     public static string CurrentPageTag = "general";
     public static string CurrentPageClass = "Amethyst.Pages.General";
@@ -65,15 +57,8 @@ public static class Interfacing
     // Currently available website language code
     public static string DocsLanguageCode = "en";
 
-    // VR Overlay handle
-    public static ulong VrOverlayHandle = OpenVR.k_ulOverlayHandleInvalid;
-    public static uint VrNotificationId;
-
     // The actual app theme (ONLY dark/light)
     public static ElementTheme ActualTheme = ElementTheme.Dark;
-
-    // Input actions' handler
-    public static readonly EvrInput.SteamEvrInput EvrInput = new();
 
     // If trackers are added / initialized
     public static bool K2AppTrackersSpawned,
@@ -86,25 +71,13 @@ public static class Interfacing
     public static uint PingCheckingThreadsNumber;
 
     // Server interfacing data
-    public static int ServerDriverStatusCode;
-    public static int ServerRpcStatusCode;
+    public static int ServiceEndpointStatusCode;
+    public static long PingTime;
 
-    public static long PingTime, ParsingTime;
+    public static bool IsServiceEndpointPresent => ServiceEndpointStatusCode == 0;
+    public static bool ServiceEndpointFailure;
 
-    public static bool IsServerDriverPresent,
-        ServerDriverFailure;
-
-    public static string ServerStatusString = " \n \n ";
-
-    // For manual calibration
-    public static bool CalibrationConfirm,
-        CalibrationModeSwap,
-        CalibrationFineTune;
-
-    // For manual calibration: L, R -> X, Y
-    public static ((float X, float Y) LeftPosition,
-        (float X, float Y) RightPosition)
-        CalibrationJoystickPositions;
+    public static string ServiceEndpointStatusString = " \n \n ";
 
     // Check if we're currently scanning for trackers from other apps
     public static bool IsAlreadyAddedTrackersScanRunning = false;
@@ -112,16 +85,8 @@ public static class Interfacing
     // If the already-added trackers check was requested
     public static bool AlreadyAddedTrackersScanRequested = false;
 
-    // HMD pose in OpenVR
-    public static (Vector3 Position, Quaternion Orientation)
-        RawVrHmdPose = new(Vector3.Zero, Quaternion.Identity);
-
     // Amethyst language resource trees
-    public static JsonObject
-        LocalResources = new(), EnglishResources = new(), LanguageEnum = new();
-
-    // Controllers' ID's (vr::k_unTrackedDeviceIndexInvalid for non-existent)
-    public static (uint Left, uint Right) VrControllerIndexes;
+    private static JsonObject _localResources = new(), _englishResources = new();
 
     // Is NUX currently opened?
     public static bool IsNuxPending = false;
@@ -131,7 +96,7 @@ public static class Interfacing
 
     // Flip defines for the override device - iteration persistent
     public static bool OverrideFlip = false; // Assume non flipped
-    
+
     public static FileInfo GetProgramLocation()
     {
         return new FileInfo(Assembly.GetExecutingAssembly().Location);
@@ -162,31 +127,22 @@ public static class Interfacing
     }
 
     // Fail with an exit code (don't delete .crash)
-    public static void Fail(int code)
+    public static void Fail(string message)
     {
         IsExitHandled = true;
-        Environment.Exit(code);
+
+        // Find the crash handler and show it with a custom message
+        var hPath = Path.Combine(GetProgramLocation().DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
+        if (File.Exists(hPath)) Process.Start(hPath, new[] { "message", message });
+        else Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
+
+        Environment.Exit(0);
     }
 
     // Show SteamVR toast / notification
-    public static void ShowVrToast(string header, string text)
+    public static void ShowServiceToast(string header, string text)
     {
-        if (VrOverlayHandle == OpenVR.k_ulOverlayHandleInvalid ||
-            string.IsNullOrEmpty(header) ||
-            string.IsNullOrEmpty(text)) return;
-
-        // Hide the current notification (if being shown)
-        if (VrNotificationId != 0) // If valid
-            OpenVR.Notifications.RemoveNotification(VrNotificationId);
-
-        // Empty image data
-        var notificationBitmap = new NotificationBitmap_t();
-
-        // null is the icon/image texture
-        OpenVR.Notifications.CreateNotification(
-            VrOverlayHandle, 0, EVRNotificationType.Transient,
-            header + '\n' + text, EVRNotificationStyle.Application,
-            ref notificationBitmap, ref VrNotificationId);
+        TrackingDevices.CurrentServiceEndpoint.DisplayToast((header, text));
     }
 
     // Show an app toast / notification
@@ -350,18 +306,14 @@ public static class Interfacing
             // Helper bool array
             List<bool> spawned = new();
 
-            // Create a dummy update vector
-            List<(TrackerType Role, bool State)> trackerStatuses =
-                (from tracker in AppData.Settings.TrackersVector
-                    where tracker.IsActive
-                    select (tracker.Role, true)).ToList();
-
             // Try 3 times (cause why not)
-            if (trackerStatuses.Count > 0)
+            if (AppData.Settings.TrackersVector.Count(x => x.IsActive) > 0)
                 for (var i = 0; i < 3; i++)
                 {
                     // Update tracker statuses in the server
-                    spawned.AddRange((await DriverClient.UpdateTrackerStates(trackerStatuses))!.Select(x => x.State));
+                    spawned.AddRange((await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(
+                            AppData.Settings.TrackersVector.Where(x => x.IsActive).Select(x => x.GetTrackerBase())))
+                        .Select(x => x.Success)); // Check if the request was actually okay
                     await Task.Delay(15);
                 }
 
@@ -371,7 +323,7 @@ public static class Interfacing
                 Logger.Info("One or more trackers couldn't be spawned after 3 tries. Giving up...");
 
                 // Cause not checking anymore
-                ServerDriverFailure = true;
+                ServiceEndpointFailure = true;
                 K2AppTrackersSpawned = false;
                 AppTrackersInitialized = false;
 
@@ -397,121 +349,7 @@ public static class Interfacing
         return true;
     }
 
-    public static bool OpenVrStartup()
-    {
-        Logger.Info("Attempting connection to VRSystem... ");
-
-        try
-        {
-            Logger.Info("Creating a cancellation token...");
-            using var cancellationTokenSource = new CancellationTokenSource();
-            cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(3));
-
-            Logger.Info("Waiting for the VR System to initialize...");
-            var eError = EVRInitError.None;
-            OpenVR.Init(ref eError, EVRApplicationType.VRApplication_Overlay);
-
-            Logger.Info("The VRSystem finished initializing...");
-            if (eError != EVRInitError.None)
-            {
-                Logger.Error($"IVRSystem could not be initialized: EVRInitError Code {eError}");
-                return false; // Catastrophic failure!
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.Error($"The VR System took too long to initialize ({e.Message}), giving up!");
-            Environment.FailFast("The VR System took too long to initialize");
-        }
-
-        // We're good to go!
-        Logger.Info("Looks like the VR System is ready to go!");
-
-        // Initialize the overlay
-        OpenVR.Overlay.CreateOverlay("k2vr.amethyst.desktop", "Amethyst", ref VrOverlayHandle);
-
-        // Since we're ok, capture playspace details
-        var trackingOrigin = OpenVR.System.GetRawZeroPoseToStandingAbsoluteTrackingPose();
-        VrPlayspaceTranslation = trackingOrigin.GetPosition();
-        VrPlayspaceOrientationQuaternion = trackingOrigin.GetOrientation();
-
-        // Rescan controller ids
-        VrControllerIndexes = (
-            OpenVR.System.GetTrackedDeviceIndexForControllerRole(
-                ETrackedControllerRole.LeftHand),
-            OpenVR.System.GetTrackedDeviceIndexForControllerRole(
-                ETrackedControllerRole.RightHand)
-        );
-
-        Logger.Info($"VR Playspace translation: \n{VrPlayspaceTranslation}");
-        Logger.Info($"VR Playspace orientation: \n{VrPlayspaceOrientationQuaternion}");
-        return true; // OK
-    }
-
-    public static bool EvrActionsStartup()
-    {
-        Logger.Info("Attempting to set up EVR Input Actions...");
-
-        if (!EvrInput.InitInputActions())
-        {
-            Logger.Error("Could not set up Input Actions. Please check the upper log for further information.");
-            ShowVrToast("EVR Input Actions Init Failure!",
-                "Couldn't set up Input Actions. Please check the log file for further information.");
-
-            return false;
-        }
-
-        Logger.Info("EVR Input Actions set up OK");
-        return true;
-    }
-
-    public static uint InstallVrApplicationManifest()
-    {
-        if (OpenVR.Applications.IsApplicationInstalled("K2VR.Amethyst"))
-        {
-            Logger.Info("Amethyst manifest is already installed");
-            return 1;
-        }
-
-        if (File.Exists(Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest")))
-        {
-            var appError = OpenVR.Applications.AddApplicationManifest(
-                Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest"), false);
-
-            if (appError != EVRApplicationError.None)
-            {
-                Logger.Warn($"Amethyst manifest not installed! Error: {appError}");
-                return 2;
-            }
-
-            Logger.Info(
-                $"Amethyst manifest installed at: {Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest")}");
-            return 1;
-        }
-
-        Logger.Warn("Amethyst vr manifest (./Amethyst.vrmanifest) not found!");
-        return 0;
-    }
-
-    public static void UninstallApplicationManifest()
-    {
-        if (OpenVR.Applications.IsApplicationInstalled("K2VR.Amethyst"))
-        {
-            OpenVR.Applications.RemoveApplicationManifest(
-                Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest"));
-
-            Logger.Info(
-                $"ttempted to remove Amethyst manifest at: {Path.Join(GetProgramLocation().DirectoryName, "Amethyst.vrmanifest")}");
-        }
-
-        if (OpenVR.Applications.IsApplicationInstalled("K2VR.Amethyst"))
-            Logger.Warn("Amethyst manifest removal failed! It may have been installed from somewhere else too");
-        else
-            Logger.Info("Amethyst manifest removal succeed");
-    }
-
-    public static async Task<Status> TestK2ServerConnection()
-
+    public static async Task<(int Code, string Message)> TestServiceConnection()
     {
         // Do not spawn 1000 voids, check how many do we have
         if (PingCheckingThreadsNumber <= MaxPingCheckingThreads)
@@ -522,27 +360,21 @@ public static class Interfacing
             try
             {
                 // Send a ping message and capture the data
-                var result = await DriverClient.TestConnection();
+                var result = await TrackingDevices.CurrentServiceEndpoint.TestConnection();
 
                 // Dump data to variables
-                PingTime = result.ElpasedTime;
-                ParsingTime = result.ReceiveTimestamp - result.SendTimestamp;
+                PingTime = result.PingTime;
 
                 // Log ?success
-                Logger.Info(
-                    $"Connection test has ended, [result: {(result.Status.StatusCode == StatusCode.OK ? "success" : "fail")}]");
-
-                // Log some data if needed
-                Logger.Info($"\nTested ping time: {PingTime} [ticks], " +
-                            $"call/parsing time: {result.ReceiveTimestamp} [ticks], " +
-                            $"flight-back time: {DateTime.Now.Ticks - result.ReceiveTimestamp} [ticks]");
+                Logger.Info($"Connection test has ended, [result: {(result.Status == 0 ? "success" : "fail")}], " +
+                            $"Tested ping time: {PingTime} [ticks]");
 
                 // Release
                 PingCheckingThreadsNumber = Math.Clamp(
                     PingCheckingThreadsNumber - 1, 0, MaxPingCheckingThreads + 1);
 
                 // Return the result
-                return result.Status;
+                return (result.Status, result.StatusMessage);
             }
             catch (Exception e)
             {
@@ -553,145 +385,30 @@ public static class Interfacing
                 PingCheckingThreadsNumber = Math.Clamp(
                     PingCheckingThreadsNumber - 1, 0, MaxPingCheckingThreads + 1);
 
-                return new Status(StatusCode.Unknown, "An exception occurred.");
+                return (3, "An exception occurred.");
             }
         }
 
         // else
         Logger.Error("Connection checking threads exceeds 3, aborting...");
-        return new Status(StatusCode.Unavailable, "Too many simultaneous checking threads.");
+        return (14, "Too many simultaneous checking threads.");
     }
 
-    public static async Task<(int ServerStatus, int APIStatus)> CheckK2ServerStatus()
-    {
-        // Don't check if already ok
-        if (IsServerDriverPresent) return (1, (int)StatusCode.OK);
-
-        try
-        {
-            /* Initialize the port */
-            Logger.Info("Initializing the server IPC...");
-            ;
-            var initCode = DriverClient.InitAmethystServer();
-            Status serverStatus = new();
-
-            Logger.Info($"Server IPC initialization {(initCode == 0 ? "succeed" : "failed")}, exit code: {initCode}");
-
-            /* Connection test and display ping */
-            // We may wait a bit for it though...
-            // ReSharper disable once InvertIf
-            if (initCode == 0)
-            {
-                Logger.Info("Testing the connection...");
-
-                for (var i = 0; i < 3; i++)
-                {
-                    Logger.Info($"Starting the test no {i + 1}...");
-                    serverStatus = await TestK2ServerConnection();
-
-                    // Not direct assignment since it's only a one-way check
-                    if (serverStatus.StatusCode == StatusCode.OK)
-                        IsServerDriverPresent = true;
-
-                    else
-                        Logger.Warn("Server status check failed! " +
-                                    $"Code: {serverStatus.StatusCode}, " +
-                                    $"Details: {serverStatus.Detail}");
-                }
-            }
-
-            return initCode == 0
-                // If the API is ok
-                ? serverStatus.StatusCode == StatusCode.OK
-                    // If the server is/isn't ok
-                    ? (1, (int)serverStatus.StatusCode)
-                    : (-1, (int)serverStatus.StatusCode)
-                // If the API is not ok
-                : (initCode, (int)StatusCode.Unknown);
-        }
-        catch (Exception e)
-        {
-            Logger.Warn("Server status check failed! " +
-                        $"Exception: {e.Message}");
-
-            return (-10, (int)StatusCode.Unknown);
-        }
-
-        /*
-         * codes:
-            all ok: 1
-            server could not be reached: -1
-            exception when trying to reach: -10
-            could not create rpc channel: -2
-            could not create rpc stub: -3
-
-            fatal run-time failure: 10
-         */
-    }
-
-    public static async Task K2ServerDriverRefresh()
-    {
-        if (!ServerDriverFailure)
-            (ServerDriverStatusCode, ServerRpcStatusCode) = await CheckK2ServerStatus();
-        else // Overwrite the status
-            ServerDriverStatusCode = 10; // Fatal
-
-        IsServerDriverPresent = false; // Assume fail
-        ServerStatusString = LocalizedJsonString("/ServerStatuses/WTF");
-        //"COULD NOT CHECK STATUS (\u15dc\u02ec\u15dc)\nE_WTF\nSomething's fucked a really big time.";
-
-        switch (ServerDriverStatusCode)
-        {
-            case 1:
-                ServerStatusString = LocalizedJsonString("/ServerStatuses/Success");
-                //"Success! (Code 1)\nI_OK\nEverything's good!";
-
-                IsServerDriverPresent = true;
-                break; // Change to success
-
-            case -1:
-                ServerStatusString = LocalizedJsonString("/ServerStatuses/ConnectionError")
-                    .Replace("{0}", ServerRpcStatusCode.ToString());
-                //"SERVER CONNECTION ERROR (Code -1:{0})\nE_CONNECTION_ERROR\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
-                break;
-
-            case -10:
-                ServerStatusString = LocalizedJsonString("/ServerStatuses/Exception")
-                    .Replace("{0}", ServerRpcStatusCode.ToString());
-                //"EXCEPTION WHILE CHECKING (Code -10)\nE_EXCEPTION_WHILE_CHECKING\nCheck SteamVR add-ons (NOT overlays) and enable Amethyst.";
-                break;
-
-            case -2:
-                ServerStatusString = LocalizedJsonString("/ServerStatuses/RPCChannelFailure")
-                    .Replace("{0}", ServerRpcStatusCode.ToString());
-                //"RPC CHANNEL FAILURE (Code -2:{0})\nE_RPC_CHAN_FAILURE\nCould not connect to localhost:7135, is it already taken?";
-                break;
-
-            case -3:
-                ServerStatusString = LocalizedJsonString("/ServerStatuses/RPCStubFailure")
-                    .Replace("{0}", ServerRpcStatusCode.ToString());
-                //"RPC/API STUB FAILURE (Code -3:{0})\nE_RPC_STUB_FAILURE\nCould not derive IK2DriverService! Is the protocol valid?";
-                break;
-
-            case 10:
-                ServerStatusString = LocalizedJsonString("/ServerStatuses/ServerFailure");
-                //"FATAL SERVER FAILURE (Code 10)\nE_FATAL_SERVER_FAILURE\nPlease restart, check logs and write to us on Discord.";
-                break;
-
-            default:
-                ServerStatusString = LocalizedJsonString("/ServerStatuses/WTF");
-                //"COULD NOT CHECK STATUS (\u15dc\u02ec\u15dc)\nE_WTF\nSomething's fucked a really big time.";
-                break;
-        }
-    }
-
-    public static async void K2ServerDriverSetup()
+    public static async void ServiceEndpointSetup()
     {
         // Refresh the server driver status
-        await K2ServerDriverRefresh();
+        if (!ServiceEndpointFailure)
+        {
+            (ServiceEndpointStatusCode, ServiceEndpointStatusString) = await TestServiceConnection();
+        }
+        else
+        {
+            ServiceEndpointStatusCode = 10; // Fatal [reserved]
+            ServiceEndpointStatusString = LocalizedJsonString("/ServerStatuses/ServerFailure");
+        }
 
-        // Play an error sound if smth's wrong
-        if (ServerDriverStatusCode != 1)
+        // Play an error sound if something's wrong
+        if (IsServiceEndpointPresent)
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
         else
@@ -706,96 +423,18 @@ public static class Interfacing
             });
 
         // LOG the status
-        Logger.Info($"Current K2 Server status: {ServerStatusString}");
-    }
-
-    public static (bool Found, uint Index) FindVrTracker(
-        string role, bool canBeAme = true, bool log = true)
-    {
-        // Loop through all devices
-        for (uint i = 0; i < OpenVR.k_unMaxTrackedDeviceCount; i++)
-        {
-            StringBuilder roleStringBuilder = new(1024);
-            var roleError = ETrackedPropertyError.TrackedProp_Success;
-            OpenVR.System.GetStringTrackedDeviceProperty(
-                i, ETrackedDeviceProperty.Prop_ControllerType_String,
-                roleStringBuilder, (uint)roleStringBuilder.Capacity, ref roleError);
-
-            if (roleStringBuilder.Length <= 0)
-                continue; // Don't waste our time
-
-            // If we've found anything
-            if (log) Logger.Info($"Found a device with roleHint: {roleStringBuilder}");
-
-            // If we've actually found the one
-            if (roleStringBuilder.ToString().IndexOf(role, StringComparison.OrdinalIgnoreCase) < 0) continue;
-
-            var status = OpenVR.System.GetTrackedDeviceActivityLevel(i);
-            if (status != EDeviceActivityLevel.k_EDeviceActivityLevel_UserInteraction &&
-                status != EDeviceActivityLevel.k_EDeviceActivityLevel_UserInteraction_Timeout)
-                continue;
-
-            StringBuilder serialStringBuilder = new(1024);
-            var serialError = ETrackedPropertyError.TrackedProp_Success;
-            OpenVR.System.GetStringTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_SerialNumber_String,
-                serialStringBuilder, (uint)serialStringBuilder.Capacity, ref serialError);
-
-            // Log that we're finished
-            if (log)
-                Logger.Info($"Found an active {role} tracker with:\n    " +
-                            $"hint: {roleStringBuilder}\n    " +
-                            $"serial: {serialStringBuilder}\n    index: {i}");
-
-            // Check if it's not ame
-            var canReturn = true;
-            if (!canBeAme) // If requested
-                AppData.Settings.TrackersVector.Where(
-                        tracker => serialStringBuilder.ToString() == tracker.Serial).ToList()
-                    .ForEach(_ =>
-                    {
-                        if (log) Logger.Info("Skipping the latest found tracker because it's been added from Amethyst");
-                        canReturn = false; // Maybe next time, bud
-                    });
-
-            // Return what we've got
-            if (canReturn) return (true, i);
-        }
-
-        if (log)
-            Logger.Warn($"Didn't find any {role} tracker in SteamVR " +
-                        "with a proper role hint (Prop_ControllerType_String)");
-
-        // We've failed if the loop's finished
-        return (false, OpenVR.k_unTrackedDeviceIndexInvalid);
+        Logger.Info($"Current K2 Server status: {ServiceEndpointStatusString}");
     }
 
     public static (Vector3 Position, Quaternion Orientation)
-        GetVrTrackerPoseCalibrated(string nameContains, bool log = false)
+        GetVrTrackerPoseCalibrated(string nameContains)
     {
-        var devicePose = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
-        OpenVR.System.GetDeviceToAbsoluteTrackingPose(
-            ETrackingUniverseOrigin.TrackingUniverseStanding, 0, devicePose);
+        var result = TrackingDevices.CurrentServiceEndpoint
+            .GetTrackerPose(nameContains, false);
 
-        var waistPair = FindVrTracker(nameContains, false, log);
-        if (waistPair.Found)
-        {
-            // Extract pose from the returns
-            // We don't care if it's invalid by any chance
-            var waistPose = devicePose[waistPair.Index];
-
-            // Get pos & rot
-            return (Vector3.Transform(
-                    waistPose.mDeviceToAbsoluteTracking.GetPosition() - VrPlayspaceTranslation,
-                    Quaternion.Inverse(VrPlayspaceOrientationQuaternion)),
-                Quaternion.Inverse(VrPlayspaceOrientationQuaternion) *
-                waistPose.mDeviceToAbsoluteTracking.GetOrientation());
-        }
-
-        if (log)
-            Logger.Warn("Either waist tracker doesn't exist or its role hint (Prop_ControllerType_String) was invalid");
-
-        // We've failed if the executor got here
-        return (Vector3.Zero, Plugins.GetHmdPoseCalibrated.Orientation);
+        return (result?.Position ?? Vector3.Zero, // Check the result against null, return
+            result?.Orientation ??
+            TrackingDevices.CurrentServiceEndpoint.HeadsetPose?.Orientation ?? Quaternion.Identity);
     }
 
     public static void UpdateServerStatus()
@@ -804,34 +443,34 @@ public static class Interfacing
         if (Shared.General.ServerErrorWhatText is not null)
         {
             Shared.General.ServerErrorWhatText.Visibility =
-                IsServerDriverPresent ? Visibility.Collapsed : Visibility.Visible;
+                IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
             Shared.General.ServerErrorWhatGrid.Visibility =
-                IsServerDriverPresent ? Visibility.Collapsed : Visibility.Visible;
+                IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
             Shared.General.ServerErrorButtonsGrid.Visibility =
-                IsServerDriverPresent ? Visibility.Collapsed : Visibility.Visible;
+                IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
             Shared.General.ServerErrorLabel.Visibility =
-                IsServerDriverPresent ? Visibility.Collapsed : Visibility.Visible;
+                IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
 
             // Split status and message by \n
             Shared.General.ServerStatusLabel.Text =
-                StringUtils.SplitStatusString(ServerStatusString)[0];
+                StringUtils.SplitStatusString(ServiceEndpointStatusString)[0];
             Shared.General.ServerErrorLabel.Text =
-                StringUtils.SplitStatusString(ServerStatusString)[1];
+                StringUtils.SplitStatusString(ServiceEndpointStatusString)[1];
             Shared.General.ServerErrorWhatText.Text =
-                StringUtils.SplitStatusString(ServerStatusString)[2];
+                StringUtils.SplitStatusString(ServiceEndpointStatusString)[2];
 
             // Optionally setup & show the re-register button
             Shared.General.ReRegisterButton.Visibility =
-                ServerDriverStatusCode == -1
+                ServiceEndpointStatusCode == -1
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
             Shared.General.ServerOpenDiscordButton.Height =
-                ServerDriverStatusCode == -1 ? 40 : 65;
+                ServiceEndpointStatusCode == -1 ? 40 : 65;
         }
 
         // Block some things if server isn't working properly
-        if (IsServerDriverPresent) return;
+        if (IsServiceEndpointPresent) return;
         Logger.Error("An error occurred and the app couldn't connect to K2 Server. " +
                      "Please check the upper message for more info.");
 
@@ -850,25 +489,6 @@ public static class Interfacing
         Shared.General.OffsetsButton.IsEnabled = false;
     }
 
-    // Update HMD pose from OpenVR -> called in K2Main
-    public static void UpdateHMDPosAndRot()
-    {
-        // Capture RAW HMD pose
-        var devicePose = new TrackedDevicePose_t[1]; // HMD only
-        OpenVR.System.GetDeviceToAbsoluteTrackingPose(
-            ETrackingUniverseOrigin.TrackingUniverseStanding, 0, devicePose);
-
-        // Assert that HMD is at index 0
-        if (OpenVR.System.GetTrackedDeviceClass(0) == ETrackedDeviceClass.HMD)
-            RawVrHmdPose = (devicePose[0].mDeviceToAbsoluteTracking.GetPosition(),
-                devicePose[0].mDeviceToAbsoluteTracking.GetOrientation());
-
-        // Capture play-space details
-        var trackingOrigin = OpenVR.System.GetRawZeroPoseToStandingAbsoluteTrackingPose();
-        VrPlayspaceTranslation = trackingOrigin.GetPosition();
-        VrPlayspaceOrientationQuaternion = trackingOrigin.GetOrientation();
-    }
-
     [DllImport("user32.dll")]
     public static extern nint GetActiveWindow();
 
@@ -878,30 +498,6 @@ public static class Interfacing
             return true; // Give up k?
 
         return GetActiveWindow() == Shared.Main.AppWindowId;
-    }
-
-    public static bool IsDashboardOpen()
-    {
-        // Check if we're running on null
-        StringBuilder systemStringBuilder = new(1024);
-        var propertyError = ETrackedPropertyError.TrackedProp_Success;
-        OpenVR.System.GetStringTrackedDeviceProperty(
-            OpenVR.k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty.Prop_TrackingSystemName_String,
-            systemStringBuilder, 1024, ref propertyError);
-
-        // Just return true for debug reasons
-        if (systemStringBuilder.ToString().Contains("null") ||
-            propertyError != ETrackedPropertyError.TrackedProp_Success)
-            return true;
-
-        // Also check if we're not idle / standby
-        var status = OpenVR.System.GetTrackedDeviceActivityLevel(OpenVR.k_unTrackedDeviceIndex_Hmd);
-        if (status != EDeviceActivityLevel.k_EDeviceActivityLevel_UserInteraction &&
-            status != EDeviceActivityLevel.k_EDeviceActivityLevel_UserInteraction_Timeout)
-            return false; // Standby - hide
-
-        // Check if the dashboard is open
-        return OpenVR.Overlay.IsDashboardVisible();
     }
 
     // Return a language name by code
@@ -988,10 +584,10 @@ public static class Interfacing
             // If everything's ok, load the resources into the current resource tree
 
             // Parse the loaded json
-            LocalResources = JsonObject.Parse(File.ReadAllText(resourcePath));
+            _localResources = JsonObject.Parse(File.ReadAllText(resourcePath));
 
             // Check if the resource root is fine
-            if (LocalResources is null || LocalResources.Count <= 0)
+            if (_localResources is null || _localResources.Count <= 0)
                 Logger.Error("The current resource root is empty! App interface will be broken!");
             else
                 Logger.Info($"Successfully loaded language resources with key \"{languageKey}\"!");
@@ -1020,17 +616,17 @@ public static class Interfacing
                             "falling back to the current one! The app interface may be broken!");
 
                 // Override the current english resource tree
-                EnglishResources = LocalResources;
+                _englishResources = _localResources;
                 return; // Just give up
             }
 
             // If everything's ok, load the resources into the current resource tree
 
             // Parse the loaded json
-            EnglishResources = JsonObject.Parse(File.ReadAllText(resourcePath));
+            _englishResources = JsonObject.Parse(File.ReadAllText(resourcePath));
 
             // Check if the resource root is fine
-            if (EnglishResources is null || EnglishResources.Count <= 0)
+            if (_englishResources is null || _englishResources.Count <= 0)
                 Logger.Error("The current resource root is empty! App interface will be broken!");
             else
                 Logger.Info("Successfully loaded language resources with key \"en\"!");
@@ -1049,8 +645,8 @@ public static class Interfacing
         try
         {
             // Check if the resource root is fine
-            if (LocalResources is not null && LocalResources.Count > 0)
-                return LocalResources.GetNamedString(resourceKey);
+            if (_localResources is not null && _localResources.Count > 0)
+                return _localResources.GetNamedString(resourceKey);
 
             Logger.Error("The current resource root is empty! App interface will be broken!");
             return resourceKey; // Just give up
@@ -1068,56 +664,8 @@ public static class Interfacing
 
     public static class Plugins
     {
-        public static (Vector3 Position, Quaternion Orientation) GetHmdPose => RawVrHmdPose;
-
-        public static (Vector3 Position, Quaternion Orientation) GetHmdPoseCalibrated => (
-            Vector3.Transform(RawVrHmdPose.Position - VrPlayspaceTranslation,
-                Quaternion.Inverse(VrPlayspaceOrientationQuaternion)),
-            Quaternion.Inverse(VrPlayspaceOrientationQuaternion) * RawVrHmdPose.Orientation);
-
-        public static (Vector3 Position, Quaternion Orientation) GetLeftControllerPose()
-        {
-            var devicePose = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
-            OpenVR.System.GetDeviceToAbsoluteTrackingPose(
-                ETrackingUniverseOrigin.TrackingUniverseStanding, 0, devicePose);
-
-            // Get pos & rot -> EigenUtils' gonna do this stuff for us
-            if (VrControllerIndexes.Left != OpenVR.k_unTrackedDeviceIndexInvalid)
-                return (devicePose[VrControllerIndexes.Left].mDeviceToAbsoluteTracking.GetPosition(),
-                    devicePose[VrControllerIndexes.Left].mDeviceToAbsoluteTracking.GetOrientation());
-
-            return (Vector3.Zero, Quaternion.Identity); // else
-        }
-
-        public static (Vector3 Position, Quaternion Orientation) GetLeftControllerPoseCalibrated()
-        {
-            var (position, orientation) = GetLeftControllerPose();
-            return (Vector3.Transform(position - VrPlayspaceTranslation,
-                    Quaternion.Inverse(VrPlayspaceOrientationQuaternion)),
-                Quaternion.Inverse(VrPlayspaceOrientationQuaternion) * orientation);
-        }
-
-        public static (Vector3 Position, Quaternion Orientation) GetRightControllerPose()
-        {
-            var devicePose = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
-            OpenVR.System.GetDeviceToAbsoluteTrackingPose(
-                ETrackingUniverseOrigin.TrackingUniverseStanding, 0, devicePose);
-
-            // Get pos & rot -> EigenUtils' gonna do this stuff for us
-            if (VrControllerIndexes.Right != OpenVR.k_unTrackedDeviceIndexInvalid)
-                return (devicePose[VrControllerIndexes.Right].mDeviceToAbsoluteTracking.GetPosition(),
-                    devicePose[VrControllerIndexes.Right].mDeviceToAbsoluteTracking.GetOrientation());
-
-            return (Vector3.Zero, Quaternion.Identity); // else
-        }
-
-        public static (Vector3 Position, Quaternion Orientation) GetRightControllerPoseCalibrated()
-        {
-            var (position, orientation) = GetRightControllerPose();
-            return (Vector3.Transform(position - VrPlayspaceTranslation,
-                    Quaternion.Inverse(VrPlayspaceOrientationQuaternion)),
-                Quaternion.Inverse(VrPlayspaceOrientationQuaternion) * orientation);
-        }
+        public static (Vector3 Position, Quaternion Orientation) GetHmdPose =>
+            TrackingDevices.CurrentServiceEndpoint.HeadsetPose?? (Vector3.Zero, Quaternion.Identity);
 
         public static string RequestLocalizedString(string key, string guid)
         {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
-using Amethyst.Driver.API;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
@@ -19,6 +18,9 @@ public class AppTracker : INotifyPropertyChanged
 
     // Is this tracker enabled?
     private bool _isActive;
+
+    // Is this tracker supported by the current service?
+    private bool _isSupported;
 
     private bool _isTrackerExpanderOpen;
 
@@ -177,6 +179,20 @@ public class AppTracker : INotifyPropertyChanged
 
     public bool IsActive
     {
+        get => _isActive && _isSupported;
+        set
+        {
+            // Don't do anything on no changes
+            if (_isActive == value) return;
+
+            _isActive = value;
+            OnPropertyChanged();
+            AppData.Settings.SaveSettings();
+        }
+    }
+
+    public bool IsActiveEnabled
+    {
         get => _isActive;
         set
         {
@@ -184,6 +200,21 @@ public class AppTracker : INotifyPropertyChanged
             if (_isActive == value) return;
 
             _isActive = value;
+            OnPropertyChanged();
+            AppData.Settings.SaveSettings();
+        }
+    }
+
+    [JsonIgnore]
+    public bool IsSupported
+    {
+        get => _isSupported;
+        set
+        {
+            // Don't do anything on no changes
+            if (_isSupported == value) return;
+
+            _isSupported = value;
             OnPropertyChanged();
             AppData.Settings.SaveSettings();
         }
@@ -233,7 +264,7 @@ public class AppTracker : INotifyPropertyChanged
     [JsonIgnore]
     public bool AppOrientationSupported =>
         Role is TrackerType.TrackerLeftFoot or TrackerType.TrackerRightFoot &&
-        TrackingDevices.GetTrackingDevice().IsAppOrientationSupported;
+        TrackingDevices.BaseTrackingDevice.IsAppOrientationSupported;
 
     [JsonIgnore]
     public string ManagingDeviceGuid =>
@@ -332,7 +363,7 @@ public class AppTracker : INotifyPropertyChanged
 
     // Is force-updated by the base device
     [JsonIgnore]
-    public bool IsAutoManaged => TrackingDevices.GetTrackingDevice().TrackedJoints.Any(x =>
+    public bool IsAutoManaged => TrackingDevices.BaseTrackingDevice.TrackedJoints.Any(x =>
         x.Role != TrackedJointType.JointManual && x.Role == TypeUtils.TrackerTypeJointDictionary[Role]);
 
     // Is NOT force-updated by the base device
@@ -500,7 +531,7 @@ public class AppTracker : INotifyPropertyChanged
     // exclusive filtered data from K2AppTracker
     // By default, the saved filter is selected
     // Offsets are added inside called methods
-    public K2TrackerBase GetTrackerBase(
+    public TrackerBase GetTrackerBase(
         JointPositionTrackingOption? posFilter = null,
         RotationTrackingFilterOption? oriFilter = null)
     {
@@ -519,25 +550,24 @@ public class AppTracker : INotifyPropertyChanged
                 .GetValueOrDefault(PositionManagingDeviceGuid, Vector3.Zero), posFilter);
 
         // Construct the return type
-        var trackerBase = new K2TrackerBase
+        var trackerBase = new TrackerBase
         {
-            Data = new K2TrackerData { IsActive = IsActive, Role = Role, Serial = Serial },
-            Tracker = Role,
-            Pose = new K2TrackerPose
+            ConnectionState = IsActive,
+            Role = Role,
+            Serial = Serial,
+
+            Position = new Vector3
             {
-                Orientation = new K2Quaternion
-                {
-                    W = fullOrientation.W,
-                    X = fullOrientation.X,
-                    Y = fullOrientation.Y,
-                    Z = fullOrientation.Z
-                },
-                Position = new K2Vector3
-                {
-                    X = fullPosition.X,
-                    Y = fullPosition.Y,
-                    Z = fullPosition.Z
-                }
+                X = fullPosition.X,
+                Y = fullPosition.Y,
+                Z = fullPosition.Z
+            },
+            Orientation = new Quaternion
+            {
+                W = fullOrientation.W,
+                X = fullOrientation.X,
+                Y = fullOrientation.Y,
+                Z = fullOrientation.Z
             }
         };
 
@@ -548,32 +578,29 @@ public class AppTracker : INotifyPropertyChanged
         var fullAngularVelocity = GetCalibratedVector(PoseAngularVelocity);
         var fullAngularAcceleration = GetCalibratedVector(PoseAngularAcceleration);
 
-        trackerBase.Pose.Physics = new K2TrackerPhysics
+        trackerBase.Velocity = new Vector3
         {
-            Velocity = new K2Vector3
-            {
-                X = fullVelocity.X,
-                Y = fullVelocity.Y,
-                Z = fullVelocity.Z
-            },
-            Acceleration = new K2Vector3
-            {
-                X = fullAcceleration.X,
-                Y = fullAcceleration.Y,
-                Z = fullAcceleration.Z
-            },
-            AngularVelocity = new K2Vector3
-            {
-                X = fullAngularVelocity.X,
-                Y = fullAngularVelocity.Y,
-                Z = fullAngularVelocity.Z
-            },
-            AngularAcceleration = new K2Vector3
-            {
-                X = fullAngularAcceleration.X,
-                Y = fullAngularAcceleration.Y,
-                Z = fullAngularAcceleration.Z
-            }
+            X = fullVelocity.X,
+            Y = fullVelocity.Y,
+            Z = fullVelocity.Z
+        };
+        trackerBase.Acceleration = new Vector3
+        {
+            X = fullAcceleration.X,
+            Y = fullAcceleration.Y,
+            Z = fullAcceleration.Z
+        };
+        trackerBase.AngularVelocity = new Vector3
+        {
+            X = fullAngularVelocity.X,
+            Y = fullAngularVelocity.Y,
+            Z = fullAngularVelocity.Z
+        };
+        trackerBase.AngularAcceleration = new Vector3
+        {
+            X = fullAngularAcceleration.X,
+            Y = fullAngularAcceleration.Y,
+            Z = fullAngularAcceleration.Z
         };
 
         return trackerBase;
@@ -606,16 +633,14 @@ public class AppTracker : INotifyPropertyChanged
     {
         return new TrackedJoint
         {
-            JointName = Serial,
+            Name = Serial,
             Role = TypeUtils.TrackerTypeJointDictionary[Role],
-            JointAcceleration = PoseAcceleration,
-            JointAngularAcceleration = PoseAngularAcceleration,
-            JointAngularVelocity = PoseAngularVelocity,
-            JointOrientation = Orientation,
-            JointPosition = Position,
-            JointVelocity = PoseVelocity,
-            PreviousJointOrientation = PreviousOrientation,
-            PreviousJointPosition = PreviousPosition,
+            Acceleration = PoseAcceleration,
+            AngularAcceleration = PoseAngularAcceleration,
+            AngularVelocity = PoseAngularVelocity,
+            Orientation = Orientation,
+            Position = Position,
+            Velocity = PoseVelocity,
             TrackingState = IsActive
                 ? TrackedJointState.StateTracked
                 : TrackedJointState.StateNotTracked

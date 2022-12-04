@@ -8,8 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Amethyst.Classes;
-using Amethyst.Driver.API;
-using Amethyst.Driver.Client;
+using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -45,6 +44,16 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     private bool IsActive
     {
         get => Trackers.All(x => x.IsActive);
+        set
+        {
+            Trackers.ToList().ForEach(x => x.IsActive = value);
+            OnPropertyChanged(); // All
+        }
+    }
+
+    private bool IsActiveEnabled
+    {
+        get => Trackers.All(x => x.IsActiveEnabled);
         set
         {
             Trackers.ToList().ForEach(x => x.IsActive = value);
@@ -116,8 +125,10 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
             for (var i = 0; i < 3; i++)
             {
                 // Update status in server
-                await DriverClient.UpdateTrackerStates(new List<(TrackerType Role, bool State)>
-                    { (tracker!.Role, (sender as ToggleSwitch)!.IsOn) });
+                var trackerBase = tracker.GetTrackerBase();
+                trackerBase.ConnectionState = (sender as ToggleSwitch)!.IsOn;
+
+                await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new []{ trackerBase });
                 await Task.Delay(20);
             }
 
@@ -125,9 +136,10 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
         if (!(sender as ToggleSwitch)!.IsOn && !AppData.Settings.TrackersVector
                 .Where(x => x.Role != tracker!.Role).Any(x => x.IsActive))
         {
-            Logger.Warn("All trackers (except this one) have been disabled, force-re-enabling!");
+            Logger.Warn("All supported trackers (except this one) have been disabled, force-re-enabling!");
             tracker!.IsActive = true; // Force re-enable this tracker
             tracker.OnPropertyChanged("IsActive");
+            tracker.OnPropertyChanged("IsActiveEnabled");
         }
 
         TrackingDevices.TrackersConfigChanged();
