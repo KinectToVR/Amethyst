@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amethyst.MVVM;
+using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -26,17 +27,29 @@ public static class TrackingDevices
         Other // Check logs, MEF probably gave us up again...
     }
 
-    public static readonly SortedDictionary<string, TrackingDevice> TrackingDevicesList = new();
-
-    // Written to at the first plugin load
-    public static readonly List<LoadAttemptedPlugin>
-        LoadAttemptedPluginsList = new();
-
-    public static TrackingDevice GetTrackingDevice()
+    public enum PluginType
     {
-        return TrackingDevicesList[AppData.Settings.TrackingDeviceGuid];
+        Unknown, // We literally don't know what
+        TrackingDevice, // Provides tracking data
+        ServiceEndpoint // Receives tracking data
     }
 
+    // Device plugins / tracking providers
+    public static readonly SortedDictionary<string, TrackingDevice> TrackingDevicesList = new();
+
+    // Endpoint plugins / tracking receivers
+    public static readonly SortedDictionary<string, ServiceEndpoint> ServiceEndpointsList = new();
+
+    // Written to at the first plugin load
+    public static readonly List<LoadAttemptedPlugin> LoadAttemptedPluginsList = new();
+
+    // Get the base tracking provider device
+    public static TrackingDevice BaseTrackingDevice => TrackingDevicesList[AppData.Settings.TrackingDeviceGuid];
+
+    // Get the currently in-operation tracking service
+    public static ServiceEndpoint CurrentServiceEndpoint => ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid];
+
+    // Get a <exists, tracking device> by guid
     public static (bool Exists, TrackingDevice Device) GetDevice(string guid)
     {
         return (TrackingDevicesList.TryGetValue(guid, out var device), device);
@@ -46,7 +59,7 @@ public static class TrackingDevices
     {
         if (TrackingDevicesList.Count < 1) return; // Just give up
 
-        var currentDevice = GetTrackingDevice();
+        var currentDevice = BaseTrackingDevice;
         var baseStatusOk = currentDevice.DeviceStatus == 0;
 
         var overrideStatusOk = true;
@@ -91,7 +104,7 @@ public static class TrackingDevices
         if (General.ErrorWhatText is not null)
         {
             // Don't show device errors if we've got a server error
-            if (!Interfacing.IsServerDriverPresent)
+            if (!Interfacing.IsServiceEndpointPresent)
                 baseStatusOk = true; // Skip if the server's failed
 
             var show = baseStatusOk ? Visibility.Collapsed : Visibility.Visible;
@@ -116,12 +129,28 @@ public static class TrackingDevices
                 AppData.Settings.OverrideDevicesGuidMap.Count > 0 ||
                 baseStatusOk // Don't dim if we have overrides or just are OK
                     ? 1.0
-                    : 0.0;
+                    : 0.5;
+
+            // -- or the single set base device doesn't match the service
+            if (AppData.Settings.OverrideDevicesGuidMap.Count <= 0 && baseStatusOk &&
+                CurrentServiceEndpoint.ControllerInputActions == null &&
+                (currentDevice.TrackedJoints.All(x =>
+                    x.Role != TrackedJointType.JointHead) || CurrentServiceEndpoint.HeadsetPose == null))
+                General.CalibrationButton.Opacity = 0.5;
+
+            // Hide the calibration button if no service calibration
+            General.CalibrationButton.Visibility =
+                // Show either if input actions (manual calibration) is available
+                CurrentServiceEndpoint.ControllerInputActions != null ||
+                // Or when automatic calibration *should be* available
+                CurrentServiceEndpoint.HeadsetPose != null
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
 
             // Show the 'additional errors' button if there are errors
             // Skip if the server driver's not present
             General.AdditionalDeviceErrorsHyperlink.Visibility =
-                overrideStatusOk || !Interfacing.IsServerDriverPresent
+                overrideStatusOk || !Interfacing.IsServiceEndpointPresent
                     ? Visibility.Collapsed
                     : Visibility.Visible;
 
@@ -187,7 +216,7 @@ public static class TrackingDevices
 
     public static bool IsExternalFlipSupportable()
     {
-        if (!GetTrackingDevice().IsFlipSupported) return false;
+        if (!BaseTrackingDevice.IsFlipSupported) return false;
 
         /* Now check if either waist tracker is overridden or disabled
 		 * And then search in OpenVR for a one with waist role */
@@ -202,14 +231,14 @@ public static class TrackingDevices
 
         // If still not, then also check if the waist is disabled by any chance
         return !AppData.Settings.TrackersVector[0].IsActive &&
-               Interfacing.FindVrTracker("waist", false).Found;
+               CurrentServiceEndpoint.GetTrackerPose("waist", false) != null;
     }
 
     public static void CheckFlipSupport()
     {
         if (Settings.ExternalFlipCheckBox is null) return;
 
-        Settings.FlipToggle.IsEnabled = GetTrackingDevice().IsFlipSupported;
+        Settings.FlipToggle.IsEnabled = BaseTrackingDevice.IsFlipSupported;
         Settings.FlipDropDown.IsEnabled = AppData.Settings.IsFlipEnabled
                                           && Settings.FlipToggle.IsEnabled;
 
@@ -279,7 +308,7 @@ public static class TrackingDevices
                             "/SharedStrings/Toasts/TrackersConfigChanged"),
                         false, "focus_restart");
 
-                    Interfacing.ShowVrToast(
+                    Interfacing.ShowServiceToast(
                         Interfacing.LocalizedJsonString(
                             "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
                         Interfacing.LocalizedJsonString(
@@ -322,7 +351,7 @@ public static class TrackingDevices
 
         // Check if all joints have valid IDs
         foreach (var tracker in AppData.Settings.TrackersVector.Where(tracker =>
-                     tracker.SelectedTrackedJointId >= GetTrackingDevice().TrackedJoints.Count))
+                     tracker.SelectedTrackedJointId >= BaseTrackingDevice.TrackedJoints.Count))
         {
             tracker.SelectedTrackedJointId = 0;
             settingsChangesMade = true;

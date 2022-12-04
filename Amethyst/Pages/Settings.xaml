@@ -663,20 +663,8 @@
                         <Button Height="40" HorizontalAlignment="Stretch"
                                 Padding="20,0" Margin="0,0,35,10"
                                 FontSize="16" FontWeight="SemiBold"
-                                Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/ReRegister'), Mode=OneWay}"
-                                x:Name="ReRegisterButton" Click="ReRegisterButton_Click" />
-
-                        <Button Height="40" HorizontalAlignment="Stretch"
-                                Padding="20,0" Margin="0,0,35,10"
-                                FontSize="16" FontWeight="SemiBold"
                                 Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/ViewLogs'), Mode=OneWay}"
                                 Click="ViewLogsButton_Click" />
-
-                        <Button Height="40" HorizontalAlignment="Stretch"
-                                Padding="20,0" Margin="0,0,35,10"
-                                FontSize="16" FontWeight="SemiBold"
-                                Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/ReManifest'), Mode=OneWay}"
-                                x:Name="ReManifestButton" Click="ReManifestButton_Click" />
                     </StackPanel>
                 </Grid>
 

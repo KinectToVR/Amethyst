@@ -6,217 +6,81 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Amethyst.Driver.API;
-using Amethyst.Driver.Client;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
-using Valve.VR;
 
 namespace Amethyst.Classes;
 
 public static class Main
 {
-    private static int _pFrozenLoops; // Loops passed since last frozen update
     private static bool _bInitialized; // Backup initialized? value
 
-    private static void UpdateVrPositions()
+    public static void FreezeActionToggled(object o, EventArgs eventArgs)
     {
-        // Grab and save vr head pose here
-        Interfacing.UpdateHMDPosAndRot();
+        Logger.Info("[Input Actions] Input: Tracking freeze toggled");
+        Interfacing.IsTrackingFrozen = !Interfacing.IsTrackingFrozen;
+
+        // Play a Sound and Update UI
+        AppSounds.PlayAppSound(
+            Interfacing.IsTrackingFrozen ? AppSounds.AppSoundType.ToggleOff : AppSounds.AppSoundType.ToggleOn);
+
+        if (Shared.General.ToggleFreezeButton is not null)
+            Shared.Main.DispatcherQueue.TryEnqueue(() =>
+            {
+                Shared.General.GeneralTabSetupFinished = false; // Boiler
+                Shared.General.ToggleFreezeButton.IsChecked = Interfacing.IsTrackingFrozen;
+                Shared.General.ToggleFreezeButton.Content = Interfacing.IsTrackingFrozen
+                    ? Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Unfreeze")
+                    : Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Freeze");
+
+                Shared.General.GeneralTabSetupFinished = true; // Boiler end
+            });
     }
 
-    private static void UpdateInputBindings()
+    public static void FlipActionToggled(object o, EventArgs eventArgs)
     {
-        // Here, update EVR Input actions
+        Logger.Info("[Input Actions] Input: Flip toggled");
 
-        // Backup the current (OLD) data
-        var bModeSwapState = Interfacing.EvrInput.ModeSwapActionData.bState;
-        var bFreezeState = Interfacing.EvrInput.TrackerFreezeActionData.bState;
-        var bFlipToggleState = Interfacing.EvrInput.TrackerFlipToggleData.bState;
+        // Also validate the result
+        AppData.Settings.IsFlipEnabled =
+            TrackingDevices.BaseTrackingDevice.IsFlipSupported && AppData.Settings.IsFlipEnabled;
 
-        // Update all input actions
-        if (!Interfacing.EvrInput.UpdateActionStates())
-            Logger.Error("Could not update EVR Input Actions. Please check logs for further information");
+        // Save settings
+        AppData.Settings.SaveSettings();
 
-        // Update the Tracking Freeze : toggle
-        // Only if the state has changed from 1 to 0: button was clicked
-        if (!Interfacing.EvrInput.TrackerFreezeActionData.bState && bFreezeState)
-        {
-            Logger.Info("[Input Actions] Input: Tracking freeze toggled");
-            Interfacing.IsTrackingFrozen = !Interfacing.IsTrackingFrozen;
+        // Play a Sound and Update UI
+        AppSounds.PlayAppSound(
+            AppData.Settings.IsFlipEnabled
+                ? AppSounds.AppSoundType.ToggleOff
+                : AppSounds.AppSoundType.ToggleOn);
 
-            // Play a Sound and Update UI
-            AppSounds.PlayAppSound(
-                Interfacing.IsTrackingFrozen ? AppSounds.AppSoundType.ToggleOff : AppSounds.AppSoundType.ToggleOn);
-
-            if (Shared.General.ToggleFreezeButton is not null)
-                Shared.Main.DispatcherQueue.TryEnqueue(() =>
-                {
-                    Shared.General.GeneralTabSetupFinished = false; // Boiler
-                    Shared.General.ToggleFreezeButton.IsChecked = Interfacing.IsTrackingFrozen;
-                    Shared.General.ToggleFreezeButton.Content = Interfacing.IsTrackingFrozen
-                        ? Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Unfreeze")
-                        : Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Skeleton/Freeze");
-
-                    Shared.General.GeneralTabSetupFinished = true; // Boiler end
-                });
-
-            var header = Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Header_Short");
-
-            // Change the tip depending on the currently connected controllers
-            var controllerModel = new StringBuilder(1024);
-            var error = ETrackedPropertyError.TrackedProp_Success;
-
-            OpenVR.System.GetStringTrackedDeviceProperty(
-                OpenVR.System.GetTrackedDeviceIndexForControllerRole(
-                    ETrackedControllerRole.LeftHand),
-                ETrackedDeviceProperty.Prop_ModelNumber_String,
-                controllerModel, 1024, ref error);
-
-            if (controllerModel.ToString().Contains("knuckles", StringComparison.OrdinalIgnoreCase) ||
-                controllerModel.ToString().Contains("index", StringComparison.OrdinalIgnoreCase))
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Buttons/Index"));
-
-            else if (controllerModel.ToString().Contains("vive", StringComparison.OrdinalIgnoreCase))
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Buttons/VIVE"));
-
-            else if (controllerModel.ToString().Contains("mr", StringComparison.OrdinalIgnoreCase))
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Buttons/WMR"));
-
-            else
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Buttons/Oculus"));
-
-            Interfacing.ShowVrToast(Interfacing.IsTrackingFrozen
-                ? Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Toast_Enabled")
-                : Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Toast_Disabled"), header);
-        }
-
-        // Update the Flip Toggle : toggle
-        // Only if the state has changed from 1 to 0: button was clicked
-        if (!Interfacing.EvrInput.TrackerFlipToggleData.bState && bFlipToggleState)
-        {
-            Logger.Info("[Input Actions] Input: Flip toggled");
-
-            // Also validate the result
-            AppData.Settings.IsFlipEnabled =
-                TrackingDevices.GetTrackingDevice().IsFlipSupported && AppData.Settings.IsFlipEnabled;
-
-            // Save settings
-            AppData.Settings.SaveSettings();
-
-            // Play a Sound and Update UI
-            AppSounds.PlayAppSound(
-                AppData.Settings.IsFlipEnabled
-                    ? AppSounds.AppSoundType.ToggleOff
-                    : AppSounds.AppSoundType.ToggleOn);
-
-            if (Shared.Settings.FlipToggle is not null)
-                Shared.Main.DispatcherQueue.TryEnqueue(() =>
-                {
-                    Shared.Settings.SettingsTabSetupFinished = false; // Boiler
-                    Shared.Settings.FlipToggle.IsOn = AppData.Settings.IsFlipEnabled;
-                    Shared.Settings.SettingsTabSetupFinished = true; // Boiler end
-                });
-
-            var header = Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Header_Short");
-
-            // Change the tip depending on the currently connected controllers
-            var controllerModel = new StringBuilder(1024);
-            var error = ETrackedPropertyError.TrackedProp_Success;
-
-            OpenVR.System.GetStringTrackedDeviceProperty(
-                OpenVR.System.GetTrackedDeviceIndexForControllerRole(
-                    ETrackedControllerRole.LeftHand),
-                ETrackedDeviceProperty.Prop_ModelNumber_String,
-                controllerModel, 1024, ref error);
-
-            if (controllerModel.ToString().Contains("knuckles", StringComparison.OrdinalIgnoreCase) ||
-                controllerModel.ToString().Contains("index", StringComparison.OrdinalIgnoreCase))
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/Index"));
-
-            else if (controllerModel.ToString().Contains("vive", StringComparison.OrdinalIgnoreCase))
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/VIVE"));
-
-            else if (controllerModel.ToString().Contains("mr", StringComparison.OrdinalIgnoreCase))
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/WMR"));
-
-            else
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/Oculus"));
-
-            Interfacing.ShowVrToast(Interfacing.IsTrackingFrozen
-                ? Interfacing.LocalizedJsonString("/GeneralPage/Tips/FlipToggle/Toast_Enabled")
-                : Interfacing.LocalizedJsonString("/GeneralPage/Tips/FlipToggle/Toast_Disabled"), header);
-        }
-
-        // Update the Calibration:Confirm : one-time switch
-        // Only one-way switch this time, reset at calibration's end
-        if (Interfacing.EvrInput.ConfirmAndSaveActionData.bState)
-            Interfacing.CalibrationConfirm = true;
-
-        // Update the Calibration:ModeSwap : one-time switch
-        // Only if the state has changed from 1 to 0: chord was done
-        Interfacing.CalibrationModeSwap =
-            !Interfacing.EvrInput.ModeSwapActionData.bState && bModeSwapState;
-
-        // Update the Calibration:FineTune : held switch
-        Interfacing.CalibrationFineTune = Interfacing.EvrInput.FineTuneActionData.bState;
-
-        // Update the Calibration:Joystick : vector2 x2
-        Interfacing.CalibrationJoystickPositions.LeftPosition =
-            (Interfacing.EvrInput.LeftJoystickActionData.x, Interfacing.EvrInput.LeftJoystickActionData.y);
-        Interfacing.CalibrationJoystickPositions.RightPosition =
-            (Interfacing.EvrInput.RightJoystickActionData.x, Interfacing.EvrInput.RightJoystickActionData.y);
+        if (Shared.Settings.FlipToggle is not null)
+            Shared.Main.DispatcherQueue.TryEnqueue(() =>
+            {
+                Shared.Settings.SettingsTabSetupFinished = false; // Boiler
+                Shared.Settings.FlipToggle.IsOn = AppData.Settings.IsFlipEnabled;
+                Shared.Settings.SettingsTabSetupFinished = true; // Boiler end
+            });
     }
-
-    private static async Task ParseVrEvents()
-    {
-        // Poll and parse all needed VR (overlay) events
-        if (OpenVR.System is null) return;
-
-        var vrEvent = new VREvent_t();
-        while (OpenVR.Overlay.PollNextOverlayEvent(
-                   Interfacing.VrOverlayHandle, ref vrEvent, (uint)Marshal.SizeOf<VREvent_t>()))
-        {
-            if (vrEvent.eventType != (uint)EVREventType.VREvent_Quit) continue;
-
-            Logger.Info("VREvent_Quit has been called, requesting more time for handling the exit...");
-            OpenVR.System.AcknowledgeQuit_Exiting();
-
-            // Handle all the exit actions (if needed)
-            if (!Interfacing.IsExitHandled)
-                await Interfacing.HandleAppExit(1000);
-
-            // Finally exit with code 0
-            Environment.Exit(0);
-        }
-    }
-
+    
     private static void UpdateTrackingDevices()
     {
         // Update the base device
-        if (!TrackingDevices.GetTrackingDevice().IsSelfUpdateEnabled)
-            TrackingDevices.GetTrackingDevice().Update();
+        if (!TrackingDevices.BaseTrackingDevice.IsSelfUpdateEnabled)
+            TrackingDevices.BaseTrackingDevice.Update();
 
         // Copy the hook joint [head] position, or the 1st one, or none
-        Interfacing.DeviceHookJointPosition[TrackingDevices.GetTrackingDevice().Guid] =
-            TrackingDevices.GetTrackingDevice().TrackedJoints
+        Interfacing.DeviceHookJointPosition[TrackingDevices.BaseTrackingDevice.Guid] =
+            TrackingDevices.BaseTrackingDevice.TrackedJoints
                 .FirstOrDefault(x => x.Role == TrackedJointType.JointHead,
-                    TrackingDevices.GetTrackingDevice().TrackedJoints.FirstOrDefault(new TrackedJoint())).JointPosition;
+                    TrackingDevices.BaseTrackingDevice.TrackedJoints.FirstOrDefault(new TrackedJoint())).Position;
 
         // Copy the relative hook joint [waist] position, or the 1st one, or none
-        Interfacing.DeviceRelativeTransformOrigin[TrackingDevices.GetTrackingDevice().Guid] =
-            TrackingDevices.GetTrackingDevice().TrackedJoints
+        Interfacing.DeviceRelativeTransformOrigin[TrackingDevices.BaseTrackingDevice.Guid] =
+            TrackingDevices.BaseTrackingDevice.TrackedJoints
                 .FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist,
-                    TrackingDevices.GetTrackingDevice().TrackedJoints.FirstOrDefault(new TrackedJoint())).JointPosition;
+                    TrackingDevices.BaseTrackingDevice.TrackedJoints.FirstOrDefault(new TrackedJoint())).Position;
 
         // Update override devices (optionally)
         foreach (var device in AppData.Settings.OverrideDevicesGuidMap.Select(overrideGuid =>
@@ -227,41 +91,22 @@ public static class Main
             // Copy the hook joint [head] position, or the 1st one, or none
             Interfacing.DeviceHookJointPosition[device.Guid] =
                 device.TrackedJoints.FirstOrDefault(x => x.Role == TrackedJointType.JointHead,
-                    device.TrackedJoints.FirstOrDefault(new TrackedJoint())).JointPosition;
+                    device.TrackedJoints.FirstOrDefault(new TrackedJoint())).Position;
 
             // Copy the relative hook joint [waist] position, or the 1st one, or none
             Interfacing.DeviceRelativeTransformOrigin[device.Guid] =
                 device.TrackedJoints.FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist,
-                    device.TrackedJoints.FirstOrDefault(new TrackedJoint())).JointPosition;
+                    device.TrackedJoints.FirstOrDefault(new TrackedJoint())).Position;
         }
     }
 
     private static async Task UpdateServerTrackers()
     {
         // Update only if we're connected and running
-        if (!Interfacing.K2AppTrackersSpawned || Interfacing.ServerDriverFailure) return;
+        if (!Interfacing.K2AppTrackersSpawned || Interfacing.ServiceEndpointFailure) return;
 
-        // If tracking is frozen, only refresh
-        if (Interfacing.IsTrackingFrozen && !AppData.Settings.FreezeLowerBodyOnly)
-        {
-            // To save resources, frozen trackers update once per 1000 frames
-            // (When they're unfrozen, they go back to instant updates)
-            if (_pFrozenLoops >= 1000)
-            {
-                // Refresh in the server driver
-                await DriverClient.RefreshTrackerPoses(AppData.Settings.TrackersVector
-                    .Where(tracker => tracker.IsActive).Select(tracker => tracker.Role));
-
-                // Reset
-                _pFrozenLoops = 0;
-            }
-            else
-            {
-                _pFrozenLoops++;
-            }
-        }
         // If the tracing's actually running
-        else
+        if (!Interfacing.IsTrackingFrozen || AppData.Settings.FreezeLowerBodyOnly)
         {
             // Update position & orientation filters
             AppData.Settings.TrackersVector.ToList().ForEach(tracker => tracker.UpdateFilters());
@@ -270,58 +115,34 @@ public static class Main
             // Note: only position gets calibrated INSIDE trackers
 
             // If we've frozen everything but elbows
-            var updateLowerBody = true;
-            if (Interfacing.IsTrackingFrozen && AppData.Settings.FreezeLowerBodyOnly)
-            {
-                updateLowerBody = false;
-
-                // To save resources, frozen trackers update once per 1000 frames
-                // (When they're unfrozen, they go back to instant updates)
-                if (_pFrozenLoops >= 1000)
-                {
-                    // Refresh in the server driver
-                    await DriverClient.RefreshTrackerPoses(AppData.Settings.TrackersVector
-                        .Where(tracker => tracker.IsActive && (int)TypeUtils
-                            .TrackerTypeJointDictionary[tracker.Role] >= 16).Select(tracker => tracker.Role));
-
-                    _pFrozenLoops = 0; // Reset
-                }
-                else
-                {
-                    _pFrozenLoops++; // Increment the counter
-                }
-            }
+            var updateLowerBody = !(Interfacing.IsTrackingFrozen && AppData.Settings.FreezeLowerBodyOnly);
 
             // Update the [server] trackers
-            await DriverClient.UpdateTrackerPoses(AppData.Settings.TrackersVector.Where(tracker => tracker.IsActive)
-                .Where(x => (int)TypeUtils.TrackerTypeJointDictionary[x.Role] < 16 || updateLowerBody)
-                .Select(tracker => tracker.GetTrackerBase(
-                    tracker.PositionTrackingFilterOption, tracker.OrientationTrackingFilterOption)));
+            await TrackingDevices.CurrentServiceEndpoint.UpdateTrackerPoses(
+                AppData.Settings.TrackersVector.Where(tracker => tracker.IsActive)
+                    .Where(x => (int)TypeUtils.TrackerTypeJointDictionary[x.Role] < 16 || updateLowerBody)
+                    .Select(tracker => tracker.GetTrackerBase(
+                        tracker.PositionTrackingFilterOption, tracker.OrientationTrackingFilterOption)));
         }
 
         // Update status right after any change
         if (_bInitialized != Interfacing.AppTrackersInitialized)
-        {
             // Try 3 times (cause why not)
             for (var i = 0; i < 3; i++)
             {
                 // Update status in server
-                await DriverClient.UpdateTrackerStates(AppData.Settings.TrackersVector
+                await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(AppData.Settings.TrackersVector
                     .Where(tracker => tracker.IsActive)
-                    .Select(tracker => (tracker.Role, Interfacing.AppTrackersInitialized)));
+                    .Select(tracker =>
+                    {
+                        var trackerBase = tracker.GetTrackerBase();
+                        trackerBase.ConnectionState = Interfacing.AppTrackersInitialized;
+                        return trackerBase;
+                    }));
 
                 // Update internal status
                 _bInitialized = Interfacing.AppTrackersInitialized;
             }
-
-            // Rescan controller ids
-            Interfacing.VrControllerIndexes = (
-                OpenVR.System.GetTrackedDeviceIndexForControllerRole(
-                    ETrackedControllerRole.LeftHand),
-                OpenVR.System.GetTrackedDeviceIndexForControllerRole(
-                    ETrackedControllerRole.RightHand)
-            );
-        }
 
         // Scan for already-added body trackers from other apps
         // (If any found, disable corresponding ame's trackers/pairs)
@@ -341,8 +162,8 @@ public static class Main
                     // Search for 
                     foreach (var tracker in AppData.Settings.TrackersVector
                                  .Where(tracker => tracker.IsActive)
-                                 .Where(tracker => Interfacing.FindVrTracker(
-                                     TypeUtils.TrackerTypeSerialDictionary[tracker.Role], false).Found))
+                                 .Where(tracker => TrackingDevices.CurrentServiceEndpoint
+                                     .GetTrackerPose(TypeUtils.TrackerTypeSerialDictionary[tracker.Role]) != null))
                     {
                         // Make actual changes (self-updates)
                         tracker.IsActive = false;
@@ -350,7 +171,10 @@ public static class Main
                         // Try even 5 times (cause why not)
                         for (var i = 0; i < 5; i++)
                         {
-                            await DriverClient.UpdateTrackerStates(new[] { (tracker.Role, false) });
+                            var trackerBase = tracker.GetTrackerBase();
+                            trackerBase.ConnectionState = false;
+
+                            await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
                             await Task.Delay(25);
                         }
 
@@ -371,7 +195,7 @@ public static class Main
                             "/SharedStrings/Toasts/TrackersAutoDisabled"),
                         true, "focus_trackers");
 
-                    Interfacing.ShowVrToast(
+                    Interfacing.ShowServiceToast(
                         Interfacing.LocalizedJsonString(
                             "/SharedStrings/Toasts/TrackersAutoDisabled/Title"),
                         Interfacing.LocalizedJsonString(
@@ -397,7 +221,7 @@ public static class Main
         // Base device
         {
             // Get the currently tracking device
-            var device = TrackingDevices.GetTrackingDevice();
+            var device = TrackingDevices.BaseTrackingDevice;
 
             var extFlip =
                 AppData.Settings.IsFlipEnabled &&
@@ -417,14 +241,13 @@ public static class Main
                         ? extFlipInternal
 
                             // Overriden internal amethyst tracker
-                            ? Quaternion.Inverse(Interfacing.VrPlayspaceOrientationQuaternion) *
-                              AppData.Settings.TrackersVector[0].Orientation
+                            ? AppData.Settings.TrackersVector[0].Orientation
 
                             // External VR waist tracker
                             : Interfacing.GetVrTrackerPoseCalibrated("waist").Orientation
 
                         // Default: VR HMD orientation
-                        : Interfacing.Plugins.GetHmdPoseCalibrated.Orientation,
+                        : Interfacing.Plugins.GetHmdPose.Orientation,
 
                     // Check for external-flip
                     extFlip
@@ -472,15 +295,15 @@ public static class Main
                     // Not the "calibrated" variant, as the fix will be applied after everything else
                     JointRotationTrackingOption.FollowHmdRotation =>
                         Quaternion.CreateFromYawPitchRoll((float)Calibration.QuaternionYaw(
-                            Interfacing.Plugins.GetHmdPoseCalibrated.Orientation), 0, 0),
+                            Interfacing.Plugins.GetHmdPose.Orientation), 0, 0),
 
                     // Optionally overwrite the rotation with NONE
                     JointRotationTrackingOption.DisableJointRotation => Quaternion.Identity,
 
                     // Default
                     _ => isJointFlipped
-                        ? Quaternion.Inverse(joint.JointOrientation)
-                        : joint.JointOrientation
+                        ? Quaternion.Inverse(joint.Orientation)
+                        : joint.Orientation
                 };
 
                 // Copy the previous orientation to the tracker
@@ -490,15 +313,15 @@ public static class Main
                     // Not the "calibrated" variant, as the fix will be applied after everything else
                     JointRotationTrackingOption.FollowHmdRotation =>
                         Quaternion.CreateFromYawPitchRoll((float)Calibration.QuaternionYaw(
-                            Interfacing.Plugins.GetHmdPoseCalibrated.Orientation), 0, 0),
+                            Interfacing.Plugins.GetHmdPose.Orientation), 0, 0),
 
                     // Optionally overwrite the rotation with NONE
                     JointRotationTrackingOption.DisableJointRotation => Quaternion.Identity,
 
                     // Default
                     _ => isJointFlipped
-                        ? Quaternion.Inverse(joint.PreviousJointOrientation)
-                        : joint.PreviousJointOrientation
+                        ? Quaternion.Inverse(joint.PreviousOrientation)
+                        : joint.PreviousOrientation
                 };
 
                 // If math-based orientation is supported, overwrite the orientation with it
@@ -551,15 +374,13 @@ public static class Main
                     JointRotationTrackingOption.FollowHmdRotation)
                 {
                     // Offset to fit the playspace
-                    tracker.Orientation =
-                        Quaternion.Inverse(Interfacing.VrPlayspaceOrientationQuaternion) * tracker.Orientation;
-                    tracker.PreviousOrientation =
-                        Quaternion.Inverse(Interfacing.VrPlayspaceOrientationQuaternion) * tracker.PreviousOrientation;
+                    tracker.Orientation = tracker.Orientation;
+                    tracker.PreviousOrientation = tracker.PreviousOrientation;
                 }
 
                 // Push raw positions and timestamps
-                tracker.Position = joint.JointPosition;
-                tracker.PreviousPosition = joint.PreviousJointPosition;
+                tracker.Position = joint.Position;
+                tracker.PreviousPosition = joint.PreviousPosition;
 
                 tracker.PoseTimestamp = joint.PoseTimestamp;
                 tracker.PreviousPoseTimestamp = joint.PreviousPoseTimestamp;
@@ -570,10 +391,10 @@ public static class Main
                 // Push raw physics (if valid)
                 if (device.IsPhysicsOverrideEnabled)
                 {
-                    tracker.PoseVelocity = joint.JointVelocity;
-                    tracker.PoseAcceleration = joint.JointAcceleration;
-                    tracker.PoseAngularVelocity = joint.JointAngularVelocity;
-                    tracker.PoseAngularAcceleration = joint.JointAngularAcceleration;
+                    tracker.PoseVelocity = joint.Velocity;
+                    tracker.PoseAcceleration = joint.Acceleration;
+                    tracker.PoseAngularVelocity = joint.AngularVelocity;
+                    tracker.PoseAngularAcceleration = joint.AngularAcceleration;
 
                     tracker.OverridePhysics = true;
                 }
@@ -631,21 +452,21 @@ public static class Main
                     // Standard, also apply calibration-related flipped orientation fixes
                     tracker.Orientation = Calibration
                         .FixFlippedOrientation(isJointFlipped
-                            ? Quaternion.Inverse(joint.JointOrientation)
-                            : joint.JointOrientation);
+                            ? Quaternion.Inverse(joint.Orientation)
+                            : joint.Orientation);
 
                     tracker.PreviousOrientation = Calibration
                         .FixFlippedOrientation(isJointFlipped
-                            ? Quaternion.Inverse(joint.PreviousJointOrientation)
-                            : joint.PreviousJointOrientation);
+                            ? Quaternion.Inverse(joint.PreviousOrientation)
+                            : joint.PreviousOrientation);
                 }
 
                 // ReSharper disable once InvertIf | If overridden w/ position
                 if (tracker.IsPositionOverridden)
                 {
                     // Push raw positions and timestamps
-                    tracker.Position = joint.JointPosition;
-                    tracker.PreviousPosition = joint.PreviousJointPosition;
+                    tracker.Position = joint.Position;
+                    tracker.PreviousPosition = joint.PreviousPosition;
 
                     tracker.PoseTimestamp = joint.PoseTimestamp;
                     tracker.PreviousPoseTimestamp = joint.PreviousPoseTimestamp;
@@ -656,10 +477,10 @@ public static class Main
                     // Push raw physics (if valid)
                     if (device.IsPhysicsOverrideEnabled)
                     {
-                        tracker.PoseVelocity = joint.JointVelocity;
-                        tracker.PoseAcceleration = joint.JointAcceleration;
-                        tracker.PoseAngularVelocity = joint.JointAngularVelocity;
-                        tracker.PoseAngularAcceleration = joint.JointAngularAcceleration;
+                        tracker.PoseVelocity = joint.Velocity;
+                        tracker.PoseAcceleration = joint.Acceleration;
+                        tracker.PoseAngularVelocity = joint.AngularVelocity;
+                        tracker.PoseAngularAcceleration = joint.AngularAcceleration;
 
                         tracker.OverridePhysics = true;
                     }
@@ -681,11 +502,8 @@ public static class Main
         Shared.Events.SemSignalStartMain.WaitOne();
 
         Logger.Info("[Main] Starting the main app loop now...");
-
-        // For limiting loop 'fps'
-        var vrError = ETrackedPropertyError.TrackedProp_Success;
-        var vrFrameRate = (long)Math.Clamp(OpenVR.System.GetFloatTrackedDeviceProperty(
-            0, ETrackedDeviceProperty.Prop_DisplayFrequency_Float, ref vrError), 70, 130);
+        
+        var vrFrameRate = 110L; // Try running at 110 fps
         Logger.Info($"Desired loop rate: >{vrFrameRate} 1/s");
 
         vrFrameRate = (long)(1.0 / ((double)vrFrameRate / TimeSpan.TicksPerSecond));
@@ -702,11 +520,6 @@ public static class Main
                 while (true)
                 {
                     loopStopWatch.Restart();
-                    // Update things here
-
-                    UpdateVrPositions(); // Update HMD poses
-                    UpdateInputBindings(); // Update input
-                    await ParseVrEvents(); // Parse VR events
 
                     // Skip some things if we're getting ready to exit
                     if (!Interfacing.IsExitingNow)
@@ -785,7 +598,7 @@ public static class Main
 
                         // -13 is the code for giving up then, I guess
                         // The user will be prompted to reset the config (opt)
-                        Interfacing.Fail(-13);
+                        Interfacing.Fail("GIVE UP TOO MUCH CRASHES KYS");
                         break;
                 }
             }

@@ -10,7 +10,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amethyst.Plugins.Contract",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AmethystSupport", "AmethystSupport\AmethystSupport.vcxproj", "{E8E9C984-7D3D-49B5-8D09-D29E36868987}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amethyst.Driver.Client", "AmethystDriverClient\Amethyst.Driver.Client.csproj", "{A9ADC790-84A8-4D52-B05E-575984AA01B3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{863D22A6-C6C3-4E22-B2E0-26685D1B2E3E}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +39,6 @@ Global
 		{E8E9C984-7D3D-49B5-8D09-D29E36868987}.Debug|x64.Build.0 = Debug|x64
 		{E8E9C984-7D3D-49B5-8D09-D29E36868987}.Release|x64.ActiveCfg = Release|x64
 		{E8E9C984-7D3D-49B5-8D09-D29E36868987}.Release|x64.Build.0 = Release|x64
-		{A9ADC790-84A8-4D52-B05E-575984AA01B3}.Debug|x64.ActiveCfg = Debug|x64
-		{A9ADC790-84A8-4D52-B05E-575984AA01B3}.Debug|x64.Build.0 = Debug|x64
-		{A9ADC790-84A8-4D52-B05E-575984AA01B3}.Release|x64.ActiveCfg = Release|x64
-		{A9ADC790-84A8-4D52-B05E-575984AA01B3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

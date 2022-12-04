@@ -7,7 +7,6 @@ using System.Linq;
 using System.Numerics;
 using Windows.Globalization;
 using Windows.System.UserProfile;
-using Amethyst.Driver.API;
 using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
@@ -60,12 +59,11 @@ public class AppSettings : INotifyPropertyChanged
         {
             _checkForOverlappingTrackers = value;
             OnPropertyChanged("CheckForOverlappingTrackers");
-            // AppData.Settings.SaveSettings();
+            AppData.Settings.SaveSettings();
         }
     }
 
-    // Current tracking device: 0 is the default base device
-    // First: Device's GUID / saved, Second: Index ID / generated
+    public string ServiceEndpointGuid { get; set; } = ""; // -> Always set
     public string TrackingDeviceGuid { get; set; } = ""; // -> Always set
     public SortedSet<string> OverrideDevicesGuidMap { get; set; } = new();
 
@@ -126,7 +124,7 @@ public class AppSettings : INotifyPropertyChanged
             AppData.Settings.SaveSettings();
         }
     }
-    
+
     // Calibration matrices : GUID/Data
     public SortedDictionary<string, Quaternion> DeviceCalibrationRotationMatrices { get; set; } = new();
     public SortedDictionary<string, Vector3> DeviceCalibrationTranslationVectors { get; set; } = new();
@@ -264,33 +262,39 @@ public class AppSettings : INotifyPropertyChanged
         }
 
         // Fix statuses (optional)
-        if (UseTrackerPairs)
+        var pairedTrackerTypes = new List<(TrackerType L, TrackerType R)>
         {
-            TrackersVector[2].IsActive = TrackersVector[1].IsActive;
-            TrackersVector[4].IsActive = TrackersVector[3].IsActive;
-            TrackersVector[6].IsActive = TrackersVector[5].IsActive;
+            (TrackerType.TrackerLeftFoot, TrackerType.TrackerRightFoot),
+            (TrackerType.TrackerLeftKnee, TrackerType.TrackerRightKnee),
+            (TrackerType.TrackerLeftElbow, TrackerType.TrackerRightElbow),
+            (TrackerType.TrackerLeftShoulder, TrackerType.TrackerRightShoulder)
+        };
 
-            TrackersVector[2].OrientationTrackingOption =
-                TrackersVector[1].OrientationTrackingOption;
-            TrackersVector[4].OrientationTrackingOption =
-                TrackersVector[3].OrientationTrackingOption;
-            TrackersVector[6].OrientationTrackingOption =
-                TrackersVector[5].OrientationTrackingOption;
+        if (!partial)
+            TrackersVector.ToList().ForEach(tracker =>
+            {
+                tracker.IsSupported = TrackingDevices.CurrentServiceEndpoint
+                    .AdditionalSupportedTrackerTypes.Contains(tracker.Role);
 
-            TrackersVector[2].PositionTrackingFilterOption =
-                TrackersVector[1].PositionTrackingFilterOption;
-            TrackersVector[4].PositionTrackingFilterOption =
-                TrackersVector[3].PositionTrackingFilterOption;
-            TrackersVector[6].PositionTrackingFilterOption =
-                TrackersVector[5].PositionTrackingFilterOption;
+                if (!tracker.IsSupported)
+                    Logger.Info($"Tracker role {tracker.Role} is not supported by " +
+                                $"({TrackingDevices.CurrentServiceEndpoint.Guid}, " +
+                                $"{TrackingDevices.CurrentServiceEndpoint.Name})! " +
+                                "Disabling this tracker and marking as unsupported!");
+            });
 
-            TrackersVector[2].OrientationTrackingFilterOption =
-                TrackersVector[1].OrientationTrackingFilterOption;
-            TrackersVector[4].OrientationTrackingFilterOption =
-                TrackersVector[3].OrientationTrackingFilterOption;
-            TrackersVector[6].OrientationTrackingFilterOption =
-                TrackersVector[5].OrientationTrackingFilterOption;
-        }
+        if (UseTrackerPairs)
+            pairedTrackerTypes.ForEach(typePair =>
+            {
+                var lT = TrackersVector.ToList().Find(x => x.Role == typePair.L);
+                var rT = TrackersVector.ToList().Find(x => x.Role == typePair.R);
+                if (lT is null || rT is null) return;
+
+                rT.IsActive = lT.IsActive;
+                rT.OrientationTrackingOption = lT.OrientationTrackingOption;
+                rT.PositionTrackingFilterOption = lT.PositionTrackingFilterOption;
+                rT.OrientationTrackingFilterOption = lT.OrientationTrackingFilterOption;
+            });
 
         // Optionally fix volume if too big somehow
         AppSoundsVolume = Math.Clamp(AppSoundsVolume, 0, 100);
@@ -337,7 +341,7 @@ public class AppSettings : INotifyPropertyChanged
 
         // Advanced config: runtime and tracking settings
         Logger.Info("Checking AppSettings [runtime] configuration...");
-        var trackingDevice = device ?? TrackingDevices.GetTrackingDevice();
+        var trackingDevice = device ?? TrackingDevices.BaseTrackingDevice;
 
         // Check orientation option configs : left foot
         Logger.Info("Checking left foot orientation settings...");

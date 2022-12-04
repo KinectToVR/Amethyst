@@ -45,7 +45,7 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     private bool IsAnyTrackerEnabled =>
         AppData.Settings.SelectedTrackingDeviceGuid == AppData.Settings.TrackingDeviceGuid &&
         Trackers.Any(x => x.IsActive && x.IsManuallyManaged);
-
+    
     public event PropertyChangedEventHandler PropertyChanged;
 
     public void OnPropertyChanged(string propName = null)
@@ -56,7 +56,7 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
 
     private static List<string> GetBaseDeviceJointsList()
     {
-        return TrackingDevices.GetTrackingDevice().TrackedJoints.Select(x => x.JointName).ToList();
+        return TrackingDevices.BaseTrackingDevice.TrackedJoints.Select(x => x.Name).ToList();
     }
 
     private void JointsSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

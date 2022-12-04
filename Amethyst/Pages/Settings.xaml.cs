@@ -14,15 +14,13 @@ using System.Threading.Tasks;
 using Windows.Globalization;
 using Windows.System.UserProfile;
 using Amethyst.Classes;
-using Amethyst.Driver.API;
-using Amethyst.Driver.Client;
 using Amethyst.MVVM;
+using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Animation;
-using Valve.VR;
 using WinRT;
 using static Amethyst.Classes.Shared.TeachingTips;
 
@@ -146,7 +144,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         AppThemeOptionBox.SelectedIndex = (int)AppData.Settings.AppTheme;
 
         // Check for autostart
-        AutoStartCheckBox.IsChecked = OpenVR.Applications.GetApplicationAutoLaunch("K2VR.Amethyst");
+        AutoStartCheckBox.IsChecked = TrackingDevices.CurrentServiceEndpoint.AutoStartAmethyst;
 
         // Optionally show the foreign language grid
         if (!File.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings",
@@ -233,14 +231,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     {
         // Don't react to pre-init signals
         if (!Shared.Settings.SettingsTabSetupFinished) return;
-
-        Interfacing.InstallVrApplicationManifest(); // Just in case
-
-        var appError = OpenVR.Applications.SetApplicationAutoLaunch("K2VR.Amethyst", true);
-
-        if (appError != EVRApplicationError.None)
-            Logger.Warn(
-                $"Amethyst manifest not installed! Error: {OpenVR.Applications.GetApplicationsErrorNameFromEnum(appError)}");
+        TrackingDevices.CurrentServiceEndpoint.AutoStartAmethyst = true;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOn);
@@ -250,14 +241,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     {
         // Don't react to pre-init signals
         if (!Shared.Settings.SettingsTabSetupFinished) return;
-
-        Interfacing.InstallVrApplicationManifest(); // Just in case
-
-        var appError = OpenVR.Applications.SetApplicationAutoLaunch("K2VR.Amethyst", false);
-
-        if (appError != EVRApplicationError.None)
-            Logger.Warn(
-                $"Amethyst manifest not installed! Error: {OpenVR.Applications.GetApplicationsErrorNameFromEnum(appError)}");
+        TrackingDevices.CurrentServiceEndpoint.AutoStartAmethyst = false;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOff);
@@ -330,39 +314,11 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         if (!Shared.Settings.SettingsTabSetupFinished) return;
 
         // Optionally show the binding teaching tip
-        if (!AppData.Settings.TeachingTipShownFlip &&
-            Interfacing.CurrentPageTag == "settings")
+        if (!AppData.Settings.TeachingTipShownFlip && Interfacing.CurrentPageTag == "settings" &&
+            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions != null)
         {
-            var header = Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Header");
-
-            // Change the tip depending on the currently connected controllers
-            var controllerModel = new StringBuilder(1024);
-            var error = ETrackedPropertyError.TrackedProp_Success;
-
-            OpenVR.System.GetStringTrackedDeviceProperty(
-                OpenVR.System.GetTrackedDeviceIndexForControllerRole(
-                    ETrackedControllerRole.LeftHand),
-                ETrackedDeviceProperty.Prop_ModelNumber_String,
-                controllerModel, 1024, ref error);
-
-            if (controllerModel.ToString().Contains("knuckles", StringComparison.OrdinalIgnoreCase) ||
-                controllerModel.ToString().Contains("index", StringComparison.OrdinalIgnoreCase))
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/Index"));
-
-            else if (controllerModel.ToString().Contains("vive", StringComparison.OrdinalIgnoreCase))
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/VIVE"));
-
-            else if (controllerModel.ToString().Contains("mr", StringComparison.OrdinalIgnoreCase))
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/WMR"));
-
-            else
-                header = header.Replace("{0}",
-                    Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Buttons/Oculus"));
-
-            ToggleFlipTeachingTip.Title = header;
+            ToggleFlipTeachingTip.Title =
+                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.SkeletonFlipActionString;
             ToggleFlipTeachingTip.Subtitle =
                 Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Footer");
 
@@ -370,8 +326,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
             Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
             ToggleFlipTeachingTip.IsOpen = true;
-
             AppData.Settings.TeachingTipShownFlip = true;
+
             AppData.Settings.SaveSettings();
         }
 
@@ -427,19 +383,12 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     private void CalibrateExternalFlipMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
         // If the extflip is from Amethyst
-        if (AppData.Settings.TrackersVector[0].IsOrientationOverridden)
-            AppData.Settings.ExternalFlipCalibrationMatrix =
-                // Overriden tracker
-                Quaternion.Inverse(Interfacing.VrPlayspaceOrientationQuaternion) * // VR space offset
-                AppData.Settings.TrackersVector[0].Orientation; // Raw orientation
-
-        // If it's from an external tracker
-        else
-            AppData.Settings.ExternalFlipCalibrationMatrix =
-                Interfacing.GetVrTrackerPoseCalibrated("waist", true).Orientation;
+        AppData.Settings.ExternalFlipCalibrationMatrix =
+            AppData.Settings.TrackersVector[0].IsOrientationOverridden
+                ? AppData.Settings.TrackersVector[0].Orientation
+                : Interfacing.GetVrTrackerPoseCalibrated("waist").Orientation;
 
         Logger.Info($"Captured orientation for external flip: {AppData.Settings.ExternalFlipCalibrationMatrix}");
-
         AppData.Settings.SaveSettings();
     }
 
@@ -668,7 +617,9 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     private void RestartButton_Click(object sender, RoutedEventArgs e)
     {
-        DriverClient.RequestVrRestart("SteamVR needs to be restarted to enable/disable trackers properly.");
+        // TODO LOCALIZATION
+        TrackingDevices.CurrentServiceEndpoint.RequestServiceRestart(
+            "The tracking service needs to be restarted to enable/disable trackers properly.");
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
@@ -753,76 +704,14 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Interfacing.ShowToast(
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
-        Interfacing.ShowVrToast(
+        Interfacing.ShowServiceToast(
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
-    }
-
-    private void ReRegisterButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
-                "K2CrashHandler", "K2CrashHandler.exe")))
-        {
-            Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
-                "K2CrashHandler", "K2CrashHandler.exe"));
-        }
-        else
-        {
-            Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
-
-            Shared.Settings.SetErrorFlyoutText.Text =
-                Interfacing.LocalizedJsonString("/SettingsPage/ReRegister/Error/NotFound");
-
-            SetErrorFlyout.ShowAt(ReRegisterButton, new FlyoutShowOptions
-            {
-                Placement = FlyoutPlacementMode.RightEdgeAlignedBottom
-            });
-        }
-
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
     }
 
     private void ViewLogsButton_Click(object sender, RoutedEventArgs e)
     {
         SystemShell.OpenFolderAndSelectItem(Logger.LogFilePath);
-
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-    }
-
-    private void ReManifestButton_Click(object sender, RoutedEventArgs e)
-    {
-        switch (Interfacing.InstallVrApplicationManifest())
-        {
-            // Not found failure
-            case 0:
-            {
-                Shared.Settings.SetErrorFlyoutText.Text =
-                    Interfacing.LocalizedJsonString("/SettingsPage/ReManifest/Error/NotFound");
-
-                SetErrorFlyout.ShowAt(ReManifestButton, new FlyoutShowOptions
-                {
-                    Placement = FlyoutPlacementMode.RightEdgeAlignedBottom
-                });
-                break;
-            }
-            // Generic success
-            case 1:
-                break;
-            // SteamVR failure
-            case 2:
-            {
-                Shared.Settings.SetErrorFlyoutText.Text =
-                    Interfacing.LocalizedJsonString("/SettingsPage/ReManifest/Error/Other");
-
-                SetErrorFlyout.ShowAt(ReManifestButton, new FlyoutShowOptions
-                {
-                    Placement = FlyoutPlacementMode.RightEdgeAlignedBottom
-                });
-                break;
-            }
-        }
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
@@ -875,8 +764,12 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
             // Make actual changes
             if (removedTracker.IsActive && Interfacing.AppTrackersInitialized)
-                await DriverClient.UpdateTrackerStates(new List<(TrackerType Role, bool State)>
-                    { (removedTracker.Role, false) });
+            {
+                var trackerBase = removedTracker.GetTrackerBase();
+                trackerBase.ConnectionState = false;
+
+                await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+            }
 
             await Task.Delay(20);
             AppData.Settings.TrackersVector.Remove(removedTracker);

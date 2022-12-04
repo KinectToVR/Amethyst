@@ -32,6 +32,25 @@ public enum TrackedJointType
     JointManual
 }
 
+// Global Tracker Types,
+// see enumeration at OpenVR
+public enum TrackerType
+{
+    TrackerHanded,
+    TrackerLeftFoot,
+    TrackerRightFoot,
+    TrackerLeftShoulder,
+    TrackerRightShoulder,
+    TrackerLeftElbow,
+    TrackerRightElbow,
+    TrackerLeftKnee,
+    TrackerRightKnee,
+    TrackerWaist,
+    TrackerChest,
+    TrackerCamera,
+    TrackerKeyboard
+}
+
 // Global joint states
 public enum TrackedJointState
 {

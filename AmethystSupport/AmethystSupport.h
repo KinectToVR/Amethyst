@@ -192,9 +192,9 @@ namespace AmethystSupport
 			// Capture needed joints' positions
 			const Eigen::Vector3f
 				forward(0, 0, 1),
-				ankleLeftPose(ankle->JointPosition.X, ankle->JointPosition.Y, ankle->JointPosition.Z),
-				footLeftPose(foot->JointPosition.X, foot->JointPosition.Y, foot->JointPosition.Z),
-				kneeLeftPose(knee->JointPosition.X, knee->JointPosition.Y, knee->JointPosition.Z);
+				ankleLeftPose(ankle->Position.X, ankle->Position.Y, ankle->Position.Z),
+				footLeftPose(foot->Position.X, foot->Position.Y, foot->Position.Z),
+				kneeLeftPose(knee->Position.X, knee->Position.Y, knee->Position.Z);
 
 			// Calculate euler yaw foot orientation, we'll need it later
 			Eigen::Vector3f footLeftRawOrientation =
@@ -279,8 +279,8 @@ namespace AmethystSupport
 		{
 			// Capture needed joints' positions
 			const Eigen::Vector3f
-				anklePose(ankle->JointPosition.X, ankle->JointPosition.Y, ankle->JointPosition.Z),
-				kneePose(knee->JointPosition.X, knee->JointPosition.Y, knee->JointPosition.Z);
+				anklePose(ankle->Position.X, ankle->Position.Y, ankle->Position.Z),
+				kneePose(knee->Position.X, knee->Position.Y, knee->Position.Z);
 
 			// The improved approach for fixing foot rotation on the Xbox One Kinect
 			// Thigh rotation is copied onto the foot, this is due to the fact that more often than not, 

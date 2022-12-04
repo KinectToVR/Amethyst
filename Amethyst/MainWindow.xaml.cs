@@ -42,6 +42,7 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.AppNotifications;
 using WinRT;
 using WinRT.Interop;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -237,24 +238,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         else
             Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
 
-        // Priority: Connect to OpenVR
-        if (!Interfacing.OpenVrStartup())
-        {
-            Logger.Error("Could not connect to OpenVR! The app will be shut down.");
-            Interfacing.Fail(-11); // OpenVR is critical, so exit
-        }
-
-        // Priority: Set up Amethyst as a vr app
-        Logger.Info("Installing the vr application manifest...");
-        Interfacing.InstallVrApplicationManifest();
-
-        // Priority: Set up VR Input Actions
-        if (!Interfacing.EvrActionsStartup())
-            Logger.Error("Could not set up VR Input Actions! The app will lack some functionality.");
-
-        // Priority: Set up the API & Server
-        Interfacing.K2ServerDriverSetup();
-
         // Start the main loop
         Task.Run(Main.MainLoop);
 
@@ -313,8 +296,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         if (pluginDirectoryList.Count < 1)
         {
-            Logger.Fatal("No plugins (tracking devices) found! Shutting down...");
-            Interfacing.Fail(-12); // Exit and cause the crash handler to appear
+            Logger.Fatal("No plugins directories found! Shutting down...");
+            Interfacing.Fail("NO PLUGIN DIRECTORIES"); // Exit and cause the crash handler to appear
         }
 
         Logger.Info($"Found {pluginDirectoryList.Count} potentially valid plugin directories...");
@@ -324,10 +307,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             using var container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
             container.ComposeExportedValue(typeof(IAmethystHost));
 
-            var plugins = container.GetExports<ITrackingDevice, ITrackingDeviceMetadata>().ToList();
-            Logger.Info($"Found {plugins.Count} potentially valid plugins...");
+            Logger.Info("Searching for tracking devices (providers) plugins...");
 
-            foreach (var plugin in plugins)
+            var devicePlugins = container.GetExports<ITrackingDevice, IPluginMetadata>().ToList();
+            Logger.Info($"Found {devicePlugins.Count} potentially valid plugins...");
+
+            foreach (var plugin in devicePlugins)
                 try
                 {
                     Logger.Info($"Parsing ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
@@ -341,6 +326,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
+                            PluginType = TrackingDevices.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
                             Status = TrackingDevices.PluginLoadError.BadOrDuplicateGuid
@@ -359,6 +345,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
+                            PluginType = TrackingDevices.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
                             Status = TrackingDevices.PluginLoadError.LoadingSkipped
@@ -376,7 +363,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (CompositionException e)
                     {
-                        Logger.Error("Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                        Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                      "failed with a local (plugin-wise) MEF exception: " +
                                      $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
                                      $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
@@ -386,6 +373,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
+                            PluginType = TrackingDevices.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
                             Status = TrackingDevices.PluginLoadError.NoDeviceDependencyDll
@@ -403,6 +391,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
+                            PluginType = TrackingDevices.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
                             Status = TrackingDevices.PluginLoadError.Other
@@ -421,6 +410,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     {
                         Name = plugin.Metadata.Name,
                         Guid = plugin.Metadata.Guid,
+                        PluginType = TrackingDevices.PluginType.TrackingDevice,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
                         DeviceFolder = pluginFolder,
@@ -479,11 +469,204 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     {
                         Name = plugin.Metadata.Name,
                         Guid = plugin.Metadata.Guid,
+                        PluginType = TrackingDevices.PluginType.TrackingDevice,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
                         Status = TrackingDevices.PluginLoadError.Other
                     });
                 }
+
+            // Check if we have enough plugins to run the app
+            if (TrackingDevices.TrackingDevicesList.Count < 1)
+            {
+                Logger.Fatal("No plugins (tracking devices) loaded! Shutting down...");
+                Interfacing.Fail("NO TRACKING PROVIDERS"); // Exit and cause the crash handler to appear
+            }
+
+            Logger.Info("Registration of tracking device plugins has ended, there are " +
+                        $"{TrackingDevices.TrackingDevicesList.Count} valid plugins in total.");
+
+            Logger.Info("Searching for tracking services (endpoint) plugins...");
+
+            var servicePlugins = container.GetExports<IServiceEndpoint, IPluginMetadata>().ToList();
+            Logger.Info($"Found {servicePlugins.Count} potentially valid plugins...");
+
+            foreach (var plugin in servicePlugins)
+                try
+                {
+                    Logger.Info($"Parsing ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
+
+                    // Check the plugin GUID against others loaded, INVALID and null
+                    if (string.IsNullOrEmpty(plugin.Metadata.Guid) || plugin.Metadata.Guid == "INVALID" ||
+                        TrackingDevices.ServiceEndpointsList.ContainsKey(plugin.Metadata.Guid))
+                    {
+                        // Add the device to the 'attempted' list, mark as duplicate
+                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        {
+                            Name = plugin.Metadata.Name,
+                            Guid = plugin.Metadata.Guid,
+                            PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                            Publisher = plugin.Metadata.Publisher,
+                            Website = plugin.Metadata.Website,
+                            Status = TrackingDevices.PluginLoadError.BadOrDuplicateGuid
+                        });
+
+                        Logger.Error($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                     "has a duplicate GUID value to another plugin, discarding it!");
+                        continue; // Give up on this one :(
+                    }
+
+                    // Check the plugin GUID against the ones we need to skip
+                    if (AppData.Settings.DisabledDevicesGuidSet.Contains(plugin.Metadata.Guid))
+                    {
+                        // Add the device to the 'attempted' list, mark as duplicate
+                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        {
+                            Name = plugin.Metadata.Name,
+                            Guid = plugin.Metadata.Guid,
+                            PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                            Publisher = plugin.Metadata.Publisher,
+                            Website = plugin.Metadata.Website,
+                            Status = TrackingDevices.PluginLoadError.LoadingSkipped
+                        });
+
+                        Logger.Error($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                     "is requested to be skipped (via GUID), discarding it!");
+                        continue; // Give up on this one :(
+                    }
+
+                    try
+                    {
+                        Logger.Info($"Trying to load ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
+                        Logger.Info($"Result: {plugin.Value}"); // Load the plugin
+                    }
+                    catch (CompositionException e)
+                    {
+                        Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                     "failed with a local (plugin-wise) MEF exception: " +
+                                     $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
+                                     $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
+
+                        // Add the device to the 'attempted' list, mark as possibly missing deps
+                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        {
+                            Name = plugin.Metadata.Name,
+                            Guid = plugin.Metadata.Guid,
+                            PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                            Publisher = plugin.Metadata.Publisher,
+                            Website = plugin.Metadata.Website,
+                            Status = TrackingDevices.PluginLoadError.NoDeviceDependencyDll
+                        });
+                        continue; // Give up on this one :(
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                     "failed with an exception, probably some of its dependencies are missing. " +
+                                     $"Message: {e.Message}, Trace: {e.StackTrace}");
+
+                        // Add the device to the 'attempted' list, mark as unknown
+                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        {
+                            Name = plugin.Metadata.Name,
+                            Guid = plugin.Metadata.Guid,
+                            PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                            Publisher = plugin.Metadata.Publisher,
+                            Website = plugin.Metadata.Website,
+                            Status = TrackingDevices.PluginLoadError.Other
+                        });
+                        continue; // Give up on this one :(
+                    }
+
+                    // It must be good if we're somehow still here
+                    var pluginLocation = Assembly.GetAssembly(plugin.Value.GetType()).Location;
+                    var pluginFolder = Directory.GetParent(pluginLocation).FullName;
+
+                    // Add the device to the 'attempted' list, mark as all fine
+                    Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "to the load-attempted device plugins list (TrackingDevices)...");
+                    TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                    {
+                        Name = plugin.Metadata.Name,
+                        Guid = plugin.Metadata.Guid,
+                        PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                        Publisher = plugin.Metadata.Publisher,
+                        Website = plugin.Metadata.Website,
+                        DeviceFolder = pluginFolder,
+                        Status = TrackingDevices.PluginLoadError.NoError
+                    });
+
+                    // Add the device to the global device list, add the plugin folder path
+                    Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "to the global service endpoints plugins list (TrackingDevices)...");
+                    TrackingDevices.ServiceEndpointsList.Add(plugin.Metadata.Guid, new ServiceEndpoint(
+                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation, plugin.Value)
+                    {
+                        LocalizationResourcesRoot = (new JsonObject(), Path.Join(pluginFolder, "Assets", "Strings"))
+                    });
+
+                    // Set the device's string resources root to its provided folder
+                    // (If it wants to change it, it's gonna need to do that after OnLoad anyway)
+                    Logger.Info($"Registering ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "default root language resource context (TrackingDevices)...");
+                    Interfacing.Plugins.SetLocalizationResourcesRoot(
+                        Path.Join(pluginFolder, "Assets", "Strings"), plugin.Metadata.Guid);
+
+                    Logger.Info($"Telling ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "this it's just been loaded into the core app domain...");
+                    plugin.Value.OnLoad(); // Call the OnLoad handler for the first time
+
+                    Logger.Info($"Service ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) \n" +
+                                $"with the device class library dll at: {pluginLocation}\n" +
+                                $"provides discoverable properties:\nStatus: {plugin.Value.ServiceStatus}\n" +
+                                $"- Status String: {plugin.Value.ServiceStatusString}\n" +
+                                $"- Supports manual calibration: {plugin.Value.ControllerInputActions != null}\n" +
+                                $"- Supports automatic calibration: {plugin.Value.HeadsetPose != null}\n" +
+                                $"- Needs to be restarted on changed: {plugin.Value.IsRestartOnChangesNeeded}\n" +
+                                $"- Supports Settings: {plugin.Value.IsSettingsDaemonSupported}\n" +
+                                $"- Additional Supported Trackers: {plugin.Value.AdditionalSupportedTrackerTypes.ToList()}");
+
+                    // Check if the loaded device is used as anything (AppData.Settings)
+                    Logger.Info($"Checking if ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) has any roles set...");
+                    Logger.Info($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                $"{(AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid ? "is the selected service!" : "does not serve any purpose:/")}");
+
+                    // TODO ALSO DO THIS ON SERVICE SELECTION/CHANGE
+                    if (AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid &&
+                        plugin.Value.ControllerInputActions.TrackingFreezeToggled is not null)
+                        plugin.Value.ControllerInputActions.TrackingFreezeToggled += Main.FreezeActionToggled;
+
+                    if (AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid &&
+                        plugin.Value.ControllerInputActions.SkeletonFlipToggled is not null)
+                        plugin.Value.ControllerInputActions.SkeletonFlipToggled += Main.FlipActionToggled;
+                }
+                catch (Exception e)
+                {
+                    // Add the device to the 'attempted' list, mark as unknown
+                    Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                 "failed with a global outer caught exception. " +
+                                 $"Provided exception Message: {e.Message}, Trace: {e.StackTrace}");
+
+                    TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                    {
+                        Name = plugin.Metadata.Name,
+                        Guid = plugin.Metadata.Guid,
+                        PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                        Publisher = plugin.Metadata.Publisher,
+                        Website = plugin.Metadata.Website,
+                        Status = TrackingDevices.PluginLoadError.Other
+                    });
+                }
+
+            // Check if we have enough plugins to run the app
+            if (TrackingDevices.ServiceEndpointsList.Count < 1)
+            {
+                Logger.Fatal("No plugins (service endpoints) loaded! Shutting down...");
+                Interfacing.Fail("NO SERVICE ENDPOINTS"); // Exit and cause the crash handler to appear
+            }
+
+            Logger.Info("Registration of service endpoint plugins has ended, there are " +
+                        $"{TrackingDevices.ServiceEndpointsList.Count} valid plugins in total.");
         }
         catch (CompositionException e)
         {
@@ -491,16 +674,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                          $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
                          $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
         }
-
-        // Check if we have enough plugins to run the app
-        if (TrackingDevices.TrackingDevicesList.Count < 1)
-        {
-            Logger.Fatal("No plugins (tracking devices) loaded! Shutting down...");
-            Interfacing.Fail(-12); // Exit and cause the crash handler to appear
-        }
-
-        Logger.Info("Registration of tracking device plugins has ended, there are " +
-                    $"{TrackingDevices.TrackingDevicesList.Count} valid plugins in total.");
 
         // Validate the saved base plugin guid
         Logger.Info("Checking if the saved base device exists in loaded plugins...");
@@ -515,7 +688,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Initialize the loaded base device now
         Logger.Info("Initializing the selected base device...");
-        TrackingDevices.GetTrackingDevice().Initialize();
+        TrackingDevices.BaseTrackingDevice.Initialize();
 
         // Validate and initialize the loaded override devices now
         Logger.Info("Checking if saved override devices exist in loaded plugins...");
@@ -544,15 +717,28 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             TrackingDevices.GetDevice(overrideGuid).Device.Initialize();
         }
 
-        Logger.Info("Checking application settings config for loaded tracking devices...");
+        // Validate the saved service plugin guid
+        Logger.Info("Checking if the saved service endpoint exists in loaded plugins...");
+        if (!TrackingDevices.ServiceEndpointsList.ContainsKey(AppData.Settings.ServiceEndpointGuid))
+        {
+            Logger.Info($"The saved service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
+                        $"Resetting it to the first one: ({TrackingDevices.ServiceEndpointsList.First().Key})!");
+            AppData.Settings.ServiceEndpointGuid = TrackingDevices.ServiceEndpointsList.First().Key;
+        }
+
+        // Priority: Connect to the tracking service
+        Logger.Info("Initializing the selected service endpoint...");
+        Interfacing.ServiceEndpointSetup();
+        
+        Logger.Info("Checking application settings config for loaded plugins...");
         AppData.Settings.CheckSettings();
 
         // Second check and try after 3 seconds
         Task.Run(() =>
         {
             // The Base device
-            if (!TrackingDevices.GetTrackingDevice().IsInitialized)
-                TrackingDevices.GetTrackingDevice().Initialize();
+            if (!TrackingDevices.BaseTrackingDevice.IsInitialized)
+                TrackingDevices.BaseTrackingDevice.Initialize();
 
             // All valid override devices
             AppData.Settings.OverrideDevicesGuidMap
@@ -1241,7 +1427,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
 
-        Interfacing.ShowVrToast(
+        Interfacing.ShowServiceToast(
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
     }
