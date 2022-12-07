@@ -17,6 +17,7 @@ using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
 using static Amethyst.Classes.Interfacing;
+using System.Reflection;
 
 namespace Amethyst.MVVM;
 
@@ -355,10 +356,10 @@ public static class ICollectionExtensions
         item.GetFiles("WinRT.Runtime.dll").FirstOrDefault()?.Delete();
 
         // Loop over all the files, load into a separate appdomain/context
-        var loadContext = new AssemblyLoadContext(item.FullName);
-        foreach (var fileInfo in item.GetFiles("*.dll"))
+        foreach (var fileInfo in item.GetFiles("plugin*.dll"))
             try
             {
+                var loadContext = new ModuleAssemblyLoadContext(fileInfo.FullName);
                 var assemblyFile = loadContext.LoadFromAssemblyPath(fileInfo.FullName);
                 var assemblyCatalog = new AssemblyCatalog(assemblyFile);
 
@@ -389,6 +390,31 @@ public static class ICollectionExtensions
             }
 
         return true; // Nah, not this time
+    }
+}
+
+public class ModuleAssemblyLoadContext : AssemblyLoadContext
+{
+    private readonly AssemblyDependencyResolver _resolver;
+
+    internal ModuleAssemblyLoadContext(string assemblyPath) : base(false)
+    {
+        _resolver = new AssemblyDependencyResolver(assemblyPath);
+
+        ResolvingUnmanagedDll += OnResolvingUnmanaged;
+        Resolving += OnResolving;
+    }
+
+    private IntPtr OnResolvingUnmanaged(Assembly assembly, string unmanagedName)
+    {
+        var unmanagedPath = _resolver.ResolveUnmanagedDllToPath(unmanagedName);
+        return unmanagedPath != null ? LoadUnmanagedDllFromPath(unmanagedPath) : IntPtr.Zero;
+    }
+
+    private Assembly OnResolving(AssemblyLoadContext context, AssemblyName assemblyName)
+    {
+        var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
+        return assemblyPath != null ? LoadFromAssemblyPath(assemblyPath) : null;
     }
 }
 
