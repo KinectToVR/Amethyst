@@ -63,7 +63,7 @@ public static class Main
                 Shared.Settings.SettingsTabSetupFinished = true; // Boiler end
             });
     }
-    
+
     private static void UpdateTrackingDevices()
     {
         // Update the base device
@@ -98,6 +98,9 @@ public static class Main
                 device.TrackedJoints.FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist,
                     device.TrackedJoints.FirstOrDefault(new TrackedJoint())).Position;
         }
+
+        // Update service endpoints
+        TrackingDevices.CurrentServiceEndpoint?.Heartbeat();
     }
 
     private static async Task UpdateServerTrackers()
@@ -502,7 +505,7 @@ public static class Main
         Shared.Events.SemSignalStartMain.WaitOne();
 
         Logger.Info("[Main] Starting the main app loop now...");
-        
+
         var vrFrameRate = 110L; // Try running at 110 fps
         Logger.Info($"Desired loop rate: >{vrFrameRate} 1/s");
 

@@ -283,6 +283,10 @@ public static class Interfacing
             // Disconnect all loaded devices
             TrackingDevices.TrackingDevicesList.Values
                 .ToList().ForEach(device => device.Shutdown());
+
+            // Disconnect all loaded services
+            TrackingDevices.ServiceEndpointsList.Values
+                .ToList().ForEach(service => service.Shutdown());
         }
         catch (Exception)
         {
@@ -367,14 +371,15 @@ public static class Interfacing
 
                 // Log ?success
                 Logger.Info($"Connection test has ended, [result: {(result.Status == 0 ? "success" : "fail")}], " +
-                            $"Tested ping time: {PingTime} [ticks]");
+                            $"Message: {result.StatusMessage} Tested ping time: {PingTime} [ticks]");
 
                 // Release
                 PingCheckingThreadsNumber = Math.Clamp(
                     PingCheckingThreadsNumber - 1, 0, MaxPingCheckingThreads + 1);
 
                 // Return the result
-                return (result.Status, result.StatusMessage);
+                return (TrackingDevices.CurrentServiceEndpoint.ServiceStatus,
+                    TrackingDevices.CurrentServiceEndpoint.ServiceStatusString);
             }
             catch (Exception e)
             {
@@ -452,12 +457,13 @@ public static class Interfacing
                 IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
 
             // Split status and message by \n
-            Shared.General.ServerStatusLabel.Text =
-                StringUtils.SplitStatusString(ServiceEndpointStatusString)[0];
-            Shared.General.ServerErrorLabel.Text =
-                StringUtils.SplitStatusString(ServiceEndpointStatusString)[1];
-            Shared.General.ServerErrorWhatText.Text =
-                StringUtils.SplitStatusString(ServiceEndpointStatusString)[2];
+            var message = StringUtils.SplitStatusString(ServiceEndpointStatusString);
+            if (message is null || message.Length < 3)
+                message = new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" };
+
+            Shared.General.ServerStatusLabel.Text = message[0];
+            Shared.General.ServerErrorLabel.Text = message[1];
+            Shared.General.ServerErrorWhatText.Text = message[2];
 
             // Optionally setup & show the re-register button
             Shared.General.ReRegisterButton.Visibility =
@@ -665,13 +671,14 @@ public static class Interfacing
     public static class Plugins
     {
         public static (Vector3 Position, Quaternion Orientation) GetHmdPose =>
-            TrackingDevices.CurrentServiceEndpoint.HeadsetPose?? (Vector3.Zero, Quaternion.Identity);
+            TrackingDevices.CurrentServiceEndpoint.HeadsetPose ?? (Vector3.Zero, Quaternion.Identity);
 
         public static string RequestLocalizedString(string key, string guid)
         {
             try
             {
-                if (string.IsNullOrEmpty(guid) || !TrackingDevices.TrackingDevicesList.ContainsKey(guid))
+                if (string.IsNullOrEmpty(guid) || (!TrackingDevices.TrackingDevicesList.ContainsKey(guid) &&
+                                                   !TrackingDevices.ServiceEndpointsList.ContainsKey(guid)))
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
@@ -679,11 +686,21 @@ public static class Interfacing
                 }
 
                 // Check if the resource root is fine
-                var resourceRoot = TrackingDevices.GetDevice(guid).Device.LocalizationResourcesRoot.Root;
-                if (resourceRoot is not null && resourceRoot.Count > 0)
-                    return resourceRoot.GetNamedString(key);
+                var thisPluginDevice = TrackingDevices.GetDevice(guid).Device;
+                var thisPluginService = TrackingDevices.GetService(guid).Service;
 
-                Logger.Error($"The resource root of device {guid} is empty! Its interface will be broken!");
+                // Check if the request was from a device
+                var resourceRootDevice = thisPluginDevice?.LocalizationResourcesRoot.Root;
+                if (resourceRootDevice is not null && resourceRootDevice.Count > 0)
+                    return resourceRootDevice.GetNamedString(key);
+
+                // Still here? Might have been an endpoint service!
+                var resourceRootService = thisPluginService?.LocalizationResourcesRoot.Root;
+                if (resourceRootService is not null && resourceRootService.Count > 0)
+                    return resourceRootService.GetNamedString(key);
+
+                // Still here?!? We're screwed!
+                Logger.Error($"The resource root of plugin {guid} is empty! Its interface will be broken!");
                 return LocalizedJsonString(key); // Just give up
             }
             catch (Exception e)
@@ -703,7 +720,8 @@ public static class Interfacing
                 Logger.Info($"[Requested by device with GUID {guid}] " +
                             $"Searching for language resources with key \"{AppData.Settings.AppLanguage}\"...");
 
-                if (string.IsNullOrEmpty(guid) || !TrackingDevices.TrackingDevicesList.ContainsKey(guid))
+                if (string.IsNullOrEmpty(guid) || (!TrackingDevices.TrackingDevicesList.ContainsKey(guid) &&
+                                                   !TrackingDevices.ServiceEndpointsList.ContainsKey(guid)))
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
@@ -740,25 +758,56 @@ public static class Interfacing
                 }
 
                 // If everything's ok, load the resources into the current resource tree
+                var thisPluginDevice = TrackingDevices.GetDevice(guid).Device;
+                var thisPluginService = TrackingDevices.GetService(guid).Service;
 
-                // Parse the loaded json
-                TrackingDevices.GetDevice(guid).Device.LocalizationResourcesRoot =
-                    (JsonObject.Parse(File.ReadAllText(resourcePath)), resourcePath);
-
-                // Check if the resource root is fine
-                var resourceRoot = TrackingDevices.GetDevice(guid).Device.LocalizationResourcesRoot.Root;
-                if (resourceRoot is null || resourceRoot.Count <= 0)
+                // Swap-check the caller type
+                if (thisPluginDevice is not null)
                 {
-                    Logger.Error($"[Requested by device with GUID {guid}] " +
-                                 $"Could not load language resources at \"{resourcePath}\"," +
-                                 $"for device {guid}! Its interface will be broken!");
-                    return false; // Just give up
+                    // Parse the loaded json
+                    thisPluginDevice.LocalizationResourcesRoot =
+                        (JsonObject.Parse(File.ReadAllText(resourcePath)), resourcePath);
+
+                    // Check if the resource root is fine
+                    var resourceRoot = thisPluginDevice.LocalizationResourcesRoot.Root;
+                    if (resourceRoot is null || resourceRoot.Count <= 0)
+                    {
+                        Logger.Error($"[Requested by device with GUID {guid}] " +
+                                     $"Could not load language resources at \"{resourcePath}\"," +
+                                     $"for device {guid}! Its interface will be broken!");
+                        return false; // Just give up
+                    }
+
+                    // Still here? 
+                    Logger.Info($"[Requested by device with GUID {guid}] " +
+                                $"Successfully loaded language resources with key \"{AppData.Settings.AppLanguage}\"!");
+                    return true; // Winning it, yay!
                 }
 
-                // Still here? 
-                Logger.Info($"[Requested by device with GUID {guid}] " +
-                            $"Successfully loaded language resources with key \"{AppData.Settings.AppLanguage}\"!");
-                return true; // Winning it, yay!
+                // Swap-check the caller type
+                if (thisPluginService is not null)
+                {
+                    // Parse the loaded json
+                    thisPluginService.LocalizationResourcesRoot =
+                        (JsonObject.Parse(File.ReadAllText(resourcePath)), resourcePath);
+
+                    // Check if the resource root is fine
+                    var resourceRoot = thisPluginService.LocalizationResourcesRoot.Root;
+                    if (resourceRoot is null || resourceRoot.Count <= 0)
+                    {
+                        Logger.Error($"[Requested by device with GUID {guid}] " +
+                                     $"Could not load language resources at \"{resourcePath}\"," +
+                                     $"for device {guid}! Its interface will be broken!");
+                        return false; // Just give up
+                    }
+
+                    // Still here? 
+                    Logger.Info($"[Requested by device with GUID {guid}] " +
+                                $"Successfully loaded language resources with key \"{AppData.Settings.AppLanguage}\"!");
+                    return true; // Winning it, yay!
+                }
+
+                return false; // Oof, what happened?
             }
             catch (Exception e)
             {

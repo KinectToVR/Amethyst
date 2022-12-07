@@ -728,6 +728,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Priority: Connect to the tracking service
         Logger.Info("Initializing the selected service endpoint...");
+        TrackingDevices.CurrentServiceEndpoint.Initialize();
+
+        Logger.Info("Checking the selected service endpoint...");
         Interfacing.ServiceEndpointSetup();
         
         Logger.Info("Checking application settings config for loaded plugins...");

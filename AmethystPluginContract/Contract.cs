@@ -185,21 +185,7 @@ public interface IServiceEndpoint
     ///     The mandatory ones are: waist, left foot, and right foot
     /// </summary>
     public SortedSet<TrackerType> AdditionalSupportedTrackerTypes { get; }
-
-    /// <summary>
-    ///     Mark as true to support manual calibration
-    ///     You'll need to update ControllerInputActions for this
-    /// </summary>
-    [DefaultValue(false)]
-    public bool IsManualCalibrationSupported { get; }
-
-    /// <summary>
-    ///     Mark as true to support automatic calibration
-    ///     The calibrating device will need to provide a hook joint (head)
-    /// </summary>
-    [DefaultValue(false)]
-    public bool IsAutomaticCalibrationSupported { get; }
-
+    
     /// <summary>
     ///     Mark as true to tell the user that they need to restart/
     ///     /in case they want to add more trackers after spawning
@@ -250,6 +236,11 @@ public interface IServiceEndpoint
     ///     This is called after the app loads the plugin
     /// </summary>
     void OnLoad();
+
+    /// <summary>
+    ///     This is called right before the pose compose
+    /// </summary>
+    void Heartbeat();
 
     /// <summary>
     ///     This initializes/connects to the service

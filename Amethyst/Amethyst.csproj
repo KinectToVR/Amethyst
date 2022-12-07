@@ -108,9 +108,6 @@
 	  </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="Controls\JointSettingsExpander.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

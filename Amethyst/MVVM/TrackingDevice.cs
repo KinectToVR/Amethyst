@@ -320,6 +320,12 @@ public class ServiceEndpoint : INotifyPropertyChanged
         Service.OnLoad();
     }
 
+    // This is called right before the pose compose
+    public void Heartbeat()
+    {
+        Service.Heartbeat();
+    }
+
     // This initializes/connects to the service
     public void Initialize()
     {

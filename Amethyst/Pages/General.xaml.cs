@@ -693,7 +693,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Optionally show the binding teaching tip
         if (AppData.Settings.TeachingTipShownFreeze || Interfacing.CurrentPageTag != "general" ||
-            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions == null) return;
+            string.IsNullOrEmpty(TrackingDevices.CurrentServiceEndpoint
+                .ControllerInputActions?.TrackingFreezeActionString)) return;
 
         FreezeTrackingTeachingTip.Title =
             TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.TrackingFreezeActionString;

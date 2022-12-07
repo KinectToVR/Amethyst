@@ -55,6 +55,12 @@ public static class TrackingDevices
         return (TrackingDevicesList.TryGetValue(guid, out var device), device);
     }
 
+    // Get a <exists, tracking device> by guid
+    public static (bool Exists, ServiceEndpoint Service) GetService(string guid)
+    {
+        return (ServiceEndpointsList.TryGetValue(guid, out var service), service);
+    }
+
     public static void UpdateTrackingDevicesInterface()
     {
         if (TrackingDevicesList.Count < 1) return; // Just give up
@@ -296,29 +302,37 @@ public static class TrackingDevices
         Events.ReloadDevicesPageEvent?.Set();
 
         // If this is the first time and happened runtime, also show the notification
-        if (Interfacing.K2AppTrackersSpawned)
+        if (Interfacing.K2AppTrackersSpawned && CurrentServiceEndpoint.IsRestartOnChangesNeeded)
         {
-            if (Settings.RestartButton is not null && showToasts)
-                if (!Settings.RestartButton.IsEnabled)
-                {
-                    Interfacing.ShowToast(
-                        Interfacing.LocalizedJsonString(
-                            "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
-                        Interfacing.LocalizedJsonString(
-                            "/SharedStrings/Toasts/TrackersConfigChanged"),
-                        false, "focus_restart");
+            Logger.Info("Trackers config has changed! " +
+                        "The selected tracking service endpoint needs to restart now!");
 
-                    Interfacing.ShowServiceToast(
-                        Interfacing.LocalizedJsonString(
-                            "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
-                        Interfacing.LocalizedJsonString(
-                            "/SharedStrings/Toasts/TrackersConfigChanged"));
-                }
+            if (Settings.RestartButton is not null &&
+                !Settings.RestartButton.IsEnabled && showToasts)
+            {
+                Interfacing.ShowToast(
+                    Interfacing.LocalizedJsonString(
+                        "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
+                    Interfacing.LocalizedJsonString(
+                        "/SharedStrings/Toasts/TrackersConfigChanged"),
+                    false, "focus_restart");
+
+                Interfacing.ShowServiceToast(
+                    Interfacing.LocalizedJsonString(
+                        "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
+                    Interfacing.LocalizedJsonString(
+                        "/SharedStrings/Toasts/TrackersConfigChanged"));
+            }
 
             // Compare with saved settings and unlock the restart
             if (Settings.RestartButton is not null)
                 Settings.RestartButton.IsEnabled = true;
         }
+
+        // If restarting isn't needed
+        if (!CurrentServiceEndpoint.IsRestartOnChangesNeeded)
+            Logger.Info("Trackers config has changed! " +
+                        "The selected tracking service endpoint doesn't need to restart, though. What a lucky day~!");
 
         // Enable/Disable Flip
         CheckFlipSupport();

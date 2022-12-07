@@ -315,7 +315,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Optionally show the binding teaching tip
         if (!AppData.Settings.TeachingTipShownFlip && Interfacing.CurrentPageTag == "settings" &&
-            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions != null)
+            !string.IsNullOrEmpty(
+                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionString))
         {
             ToggleFlipTeachingTip.Title =
                 TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.SkeletonFlipActionString;
