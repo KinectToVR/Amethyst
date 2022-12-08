@@ -854,6 +854,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Request page reloads
         Shared.Events.RequestInterfaceReload();
+        OnPropertyChanged(); // Reload all
     }
 
     private async Task MainGrid_LoadedHandler()
@@ -961,6 +962,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         }
 
         UpdateIcon.Foreground = Interfacing.CheckingUpdatesNow ? Shared.Main.AttentionBrush : Shared.Main.NeutralBrush;
+        HelpIcon.Foreground = Shared.Main.NeutralBrush;
     }
 
     private async Task ExecuteUpdates()
@@ -1730,5 +1732,25 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
+    private void HelpFlyout_Opening(object sender, object e)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+
+        HelpIcon.Foreground = Shared.Main.AttentionBrush;
+        HelpIconGrid.Translation = Vector3.Zero;
+        HelpIconText.Opacity = 0.0;
+    }
+
+    private void HelpFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+
+        HelpIcon.Foreground = Shared.Main.NeutralBrush;
+        HelpIconGrid.Translation = new Vector3(0, -8, 0);
+        HelpIconText.Opacity = 1.0;
     }
 }
