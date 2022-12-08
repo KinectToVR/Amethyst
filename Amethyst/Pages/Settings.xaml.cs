@@ -776,4 +776,16 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                     .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name), "[[", "]]");
         }
     }
+
+    private void ServiceDropDown_Expanding(Expander sender, ExpanderExpandingEventArgs args)
+    {
+        sender.IsExpanded = TrackingDevices.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
+                            TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
+    }
+
+    private void ServiceDropDown_Collapsed(Expander sender, ExpanderCollapsedEventArgs args)
+    {
+        sender.IsExpanded = TrackingDevices.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
+                            TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
+    }
 }
