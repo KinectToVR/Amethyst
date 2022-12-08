@@ -314,14 +314,16 @@ public static class TrackingDevices
                     Interfacing.LocalizedJsonString(
                         "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
                     Interfacing.LocalizedJsonString(
-                        "/SharedStrings/Toasts/TrackersConfigChanged"),
+                        "/SharedStrings/Toasts/TrackersConfigChanged")
+                        .Replace("{0}", CurrentServiceEndpoint.Name),
                     false, "focus_restart");
 
                 Interfacing.ShowServiceToast(
                     Interfacing.LocalizedJsonString(
                         "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
                     Interfacing.LocalizedJsonString(
-                        "/SharedStrings/Toasts/TrackersConfigChanged"));
+                        "/SharedStrings/Toasts/TrackersConfigChanged")
+                        .Replace("{0}", CurrentServiceEndpoint.Name));
             }
 
             // Compare with saved settings and unlock the restart

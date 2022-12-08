@@ -169,7 +169,7 @@
 
                 <Grid HorizontalAlignment="Stretch" Margin="0,5,0,0">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                               Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/AutoStart'), Mode=OneWay}"
+                               Text="{x:Bind AutoStartLabelText, Mode=OneWay}"
                                x:Name="Captions_AutoStart" Margin="30,0,0,3" />
 
                     <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
@@ -180,8 +180,8 @@
                     <Grid.Resources>
                         <TeachingTip x:Name="AutoStartTeachingTip"
                                      Target="{Binding ElementName=Captions_AutoStart}"
-                                     Title="{x:Bind util:Translator.Get.String('/NUX/Tip7/Title'), Mode=OneWay}"
-                                     Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip7/Content'), Mode=OneWay}"
+                                     Title="{x:Bind AutoStartTipText, Mode=OneWay}"
+                                     Subtitle="{x:Bind AutoStartTipContent, Mode=OneWay}"
                                      CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
                                      ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
                                      PreferredPlacement="Bottom"
@@ -490,8 +490,7 @@
                                             FontWeight="SemiBold" Margin="0,20,0,20" />
 
                                         <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
-                                                   Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/ManageTrackers'), Mode=OneWay}" />
-
+                                                   Text="{x:Bind ManageTrackersText, Mode=OneWay}" />
                                     </StackPanel>
 
                                 </Flyout>
@@ -522,7 +521,8 @@
 
                     <ItemsRepeater ItemsSource="{x:Bind classes:AppData.Settings.TrackersVector, Mode=OneWay}">
                         <DataTemplate x:DataType="classes:AppTracker">
-                            <controls:JointSettingsExpander Role="{x:Bind Role, Mode=OneWay}" Transitions="{x:Bind SettingsExpanderTransitions, Mode=OneWay}" />
+                            <controls:JointSettingsExpander Role="{x:Bind Role, Mode=OneWay}"
+                                                            Transitions="{x:Bind SettingsExpanderTransitions, Mode=OneWay}" />
                         </DataTemplate>
                     </ItemsRepeater>
                 </StackPanel>
@@ -583,19 +583,22 @@
                     </AppBarButton>
 
                     <Button Grid.Column="1" Grid.Row="0" Padding="15,0" Height="40"
-                            Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/RestartSteamVR'), Mode=OneWay}"
+                            Visibility="{x:Bind ServiceNeedsRestart, Mode=OneWay}"
+                            Content="{x:Bind RestartServiceText, Mode=OneWay}"
                             Style="{ThemeResource AccentButtonStyle}" x:Name="RestartButton"
                             Click="RestartButton_Click" FontWeight="SemiBold"
                             HorizontalAlignment="Stretch" VerticalAlignment="Center"
                             FontSize="16" IsEnabled="False" />
 
-                    <StackPanel Grid.Column="0" Orientation="Vertical" Margin="0,2,15,0" Grid.Row="0">
+                    <StackPanel Grid.Column="0" Orientation="Vertical"
+                                Visibility="{x:Bind ServiceNeedsRestart, Mode=OneWay}"
+                                Margin="0,2,15,0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
-                                   Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/TrackersRestart/Line1'), Mode=OneWay}"
+                                   Text="{x:Bind RestartServiceNoteL1, Mode=OneWay}"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
-                                   Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/TrackersRestart/Line2'), Mode=OneWay}"
+                                   Text="{x:Bind RestartServiceNoteL2, Mode=OneWay}"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                     </StackPanel>

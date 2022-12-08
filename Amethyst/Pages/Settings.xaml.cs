@@ -58,6 +58,14 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         SettingsPage.AutoStartTeachingTip = AutoStartTeachingTip;
         SettingsPage.ManageTrackersTeachingTip = ManageTrackersTeachingTip;
 
+        // This 'ease in' transition will affect the added expander
+        AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
+        {
+            tracker.SettingsExpanderTransitions =
+                new TransitionCollection { new RepositionThemeTransition() };
+            tracker.OnPropertyChanged(); // Refresh the transition
+        });
+
         AppData.Settings.TrackersVector.CollectionChanged += (_, _) =>
         {
             // Trackers' collection has changed, 
@@ -65,16 +73,22 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             {
                 // This 'ease in' transition will affect the added expander
                 AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
+                {
                     tracker.SettingsExpanderTransitions =
-                        new TransitionCollection { new ContentThemeTransition() });
+                        new TransitionCollection { new ContentThemeTransition() };
+                    tracker.OnPropertyChanged(); // Refresh the transition
+                });
 
                 // Wait for the transition to end
                 await Task.Delay(200);
 
                 // This 'move' transition will affect all tracker expanders
                 AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
+                {
                     tracker.SettingsExpanderTransitions =
-                        new TransitionCollection { new RepositionThemeTransition() });
+                        new TransitionCollection { new RepositionThemeTransition() };
+                    tracker.OnPropertyChanged(); // Refresh the transition
+                });
             });
         };
 
@@ -336,12 +350,14 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Optionally show the binding teaching tip
         if (!AppData.Settings.TeachingTipShownFlip && Interfacing.CurrentPageTag == "settings" &&
             !string.IsNullOrEmpty(
-                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionString))
+                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionTitleString) &&
+            !string.IsNullOrEmpty(
+                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionContentString))
         {
             ToggleFlipTeachingTip.Title =
-                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.SkeletonFlipActionString;
+                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.SkeletonFlipActionTitleString;
             ToggleFlipTeachingTip.Subtitle =
-                Interfacing.LocalizedJsonString("/SettingsPage/Tips/FlipToggle/Footer");
+                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.SkeletonFlipActionContentString;
 
             ToggleFlipTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
 
@@ -721,5 +737,43 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         await Task.Delay(100);
         AppData.Settings.OnPropertyChanged();
         OnPropertyChanged(); // Retry 2
+    }
+
+    private bool ServiceNeedsRestart => TrackingDevices.CurrentServiceEndpoint.IsRestartOnChangesNeeded;
+
+    private string RestartServiceText => Interfacing.LocalizedJsonString("/SettingsPage/Buttons/RestartService")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string RestartServiceNoteL1 => Interfacing
+        .LocalizedJsonString("/SettingsPage/Captions/TrackersRestart/Line1")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string RestartServiceNoteL2 => Interfacing
+        .LocalizedJsonString("/SettingsPage/Captions/TrackersRestart/Line2")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string AutoStartLabelText => Interfacing.LocalizedJsonString("/SettingsPage/Captions/AutoStart")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string AutoStartTipText => Interfacing.LocalizedJsonString("/NUX/Tip7/Title")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string AutoStartTipContent => Interfacing.LocalizedJsonString("/NUX/Tip7/Content")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string ManageTrackersText
+    {
+        get
+        {
+            if (TrackingDevices.CurrentServiceEndpoint.IsRestartOnChangesNeeded)
+                return Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers")
+                    .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name)
+                    .Replace("[[", "").Replace("]]", "");
+
+            // If the service doesn't need restarting
+            return StringUtils.RemoveBetween(
+                Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers")
+                    .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name), "[[", "]]");
+        }
     }
 }

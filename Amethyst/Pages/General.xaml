@@ -1282,7 +1282,7 @@
                             <TeachingTip x:Name="ToggleTrackersTeachingTip"
                                          Target="{Binding ElementName=ToggleTrackersButton}"
                                          Title="{x:Bind util:Translator.Get.String('/NUX/Tip2/Title'), Mode=OneWay}"
-                                         Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip2/Content'), Mode=OneWay}"
+                                         Subtitle="{x:Bind AutoStartTipText, Mode=OneWay}"
                                          CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
                                          ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
                                          PreferredPlacement="Bottom"
@@ -1406,7 +1406,7 @@
 
                             <StackPanel Orientation="Horizontal" Margin="40,0,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/DriverStatus/Label'), Mode=OneWay}"
+                                           Text="{x:Bind ServiceStatusLabel, Mode=OneWay}"
                                            Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Margin="5,0,0,0" x:Name="ServerStatusLabel"

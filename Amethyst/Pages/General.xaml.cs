@@ -694,12 +694,14 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Optionally show the binding teaching tip
         if (AppData.Settings.TeachingTipShownFreeze || Interfacing.CurrentPageTag != "general" ||
             string.IsNullOrEmpty(TrackingDevices.CurrentServiceEndpoint
-                .ControllerInputActions?.TrackingFreezeActionString)) return;
+                .ControllerInputActions?.TrackingFreezeActionTitleString) ||
+            string.IsNullOrEmpty(TrackingDevices.CurrentServiceEndpoint
+                .ControllerInputActions?.TrackingFreezeActionContentString)) return;
 
         FreezeTrackingTeachingTip.Title =
-            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.TrackingFreezeActionString;
+            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.TrackingFreezeActionTitleString;
         FreezeTrackingTeachingTip.Subtitle =
-            Interfacing.LocalizedJsonString("/GeneralPage/Tips/TrackingFreeze/Footer");
+            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.TrackingFreezeActionContentString;
         FreezeTrackingTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
 
         Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
@@ -1752,6 +1754,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Setup end
         Shared.General.GeneralTabSetupFinished = true;
     }
+
+    private string AutoStartTipText => Interfacing.LocalizedJsonString("/NUX/Tip2/Content")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+    private string ServiceStatusLabel => Interfacing.LocalizedJsonString("/GeneralPage/Captions/DriverStatus/Label")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
 }
 
 public class AttachedString : DependencyObject

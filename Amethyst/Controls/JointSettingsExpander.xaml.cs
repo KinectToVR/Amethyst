@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,11 +18,6 @@ namespace Amethyst.Controls;
 
 public sealed partial class JointSettingsExpander : UserControl, INotifyPropertyChanged
 {
-    private ObservableCollection<AppTracker> _trackers = new();
-
-    // OnPropertyChanged listener for containers
-    public EventHandler PropertyChangedEvent;
-
     public JointSettingsExpander()
     {
         InitializeComponent();
@@ -42,15 +35,7 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
         $"/SharedStrings/Joints/{(Trackers.Count > 1 ? "Pairs" : "Enum")}/" +
         $"{(int)(Trackers.FirstOrDefault(x => x.Role == Role)?.Role ?? TrackerType.TrackerHanded)}");
 
-    private bool IsActive
-    {
-        get => Trackers.All(x => x.IsActive);
-        set
-        {
-            Trackers.ToList().ForEach(x => x.IsActive = value);
-            OnPropertyChanged(); // All
-        }
-    }
+    private bool IsActive => Trackers.All(x => x.IsActive);
 
     private bool IsSupported => Trackers.All(x => x.IsSupported);
 
@@ -92,17 +77,24 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
                 Trackers.FirstOrDefault()?.Role ?? TrackerType.TrackerHanded])
         : Trackers.Count == 1; // Either only (paired or mixed) or only the single ones
 
+    private string NotSupportedText => Interfacing.LocalizedJsonString("/SharedStrings/Joints/NotSupported/Tooltip")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 
     private bool InvertBool(bool v)
     {
         return !v;
+    }
+
+    private Visibility InvertVisibility(bool v)
+    {
+        return !v ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void TrackerCombo_OnDropDownOpened(object sender, object e)

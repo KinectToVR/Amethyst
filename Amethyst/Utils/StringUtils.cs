@@ -1,4 +1,6 @@
-﻿namespace Amethyst.Utils;
+﻿using System.Text.RegularExpressions;
+
+namespace Amethyst.Utils;
 
 public static class StringUtils
 {
@@ -18,5 +20,11 @@ public static class StringUtils
         //    "INVALID STATUS STRING", "E_FIX_YOUR_DAMN_SHIT",
         //    "The status string was invalid, please format it as: [title]\\n[code]\\n[text]"
         //};
+    }
+
+    public static string RemoveBetween(string sourceString, string startTag, string endTag)
+    {
+        var regex = new Regex($"{Regex.Escape(startTag)}(.*?){Regex.Escape(endTag)}", RegexOptions.RightToLeft);
+        return regex.Replace(sourceString, startTag + endTag);
     }
 }
