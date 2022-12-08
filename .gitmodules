@@ -1,6 +1,3 @@
-[submodule "vendor/openvr"]
-	path = vendor/openvr
-	url = https://github.com/ValveSoftware/openvr
 [submodule "vendor/eigen"]
 	path = vendor/eigen
 	url = https://gitlab.com/libeigen/eigen.git
