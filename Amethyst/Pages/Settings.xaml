@@ -522,7 +522,7 @@
 
                     <ItemsRepeater ItemsSource="{x:Bind classes:AppData.Settings.TrackersVector, Mode=OneWay}">
                         <DataTemplate x:DataType="classes:AppTracker">
-                            <controls:JointSettingsExpander Role="{x:Bind Role, Mode=OneWay}" />
+                            <controls:JointSettingsExpander Role="{x:Bind Role, Mode=OneWay}" Transitions="{x:Bind SettingsExpanderTransitions, Mode=OneWay}" />
                         </DataTemplate>
                     </ItemsRepeater>
                 </StackPanel>

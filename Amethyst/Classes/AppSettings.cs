@@ -271,17 +271,12 @@ public class AppSettings : INotifyPropertyChanged
         };
 
         if (!partial)
-            TrackersVector.ToList().ForEach(tracker =>
-            {
-                tracker.IsSupported = TrackingDevices.CurrentServiceEndpoint
-                    .AdditionalSupportedTrackerTypes.Contains(tracker.Role);
-
-                if (!tracker.IsSupported)
-                    Logger.Info($"Tracker role {tracker.Role} is not supported by " +
-                                $"({TrackingDevices.CurrentServiceEndpoint.Guid}, " +
-                                $"{TrackingDevices.CurrentServiceEndpoint.Name})! " +
-                                "Disabling this tracker and marking as unsupported!");
-            });
+            TrackersVector.Where(tracker => !tracker.IsSupported).ToList()
+                .ForEach(tracker => Logger.Info(
+                    $"Tracker role {tracker.Role} is not supported by " +
+                    $"({TrackingDevices.CurrentServiceEndpoint.Guid}, " +
+                    $"{TrackingDevices.CurrentServiceEndpoint.Name})! " +
+                    "Disabling this tracker and marking as unsupported!"));
 
         if (UseTrackerPairs)
             pairedTrackerTypes.ForEach(typePair =>

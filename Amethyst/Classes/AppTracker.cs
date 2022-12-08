@@ -6,6 +6,7 @@ using System.Numerics;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
+using Microsoft.UI.Xaml.Media.Animation;
 using Newtonsoft.Json;
 
 namespace Amethyst.Classes;
@@ -18,10 +19,6 @@ public class AppTracker : INotifyPropertyChanged
 
     // Is this tracker enabled?
     private bool _isActive;
-
-    // Is this tracker supported by the current service?
-    private bool _isSupported;
-
     private bool _isTrackerExpanderOpen;
 
     // Internal filters' data
@@ -179,7 +176,7 @@ public class AppTracker : INotifyPropertyChanged
 
     public bool IsActive
     {
-        get => _isActive && _isSupported;
+        get => _isActive && IsSupported;
         set
         {
             // Don't do anything on no changes
@@ -206,19 +203,9 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     [JsonIgnore]
-    public bool IsSupported
-    {
-        get => _isSupported;
-        set
-        {
-            // Don't do anything on no changes
-            if (_isSupported == value) return;
-
-            _isSupported = value;
-            OnPropertyChanged();
-            AppData.Settings.SaveSettings();
-        }
-    }
+    public bool IsSupported =>
+        Role is TrackerType.TrackerWaist or TrackerType.TrackerLeftFoot or TrackerType.TrackerRightFoot ||
+        (TrackingDevices.CurrentServiceEndpoint?.AdditionalSupportedTrackerTypes.Contains(Role) ?? false);
 
     [JsonIgnore]
     public bool OverridePhysics
@@ -663,4 +650,7 @@ public class AppTracker : INotifyPropertyChanged
     {
         return guid == ManagingDeviceGuid;
     }
+
+    // MVVM: a connection of the transitions each tracker expander should animate
+    [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = new();
 }

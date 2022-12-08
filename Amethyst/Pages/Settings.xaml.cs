@@ -58,6 +58,26 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         SettingsPage.AutoStartTeachingTip = AutoStartTeachingTip;
         SettingsPage.ManageTrackersTeachingTip = ManageTrackersTeachingTip;
 
+        AppData.Settings.TrackersVector.CollectionChanged += (_, _) =>
+        {
+            // Trackers' collection has changed, 
+            Shared.Main.DispatcherQueue.TryEnqueue(async () =>
+            {
+                // This 'ease in' transition will affect the added expander
+                AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
+                    tracker.SettingsExpanderTransitions =
+                        new TransitionCollection { new ContentThemeTransition() });
+
+                // Wait for the transition to end
+                await Task.Delay(200);
+
+                // This 'move' transition will affect all tracker expanders
+                AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
+                    tracker.SettingsExpanderTransitions =
+                        new TransitionCollection { new RepositionThemeTransition() });
+            });
+        };
+
         Logger.Info($"Registering settings MVVM for page: '{GetType().FullName}'...");
         DataContext = AppData.Settings; // Set this settings instance as the context
 
@@ -452,135 +472,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     private void TrackerConfigButton_Click(object sender, RoutedEventArgs e)
     {
-        // Invalid for now
-
-        //_trackerConfigFlyout = new MenuFlyout();
-
-        //for (var index = 0; index <= (int)TrackerType.TrackerKeyboard; index++)
-        //{
-        //    var isAdditional = index is 0 or 3 or 4 or 10 or 11 or 12;
-        //    var menuTrackerToggleItem = new ToggleMenuFlyoutItem
-        //    {
-        //        Text = Interfacing.LocalizedJsonString(
-        //            $"/SharedStrings/Joints/Enum/{index}"),
-        //        IsEnabled = isAdditional, IsChecked = !isAdditional
-        //    };
-
-        //    var currentTracker = (TrackerType)index;
-        //    if (AppData.Settings.TrackersVector.Any(x => x.Role == currentTracker))
-        //    {
-        //        menuTrackerToggleItem.IsChecked = true;
-        //        menuTrackerToggleItem.IsEnabled = true;
-        //    }
-
-        //    menuTrackerToggleItem.Click += async (parent, _) =>
-        //    {
-        //        // Notify of the setup end
-        //        Shared.Settings.SettingsTabSetupFinished = false;
-
-        //        // Create a new tracker / Remove the unchecked one
-        //        if (parent.As<ToggleMenuFlyoutItem>().IsChecked)
-        //            // If not checked, add a new tracker
-        //            AppData.Settings.TrackersVector.Add(new AppTracker
-        //            {
-        //                Role = currentTracker,
-        //                Serial = TypeUtils.TrackerTypeRoleSerialDictionary[currentTracker]
-        //            });
-
-        //        else // If the tracker was unchecked
-        //            for (var t = 0; t < AppData.Settings.TrackersVector.Count; t++)
-        //                if (AppData.Settings.TrackersVector[t].Role == currentTracker)
-        //                {
-        //                    // Make actual changes
-        //                    if (AppData.Settings.TrackersVector[t].IsActive && Interfacing.AppTrackersInitialized)
-        //                        DriverClient.UpdateTrackerStates(new List<(TrackerType Role, bool State)>
-        //                        {
-        //                            (AppData.Settings.TrackersVector[t].Role, false)
-        //                        });
-
-        //                    await Task.Delay(20);
-        //                    AppData.Settings.TrackersVector.RemoveAt(t);
-
-        //                    // If the tracker was on and then removed
-        //                    if (AppData.Settings.TrackersVector[t].IsActive)
-        //                    {
-        //                        // Boiler
-        //                        Shared.Settings.SettingsTabSetupFinished = true;
-
-        //                        // Show the notifications and rebuild
-        //                        TrackingDevices.TrackersConfigChanged();
-
-        //                        // Boiler end
-        //                        Shared.Settings.SettingsTabSetupFinished = false;
-        //                    }
-
-        //                    // Save settings
-        //                    AppData.Settings.SaveSettings();
-        //                }
-
-        //        // TODO Rebuild the joint expander stack
-
-        //        TrackingDevices.CheckFlipSupport();
-
-        //        // Notify of the setup end
-        //        Shared.Settings.SettingsTabSetupFinished = true;
-        //        AppData.Settings.SaveSettings();
-
-        //        // Check if any trackers are enabled
-        //        if (!AppData.Settings.TrackersVector.Any(x => x.IsActive))
-        //        {
-        //            Logger.Warn("All trackers have been disabled, force-enabling the waist tracker!");
-        //            AppData.Settings.TrackersVector[0].IsActive = true;
-
-        //            // Save settings
-        //            AppData.Settings.SaveSettings();
-        //        }
-
-        //        Logger.Info("Requesting a check for already-added trackers...");
-        //        Interfacing.AlreadyAddedTrackersScanRequested = true;
-        //    };
-
-        //    // Append the item
-        //    _trackerConfigFlyout.Items.Add(menuTrackerToggleItem);
-        //}
-
-        ////     var menuPairsToggleItem = new ToggleMenuFlyoutItem
-        ////     {
-        ////         Text = Interfacing.LocalizedJsonString("/SettingsPage/Captions/TrackerPairs"),
-        ////         IsChecked = AppData.Settings.UseTrackerPairs
-        ////     };
-
-        ////     menuPairsToggleItem.Click += (_, _) =>
-        ////     {
-        ////Shared.Settings.SettingsTabSetupFinished = false;
-        ////         AppData.Settings.UseTrackerPairs = sender.As<ToggleMenuFlyoutItem>().IsChecked;
-
-        ////         // TODO tracker pairs
-
-        ////TrackingDevices.CheckFlipSupport();
-
-        ////         // Notify of the setup end
-        ////         Shared.Settings.SettingsTabSetupFinished = true;
-        ////         AppData.Settings.SaveSettings();
-        ////         AppData.Settings.ReadSettings(); // Config check
-        ////     };
-
-        //// Append the item
-        ////_trackerConfigFlyout.Items.Add(new MenuFlyoutSeparator());
-        ////_trackerConfigFlyout.Items.Add(menuPairsToggleItem);
-
-        //_trackerConfigFlyout.Placement = FlyoutPlacementMode.LeftEdgeAlignedBottom;
-        //_trackerConfigFlyout.ShowMode = FlyoutShowMode.Transient;
-        //_trackerConfigFlyout.ShowAt(TrackerConfigButton);
-
-        //// Play a sound
-        //AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
-
-        //_trackerConfigFlyout.Closing += (_, _) =>
-        //{
-        //    // Play a sound
-        //    AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
-        //};
+        // ignored
     }
 
     private async void AddTrackersTeachingTip_ActionButtonClick(TeachingTip sender, object args)

@@ -4,7 +4,7 @@ public static class StringUtils
 {
     public static string[] SplitStatusString(string status)
     {
-        return status is null ? null : status.Split('\n');
+        return status?.Split('\n');
 
         //return new[]
         //{

@@ -39,7 +39,8 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
         AppData.Settings.UseTrackerPairs && x.Role == TypeUtils.PairedTrackerTypeDictionary[Role])).ToList();
 
     private string Header => Interfacing.LocalizedJsonString(
-        $"/SharedStrings/Joints/{(Trackers.Count > 1 ? "Pairs" : "Enum")}/{(int)(Trackers.FirstOrDefault()?.Role ?? TrackerType.TrackerHanded)}");
+        $"/SharedStrings/Joints/{(Trackers.Count > 1 ? "Pairs" : "Enum")}/" +
+        $"{(int)(Trackers.FirstOrDefault(x => x.Role == Role)?.Role ?? TrackerType.TrackerHanded)}");
 
     private bool IsActive
     {
@@ -50,6 +51,8 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
             OnPropertyChanged(); // All
         }
     }
+
+    private bool IsSupported => Trackers.All(x => x.IsSupported);
 
     private bool IsActiveEnabled
     {
@@ -128,7 +131,7 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
                 var trackerBase = tracker.GetTrackerBase();
                 trackerBase.ConnectionState = (sender as ToggleSwitch)!.IsOn;
 
-                await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new []{ trackerBase });
+                await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
                 await Task.Delay(20);
             }
 
