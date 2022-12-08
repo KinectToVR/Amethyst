@@ -198,16 +198,34 @@ public class InputActions
     public EventHandler? SkeletonFlipToggled { get; set; }
 
     /// <summary>
+    ///     [Title]
     ///     Shown when tracking freeze is toggled manually,
     ///     explains what to press to toggle it from here
     ///     Leave null or empty to skip showing anything
     /// </summary>
-    public string? TrackingFreezeActionString { get; }
+    public string? TrackingFreezeActionTitleString { get; }
 
     /// <summary>
+    ///     [Title]
+    ///     Shown when tracking freeze is toggled manually,
+    ///     explains what to press to toggle it from here
+    ///     Leave null or empty to skip showing anything
+    /// </summary>
+    public string? TrackingFreezeActionContentString { get; }
+
+    /// <summary>
+    ///     [Title]
     ///     Shown when skeleton flip is toggled manually,
     ///     explains what to press to toggle it from here
     ///     Leave null or empty to skip showing anything
     /// </summary>
-    public string? SkeletonFlipActionString { get; }
+    public string? SkeletonFlipActionTitleString { get; }
+
+    /// <summary>
+    ///     [Title]
+    ///     Shown when skeleton flip is toggled manually,
+    ///     explains what to press to toggle it from here
+    ///     Leave null or empty to skip showing anything
+    /// </summary>
+    public string? SkeletonFlipActionContentString { get; }
 }
