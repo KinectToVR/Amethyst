@@ -42,7 +42,6 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.AppNotifications;
 using WinRT;
 using WinRT.Interop;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -54,8 +53,10 @@ namespace Amethyst;
 /// </summary>
 public sealed partial class MainWindow : Window, INotifyPropertyChanged
 {
-    private bool _mainPageLoadedOnce;
     private readonly bool _mainPageInitFinished;
+
+    private readonly SemaphoreSlim _rotationFSemaphore = new(0);
+    private bool _mainPageLoadedOnce;
     private SystemBackdropConfiguration m_configurationSource;
     private MicaController m_micaController;
 
@@ -732,7 +733,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         Logger.Info("Checking the selected service endpoint...");
         Interfacing.ServiceEndpointSetup();
-        
+
         Logger.Info("Checking application settings config for loaded plugins...");
         AppData.Settings.CheckSettings();
 
@@ -1103,8 +1104,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             updateError = true;
         }
 
-        // Mark the update footer as inactive
+        // Wait for a full icon revolve
+        await _rotationFSemaphore.WaitAsync();
+
+        // Resume to UI and stop the animation
         IconRotation.Stop();
+
+        // Mark the update footer as inactive
         UpdateIcon.Foreground = Shared.Main.NeutralBrush;
         UpdateIconGrid.Translation = new Vector3(0, -8, 0);
         UpdateIconText.Opacity = 1.0;
@@ -1174,14 +1180,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 UpdateIconText.Opacity = 0.0;
                 UpdateIcon.Foreground = Shared.Main.AttentionBrush;
 
-                // Here check for updates (via external bool)
-                IconRotation.Begin();
-
-                // Check for updates
-                var updateTimer = new Task(() => Task.Delay(1000));
+                IconRotation.Begin(); // Begin animation
 
                 // Check now
-                updateTimer.Start();
                 Interfacing.UpdateFound = false;
 
                 // Dummy for holding change logs
@@ -1292,9 +1293,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 {
                     Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
                 }
-
-                // Limit time to (min) 1s
-                await updateTimer;
+                
+                // Wait for a full icon revolve
+                await _rotationFSemaphore.WaitAsync();
 
                 // Resume to UI and stop the animation
                 IconRotation.Stop();
@@ -1752,5 +1753,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         HelpIcon.Foreground = Shared.Main.NeutralBrush;
         HelpIconGrid.Translation = new Vector3(0, -8, 0);
         HelpIconText.Opacity = 1.0;
+    }
+
+    private void OnIconRotationOnCompleted(object o, object o1)
+    {
+        _rotationFSemaphore.Release();
+
+        IconRotation.Stop(); // Restart
+        IconRotation.Begin();
     }
 }

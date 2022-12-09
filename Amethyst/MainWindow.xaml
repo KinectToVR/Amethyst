@@ -363,7 +363,7 @@
         </muxc:NavigationView>
 
         <Grid.Resources>
-            <Storyboard x:Name="IconRotation" AutoReverse="False" RepeatBehavior="Forever">
+            <Storyboard x:Name="IconRotation" AutoReverse="False" Completed="OnIconRotationOnCompleted">
                 <DoubleAnimation Duration="0:0:1" To="360"
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)"
                                  Storyboard.TargetName="UpdateIcon" />
