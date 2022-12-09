@@ -258,41 +258,41 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Iterate over all directories in .\Plugins dir and add all Plugin* dirs to catalogs
         var pluginDirectoryList = Directory.EnumerateDirectories(
-            Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "Plugins"),
+            Path.Combine(Interfacing.GetProgramLocation().DirectoryName!, "Plugins"),
             "*", SearchOption.TopDirectoryOnly).ToList();
 
         AssemblyLoadContext.Default.LoadFromAssemblyPath(
             Assembly.GetAssembly(typeof(ITrackingDevice))!.Location);
 
         // Search for local plugins
-        Logger.Info("Searching for local devices now...");
+        Logger.Info("Searching for local plugins now...");
         pluginDirectoryList.ForEach(pluginPath =>
             catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath)));
 
         try
         {
             // Load the JSON source into buffer, parse
-            Logger.Info("Searching for external devices now...");
+            Logger.Info("Searching for external plugins now...");
             var jsonRoot = JsonObject.Parse(
                 File.ReadAllText(Interfacing.GetK2AppDataFileDir("amethystpaths.k2path")));
 
-            // Loop over all the external devices and append
-            if (jsonRoot.ContainsKey("external_devices"))
-                jsonRoot.GetNamedArray("external_devices").ToList()
+            // Loop over all the external plugins and append
+            if (jsonRoot.ContainsKey("external_plugins"))
+                jsonRoot.GetNamedArray("external_plugins").ToList()
                     .Select(pluginEntry => Directory.Exists(pluginEntry.ToString())).ToList()
                     .ForEach(pluginPath => catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath.ToString())));
 
-            else Logger.Info("No external devices found! Loading the local ones now...");
+            else Logger.Info("No external plugins found! Loading the local ones now...");
         }
         catch (FileNotFoundException e)
         {
-            Logger.Error($"Checking for external devices has failed, an exception occurred. Message: {e.Message}");
+            Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
             Logger.Error($"Creating new {Interfacing.GetK2AppDataFileDir("amethystpaths.k2path")} config...");
             File.Create(Interfacing.GetK2AppDataFileDir("amethystpaths.k2path")); // Create a placeholder file
         }
         catch (Exception e)
         {
-            Logger.Error($"Checking for external devices has failed, an exception occurred. Message: {e.Message}");
+            Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
         }
 
         if (pluginDirectoryList.Count < 1)
@@ -680,9 +680,21 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Checking if the saved base device exists in loaded plugins...");
         if (!TrackingDevices.TrackingDevicesList.ContainsKey(AppData.Settings.TrackingDeviceGuid))
         {
+            // Find the first device that provides any joints
+            var firstValidDevice = TrackingDevices.TrackingDevicesList.Values
+                .FirstOrDefault(device => device.TrackedJoints.Count > 0, null);
+
+            // Check if we've found such a device
+            if (firstValidDevice is null)
+            {
+                Logger.Fatal("No plugins valid (tracking devices) which provide " +
+                             "at lest 1 tracked joint have been found! Shutting down...");
+                Interfacing.Fail("NO TRACKED JOINTS"); // Exit and show the c/handler
+            }
+
             Logger.Info($"The saved base device ({AppData.Settings.TrackingDeviceGuid}) is invalid! " +
-                        $"Resetting it to the first one: ({TrackingDevices.TrackingDevicesList.First().Key})!");
-            AppData.Settings.TrackingDeviceGuid = TrackingDevices.TrackingDevicesList.First().Key;
+                        $"Resetting it to the first valid tracking device: ({firstValidDevice.Guid})!");
+            AppData.Settings.TrackingDeviceGuid = firstValidDevice.Guid;
         }
 
         Logger.Info("Updating app settings for the selected base device...");
