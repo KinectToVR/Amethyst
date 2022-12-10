@@ -87,6 +87,7 @@
   "/SettingsPage/Buttons/Reset": "Konfig löschen und Amethyst neustarten",
   "/SettingsPage/Buttons/RestartService": "{0} neustrarten",
   "/SettingsPage/Buttons/ViewLogs": "Öffne den Log-Ordner für Amethyst",
+  "/SettingsPage/Buttons/ServiceSettings": "View {0} service settings",
   "/SettingsPage/Captions/AutoStart": "Amethyst automatisch mit {0} starten",
   "/SettingsPage/Captions/CalibrateExtFlip": "Zum Kalibrieren klicken",
   "/SettingsPage/Captions/ExtFlip": "Wenn eingeschaltet: Amethyst entscheidet ob man sich umgedreht hat,\nindem es den derzeit aktiven Taillen-Tracker überprüft",

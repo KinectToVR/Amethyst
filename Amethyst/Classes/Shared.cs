@@ -83,7 +83,7 @@ public static class Shared
             // Navigate only if the selected page isn't currently loaded
             if (page is null || preNavPageType == page) return;
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
+            
             // Switch bring back the current item to the base state
             if (!string.IsNullOrEmpty(preNavPageType?.Name))
                 switch (preNavPageType.FullName)

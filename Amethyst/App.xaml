@@ -51,6 +51,30 @@
                 </Setter>
             </Style>
 
+            <Style x:Key="CardTopStyle" TargetType="StackPanel">
+                <Setter Property="CornerRadius" Value="4,4,0,0" />
+                <Setter Property="Padding" Value="12" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            </Style>
+
+            <Style x:Key="CardMiddleStyle" TargetType="StackPanel">
+                <Setter Property="CornerRadius" Value="0,0,0,0" />
+                <Setter Property="Padding" Value="12" />
+                <Setter Property="BorderThickness" Value="1,0,1,1" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+            </Style>
+
+            <Style x:Key="CardBottomStyle" TargetType="StackPanel">
+                <Setter Property="CornerRadius" Value="0,0,4,4" />
+                <Setter Property="Padding" Value="12" />
+                <Setter Property="BorderThickness" Value="1,0,1,1" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+            </Style>
+
             <!--From WinUI-Gallery-->
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">

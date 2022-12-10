@@ -701,7 +701,7 @@
                                                x:Name="TrackingDeviceStatusLabel" />
 
                                     <SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                                 Margin="0,0,3,0" CornerRadius="4" Height="35" Width="160"
+                                                 Margin="0,0,3,0" CornerRadius="4" Height="35" MinWidth="160"
                                                  HorizontalAlignment="Right" VerticalAlignment="Top"
                                                  Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Reconnect'), Mode=OneWay}"
                                                  x:Name="ReconnectDeviceButton" Click="ReconnectDeviceButton_Click">
@@ -764,7 +764,7 @@
                                             Margin="0,0,3,0" CornerRadius="4"
                                             Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/SetAs/Header'), Mode=OneWay}"
                                             ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/SetAs/Header/ToolTip'), Mode=OneWay}"
-                                            Height="35" Width="160" x:Name="SetThisDeviceAsButton"
+                                            Height="35" MinWidth="160" x:Name="SetThisDeviceAsButton"
                                             HorizontalAlignment="Right" VerticalAlignment="Top">
 
                                         <Button.Flyout>

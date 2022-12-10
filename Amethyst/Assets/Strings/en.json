@@ -87,6 +87,7 @@
   "/SettingsPage/Buttons/Reset": "Delete configuration and restart",
   "/SettingsPage/Buttons/RestartService": "Restart {0}",
   "/SettingsPage/Buttons/ViewLogs": "Open Amethyst's logs folder",
+  "/SettingsPage/Buttons/ServiceSettings": "View {0} service settings",
   "/SettingsPage/Captions/AutoStart": "Automatically start with {0}",
   "/SettingsPage/Captions/CalibrateExtFlip": "Click to calibrate",
   "/SettingsPage/Captions/ExtFlip": "When turned on: Amethyst will decide if you are turned back,\nchecking the currently active external Waist Tracker (if present)",

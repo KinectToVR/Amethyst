@@ -203,7 +203,7 @@ public class InputActions
     ///     explains what to press to toggle it from here
     ///     Leave null or empty to skip showing anything
     /// </summary>
-    public string? TrackingFreezeActionTitleString { get; }
+    public string? TrackingFreezeActionTitleString { get; set; }
 
     /// <summary>
     ///     [Title]
@@ -211,7 +211,7 @@ public class InputActions
     ///     explains what to press to toggle it from here
     ///     Leave null or empty to skip showing anything
     /// </summary>
-    public string? TrackingFreezeActionContentString { get; }
+    public string? TrackingFreezeActionContentString { get; set; }
 
     /// <summary>
     ///     [Title]
@@ -219,7 +219,7 @@ public class InputActions
     ///     explains what to press to toggle it from here
     ///     Leave null or empty to skip showing anything
     /// </summary>
-    public string? SkeletonFlipActionTitleString { get; }
+    public string? SkeletonFlipActionTitleString { get; set; }
 
     /// <summary>
     ///     [Title]
@@ -227,5 +227,5 @@ public class InputActions
     ///     explains what to press to toggle it from here
     ///     Leave null or empty to skip showing anything
     /// </summary>
-    public string? SkeletonFlipActionContentString { get; }
+    public string? SkeletonFlipActionContentString { get; set; }
 }

@@ -1460,8 +1460,8 @@
 
                             <!--If this button is visible, set the (upper two)'s height to 40-->
                             <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    x:Name="ReRegisterButton" Click="ReRegisterButton_Click" FontWeight="SemiBold"
-                                    Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/ReRegister'), Mode=OneWay}"
+                                    x:Name="ServiceSettingsButton" Click="ServiceSettingsButton_Click" FontWeight="SemiBold"
+                                    Content="{x:Bind ServiceSettingsText, Mode=OneWay}"
                                     Margin="40,10" FontSize="15" Visibility="Collapsed" />
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">

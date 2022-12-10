@@ -630,60 +630,121 @@
                             x:Name="ServiceDropDownContainer" Margin="0,20,0,10">
                     <StackPanel.Transitions>
                         <TransitionCollection>
-                            <ReorderThemeTransition />
+                            <RepositionThemeTransition />
                         </TransitionCollection>
                     </StackPanel.Transitions>
 
                     <TextBlock FontWeight="SemiBold" FontSize="25" Text="Tracking Output" />
 
-                    <Grid x:Name="ServiceDropDownGrid">
-                        <Expander Margin="0,10,0,0"
-                                  x:Name="ServiceDropDown" MinHeight="75"
-                                  Expanding="ServiceDropDown_Expanding"
-                                  Collapsed="ServiceDropDown_Collapsed"
-                                  ExpandDirection="Down" HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Stretch">
+                    <StackPanel Margin="0,10,0,0" Style="{ThemeResource CardTopStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="5*" />
+                            </Grid.ColumnDefinitions>
 
-                            <Expander.Header>
-                                <Grid Padding="2,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*" />
-                                        <ColumnDefinition Width="5*" />
-                                    </Grid.ColumnDefinitions>
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                       FontWeight="SemiBold" FontSize="16" Text="Send trackers to:"
+                                       Margin="5,0,0,0" Grid.Column="0" />
 
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="SemiBold" FontSize="16" Text="Send trackers to:"
-                                               Margin="0,0,20,0" Grid.Column="0" />
+                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center"
+                                      Height="48" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+                                      Grid.Column="1" Margin="0,0,0,0" 
+                                      SelectionChanged="SelectedServiceComboBox_SelectionChanged"
+                                      DropDownOpened="ServiceCombo_OnDropDownOpened"
+                                      DropDownClosed="ServiceCombo_OnDropDownClosed"
+                                      ItemsSource="{x:Bind LoadedServiceNames, Mode=OneWay}"
+                                      SelectedIndex="{x:Bind SelectedServiceIndex, Mode=OneWay}" />
+                        </Grid>
+                    </StackPanel>
 
-                                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center"
-                                              Height="48" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                              Grid.Column="1" Margin="0,0,8,0">
-                                        <ComboBoxItem Content="me!" />
-                                        <ComboBoxItem Content="me!" />
-                                        <ComboBoxItem Content="me!" />
-                                    </ComboBox>
-                                </Grid>
-                            </Expander.Header>
+                    <StackPanel Style="{ThemeResource CardMiddleStyle}"
+                                CornerRadius="{x:Bind ServiceControlsCornerRadius, Mode=OneWay}">
+                        <Grid Margin="5,0,0,0" HorizontalAlignment="Stretch">
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                                       Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/DeviceStatus'), Mode=OneWay}"
+                                       Foreground="{ThemeResource ControlDisplayTextBrush}" />
 
-                            <Expander.Content>
-                                <StackPanel Orientation="Vertical" Padding="0,-5" />
-                            </Expander.Content>
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                                       FontWeight="SemiBold" Text="{x:Bind ServiceStatusText[0], Mode=OneWay}" 
+                                       Margin="55,0,0,0" />
 
-                            <Expander.Resources>
-                                <!--Other resources, styles-->
-                                <ResourceDictionary>
-                                    <ResourceDictionary.MergedDictionaries>
-                                        <ResourceDictionary>
-                                            <!-- ReSharper disable once Xaml.RedundantResource -->
-                                            <Thickness x:Key="ExpanderChevronMargin">0,0,0,0</Thickness>
-                                            <!-- ReSharper disable once Xaml.RedundantResource -->
-                                            <x:Double x:Key="ExpanderChevronButtonSize">0</x:Double>
-                                        </ResourceDictionary>
-                                    </ResourceDictionary.MergedDictionaries>
-                                </ResourceDictionary>
-                            </Expander.Resources>
-                        </Expander>
-                    </Grid>
+                            <SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                         CornerRadius="4" Height="35" MinWidth="160"
+                                         HorizontalAlignment="Right" VerticalAlignment="Top"
+                                         Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Reconnect'), Mode=OneWay}"
+                                         Click="RefreshServiceButton_Click">
+
+                                <SplitButton.Flyout>
+                                    <Flyout Placement="Bottom" x:Name="AlternativeConnectionOptionsFlyout"
+                                            Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
+                                        <Flyout.FlyoutPresenterStyle>
+                                            <Style TargetType="FlyoutPresenter">
+                                                <Setter Property="CornerRadius" Value="8" />
+                                                <Setter Property="Background"
+                                                        Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                            </Style>
+                                        </Flyout.FlyoutPresenterStyle>
+
+                                        <StackPanel Orientation="Vertical">
+                                            <Button CornerRadius="4" Height="35" HorizontalAlignment="Stretch"
+                                                    Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Disconnect'), Mode=OneWay}"
+                                                    FontWeight="SemiBold" Click="ShutdownServiceButton_Click" />
+                                        </StackPanel>
+                                    </Flyout>
+                                </SplitButton.Flyout>
+                            </SplitButton>
+                        </Grid>
+
+                        <Grid Margin="0,5,0,0" HorizontalAlignment="Stretch"
+                              Visibility="{x:Bind ServiceStatusError, Mode=OneWay}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="38" MinWidth="0" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+
+                                  Padding="0,0,5,10" Width="Auto" Grid.Column="0"
+                                  MinHeight="115" Height="Auto" CornerRadius="4">
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                                           FontWeight="SemiBold" FontFamily="Consolas"
+                                           Text="{x:Bind ServiceStatusText[1], Mode=OneWay}" 
+                                           x:Name="TrackingDeviceErrorLabel" Margin="10,7,0,0"
+                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                                           FontWeight="SemiBold" Margin="10,30,5,0"
+                                           Text="{x:Bind ServiceStatusText[2], Mode=OneWay}" 
+                                           Foreground="{ThemeResource ControlDisplayTextBrush}"
+                                           TextWrapping="WrapWholeWords" />
+                            </Grid>
+
+                            <StackPanel Grid.Column="2" Orientation="Vertical">
+                                <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Margin="0,0,0,5" CornerRadius="4"
+                                        Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/ViewDocs'), Mode=OneWay}"
+                                        Click="OpenDocsButton_Click" Height="55" Width="160"
+                                        Style="{ThemeResource AccentButtonStyle}"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top" />
+
+                                <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                        Margin="0,0,0,0" CornerRadius="4"
+                                        Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/JoinDiscord'), Mode=OneWay}"
+                                        Height="55" Width="160" Click="OpenDiscordButton_Click"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Style="{ThemeResource CardBottomStyle}"
+                                Visibility="{x:Bind ServiceSupportsSettings, Mode=OneWay}">
+                        <ItemsControl ItemsSource="{x:Bind ServiceSettingsPage, Mode=OneWay}" />
+                    </StackPanel>
                 </StackPanel>
 
                 <TextBlock

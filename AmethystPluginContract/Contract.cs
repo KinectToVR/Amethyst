@@ -330,6 +330,11 @@ public interface IAmethystHost
     void Log(string message, LogSeverity severity);
 
     /// <summary>
+    ///     Play a sound from the resources
+    /// </summary>
+    void PlayAppSound(SoundType sound);
+
+    /// <summary>
     ///     Request a refresh of the status/name/etc. interface
     /// </summary>
     void RefreshStatusInterface();

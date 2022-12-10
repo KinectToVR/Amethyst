@@ -118,3 +118,25 @@ public enum JointPositionTrackingOption
     // Filter Off
     NoPositionTrackingFilter
 }
+
+// Sound types
+public enum SoundType
+{
+    CalibrationAborted,
+    CalibrationComplete,
+    CalibrationPointCaptured,
+    CalibrationStart,
+    CalibrationTick,
+    Error,
+    Focus,
+    GoBack,
+    Hide,
+    Invoke,
+    MoveNext,
+    MovePrevious,
+    Show,
+    ToggleOff,
+    ToggleOn,
+    TrackersConnected,
+    TrackersDisconnected
+}

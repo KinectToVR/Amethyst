@@ -23,6 +23,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Animation;
 using WinRT;
 using static Amethyst.Classes.Shared.TeachingTips;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -739,8 +740,138 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         OnPropertyChanged(); // Retry 2
     }
 
+    private void RefreshServiceButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
+    {
+        Logger.Info($"Now reinitializing service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid}...");
+        TrackingDevices.CurrentServiceEndpoint.Initialize();
+
+        // Force refresh all the valid pages
+        Shared.Events.RequestInterfaceReload(false);
+
+        // Update other components (may be moved to MVVM)
+        TrackingDevices.HandleDeviceRefresh(false);
+        TrackingDevices.UpdateTrackingDevicesInterface();
+        AlternativeConnectionOptionsFlyout.Hide();
+
+        // Update the page UI
+        OnPropertyChanged();
+    }
+
+    private void ShutdownServiceButton_Click(object sender, RoutedEventArgs e)
+    {
+        Logger.Info($"Now shutting down service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid}...");
+        TrackingDevices.CurrentServiceEndpoint.Shutdown();
+
+        // Force refresh all the valid pages
+        Shared.Events.RequestInterfaceReload(false);
+
+        // Update other components (may be moved to MVVM)
+        TrackingDevices.HandleDeviceRefresh(false);
+        TrackingDevices.UpdateTrackingDevicesInterface();
+        AlternativeConnectionOptionsFlyout.Hide();
+
+        // Update the page UI
+        OnPropertyChanged();
+    }
+
+    private async void OpenDocsButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        await Launcher.LaunchUriAsync(
+            new Uri($"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"));
+    }
+
+    private async void OpenDiscordButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        await Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBQCRDG"));
+    }
+
+    private void SelectedServiceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if ((sender as ComboBox)!.SelectedIndex < 0)
+            (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
+
+        // Get the selected device by its vector index
+        var selectedDevice = TrackingDevices.ServiceEndpointsList.Values
+            .ElementAt((sender as ComboBox)!.SelectedIndex);
+
+        // Check if not null
+        if (selectedDevice is null)
+        {
+            Logger.Info("The newly selected device appears to be null, aborting!");
+            return; // Abandon this one and don't care further
+        }
+
+        // Check if the selected device isn't already set
+        if (selectedDevice == TrackingDevices.CurrentServiceEndpoint) return;
+
+        Logger.Info("The selected service endpoint was requested to be changed to" +
+                    $"({selectedDevice.Guid}, {selectedDevice.Name})!");
+
+        AppData.Settings.ServiceEndpointGuid = selectedDevice.Guid;
+
+        // Re-initialize if not connected for some reason
+        if (TrackingDevices.CurrentServiceEndpoint.StatusError)
+        {
+            Logger.Info("Now reinitializing service endpoint " +
+                        $"{TrackingDevices.CurrentServiceEndpoint.Guid}...");
+            TrackingDevices.CurrentServiceEndpoint.Initialize();
+        }
+
+        // Refresh everything
+        OnPropertyChanged();
+    }
+
+    private void ServiceCombo_OnDropDownOpened(object sender, object e)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    private void ServiceCombo_OnDropDownClosed(object sender, object e)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+    }
+
+    // MVVM stuff: service settings and its status
+    private IEnumerable<Page> ServiceSettingsPage => new[]
+    {
+        TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot as Page
+    };
+
+    private IEnumerable<string> LoadedServiceNames =>
+        TrackingDevices.ServiceEndpointsList.Values.Select(service => service.Name);
+
+    private int SelectedServiceIndex =>
+        TrackingDevices.ServiceEndpointsList.Values.ToList().IndexOf(TrackingDevices.CurrentServiceEndpoint);
+
+    private bool ServiceStatusError => TrackingDevices.CurrentServiceEndpoint.StatusError;
+
+    private bool ServiceSupportsSettings => TrackingDevices.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
+                                            TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
+
+    private string[] ServiceStatusText
+    {
+        get
+        {
+            var message = StringUtils.SplitStatusString(TrackingDevices.CurrentServiceEndpoint.ServiceStatusString);
+            return message is null || message.Length < 3
+                ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" }
+                : message; // If everything is all right this time
+        }
+    }
+
     private bool ServiceNeedsRestart => TrackingDevices.CurrentServiceEndpoint.IsRestartOnChangesNeeded;
 
+    // Dynamically switch between CardMiddleStyle and CardBottomStyle
+    private CornerRadius ServiceControlsCornerRadius =>
+        ServiceSupportsSettings ? new CornerRadius(0) : new CornerRadius(0, 0, 4, 4);
+
+    // MVVM stuff: bound strings with placeholders
     private string RestartServiceText => Interfacing.LocalizedJsonString("/SettingsPage/Buttons/RestartService")
         .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
 
@@ -775,17 +906,5 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers")
                     .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name), "[[", "]]");
         }
-    }
-
-    private void ServiceDropDown_Expanding(Expander sender, ExpanderExpandingEventArgs args)
-    {
-        sender.IsExpanded = TrackingDevices.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
-                            TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
-    }
-
-    private void ServiceDropDown_Collapsed(Expander sender, ExpanderCollapsedEventArgs args)
-    {
-        sender.IsExpanded = TrackingDevices.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
-                            TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
     }
 }

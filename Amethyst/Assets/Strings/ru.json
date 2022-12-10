@@ -87,6 +87,7 @@
   "/SettingsPage/Buttons/Reset": "Удалить конфигурацию и перезапустить",
   "/SettingsPage/Buttons/RestartService": "Перезапустить {0}",
   "/SettingsPage/Buttons/ViewLogs": "Откройте папку журналов Amethyst",
+  "/SettingsPage/Buttons/ServiceSettings": "View {0} service settings",
   "/SettingsPage/Captions/AutoStart": "Автоматически запускать при открытии {0}",
   "/SettingsPage/Captions/CalibrateExtFlip": "Нажмите для калибровки",
   "/SettingsPage/Captions/ExtFlip": "Когда включено: Amethyst будет решать, если вы повернуты назад,\nпроверяя текущий активный трекер пояса",

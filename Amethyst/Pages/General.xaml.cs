@@ -64,7 +64,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.General.ForceRenderCheckBox = ForceRenderCheckBox;
         Shared.General.OffsetsButton = OffsetsButton;
         Shared.General.CalibrationButton = CalibrationButton;
-        Shared.General.ReRegisterButton = ReRegisterButton;
+        Shared.General.ReRegisterButton = ServiceSettingsButton;
         Shared.General.ServerOpenDiscordButton = ServerOpenDiscordButton;
         Shared.General.DeviceNameLabel = SelectedDeviceNameLabel;
         Shared.General.DeviceStatusLabel = TrackingDeviceStatusLabel;
@@ -937,23 +937,22 @@ public sealed partial class General : Page, INotifyPropertyChanged
         }));
     }
 
-    private void ReRegisterButton_Click(object sender, RoutedEventArgs e)
+    private async void ServiceSettingsButton_Click(object sender, RoutedEventArgs e)
     {
-        if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
-                "K2CrashHandler", "K2CrashHandler.exe")))
-        {
-            Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
-                "K2CrashHandler", "K2CrashHandler.exe"));
-        }
-        else
-        {
-            Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
-            SetErrorFlyoutText.Text = Interfacing.LocalizedJsonString("/SettingsPage/ReRegister/Error/NotFound");
-            SetErrorFlyout.ShowAt(ReRegisterButton, new FlyoutShowOptions
-            {
-                Placement = FlyoutPlacementMode.RightEdgeAlignedBottom
-            });
-        }
+        // Go to the bottom of the settings page to view service endpoint settings
+
+        // Navigate to the settings page
+        Shared.Main.MainNavigationView.SelectedItem =
+            Shared.Main.MainNavigationView.MenuItems[1];
+
+        Shared.Main.NavigateToPage("settings",
+            new EntranceNavigationTransitionInfo());
+
+        await Task.Delay(750);
+
+        Shared.Settings.PageMainScrollViewer?.UpdateLayout();
+        Shared.Settings.PageMainScrollViewer?.ChangeView(null,
+            Shared.Settings.PageMainScrollViewer?.ExtentHeight ?? 0, null);
     }
 
     private void SkeletonDrawingCanvas_Loaded(object sender, RoutedEventArgs e)
@@ -1755,8 +1754,12 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.General.GeneralTabSetupFinished = true;
     }
 
+    private string ServiceSettingsText => Interfacing.LocalizedJsonString("/SettingsPage/Buttons/ServiceSettings")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
     private string AutoStartTipText => Interfacing.LocalizedJsonString("/NUX/Tip2/Content")
         .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
     private string ServiceStatusLabel => Interfacing.LocalizedJsonString("/GeneralPage/Captions/DriverStatus/Label")
         .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
 }

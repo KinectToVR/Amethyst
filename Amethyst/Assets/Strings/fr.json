@@ -87,6 +87,7 @@
   "/SettingsPage/Buttons/Reset": "Supprimer la configuration et relancer",
   "/SettingsPage/Buttons/RestartService": "Relancer {0}",
   "/SettingsPage/Buttons/ViewLogs": "Ouvrez le dossier des logs d'Amethyst",
+  "/SettingsPage/Buttons/ServiceSettings": "View {0} service settings",
   "/SettingsPage/Captions/AutoStart": "Lancer automatiquement avec {0}",
   "/SettingsPage/Captions/CalibrateExtFlip": "Cliquez pour calibrer",
   "/SettingsPage/Captions/ExtFlip": "Lorsqu'actif: Amethyst décidera si vous êtes retourné\nen se basant sur le tracker actif avec le rôle de taille.",

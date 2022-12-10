@@ -226,7 +226,7 @@ public class ServiceEndpoint : INotifyPropertyChanged
     // Additional supported tracker types set
     // The mandatory ones are: waist, left foot, and right foot
     public SortedSet<TrackerType> AdditionalSupportedTrackerTypes => Service.AdditionalSupportedTrackerTypes;
-    
+
     // Mark as true to tell the user that they need to restart/
     // /in case they want to add more trackers after spawning
     // This is the case with OpenVR, where settings need to be reloaded
@@ -288,7 +288,7 @@ public class ServiceEndpoint : INotifyPropertyChanged
     // Get the absolute pose of the HMD, calibrated against the play space
     // Return null if unknown to the service or unavailable
     // You'll need to provide this to support automatic calibration
-    public (Vector3 Position, Quaternion Orientation)? HeadsetPose => Service.HeadsetPose; 
+    public (Vector3 Position, Quaternion Orientation)? HeadsetPose => Service.HeadsetPose;
 
     // Find an already-existing tracker and get its pose
     // For no results found return null, also check if it's from amethyst
@@ -429,10 +429,10 @@ public class PluginHost : IAmethystHost
     // Get the HMD Yaw (exclusively)
     public double HmdOrientationYaw =>
         Calibration.QuaternionYaw(Interfacing.Plugins.GetHmdPose.Orientation);
-    
+
     // Get the raw OpenVRs HMD pose
     public (Vector3 Position, Quaternion Orientation) HmdPose => Interfacing.Plugins.GetHmdPose;
-    
+
     // Log a message to Amethyst logs : handler
     public void Log(string message, LogSeverity severity)
     {
@@ -455,6 +455,12 @@ public class PluginHost : IAmethystHost
                 Logger.Info(message);
                 break;
         }
+    }
+
+    // Play a custom sound from app resources
+    public void PlayAppSound(SoundType sound)
+    {
+        AppSounds.PlayAppSound((AppSounds.AppSoundType)sound);
     }
 
     // Request a refresh of the status/name/etc. interface
