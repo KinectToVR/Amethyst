@@ -797,23 +797,36 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
 
         // Get the selected device by its vector index
-        var selectedDevice = TrackingDevices.ServiceEndpointsList.Values
+        var selectedService = TrackingDevices.ServiceEndpointsList.Values
             .ElementAt((sender as ComboBox)!.SelectedIndex);
 
         // Check if not null
-        if (selectedDevice is null)
+        if (selectedService is null)
         {
-            Logger.Info("The newly selected device appears to be null, aborting!");
+            Logger.Info("The newly selected service appears to be null, aborting!");
             return; // Abandon this one and don't care further
         }
 
-        // Check if the selected device isn't already set
-        if (selectedDevice == TrackingDevices.CurrentServiceEndpoint) return;
+        // Check if the selected service isn't already set
+        if (selectedService == TrackingDevices.CurrentServiceEndpoint) return;
+        Logger.Info("The selected service endpoint was requested to be changed to " +
+                    $"({selectedService.Guid}, {selectedService.Name})!");
 
-        Logger.Info("The selected service endpoint was requested to be changed to" +
-                    $"({selectedDevice.Guid}, {selectedDevice.Name})!");
+        try
+        {
+            // Try disabling the currently selected service endpoint
+            Logger.Info("Shutting down the currently selected service " +
+                        $"({TrackingDevices.CurrentServiceEndpoint.Guid}, " +
+                        $"{TrackingDevices.CurrentServiceEndpoint.Name})...");
 
-        AppData.Settings.ServiceEndpointGuid = selectedDevice.Guid;
+            TrackingDevices.CurrentServiceEndpoint.Shutdown();
+        }
+        catch
+        {
+            // ignored
+        }
+
+        AppData.Settings.ServiceEndpointGuid = selectedService.Guid;
 
         // Re-initialize if not connected for some reason
         if (TrackingDevices.CurrentServiceEndpoint.StatusError)
