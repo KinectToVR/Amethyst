@@ -598,10 +598,8 @@ public static class Main
 
                         // Wait a moment
                         await Task.Delay(200);
-
-                        // -13 is the code for giving up then, I guess
-                        // The user will be prompted to reset the config (opt)
-                        Interfacing.Fail("GIVE UP TOO MUCH CRASHES KYS");
+                        Interfacing.Fail(Interfacing.LocalizedJsonString(
+                            "/CrashHandler/Content/Crash/Panic"));
                         break;
                 }
             }

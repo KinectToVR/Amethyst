@@ -298,7 +298,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         if (pluginDirectoryList.Count < 1)
         {
             Logger.Fatal("No plugins directories found! Shutting down...");
-            Interfacing.Fail("NO PLUGIN DIRECTORIES"); // Exit and cause the crash handler to appear
+            Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoPlugins"));
         }
 
         Logger.Info($"Found {pluginDirectoryList.Count} potentially valid plugin directories...");
@@ -481,7 +481,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             if (TrackingDevices.TrackingDevicesList.Count < 1)
             {
                 Logger.Fatal("No plugins (tracking devices) loaded! Shutting down...");
-                Interfacing.Fail("NO TRACKING PROVIDERS"); // Exit and cause the crash handler to appear
+                Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoDevices"));
             }
 
             Logger.Info("Registration of tracking device plugins has ended, there are " +
@@ -663,7 +663,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             if (TrackingDevices.ServiceEndpointsList.Count < 1)
             {
                 Logger.Fatal("No plugins (service endpoints) loaded! Shutting down...");
-                Interfacing.Fail("NO SERVICE ENDPOINTS"); // Exit and cause the crash handler to appear
+                Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoServices"));
             }
 
             Logger.Info("Registration of service endpoint plugins has ended, there are " +
@@ -689,7 +689,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             {
                 Logger.Fatal("No plugins valid (tracking devices) which provide " +
                              "at lest 1 tracked joint have been found! Shutting down...");
-                Interfacing.Fail("NO TRACKED JOINTS"); // Exit and show the c/handler
+                Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoJoints"));
             }
 
             Logger.Info($"The saved base device ({AppData.Settings.TrackingDeviceGuid}) is invalid! " +
@@ -1305,7 +1305,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 {
                     Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
                 }
-                
+
                 // Wait for a full icon revolve
                 await _rotationFSemaphore.WaitAsync();
 
