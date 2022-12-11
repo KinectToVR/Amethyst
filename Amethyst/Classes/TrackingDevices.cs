@@ -189,7 +189,8 @@ public static class TrackingDevices
         // Just give up if not set up yet
         if (Devices.ErrorWhatText is null) return;
 
-        Devices.DevicesSignalJoints = false; // Block signals
+        var jointsValidBackup = Devices.DevicesJointsValid;
+        Devices.DevicesJointsValid = false; // Block signals
         var currentDevice = GetDevice(AppData.Settings.SelectedTrackingDeviceGuid);
 
         if (shouldReconnect) currentDevice.Device.Initialize();
@@ -218,6 +219,9 @@ public static class TrackingDevices
         Devices.SelectedDeviceSettingsRootLayoutPanel.Children.Clear();
         if (currentDevice.Device.SettingsInterfaceRoot is Page root)
             Devices.SelectedDeviceSettingsRootLayoutPanel.Children.Add(root);
+
+        // We're done
+        Devices.DevicesJointsValid = jointsValidBackup;
     }
 
     public static bool IsExternalFlipSupportable()

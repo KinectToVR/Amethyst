@@ -161,7 +161,7 @@ public class AppSettings : INotifyPropertyChanged
         set
         {
             _selectedTrackingDeviceGuid = value;
-            OnPropertyChanged("SelectedTrackingDeviceGuid");
+            OnPropertyChanged(); // Refresh all
         }
     }
 
@@ -171,6 +171,7 @@ public class AppSettings : INotifyPropertyChanged
     // Save settings
     public void SaveSettings()
     {
+        if (CheckingSettings) return;
         try
         {
             // Save application settings to $env:AppData/Amethyst/
@@ -202,10 +203,13 @@ public class AppSettings : INotifyPropertyChanged
         CheckSettings(true);
     }
 
+    [JsonIgnore] public static bool CheckingSettings { get; private set; } = false;
+
     public void CheckSettings(bool partial = false, TrackingDevice device = null)
     {
         // Basic config: global and pre-setup settings
         Logger.Info("Checking AppSettings [global] configuration...");
+        CheckingSettings = true; // Don't check interface
 
         // Check if the trackers vector is broken
         var vectorBroken = TrackersVector.Count < 7;
@@ -239,9 +243,9 @@ public class AppSettings : INotifyPropertyChanged
         // If the vector was broken, override waist & feet statuses
         if (vectorBroken)
         {
-            TrackersVector[0].IsActive = true;
-            TrackersVector[1].IsActive = true;
-            TrackersVector[2].IsActive = true;
+            TrackersVector[0].IsActiveEnabled = true;
+            TrackersVector[1].IsActiveEnabled = true;
+            TrackersVector[2].IsActiveEnabled = true;
         }
 
         // Scan for duplicate trackers
@@ -255,10 +259,10 @@ public class AppSettings : INotifyPropertyChanged
 
         // Check if any trackers are enabled
         // -> No trackers are enabled, force-enable the waist tracker
-        if (!TrackersVector.Any(x => x.IsActive))
+        if (!TrackersVector.Any(x => x.IsActiveEnabled))
         {
             Logger.Warn("All trackers were disabled, force-enabling the waist tracker!");
-            TrackersVector[0].IsActive = true; // Enable the waist tracker
+            TrackersVector[0].IsActiveEnabled = true; // Enable the waist tracker
         }
 
         // Fix statuses (optional)
@@ -285,7 +289,7 @@ public class AppSettings : INotifyPropertyChanged
                 var rT = TrackersVector.ToList().Find(x => x.Role == typePair.R);
                 if (lT is null || rT is null) return;
 
-                rT.IsActive = lT.IsActive;
+                rT.IsActiveEnabled = lT.IsActiveEnabled;
                 rT.OrientationTrackingOption = lT.OrientationTrackingOption;
                 rT.PositionTrackingFilterOption = lT.PositionTrackingFilterOption;
                 rT.OrientationTrackingFilterOption = lT.OrientationTrackingFilterOption;
@@ -332,7 +336,8 @@ public class AppSettings : INotifyPropertyChanged
             Logger.Warn($"Could not load language resources at \"{resourcePath}\", the app interface will be broken!");
 
         // That's all for basic config!
-        if (partial) return;
+        CheckingSettings = false;
+        if (partial) return; // Don't.
 
         // Advanced config: runtime and tracking settings
         Logger.Info("Checking AppSettings [runtime] configuration...");
@@ -420,7 +425,7 @@ public class AppSettings : INotifyPropertyChanged
 
                 // ReSharper disable once InvertIf | Check if the specified override index is valid
                 if (TrackingDevices.GetDevice(appTracker.OverrideGuid)
-                        .Device.TrackedJoints.Count <= appTracker.SelectedTrackedJointId)
+                        .Device.TrackedJoints.Count <= appTracker.OverrideJointId)
                 {
                     Logger.Info($"The saved tracker {appTracker.Serial} bound joint ID " +
                                 $"({appTracker.OverrideJointId}) is invalid! Resetting it to the first one!");

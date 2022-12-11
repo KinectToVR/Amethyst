@@ -51,7 +51,10 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
         TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesList.Values;
-        
+
+        //AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
+        AppData.Settings.TrackersVector.CollectionChanged += (_, _) => OnPropertyChanged();
+
         // Set currently tracking device & selected device
         Logger.Info("Overwriting the devices TreeView selected item...");
         var devicesListIndex = TrackingDevices.TrackingDevicesList.Keys.ToList()
@@ -193,7 +196,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     private async void TrackingDeviceTreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
     {
         if (!Shared.Devices.DevicesTabSetupFinished) return; // Block dummy selects
-        Shared.Devices.DevicesSignalJoints = false; // Don't signal on device selection
+        Shared.Devices.DevicesJointsValid = false; // Don't signal on device selection
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
@@ -209,6 +212,21 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
         // Backup
         AppData.Settings.PreviousSelectedTrackingDeviceGuid = AppData.Settings.SelectedTrackingDeviceGuid;
+
+        await Task.Delay(10);
+        WaistAndFeetTrackersExpander.InvalidateMeasure();
+        KneesAndElbowsTrackersExpander.InvalidateMeasure();
+        AdditionalTrackersExpander.InvalidateMeasure();
+        DevicesJointsSelectorStackPanel.InvalidateMeasure();
+
+        WaistAndFeetOverridesExpander.InvalidateMeasure();
+        KneesAndElbowsOverridesExpander.InvalidateMeasure();
+        AdditionalOverridesExpander.InvalidateMeasure();
+        DevicesOverridesSelectorStackPanel.InvalidateMeasure();
+
+        // We're done here
+        AppData.Settings.TrackersVector.ToList().ForEach(x => x.OnPropertyChanged());
+        Shared.Devices.DevicesJointsValid = true;
     }
 
     private void DeviceStatusTeachingTip_ActionButtonClick(TeachingTip sender, object args)

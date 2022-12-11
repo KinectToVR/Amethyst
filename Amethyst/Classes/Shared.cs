@@ -247,7 +247,7 @@ public static class Shared
     {
         // Devices Page
         public static bool DevicesTabSetupFinished = false, // On-load setup
-            DevicesSignalJoints = true, // Optionally no signal
+            DevicesJointsValid = true, // Optionally no signal
             PluginsPageLoadedOnce = false; // Manager flyout
 
         public static TextBlock

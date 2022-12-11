@@ -15,7 +15,9 @@
 
     <Expander Margin="40,17,30,0"
               IsExpanded="False" ExpandDirection="Down" x:Name="OverridesItemsExpander"
-              HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+              HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch"
+              Expanding="OverridesItemsExpander_Expanding"
+              Collapsed="OverrideTrackerCombo_OnDropDownClosed">
         <Expander.Header>
             <TextBlock Text="{x:Bind Header, Mode=OneWay}" FontWeight="SemiBold" />
         </Expander.Header>
@@ -50,7 +52,7 @@
                            Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/Tracker'), Mode=OneWay}" />
                 <TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                            FontWeight="SemiBold"
-                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/Device/Override'), Mode=OneWay}" />
+                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/TrackedJoint'), Mode=OneWay}" />
 
                 <TextBlock Grid.Column="4" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                            FontWeight="SemiBold"
@@ -60,14 +62,13 @@
                            Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Set/Orientation'), Mode=OneWay}" />
             </Grid>
 
-            <ItemsRepeater x:Name="JointsItemsRepeater" ItemsSource="{x:Bind Trackers}">
+            <ItemsRepeater x:Name="JointsItemsRepeater" ItemsSource="{x:Bind Trackers, Mode=OneWay}"
+                           Loaded="JointsItemsRepeater_Loaded">
                 <DataTemplate x:DataType="classes:AppTracker">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="3*" MinWidth="80" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" MinWidth="140" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5*" />
                             <ColumnDefinition Width="3*" MinWidth="80" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="3*" MinWidth="80" />
@@ -79,7 +80,7 @@
 
                         <!--Title Container-->
                         <Grid Grid.Column="0">
-                            <TextBlock FontWeight="SemiBold" FontSize="14"
+                            <TextBlock FontWeight="SemiBold" FontSize="15"
                                        Margin="0,-3,0,0"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
@@ -90,11 +91,8 @@
                                 Background="{ThemeResource SystemFillColorAttentionBrush}"
                                 HorizontalAlignment="Right" VerticalAlignment="Center"
                                 Margin="0,0,-12,-10" Width="17" Height="17"
-                                ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/DevicesPage/ToolTips/Overrides/Overlapping'), Mode=OneWay}"
-                                Opacity="{x:Bind BoolToOpacity(IsOverriddenByOtherDevice)}">
-                                <InfoBadge.OpacityTransition>
-                                    <ScalarTransition />
-                                </InfoBadge.OpacityTransition>
+                                ToolTipService.ToolTip="{x:Bind OverriddenByOtherDeviceString, Mode=OneWay}"
+                                Opacity="{x:Bind BoolToOpacity(IsOverriddenByOtherDevice), Mode=OneWay}">
                                 <InfoBadge.IconSource>
                                     <FontIconSource Foreground="{ThemeResource NoThemeColorSolidColorBrush}"
                                                     Glyph="&#xEDAD;" />
@@ -103,21 +101,29 @@
                         </Grid>
 
                         <!--Tracker Combo-->
-                        <ComboBox Grid.Column="2" x:Name="OverrideTrackerCombo"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  Height="45" MinWidth="150"
-                                  FontSize="15" FontWeight="SemiBold"
-                                  DropDownOpened="OverrideTrackerCombo_OnDropDownOpened"
-                                  DropDownClosed="OverrideTrackerCombo_OnDropDownClosed"
-                                  SelectionChanged="OverrideTrackerComboBox_SelectionChanged"
-                                  PlaceholderText="{x:Bind util:Translator.Get.String('/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText'), Mode=OneWay}"
-                                  ItemsSource="{x:Bind local:OverrideExpander.GetManagingDeviceJointsList(OverrideGuid), Mode=OneWay}"
-                                  IsEnabled="{x:Bind IsActive, Mode=OneWay}"
-                                  SelectedIndex="{x:Bind SelectedOverrideJointIdForSelectedDevice, Mode=TwoWay}" />
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" MinWidth="140" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <ComboBox Grid.Column="1" x:Name="OverrideTrackerCombo"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Height="45" MinWidth="150"
+                                      FontSize="15" FontWeight="SemiBold"
+                                      DropDownOpened="OverrideTrackerCombo_OnDropDownOpened"
+                                      DropDownClosed="OverrideTrackerCombo_OnDropDownClosed"
+                                      SelectionChanged="OverrideTrackerComboBox_SelectionChanged"
+                                      PlaceholderText="{x:Bind util:Translator.Get.String('/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText'), Mode=OneWay}"
+                                      ItemsSource="{x:Bind local:OverrideExpander.GetManagingDeviceJointsList(classes:AppData.Settings.SelectedTrackingDeviceGuid), Mode=OneWay}"
+                                      IsEnabled="{x:Bind IsActive, Mode=OneWay}"
+                                      SelectedIndex="{x:Bind SelectedOverrideJointIdForSelectedDevice, Mode=TwoWay}" />
+                        </Grid>
 
                         <!--Position toggle-->
-                        <ToggleSwitch Grid.Column="4" x:Name="OverridePositionSwitch"
+                        <ToggleSwitch Grid.Column="2" x:Name="OverridePositionSwitch"
                                       IsOn="{x:Bind IsPositionOverriddenBySelectedDevice, Mode=TwoWay}"
                                       Toggled="OverridePositionSwitch_Toggled"
                                       HorizontalAlignment="Center"
@@ -126,7 +132,7 @@
                                       OnContent="" OffContent="" />
 
                         <!--Orientation toggle-->
-                        <ToggleSwitch Grid.Column="6" x:Name="OverrideOrientationSwitch"
+                        <ToggleSwitch Grid.Column="4" x:Name="OverrideOrientationSwitch"
                                       IsOn="{x:Bind IsOrientationOverriddenBySelectedDevice, Mode=TwoWay}"
                                       Toggled="OverrideOrientationSwitch_Toggled"
                                       HorizontalAlignment="Center"

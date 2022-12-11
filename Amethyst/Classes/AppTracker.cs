@@ -17,8 +17,13 @@ public class AppTracker : INotifyPropertyChanged
 
     private readonly Filtering.LowPassFilter _lowPassFilter = new(6.9, .005);
 
+    private readonly Vector3 _predictedPosition = new(0);
+
     // Is this tracker enabled?
     private bool _isActive;
+    private bool _isOrientationOverridden;
+
+    private bool _isPositionOverridden;
     private bool _isTrackerExpanderOpen;
 
     // Internal filters' data
@@ -47,8 +52,6 @@ public class AppTracker : INotifyPropertyChanged
     // Position filter option
     private JointPositionTrackingOption _positionTrackingFilterOption =
         JointPositionTrackingOption.PositionTrackingFilterLerp;
-
-    private readonly Vector3 _predictedPosition = new(0);
 
     // The assigned host joint if using manual joints
     private uint _selectedTrackedJointId;
@@ -79,8 +82,17 @@ public class AppTracker : INotifyPropertyChanged
     [JsonIgnore] public long PreviousPoseTimestamp { get; set; } = 0;
 
     // Is this joint overridden?
-    public bool IsPositionOverridden { get; set; }
-    public bool IsOrientationOverridden { get; set; }
+    public bool IsPositionOverridden
+    {
+        get => !string.IsNullOrEmpty(OverrideGuid) && _isPositionOverridden;
+        set => _isPositionOverridden = value;
+    }
+
+    public bool IsOrientationOverridden
+    {
+        get => !string.IsNullOrEmpty(OverrideGuid) && _isOrientationOverridden;
+        set => _isOrientationOverridden = value;
+    }
 
     [JsonIgnore]
     public bool NoPositionFilteringRequested
@@ -288,6 +300,8 @@ public class AppTracker : INotifyPropertyChanged
         get => IsActive ? (int)_selectedTrackedJointId : -1;
         set
         {
+            // Don't parse any invalid changed
+            if (!Shared.Devices.DevicesJointsValid) return;
             _selectedTrackedJointId = value >= 0 ? (uint)value : 0;
 
             AppData.Settings.CheckSettings(); // Full
@@ -331,20 +345,46 @@ public class AppTracker : INotifyPropertyChanged
     {
         // '+ 1' and '- 1' cause '0' is 'No Override' in this case
         // Note: use OverrideJointId for the "normal" (non-ui) one
-        get => IsActive ? IsManagedBy(AppData.Settings.SelectedTrackingDeviceGuid) ? (int)_overrideJointId + 1 : 0 : -1;
+        // Note: -1 replaced with 0 cuz disabled joints are hidden
+        get => IsActive
+            ? IsManagedBy(AppData.Settings.SelectedTrackingDeviceGuid)
+                ? (int)_overrideJointId + 1
+                : 0 // Not overridden by this device
+            : 0; // -1; // Disabled or not supported
         set
         {
+            // Don't parse any invalid changed
+            if (!Shared.Devices.DevicesJointsValid) return;
+
             // Update the override joint and the managing device
+            var previousValue = SelectedOverrideJointIdForSelectedDevice;
             _overrideJointId = value > 0 ? (uint)(value - 1) : 0;
             OverrideGuid = AppData.Settings.SelectedTrackingDeviceGuid;
 
-            // Enable at least 1 override
-            if (!IsOverridden)
-                IsPositionOverridden = true;
+            switch (value)
+            {
+                // Enable overrides if just selected
+                case > 0 when !IsOverridden:
+                    IsPositionOverridden = true;
+                    IsOrientationOverridden = true;
+                    break;
 
-            AppData.Settings.CheckSettings(); // Full
-            AppData.Settings.SaveSettings(); // Save it!
-            OnPropertyChanged(); // All
+                // Disable both overrides if deselected
+                case <= 0:
+                    IsPositionOverridden = false;
+                    IsOrientationOverridden = false;
+                    OverrideGuid = ""; // Reset
+                    break;
+            }
+
+            lock (Interfacing.UpdateLock)
+            {
+                AppData.Settings.CheckSettings(); // Full
+                AppData.Settings.SaveSettings(); // Save it!
+            }
+
+            if (previousValue != SelectedOverrideJointIdForSelectedDevice)
+                OnPropertyChanged(); // Refresh all
         }
     }
 
@@ -371,14 +411,12 @@ public class AppTracker : INotifyPropertyChanged
         get => OverrideGuid == AppData.Settings.SelectedTrackingDeviceGuid && IsPositionOverridden;
         set
         {
+            // Don't parse any invalid changed
+            if (!Shared.Devices.DevicesJointsValid) return;
+
             // Update the managing and the override
             OverrideGuid = AppData.Settings.SelectedTrackingDeviceGuid;
             IsPositionOverridden = value;
-
-            // If not overridden yet (index=0)
-            if (_overrideJointId <= 0)
-                _overrideJointId = 1;
-
             OnPropertyChanged(); // All
         }
     }
@@ -390,19 +428,27 @@ public class AppTracker : INotifyPropertyChanged
         get => OverrideGuid == AppData.Settings.SelectedTrackingDeviceGuid && IsOrientationOverridden;
         set
         {
+            // Don't parse any invalid changed
+            if (!Shared.Devices.DevicesJointsValid) return;
+
             // Update the managing and the override
             OverrideGuid = AppData.Settings.SelectedTrackingDeviceGuid;
             IsOrientationOverridden = value;
-
-            // If not overridden yet (index=0)
-            if (_overrideJointId <= 0)
-                _overrideJointId = 1;
-
             OnPropertyChanged(); // All
         }
     }
 
-    [JsonIgnore] public bool IsOverriddenByOtherDevice => OverrideGuid == AppData.Settings.SelectedTrackingDeviceGuid;
+    [JsonIgnore]
+    public bool IsOverriddenByOtherDevice =>
+        !string.IsNullOrEmpty(OverrideGuid) && OverrideGuid != AppData.Settings.SelectedTrackingDeviceGuid;
+
+    [JsonIgnore]
+    public string OverriddenByOtherDeviceString =>
+        Interfacing.LocalizedJsonString("/DevicesPage/ToolTips/Overrides/Overlapping")
+            .Replace("{0}", ManagingDeviceGuid);
+
+    // MVVM: a connection of the transitions each tracker expander should animate
+    [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = new();
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -650,7 +696,4 @@ public class AppTracker : INotifyPropertyChanged
     {
         return guid == ManagingDeviceGuid;
     }
-
-    // MVVM: a connection of the transitions each tracker expander should animate
-    [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = new();
 }
