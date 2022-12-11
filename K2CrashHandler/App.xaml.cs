@@ -29,15 +29,17 @@ public partial class App : Application
         try
         {
             var amethystConfigText = File.ReadAllText(Path.Combine(Environment.GetFolderPath(
-                Environment.SpecialFolder.ApplicationData), "Amethyst", "Amethyst_settings.xml"));
+                Environment.SpecialFolder.ApplicationData), "Amethyst", "AmethystSettings.json"));
 
-            Shared.LanguageCode = amethystConfigText.Contains("<appLanguage>")
+            Shared.LanguageCode = amethystConfigText.Contains("\"AppLanguage\": \"")
                 ? amethystConfigText.Substring(
-                    amethystConfigText.IndexOf("<appLanguage>") + "<appLanguage>".Length, 2)
+                    amethystConfigText.IndexOf("\"AppLanguage\": \"", StringComparison.Ordinal) +
+                    "\"AppLanguage\": \"".Length, 2)
                 : "en";
 
             if (!int.TryParse(amethystConfigText.AsSpan(
-                        amethystConfigText.IndexOf("<appTheme>") + "<appTheme>".Length, 1),
+                        amethystConfigText.IndexOf("\"AppTheme\": ", StringComparison.Ordinal) +
+                        "\"AppTheme\": ".Length, 1),
                     out var themeConfig)) return;
 
             Shared.DocsLanguageCode = Shared.LanguageCode;

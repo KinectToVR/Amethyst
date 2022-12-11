@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WinRT.Interop;
+using Windows.System;
 
 namespace K2CrashHandler;
 // To learn more about WinUI, the WinUI project structure,
@@ -34,15 +35,13 @@ public sealed partial class MainWindow : Window
         try
         {
             var langResPath = Path.Combine(
-                Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
-                    .ToString()).ToString(), "Assets", "Strings",
+                Directory.GetParent(Assembly.GetExecutingAssembly().Location)!.ToString(), "Assets", "Strings",
                 Shared.LanguageCode + ".json"); // The ame one
 
             if (!File.Exists(langResPath))
             {
                 langResPath = Path.Combine(
-                    Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
-                        .ToString()).ToString(), "Assets", "Strings",
+                    Directory.GetParent(Assembly.GetExecutingAssembly().Location)!.ToString(), "Assets", "Strings",
                     CultureInfo.CurrentUICulture.Name[..2]
                     + ".json"); // System default one fallback
 
@@ -52,8 +51,7 @@ public sealed partial class MainWindow : Window
             if (!File.Exists(langResPath))
             {
                 langResPath = Path.Combine(
-                    Directory.GetParent(Directory.GetParent(Assembly.GetExecutingAssembly().Location)
-                        .ToString()).ToString(), "Assets", "Strings",
+                    Directory.GetParent(Assembly.GetExecutingAssembly().Location)!.ToString(), "Assets", "Strings",
                     "en.json"); // English fallback
 
                 Shared.LanguageCode = "en";
@@ -75,7 +73,7 @@ public sealed partial class MainWindow : Window
             logFileLocation = "0";
 
         // Prepare placeholder callbacks (recovery mode)
-        RoutedEventHandler primaryButtonHandler = Action_ReRegister,
+        RoutedEventHandler primaryButtonHandler = Action_OpenCollective,
             secondaryButtonHandler = Action_Close;
 
         // Check if there's any argv[1]
@@ -83,7 +81,7 @@ public sealed partial class MainWindow : Window
 
         CrashHandlerMode = args.Length > 1
             ? HandlerMode.CrashWatchdog
-            : HandlerMode.DriverRegister;
+            : HandlerMode.None;
 
         if (CrashHandlerMode == HandlerMode.CrashWatchdog)
         {
@@ -92,6 +90,9 @@ public sealed partial class MainWindow : Window
 
             else if (args[1].Contains("vr_elevated"))
                 CrashHandlerMode = HandlerMode.RunningElevated;
+
+            else if (args[1].Contains("message"))
+                CrashHandlerMode = HandlerMode.CrashMessage;
         }
 
         // If we're OK then don't use recovery mode
@@ -251,7 +252,18 @@ public sealed partial class MainWindow : Window
                 break;
             }
 
-            case HandlerMode.DriverRegister:
+            case HandlerMode.CrashMessage:
+            {
+                // Parse the strings
+                primaryButtonHandler = Action_ForceQuit;
+
+                handlerTitle = LangResString("Title/Crash");
+                primaryButtonText = LangResString("PrimaryButton/Crash/Default");
+                handlerContent = args[2];
+                break;
+            }
+
+            case HandlerMode.None:
             default:
             {
                 // Defaults
@@ -340,312 +352,30 @@ public sealed partial class MainWindow : Window
             : key;
     }
 
-    private async void Action_ReRegister(object sender, RoutedEventArgs e)
+    private async void Action_OpenCollective(object sender, RoutedEventArgs e)
     {
-        VrHelper helper = new();
-        OpenVrPaths openVrPaths;
-        var resultPaths = helper.UpdateSteamPaths();
-
-        // Check if SteamVR was found
-        if (!resultPaths.Item1.Item1)
-        {
-            // Critical, cry about it
-            await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                LangResString("ReRegister/SteamVRNotFound"),
-                "", "");
-            return;
-        }
-
-        try // Try-Catch it
-        {
-            // Read the OpenVRPaths
-            openVrPaths = OpenVrPaths.Read();
-        }
-        catch (Exception)
-        {
-            // Critical, cry about it
-            await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                LangResString("ReRegister/OpenVRPathsError"),
-                "", "");
-            return;
-        }
-
-        /*
-             * ReRegister Logic:
-             *
-             * Search for Amethyst VRDriver in the crash handler's directory
-             * and 2 folders up in tree, recursively. (Find the manifest)
-             *
-             * If the manifest & dll are found, check and ask to close SteamVR
-             *
-             * With closed SteamVR, search for all remaining 'driver_Amethyst' instances:
-             * copied inside /drivers/ or registered. If found, ask to delete them
-             *
-             * When everything is purified, we can register the 'driver_Amethyst'
-             * via OpenVRPaths and then check twice if it's there ready to go
-             *
-             * If the previous steps succeeded, we can enable the 'driver_Amethyst'
-             * in VRSettings. A run failure/exception of this one isn't critical
-             */
-
-        /* 1 */
-
-        // Get crash handler's  parent path
-        var doubleParentPath =
-            Directory.GetParent(Assembly.GetExecutingAssembly().Location);
-
-        // Search for driver manifests, try max 2 times
-        var localAmethystDriverPath = "";
-        for (var i = 0; i < 2; i++)
-        {
-            // Double that to get Amethyst exe path
-            if (doubleParentPath.Parent != null)
-                doubleParentPath = doubleParentPath.Parent;
-
-            // Find all vr driver manifests there
-            var allLocalDriverManifests = Directory.GetFiles(
-                doubleParentPath.ToString(), "driver.vrdrivermanifest", SearchOption.AllDirectories);
-
-            // For each found manifest, check if there is an ame driver dll inside
-            foreach (var localDriverManifest in allLocalDriverManifests)
-                if (File.Exists(Path.Combine(
-                        Directory.GetParent(localDriverManifest).ToString(),
-                        "bin", "win64", "driver_Amethyst.dll")))
-                {
-                    // We've found it! Now cache it and break free
-                    localAmethystDriverPath = Directory.GetParent(localDriverManifest).ToString();
-                    goto p_search_loop_end;
-                }
-            // Else redo once more & then check
-        }
-
-        // End of the searching loop
-        p_search_loop_end:
-
-        // If there's none (still), cry about it and abort
-        if (string.IsNullOrEmpty(localAmethystDriverPath))
-        {
-            await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                LangResString("ReRegister/DriverNotFound"),
-                "", "");
-            return;
-        }
-
-        /* 2 */
-
-        // Force exit (kill) SteamVR
-        if (Process.GetProcesses().FirstOrDefault(
-                proc => proc.ProcessName == "vrserver" ||
-                        proc.ProcessName == "vrmonitor") != null)
-        {
-            if (await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                    LangResString("ReRegister/KillSteamVR/Content"),
-                    LangResString("ReRegister/KillSteamVR/PrimaryButton"),
-                    LangResString("ReRegister/KillSteamVR/SecondaryButton")))
-            {
-                DialogView.PrimaryButtonActionPending(true);
-                await Task.Factory.StartNew(
-                    () => helper.CloseSteamVr());
-                DialogView.PrimaryButtonActionPending(false);
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        /* 2.5 */
-
-        // Search for all K2EX instances and either unregister or delete them
-
-
-        var isDriverK2Present = resultPaths.Item1.Item3; // is ame copied?
-        var driverK2PathsList = new List<string>(); // ame external list
-
-        foreach (var externalDriver in openVrPaths.ExternalDrivers.Where(
-                     externalDriver => externalDriver.Contains("KinectToVR")))
-        {
-            isDriverK2Present = true;
-            driverK2PathsList.Add(externalDriver);
-        }
-
-        // Remove (or delete) the existing K2EX Drivers
-        if (isDriverK2Present)
-            if (!await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                    LangResString("ReRegister/ExistingDrivers/Content_K2EX"),
-                    LangResString("ReRegister/ExistingDrivers/PrimaryButton_K2EX"),
-                    LangResString("ReRegister/ExistingDrivers/SecondaryButton_K2EX")))
-                return;
-
-        // Try-Catch it
-        try
-        {
-            if (isDriverK2Present || resultPaths.Item1.Item3)
-            {
-                // Delete the copied K2EX Driver (if exists)
-                if (resultPaths.Item1.Item3)
-                    Directory.Delete(resultPaths.Item2.Item3, true); // Delete
-
-                // Un-register any remaining K2EX Drivers (if exist)
-                if (driverK2PathsList.Any())
-                {
-                    foreach (var driverK2Path in driverK2PathsList)
-                        openVrPaths.ExternalDrivers.Remove(driverK2Path);
-
-                    // Save it
-                    openVrPaths.Write();
-                }
-            }
-        }
-        catch (Exception)
-        {
-            // Critical, cry about it
-            await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                LangResString("ReRegister/FatalRemoveException_K2EX"),
-                "", "");
-            return;
-        }
-
-        /* 3 */
-
-        // Search for all remaining (registered or copied) Amethyst Driver instances
-
-        var isAmethystDriverPresent = resultPaths.Item1.Item3; // is ame copied?
-        var amethystDriverPathsList = new List<string>(); // ame external list
-
-        var isLocalAmethystDriverRegistered = false; // is our local ame registered?
-
-        foreach (var externalDriver in openVrPaths.ExternalDrivers.Where(
-                     externalDriver => externalDriver.Contains("Amethyst")))
-        {
-            // Don't un-register the already-existent one
-            if (externalDriver == localAmethystDriverPath)
-            {
-                isLocalAmethystDriverRegistered = true;
-                continue; // Don't report it
-            }
-
-            isAmethystDriverPresent = true;
-            amethystDriverPathsList.Add(externalDriver);
-        }
-
-        // Remove (or delete) the existing Amethyst Drivers
-        if (isAmethystDriverPresent)
-            if (!await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                    LangResString("ReRegister/ExistingDrivers/Content"),
-                    LangResString("ReRegister/ExistingDrivers/PrimaryButton"),
-                    LangResString("ReRegister/ExistingDrivers/SecondaryButton")))
-                return;
-
-        // Try-Catch it
-        try
-        {
-            if (isAmethystDriverPresent || resultPaths.Item1.Item3)
-            {
-                // Delete the copied Amethyst Driver (if exists)
-                if (resultPaths.Item1.Item3)
-                    Directory.Delete(resultPaths.Item2.Item3, true); // Delete
-
-                // Un-register any remaining Amethyst Drivers (if exist)
-                if (amethystDriverPathsList.Any())
-                {
-                    foreach (var amethystDriverPath in amethystDriverPathsList)
-                    {
-                        // Don't remove if already existent
-                        if (amethystDriverPath == localAmethystDriverPath) continue;
-
-                        openVrPaths.ExternalDrivers.Remove(amethystDriverPath); // Un-register
-                    }
-
-                    // Save it
-                    openVrPaths.Write();
-                }
-            }
-        }
-        catch (Exception)
-        {
-            // Critical, cry about it
-            await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                LangResString("ReRegister/FatalRemoveException"),
-                "", "");
-            return;
-        }
-
-        /* 4 */
-
-        // If out local amethyst driver was already registered, skip this step
-        if (!isLocalAmethystDriverRegistered)
-            try // Try-Catch it
-            {
-                // Register the local Amethyst Driver via OpenVRPaths
-                openVrPaths.ExternalDrivers.Add(localAmethystDriverPath);
-                openVrPaths.Write(); // Save it
-
-                // If failed, cry about it and abort
-                var openVrPathsCheck = OpenVrPaths.Read();
-                if (!openVrPathsCheck.ExternalDrivers.Contains(localAmethystDriverPath))
-                {
-                    await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                        LangResString("ReRegister/OpenVRPathsWriteError"),
-                        "", "");
-                    return;
-                }
-            }
-            catch (Exception)
-            {
-                // Critical, cry about it
-                await DialogView.HandlePrimaryButtonConfirmationFlyout(
-                    LangResString("ReRegister/FatalRegisterException"),
-                    "", "");
-                return;
-            }
-
-        /* 5 */
-
-        // Try-Catch it
-        try
-        {
-            // Read the vr settings
-            var steamVrSettings = JsonConvert.DeserializeObject<dynamic>(
-                File.ReadAllText(resultPaths.Item2.Item2));
-
-            // Enable & unblock the Amethyst Driver
-            if (steamVrSettings["driver_Amethyst"] == null)
-                steamVrSettings["driver_Amethyst"] = new JObject();
-
-            steamVrSettings["driver_Amethyst"]["enable"] = true;
-            steamVrSettings["driver_Amethyst"]["blocked_by_safe_mode"] = false;
-            JsonFile.Write(resultPaths.Item2.Item2, steamVrSettings, 3, ' ');
-        }
-        catch (Exception)
-        {
-            // Not critical
-        }
-
-        // UreshiiDesuYoo
-        await DialogView.HandlePrimaryButtonConfirmationFlyout(
-            LangResString("ReRegister/Finished"), "", "");
+        await Launcher.LaunchUriAsync(new Uri($"https://opencollective.com/k2vr/"));
     }
 
     private void Action_ResetConfig(object sender, RoutedEventArgs e)
     {
         File.Delete(Path.Combine(Environment.GetFolderPath(
-            Environment.SpecialFolder.ApplicationData), "Amethyst", "Amethyst_settings.xml"));
+            Environment.SpecialFolder.ApplicationData), "Amethyst", "AmethystSettings.json"));
     }
 
-    private void Action_VRDocs(object sender, RoutedEventArgs e)
+    private async void Action_VRDocs(object sender, RoutedEventArgs e)
     {
-        Process.Start("explorer", $"https://docs.k2vr.tech/{Shared.DocsLanguageCode}/");
+        await Launcher.LaunchUriAsync(new Uri($"https://docs.k2vr.tech/{Shared.DocsLanguageCode}/"));
     }
 
-    private void Action_DeviceDocs(object sender, RoutedEventArgs e)
+    private async void Action_DeviceDocs(object sender, RoutedEventArgs e)
     {
-        Process.Start("explorer", $"https://docs.k2vr.tech/{Shared.DocsLanguageCode}/");
+        await Launcher.LaunchUriAsync(new Uri($"https://docs.k2vr.tech/{Shared.DocsLanguageCode}/"));
     }
 
-    private void Action_Discord(object sender, RoutedEventArgs e)
+    private async void Action_Discord(object sender, RoutedEventArgs e)
     {
-        Process.Start("explorer.exe", "https://discord.gg/YBQCRDG");
+        await Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBQCRDG"));
     }
 
     private void Action_ForceQuit(object sender, RoutedEventArgs e)
@@ -845,7 +575,8 @@ public enum SystemMetric
 public enum HandlerMode
 {
     CrashWatchdog,
-    DriverRegister,
+    None,
     AlreadyRunning,
-    RunningElevated
+    RunningElevated,
+    CrashMessage
 }
