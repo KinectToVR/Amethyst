@@ -546,7 +546,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public bool IsLoaded
     {
-        get => TrackingDevices.TrackingDevicesList.ContainsKey(Guid);
+        get => TrackingDevices.TrackingDevicesList.ContainsKey(Guid) ||
+               TrackingDevices.ServiceEndpointsList.ContainsKey(Guid);
         set
         {
             if (_isLoaded == value) return; // No changes
