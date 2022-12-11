@@ -110,7 +110,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 Shared.Events.ReloadSettingsPageEvent.WaitOne();
 
                 // Reload & restart the waiting loop
-                if (_settingsPageLoadedOnce)
+                if (_settingsPageLoadedOnce && Interfacing.CurrentPageTag == "settings")
                     Shared.Main.DispatcherQueue.TryEnqueue(Page_LoadedHandler);
 
                 // Reset the event

@@ -17,6 +17,7 @@ namespace Amethyst.Controls;
 public sealed partial class JointSelectorExpander : UserControl, INotifyPropertyChanged
 {
     private List<AppTracker> _trackers = new();
+    private bool _areChangesValid = false;
 
     // OnPropertyChanged listener for containers
     public EventHandler PropertyChangedEvent;
@@ -63,24 +64,37 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     private void JointsSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if (!((sender as ComboBox)?.IsLoaded ?? false)
-            || !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+        if (!((sender as ComboBox)?.IsLoaded ?? false) || 
+            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
+        // Either fix the selection index or give up on everything
         if (((ComboBox)sender).SelectedIndex < 0)
-            ((ComboBox)sender).SelectedItem = e.RemovedItems[0];
+            ((ComboBox)sender).SelectedItem = GetBaseDeviceJointsList()
+                .ElementAtOrDefault((((ComboBox)sender).DataContext as AppTracker)!.SelectedBaseTrackedJointId);
 
-        // Signal the just-selected tracked joint
-        TrackingDevices.BaseTrackingDevice.SignalJoint(((ComboBox)sender).SelectedIndex);
+        //else
+        else if (_areChangesValid)
+        {
+            if (((ComboBox)sender).SelectedIndex < 0)
+                ((ComboBox)sender).SelectedItem = e.RemovedItems[0];
+
+            // Signal the just-selected tracked joint
+            TrackingDevices.BaseTrackingDevice.SignalJoint(((ComboBox)sender).SelectedIndex);
+            (((ComboBox)sender).DataContext as AppTracker)!.SelectedBaseTrackedJointId =
+                ((ComboBox)sender).SelectedIndex; // Update the host data (manual) binding
+        }
     }
 
     private void JointTrackerCombo_OnDropDownOpened(object sender, object e)
     {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+        _areChangesValid = true; // Begin changes
     }
 
     private void JointTrackerCombo_OnDropDownClosed(object sender, object e)
     {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+        _areChangesValid = false; // End changes
     }
 
     private void JointsItemsExpander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
@@ -88,17 +102,21 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
         // Don't even care if we're not set up yet
         if (!IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
 
-        if (!JointsItemsRepeater.IsLoaded)
-            Shared.Devices.DevicesJointsValid = false; // Block interactions until loaded
+    private void JointsItemsExpander_Collapsed(Expander sender, ExpanderCollapsedEventArgs args)
+    {
+        // Don't even care if we're not set up yet
+        if (!IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
     private void JointsItemsRepeater_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if ((!(sender as ItemsRepeater)?.IsLoaded ?? false) || !IsAnyTrackerEnabled) return;
+        if ((!(sender as ItemsRepeater)?.IsLoaded ?? false) || 
+            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
         Trackers.ForEach(x => x.OnPropertyChanged());
-        Shared.Devices.DevicesJointsValid = true; // Unblock
     }
 }

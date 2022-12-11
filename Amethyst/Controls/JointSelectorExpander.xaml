@@ -15,7 +15,7 @@
               IsExpanded="False" ExpandDirection="Down" x:Name="JointsItemsExpander"
               HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch"
               Expanding="JointsItemsExpander_Expanding"
-              Collapsed="JointTrackerCombo_OnDropDownClosed">
+              Collapsed="JointsItemsExpander_Collapsed">
         <Expander.Header>
             <TextBlock Text="{x:Bind Header, Mode=OneWay}" FontWeight="SemiBold" />
         </Expander.Header>
@@ -98,8 +98,8 @@
                                   SelectionChanged="JointsSelectorComboBox_SelectionChanged"
                                   PlaceholderText="{x:Bind util:Translator.Get.String('/DevicesPage/Placeholders/Joints/Disabled/PlaceholderText'), Mode=OneWay}"
                                   ItemsSource="{x:Bind local:JointSelectorExpander.GetBaseDeviceJointsList(), Mode=OneWay}"
-                                  IsEnabled="{x:Bind IsActive, Mode=OneWay}"
-                                  SelectedIndex="{x:Bind SelectedBaseTrackedJointId, Mode=TwoWay}" />
+                                  IsEnabled="{x:Bind IsActive, Mode=OneWay}" DataContext="{x:Bind}"
+                                  SelectedIndex="{x:Bind SelectedBaseTrackedJointId, Mode=OneWay}" />
                     </Grid>
                 </DataTemplate>
             </ItemsRepeater>

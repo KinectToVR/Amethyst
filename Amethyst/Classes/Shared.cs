@@ -67,7 +67,7 @@ public static class Shared
         public static NavigationView MainNavigationView;
         public static Frame MainContentFrame;
         public static TextBlock AppTitleLabel;
-        
+
         public static SolidColorBrush
             AttentionBrush, NeutralBrush;
 
@@ -83,7 +83,7 @@ public static class Shared
             // Navigate only if the selected page isn't currently loaded
             if (page is null || preNavPageType == page) return;
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-            
+
             // Switch bring back the current item to the base state
             if (!string.IsNullOrEmpty(preNavPageType?.Name))
                 switch (preNavPageType.FullName)
@@ -208,7 +208,7 @@ public static class Shared
 
         public static ToggleButton
             ToggleFreezeButton;
-        
+
         public static TextBlock
             AdditionalDeviceErrorsHyperlink;
 
@@ -258,7 +258,9 @@ public static class Shared
 
         public static Grid
             DeviceErrorGrid,
-            TrackingDeviceChangePanel;
+            TrackingDeviceChangePanel,
+            DevicesMainContentGridOuter,
+            DevicesMainContentGridInner;
 
         public static Button
             SetAsOverrideButton,
@@ -306,8 +308,26 @@ public static class Shared
                 DeselectDeviceButton.Visibility = Visibility.Collapsed;
             }
 
-            // Placeholder
-            await Task.Delay(0);
+            // Device stuff reload animation
+            if (!manual)
+            {
+                // Remove the only one child of our outer main content grid
+                // (What a bestiality it is to do that!!1)
+                DevicesMainContentGridOuter.Children.Clear();
+                DevicesMainContentGridInner.Transitions.Add(
+                    new EntranceThemeTransition { IsStaggeringEnabled = false });
+
+                // Sleep peacefully pretending that noting happened
+                await Task.Delay(10);
+
+                // Re-add the child for it to play our funky transition
+                // (Though it's not the same as before...)
+                DevicesMainContentGridOuter.Children.Add(DevicesMainContentGridInner);
+            }
+
+            // Remove the transition
+            await Task.Delay(100);
+            DevicesMainContentGridInner.Transitions.Clear();
         }
     }
 

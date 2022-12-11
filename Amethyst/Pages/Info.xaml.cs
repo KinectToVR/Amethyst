@@ -44,7 +44,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                 Shared.Events.ReloadInfoPageEvent.WaitOne();
 
                 // Reload & restart the waiting loop
-                if (_infoPageLoadedOnce)
+                if (_infoPageLoadedOnce && Interfacing.CurrentPageTag == "info")
                     Shared.Main.DispatcherQueue.TryEnqueue(Page_LoadedHandler);
 
                 // Reset the event

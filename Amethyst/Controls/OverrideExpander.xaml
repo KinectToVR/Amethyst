@@ -118,8 +118,8 @@
                                       SelectionChanged="OverrideTrackerComboBox_SelectionChanged"
                                       PlaceholderText="{x:Bind util:Translator.Get.String('/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText'), Mode=OneWay}"
                                       ItemsSource="{x:Bind local:OverrideExpander.GetManagingDeviceJointsList(classes:AppData.Settings.SelectedTrackingDeviceGuid), Mode=OneWay}"
-                                      IsEnabled="{x:Bind IsActive, Mode=OneWay}"
-                                      SelectedIndex="{x:Bind SelectedOverrideJointIdForSelectedDevice, Mode=TwoWay}" />
+                                      IsEnabled="{x:Bind IsActive, Mode=OneWay}" DataContext="{x:Bind}"
+                                      SelectedIndex="{x:Bind SelectedOverrideJointIdForSelectedDevice, Mode=OneWay}" />
                         </Grid>
 
                         <!--Position toggle-->

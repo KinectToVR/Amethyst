@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Amethyst.Classes;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
@@ -75,16 +76,29 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
 
     private void OverrideTrackerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        // Validate the pending input changes
+        Trackers.ForEach(x => x.OnPropertyChanged());
+
         // Don't even care if we're not set up yet
-        if (!((sender as ComboBox)?.IsLoaded ?? false)
-            || !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+        if (!((sender as ComboBox)?.IsLoaded ?? false) || 
+            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
+        // Either fix the selection index or give up on everything
         if (((ComboBox)sender).SelectedIndex < 0)
-            ((ComboBox)sender).SelectedItem = e.RemovedItems[0];
+            ((ComboBox)sender).SelectedItem = GetManagingDeviceJointsList(
+                    AppData.Settings.SelectedTrackingDeviceGuid)
+                .ElementAtOrDefault((((ComboBox)sender).DataContext as AppTracker)!
+                    .SelectedOverrideJointIdForSelectedDevice);
 
-        // Signal the just-selected tracked joint (checker copied from AppTracker.cs)
-        TrackingDevices.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device?
-            .SignalJoint(((ComboBox)sender).SelectedIndex > 0 ? ((ComboBox)sender).SelectedIndex - 1 : 0);
+        //else
+        {
+            // Signal the just-selected tracked joint (checker copied from AppTracker.cs)
+            TrackingDevices.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device?
+                .SignalJoint(((ComboBox)sender).SelectedIndex > 0 ? ((ComboBox)sender).SelectedIndex - 1 : 0);
+
+            (((ComboBox)sender).DataContext as AppTracker)!.SelectedOverrideJointIdForSelectedDevice =
+                ((ComboBox)sender).SelectedIndex; // Set the property of the host
+        }
     }
 
     private void OverrideTrackerCombo_OnDropDownOpened(object sender, object e)
@@ -100,8 +114,8 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     private void OverridePositionSwitch_Toggled(object sender, RoutedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if (!((sender as ToggleSwitch)?.IsLoaded ?? false)
-            || !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+        if (!((sender as ToggleSwitch)?.IsLoaded ?? false) || 
+            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
         AppSounds.PlayAppSound(((ToggleSwitch)sender).IsOn
             ? AppSounds.AppSoundType.ToggleOn
@@ -113,8 +127,8 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     private void OverrideOrientationSwitch_Toggled(object sender, RoutedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if (!((sender as ToggleSwitch)?.IsLoaded ?? false)
-            || !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+        if (!((sender as ToggleSwitch)?.IsLoaded ?? false) || 
+            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
         AppSounds.PlayAppSound(((ToggleSwitch)sender).IsOn
             ? AppSounds.AppSoundType.ToggleOn
@@ -126,19 +140,20 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     private void OverridesItemsExpander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
     {
         // Don't even care if we're not set up yet
-        if (!IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+        if (!IsAnyTrackerEnabled) return;
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
 
-        if (!JointsItemsRepeater.IsLoaded)
-            Shared.Devices.DevicesJointsValid = false; // Block interactions until loaded
+        Trackers.ForEach(x => x.OnPropertyChanged());
+        OnPropertyChanged(); // Refresh everything upon expanding
     }
 
     private void JointsItemsRepeater_Loaded(object sender, RoutedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if ((!(sender as ItemsRepeater)?.IsLoaded ?? false) || !IsAnyTrackerEnabled) return;
+        if ((!(sender as ItemsRepeater)?.IsLoaded ?? false) || 
+            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
         Trackers.ForEach(x => x.OnPropertyChanged());
-        Shared.Devices.DevicesJointsValid = true; // Unblock
+        OnPropertyChanged(); // Refresh everything upon expanding
     }
 }

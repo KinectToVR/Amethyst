@@ -105,7 +105,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 Shared.Events.ReloadGeneralPageEvent.WaitOne();
 
                 // Reload & restart the waiting loop
-                if (_generalPageLoadedOnce)
+                if (_generalPageLoadedOnce && Interfacing.CurrentPageTag == "general")
                     Shared.Main.DispatcherQueue.TryEnqueue(
                         async () => { await Page_LoadedHandler(); });
 

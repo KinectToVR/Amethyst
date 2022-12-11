@@ -45,6 +45,8 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         Shared.Devices.SetAsBaseButton = SetAsBaseButton;
         Shared.Devices.DeselectDeviceButton = DeselectDeviceButton;
         Shared.Devices.SelectedDeviceSettingsRootLayoutPanel = SelectedDeviceSettingsRootLayoutPanel;
+        Shared.Devices.DevicesMainContentGridOuter = DevicesMainContentGridOuter;
+        Shared.Devices.DevicesMainContentGridInner = DevicesMainContentGridInner;
 
         Shared.TeachingTips.DevicesPage.DeviceControlsTeachingTip = DeviceControlsTeachingTip;
         Shared.TeachingTips.DevicesPage.DevicesListTeachingTip = DevicesListTeachingTip;
@@ -78,7 +80,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
                 Shared.Events.ReloadDevicesPageEvent.WaitOne();
 
                 // Reload & restart the waiting loop
-                if (_devicesPageLoadedOnce)
+                if (_devicesPageLoadedOnce && Interfacing.CurrentPageTag == "devices")
                     Shared.Main.DispatcherQueue.TryEnqueue(
                         async () => { await Page_LoadedHandler(); });
 
@@ -513,11 +515,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     {
         Shared.Devices.PluginsPageLoadedOnce = true;
     }
-
-    private void JointsSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-    }
-
+    
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
