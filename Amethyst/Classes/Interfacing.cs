@@ -317,7 +317,7 @@ public static class Interfacing
                     // Update tracker statuses in the server
                     spawned.AddRange((await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(
                             AppData.Settings.TrackersVector.Where(x => x.IsActive).Select(x => x.GetTrackerBase())))
-                        .Select(x => x.Success)); // Check if the request was actually okay
+                        ?.Select(x => x.Success) ?? new[] { false }); // Check if the request was actually okay
                     await Task.Delay(15);
                 }
 
