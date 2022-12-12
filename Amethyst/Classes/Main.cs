@@ -70,17 +70,24 @@ public static class Main
         if (!TrackingDevices.BaseTrackingDevice.IsSelfUpdateEnabled)
             TrackingDevices.BaseTrackingDevice.Update();
 
-        // Copy the hook joint [head] position, or the 1st one, or none
-        Interfacing.DeviceHookJointPosition[TrackingDevices.BaseTrackingDevice.Guid] =
-            TrackingDevices.BaseTrackingDevice.TrackedJoints
+        // Copy needed device transform poses
+        {
+            // Create a ref to the hook [head] joint (or the first, or default joint)
+            var headJoint = TrackingDevices.BaseTrackingDevice.TrackedJoints
                 .FirstOrDefault(x => x.Role == TrackedJointType.JointHead,
-                    TrackingDevices.BaseTrackingDevice.TrackedJoints.FirstOrDefault(new TrackedJoint())).Position;
+                    TrackingDevices.BaseTrackingDevice.TrackedJoints.FirstOrDefault(new TrackedJoint()));
 
-        // Copy the relative hook joint [waist] position, or the 1st one, or none
-        Interfacing.DeviceRelativeTransformOrigin[TrackingDevices.BaseTrackingDevice.Guid] =
-            TrackingDevices.BaseTrackingDevice.TrackedJoints
+            // Create a ref to the rto [waist] joint (or the first, or default joint)
+            var waistJoint = TrackingDevices.BaseTrackingDevice.TrackedJoints
                 .FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist,
-                    TrackingDevices.BaseTrackingDevice.TrackedJoints.FirstOrDefault(new TrackedJoint())).Position;
+                    TrackingDevices.BaseTrackingDevice.TrackedJoints.FirstOrDefault(new TrackedJoint()));
+
+            // Copy the hook joint [head], relative transform origin joint [waist] pose
+            Interfacing.DeviceHookJointPosition[TrackingDevices.BaseTrackingDevice.Guid] =
+                (headJoint.Position, headJoint.Orientation);
+            Interfacing.DeviceRelativeTransformOrigin[TrackingDevices.BaseTrackingDevice.Guid] =
+                (waistJoint.Position, waistJoint.Orientation);
+        }
 
         // Update override devices (optionally)
         foreach (var device in AppData.Settings.OverrideDevicesGuidMap.Select(overrideGuid =>
@@ -88,15 +95,19 @@ public static class Main
         {
             if (!device.IsSelfUpdateEnabled) device.Update();
 
-            // Copy the hook joint [head] position, or the 1st one, or none
-            Interfacing.DeviceHookJointPosition[device.Guid] =
-                device.TrackedJoints.FirstOrDefault(x => x.Role == TrackedJointType.JointHead,
-                    device.TrackedJoints.FirstOrDefault(new TrackedJoint())).Position;
+            // Create a ref to the hook [head] joint (or the first, or default joint)
+            var headJoint = device.TrackedJoints.FirstOrDefault(
+                x => x.Role == TrackedJointType.JointHead,
+                device.TrackedJoints.FirstOrDefault(new TrackedJoint()));
 
-            // Copy the relative hook joint [waist] position, or the 1st one, or none
-            Interfacing.DeviceRelativeTransformOrigin[device.Guid] =
-                device.TrackedJoints.FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist,
-                    device.TrackedJoints.FirstOrDefault(new TrackedJoint())).Position;
+            // Create a ref to the rto [waist] joint (or the first, or default joint)
+            var waistJoint = device.TrackedJoints.FirstOrDefault(
+                x => x.Role == TrackedJointType.JointSpineWaist,
+                device.TrackedJoints.FirstOrDefault(new TrackedJoint()));
+
+            // Copy the hook joint [head], relative transform origin joint [waist] pose
+            Interfacing.DeviceHookJointPosition[device.Guid] = (headJoint.Position, headJoint.Orientation);
+            Interfacing.DeviceRelativeTransformOrigin[device.Guid] = (waistJoint.Position, waistJoint.Orientation);
         }
 
         // Update service endpoints

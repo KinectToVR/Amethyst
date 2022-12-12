@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,10 +40,10 @@ public static class Interfacing
         UpdatingNow = false;
 
     // Position helpers for k2 devices -> GUID, Pose
-    public static readonly SortedDictionary<string, Vector3>
+    public static readonly SortedDictionary<string, (Vector3 Position, Quaternion Orientation)>
         DeviceHookJointPosition = new(); // This one applies to both
 
-    public static readonly SortedDictionary<string, Vector3>
+    public static readonly SortedDictionary<string, (Vector3 Position, Quaternion Orientation)>
         // For automatic calibration
         DeviceRelativeTransformOrigin = new(); // This one applies to both
 

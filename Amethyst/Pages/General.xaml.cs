@@ -405,7 +405,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                     // Capture user's position at t_end-1, update the label text
                     case 0:
                         hmdPositions.Add(Interfacing.Plugins.GetHmdPose.Position);
-                        headPositions.Add(Interfacing.DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid));
+                        headPositions.Add(Interfacing.DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid).Position);
 
                         CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString(
                             "/GeneralPage/Calibration/Captions/Captured");
@@ -1561,7 +1561,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             // Set up the calibration origin
             if (calibrationFirstTime)
                 AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] =
-                    Interfacing.DeviceRelativeTransformOrigin.ValueOr(_calibratingDeviceGuid);
+                    Interfacing.DeviceRelativeTransformOrigin.ValueOr(_calibratingDeviceGuid).Position;
 
             // Cache the calibration first_time
             calibrationFirstTime = false;

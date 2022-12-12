@@ -157,6 +157,23 @@ public static class SortedDictionaryExtensions
             ? value
             : fallbackValue ?? Vector3.Zero;
     }
+
+    public static Quaternion ValueOr(this SortedDictionary<string, Quaternion> dictionary,
+        string key, Quaternion? fallbackValue = null)
+    {
+        return dictionary is not null && dictionary.TryGetValue(key, out var value)
+            ? value
+            : fallbackValue ?? Quaternion.Identity;
+    }
+
+    public static (Vector3 Position, Quaternion Orientation) ValueOr(
+        this SortedDictionary<string, (Vector3 Position, Quaternion Orientation)> dictionary,
+        string key, (Vector3 Position, Quaternion Orientation)? fallbackValue = null)
+    {
+        return dictionary is not null && dictionary.TryGetValue(key, out var value)
+            ? value
+            : fallbackValue ?? (Vector3.Zero, Quaternion.Identity);
+    }
 }
 
 public static class QuaternionExtensions
