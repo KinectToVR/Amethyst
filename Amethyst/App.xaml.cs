@@ -8,6 +8,7 @@ using Windows.UI.ViewManagement;
 using Amethyst.Classes;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
+using System.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -113,8 +114,20 @@ public partial class App : Application
         // Reload plugins' language resources
         foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
             Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
+        
+        // Reload everything we can
+        Shared.Devices.DevicesJointsValid = false;
 
         // Request page reloads
+        Translator.Get.OnPropertyChanged();
         Shared.Events.RequestInterfaceReload();
+
+        // Request manager reloads
+        AppData.Settings.OnPropertyChanged();
+        AppData.Settings.TrackersVector.ToList()
+            .ForEach(x => x.OnPropertyChanged());
+
+        // We're done with our changes now!
+        Shared.Devices.DevicesJointsValid = true;
     }
 }

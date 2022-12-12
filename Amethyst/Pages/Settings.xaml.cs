@@ -216,9 +216,20 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
             Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
+        // Reload everything we can
+        Shared.Devices.DevicesJointsValid = false;
+
         // Request page reloads
         Translator.Get.OnPropertyChanged();
         Shared.Events.RequestInterfaceReload();
+
+        // Request manager reloads
+        AppData.Settings.OnPropertyChanged();
+        AppData.Settings.TrackersVector.ToList()
+            .ForEach(x => x.OnPropertyChanged());
+
+        // We're done with our changes now!
+        Shared.Devices.DevicesJointsValid = true;
     }
 
     private void OptionBox_DropDownOpened(object sender, object e)
