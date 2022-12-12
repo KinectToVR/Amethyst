@@ -634,7 +634,8 @@
                         </TransitionCollection>
                     </StackPanel.Transitions>
 
-                    <TextBlock FontWeight="SemiBold" FontSize="25" Text="Tracking Output" />
+                    <TextBlock FontWeight="SemiBold" FontSize="25" 
+                               Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/Services'), Mode=OneWay}" />
 
                     <StackPanel Margin="0,10,0,0" Style="{ThemeResource CardTopStyle}">
                         <Grid>
@@ -644,7 +645,8 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" FontSize="16" Text="Send trackers to:"
+                                       FontWeight="SemiBold" FontSize="16" 
+                                       Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/Services'), Mode=OneWay}"
                                        Margin="5,0,0,0" Grid.Column="0" />
 
                             <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center"
