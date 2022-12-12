@@ -18,6 +18,8 @@ namespace Amethyst.Controls;
 
 public sealed partial class JointSettingsExpander : UserControl, INotifyPropertyChanged
 {
+    private bool _filterInteractionsBlocked;
+
     public JointSettingsExpander()
     {
         InitializeComponent();
@@ -58,13 +60,21 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     private int PositionTrackingDisplayOption
     {
         get => Trackers.FirstOrDefault()?.PositionTrackingDisplayOption ?? -1;
-        set => Trackers.ToList().ForEach(x => x.PositionTrackingDisplayOption = value);
+        set
+        {
+            if (_filterInteractionsBlocked) return;
+            Trackers.ToList().ForEach(x => x.PositionTrackingDisplayOption = value);
+        }
     }
 
     private int OrientationTrackingDisplayOption
     {
         get => Trackers.FirstOrDefault()?.OrientationTrackingDisplayOption ?? -1;
-        set => Trackers.ToList().ForEach(x => x.OrientationTrackingDisplayOption = value);
+        set
+        {
+            if (_filterInteractionsBlocked) return;
+            Trackers.ToList().ForEach(x => x.OrientationTrackingDisplayOption = value);
+        }
     }
 
     private string ManagingDevicePlaceholder => Trackers.FirstOrDefault()?.ManagingDevicePlaceholder ?? "INVALID";
@@ -85,6 +95,18 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
+        // Block all ComboBox interactions
+        _filterInteractionsBlocked = true;
+
+        // Refresh ComboBox selected (display) items
+        PositionFilterComboBox.SelectedIndex = -1;
+        PositionFilterComboBox.SelectedIndex = PositionTrackingDisplayOption;
+        OrientationOptionComboBox.SelectedIndex = -1;
+        OrientationOptionComboBox.SelectedIndex = OrientationTrackingDisplayOption;
+
+        // Unblock all ComboBox interactions
+        _filterInteractionsBlocked = false;
     }
 
     private bool InvertBool(bool v)

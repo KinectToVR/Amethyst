@@ -62,7 +62,7 @@
                                Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
 
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center"
-                              DataContext="{x:Bind}"
+                              DataContext="{x:Bind}" x:Name="PositionFilterComboBox"
                               SelectedIndex="{x:Bind PositionTrackingDisplayOption, Mode=TwoWay}"
                               Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
                               PlaceholderText="{x:Bind ManagingDevicePlaceholder, Mode=OneWay}"
@@ -89,7 +89,7 @@
                                Margin="0,0,20,0" Grid.Column="0" Grid.Row="1" />
 
                     <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center"
-                              DataContext="{x:Bind}"
+                              DataContext="{x:Bind}" x:Name="OrientationOptionComboBox"
                               Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
                               PlaceholderText="{x:Bind ManagingDevicePlaceholder, Mode=OneWay}"
                               SelectedIndex="{x:Bind OrientationTrackingDisplayOption, Mode=TwoWay}"
