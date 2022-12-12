@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -684,21 +684,25 @@ public static class Interfacing
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
                     return LocalizedJsonString(key); // Just give up
                 }
-
-                // Check if the resource root is fine
-                var thisPluginDevice = TrackingDevices.GetDevice(guid).Device;
-                var thisPluginService = TrackingDevices.GetService(guid).Service;
-
+                
                 // Check if the request was from a device
-                var resourceRootDevice = thisPluginDevice?.LocalizationResourcesRoot.Root;
-                if (resourceRootDevice is not null && resourceRootDevice.Count > 0)
-                    return resourceRootDevice.GetNamedString(key);
+                if (TrackingDevices.TrackingDevicesList.TryGetValue(guid, out var device))
+                {
+                    // Check if the resource root is fine
+                    var resourceRootDevice = device?.LocalizationResourcesRoot.Root;
+                    if (resourceRootDevice is not null && resourceRootDevice.Count > 0)
+                        return resourceRootDevice.GetNamedString(key); // Return if ok
+                }
 
-                // Still here? Might have been an endpoint service!
-                var resourceRootService = thisPluginService?.LocalizationResourcesRoot.Root;
-                if (resourceRootService is not null && resourceRootService.Count > 0)
-                    return resourceRootService.GetNamedString(key);
-
+                // Check if the request was from a service
+                if (TrackingDevices.ServiceEndpointsList.TryGetValue(guid, out var service))
+                {
+                    // Check if the resource root is fine
+                    var resourceRootService = service?.LocalizationResourcesRoot.Root;
+                    if (resourceRootService is not null && resourceRootService.Count > 0)
+                        return resourceRootService.GetNamedString(key); // Return if ok
+                }
+                
                 // Still here?!? We're screwed!
                 Logger.Error($"The resource root of plugin {guid} is empty! Its interface will be broken!");
                 return LocalizedJsonString(key); // Just give up
@@ -717,7 +721,7 @@ public static class Interfacing
         {
             try
             {
-                Logger.Info($"[Requested by device with GUID {guid}] " +
+                Logger.Info($"[Requested by plugin with GUID {guid}] " +
                             $"Searching for language resources with key \"{AppData.Settings.AppLanguage}\"...");
 
                 if (string.IsNullOrEmpty(guid) || (!TrackingDevices.TrackingDevicesList.ContainsKey(guid) &&
@@ -730,7 +734,7 @@ public static class Interfacing
 
                 if (!Directory.Exists(path))
                 {
-                    Logger.Info($"[Requested by device with GUID {guid}] " +
+                    Logger.Info($"[Requested by plugin with GUID {guid}] " +
                                 $"Could not find any language enumeration resources in \"{path}\"! " +
                                 $"Interface of device {guid} will be broken!");
                     return false; // Just give up
@@ -741,7 +745,7 @@ public static class Interfacing
                 // If the specified language doesn't exist somehow, fallback to 'en'
                 if (!File.Exists(resourcePath))
                 {
-                    Logger.Warn($"[Requested by device with GUID {guid}] " +
+                    Logger.Warn($"[Requested by plugin with GUID {guid}] " +
                                 "Could not load language resources at " +
                                 $"\"{resourcePath}\", falling back to 'en' (en.json)!");
 
@@ -751,25 +755,21 @@ public static class Interfacing
                 // If failed again, just give up
                 if (!File.Exists(resourcePath))
                 {
-                    Logger.Error($"[Requested by device with GUID {guid}] " +
+                    Logger.Error($"[Requested by plugin with GUID {guid}] " +
                                  $"Could not load language resources at \"{resourcePath}\"," +
                                  $"for device {guid}! Its interface will be broken!");
                     return false; // Just give up
                 }
 
-                // If everything's ok, load the resources into the current resource tree
-                var thisPluginDevice = TrackingDevices.GetDevice(guid).Device;
-                var thisPluginService = TrackingDevices.GetService(guid).Service;
-
-                // Swap-check the caller type
-                if (thisPluginDevice is not null)
+                // ReSharper disable once InvertIf | Check if the request was from a device
+                if (TrackingDevices.TrackingDevicesList.TryGetValue(guid, out var device) && device is not null)
                 {
                     // Parse the loaded json
-                    thisPluginDevice.LocalizationResourcesRoot =
-                        (JsonObject.Parse(File.ReadAllText(resourcePath)), resourcePath);
+                    device.LocalizationResourcesRoot =
+                        (JsonObject.Parse(File.ReadAllText(resourcePath)), path);
 
                     // Check if the resource root is fine
-                    var resourceRoot = thisPluginDevice.LocalizationResourcesRoot.Root;
+                    var resourceRoot = device.LocalizationResourcesRoot.Root;
                     if (resourceRoot is null || resourceRoot.Count <= 0)
                     {
                         Logger.Error($"[Requested by device with GUID {guid}] " +
@@ -780,38 +780,47 @@ public static class Interfacing
 
                     // Still here? 
                     Logger.Info($"[Requested by device with GUID {guid}] " +
-                                $"Successfully loaded language resources with key \"{AppData.Settings.AppLanguage}\"!");
+                                "Successfully loaded language resources with key " +
+                                $"\"{AppData.Settings.AppLanguage}\"!");
+
                     return true; // Winning it, yay!
                 }
 
-                // Swap-check the caller type
-                if (thisPluginService is not null)
+                // ReSharper disable once InvertIf | Check if the request was from a service
+                if (TrackingDevices.ServiceEndpointsList.TryGetValue(guid, out var service) && service is not null)
                 {
                     // Parse the loaded json
-                    thisPluginService.LocalizationResourcesRoot =
+                    service.LocalizationResourcesRoot =
                         (JsonObject.Parse(File.ReadAllText(resourcePath)), resourcePath);
 
                     // Check if the resource root is fine
-                    var resourceRoot = thisPluginService.LocalizationResourcesRoot.Root;
+                    var resourceRoot = service.LocalizationResourcesRoot.Root;
                     if (resourceRoot is null || resourceRoot.Count <= 0)
                     {
-                        Logger.Error($"[Requested by device with GUID {guid}] " +
+                        Logger.Error($"[Requested by service with GUID {guid}] " +
                                      $"Could not load language resources at \"{resourcePath}\"," +
                                      $"for device {guid}! Its interface will be broken!");
                         return false; // Just give up
                     }
 
                     // Still here? 
-                    Logger.Info($"[Requested by device with GUID {guid}] " +
-                                $"Successfully loaded language resources with key \"{AppData.Settings.AppLanguage}\"!");
+                    Logger.Info($"[Requested by service with GUID {guid}] " +
+                                "Successfully loaded language resources with key " +
+                                $"\"{AppData.Settings.AppLanguage}\"!");
+
                     return true; // Winning it, yay!
                 }
+
+                Logger.Error($"[Requested by plugin with GUID {guid}] " +
+                             $"Could not load language resources at \"{resourcePath}\"," +
+                             $"for plugin {guid}! Its interface will be broken! " +
+                             "Either the GUID was invalid, or the plugin is broken.");
 
                 return false; // Oof, what happened?
             }
             catch (Exception e)
             {
-                Logger.Error($"[Requested by device with GUID {guid}] " +
+                Logger.Error($"[Requested by plugin with GUID {guid}] " +
                              $"JSON error at key: \"{AppData.Settings.AppLanguage}\"! Message: {e.Message}");
                 return false; // Just give up
             }
