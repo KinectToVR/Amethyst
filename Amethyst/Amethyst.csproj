@@ -7,7 +7,6 @@
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <RootNamespace>Amethyst</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>Assets\ktvr.ico</ApplicationIcon>
     <Platforms>x64</Platforms>
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
     <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
@@ -21,6 +20,16 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
     <StartupObject>Amethyst.Program</StartupObject>
+
+    <ApplicationIcon>Assets\ktvr.ico</ApplicationIcon>
+    <Authors>K2VR Team</Authors>
+    <Copyright>© K2VR Team</Copyright>
+    <Description>Amethyst.NET (Desktop) App</Description>
+    <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
+    <Version>1.2.230000.1</Version>
+    <FileVersion>1.2.0.1</FileVersion>
+    <AssemblyVersion>1.2.0.1</AssemblyVersion>
+    <RepositoryUrl>https://github.com/KinectToVR/Amethyst.NET</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

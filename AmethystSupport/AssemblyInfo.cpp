@@ -12,10 +12,11 @@ using namespace Security::Permissions;
 [assembly:AssemblyConfigurationAttribute(L"")];
 [assembly:AssemblyCompanyAttribute(L"K2VR Team")];
 [assembly:AssemblyProductAttribute(L"AmethystSupport")];
-[assembly:AssemblyCopyrightAttribute(L"Copyright (c) 2022 K2VR Team")];
+[assembly:AssemblyCopyrightAttribute(L"© K2VR Team")];
 [assembly:AssemblyTrademarkAttribute(L"K2VR")];
 [assembly:AssemblyCultureAttribute(L"")];
 
-[assembly:AssemblyVersionAttribute(L"1.0.*")];
+[assembly:AssemblyVersionAttribute(L"1.2.0.1")];
+[assembly:AssemblyFileVersionAttribute(L"1.2.0.1")];
 
 [assembly:ComVisible(false)];

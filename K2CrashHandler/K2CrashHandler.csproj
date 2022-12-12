@@ -14,17 +14,18 @@
     <UseWinUI>true</UseWinUI>
     <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
     <WindowsPackageType>None</WindowsPackageType>
+    <BaseOutputPath></BaseOutputPath>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+
     <ApplicationIcon>Assets\crashhandler.ico</ApplicationIcon>
     <Authors>K2VR Team</Authors>
-    <Description>Amethyst Crash and Recovery Handler</Description>
+    <Copyright>© K2VR Team</Copyright>
+    <Description>Amethyst.NET Crash and Recovery Handler</Description>
     <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
-    <Copyright>Copyright © K2VR Team 2022</Copyright>
-    <BaseOutputPath></BaseOutputPath>
-    <FileVersion>1.0.3.1</FileVersion>
-    <AssemblyVersion>1.0.3.1</AssemblyVersion>
-    <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
-    <Version>1.0.3.1</Version>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <Version>1.2.230000.1</Version>
+    <FileVersion>1.2.0.1</FileVersion>
+    <AssemblyVersion>1.2.0.1</AssemblyVersion>
+    <RepositoryUrl>https://github.com/KinectToVR/Amethyst.NET</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,8 +40,7 @@
   <!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
        Tools extension to be activated for this project even if the Windows App SDK Nuget
        package has not yet been restored -->
-  <ItemGroup
-    Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
