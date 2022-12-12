@@ -18,6 +18,7 @@ using Amethyst.Utils;
 using AmethystSupport;
 using static Amethyst.Classes.Interfacing;
 using System.Reflection;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Amethyst.MVVM;
 
@@ -433,8 +434,68 @@ public class PluginHost : IAmethystHost
     // Get the raw OpenVRs HMD pose
     public (Vector3 Position, Quaternion Orientation) HmdPose => Interfacing.Plugins.GetHmdPose;
 
+    // Get the hook joint pose (typically Head, fallback to .First())
+    public (Vector3 Position, Quaternion Orientation) GetHookJointPose(bool calibrated = false)
+    {
+        (Vector3 jointPosition, Quaternion jointOrientation) = DeviceHookJointPosition
+            .TryGetValue(AppData.Settings.TrackingDeviceGuid, out var pose)
+            ? pose // Copy the position if everything's fine, return a placeholder if not
+            : (Vector3.Zero, Quaternion.Identity);
+
+        if (!calibrated)
+            return (jointPosition, jointOrientation);
+
+        // Construct the calibrated pose
+        return (Vector3.Transform(
+                    // Input, position
+                    jointPosition - AppData.Settings.DeviceCalibrationOrigins
+                        .GetValueOrDefault(AppData.Settings.TrackingDeviceGuid, Vector3.Zero),
+                    // Rotation
+                    AppData.Settings.DeviceCalibrationRotationMatrices
+                        .GetValueOrDefault(AppData.Settings.TrackingDeviceGuid, Quaternion.Identity)) +
+                // Translation
+                AppData.Settings.DeviceCalibrationTranslationVectors
+                    .GetValueOrDefault(AppData.Settings.TrackingDeviceGuid, Vector3.Zero) +
+                // Origin
+                AppData.Settings.DeviceCalibrationOrigins
+                    .GetValueOrDefault(AppData.Settings.TrackingDeviceGuid, Vector3.Zero),
+            // Orientation
+            AppData.Settings.DeviceCalibrationRotationMatrices
+                .GetValueOrDefault(AppData.Settings.TrackingDeviceGuid, Quaternion.Identity) * jointOrientation);
+    }
+
+    // Get the pose of the relative transform origin joint
+    public (Vector3 Position, Quaternion Orientation) GetTransformJointPose(bool calibrated = false)
+    {
+        (Vector3 jointPosition, Quaternion jointOrientation) = DeviceRelativeTransformOrigin
+            .TryGetValue(AppData.Settings.TrackingDeviceGuid, out var pose)
+            ? pose // Copy the position if everything's fine, return a placeholder if not
+            : (Vector3.Zero, Quaternion.Identity);
+
+        if (!calibrated)
+            return (jointPosition, jointOrientation);
+
+        // Construct the calibrated pose
+        return (Vector3.Transform(
+                    // Input, position
+                    jointPosition - AppData.Settings.DeviceCalibrationOrigins
+                        .GetValueOrDefault(AppData.Settings.TrackingDeviceGuid, Vector3.Zero),
+                    // Rotation
+                    AppData.Settings.DeviceCalibrationRotationMatrices
+                        .GetValueOrDefault(AppData.Settings.TrackingDeviceGuid, Quaternion.Identity)) +
+                // Translation
+                AppData.Settings.DeviceCalibrationTranslationVectors
+                    .GetValueOrDefault(AppData.Settings.TrackingDeviceGuid, Vector3.Zero) +
+                // Origin
+                AppData.Settings.DeviceCalibrationOrigins
+                    .GetValueOrDefault(AppData.Settings.TrackingDeviceGuid, Vector3.Zero),
+            // Orientation
+            AppData.Settings.DeviceCalibrationRotationMatrices
+                .GetValueOrDefault(AppData.Settings.TrackingDeviceGuid, Quaternion.Identity) * jointOrientation);
+    }
+
     // Log a message to Amethyst logs : handler
-    public void Log(string message, LogSeverity severity)
+    public void Log(string message, LogSeverity severity = LogSeverity.Info)
     {
         switch (severity)
         {

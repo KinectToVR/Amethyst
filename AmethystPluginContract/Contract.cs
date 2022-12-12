@@ -185,7 +185,7 @@ public interface IServiceEndpoint
     ///     The mandatory ones are: waist, left foot, and right foot
     /// </summary>
     public SortedSet<TrackerType> AdditionalSupportedTrackerTypes { get; }
-    
+
     /// <summary>
     ///     Mark as true to tell the user that they need to restart/
     ///     /in case they want to add more trackers after spawning
@@ -233,6 +233,13 @@ public interface IServiceEndpoint
     public string TrackingSystemName { get; }
 
     /// <summary>
+    ///     Get the absolute pose of the HMD, calibrated against the play space
+    ///     Return null if unknown to the service or unavailable
+    ///     You'll need to provide this to support automatic calibration
+    /// </summary>
+    public (Vector3 Position, Quaternion Orientation)? HeadsetPose { get; }
+
+    /// <summary>
     ///     This is called after the app loads the plugin
     /// </summary>
     void OnLoad();
@@ -262,13 +269,6 @@ public interface IServiceEndpoint
     ///     Request a restart of the tracking endpoint service
     /// </summary>
     public bool? RequestServiceRestart(string reason, bool wantReply = false);
-
-    /// <summary>
-    ///     Get the absolute pose of the HMD, calibrated against the play space
-    ///     Return null if unknown to the service or unavailable
-    ///     You'll need to provide this to support automatic calibration
-    /// </summary>
-    public (Vector3 Position, Quaternion Orientation)? HeadsetPose { get; }
 
     /// <summary>
     ///     Find an already-existing tracker and get its pose
@@ -306,28 +306,51 @@ public interface IAmethystHost
     /// <summary>
     ///     Helper to get all joints' positions from the app, which are added in Amethyst.
     ///     Note: if joint's off, its trackingState will be ITrackedJointState::State_NotTracked
+    ///     Note: [AppJointPoses] will always be returned raw and w/o tweaks/offsets
+    ///     /     if need the final ones, please consider writing an IServiceEndpoint
     /// </summary>
     List<TrackedJoint> AppJointPoses { get; }
 
     /// <summary>
-    ///     Get the HMD Yaw (exclusively)
+    ///     Get the raw HMD yaw from the current service endpoint
+    ///     Note: or 0 if the current service doesn't provide one
     /// </summary>
     double HmdOrientationYaw { get; }
-    
+
     /// <summary>
-    ///     Get the raw OpenVRs HMD pose
+    ///     Get the raw HMD pose from the current service endpoint
+    ///     or (zero, identity) if the service doesn't provide one
     /// </summary>
     (Vector3 Position, Quaternion Orientation) HmdPose { get; }
-    
+
     /// <summary>
     ///     Get Amethyst UI language
     /// </summary>
     string LanguageCode { get; }
 
     /// <summary>
+    ///     Get the hook joint pose (typically Head, fallback to .First())
+    ///     of the currently selected base tracking device (no overrides!)
+    ///     Mark [calibrated] as [true] to get the calibrated joint pose
+    ///     Note: [AppJointPoses] will always be returned raw and w/o tweaks/offsets
+    ///     /     if need the final ones, please consider writing an IServiceEndpoint
+    /// </summary>
+    (Vector3 Position, Quaternion Orientation) GetHookJointPose(bool calibrated = false);
+
+    /// <summary>
+    ///     Get the pose of the relative transform origin joint
+    ///     (typically Waist, fallback to .First(), then default)
+    ///     of the currently selected base device (no overrides!)
+    ///     Mark [calibrated] as [true] to get the calibrated pose
+    ///     Note: [AppJointPoses] will always be returned raw and w/o tweaks/offsets
+    ///     /     if need the final ones, please consider writing an IServiceEndpoint
+    /// </summary>
+    (Vector3 Position, Quaternion Orientation) GetTransformJointPose(bool calibrated = false);
+
+    /// <summary>
     ///     Log a message to Amethyst logs : handler
     /// </summary>
-    void Log(string message, LogSeverity severity);
+    void Log(string message, LogSeverity severity = LogSeverity.Info);
 
     /// <summary>
     ///     Play a sound from the resources
@@ -349,7 +372,7 @@ public interface IAmethystHost
     ///     Request a folder to be set as device's AME resources,
     ///     you can access these resources with the lower function later (after onLoad)
     ///     Warning: Resources are containerized and can't be accessed in-between devices!
-    ///     Warning: The default root is "[device_folder_path]/resources/Strings"!
+    ///     Warning: The default root is "[plugin_folder_path]/resources/Strings"!
     /// </summary>
     bool SetLocalizationResourcesRoot(string path, string guid);
 
