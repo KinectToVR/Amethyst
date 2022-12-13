@@ -30,6 +30,17 @@ public partial class App : Application
     {
         InitializeComponent();
 
+        UnhandledException += (object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e) => {
+            Exception ex = e.Exception;
+            Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
+            Application.Current.Exit();
+        };
+        AppDomain.CurrentDomain.UnhandledException += (object sender, System.UnhandledExceptionEventArgs e) => {
+            Exception ex = ( Exception ) e.ExceptionObject;
+            Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
+            Application.Current.Exit();
+        };
+
         // Set default window launch size (WinUI)
         ApplicationView.PreferredLaunchViewSize = new Size(1000, 700);
         ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
