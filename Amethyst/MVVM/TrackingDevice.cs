@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 using Windows.Data.Json;
@@ -17,9 +19,6 @@ using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
 using static Amethyst.Classes.Interfacing;
-using System.Reflection;
-using Microsoft.UI.Xaml.Controls;
-using System.Runtime.CompilerServices;
 
 namespace Amethyst.MVVM;
 
@@ -265,6 +264,11 @@ public class ServiceEndpoint : INotifyPropertyChanged
 
     public (JsonObject Root, string Directory) LocalizationResourcesRoot { get; set; } = new();
 
+    // Get the absolute pose of the HMD, calibrated against the play space
+    // Return null if unknown to the service or unavailable
+    // You'll need to provide this to support automatic calibration
+    public (Vector3 Position, Quaternion Orientation)? HeadsetPose => Service.HeadsetPose;
+
     // Property changed event
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -286,11 +290,6 @@ public class ServiceEndpoint : INotifyPropertyChanged
     {
         return Service.TestConnection();
     }
-
-    // Get the absolute pose of the HMD, calibrated against the play space
-    // Return null if unknown to the service or unavailable
-    // You'll need to provide this to support automatic calibration
-    public (Vector3 Position, Quaternion Orientation)? HeadsetPose => Service.HeadsetPose;
 
     // Find an already-existing tracker and get its pose
     // For no results found return null, also check if it's from amethyst
@@ -496,8 +495,8 @@ public class PluginHost : IAmethystHost
     }
 
     // Log a message to Amethyst logs : handler
-    public void Log(string message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
-        [CallerMemberName] string memberName = "")
+    public void Log(string message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0,
+        [CallerFilePath] string filePath = "", [CallerMemberName] string memberName = "")
     {
         switch (severity)
         {
@@ -519,10 +518,10 @@ public class PluginHost : IAmethystHost
                 break;
         }
     }
-    
+
     // Log a message to Amethyst logs : handler
-    public void Log(object message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
-        [CallerMemberName] string memberName = "")
+    public void Log(object message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0,
+        [CallerFilePath] string filePath = "", [CallerMemberName] string memberName = "")
     {
         switch (severity)
         {
