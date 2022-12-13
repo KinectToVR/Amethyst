@@ -699,9 +699,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 .ControllerInputActions?.TrackingFreezeActionContentString)) return;
 
         FreezeTrackingTeachingTip.Title =
-            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.TrackingFreezeActionTitleString;
+            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.TrackingFreezeActionTitleString;
         FreezeTrackingTeachingTip.Subtitle =
-            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.TrackingFreezeActionContentString;
+            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.TrackingFreezeActionContentString;
         FreezeTrackingTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
 
         Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
@@ -1528,10 +1528,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
             calibrationModeSwap = true;
         }
 
-        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.CalibrationConfirmed is not null)
+        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.CalibrationConfirmed is not null)
             TrackingDevices.CurrentServiceEndpoint
                 .ControllerInputActions.CalibrationConfirmed += OnCalibrationConfirmed;
-        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.CalibrationModeChanged is not null)
+        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.CalibrationModeChanged is not null)
             TrackingDevices.CurrentServiceEndpoint
                 .ControllerInputActions.CalibrationModeChanged += OnCalibrationModeChanged;
 
@@ -1543,7 +1543,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             {
                 // Apply to the global base
                 AppData.Settings.DeviceCalibrationTranslationVectors[_calibratingDeviceGuid] +=
-                    TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.MovePositionValues;
+                    TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.MovePositionValues ?? Vector3.Zero;
 
                 await Task.Delay(7);
 
@@ -1570,10 +1570,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
             // Wait for a mode switch
             while (!calibrationModeSwap && !calibrationConfirm)
             {
-                tempYaw += TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.AdjustRotationValues
-                    .Y; // Left X
-                tempPitch += TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.AdjustRotationValues
-                    .X; // Right Y
+                tempYaw += TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.AdjustRotationValues
+                    .Y ?? 0f; // Left X
+                tempPitch += TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.AdjustRotationValues
+                    .X ?? 0f; // Right Y
 
                 anglesVector3 = new Vector3(tempPitch, tempYaw, 0f);
                 rotationQuaternion = Quaternion.CreateFromYawPitchRoll(
@@ -1601,10 +1601,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
             if (!_calibrationPending) break;
         }
 
-        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.CalibrationConfirmed is not null)
+        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.CalibrationConfirmed is not null)
             TrackingDevices.CurrentServiceEndpoint
                 .ControllerInputActions.CalibrationConfirmed -= OnCalibrationConfirmed;
-        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.CalibrationModeChanged is not null)
+        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.CalibrationModeChanged is not null)
             TrackingDevices.CurrentServiceEndpoint
                 .ControllerInputActions.CalibrationModeChanged -= OnCalibrationModeChanged;
 

@@ -3,12 +3,13 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Amethyst.Classes;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
-using System.Linq;
+using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,15 +31,20 @@ public partial class App : Application
     {
         InitializeComponent();
 
-        UnhandledException += (object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e) => {
-            Exception ex = e.Exception;
+        // Listen for and log all uncaught second-chance exceptions : XamlApp
+        UnhandledException += (_, e) =>
+        {
+            var ex = e.Exception;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
-            Application.Current.Exit();
+            Current.Exit();
         };
-        AppDomain.CurrentDomain.UnhandledException += (object sender, System.UnhandledExceptionEventArgs e) => {
-            Exception ex = ( Exception ) e.ExceptionObject;
+
+        // Listen for and log all uncaught second-chance exceptions : Domain
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+        {
+            var ex = (Exception)e.ExceptionObject;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
-            Application.Current.Exit();
+            Current.Exit();
         };
 
         // Set default window launch size (WinUI)
@@ -125,7 +131,7 @@ public partial class App : Application
         // Reload plugins' language resources
         foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
             Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
-        
+
         // Reload everything we can
         Shared.Devices.DevicesJointsValid = false;
 

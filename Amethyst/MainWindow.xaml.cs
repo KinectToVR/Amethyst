@@ -237,8 +237,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
                 "K2CrashHandler", "K2CrashHandler.exe"), $"{Environment.ProcessId} \"{Logger.LogFilePath}\"");
         else
-            Logger.Warn($"Crash handler exe ({Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
-                "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
+            Logger.Warn(
+                $"Crash handler exe ({Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
 
         // Start the main loop
         Task.Run(Main.MainLoop);
@@ -632,14 +632,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     Logger.Info($"Checking if ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) has any roles set...");
                     Logger.Info($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 $"{(AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid ? "is the selected service!" : "does not serve any purpose:/")}");
-
-                    // TODO ALSO DO THIS ON SERVICE SELECTION/CHANGE
+                    
+                    // Check and use service's provided [freeze] action handlers
                     if (AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid &&
-                        plugin.Value.ControllerInputActions.TrackingFreezeToggled is not null)
+                        plugin.Value.ControllerInputActions?.TrackingFreezeToggled is not null)
                         plugin.Value.ControllerInputActions.TrackingFreezeToggled += Main.FreezeActionToggled;
 
+                    // Check and use service's provided [flip] action handlers
                     if (AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid &&
-                        plugin.Value.ControllerInputActions.SkeletonFlipToggled is not null)
+                        plugin.Value.ControllerInputActions?.SkeletonFlipToggled is not null)
                         plugin.Value.ControllerInputActions.SkeletonFlipToggled += Main.FlipActionToggled;
                 }
                 catch (Exception e)

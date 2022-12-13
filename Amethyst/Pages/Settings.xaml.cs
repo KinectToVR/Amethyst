@@ -367,9 +367,9 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionContentString))
         {
             ToggleFlipTeachingTip.Title =
-                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.SkeletonFlipActionTitleString;
+                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionTitleString;
             ToggleFlipTeachingTip.Subtitle =
-                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions.SkeletonFlipActionContentString;
+                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionContentString;
 
             ToggleFlipTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
 
@@ -823,6 +823,18 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Logger.Info("The selected service endpoint was requested to be changed to " +
                     $"({selectedService.Guid}, {selectedService.Name})!");
 
+        // Check and disable previous service's provided [freeze] action handlers
+        if (TrackingDevices.CurrentServiceEndpoint
+                .ControllerInputActions?.TrackingFreezeToggled is not null)
+            TrackingDevices.CurrentServiceEndpoint
+                .ControllerInputActions.TrackingFreezeToggled -= Main.FreezeActionToggled;
+
+        // Check and disable previous service's provided [flip] action handlers
+        if (TrackingDevices.CurrentServiceEndpoint
+                .ControllerInputActions?.SkeletonFlipToggled is not null)
+            TrackingDevices.CurrentServiceEndpoint
+                .ControllerInputActions.SkeletonFlipToggled -= Main.FlipActionToggled;
+
         try
         {
             // Try disabling the currently selected service endpoint
@@ -837,6 +849,19 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             // ignored
         }
 
+        // Check and use service's provided [freeze] action handlers
+        if (TrackingDevices.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid]
+                .ControllerInputActions?.TrackingFreezeToggled is not null)
+            TrackingDevices.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid]
+                .ControllerInputActions.TrackingFreezeToggled += Main.FreezeActionToggled;
+
+        // Check and use service's provided [flip] action handlers
+        if (TrackingDevices.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid]
+                .ControllerInputActions?.SkeletonFlipToggled is not null)
+            TrackingDevices.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid]
+                .ControllerInputActions.SkeletonFlipToggled += Main.FlipActionToggled;
+
+        // Update the selected service in application settings
         AppData.Settings.ServiceEndpointGuid = selectedService.Guid;
 
         // Re-initialize if not connected for some reason
