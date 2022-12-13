@@ -19,6 +19,7 @@ using AmethystSupport;
 using static Amethyst.Classes.Interfacing;
 using System.Reflection;
 using Microsoft.UI.Xaml.Controls;
+using System.Runtime.CompilerServices;
 
 namespace Amethyst.MVVM;
 
@@ -495,25 +496,51 @@ public class PluginHost : IAmethystHost
     }
 
     // Log a message to Amethyst logs : handler
-    public void Log(string message, LogSeverity severity = LogSeverity.Info)
+    public void Log(string message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
+        [CallerMemberName] string memberName = "")
     {
         switch (severity)
         {
             case LogSeverity.Fatal:
-                Logger.Fatal(message);
+                Logger.Fatal(message, lineNumber, filePath, memberName);
                 break;
 
             case LogSeverity.Error:
-                Logger.Error(message);
+                Logger.Error(message, lineNumber, filePath, memberName);
                 break;
 
             case LogSeverity.Warning:
-                Logger.Warn(message);
+                Logger.Warn(message, lineNumber, filePath, memberName);
                 break;
 
             case LogSeverity.Info:
             default:
-                Logger.Info(message);
+                Logger.Info(message, lineNumber, filePath, memberName);
+                break;
+        }
+    }
+    
+    // Log a message to Amethyst logs : handler
+    public void Log(object message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
+        [CallerMemberName] string memberName = "")
+    {
+        switch (severity)
+        {
+            case LogSeverity.Fatal:
+                Logger.Fatal(message.ToString(), lineNumber, filePath, memberName);
+                break;
+
+            case LogSeverity.Error:
+                Logger.Error(message.ToString(), lineNumber, filePath, memberName);
+                break;
+
+            case LogSeverity.Warning:
+                Logger.Warn(message.ToString(), lineNumber, filePath, memberName);
+                break;
+
+            case LogSeverity.Info:
+            default:
+                Logger.Info(message.ToString(), lineNumber, filePath, memberName);
                 break;
         }
     }

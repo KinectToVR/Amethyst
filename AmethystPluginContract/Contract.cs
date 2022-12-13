@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Amethyst.Plugins.Contract;
 
@@ -350,7 +351,14 @@ public interface IAmethystHost
     /// <summary>
     ///     Log a message to Amethyst logs : handler
     /// </summary>
-    void Log(string message, LogSeverity severity = LogSeverity.Info);
+    void Log(string message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
+        [CallerMemberName] string memberName = "");
+
+    /// <summary>
+    ///     Log a message to Amethyst logs : handler
+    /// </summary>
+    void Log(object message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
+        [CallerMemberName] string memberName = "");
 
     /// <summary>
     ///     Play a sound from the resources

@@ -237,7 +237,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
                 "K2CrashHandler", "K2CrashHandler.exe"), $"{Environment.ProcessId} \"{Logger.LogFilePath}\"");
         else
-            Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
+            Logger.Warn($"Crash handler exe ({Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+                "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
 
         // Start the main loop
         Task.Run(Main.MainLoop);
