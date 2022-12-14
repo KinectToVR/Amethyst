@@ -538,9 +538,9 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     private void RestartButton_Click(object sender, RoutedEventArgs e)
     {
-        // TODO LOCALIZATION
         TrackingDevices.CurrentServiceEndpoint.RequestServiceRestart(
-            "The tracking service needs to be restarted to enable/disable trackers properly.");
+            Interfacing.LocalizedJsonString("/SettingsPage/Captions/ServiceRestart")
+                .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name));
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
@@ -764,14 +764,50 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         TrackingDevices.UpdateTrackingDevicesInterface();
         AlternativeConnectionOptionsFlyout.Hide();
 
-        // Update the page UI
-        OnPropertyChanged();
+        // Set up the co/re/disconnect button
+        Shared.General.ToggleTrackersButton.IsChecked = false;
+        Shared.General.ToggleTrackersButton.Content =
+            Interfacing.LocalizedJsonString(Interfacing.K2AppTrackersSpawned
+                ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
+                : "/GeneralPage/Buttons/TrackersToggle/Connect");
+
+        // Hide additional controls
+        Shared.General.CalibrationButton.IsEnabled = false;
+
+        // Mark the service as non-failed, clean
+        Interfacing.ServiceEndpointFailure = false;
+        Interfacing.K2AppTrackersSpawned = false;
+        Interfacing.AppTrackersInitialized = false;
+        Interfacing.ServiceEndpointSetup(); // Refresh
+
+        // Reload everything we can
+        Shared.Devices.DevicesJointsValid = false;
+
+        // Request page reloads
+        Translator.Get.OnPropertyChanged();
+        Shared.Events.RequestInterfaceReload();
+
+        // Request manager reloads
+        AppData.Settings.OnPropertyChanged();
+        AppData.Settings.TrackersVector.ToList()
+            .ForEach(x => x.OnPropertyChanged());
+
+        // We're done with our changes now!
+        Shared.Devices.DevicesJointsValid = true;
     }
 
     private void ShutdownServiceButton_Click(object sender, RoutedEventArgs e)
     {
-        Logger.Info($"Now shutting down service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid}...");
-        TrackingDevices.CurrentServiceEndpoint.Shutdown();
+        try
+        {
+            Logger.Info($"Now shutting down service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid}...");
+            TrackingDevices.CurrentServiceEndpoint.Shutdown();
+        }
+        catch (Exception ex)
+        {
+            Logger.Info($"Shutting down service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid} failed! " +
+                        $"Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
+        }
 
         // Force refresh all the valid pages
         Shared.Events.RequestInterfaceReload(false);
@@ -781,8 +817,36 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         TrackingDevices.UpdateTrackingDevicesInterface();
         AlternativeConnectionOptionsFlyout.Hide();
 
-        // Update the page UI
-        OnPropertyChanged();
+        // Set up the co/re/disconnect button
+        Shared.General.ToggleTrackersButton.IsChecked = false;
+        Shared.General.ToggleTrackersButton.Content =
+            Interfacing.LocalizedJsonString(Interfacing.K2AppTrackersSpawned
+                ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
+                : "/GeneralPage/Buttons/TrackersToggle/Connect");
+
+        // Hide additional controls
+        Shared.General.CalibrationButton.IsEnabled = false;
+
+        // Mark the service as non-failed, clean
+        Interfacing.ServiceEndpointFailure = false;
+        Interfacing.K2AppTrackersSpawned = false;
+        Interfacing.AppTrackersInitialized = false;
+        Interfacing.ServiceEndpointSetup(); // Refresh
+
+        // Reload everything we can
+        Shared.Devices.DevicesJointsValid = false;
+
+        // Request page reloads
+        Translator.Get.OnPropertyChanged();
+        Shared.Events.RequestInterfaceReload();
+
+        // Request manager reloads
+        AppData.Settings.OnPropertyChanged();
+        AppData.Settings.TrackersVector.ToList()
+            .ForEach(x => x.OnPropertyChanged());
+
+        // We're done with our changes now!
+        Shared.Devices.DevicesJointsValid = true;
     }
 
     private async void OpenDocsButton_Click(object sender, RoutedEventArgs e)
@@ -802,7 +866,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         await Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBQCRDG"));
     }
 
-    private void SelectedServiceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void SelectedServiceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if ((sender as ComboBox)!.SelectedIndex < 0)
             (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
@@ -835,6 +899,23 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             TrackingDevices.CurrentServiceEndpoint
                 .ControllerInputActions.SkeletonFlipToggled -= Main.FlipActionToggled;
 
+        // Set up the co/re/disconnect button
+        Shared.General.ToggleTrackersButton.IsChecked = false;
+        Shared.General.ToggleTrackersButton.Content =
+            Interfacing.LocalizedJsonString(Interfacing.K2AppTrackersSpawned
+                ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
+                : "/GeneralPage/Buttons/TrackersToggle/Connect");
+
+        // Hide additional controls
+        Shared.General.CalibrationButton.IsEnabled = false;
+
+        // Mark the service as non-failed, disable trackers
+        Interfacing.ServiceEndpointFailure = false;
+        Interfacing.AppTrackersInitialized = false;
+        t
+            await Task.Delay(300); // Wait until disabled
+        Interfacing.K2AppTrackersSpawned = false;
+
         try
         {
             // Try disabling the currently selected service endpoint
@@ -844,9 +925,10 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
             TrackingDevices.CurrentServiceEndpoint.Shutdown();
         }
-        catch
+        catch (Exception ex)
         {
-            // ignored
+            Logger.Info($"Shutting down service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid} failed! " +
+                        $"Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
         }
 
         // Check and use service's provided [freeze] action handlers
@@ -864,16 +946,27 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Update the selected service in application settings
         AppData.Settings.ServiceEndpointGuid = selectedService.Guid;
 
-        // Re-initialize if not connected for some reason
-        if (TrackingDevices.CurrentServiceEndpoint.StatusError)
-        {
-            Logger.Info("Now reinitializing service endpoint " +
-                        $"{TrackingDevices.CurrentServiceEndpoint.Guid}...");
-            TrackingDevices.CurrentServiceEndpoint.Initialize();
-        }
+        // Re-initialize just in case
+        Logger.Info("Now reinitializing service endpoint " +
+                    $"{TrackingDevices.CurrentServiceEndpoint.Guid}...");
 
-        // Refresh everything
-        OnPropertyChanged();
+        TrackingDevices.CurrentServiceEndpoint.Initialize();
+        Interfacing.ServiceEndpointSetup(); // Refresh
+
+        // Reload everything we can
+        Shared.Devices.DevicesJointsValid = false;
+
+        // Request page reloads
+        Translator.Get.OnPropertyChanged();
+        Shared.Events.RequestInterfaceReload();
+
+        // Request manager reloads
+        AppData.Settings.OnPropertyChanged();
+        AppData.Settings.TrackersVector.ToList()
+            .ForEach(x => x.OnPropertyChanged());
+
+        // We're done with our changes now!
+        Shared.Devices.DevicesJointsValid = true;
     }
 
     private void ServiceCombo_OnDropDownOpened(object sender, object e)

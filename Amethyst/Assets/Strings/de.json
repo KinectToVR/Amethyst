@@ -105,6 +105,7 @@
   "/SettingsPage/Captions/TrackersRestart/Line1": "Ein- oder Ausschalten von einem Tracker",
   "/SettingsPage/Captions/TrackersRestart/Line2": "benötigt einen Neustart von {0} und Amethyst.",
   "/SettingsPage/Captions/Services": "Send trackers to:",
+  "/SettingsPage/Captions/ServiceRestart": "{0} needs to be restarted to enable/disable trackers properly.",
   "/SettingsPage/Elements/ExtFlipCalibration/ToolTip": "Kalibrierung",
   "/SettingsPage/Elements/FlipToggle/ToolTip": "Durch Deaktivieren wird das Tracking gestoppt, wenn man sich umdreht.",
   "/SettingsPage/Filters/Orientation/Device": "Default Orientation",
