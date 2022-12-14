@@ -37,10 +37,15 @@ public static class Shared
                 return; // Not ready yet oof
 
             if (all) ReloadMainWindowEvent?.Set();
+
             ReloadGeneralPageEvent?.Set();
             ReloadSettingsPageEvent?.Set();
             ReloadDevicesPageEvent?.Set();
             ReloadInfoPageEvent?.Set();
+
+            // Reload other stuff, like statuses
+            TrackingDevices.UpdateTrackingDevicesInterface();
+            TrackingDevices.HandleDeviceRefresh(false);
         }
     }
 
