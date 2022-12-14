@@ -515,7 +515,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                 using var container = new CompositionContainer(pCatalog,
                     CompositionOptions.DisableSilentRejection);
-                
+
                 Logger.Info($"Searching for tracking services (endpoint) plugins within {pluginCatalog}...");
                 var devicePlugins = container.GetExports<IServiceEndpoint, IPluginMetadata>().ToList();
 
@@ -1814,5 +1814,25 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         IconRotation.Stop(); // Restart
         IconRotation.Begin();
+    }
+
+    private void InterfaceBlockerGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        if (!InitializerTeachingTip.IsOpen) return;
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Focus);
+
+        // Dismiss the current tip
+        Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = false;
+
+        // Just dismiss the tip
+        Shared.Main.InterfaceBlockerGrid.Opacity = 0.0;
+        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
+        Interfacing.IsNuxPending = false;
+
+        // We're done
+        AppData.Settings.FirstTimeTourShown = true;
+        AppData.Settings.SaveSettings();
     }
 }

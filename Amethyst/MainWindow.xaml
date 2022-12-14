@@ -70,6 +70,13 @@
             </Grid.OpacityTransition>
         </Grid>
 
+        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left"
+              IsDoubleTapEnabled="True"
+              Width="70" Height="65" Margin="0,0,0,70"
+              DoubleTapped="InterfaceBlockerGrid_DoubleTapped"
+              Opacity="0.0" Background="White" Canvas.ZIndex="10"
+              IsHitTestVisible="{Binding ElementName=InterfaceBlockerGrid, Path=IsHitTestVisible}" />
+
         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
               x:Name="InterfaceBlockerGrid" Opacity="0.0"
               Background="Transparent"
