@@ -78,6 +78,9 @@ public partial class App : Application
         // Read saved settings
         AppData.Settings.ReadSettings();
 
+        // Read plugin settings
+        TrackingDevices.PluginSettings.ReadSettings();
+
         // Create the strings directory in case it doesn't exist yet
         Directory.CreateDirectory(Path.Join(
             Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings"));

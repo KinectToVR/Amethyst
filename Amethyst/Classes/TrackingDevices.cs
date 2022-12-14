@@ -34,6 +34,9 @@ public static class TrackingDevices
         ServiceEndpoint // Receives tracking data
     }
 
+    // Plugin settings (Note: GUIDs must not overlap)
+    public static AppPluginSettings PluginSettings { get; set; }  = new();
+
     // Device plugins / tracking providers
     public static readonly SortedDictionary<string, TrackingDevice> TrackingDevicesList = new();
 

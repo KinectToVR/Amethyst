@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -53,6 +54,8 @@ namespace Amethyst;
 /// </summary>
 public sealed partial class MainWindow : Window, INotifyPropertyChanged
 {
+    [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
+
     private readonly bool _mainPageInitFinished;
 
     private readonly SemaphoreSlim _rotationFSemaphore = new(0);
@@ -254,8 +257,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         var catalog = new AggregateCatalog();
 
         // Add the current assembly to support invoke method exports
-        Logger.Info("Exporting the plugin host plugin...");
-        catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
+        //Logger.Info("Exporting the plugin host plugin...");
+        //catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
 
         // Iterate over all directories in .\Plugins dir and add all Plugin* dirs to catalogs
         var pluginDirectoryList = Directory.EnumerateDirectories(
@@ -305,18 +308,33 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info($"Found {pluginDirectoryList.Count} potentially valid plugin directories...");
         try
         {
-            // Match Imports with corresponding exports in all catalogs in the container
-            using var container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
-            container.ComposeExportedValue(typeof(IAmethystHost));
+            // Loop over device catalog parts and compose
+            foreach (var pluginCatalog in catalog.Catalogs)
+            {
+                var pCatalog = new AggregateCatalog();
+                pCatalog.Catalogs.Add(pluginCatalog);
 
-            Logger.Info("Searching for tracking devices (providers) plugins...");
+                using var container = new CompositionContainer(pCatalog,
+                    CompositionOptions.DisableSilentRejection);
 
-            var devicePlugins = container.GetExports<ITrackingDevice, IPluginMetadata>().ToList();
-            Logger.Info($"Found {devicePlugins.Count} potentially valid plugins...");
+                Logger.Info($"Searching for tracking devices (providers) plugins within {pluginCatalog}...");
+                var devicePlugins = container.GetExports<ITrackingDevice, IPluginMetadata>().ToList();
 
-            foreach (var plugin in devicePlugins)
+                Logger.Info($"Found {devicePlugins.Count} potentially valid exported plugin parts...");
+                if (devicePlugins.Count <= 0)
+                {
+                    Logger.Info("Skipping this catalog part as it doesn't contain any usable plugins!");
+                    continue; // Skip composing this plugin, it won't do any good!
+                }
+
+                var plugin = devicePlugins.First();
+                Logger.Info($"Preparing exports for ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
+
                 try
                 {
+                    AmethystPluginHost = new PluginHost(plugin.Metadata.Guid);
+                    container.ComposeParts(this);
+
                     Logger.Info($"Parsing ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
 
                     // Check the plugin GUID against others loaded, INVALID and null
@@ -477,6 +495,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         Status = TrackingDevices.PluginLoadError.Other
                     });
                 }
+            }
 
             // Check if we have enough plugins to run the app
             if (TrackingDevices.TrackingDevicesList.Count < 1)
@@ -488,14 +507,33 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Info("Registration of tracking device plugins has ended, there are " +
                         $"{TrackingDevices.TrackingDevicesList.Count} valid plugins in total.");
 
-            Logger.Info("Searching for tracking services (endpoint) plugins...");
+            // Loop over service catalog parts and compose
+            foreach (var pluginCatalog in catalog.Catalogs)
+            {
+                var pCatalog = new AggregateCatalog();
+                pCatalog.Catalogs.Add(pluginCatalog);
 
-            var servicePlugins = container.GetExports<IServiceEndpoint, IPluginMetadata>().ToList();
-            Logger.Info($"Found {servicePlugins.Count} potentially valid plugins...");
+                using var container = new CompositionContainer(pCatalog,
+                    CompositionOptions.DisableSilentRejection);
+                
+                Logger.Info($"Searching for tracking services (endpoint) plugins within {pluginCatalog}...");
+                var devicePlugins = container.GetExports<IServiceEndpoint, IPluginMetadata>().ToList();
 
-            foreach (var plugin in servicePlugins)
+                Logger.Info($"Found {devicePlugins.Count} potentially valid exported plugin parts...");
+                if (devicePlugins.Count <= 0)
+                {
+                    Logger.Info("Skipping this catalog part as it doesn't contain any usable plugins!");
+                    continue; // Skip composing this plugin, it won't do any good!
+                }
+
+                var plugin = devicePlugins.First();
+                Logger.Info($"Preparing exports for ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
+
                 try
                 {
+                    AmethystPluginHost = new PluginHost(plugin.Metadata.Guid);
+                    container.ComposeParts(this);
+
                     Logger.Info($"Parsing ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
 
                     // Check the plugin GUID against others loaded, INVALID and null
@@ -632,7 +670,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     Logger.Info($"Checking if ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) has any roles set...");
                     Logger.Info($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 $"{(AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid ? "is the selected service!" : "does not serve any purpose:/")}");
-                    
+
                     // Check and use service's provided [freeze] action handlers
                     if (AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid &&
                         plugin.Value.ControllerInputActions?.TrackingFreezeToggled is not null)
@@ -660,6 +698,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         Status = TrackingDevices.PluginLoadError.Other
                     });
                 }
+            }
 
             // Check if we have enough plugins to run the app
             if (TrackingDevices.ServiceEndpointsList.Count < 1)

@@ -5,6 +5,7 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -419,9 +420,24 @@ public class ModuleAssemblyLoadContext : AssemblyLoadContext
     }
 }
 
-[Export(typeof(IAmethystHost))]
 public class PluginHost : IAmethystHost
 {
+    [SetsRequiredMembers]
+    public PluginHost(string guid)
+    {
+        Guid = guid; // Cache the guid and rebuild
+        SettingsHelper = new PluginSettingsHelper(guid);
+    }
+
+    // Internal plugin guid
+    private string Guid { get; }
+
+    // Settings helper : read/write plugins settings
+    private PluginSettingsHelper SettingsHelper { get; }
+
+    // Get the plugin settings helper
+    public IPluginSettings PluginSettings => SettingsHelper;
+
     // Helper to get all joints' positions from the app, which are added in Amethyst.
     // Note: if joint's off, its trackingState will be ITrackedJointState::State_NotTracked
     public List<TrackedJoint> AppJointPoses =>
@@ -501,20 +517,20 @@ public class PluginHost : IAmethystHost
         switch (severity)
         {
             case LogSeverity.Fatal:
-                Logger.Fatal(message, lineNumber, filePath, memberName);
+                Logger.Fatal($"[{Guid}] " + message, lineNumber, filePath, memberName);
                 break;
 
             case LogSeverity.Error:
-                Logger.Error(message, lineNumber, filePath, memberName);
+                Logger.Error($"[{Guid}] " + message, lineNumber, filePath, memberName);
                 break;
 
             case LogSeverity.Warning:
-                Logger.Warn(message, lineNumber, filePath, memberName);
+                Logger.Warn($"[{Guid}] " + message, lineNumber, filePath, memberName);
                 break;
 
             case LogSeverity.Info:
             default:
-                Logger.Info(message, lineNumber, filePath, memberName);
+                Logger.Info($"[{Guid}] " + message, lineNumber, filePath, memberName);
                 break;
         }
     }
@@ -526,20 +542,20 @@ public class PluginHost : IAmethystHost
         switch (severity)
         {
             case LogSeverity.Fatal:
-                Logger.Fatal(message.ToString(), lineNumber, filePath, memberName);
+                Logger.Fatal($"[{Guid}] " + message, lineNumber, filePath, memberName);
                 break;
 
             case LogSeverity.Error:
-                Logger.Error(message.ToString(), lineNumber, filePath, memberName);
+                Logger.Error($"[{Guid}] " + message, lineNumber, filePath, memberName);
                 break;
 
             case LogSeverity.Warning:
-                Logger.Warn(message.ToString(), lineNumber, filePath, memberName);
+                Logger.Warn($"[{Guid}] " + message, lineNumber, filePath, memberName);
                 break;
 
             case LogSeverity.Info:
             default:
-                Logger.Info(message.ToString(), lineNumber, filePath, memberName);
+                Logger.Info($"[{Guid}] " + message, lineNumber, filePath, memberName);
                 break;
         }
     }
@@ -561,38 +577,38 @@ public class PluginHost : IAmethystHost
 
     // Request a string from AME resources, empty for no match
     // Warning: The primarily searched resource is the device-provided one!
-    public string RequestLocalizedString(string key, string guid)
+    public string RequestLocalizedString(string key)
     {
-        return Interfacing.Plugins.RequestLocalizedString(key, guid);
+        return Interfacing.Plugins.RequestLocalizedString(key, Guid);
     }
 
     // Request a folder to be set as device's AME resources,
     // you can access these resources with the lower function later (after onLoad)
     // Warning: Resources are containerized and can't be accessed in-between devices!
     // Warning: The default root is "[device_folder_path]/resources/Strings"!
-    public bool SetLocalizationResourcesRoot(string path, string guid)
+    public bool SetLocalizationResourcesRoot(string path)
     {
-        return Interfacing.Plugins.SetLocalizationResourcesRoot(path, guid);
+        return Interfacing.Plugins.SetLocalizationResourcesRoot(path, Guid);
     }
 
     // Show a Windows toast notification
-    public void DisplayToast((string Title, string Text) message, string guid)
+    public void DisplayToast((string Title, string Text) message)
     {
         ShowToast(message.Title, message.Text);
     }
 
     // Request an application exit, non-fatal by default
     // Mark fatal as true to show the crash handler with your message
-    public void RequestExit(string message, string guid, bool fatal = false)
+    public void RequestExit(string message, bool fatal = false)
     {
-        Logger.Info($"Exit (fatal: {fatal}) requested by {guid} with message \"{message}\"!");
+        Logger.Info($"Exit (fatal: {fatal}) requested by {Guid} with message \"{message}\"!");
         Shared.Main.DispatcherQueue.TryEnqueue(async () =>
         {
             // Launch the crash handler if fatal
             if (fatal)
             {
                 var hPath = Path.Combine(GetProgramLocation().DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
-                if (File.Exists(hPath)) Process.Start(hPath, new[] { "plugin_message", message, guid });
+                if (File.Exists(hPath)) Process.Start(hPath, new[] { "plugin_message", message, Guid });
                 else Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
             }
 
