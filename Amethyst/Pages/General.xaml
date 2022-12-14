@@ -1180,7 +1180,7 @@
                     <Grid Grid.Row="1" Margin="30,0,30,0"
                           x:Name="ContextGridContainer">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
@@ -1201,15 +1201,15 @@
 
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click" Visibility="Visible"
                                 Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Calibration/Begin'), Mode=OneWay}"
-                                IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                Margin="10,10,0,10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
+                                IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold" Padding="55,0"
+                                Margin="10,10,10,10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
                             <Button.OpacityTransition>
                                 <ScalarTransition />
                             </Button.OpacityTransition>
                         </Button>
 
-                        <ToggleButton Margin="20,10,10,10" CornerRadius="4" Grid.Column="1" x:Name="ToggleFreezeButton"
+                        <ToggleButton Margin="10,10,10,10" CornerRadius="4" Grid.Column="1" x:Name="ToggleFreezeButton"
                                       Click="ToggleFreezeButton_Click" FontWeight="SemiBold" IsTabStop="False"
                                       IsEnabled="{Binding ElementName=CalibrationButton,Path=IsEnabled, TargetNullValue=False}"
                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="16">
