@@ -413,7 +413,7 @@ public static class Interfacing
         }
 
         // Play an error sound if something's wrong
-        if (IsServiceEndpointPresent)
+        if (!IsServiceEndpointPresent)
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
         else

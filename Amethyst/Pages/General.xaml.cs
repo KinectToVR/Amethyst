@@ -202,7 +202,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private void DiscardOffsetsButton_Click(object sender, RoutedEventArgs e)
     {
         // Discard backend offsets' values by re-reading them from settings
-        AppData.Settings.ReadSettings();
+        lock (Interfacing.UpdateLock)
+        {
+            AppData.Settings.ReadSettings();
+            AppData.Settings.CheckSettings();
+        }
 
         // Reload offset values
         Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
@@ -445,7 +449,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Reset by re-reading the settings if aborted
         if (!_calibrationPending)
         {
-            AppData.Settings.ReadSettings();
+            lock (Interfacing.UpdateLock)
+            {
+                AppData.Settings.ReadSettings();
+                AppData.Settings.CheckSettings();
+            }
             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationAborted);
         }
         // Else save I guess
@@ -712,7 +720,12 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private void OffsetsButton_Click(object sender, RoutedEventArgs e)
     {
         // Push saved offsets' by reading them from settings
-        AppData.Settings.ReadSettings();
+        lock (Interfacing.UpdateLock)
+        {
+            AppData.Settings.SaveSettings();
+            AppData.Settings.ReadSettings();
+            AppData.Settings.CheckSettings();
+        }
 
         // Reload offset values
         Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
@@ -780,6 +793,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Show additional controls
         CalibrationButton.IsEnabled = true;
+        TrackingDevices.UpdateTrackingDevicesInterface();
     }
 
     private void ToggleTrackersButton_Unchecked(object sender, RoutedEventArgs e)
@@ -799,6 +813,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Hide additional controls
         CalibrationButton.IsEnabled = false;
+        TrackingDevices.UpdateTrackingDevicesInterface();
     }
 
     private void ToggleTrackersTeachingTip_ActionButtonClick(TeachingTip sender, object args)
@@ -1638,7 +1653,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Reset by re-reading the settings if aborted
         if (!_calibrationPending)
         {
-            AppData.Settings.ReadSettings();
+            lock (Interfacing.UpdateLock)
+            {
+                AppData.Settings.ReadSettings();
+                AppData.Settings.CheckSettings();
+            }
             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationAborted);
         }
         // Else save I guess

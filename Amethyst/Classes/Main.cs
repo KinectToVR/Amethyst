@@ -584,7 +584,8 @@ public static class Main
             }
             catch (Exception e)
             {
-                Logger.Error($"The main loop has crashed! Restarting it now... (Message: {e.Message})");
+                Logger.Error("The main loop has crashed! Restarting it now... " +
+                             $"{e.GetType().Name} in {e.Source}: {e.Message}\n{e.StackTrace}");
 
                 serverTries++; // One more?
                 switch (serverTries)
