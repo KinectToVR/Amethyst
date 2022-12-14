@@ -234,15 +234,15 @@ public class InputActions
 public interface IPluginSettings
 {
     // Get a serialized object from the plugin settings
-    public object GetPluginSetting(object key);
+    public T GetSetting<T>(object key) where T : new();
 
     // Write a serialized object to the plugin settings
-    public void SetPluginSetting(object key, object value);
+    public void SetSetting(object key, object value);
 
     // Helper to manage settings like an array
     public object this[object key]
     {
-        get => GetPluginSetting(key);
-        set => SetPluginSetting(key, value);
+        get => GetSetting<object>(key);
+        set => SetSetting(key, value);
     }
 }

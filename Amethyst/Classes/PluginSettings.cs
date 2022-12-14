@@ -12,31 +12,39 @@ namespace Amethyst.Classes;
 public class AppPluginSettings : INotifyPropertyChanged
 {
     // Calibration matrices : GUID/Data
-    private SortedDictionary<string, SortedDictionary<object, object>> PluginSettingsDictionary { get; set; } = new();
+    public SortedDictionary<string, SortedDictionary<object, object>> PluginSettingsDictionary { get; set; } = new();
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
     // Get a serialized object from the plugin settings
-    public object GetPluginSetting(string guid, object key)
+    public T GetPluginSetting<T>(string guid, object key) where T : new()
     {
         // Check if the selected plugin has any settings saved
         if (PluginSettingsDictionary.TryGetValue(guid, out var settingsRoot))
             if (settingsRoot.TryGetValue(key, out var value))
             {
-                // Return the value if valid
-                return value;
+                try
+                {
+                    // Return the value if valid
+                    return (T)value;
+                }
+                catch
+                {
+                    Logger.Info($"Plugin {guid} settings has an invalid definition for {key}! Creating a new one...");
+                    return Activator.CreateInstance<T>(); // Just don't care further
+                }
             }
             else
             {
                 Logger.Info($"Plugin {guid} settings does not have a definition for {key}! Creating a new one...");
-                return null; // Just don't care further
+                return Activator.CreateInstance<T>(); // Just don't care further
             }
 
         // Still here? We must have failed...
         Logger.Info($"Plugin {guid} settings root is invalid! Creating a new one...");
         PluginSettingsDictionary.Add(guid, new SortedDictionary<object, object>());
-        return null; // Just don't care further
+        return Activator.CreateInstance<T>(); // Just don't care further
     }
 
     // Write a serialized object to the plugin settings
@@ -117,13 +125,15 @@ public class PluginSettingsHelper : IPluginSettings
     private string Guid { get; }
 
     // Get a serialized object from the plugin settings
-    public object GetPluginSetting(object key)
+    public T GetSetting<T>(object key) where T : new()
     {
-        return TrackingDevices.PluginSettings?.GetPluginSetting(Guid, key);
+        return TrackingDevices.PluginSettings is null
+            ? default // Return the default value for T
+            : TrackingDevices.PluginSettings.GetPluginSetting<T>(Guid, key);
     }
 
     // Write a serialized object to the plugin settings
-    public void SetPluginSetting(object key, object value)
+    public void SetSetting(object key, object value)
     {
         TrackingDevices.PluginSettings?.SetPluginSetting(Guid, key, value);
         TrackingDevices.PluginSettings?.SaveSettings(); // Save it btw!
