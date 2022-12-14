@@ -136,7 +136,7 @@ public static class Main
                 AppData.Settings.TrackersVector.Where(tracker => tracker.IsActive)
                     .Where(x => (int)TypeUtils.TrackerTypeJointDictionary[x.Role] < 16 || updateLowerBody)
                     .Select(tracker => tracker.GetTrackerBase(
-                        tracker.PositionTrackingFilterOption, tracker.OrientationTrackingFilterOption)));
+                        tracker.PositionTrackingFilterOption, tracker.OrientationTrackingFilterOption)), false);
         }
 
         // Update status right after any change
