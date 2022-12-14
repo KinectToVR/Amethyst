@@ -229,3 +229,20 @@ public class InputActions
     /// </summary>
     public string? SkeletonFlipActionContentString { get; set; }
 }
+
+// Plugin settings helper class
+public interface IPluginSettings
+{
+    // Get a serialized object from the plugin settings
+    public object GetPluginSetting(object key);
+
+    // Write a serialized object to the plugin settings
+    public void SetPluginSetting(object key, object value);
+
+    // Helper to manage settings like an array
+    public object this[object key]
+    {
+        get => GetPluginSetting(key);
+        set => SetPluginSetting(key, value);
+    }
+}

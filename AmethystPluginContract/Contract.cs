@@ -330,6 +330,13 @@ public interface IAmethystHost
     string LanguageCode { get; }
 
     /// <summary>
+    ///     Get/Set a serialized object from/to the plugin settings
+    ///     Access either via GetPluginSetting/SetPluginSetting /
+    ///     / or an indexer ('["key"]' get / '["key"] = value' set)
+    /// </summary>
+    public IPluginSettings PluginSettings { get; }
+
+    /// <summary>
     ///     Get the hook joint pose (typically Head, fallback to .First())
     ///     of the currently selected base tracking device (no overrides!)
     ///     Mark [calibrated] as [true] to get the calibrated joint pose
@@ -374,7 +381,7 @@ public interface IAmethystHost
     ///     Request a string from AME resources, empty for no match
     ///     Warning: The primarily searched resource is the device-provided one!
     /// </summary>
-    string RequestLocalizedString(string key, string guid);
+    string RequestLocalizedString(string key);
 
     /// <summary>
     ///     Request a folder to be set as device's AME resources,
@@ -382,16 +389,16 @@ public interface IAmethystHost
     ///     Warning: Resources are containerized and can't be accessed in-between devices!
     ///     Warning: The default root is "[plugin_folder_path]/resources/Strings"!
     /// </summary>
-    bool SetLocalizationResourcesRoot(string path, string guid);
+    bool SetLocalizationResourcesRoot(string path);
 
     /// <summary>
     ///     Show a Windows toast notification
     /// </summary>
-    void DisplayToast((string Title, string Text) message, string guid);
+    void DisplayToast((string Title, string Text) message);
 
     /// <summary>
     ///     Request an application exit, non-fatal by default
     ///     Mark fatal as true to show the crash handler with your message
     /// </summary>
-    void RequestExit(string message, string guid, bool fatal = false);
+    void RequestExit(string message, bool fatal = false);
 }
