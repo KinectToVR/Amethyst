@@ -16,6 +16,7 @@
   "/GeneralPage/Buttons/TrackersToggle/Connect": "Connecter les trackers",
   "/GeneralPage/Buttons/TrackersToggle/Disconnect": "Déconnecter les trackers",
   "/GeneralPage/Buttons/TrackersToggle/Reconnect": "Reconnecter les trackers",
+  "/GeneralPage/Buttons/DeviceSettings": "View {0} device settings",
   "/GeneralPage/Calibration/Captions/Aborted": "Calibration annulée!",
   "/GeneralPage/Calibration/Captions/Automatic": "Tenez-vous à 3  de votre espace de jeu.",
   "/GeneralPage/Calibration/Captions/Captured": "Position capturée!",

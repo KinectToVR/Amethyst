@@ -193,7 +193,7 @@ public static class Shared
         public static MenuFlyoutItem OffsetsButton;
 
         public static Button
-            CalibrationButton, ReRegisterButton, ServerOpenDiscordButton;
+            CalibrationButton, ServiceSettingsButton;
 
         public static TextBlock
             DeviceNameLabel,
@@ -208,8 +208,7 @@ public static class Shared
         public static Grid
             ErrorButtonsGrid,
             ErrorWhatGrid,
-            ServerErrorWhatGrid,
-            ServerErrorButtonsGrid;
+            ServerErrorWhatGrid;
 
         public static ToggleButton
             ToggleFreezeButton;

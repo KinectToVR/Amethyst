@@ -451,9 +451,9 @@ public static class Interfacing
                 IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
             Shared.General.ServerErrorWhatGrid.Visibility =
                 IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
-            Shared.General.ServerErrorButtonsGrid.Visibility =
-                IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
             Shared.General.ServerErrorLabel.Visibility =
+                IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
+            Shared.General.ServiceSettingsButton.Visibility =
                 IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
 
             // Split status and message by \n
@@ -464,19 +464,16 @@ public static class Interfacing
             Shared.General.ServerStatusLabel.Text = message[0];
             Shared.General.ServerErrorLabel.Text = message[1];
             Shared.General.ServerErrorWhatText.Text = message[2];
-
-            // Optionally setup & show the re-register button
-            Shared.General.ReRegisterButton.Visibility =
-                ServiceEndpointStatusCode == -1
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-
-            Shared.General.ServerOpenDiscordButton.Height =
-                ServiceEndpointStatusCode == -1 ? 40 : 65;
         }
 
         // Block some things if server isn't working properly
-        if (IsServiceEndpointPresent) return;
+        if (IsServiceEndpointPresent)
+        {
+            Shared.General.ToggleTrackersButton.IsEnabled = true;
+            Shared.General.OffsetsButton.IsEnabled = true;
+            return; // Unlock spawn|offsets|calibration buttons
+        }
+
         Logger.Error("An error occurred and the app couldn't connect to K2 Server. " +
                      "Please check the upper message for more info.");
 
@@ -684,7 +681,7 @@ public static class Interfacing
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
                     return LocalizedJsonString(key); // Just give up
                 }
-                
+
                 // Check if the request was from a device
                 if (TrackingDevices.TrackingDevicesList.TryGetValue(guid, out var device))
                 {
@@ -702,7 +699,7 @@ public static class Interfacing
                     if (resourceRootService is not null && resourceRootService.Count > 0)
                         return resourceRootService.GetNamedString(key); // Return if ok
                 }
-                
+
                 // Still here?!? We're screwed!
                 Logger.Error($"The resource root of plugin {guid} is empty! Its interface will be broken!");
                 return LocalizedJsonString(key); // Just give up

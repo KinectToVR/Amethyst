@@ -143,6 +143,9 @@ public class TrackingDevice : INotifyPropertyChanged
     public void Shutdown()
     {
         Device.Shutdown();
+
+        // Try to cleanup memory after the plugin
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
     }
 
     // This is called to update the device (each loop)
@@ -339,6 +342,9 @@ public class ServiceEndpoint : INotifyPropertyChanged
     public void Shutdown()
     {
         Service.Shutdown();
+
+        // Try to cleanup memory after the plugin
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
     }
 
     public void OnPropertyChanged(string propName = null)

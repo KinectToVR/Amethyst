@@ -16,6 +16,7 @@
   "/GeneralPage/Buttons/TrackersToggle/Connect": "Tracker verbinden",
   "/GeneralPage/Buttons/TrackersToggle/Disconnect": "Tracker trennen",
   "/GeneralPage/Buttons/TrackersToggle/Reconnect": "Tracker neu verbinden",
+  "/GeneralPage/Buttons/DeviceSettings": "View {0} device settings",
   "/GeneralPage/Calibration/Captions/Aborted": "Kalibrierung abgebrochen!",
   "/GeneralPage/Calibration/Captions/Automatic": "Stell dich an drei Stellen deines Spielbereichs auf.",
   "/GeneralPage/Calibration/Captions/Captured": "Position gespeichert!",

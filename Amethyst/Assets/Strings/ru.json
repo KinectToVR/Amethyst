@@ -16,6 +16,7 @@
   "/GeneralPage/Buttons/TrackersToggle/Connect": "Подключить трекеры",
   "/GeneralPage/Buttons/TrackersToggle/Disconnect": "Отключить трекеры",
   "/GeneralPage/Buttons/TrackersToggle/Reconnect": "Переподключить трекеры",
+  "/GeneralPage/Buttons/DeviceSettings": "View {0} device settings",
   "/GeneralPage/Calibration/Captions/Aborted": "Калибровка прервана!",
   "/GeneralPage/Calibration/Captions/Automatic": "Встаньте в трех местах вашей игровой площади.",
   "/GeneralPage/Calibration/Captions/Captured": "Положение зафиксировано!",

@@ -105,8 +105,11 @@ public static class TrackingDevices
                     var skipAnimation = Devices.DevicesTreeView.SelectedNode == devicesListNode;
                     Devices.DevicesTreeView.SelectedNode = devicesListNode;
 
-                    await Devices.ReloadSelectedDevice(skipAnimation);
+                    AppData.Settings.PreviousSelectedTrackingDeviceGuid = failingOverrideGuid;
                     AppData.Settings.SelectedTrackingDeviceGuid = failingOverrideGuid;
+
+                    await Devices.ReloadSelectedDevice(skipAnimation);
+                    Events.ReloadDevicesPageEvent?.Set(); // Full reload
                 }));
 
         // Update general tab

@@ -64,8 +64,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.General.ForceRenderCheckBox = ForceRenderCheckBox;
         Shared.General.OffsetsButton = OffsetsButton;
         Shared.General.CalibrationButton = CalibrationButton;
-        Shared.General.ReRegisterButton = ServiceSettingsButton;
-        Shared.General.ServerOpenDiscordButton = ServerOpenDiscordButton;
+        Shared.General.ServiceSettingsButton = ServiceSettingsButton;
         Shared.General.DeviceNameLabel = SelectedDeviceNameLabel;
         Shared.General.DeviceStatusLabel = TrackingDeviceStatusLabel;
         Shared.General.ErrorWhatText = ErrorWhatText;
@@ -77,7 +76,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.General.ErrorButtonsGrid = ErrorButtonsGrid;
         Shared.General.ErrorWhatGrid = ErrorWhatGrid;
         Shared.General.ServerErrorWhatGrid = ServerErrorWhatGrid;
-        Shared.General.ServerErrorButtonsGrid = ServerErrorButtonsGrid;
         Shared.General.ToggleFreezeButton = ToggleFreezeButton;
         Shared.General.AdditionalDeviceErrorsHyperlink = AdditionalDeviceErrorsHyperlink;
 
@@ -955,6 +953,35 @@ public sealed partial class General : Page, INotifyPropertyChanged
             Shared.Settings.PageMainScrollViewer?.ExtentHeight ?? 0, null);
     }
 
+    private async void DeviceSettingsButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Go to the devices page to view device settings
+
+        // Navigate to the settings page
+        Shared.Main.MainNavigationView.SelectedItem =
+            Shared.Main.MainNavigationView.MenuItems[2];
+
+        Shared.Main.NavigateToPage("devices",
+            new EntranceNavigationTransitionInfo());
+
+        await Task.Delay(500);
+
+        // Should already be init-ed after 500ms, but check anyway
+        if (Shared.Devices.DevicesTreeView is null) return;
+        var devicesListIndex = TrackingDevices.TrackingDevicesList.Keys.ToList()
+            .IndexOf(AppData.Settings.TrackingDeviceGuid);
+        var devicesListNode = Shared.Devices.DevicesTreeView.RootNodes[devicesListIndex];
+
+        var skipAnimation = Shared.Devices.DevicesTreeView.SelectedNode == devicesListNode;
+        Shared.Devices.DevicesTreeView.SelectedNode = devicesListNode;
+
+        AppData.Settings.PreviousSelectedTrackingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
+        AppData.Settings.SelectedTrackingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
+
+        await Shared.Devices.ReloadSelectedDevice(skipAnimation);
+        Shared.Events.ReloadDevicesPageEvent?.Set(); // Full reload
+    }
+
     private void SkeletonDrawingCanvas_Loaded(object sender, RoutedEventArgs e)
     {
         // Don't handle reloads
@@ -1756,6 +1783,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private string ServiceSettingsText => Interfacing.LocalizedJsonString("/SettingsPage/Buttons/ServiceSettings")
         .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string DeviceSettingsText => Interfacing.LocalizedJsonString("/GeneralPage/Buttons/DeviceSettings")
+        .Replace("{0}", TrackingDevices.BaseTrackingDevice.Name);
 
     private string AutoStartTipText => Interfacing.LocalizedJsonString("/NUX/Tip2/Content")
         .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);

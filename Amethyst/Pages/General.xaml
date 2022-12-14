@@ -1360,24 +1360,16 @@
                                 </TextBlock>
                             </Grid>
 
-                            <Grid Margin="0,12,0,0" x:Name="ErrorButtonsGrid">
+                            <Grid Margin="0,10,0,0" x:Name="ErrorButtonsGrid">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <Button FontSize="15" x:Name="OpenDiscordButton" Click="OpenDiscordButton_Click"
-                                        Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Help/Discord'), Mode=OneWay}"
-                                        Height="65" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Margin="40,10,10,10" CornerRadius="4" Grid.Column="0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" />
-                                <Button FontSize="15" x:Name="OpenDocsButton" Click="OpenDocsButton_Click"
-                                        Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Help/Docs'), Mode=OneWay}"
-                                        Height="65" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Margin="10,10,40,10" CornerRadius="4" Grid.Column="1"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
+                                <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                        x:Name="DeviceSettingsButton" Click="DeviceSettingsButton_Click"
+                                        Content="{x:Bind DeviceSettingsText, Mode=OneWay}"
+                                        Style="{ThemeResource AccentButtonStyle}" FontWeight="SemiBold"
+                                        Margin="40,0" FontSize="15" Visibility="Visible" />
                             </Grid>
 
                             <!--Override Status Error-->
@@ -1436,32 +1428,10 @@
                                 </TextBlock>
                             </Grid>
 
-                            <Grid Margin="0,12,0,0" x:Name="ServerErrorButtonsGrid">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Button FontSize="15" x:Name="ServerOpenDiscordButton" Click="OpenDiscordButton_Click"
-                                        Height="65"
-                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="{Binding ElementName=OpenDiscordButton, Path=Content}"
-                                        Margin="40,10,10,10" CornerRadius="4" Grid.Column="0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" />
-                                <Button FontSize="15" Click="ServerOpenDocsButton_Click"
-                                        Height="{Binding ElementName=ServerOpenDiscordButton, Path=Height}"
-                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Content="{Binding ElementName=OpenDocsButton, Path=Content}"
-                                        Margin="10,10,40,10" CornerRadius="4" Grid.Column="1"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
-                            </Grid>
-
-                            <!--If this button is visible, set the (upper two)'s height to 40-->
                             <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    x:Name="ServiceSettingsButton" Click="ServiceSettingsButton_Click" FontWeight="SemiBold"
+                                    x:Name="ServiceSettingsButton" Click="ServiceSettingsButton_Click" 
                                     Content="{x:Bind ServiceSettingsText, Mode=OneWay}"
+                                    Style="{ThemeResource AccentButtonStyle}" FontWeight="SemiBold"
                                     Margin="40,10" FontSize="15" Visibility="Collapsed" />
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
