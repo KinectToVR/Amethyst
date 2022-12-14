@@ -634,7 +634,7 @@
                         </TransitionCollection>
                     </StackPanel.Transitions>
 
-                    <TextBlock FontWeight="SemiBold" FontSize="25" 
+                    <TextBlock FontWeight="SemiBold" FontSize="25"
                                Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/Services'), Mode=OneWay}" />
 
                     <StackPanel Margin="0,10,0,0" Style="{ThemeResource CardTopStyle}">
@@ -645,13 +645,13 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" FontSize="16" 
+                                       FontWeight="SemiBold" FontSize="16"
                                        Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/Services'), Mode=OneWay}"
                                        Margin="5,0,0,0" Grid.Column="0" />
 
                             <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center"
                                       Height="48" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                      Grid.Column="1" Margin="0,0,0,0" 
+                                      Grid.Column="1" Margin="0,0,0,0"
                                       SelectionChanged="SelectedServiceComboBox_SelectionChanged"
                                       DropDownOpened="ServiceCombo_OnDropDownOpened"
                                       DropDownClosed="ServiceCombo_OnDropDownClosed"
@@ -668,7 +668,7 @@
                                        Foreground="{ThemeResource ControlDisplayTextBrush}" />
 
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="{x:Bind ServiceStatusText[0], Mode=OneWay}" 
+                                       FontWeight="SemiBold" Text="{x:Bind ServiceStatusText[0], Mode=OneWay}"
                                        Margin="55,0,0,0" />
 
                             <SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
@@ -715,13 +715,13 @@
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                            FontWeight="SemiBold" FontFamily="Consolas"
-                                           Text="{x:Bind ServiceStatusText[1], Mode=OneWay}" 
+                                           Text="{x:Bind ServiceStatusText[1], Mode=OneWay}"
                                            x:Name="TrackingDeviceErrorLabel" Margin="10,7,0,0"
                                            Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                            FontWeight="SemiBold" Margin="10,30,5,0"
-                                           Text="{x:Bind ServiceStatusText[2], Mode=OneWay}" 
+                                           Text="{x:Bind ServiceStatusText[2], Mode=OneWay}"
                                            Foreground="{ThemeResource ControlDisplayTextBrush}"
                                            TextWrapping="WrapWholeWords" />
                             </Grid>

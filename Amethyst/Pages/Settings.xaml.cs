@@ -7,11 +7,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Numerics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Globalization;
+using Windows.System;
 using Windows.System.UserProfile;
 using Amethyst.Classes;
 using Amethyst.MVVM;
@@ -23,7 +22,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Animation;
 using WinRT;
 using static Amethyst.Classes.Shared.TeachingTips;
-using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -127,6 +125,77 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             TrackerType.TrackerLeftElbow and not TrackerType.TrackerRightElbow)
         // Convert to an entry, passing the filtered tracker role
         .Select(x => new AppTrackerEntry { TrackerRole = x }).ToList();
+
+    // MVVM stuff: service settings and its status
+    private IEnumerable<Page> ServiceSettingsPage => new[]
+    {
+        TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot as Page
+    };
+
+    private IEnumerable<string> LoadedServiceNames =>
+        TrackingDevices.ServiceEndpointsList.Values.Select(service => service.Name);
+
+    private int SelectedServiceIndex =>
+        TrackingDevices.ServiceEndpointsList.Values.ToList().IndexOf(TrackingDevices.CurrentServiceEndpoint);
+
+    private bool ServiceStatusError => TrackingDevices.CurrentServiceEndpoint.StatusError;
+
+    private bool ServiceSupportsSettings => TrackingDevices.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
+                                            TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
+
+    private string[] ServiceStatusText
+    {
+        get
+        {
+            var message = StringUtils.SplitStatusString(TrackingDevices.CurrentServiceEndpoint.ServiceStatusString);
+            return message is null || message.Length < 3
+                ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" }
+                : message; // If everything is all right this time
+        }
+    }
+
+    private bool ServiceNeedsRestart => TrackingDevices.CurrentServiceEndpoint.IsRestartOnChangesNeeded;
+
+    // Dynamically switch between CardMiddleStyle and CardBottomStyle
+    private CornerRadius ServiceControlsCornerRadius =>
+        ServiceSupportsSettings ? new CornerRadius(0) : new CornerRadius(0, 0, 4, 4);
+
+    // MVVM stuff: bound strings with placeholders
+    private string RestartServiceText => Interfacing.LocalizedJsonString("/SettingsPage/Buttons/RestartService")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string RestartServiceNoteL1 => Interfacing
+        .LocalizedJsonString("/SettingsPage/Captions/TrackersRestart/Line1")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string RestartServiceNoteL2 => Interfacing
+        .LocalizedJsonString("/SettingsPage/Captions/TrackersRestart/Line2")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string AutoStartLabelText => Interfacing.LocalizedJsonString("/SettingsPage/Captions/AutoStart")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string AutoStartTipText => Interfacing.LocalizedJsonString("/NUX/Tip7/Title")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string AutoStartTipContent => Interfacing.LocalizedJsonString("/NUX/Tip7/Content")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string ManageTrackersText
+    {
+        get
+        {
+            if (TrackingDevices.CurrentServiceEndpoint.IsRestartOnChangesNeeded)
+                return Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers")
+                    .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name)
+                    .Replace("[[", "").Replace("]]", "");
+
+            // If the service doesn't need restarting
+            return StringUtils.RemoveBetween(
+                Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers")
+                    .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name), "[[", "]]");
+        }
+    }
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
@@ -912,7 +981,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Mark the service as non-failed, disable trackers
         Interfacing.ServiceEndpointFailure = false;
         Interfacing.AppTrackersInitialized = false;
-        
+
         await Task.Delay(300); // Wait until disabled
         Interfacing.K2AppTrackersSpawned = false;
 
@@ -977,76 +1046,5 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     private void ServiceCombo_OnDropDownClosed(object sender, object e)
     {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
-    }
-
-    // MVVM stuff: service settings and its status
-    private IEnumerable<Page> ServiceSettingsPage => new[]
-    {
-        TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot as Page
-    };
-
-    private IEnumerable<string> LoadedServiceNames =>
-        TrackingDevices.ServiceEndpointsList.Values.Select(service => service.Name);
-
-    private int SelectedServiceIndex =>
-        TrackingDevices.ServiceEndpointsList.Values.ToList().IndexOf(TrackingDevices.CurrentServiceEndpoint);
-
-    private bool ServiceStatusError => TrackingDevices.CurrentServiceEndpoint.StatusError;
-
-    private bool ServiceSupportsSettings => TrackingDevices.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
-                                            TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
-
-    private string[] ServiceStatusText
-    {
-        get
-        {
-            var message = StringUtils.SplitStatusString(TrackingDevices.CurrentServiceEndpoint.ServiceStatusString);
-            return message is null || message.Length < 3
-                ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" }
-                : message; // If everything is all right this time
-        }
-    }
-
-    private bool ServiceNeedsRestart => TrackingDevices.CurrentServiceEndpoint.IsRestartOnChangesNeeded;
-
-    // Dynamically switch between CardMiddleStyle and CardBottomStyle
-    private CornerRadius ServiceControlsCornerRadius =>
-        ServiceSupportsSettings ? new CornerRadius(0) : new CornerRadius(0, 0, 4, 4);
-
-    // MVVM stuff: bound strings with placeholders
-    private string RestartServiceText => Interfacing.LocalizedJsonString("/SettingsPage/Buttons/RestartService")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
-
-    private string RestartServiceNoteL1 => Interfacing
-        .LocalizedJsonString("/SettingsPage/Captions/TrackersRestart/Line1")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
-
-    private string RestartServiceNoteL2 => Interfacing
-        .LocalizedJsonString("/SettingsPage/Captions/TrackersRestart/Line2")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
-
-    private string AutoStartLabelText => Interfacing.LocalizedJsonString("/SettingsPage/Captions/AutoStart")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
-
-    private string AutoStartTipText => Interfacing.LocalizedJsonString("/NUX/Tip7/Title")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
-
-    private string AutoStartTipContent => Interfacing.LocalizedJsonString("/NUX/Tip7/Content")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
-
-    private string ManageTrackersText
-    {
-        get
-        {
-            if (TrackingDevices.CurrentServiceEndpoint.IsRestartOnChangesNeeded)
-                return Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers")
-                    .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name)
-                    .Replace("[[", "").Replace("]]", "");
-
-            // If the service doesn't need restarting
-            return StringUtils.RemoveBetween(
-                Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers")
-                    .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name), "[[", "]]");
-        }
     }
 }

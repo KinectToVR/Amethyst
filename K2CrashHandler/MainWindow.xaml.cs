@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Windows.Graphics;
+using Windows.System;
 using K2CrashHandler.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using WinRT.Interop;
-using Windows.System;
 
 namespace K2CrashHandler;
 // To learn more about WinUI, the WinUI project structure,
@@ -354,7 +350,7 @@ public sealed partial class MainWindow : Window
 
     private async void Action_OpenCollective(object sender, RoutedEventArgs e)
     {
-        await Launcher.LaunchUriAsync(new Uri($"https://opencollective.com/k2vr/"));
+        await Launcher.LaunchUriAsync(new Uri("https://opencollective.com/k2vr/"));
     }
 
     private void Action_ResetConfig(object sender, RoutedEventArgs e)

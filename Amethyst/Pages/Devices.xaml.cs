@@ -515,7 +515,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     {
         Shared.Devices.PluginsPageLoadedOnce = true;
     }
-    
+
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));

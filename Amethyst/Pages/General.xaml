@@ -1199,9 +1199,11 @@
                                          CloseButtonClick="CalibrationTeachingTip_CloseButtonClick" />
                         </Grid.Resources>
 
-                        <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click" Visibility="Visible"
+                        <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
+                                Visibility="Visible"
                                 Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Calibration/Begin'), Mode=OneWay}"
-                                IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold" Padding="55,0"
+                                IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
+                                Padding="55,0"
                                 Margin="10,10,10,10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
                             <Button.OpacityTransition>
@@ -1429,7 +1431,7 @@
                             </Grid>
 
                             <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    x:Name="ServiceSettingsButton" Click="ServiceSettingsButton_Click" 
+                                    x:Name="ServiceSettingsButton" Click="ServiceSettingsButton_Click"
                                     Content="{x:Bind ServiceSettingsText, Mode=OneWay}"
                                     Style="{ThemeResource AccentButtonStyle}" FontWeight="SemiBold"
                                     Margin="40,10" FontSize="15" Visibility="Collapsed" />

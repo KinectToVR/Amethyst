@@ -5,12 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Amethyst.Classes;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Newtonsoft.Json.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -80,7 +78,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
         Trackers.ForEach(x => x.OnPropertyChanged());
 
         // Don't even care if we're not set up yet
-        if (!((sender as ComboBox)?.IsLoaded ?? false) || 
+        if (!((sender as ComboBox)?.IsLoaded ?? false) ||
             !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
         // Either fix the selection index or give up on everything
@@ -114,7 +112,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     private void OverridePositionSwitch_Toggled(object sender, RoutedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if (!((sender as ToggleSwitch)?.IsLoaded ?? false) || 
+        if (!((sender as ToggleSwitch)?.IsLoaded ?? false) ||
             !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
         AppSounds.PlayAppSound(((ToggleSwitch)sender).IsOn
@@ -127,7 +125,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     private void OverrideOrientationSwitch_Toggled(object sender, RoutedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if (!((sender as ToggleSwitch)?.IsLoaded ?? false) || 
+        if (!((sender as ToggleSwitch)?.IsLoaded ?? false) ||
             !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
         AppSounds.PlayAppSound(((ToggleSwitch)sender).IsOn
@@ -150,7 +148,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     private void JointsItemsRepeater_Loaded(object sender, RoutedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if ((!(sender as ItemsRepeater)?.IsLoaded ?? false) || 
+        if ((!(sender as ItemsRepeater)?.IsLoaded ?? false) ||
             !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
         Trackers.ForEach(x => x.OnPropertyChanged());

@@ -165,6 +165,8 @@ public class AppSettings : INotifyPropertyChanged
         }
     }
 
+    [JsonIgnore] public static bool CheckingSettings { get; private set; }
+
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -202,8 +204,6 @@ public class AppSettings : INotifyPropertyChanged
 
         CheckSettings(true);
     }
-
-    [JsonIgnore] public static bool CheckingSettings { get; private set; } = false;
 
     public void CheckSettings(bool partial = false, TrackingDevice device = null)
     {

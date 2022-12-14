@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using Amethyst.Classes;
 using Amethyst.Utils;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -16,8 +17,8 @@ namespace Amethyst.Controls;
 
 public sealed partial class JointSelectorExpander : UserControl, INotifyPropertyChanged
 {
+    private bool _areChangesValid;
     private List<AppTracker> _trackers = new();
-    private bool _areChangesValid = false;
 
     // OnPropertyChanged listener for containers
     public EventHandler PropertyChangedEvent;
@@ -64,13 +65,15 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     private void JointsSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if (!((sender as ComboBox)?.IsLoaded ?? false) || 
+        if (!((sender as ComboBox)?.IsLoaded ?? false) ||
             !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
         // Either fix the selection index or give up on everything
         if (((ComboBox)sender).SelectedIndex < 0)
+        {
             ((ComboBox)sender).SelectedItem = GetBaseDeviceJointsList()
                 .ElementAtOrDefault((((ComboBox)sender).DataContext as AppTracker)!.SelectedBaseTrackedJointId);
+        }
 
         //else
         else if (_areChangesValid)
@@ -111,10 +114,10 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
-    private void JointsItemsRepeater_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void JointsItemsRepeater_Loaded(object sender, RoutedEventArgs e)
     {
         // Don't even care if we're not set up yet
-        if ((!(sender as ItemsRepeater)?.IsLoaded ?? false) || 
+        if ((!(sender as ItemsRepeater)?.IsLoaded ?? false) ||
             !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
 
         Trackers.ForEach(x => x.OnPropertyChanged());

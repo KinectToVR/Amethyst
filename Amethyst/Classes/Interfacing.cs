@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
-using Microsoft.UI.Xaml.Controls;
-using System.Diagnostics;
 
 namespace Amethyst.Classes;
 
@@ -73,8 +70,6 @@ public static class Interfacing
     // Server interfacing data
     public static int ServiceEndpointStatusCode;
     public static long PingTime;
-
-    public static bool IsServiceEndpointPresent => ServiceEndpointStatusCode == 0;
     public static bool ServiceEndpointFailure;
 
     public static string ServiceEndpointStatusString = " \n \n ";
@@ -96,6 +91,8 @@ public static class Interfacing
 
     // Flip defines for the override device - iteration persistent
     public static bool OverrideFlip = false; // Assume non flipped
+
+    public static bool IsServiceEndpointPresent => ServiceEndpointStatusCode == 0;
 
     public static FileInfo GetProgramLocation()
     {

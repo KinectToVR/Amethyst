@@ -34,9 +34,6 @@ public static class TrackingDevices
         ServiceEndpoint // Receives tracking data
     }
 
-    // Plugin settings (Note: GUIDs must not overlap)
-    public static AppPluginSettings PluginSettings { get; set; }  = new();
-
     // Device plugins / tracking providers
     public static readonly SortedDictionary<string, TrackingDevice> TrackingDevicesList = new();
 
@@ -45,6 +42,9 @@ public static class TrackingDevices
 
     // Written to at the first plugin load
     public static readonly List<LoadAttemptedPlugin> LoadAttemptedPluginsList = new();
+
+    // Plugin settings (Note: GUIDs must not overlap)
+    public static AppPluginSettings PluginSettings { get; set; } = new();
 
     // Get the base tracking provider device
     public static TrackingDevice BaseTrackingDevice => TrackingDevicesList[AppData.Settings.TrackingDeviceGuid];
@@ -324,7 +324,7 @@ public static class TrackingDevices
                     Interfacing.LocalizedJsonString(
                         "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
                     Interfacing.LocalizedJsonString(
-                        "/SharedStrings/Toasts/TrackersConfigChanged")
+                            "/SharedStrings/Toasts/TrackersConfigChanged")
                         .Replace("{0}", CurrentServiceEndpoint.Name),
                     false, "focus_restart");
 
@@ -332,7 +332,7 @@ public static class TrackingDevices
                     Interfacing.LocalizedJsonString(
                         "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
                     Interfacing.LocalizedJsonString(
-                        "/SharedStrings/Toasts/TrackersConfigChanged")
+                            "/SharedStrings/Toasts/TrackersConfigChanged")
                         .Replace("{0}", CurrentServiceEndpoint.Name));
             }
 

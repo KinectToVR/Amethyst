@@ -6,13 +6,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Loader;
 using System.Threading;
@@ -54,8 +52,6 @@ namespace Amethyst;
 /// </summary>
 public sealed partial class MainWindow : Window, INotifyPropertyChanged
 {
-    [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
-
     private readonly bool _mainPageInitFinished;
 
     private readonly SemaphoreSlim _rotationFSemaphore = new(0);
@@ -851,6 +847,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         _mainPageInitFinished = true;
     }
 
+    [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
+
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -874,9 +872,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Mark as loaded
         _mainPageLoadedOnce = true;
     }
-
-    [LibraryImport("user32.dll")]
-    private static partial int SendMessage(nint hWnd, int wMsg, nint wParam, nint lParam);
 
     private void MainWindow_ActualThemeChanged(FrameworkElement sender, object args)
     {

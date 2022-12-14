@@ -960,7 +960,7 @@
 
                                 <StackPanel x:Name="JointsExpanderHostStackPanel" HorizontalAlignment="Stretch"
                                             VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
-                              
+
                                     <controls:JointSelectorExpander x:Name="WaistAndFeetTrackersExpander"
                                                                     Header="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Joints/WaistAndFeet'), Mode=OneWay}"
                                                                     Trackers="{x:Bind BasicTrackers, Mode=OneWay}" />
@@ -993,7 +993,7 @@
 
                                 <StackPanel x:Name="OverridesExpanderHostStackPanel" HorizontalAlignment="Stretch"
                                             VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
-                                
+
                                     <controls:OverrideExpander x:Name="WaistAndFeetOverridesExpander"
                                                                Header="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/Joints/WaistAndFeet'), Mode=OneWay}"
                                                                Trackers="{x:Bind BasicTrackers, Mode=OneWay}" />

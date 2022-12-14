@@ -4,11 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
@@ -118,6 +115,18 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private List<Line> BoneLines { get; } = new(24);
     private List<Ellipse> JointPoints { get; } = new(60);
+
+    private string ServiceSettingsText => Interfacing.LocalizedJsonString("/SettingsPage/Buttons/ServiceSettings")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string DeviceSettingsText => Interfacing.LocalizedJsonString("/GeneralPage/Buttons/DeviceSettings")
+        .Replace("{0}", TrackingDevices.BaseTrackingDevice.Name);
+
+    private string AutoStartTipText => Interfacing.LocalizedJsonString("/NUX/Tip2/Content")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private string ServiceStatusLabel => Interfacing.LocalizedJsonString("/GeneralPage/Captions/DriverStatus/Label")
+        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -454,6 +463,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 AppData.Settings.ReadSettings();
                 AppData.Settings.CheckSettings();
             }
+
             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationAborted);
         }
         // Else save I guess
@@ -1658,6 +1668,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 AppData.Settings.ReadSettings();
                 AppData.Settings.CheckSettings();
             }
+
             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationAborted);
         }
         // Else save I guess
@@ -1799,18 +1810,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Setup end
         Shared.General.GeneralTabSetupFinished = true;
     }
-
-    private string ServiceSettingsText => Interfacing.LocalizedJsonString("/SettingsPage/Buttons/ServiceSettings")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
-
-    private string DeviceSettingsText => Interfacing.LocalizedJsonString("/GeneralPage/Buttons/DeviceSettings")
-        .Replace("{0}", TrackingDevices.BaseTrackingDevice.Name);
-
-    private string AutoStartTipText => Interfacing.LocalizedJsonString("/NUX/Tip2/Content")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
-
-    private string ServiceStatusLabel => Interfacing.LocalizedJsonString("/GeneralPage/Captions/DriverStatus/Label")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
 }
 
 public class AttachedString : DependencyObject
