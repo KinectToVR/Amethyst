@@ -912,8 +912,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Mark the service as non-failed, disable trackers
         Interfacing.ServiceEndpointFailure = false;
         Interfacing.AppTrackersInitialized = false;
-        t
-            await Task.Delay(300); // Wait until disabled
+        
+        await Task.Delay(300); // Wait until disabled
         Interfacing.K2AppTrackersSpawned = false;
 
         try
