@@ -356,6 +356,12 @@ public interface IAmethystHost
     (Vector3 Position, Quaternion Orientation) GetTransformJointPose(bool calibrated = false);
 
     /// <summary>
+    ///     Check if the base tracking device provides a joint with the selected role
+    ///     Note: this only applies to the tracking device set as base, not overrides
+    /// </summary>
+    bool IsTrackedJointValid(TrackedJointType jointType);
+
+    /// <summary>
     ///     Log a message to Amethyst logs : handler
     /// </summary>
     void Log(string message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0,

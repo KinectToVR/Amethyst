@@ -456,6 +456,10 @@ public class PluginHost : IAmethystHost
     // Get the raw OpenVRs HMD pose
     public (Vector3 Position, Quaternion Orientation) HmdPose => Interfacing.Plugins.GetHmdPose;
 
+    // Check if a joint with the specified role is provided by the base device
+    public bool IsTrackedJointValid(TrackedJointType jointType) =>
+        TrackingDevices.BaseTrackingDevice.TrackedJoints.Exists(x => x.Role == jointType);
+
     // Get the hook joint pose (typically Head, fallback to .First())
     public (Vector3 Position, Quaternion Orientation) GetHookJointPose(bool calibrated = false)
     {
