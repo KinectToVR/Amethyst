@@ -126,6 +126,9 @@ public partial class App : Application
         Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
         Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
 
+        // Sanity check
+        if (!Shared.Main.MainWindowLoaded) return;
+
         // Reload language resources
         Interfacing.LoadJsonStringResourcesEnglish();
         Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
@@ -133,9 +136,15 @@ public partial class App : Application
         // Reload plugins' language resources
         foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
             Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
+        foreach (var plugin in TrackingDevices.ServiceEndpointsList.Values)
+            Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
         // Reload everything we can
         Shared.Devices.DevicesJointsValid = false;
+
+        // Reload plugins' interfaces
+        TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
+        TrackingDevices.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
 
         // Request page reloads
         Translator.Get.OnPropertyChanged();

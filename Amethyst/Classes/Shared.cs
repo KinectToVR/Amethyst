@@ -56,6 +56,7 @@ public static class Shared
 
         // Main Window
         public static Mutex ApplicationMultiInstanceMutex;
+        public static bool MainWindowLoaded = false;
 
         public static Window Window;
         public static AppWindow AppWindow;

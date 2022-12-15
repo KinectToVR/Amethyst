@@ -284,9 +284,15 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Reload plugins' language resources
         foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
             Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
+        foreach (var plugin in TrackingDevices.ServiceEndpointsList.Values)
+            Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
         // Reload everything we can
         Shared.Devices.DevicesJointsValid = false;
+
+        // Reload plugins' interfaces
+        TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
+        TrackingDevices.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
 
         // Request page reloads
         Translator.Get.OnPropertyChanged();

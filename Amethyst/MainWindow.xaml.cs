@@ -845,6 +845,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Notify of the setup end
         _mainPageInitFinished = true;
+        Shared.Main.MainWindowLoaded = true;
     }
 
     [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
