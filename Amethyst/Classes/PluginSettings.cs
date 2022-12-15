@@ -27,7 +27,7 @@ public class AppPluginSettings : INotifyPropertyChanged
                 try
                 {
                     // Return the value if valid
-                    return (T)value;
+                    return JsonConvert.DeserializeObject<T>(value.ToString() ?? "");
                 }
                 catch
                 {
