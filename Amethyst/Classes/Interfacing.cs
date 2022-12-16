@@ -827,10 +827,6 @@ public static class Interfacing
             {
                 // Force refresh all the valid pages
                 Shared.Events.RequestInterfaceReload(false);
-
-                // Update other components (may be moved to MVVM)
-                TrackingDevices.HandleDeviceRefresh(false);
-                TrackingDevices.UpdateTrackingDevicesInterface();
             });
         }
     }

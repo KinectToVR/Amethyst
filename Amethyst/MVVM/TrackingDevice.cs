@@ -12,6 +12,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Loader;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.System;
@@ -20,6 +21,7 @@ using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
 using static Amethyst.Classes.Interfacing;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Amethyst.MVVM;
 
@@ -53,9 +55,9 @@ public class TrackingDevice : INotifyPropertyChanged
 
     // Joints' list / you need to (should) update at every update() call
     // Each must have its own role or _Manual to force user's manual set
-    public List<TrackedJoint> TrackedJoints => Device.TrackedJoints;
+    public List<TrackedJoint> TrackedJoints => Device.TrackedJoints.ToList();
 
-    public (JsonObject Root, string Directory) LocalizationResourcesRoot { get; set; } = new();
+    public (JsonObject Root, string Directory) LocalizationResourcesRoot { get; set; }
 
     // Is the device connected/started?
     public bool IsInitialized => Device.IsInitialized;
@@ -137,12 +139,19 @@ public class TrackingDevice : INotifyPropertyChanged
     public void Initialize()
     {
         Device.Initialize();
+
+        // Re-register joint changes handlers
+        Device.TrackedJoints.CollectionChanged -= TrackedJoints_CollectionChanged;
+        Device.TrackedJoints.CollectionChanged += TrackedJoints_CollectionChanged;
     }
 
     // This is called when the device is closed
     public void Shutdown()
     {
         Device.Shutdown();
+
+        // Unregister joint changes handlers
+        Device.TrackedJoints.CollectionChanged -= TrackedJoints_CollectionChanged;
 
         // Try to cleanup memory after the plugin
         GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
@@ -174,6 +183,35 @@ public class TrackingDevice : INotifyPropertyChanged
     public double BoolToOpacityMultiple(bool v1, bool v2)
     {
         return v1 && v2 ? 1.0 : 0.0;
+    }
+
+    private void TrackedJoints_CollectionChanged(object sender, object e)
+    {
+        // Stop the pose composer for now
+        lock (UpdateLock)
+        {
+            TrackingDevices.HandleDeviceRefresh(false);
+            AppData.Settings.CheckSettings(); // Refresh the device
+        }
+
+        // Make all the devices refresh their props
+        TrackingDevices.TrackingDevicesList.ToList()
+            .ForEach(x => x.Value.OnPropertyChanged());
+
+        // Update other statuses
+        TrackingDevices.UpdateTrackingDevicesInterface();
+        Shared.Events.RequestInterfaceReload(false);
+
+        // Check the application config, save
+        AppData.Settings.CheckSettings();
+        AppData.Settings.SaveSettings();
+    }
+
+    public void RefreshWatchHandlers()
+    {
+        // Re-register joint changes handlers
+        Device.TrackedJoints.CollectionChanged -= TrackedJoints_CollectionChanged;
+        Device.TrackedJoints.CollectionChanged += TrackedJoints_CollectionChanged;
     }
 }
 
@@ -457,8 +495,13 @@ public class PluginHost : IAmethystHost
     public (Vector3 Position, Quaternion Orientation) HmdPose => Interfacing.Plugins.GetHmdPose;
 
     // Check if a joint with the specified role is provided by the base device
-    public bool IsTrackedJointValid(TrackedJointType jointType) =>
-        TrackingDevices.BaseTrackingDevice.TrackedJoints.Exists(x => x.Role == jointType);
+    public bool IsTrackedJointValid(TrackedJointType jointType)
+    {
+        return TrackingDevices.BaseTrackingDevice.TrackedJoints.Exists(x => x.Role == jointType);
+    }
+
+    // Lock the main update loop while in scope with [lock (UpdateThreadLock) { }]
+    public object UpdateThreadLock => UpdateLock;
 
     // Get the hook joint pose (typically Head, fallback to .First())
     public (Vector3 Position, Quaternion Orientation) GetHookJointPose(bool calibrated = false)
@@ -579,7 +622,23 @@ public class PluginHost : IAmethystHost
     // Request a refresh of the status/name/etc. interface
     public void RefreshStatusInterface()
     {
+        Logger.Info($"{Guid} requested an interface reload, reloading now!");
         Interfacing.Plugins.RefreshApplicationInterface();
+
+        // ReSharper disable once InvertIf | Check if the request was from a device
+        if (TrackingDevices.TrackingDevicesList.TryGetValue(Guid, out var device) && device is not null)
+            device.RefreshWatchHandlers(); // Re-register joint changes handlers
+        
+        // Check if used in any way: as the base, an override, or the endpoint
+        if (!TrackingDevices.IsBase(Guid) && !TrackingDevices.IsOverride(Guid) &&
+            TrackingDevices.CurrentServiceEndpoint.Guid != Guid) return;
+
+        Logger.Info($"{Guid} is currently being used, refreshing its config!");
+        var locked = Monitor.TryEnter(UpdateLock); // Try entering the lock
+
+        AppData.Settings.CheckSettings(); // Full check
+        AppData.Settings.SaveSettings(); // Save it!
+        if (locked) Monitor.Exit(UpdateLock); // Try entering the lock
     }
 
     // Get Amethyst UI language

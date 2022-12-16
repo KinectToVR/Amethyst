@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -32,8 +33,10 @@ public interface ITrackingDevice
     /// <summary>
     ///     Joints' list / you need to (should) update at every update() call
     ///     Each must have its own role or _Manual to force user's manual set
+    ///     Adding and removing trackers will cause an automatic UI refresh/
+    ///     / note: only when the device HAS BEEN initialized WASN'T shut down
     /// </summary>
-    List<TrackedJoint> TrackedJoints { get; }
+    ObservableCollection<TrackedJoint> TrackedJoints { get; }
 
     /// <summary>
     ///     Is the device connected/started?
@@ -331,8 +334,10 @@ public interface IAmethystHost
 
     /// <summary>
     ///     Get/Set a serialized object from/to the plugin settings
-    ///     Access either via GetPluginSetting/SetPluginSetting /
-    ///     / or an indexer ('["key"]' get / '["key"] = value' set)
+    ///     Access either via GetSetting (pass the desired Type,
+    ///     and optionally the fallback value for) or SetSetting.
+    ///     Types you save must either be serializable by ToString()
+    ///     or the Newtonsoft.Json (JSON.NET) serialization library
     /// </summary>
     public IPluginSettings PluginSettings { get; }
 
@@ -360,6 +365,13 @@ public interface IAmethystHost
     ///     Note: this only applies to the tracking device set as base, not overrides
     /// </summary>
     bool IsTrackedJointValid(TrackedJointType jointType);
+
+    /// <summary>
+    ///     Lock the main update loop while in scope with [lock (UpdateThreadLock) { }]
+    ///     This will block AME from updating while locked, and also wait for when the/
+    ///     / lock is available => multiple plugins can never lock it at the same time!
+    /// </summary>
+    object UpdateThreadLock { get; }
 
     /// <summary>
     ///     Log a message to Amethyst logs : handler

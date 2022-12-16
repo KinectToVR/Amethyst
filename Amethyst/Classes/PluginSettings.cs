@@ -11,14 +11,15 @@ namespace Amethyst.Classes;
 
 public class AppPluginSettings : INotifyPropertyChanged
 {
-    // Calibration matrices : GUID/Data
+    // ReSharper disable once MemberCanBePrivate.Global | Calibration matrices : GUID/Data
     public SortedDictionary<string, SortedDictionary<object, object>> PluginSettingsDictionary { get; set; } = new();
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
+#nullable enable
     // Get a serialized object from the plugin settings
-    public T GetPluginSetting<T>(string guid, object key) where T : new()
+    public T? GetPluginSetting<T>(string guid, object key, T? fallback = default)
     {
         // Check if the selected plugin has any settings saved
         if (PluginSettingsDictionary.TryGetValue(guid, out var settingsRoot))
@@ -31,20 +32,20 @@ public class AppPluginSettings : INotifyPropertyChanged
                 }
                 catch
                 {
-                    Logger.Info($"Plugin {guid} settings has an invalid definition for {key}! Creating a new one...");
-                    return Activator.CreateInstance<T>(); // Just don't care further
+                    Logger.Info($"Plugin {guid} settings have an invalid definition for {key}! Creating a new one...");
+                    return fallback ?? default; // Just don't care further
                 }
             }
             else
             {
-                Logger.Info($"Plugin {guid} settings does not have a definition for {key}! Creating a new one...");
-                return Activator.CreateInstance<T>(); // Just don't care further
+                Logger.Info($"Plugin {guid} settings do not have a definition for {key}! Creating a new one...");
+                return fallback ?? default; // Just don't care further
             }
 
         // Still here? We must have failed...
         Logger.Info($"Plugin {guid} settings root is invalid! Creating a new one...");
         PluginSettingsDictionary.Add(guid, new SortedDictionary<object, object>());
-        return Activator.CreateInstance<T>(); // Just don't care further
+        return fallback ?? default; // Just don't care further
     }
 
     // Write a serialized object to the plugin settings
@@ -67,7 +68,7 @@ public class AppPluginSettings : INotifyPropertyChanged
             }
             else
             {
-                Logger.Info($"Plugin {guid} settings does not have a definition for {key}! Creating a new one...");
+                Logger.Info($"Plugin {guid} settings do not have a definition for {key}! Creating a new one...");
                 settingsRoot.Add(key, value);
                 return; // Winning it!
             }
@@ -75,6 +76,7 @@ public class AppPluginSettings : INotifyPropertyChanged
         // Still here? We must have failed...
         Logger.Info($"Plugin {guid} settings root is invalid! Giving up...");
     }
+#nullable disable
 
     // Save settings
     public void SaveSettings()
@@ -124,18 +126,25 @@ public class PluginSettingsHelper : IPluginSettings
 
     private string Guid { get; }
 
+#nullable enable
     // Get a serialized object from the plugin settings
-    public T GetSetting<T>(object key) where T : new()
+    public T? GetSetting<T>(object key, T? fallback = default)
     {
-        return TrackingDevices.PluginSettings is null
-            ? default // Return the default value for T
-            : TrackingDevices.PluginSettings.GetPluginSetting<T>(Guid, key);
+        if (TrackingDevices.PluginSettings is null) return fallback ?? default;
+        return TrackingDevices.PluginSettings.GetPluginSetting(Guid, key, fallback);
     }
 
     // Write a serialized object to the plugin settings
-    public void SetSetting(object key, object value)
+    public void SetSetting<T>(object key, T? value)
     {
+        if (value is null)
+        {
+            Logger.Info($"The value requested to be saved at key \"{key}\" by {Guid} is null! Aborting...");
+            return; // Sanity check, discard if null for some reason
+        }
+
         TrackingDevices.PluginSettings?.SetPluginSetting(Guid, key, value);
         TrackingDevices.PluginSettings?.SaveSettings(); // Save it btw!
     }
+#nullable disable
 }
