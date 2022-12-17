@@ -843,6 +843,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         externalWatcher.Deleted += OnWatcherOnChanged;
         externalWatcher.Renamed += OnWatcherOnChanged;
 
+        // Check settings once again and save
+        AppData.Settings.CheckSettings();
+        AppData.Settings.SaveSettings();
+
         // Notify of the setup end
         _mainPageInitFinished = true;
         Shared.Main.MainWindowLoaded = true;

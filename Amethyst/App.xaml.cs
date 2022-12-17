@@ -122,40 +122,46 @@ public partial class App : Application
     // Send a non-dismissible tip about reloading the app
     private static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs)
     {
-        Logger.Info("String resource files have changed, reloading!");
-        Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
-        Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            Logger.Info("String resource files have changed, reloading!");
+            Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
+            Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
 
-        // Sanity check
-        if (!Shared.Main.MainWindowLoaded) return;
+            // Sanity check
+            if (!Shared.Main.MainWindowLoaded) return;
 
-        // Reload language resources
-        Interfacing.LoadJsonStringResourcesEnglish();
-        Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
+            // Reload language resources
+            Interfacing.LoadJsonStringResourcesEnglish();
+            Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
 
-        // Reload plugins' language resources
-        foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
-            Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
-        foreach (var plugin in TrackingDevices.ServiceEndpointsList.Values)
-            Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
+            // Reload plugins' language resources
+            foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
+                Interfacing.Plugins.SetLocalizationResourcesRoot(
+                    plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
-        // Reload everything we can
-        Shared.Devices.DevicesJointsValid = false;
+            foreach (var plugin in TrackingDevices.ServiceEndpointsList.Values)
+                Interfacing.Plugins.SetLocalizationResourcesRoot(
+                    plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
-        // Reload plugins' interfaces
-        TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
-        TrackingDevices.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
+            // Reload everything we can
+            Shared.Devices.DevicesJointsValid = false;
 
-        // Request page reloads
-        Translator.Get.OnPropertyChanged();
-        Shared.Events.RequestInterfaceReload();
+            // Reload plugins' interfaces
+            TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
+            TrackingDevices.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
 
-        // Request manager reloads
-        AppData.Settings.OnPropertyChanged();
-        AppData.Settings.TrackersVector.ToList()
-            .ForEach(x => x.OnPropertyChanged());
+            // Request page reloads
+            Translator.Get.OnPropertyChanged();
+            Shared.Events.RequestInterfaceReload();
 
-        // We're done with our changes now!
-        Shared.Devices.DevicesJointsValid = true;
+            // Request manager reloads
+            AppData.Settings.OnPropertyChanged();
+            AppData.Settings.TrackersVector.ToList()
+                .ForEach(x => x.OnPropertyChanged());
+
+            // We're done with our changes now!
+            Shared.Devices.DevicesJointsValid = true;
+        });
     }
 }

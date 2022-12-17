@@ -187,24 +187,26 @@ public class TrackingDevice : INotifyPropertyChanged
 
     private void TrackedJoints_CollectionChanged(object sender, object e)
     {
-        // Stop the pose composer for now
-        lock (UpdateLock)
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
         {
-            TrackingDevices.HandleDeviceRefresh(false);
-            AppData.Settings.CheckSettings(); // Refresh the device
-        }
+            // Stop the pose composer for now
+            lock (UpdateLock)
+            {
+                TrackingDevices.HandleDeviceRefresh(false);
+                AppData.Settings.CheckSettings(); // Refresh
+            }
 
-        // Make all the devices refresh their props
-        TrackingDevices.TrackingDevicesList.ToList()
-            .ForEach(x => x.Value.OnPropertyChanged());
+            // Make all the devices refresh their props
+            TrackingDevices.TrackingDevicesList.ToList()
+                .ForEach(x => x.Value.OnPropertyChanged());
 
-        // Update other statuses
-        TrackingDevices.UpdateTrackingDevicesInterface();
-        Shared.Events.RequestInterfaceReload(false);
+            // Update other statuses
+            TrackingDevices.UpdateTrackingDevicesInterface();
+            Shared.Events.RequestInterfaceReload(false);
 
-        // Check the application config, save
-        AppData.Settings.CheckSettings();
-        AppData.Settings.SaveSettings();
+            // Save the application config
+            AppData.Settings.SaveSettings();
+        });
     }
 
     public void RefreshWatchHandlers()
@@ -622,23 +624,26 @@ public class PluginHost : IAmethystHost
     // Request a refresh of the status/name/etc. interface
     public void RefreshStatusInterface()
     {
-        Logger.Info($"{Guid} requested an interface reload, reloading now!");
-        Interfacing.Plugins.RefreshApplicationInterface();
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            Logger.Info($"{Guid} requested an interface reload, reloading now!");
+            Interfacing.Plugins.RefreshApplicationInterface();
 
-        // ReSharper disable once InvertIf | Check if the request was from a device
-        if (TrackingDevices.TrackingDevicesList.TryGetValue(Guid, out var device) && device is not null)
-            device.RefreshWatchHandlers(); // Re-register joint changes handlers
+            // ReSharper disable once InvertIf | Check if the request was from a device
+            if (TrackingDevices.TrackingDevicesList.TryGetValue(Guid, out var device) && device is not null)
+                device.RefreshWatchHandlers(); // Re-register joint changes handlers
 
-        // Check if used in any way: as the base, an override, or the endpoint
-        if (!TrackingDevices.IsBase(Guid) && !TrackingDevices.IsOverride(Guid) &&
-            TrackingDevices.CurrentServiceEndpoint.Guid != Guid) return;
+            // Check if used in any way: as the base, an override, or the endpoint
+            if (!TrackingDevices.IsBase(Guid) && !TrackingDevices.IsOverride(Guid) &&
+                TrackingDevices.CurrentServiceEndpoint.Guid != Guid) return;
 
-        Logger.Info($"{Guid} is currently being used, refreshing its config!");
-        var locked = Monitor.TryEnter(UpdateLock); // Try entering the lock
+            Logger.Info($"{Guid} is currently being used, refreshing its config!");
+            var locked = Monitor.TryEnter(UpdateLock); // Try entering the lock
 
-        AppData.Settings.CheckSettings(); // Full check
-        AppData.Settings.SaveSettings(); // Save it!
-        if (locked) Monitor.Exit(UpdateLock); // Try entering the lock
+            AppData.Settings.CheckSettings(); // Full check
+            AppData.Settings.SaveSettings(); // Save it!
+            if (locked) Monitor.Exit(UpdateLock); // Try entering the lock
+        });
     }
 
     // Get Amethyst UI language

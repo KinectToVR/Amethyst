@@ -282,6 +282,7 @@ public class AppSettings : INotifyPropertyChanged
                     $"{TrackingDevices.CurrentServiceEndpoint.Name})! " +
                     "Disabling this tracker and marking as unsupported!"));
 
+        // Check pairs' configs
         if (UseTrackerPairs)
             pairedTrackerTypes.ForEach(typePair =>
             {
@@ -294,6 +295,29 @@ public class AppSettings : INotifyPropertyChanged
                 rT.PositionTrackingFilterOption = lT.PositionTrackingFilterOption;
                 rT.OrientationTrackingFilterOption = lT.OrientationTrackingFilterOption;
             });
+
+        // Check filter indexes
+        Logger.Info("Checking pose filter index settings...");
+        AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
+        {
+            tracker.PositionTrackingFilterOption =
+                (JointPositionTrackingOption)Math.Clamp(
+                    (int)tracker.PositionTrackingFilterOption,
+                    (int)JointPositionTrackingOption.PositionTrackingFilterLerp,
+                    (int)JointPositionTrackingOption.NoPositionTrackingFilter);
+
+            tracker.OrientationTrackingFilterOption =
+                (RotationTrackingFilterOption)Math.Clamp(
+                    (int)tracker.OrientationTrackingFilterOption,
+                    (int)RotationTrackingFilterOption.OrientationTrackingFilterSlerp,
+                    (int)RotationTrackingFilterOption.NoOrientationTrackingFilter);
+
+            tracker.OrientationTrackingOption =
+                (JointRotationTrackingOption)Math.Clamp(
+                    (int)tracker.OrientationTrackingOption,
+                    (int)JointRotationTrackingOption.DeviceInferredRotation,
+                    (int)JointRotationTrackingOption.DisableJointRotation);
+        });
 
         // Optionally fix volume if too big somehow
         AppSoundsVolume = Math.Clamp(AppSoundsVolume, 0, 100);

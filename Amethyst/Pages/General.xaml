@@ -43,7 +43,7 @@
                         <Pivot.HeaderTemplate>
                             <DataTemplate x:DataType="classes:AppTracker">
                                 <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}"
-                                           FontSize="26" FontWeight="Normal" Text="{x:Bind TrackerName}" />
+                                           FontSize="26" FontWeight="Normal" Text="{x:Bind TrackerName, Mode=OneWay}" />
                             </DataTemplate>
                         </Pivot.HeaderTemplate>
                         <Pivot.ItemTemplate>

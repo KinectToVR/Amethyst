@@ -607,9 +607,8 @@
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
                                    Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/TrackersAutoSpawn'), Mode=OneWay}"
                                    Margin="30,0,0,10" />
-                        <CheckBox x:Name="AutoSpawnCheckBox"
-                                  Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
-                                  IsChecked="{x:Bind classes:AppData.Settings.AutoSpawnEnabledJoints}"
+                        <CheckBox Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
+                                  IsChecked="{x:Bind classes:AppData.Settings.AutoSpawnEnabledJoints, Mode=TwoWay}"
                                   HorizontalAlignment="Left" VerticalAlignment="Center"
                                   MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
                     </Grid>
@@ -620,7 +619,7 @@
                                    Margin="30,0,0,10" />
                         <CheckBox x:Name="CheckOverlapsCheckBox"
                                   Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
-                                  IsChecked="{x:Bind classes:AppData.Settings.CheckForOverlappingTrackers}"
+                                  IsChecked="{x:Bind classes:AppData.Settings.CheckForOverlappingTrackers, Mode=TwoWay}"
                                   HorizontalAlignment="Left" VerticalAlignment="Center"
                                   MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
                     </Grid>

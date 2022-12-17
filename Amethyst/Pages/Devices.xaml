@@ -79,7 +79,7 @@
                                                Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Title'), Mode=OneWay}" />
 
                                     <ItemsRepeater x:Name="PluginsItemsRepeater" HorizontalAlignment="Stretch"
-                                                   ItemsSource="{x:Bind classes:TrackingDevices.LoadAttemptedPluginsList}"
+                                                   ItemsSource="{x:Bind classes:TrackingDevices.LoadAttemptedPluginsList, Mode=OneTime}"
                                                    Margin="20,0,20,20" AllowDrop="False">
 
                                         <ItemsRepeater.ItemTemplate>
@@ -130,8 +130,8 @@
                                                                 <TextBlock VerticalAlignment="Center"
                                                                            FontWeight="SemiBold" FontSize="12"
                                                                            Opacity="0.5"
-                                                                           Text="{x:Bind TrimString(Publisher, 37)}"
-                                                                           Tapped="{x:Bind ShowDeviceFolder}"
+                                                                           Text="{x:Bind TrimString(Publisher, 37), Mode=OneWay}"
+                                                                           Tapped="{x:Bind ShowDeviceFolder, Mode=OneWay}"
                                                                            ToolTipService.ToolTip="{x:Bind DeviceFolder, Mode=OneWay}"
                                                                            ToolTipService.Placement="Bottom" />
                                                             </StackPanel>
@@ -213,8 +213,8 @@
 
                                                                     <TextBlock VerticalAlignment="Center"
                                                                                FontWeight="SemiBold"
-                                                                               Text="{x:Bind TrimString(DeviceFolder, 77)}"
-                                                                               Tapped="{x:Bind ShowDeviceFolder}"
+                                                                               Text="{x:Bind TrimString(DeviceFolder, 77), Mode=OneWay}"
+                                                                               Tapped="{x:Bind ShowDeviceFolder, Mode=OneWay}"
                                                                                ToolTipService.ToolTip="{x:Bind DeviceFolder, Mode=OneWay}"
                                                                                ToolTipService.Placement="Bottom" />
                                                                 </StackPanel>
@@ -236,8 +236,8 @@
                                                                                FontWeight="SemiBold"
                                                                                Foreground="{ThemeResource SystemFillColorAttentionBrush}"
                                                                                TextDecorations="Underline"
-                                                                               Text="{x:Bind TrimString(Website, 77)}"
-                                                                               Tapped="{x:Bind OpenDeviceWebsite}"
+                                                                               Text="{x:Bind TrimString(Website, 77), Mode=OneWay}"
+                                                                               Tapped="{x:Bind OpenDeviceWebsite, Mode=OneWay}"
                                                                                ToolTipService.ToolTip="{x:Bind Website, Mode=OneWay}"
                                                                                ToolTipService.Placement="Bottom" />
                                                                 </StackPanel>
