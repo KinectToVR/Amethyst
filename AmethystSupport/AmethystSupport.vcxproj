@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
-    <EnableManagedPackageReferenceSupport>true</EnableManagedPackageReferenceSupport>
+    <!-- <EnableManagedPackageReferenceSupport>true</EnableManagedPackageReferenceSupport> -->
     <ProjectGuid>{E8E9C984-7D3D-49B5-8D09-D29E36868987}</ProjectGuid>
     <Keyword>NetCoreCProj</Keyword>
     <RootNamespace>AmethystSupport</RootNamespace>
