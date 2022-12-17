@@ -115,7 +115,29 @@ public static class Main
     private static async Task UpdateServerTrackers()
     {
         // Update only if we're connected and running
-        if (!Interfacing.AppTrackersInitialized || Interfacing.ServiceEndpointFailure) return;
+        if (!Interfacing.K2AppTrackersSpawned || Interfacing.ServiceEndpointFailure) return;
+
+        // Update status right after any change
+        if (_bInitialized != Interfacing.AppTrackersInitialized)
+            // Try 3 times (cause why not)
+            for (var i = 0; i < 3; i++)
+            {
+                // Update status in server
+                await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(AppData.Settings.TrackersVector
+                    .Where(tracker => tracker.IsActive)
+                    .Select(tracker =>
+                    {
+                        var trackerBase = tracker.GetTrackerBase();
+                        trackerBase.ConnectionState = Interfacing.AppTrackersInitialized;
+                        return trackerBase;
+                    }));
+
+                // Update internal status
+                _bInitialized = Interfacing.AppTrackersInitialized;
+            }
+
+        // That's all if we're not running!
+        if (!Interfacing.AppTrackersInitialized) return;
 
         // If the tracing's actually running
         if (!Interfacing.IsTrackingFrozen || AppData.Settings.FreezeLowerBodyOnly)
@@ -136,25 +158,6 @@ public static class Main
                     .Select(tracker => tracker.GetTrackerBase(
                         tracker.PositionTrackingFilterOption, tracker.OrientationTrackingFilterOption)), false);
         }
-
-        // Update status right after any change
-        if (_bInitialized != Interfacing.AppTrackersInitialized)
-            // Try 3 times (cause why not)
-            for (var i = 0; i < 3; i++)
-            {
-                // Update status in server
-                await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(AppData.Settings.TrackersVector
-                    .Where(tracker => tracker.IsActive)
-                    .Select(tracker =>
-                    {
-                        var trackerBase = tracker.GetTrackerBase();
-                        trackerBase.ConnectionState = Interfacing.AppTrackersInitialized;
-                        return trackerBase;
-                    }));
-
-                // Update internal status
-                _bInitialized = Interfacing.AppTrackersInitialized;
-            }
 
         // Scan for already-added body trackers from other apps
         // (If any found, disable corresponding ame's trackers/pairs)

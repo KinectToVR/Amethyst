@@ -3,7 +3,7 @@
 public static class AppData
 {
     // Internal version number
-    public const string K2InternalVersion = "1.2.221213.1";
+    public const string K2InternalVersion = "1.2.221218.1";
     public const uint K2IntVersion = 5; // Amethyst version
     public const uint K2ApiVersion = 0; // API version
 

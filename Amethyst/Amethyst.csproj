@@ -20,6 +20,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
     <StartupObject>Amethyst.Program</StartupObject>
+    <PublishTrimmed>false</PublishTrimmed>
 
     <ApplicationIcon>Assets\ktvr.ico</ApplicationIcon>
     <Authors>K2VR Team</Authors>
@@ -75,7 +76,7 @@
     <ProjectReference Include="..\AmethystSupport\AmethystSupport.vcxproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="Assets\*">
+    <Content Include="Assets\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
