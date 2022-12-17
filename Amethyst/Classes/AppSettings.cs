@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using Windows.Data.Json;
 using Windows.Globalization;
 using Windows.System.UserProfile;
 using Amethyst.MVVM;
@@ -246,6 +247,38 @@ public class AppSettings : INotifyPropertyChanged
             TrackersVector[0].IsActiveEnabled = true;
             TrackersVector[1].IsActiveEnabled = true;
             TrackersVector[2].IsActiveEnabled = true;
+
+            // Try reading the default config
+            Logger.Info("Checking out the default configuration settings...");
+            (bool ExtraTrackers, bool Valid) defaultSettings = (false, false); // Invalid for now!
+
+            if (File.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")))
+                try
+                {
+                    // Parse the loaded json
+                    var jsonHead = JsonObject.Parse(File.ReadAllText(
+                        Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")));
+
+                    if (!jsonHead.ContainsKey("ExtraTrackers"))
+                        // Invalid configuration file, don't proceed further!
+                        Logger.Error("The default configuration json file was invalid!");
+                    else // Read from JSON and mark as valid
+                        defaultSettings = (jsonHead.GetNamedBoolean("ExtraTrackers"), true);
+                }
+                catch (Exception e)
+                {
+                    Logger.Info($"Default settings checkout failed! Message: {e.Message}");
+                }
+            else Logger.Info("No default configuration found! [defaults.json]");
+
+            // Enable more trackers if valid and requested
+            if (defaultSettings.Valid && defaultSettings.ExtraTrackers)
+            {
+                TrackersVector[3].IsActiveEnabled = true;
+                TrackersVector[4].IsActiveEnabled = true;
+                TrackersVector[5].IsActiveEnabled = true;
+                TrackersVector[6].IsActiveEnabled = true;
+            }
         }
 
         // Scan for duplicate trackers

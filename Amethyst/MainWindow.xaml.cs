@@ -713,13 +713,53 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                          $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
         }
 
+        // Try reading the default config
+        Logger.Info("Checking out the default configuration settings...");
+        (string DeviceGuid, string ServiceGuid, bool Valid)
+            defaultSettings = (null, null, false); // Invalid for now!
+
+        if (File.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")))
+            try
+            {
+                // Parse the loaded json
+                var jsonHead = JsonObject.Parse(File.ReadAllText(
+                    Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")));
+
+                if (!jsonHead.ContainsKey("TrackingDevice") ||
+                    !jsonHead.ContainsKey("ServiceEndpoint"))
+                    // Invalid configuration file, don't proceed further!
+                    Logger.Error("The default configuration json file was invalid!");
+                else
+                    defaultSettings = (
+                        jsonHead.GetNamedString("TrackingDevice"),
+                        jsonHead.GetNamedString("ServiceEndpoint"),
+                        true); // Read from JSON and mark as valid
+            }
+            catch (Exception e)
+            {
+                Logger.Info($"Default settings checkout failed! Message: {e.Message}");
+            }
+        else Logger.Info("No default configuration found! [defaults.json]");
+
         // Validate the saved base plugin guid
         Logger.Info("Checking if the saved base device exists in loaded plugins...");
         if (!TrackingDevices.TrackingDevicesList.ContainsKey(AppData.Settings.TrackingDeviceGuid))
         {
-            // Find the first device that provides any joints
-            var firstValidDevice = TrackingDevices.TrackingDevicesList.Values
-                .FirstOrDefault(device => device.TrackedJoints.Count > 0, null);
+            // Check against the defaults
+            var firstValidDevice = string.IsNullOrEmpty(defaultSettings.DeviceGuid)
+                ? null // Default to null for an empty default guid passed
+                : TrackingDevices.GetDevice(defaultSettings.DeviceGuid).Device;
+
+            // Check the device now
+            if (firstValidDevice is null || firstValidDevice.TrackedJoints.Count <= 0)
+            {
+                Logger.Warn($"The requested default tracking device ({defaultSettings.DeviceGuid}) " +
+                            "was invalid! Searching for any non-disabled suitable device now...");
+
+                // Find the first device that provides any joints
+                firstValidDevice = TrackingDevices.TrackingDevicesList.Values
+                    .FirstOrDefault(device => device.TrackedJoints.Count > 0, null);
+            }
 
             // Check if we've found such a device
             if (firstValidDevice is null)
@@ -771,9 +811,19 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Checking if the saved service endpoint exists in loaded plugins...");
         if (!TrackingDevices.ServiceEndpointsList.ContainsKey(AppData.Settings.ServiceEndpointGuid))
         {
-            Logger.Info($"The saved service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
-                        $"Resetting it to the first one: ({TrackingDevices.ServiceEndpointsList.First().Key})!");
-            AppData.Settings.ServiceEndpointGuid = TrackingDevices.ServiceEndpointsList.First().Key;
+            if (!string.IsNullOrEmpty(defaultSettings.ServiceGuid) && // Check the guid first
+                TrackingDevices.ServiceEndpointsList.ContainsKey(defaultSettings.ServiceGuid))
+            {
+                Logger.Info($"The selected service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
+                            $"Resetting it to the default one selected in defaults: ({defaultSettings.ServiceGuid})!");
+                AppData.Settings.ServiceEndpointGuid = defaultSettings.ServiceGuid;
+            }
+            else
+            {
+                Logger.Info($"The default service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
+                            $"Resetting it to the first one: ({TrackingDevices.ServiceEndpointsList.First().Key})!");
+                AppData.Settings.ServiceEndpointGuid = TrackingDevices.ServiceEndpointsList.First().Key;
+            }
         }
 
         // Priority: Connect to the tracking service
