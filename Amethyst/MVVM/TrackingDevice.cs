@@ -99,10 +99,10 @@ public class TrackingDevice : INotifyPropertyChanged
     // This will allow Amethyst to calculate rotations by itself, additionally
     public bool IsAppOrientationSupported =>
         Device.IsAppOrientationSupported && // The device must declare it actually consists
-        Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointAnkleLeft) &&
-        Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointAnkleRight) &&
         Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointFootLeft) &&
         Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointFootRight) &&
+        Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointFootTipLeft) &&
+        Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointFootTipRight) &&
         Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointKneeLeft) &&
         Device.TrackedJoints.Any(x => x.Role == TrackedJointType.JointKneeRight);
 

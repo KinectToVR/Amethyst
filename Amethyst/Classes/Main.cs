@@ -344,10 +344,10 @@ public static class Main
                         JointRotationTrackingOption.SoftwareCalculatedRotation =>
                             Calibration.FeetSoftwareOrientation(
                                     device.TrackedJoints.First(x =>
-                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointAnkleLeft,
+                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
                                             (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)),
                                     device.TrackedJoints.First(x =>
-                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
+                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootTipLeft,
                                             (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)),
                                     device.TrackedJoints.First(x =>
                                         x.Role == TypeUtils.FlipJointType(TrackedJointType.JointKneeLeft,
@@ -357,10 +357,10 @@ public static class Main
                         JointRotationTrackingOption.SoftwareCalculatedRotationV2 =>
                             Calibration.FeetSoftwareOrientationV2(
                                     device.TrackedJoints.First(x =>
-                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointAnkleLeft,
+                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
                                             (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)),
                                     device.TrackedJoints.First(x =>
-                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
+                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootTipLeft,
                                             (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)),
                                     device.TrackedJoints.First(x =>
                                         x.Role == TypeUtils.FlipJointType(TrackedJointType.JointKneeLeft,

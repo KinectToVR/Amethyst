@@ -44,8 +44,8 @@ public static class TypeUtils
     public static SortedDictionary<TrackerType, TrackedJointType> TrackerTypeJointDictionary = new()
     {
         { TrackerType.TrackerHanded, TrackedJointType.JointHandLeft },
-        { TrackerType.TrackerLeftFoot, TrackedJointType.JointAnkleLeft },
-        { TrackerType.TrackerRightFoot, TrackedJointType.JointAnkleRight },
+        { TrackerType.TrackerLeftFoot, TrackedJointType.JointFootLeft },
+        { TrackerType.TrackerRightFoot, TrackedJointType.JointFootRight },
         { TrackerType.TrackerLeftShoulder, TrackedJointType.JointShoulderLeft },
         { TrackerType.TrackerRightShoulder, TrackedJointType.JointShoulderRight },
         { TrackerType.TrackerLeftElbow, TrackedJointType.JointElbowLeft },
@@ -95,10 +95,10 @@ public static class TypeUtils
     public static SortedDictionary<TrackedJointType, TrackerType> JointTrackerTypeDictionary = new()
     {
         { TrackedJointType.JointHandLeft, TrackerType.TrackerHanded },
-        { TrackedJointType.JointAnkleLeft, TrackerType.TrackerLeftFoot },
-        { TrackedJointType.JointAnkleRight, TrackerType.TrackerRightFoot },
         { TrackedJointType.JointFootLeft, TrackerType.TrackerLeftFoot },
         { TrackedJointType.JointFootRight, TrackerType.TrackerRightFoot },
+        { TrackedJointType.JointFootTipLeft, TrackerType.TrackerLeftFoot },
+        { TrackedJointType.JointFootTipRight, TrackerType.TrackerRightFoot },
         { TrackedJointType.JointShoulderLeft, TrackerType.TrackerLeftShoulder },
         { TrackedJointType.JointShoulderRight, TrackerType.TrackerRightShoulder },
         { TrackedJointType.JointElbowLeft, TrackerType.TrackerLeftElbow },
@@ -132,12 +132,12 @@ public static class TypeUtils
         { TrackedJointType.JointSpineWaist, TrackedJointType.JointSpineWaist },
         { TrackedJointType.JointHipLeft, TrackedJointType.JointHipRight },
         { TrackedJointType.JointKneeLeft, TrackedJointType.JointKneeRight },
-        { TrackedJointType.JointAnkleLeft, TrackedJointType.JointAnkleRight },
         { TrackedJointType.JointFootLeft, TrackedJointType.JointFootRight },
+        { TrackedJointType.JointFootTipLeft, TrackedJointType.JointFootTipRight },
         { TrackedJointType.JointHipRight, TrackedJointType.JointHipLeft },
         { TrackedJointType.JointKneeRight, TrackedJointType.JointKneeLeft },
-        { TrackedJointType.JointAnkleRight, TrackedJointType.JointAnkleLeft },
         { TrackedJointType.JointFootRight, TrackedJointType.JointFootLeft },
+        { TrackedJointType.JointFootTipRight, TrackedJointType.JointFootTipLeft },
         { TrackedJointType.JointManual, TrackedJointType.JointManual }
     };
 

@@ -1159,9 +1159,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
             SkBone(BoneLines[17], JointPoints[17], ref joints,
                 TrackedJointType.JointHipLeft, TrackedJointType.JointKneeLeft);
             SkBone(BoneLines[18], JointPoints[18], ref joints,
-                TrackedJointType.JointKneeLeft, TrackedJointType.JointAnkleLeft);
+                TrackedJointType.JointKneeLeft, TrackedJointType.JointFootLeft);
             SkBone(BoneLines[19], JointPoints[19], ref joints,
-                TrackedJointType.JointAnkleLeft, TrackedJointType.JointFootLeft);
+                TrackedJointType.JointFootLeft, TrackedJointType.JointFootTipLeft);
 
             // Lower right limb
             SkBone(BoneLines[20], JointPoints[20], ref joints,
@@ -1169,9 +1169,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
             SkBone(BoneLines[21], JointPoints[21], ref joints,
                 TrackedJointType.JointHipRight, TrackedJointType.JointKneeRight);
             SkBone(BoneLines[22], JointPoints[22], ref joints,
-                TrackedJointType.JointKneeRight, TrackedJointType.JointAnkleRight);
+                TrackedJointType.JointKneeRight, TrackedJointType.JointFootRight);
             SkBone(BoneLines[23], JointPoints[23], ref joints,
-                TrackedJointType.JointAnkleRight, TrackedJointType.JointFootRight);
+                TrackedJointType.JointFootRight, TrackedJointType.JointFootTipRight);
 
             // Waist
             SkPoint(JointPoints[24], joints.FirstOrDefault(x =>
@@ -1180,12 +1180,12 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
             // Left Foot
             SkPoint(JointPoints[25], joints.FirstOrDefault(x =>
-                    x.Role == TrackedJointType.JointAnkleLeft, null),
+                    x.Role == TrackedJointType.JointFootLeft, null),
                 AppData.Settings.TrackersVector[1].IsOverriddenPair);
 
             // Right Foot
             SkPoint(JointPoints[26], joints.FirstOrDefault(x =>
-                    x.Role == TrackedJointType.JointAnkleRight, null),
+                    x.Role == TrackedJointType.JointFootRight, null),
                 AppData.Settings.TrackersVector[2].IsOverriddenPair);
 
             // Left Elbow

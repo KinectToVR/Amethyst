@@ -23,12 +23,12 @@ public enum TrackedJointType
     JointSpineWaist,
     JointHipLeft,
     JointKneeLeft,
-    JointAnkleLeft,
     JointFootLeft,
+    JointFootTipLeft,
     JointHipRight,
     JointKneeRight,
-    JointAnkleRight,
     JointFootRight,
+    JointFootTipRight,
     JointManual
 }
 
