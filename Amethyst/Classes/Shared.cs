@@ -43,9 +43,12 @@ public static class Shared
             ReloadDevicesPageEvent?.Set();
             ReloadInfoPageEvent?.Set();
 
-            // Reload other stuff, like statuses
-            TrackingDevices.UpdateTrackingDevicesInterface();
-            TrackingDevices.HandleDeviceRefresh(false);
+            Main.DispatcherQueue?.TryEnqueue(() =>
+            {
+                // Reload other stuff, like statuses
+                TrackingDevices.UpdateTrackingDevicesInterface();
+                TrackingDevices.HandleDeviceRefresh(false);
+            });
         }
     }
 

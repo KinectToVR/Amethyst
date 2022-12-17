@@ -27,8 +27,8 @@ public class AppPluginSettings : INotifyPropertyChanged
             {
                 try
                 {
-                    // Return the value if valid
-                    return JsonConvert.DeserializeObject<T>(value.ToString() ?? "");
+                    if (value.GetType().IsAssignableFrom(typeof(T))) return (T)value; // Return the value if valid
+                    return JsonConvert.DeserializeObject<T>(value.ToString() ?? ""); // Otherwise deserialize
                 }
                 catch
                 {
