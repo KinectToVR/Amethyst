@@ -8,8 +8,6 @@ using namespace System;
 using namespace Numerics;
 using namespace Collections::Generic;
 
-using namespace Amethyst::Plugins::Contract;
-
 // The upper bound of the fog volume along the y-axis (height)
 // This defines how far up the fog extends from the floor plane
 // This is hard coded because all V2 sensors are the same (afaik, I don't know if the fog height changes depending on room conditions though)
@@ -69,14 +67,13 @@ namespace AmethystSupport
 			// Subtract mean
 			const Eigen::Matrix<float, 3, Eigen::Dynamic> Am = head_points.colwise() - centroid_a;
 			const Eigen::Matrix<float, 3, Eigen::Dynamic> Bm = hmd_points.colwise() - centroid_b;
-
-			Eigen::Matrix<float, 3, Eigen::Dynamic> H = Am * Bm.transpose();
+			const Eigen::Matrix3Xf H = Am * Bm.transpose();
 
 			// Find rotation
-			const auto svd = H.jacobiSvd<
+			const auto svd = Eigen::JacobiSVD(H,
 				Eigen::DecompositionOptions::ComputeFullU |
-				Eigen::DecompositionOptions::ComputeFullV>();
-
+				Eigen::DecompositionOptions::ComputeFullV);
+				
 			const Eigen::Matrix3f& result_u = svd.matrixU();
 			Eigen::MatrixXf result_v = svd.matrixV();
 			Eigen::Matrix3f return_rotation = result_v * result_u.transpose();
@@ -187,14 +184,14 @@ namespace AmethystSupport
 		}
 
 		static Quaternion FeetSoftwareOrientation(
-			TrackedJoint^ ankle, TrackedJoint^ foot, TrackedJoint^ knee)
+			Vector3 ankle, Vector3 foot, Vector3 knee)
 		{
 			// Capture needed joints' positions
 			const Eigen::Vector3f
 				forward(0, 0, 1),
-				ankleLeftPose(ankle->Position.X, ankle->Position.Y, ankle->Position.Z),
-				footLeftPose(foot->Position.X, foot->Position.Y, foot->Position.Z),
-				kneeLeftPose(knee->Position.X, knee->Position.Y, knee->Position.Z);
+				ankleLeftPose(ankle.X, ankle.Y, ankle.Z),
+				footLeftPose(foot.X, foot.Y, foot.Z),
+				kneeLeftPose(knee.X, knee.Y, knee.Z);
 
 			// Calculate euler yaw foot orientation, we'll need it later
 			Eigen::Vector3f footLeftRawOrientation =
@@ -275,12 +272,12 @@ namespace AmethystSupport
 		}
 
 		static Quaternion FeetSoftwareOrientationV2(
-			TrackedJoint^ ankle, TrackedJoint^ foot, TrackedJoint^ knee)
+			Vector3 ankle, Vector3 knee)
 		{
 			// Capture needed joints' positions
 			const Eigen::Vector3f
-				anklePose(ankle->Position.X, ankle->Position.Y, ankle->Position.Z),
-				kneePose(knee->Position.X, knee->Position.Y, knee->Position.Z);
+				anklePose(ankle.X, ankle.Y, ankle.Z),
+				kneePose(knee.X, knee.Y, knee.Z);
 
 			// The improved approach for fixing foot rotation on the Xbox One Kinect
 			// Thigh rotation is copied onto the foot, this is due to the fact that more often than not, 
