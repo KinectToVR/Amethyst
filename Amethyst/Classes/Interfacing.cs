@@ -785,7 +785,7 @@ public static class Interfacing
                 {
                     // Parse the loaded json
                     service.LocalizationResourcesRoot =
-                        (JsonObject.Parse(File.ReadAllText(resourcePath)), resourcePath);
+                        (JsonObject.Parse(File.ReadAllText(resourcePath)), path);
 
                     // Check if the resource root is fine
                     var resourceRoot = service.LocalizationResourcesRoot.Root;
