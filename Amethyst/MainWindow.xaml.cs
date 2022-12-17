@@ -715,8 +715,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Try reading the default config
         Logger.Info("Checking out the default configuration settings...");
-        (string DeviceGuid, string ServiceGuid, bool Valid)
-            defaultSettings = (null, null, false); // Invalid for now!
+        (string DeviceGuid, string ServiceGuid) defaultSettings = (null, null); // Invalid!
 
         if (File.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")))
             try
@@ -725,15 +724,23 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 var jsonHead = JsonObject.Parse(File.ReadAllText(
                     Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")));
 
-                if (!jsonHead.ContainsKey("TrackingDevice") ||
-                    !jsonHead.ContainsKey("ServiceEndpoint"))
+                // Check the device guid
+                if (!jsonHead.ContainsKey("TrackingDevice"))
                     // Invalid configuration file, don't proceed further!
-                    Logger.Error("The default configuration json file was invalid!");
+                    Logger.Error("The default configuration json file was (partially) invalid!");
                 else
                     defaultSettings = (
                         jsonHead.GetNamedString("TrackingDevice"),
-                        jsonHead.GetNamedString("ServiceEndpoint"),
-                        true); // Read from JSON and mark as valid
+                        defaultSettings.ServiceGuid); // Keep the last one
+
+                // Check the service guid
+                if (!jsonHead.ContainsKey("ServiceEndpoint"))
+                    // Invalid configuration file, don't proceed further!
+                    Logger.Error("The default configuration json file was (partially) invalid!");
+                else
+                    defaultSettings = (
+                        defaultSettings.DeviceGuid, // Keep the last one
+                        jsonHead.GetNamedString("ServiceEndpoint"));
             }
             catch (Exception e)
             {
