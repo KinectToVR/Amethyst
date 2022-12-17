@@ -354,7 +354,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
 
                     // Check the plugin GUID against the ones we need to skip
-                    if (AppData.Settings.DisabledDevicesGuidSet.Contains(plugin.Metadata.Guid))
+                    if (AppData.Settings.DisabledPluginsGuidSet.Contains(plugin.Metadata.Guid))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
                         TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
@@ -553,7 +553,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
 
                     // Check the plugin GUID against the ones we need to skip
-                    if (AppData.Settings.DisabledDevicesGuidSet.Contains(plugin.Metadata.Guid))
+                    if (AppData.Settings.DisabledPluginsGuidSet.Contains(plugin.Metadata.Guid))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
                         TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin

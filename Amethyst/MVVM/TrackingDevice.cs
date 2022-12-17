@@ -628,7 +628,7 @@ public class PluginHost : IAmethystHost
         // ReSharper disable once InvertIf | Check if the request was from a device
         if (TrackingDevices.TrackingDevicesList.TryGetValue(Guid, out var device) && device is not null)
             device.RefreshWatchHandlers(); // Re-register joint changes handlers
-        
+
         // Check if used in any way: as the base, an override, or the endpoint
         if (!TrackingDevices.IsBase(Guid) && !TrackingDevices.IsOverride(Guid) &&
             TrackingDevices.CurrentServiceEndpoint.Guid != Guid) return;
@@ -693,14 +693,12 @@ public class PluginHost : IAmethystHost
 
 public class LoadAttemptedPlugin : INotifyPropertyChanged
 {
-    private bool _isLoaded;
-
     public string Name { get; init; } = "[UNKNOWN]";
     public string Guid { get; init; } = "[INVALID]";
 
     public string Publisher { get; init; }
     public string Website { get; init; }
-    public string DeviceFolder { get; init; } = "[INVALID]";
+    public string DeviceFolder { get; init; }
 
     public string DeviceUpdateUri { get; init; } = "[UNKNOWN]";
     public string DeviceVersion { get; init; } = "[UNKNOWN]";
@@ -713,24 +711,33 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public TrackingDevices.PluginLoadError Status { get; init; } =
         TrackingDevices.PluginLoadError.Unknown;
 
-    public bool LoadError => Status != TrackingDevices.PluginLoadError.NoError;
-    public bool LoadSuccess => Status == TrackingDevices.PluginLoadError.NoError;
+    public bool LoadError => Status is not
+        TrackingDevices.PluginLoadError.NoError and not
+        TrackingDevices.PluginLoadError.LoadingSkipped;
+
+    public bool LoadSuccess => Status is
+        TrackingDevices.PluginLoadError.NoError or
+        TrackingDevices.PluginLoadError.LoadingSkipped;
 
     public bool IsLoaded
     {
-        get => TrackingDevices.TrackingDevicesList.ContainsKey(Guid) ||
-               TrackingDevices.ServiceEndpointsList.ContainsKey(Guid);
+        get => !AppData.Settings.DisabledPluginsGuidSet.Contains(Guid);
         set
         {
-            if (_isLoaded == value) return; // No changes
-            _isLoaded = value; // Copy to the private container
+            if (IsLoaded == value) return; // No changes
+            if (!Shared.Devices.PluginsPageOpened)
+            {
+                OnPropertyChanged();
+                return; // Sanity check
+            }
 
             // Disable/Enable this plugin
-            if (value) AppData.Settings.DisabledDevicesGuidSet.Remove(Guid);
-            else AppData.Settings.DisabledDevicesGuidSet.Add(Guid);
+            if (value) AppData.Settings.DisabledPluginsGuidSet.Remove(Guid);
+            else AppData.Settings.DisabledPluginsGuidSet.Add(Guid);
 
-            // Check if the change is valid
-            if (TrackingDevices.TrackingDevicesList.ContainsKey(Guid) && !_isLoaded)
+            // Check if the change is valid : tracking provider
+            if (TrackingDevices.TrackingDevicesList.ContainsKey(Guid) &&
+                AppData.Settings.DisabledPluginsGuidSet.Contains(Guid))
             {
                 SortedSet<string> loadedDeviceSet = new();
 
@@ -746,19 +753,19 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
                 // If we've just disabled the last loaded device, re-enable the first
                 if (TrackingDevices.TrackingDevicesList.Keys.All(
-                        AppData.Settings.DisabledDevicesGuidSet.Contains) ||
+                        AppData.Settings.DisabledPluginsGuidSet.Contains) ||
 
-                    // If this device entry happens to be the last one of the official ones
+                    // If this entry happens to be the last one of the official ones
                     (loadedDeviceSet.Contains(Guid) && loadedDeviceSet.All(
-                        AppData.Settings.DisabledDevicesGuidSet.Contains)))
-                {
-                    AppData.Settings.DisabledDevicesGuidSet.Remove(Guid);
-                    _isLoaded = true; // Re-enable this device
-                }
+                        AppData.Settings.DisabledPluginsGuidSet.Contains)))
+
+                    // Re-enable this device if upper conditions are met
+                    AppData.Settings.DisabledPluginsGuidSet.Remove(Guid);
             }
 
             // Check if the change is valid : service endpoint
-            else if (TrackingDevices.ServiceEndpointsList.ContainsKey(Guid) && !_isLoaded)
+            else if (TrackingDevices.ServiceEndpointsList.ContainsKey(Guid) &&
+                     AppData.Settings.DisabledPluginsGuidSet.Contains(Guid))
             {
                 SortedSet<string> loadedServiceSet = new();
 
@@ -770,21 +777,20 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
                 // If we've just disabled the last loaded service, re-enable the first
                 if (TrackingDevices.ServiceEndpointsList.Keys.All(
-                        AppData.Settings.DisabledDevicesGuidSet.Contains) ||
+                        AppData.Settings.DisabledPluginsGuidSet.Contains) ||
 
-                    // If this device entry happens to be the last one of the official ones
+                    // If this entry happens to be the last one of the official ones
                     (loadedServiceSet.Contains(Guid) && loadedServiceSet.All(
-                        AppData.Settings.DisabledDevicesGuidSet.Contains)))
-                {
-                    AppData.Settings.DisabledDevicesGuidSet.Remove(Guid);
-                    _isLoaded = true; // Re-enable this device
-                }
+                        AppData.Settings.DisabledPluginsGuidSet.Contains)))
+
+                    // Re-enable this service if upper conditions are met
+                    AppData.Settings.DisabledPluginsGuidSet.Remove(Guid);
             }
 
             // Show the reload tip on any valid changes
             // == cause the upper check would make it different
             // and it's already been assigned at the beginning
-            if (Shared.Devices.PluginsPageLoadedOnce && _isLoaded == value)
+            if (Shared.Devices.PluginsPageOpened && IsLoaded == value)
                 Shared.TeachingTips.MainPage.ReloadTeachingTip.IsOpen = true;
 
             // Save settings
@@ -797,6 +803,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public bool PublisherValid => !string.IsNullOrEmpty(Publisher);
     public bool WebsiteValid => !string.IsNullOrEmpty(Website);
+    public bool LocationValid => !string.IsNullOrEmpty(DeviceFolder);
 
     public event PropertyChangedEventHandler PropertyChanged;
 

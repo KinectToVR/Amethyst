@@ -198,7 +198,8 @@
                                                                                ToolTipService.ToolTip="{x:Bind Guid, Mode=OneWay}" />
                                                                 </StackPanel>
 
-                                                                <StackPanel Orientation="Horizontal">
+                                                                <StackPanel Orientation="Horizontal"
+                                                                            Visibility="{x:Bind LocationValid, Mode=OneWay}">
                                                                     <StackPanel.Transitions>
                                                                         <TransitionCollection>
                                                                             <RepositionThemeTransition />

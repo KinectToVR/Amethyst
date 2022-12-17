@@ -193,6 +193,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
 
         Interfacing.IsNuxPending = false;
+        Shared.Devices.PluginsPageOpened = false;
     }
 
     private async void TrackingDeviceTreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
@@ -511,9 +512,10 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
-    private void PluginManagerFlyout_OnOpened(object sender, object e)
+    private async void PluginManagerFlyout_OnOpened(object sender, object e)
     {
-        Shared.Devices.PluginsPageLoadedOnce = true;
+        await Task.Delay(100); // Wait a bit and unblock
+        Shared.Devices.PluginsPageOpened = true;
     }
 
     public void OnPropertyChanged(string propName = null)
