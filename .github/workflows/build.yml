@@ -2,9 +2,6 @@ name: Check-Build
 
 on: [push]
 
-env:
-  KINECTSDK10_DIR: ${{ github.workspace }}\KinectSDK-v1.8\AttachedContainer\SDK18\Microsoft SDKs\Kinect\v1.8\
-
 jobs:
   build:
 
@@ -25,11 +22,19 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
 
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-api-key: ${{ secrets.NuGetAPIKey }}
+          nuget-version: latest
+
       - name: Restore and build (publish) K2CrashHandler
         run: msbuild K2CrashHandler /restore /p:Platform=x64 /p:PlatformTarget=x64 /p:Configuration=Release /p:RuntimeIdentifier=win10-x64 /t:Publish /p:PublishProfile=K2CrashHandler\Properties\PublishProfiles\FolderProfile.pubxml
         
       - name: Restore and build (publish) Amethyst.NET
-        run: msbuild Amethyst /restore /p:Platform=x64 /p:PlatformTarget=x64 /p:Configuration=Release /p:RuntimeIdentifier=win10-x64 /t:Publish /p:PublishProfile=Amethyst\Properties\PublishProfiles\FolderProfile.pubxml
+        run: |
+          nuget restore
+          msbuild Amethyst /restore /p:Platform=x64 /p:PlatformTarget=x64 /p:Configuration=Release /p:RuntimeIdentifier=win10-x64 /t:Publish /p:PublishProfile=Amethyst\Properties\PublishProfiles\FolderProfile.pubxml
         
       - name: Create a shared output
         run: |
@@ -94,7 +99,7 @@ jobs:
           cd Pack\Output
           7z a Amethyst.NET.zip *
         
-      - name: Upload plugin artifact
+      - name: Upload packed app artifact
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
