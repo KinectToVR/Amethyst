@@ -13,10 +13,13 @@ namespace Amethyst.Classes;
 
 public class AppTracker : INotifyPropertyChanged
 {
-    private readonly Filtering.KalmanFilter _kalmanFilter = new();
+    [JsonIgnore]
+    private readonly KalmanFilter _kalmanFilter = new();
 
-    private readonly Filtering.LowPassFilter _lowPassFilter = new(6.9, .005);
+    [JsonIgnore]
+    private readonly LowPassFilter _lowPassFilter = new(6.9f, .005f);
 
+    [JsonIgnore]
     private readonly Vector3 _predictedPosition = new(0);
 
     // Is this tracker enabled?
@@ -642,8 +645,8 @@ public class AppTracker : INotifyPropertyChanged
     public void UpdateFilters()
     {
         // Update LowPass and Kalman filters
-        _lowPassPosition = _lowPassFilter.Update(Position);
-        _kalmanPosition = _kalmanFilter.Update(Position);
+        _lowPassPosition = _lowPassFilter.Update(Position.Projected()).V();
+        _kalmanPosition = _kalmanFilter.Update(Position.Projected()).V();
 
         // Update the LERP (mix) filter
         _lerpPosition = Vector3.Lerp(_lastLerpPosition, Position, 0.31f);

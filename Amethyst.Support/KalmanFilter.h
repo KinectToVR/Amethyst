@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <Eigen/Dense>
 
-class KalmanFilter
+class CKalmanFilter
 {
 public:
 	/**
@@ -14,18 +14,18 @@ public:
 	*   P - Estimate error covariance
 	*/
 
-	KalmanFilter()
+	CKalmanFilter()
 	{
 		constexpr int _n = 3; // Number of states
 		constexpr int _m = 1; // Number of measurements
 		constexpr int _c = 1; // Number of control inputs
 
-		Eigen::MatrixXd _A(_n, _n); // System dynamics matrix
-		Eigen::MatrixXd _B(_n, _c); // Input control matrix
-		Eigen::MatrixXd _C(_m, _n); // Output matrix
-		Eigen::MatrixXd _Q(_n, _n); // Process noise covariance
-		Eigen::MatrixXd _R(_m, _m); // Measurement noise covariance
-		Eigen::MatrixXd _P(_n, _n); // Estimate error covariance
+		Eigen::MatrixXf _A(_n, _n); // System dynamics matrix
+		Eigen::MatrixXf _B(_n, _c); // Input control matrix
+		Eigen::MatrixXf _C(_m, _n); // Output matrix
+		Eigen::MatrixXf _Q(_n, _n); // Process noise covariance
+		Eigen::MatrixXf _R(_m, _m); // Measurement noise covariance
+		Eigen::MatrixXf _P(_n, _n); // Estimate error covariance
 
 		double dt = 1.0 / 100;
 		// Discrete LTI projectile motion, measuring position only
@@ -50,8 +50,8 @@ public:
 		n = _A.rows();
 		c = _B.cols();
 
-		I = Eigen::MatrixXd(n, n);
-		x_hat = Eigen::VectorXd(n);
+		I = Eigen::MatrixXf(n, n);
+		x_hat = Eigen::VectorXf(n);
 
 		initialized = false;
 		I.setIdentity();
@@ -70,7 +70,7 @@ public:
 	/**
 	* Initialize the filter with a guess for initial states.
 	*/
-	void init(const Eigen::VectorXd& x0)
+	void init(const Eigen::VectorXf& x0)
 	{
 		x_hat = x0;
 		P = P0;
@@ -80,7 +80,7 @@ public:
 	/**
 	* Update the prediction based on control input.
 	*/
-	void predict(const Eigen::VectorXd& u)
+	void predict(const Eigen::VectorXf& u)
 	{
 		if (!initialized)
 			init();
@@ -92,7 +92,7 @@ public:
 	/**
 	* Update the estimated state based on measured values.
 	*/
-	void update(const Eigen::VectorXd& y)
+	void update(const Eigen::VectorXf& y)
 	{
 		K = P * C.transpose() * (C * P * C.transpose() + R).inverse();
 		x_hat += K * (y - C * x_hat);
@@ -102,7 +102,7 @@ public:
 	/**
 	* Update the dynamics matrix.
 	*/
-	void update_dynamics(const Eigen::MatrixXd A)
+	void update_dynamics(const Eigen::MatrixXf A)
 	{
 		this->A = A;
 	}
@@ -110,7 +110,7 @@ public:
 	/**
 	* Update the output matrix.
 	*/
-	void update_output(const Eigen::MatrixXd C)
+	void update_output(const Eigen::MatrixXf C)
 	{
 		this->C = C;
 	}
@@ -118,11 +118,11 @@ public:
 	/**
 	* Return the current state.
 	*/
-	Eigen::VectorXd state() { return x_hat; };
+	Eigen::VectorXf state() { return x_hat; };
 
 private:
 	// Matrices for computation
-	Eigen::MatrixXd A, B, C, Q, R, P, K, P0;
+	Eigen::MatrixXf A, B, C, Q, R, P, K, P0;
 
 	// System dimensions
 	int m, n, c;
@@ -131,8 +131,8 @@ private:
 	bool initialized = false;
 
 	// n-size identity
-	Eigen::MatrixXd I;
+	Eigen::MatrixXf I;
 
 	// Estimated states
-	Eigen::VectorXd x_hat;
+	Eigen::VectorXf x_hat;
 };

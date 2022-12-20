@@ -491,7 +491,7 @@ public class PluginHost : IAmethystHost
 
     // Get the HMD Yaw (exclusively)
     public double HmdOrientationYaw =>
-        Calibration.QuaternionYaw(Interfacing.Plugins.GetHmdPose.Orientation);
+        Support.QuaternionYaw(Interfacing.Plugins.GetHmdPose.Orientation.Projected());
 
     // Get the raw OpenVRs HMD pose
     public (Vector3 Position, Quaternion Orientation) HmdPose => Interfacing.Plugins.GetHmdPose;

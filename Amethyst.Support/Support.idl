@@ -1,0 +1,50 @@
+namespace AmethystSupport
+{
+	struct SVector3
+	{
+		Single X;
+		Single Y;
+		Single Z;
+	};
+
+	struct SQuaternion
+	{
+		Single X;
+		Single Y;
+		Single Z;
+		Single W;
+	};
+
+	struct STransform
+	{
+		SVector3 Translation;
+		SQuaternion Rotation;
+	};
+
+    [default_interface]
+	static runtimeclass Support
+	{
+		static STransform SVD(SVector3[] head_positions, SVector3[] hmd_positions);
+		static SQuaternion FixFlippedOrientation(SQuaternion base);
+
+		static Single OrientationDot(SQuaternion from, SQuaternion to);
+		static Single QuaternionYaw(SQuaternion q); // Projected yaw rad
+
+		static SQuaternion FeetSoftwareOrientation(SVector3 ankle, SVector3 foot, SVector3 knee);
+		static SQuaternion FeetSoftwareOrientationV2(SVector3 ankle, SVector3 knee); // Hekky^
+    }
+	
+    [default_interface]
+	runtimeclass LowPassFilter
+	{
+		LowPassFilter(Single cutOff, Single deltaTime);
+		SVector3 Update(SVector3 input); // Recalculate
+    }
+	
+    [default_interface]
+	runtimeclass KalmanFilter
+	{
+		KalmanFilter(); // No explc parameters required
+		SVector3 Update(SVector3 input); // Recalculate
+    }
+}

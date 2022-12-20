@@ -248,7 +248,7 @@ public static class Main
 
             // Compose flip
             var dotFacing =
-                Calibration.OrientationDot(
+                Support.OrientationDot(
                     // Check for external-flip
                     extFlip
 
@@ -256,23 +256,23 @@ public static class Main
                         ? extFlipInternal
 
                             // Overriden internal amethyst tracker
-                            ? AppData.Settings.TrackersVector[0].Orientation
+                            ? AppData.Settings.TrackersVector[0].Orientation.Projected()
 
                             // External VR waist tracker
-                            : Interfacing.GetVrTrackerPoseCalibrated("waist").Orientation
+                            : Interfacing.GetVrTrackerPoseCalibrated("waist").Orientation.Projected()
 
                         // Default: VR HMD orientation
-                        : Interfacing.Plugins.GetHmdPose.Orientation,
+                        : Interfacing.Plugins.GetHmdPose.Orientation.Projected(),
 
                     // Check for external-flip
                     extFlip
 
                         // If ExtFlip is enabled compare to its calibration
-                        ? AppData.Settings.ExternalFlipCalibrationMatrix
+                        ? AppData.Settings.ExternalFlipCalibrationMatrix.Projected()
 
                         // Default: use the default calibration rotation
                         : AppData.Settings.DeviceCalibrationRotationMatrices.GetValueOrDefault(
-                            AppData.Settings.TrackingDeviceGuid, Quaternion.Identity));
+                            AppData.Settings.TrackingDeviceGuid, Quaternion.Identity).Projected());
 
             // Not in transition angle area, can compute
             if (Math.Abs(dotFacing) >= flipThreshold)
@@ -309,8 +309,8 @@ public static class Main
                     // Optionally overwrite the rotation with HMD orientation
                     // Not the "calibrated" variant, as the fix will be applied after everything else
                     JointRotationTrackingOption.FollowHmdRotation =>
-                        Quaternion.CreateFromYawPitchRoll((float)Calibration.QuaternionYaw(
-                            Interfacing.Plugins.GetHmdPose.Orientation), 0, 0),
+                        Quaternion.CreateFromYawPitchRoll(Support.QuaternionYaw(
+                            Interfacing.Plugins.GetHmdPose.Orientation.Projected()), 0, 0),
 
                     // Optionally overwrite the rotation with NONE
                     JointRotationTrackingOption.DisableJointRotation => Quaternion.Identity,
@@ -327,8 +327,8 @@ public static class Main
                     // Optionally overwrite the rotation with HMD orientation
                     // Not the "calibrated" variant, as the fix will be applied after everything else
                     JointRotationTrackingOption.FollowHmdRotation =>
-                        Quaternion.CreateFromYawPitchRoll((float)Calibration.QuaternionYaw(
-                            Interfacing.Plugins.GetHmdPose.Orientation), 0, 0),
+                        Quaternion.CreateFromYawPitchRoll(Support.QuaternionYaw(
+                            Interfacing.Plugins.GetHmdPose.Orientation.Projected()), 0, 0),
 
                     // Optionally overwrite the rotation with NONE
                     JointRotationTrackingOption.DisableJointRotation => Quaternion.Identity,
@@ -345,27 +345,32 @@ public static class Main
                     tracker.Orientation = tracker.OrientationTrackingOption switch
                     {
                         JointRotationTrackingOption.SoftwareCalculatedRotation =>
-                            Calibration.FeetSoftwareOrientation(
+                            Support.FeetSoftwareOrientation(
                                     device.TrackedJoints.First(x =>
-                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Position,
+                                            x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
+                                                (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped))
+                                        .Position.Projected(),
                                     device.TrackedJoints.First(x =>
-                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootTipLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Position,
+                                            x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootTipLeft,
+                                                (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped))
+                                        .Position.Projected(),
                                     device.TrackedJoints.First(x =>
-                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointKneeLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Position)
-                                .Inversed(isJointFlipped), // Also inverse if flipped (via an extension)
+                                            x.Role == TypeUtils.FlipJointType(TrackedJointType.JointKneeLeft,
+                                                (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped))
+                                        .Position.Projected())
+                                .Q().Inversed(isJointFlipped), // Also inverse if flipped (via an extension)
 
                         JointRotationTrackingOption.SoftwareCalculatedRotationV2 =>
-                            Calibration.FeetSoftwareOrientationV2(
+                            Support.FeetSoftwareOrientationV2(
                                     device.TrackedJoints.First(x =>
-                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Position,
+                                            x.Role == TypeUtils.FlipJointType(TrackedJointType.JointFootLeft,
+                                                (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped))
+                                        .Position.Projected(),
                                     device.TrackedJoints.First(x =>
-                                        x.Role == TypeUtils.FlipJointType(TrackedJointType.JointKneeLeft,
-                                            (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped)).Position)
-                                .Inversed(isJointFlipped), // Also inverse if flipped (via an extension)
+                                            x.Role == TypeUtils.FlipJointType(TrackedJointType.JointKneeLeft,
+                                                (tracker.Role != TrackerType.TrackerLeftFoot) ^ isJointFlipped))
+                                        .Position.Projected())
+                                .Q().Inversed(isJointFlipped), // Also inverse if flipped (via an extension)
 
                         _ => tracker.Orientation
                     };
@@ -375,10 +380,10 @@ public static class Main
                     != JointRotationTrackingOption.FollowHmdRotation)
                 {
                     // Note: only in flip mode
-                    tracker.Orientation = Calibration
-                        .FixFlippedOrientation(tracker.Orientation);
-                    tracker.PreviousOrientation = Calibration
-                        .FixFlippedOrientation(tracker.PreviousOrientation);
+                    tracker.Orientation = Support
+                        .FixFlippedOrientation(tracker.Orientation.Projected()).Q();
+                    tracker.PreviousOrientation = Support
+                        .FixFlippedOrientation(tracker.PreviousOrientation.Projected()).Q();
                 }
 
                 // Apply playspace-related orientation fixes
@@ -462,15 +467,15 @@ public static class Main
                     JointRotationTrackingOption.DeviceInferredRotation)
                 {
                     // Standard, also apply calibration-related flipped orientation fixes
-                    tracker.Orientation = Calibration
+                    tracker.Orientation = Support
                         .FixFlippedOrientation(isJointFlipped
-                            ? Quaternion.Inverse(joint.Orientation)
-                            : joint.Orientation);
+                            ? Quaternion.Inverse(joint.Orientation).Projected()
+                            : joint.Orientation.Projected()).Q();
 
-                    tracker.PreviousOrientation = Calibration
+                    tracker.PreviousOrientation = Support
                         .FixFlippedOrientation(isJointFlipped
-                            ? Quaternion.Inverse(joint.PreviousOrientation)
-                            : joint.PreviousOrientation);
+                            ? Quaternion.Inverse(joint.PreviousOrientation).Projected()
+                            : joint.PreviousOrientation.Projected()).Q();
                 }
 
                 // ReSharper disable once InvertIf | If overridden w/ position

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using Amethyst.Plugins.Contract;
+using AmethystSupport;
 
 namespace Amethyst.Utils;
 
@@ -144,6 +145,33 @@ public static class TypeUtils
     public static TrackedJointType FlipJointType(TrackedJointType joint, bool flip)
     {
         return flip ? FlippedJointTypeDictionary[joint] : joint;
+    }
+
+    public static SVector3 Projected(this Vector3 vector)
+    {
+        return new SVector3(vector.X, vector.Y, vector.Z);
+    }
+
+    public static SQuaternion Projected(this Quaternion quaternion)
+    {
+        return new SQuaternion(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
+    }
+
+    public static Vector3 V(this SVector3 vector)
+    {
+        return new Vector3(vector.X, vector.Y, vector.Z);
+    }
+
+    public static Quaternion Q(this SQuaternion quaternion)
+    {
+        return new Quaternion(
+            quaternion.X, quaternion.Y,
+            quaternion.Z, quaternion.W);
+    }
+
+    public static (Vector3 V, Quaternion Q) T(this STransform transform)
+    {
+        return (transform.Translation.V(), transform.Rotation.Q());
     }
 }
 

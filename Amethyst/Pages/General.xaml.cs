@@ -441,8 +441,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (_calibrationPending)
         {
             // Calibrate (AmethystSupport/CLI)
-            var (translation, rotation) =
-                Calibration.SVD(headPositions, hmdPositions);
+            var (translation, rotation) = Support.SVD(
+                headPositions.Select(x => x.Projected()).ToArray(),
+                hmdPositions.Select(x => x.Projected()).ToArray()).T();
 
             Logger.Info("Automatic calibration concluded!\n" +
                         $"Head positions: {headPositions.ToArray()}\n" +
