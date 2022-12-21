@@ -1581,7 +1581,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         Shared.Main.NavigateToPage(
             args.InvokedItemContainer.Tag.ToString(),
-            args.RecommendedNavigationTransitionInfo);
+            new EntranceNavigationTransitionInfo());
     }
 
     private void NavView_BackRequested(NavigationView sender,
