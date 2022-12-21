@@ -44,7 +44,7 @@ public static class AppSounds
                         "Assets", "Sounds", sound + ".wav")))
                 {
                     // Load the sound file into a player
-                    new MediaPlayer
+                    using var player = new MediaPlayer
                     {
                         Source = MediaSource.CreateFromUri(
                             new Uri(Path.Join(Interfacing.GetProgramLocation().Directory.ToString(),
@@ -52,7 +52,10 @@ public static class AppSounds
 
                         // Set the desired volume
                         Volume = AppData.Settings.AppSoundsVolume
-                    }.Play(); // Play the sound
+                    };
+
+                    player.CommandManager.IsEnabled = false;
+                    player.Play(); // Play the sound
 
                     // Wait for the sound to complete
                     await Task.Delay(2000);

@@ -828,6 +828,7 @@
 
                                     <MediaPlayerElement x:Name="CalibrationPreviewMediaElement"
                                                         Stretch="UniformToFill" Margin="0,0,0,80"
+                                                        AreTransportControlsEnabled="False"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
