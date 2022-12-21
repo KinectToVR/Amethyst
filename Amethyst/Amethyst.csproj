@@ -79,7 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Amethyst.Support\Amethyst.Support.vcxproj" />
-    <ProjectReference Include="..\AmethystPluginContract\Amethyst.Plugins.Contract.csproj" />
+    <ProjectReference Include="..\Amethyst.Plugins.Contract\Amethyst.Plugins.Contract.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\**">

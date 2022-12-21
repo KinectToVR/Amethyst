@@ -7,7 +7,7 @@
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{fd15cd75-291a-4911-bfbc-32e7381034cf}</ProjectGuid>
-    <ProjectName>AmethystSupport</ProjectName>
+    <ProjectName>Amethyst.Support</ProjectName>
     <RootNamespace>AmethystSupport</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
@@ -90,9 +90,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>AmethystSupport</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>AmethystSupport</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>

@@ -35,7 +35,12 @@ public partial class App : Application
         {
             var ex = e.Exception;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
-            Current.Exit();
+
+            var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
+            var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Replace("{0}", stc);
+
+            Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
+            Environment.Exit(0); // Simulate a standard application exit
         };
 
         // Listen for and log all uncaught second-chance exceptions : Domain
@@ -43,7 +48,12 @@ public partial class App : Application
         {
             var ex = (Exception)e.ExceptionObject;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
-            Current.Exit();
+
+            var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
+            var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Replace("{0}", stc);
+
+            Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
+            Environment.Exit(0); // Simulate a standard application exit
         };
 
         // Set default window launch size (WinUI)

@@ -6,7 +6,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amethyst", "Amethyst\Amethy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "K2CrashHandler", "K2CrashHandler\K2CrashHandler.csproj", "{19887A68-96C8-4CAB-8A46-CCCEBFDFEC80}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amethyst.Plugins.Contract", "AmethystPluginContract\Amethyst.Plugins.Contract.csproj", "{8F6A83EB-577D-41AA-B348-0E41A4CEF186}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amethyst.Plugins.Contract", "Amethyst.Plugins.Contract\Amethyst.Plugins.Contract.csproj", "{8F6A83EB-577D-41AA-B348-0E41A4CEF186}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Amethyst.Support", "Amethyst.Support\Amethyst.Support.vcxproj", "{FD15CD75-291A-4911-BFBC-32E7381034CF}"
 EndProject
