@@ -205,7 +205,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
                         "K2CrashHandler", "K2CrashHandler.exe")))
                     Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
-                        "K2CrashHandler", "K2CrashHandler.exe"));
+                        "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
                 else
                     Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
 
@@ -220,7 +220,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
                     "K2CrashHandler", "K2CrashHandler.exe")))
                 Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
-                    "K2CrashHandler", "K2CrashHandler.exe"));
+                    "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
             else
                 Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
 
