@@ -30,11 +30,28 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
 
     public TrackerType Role { get; set; }
 
-    public List<AppTracker> Trackers => AppData.Settings.TrackersVector.Where(x => x.Role == Role || (
-        AppData.Settings.UseTrackerPairs && x.Role == TypeUtils.PairedTrackerTypeDictionary[Role])).ToList();
+    public List<AppTracker> Trackers
+    {
+        get
+        {
+            // Logic: get all trackers that match the requested role or its flipped equivalent
+            // Then, either group them by whether they are supported (by the current service)
+            // If they appear to be mixed, return only the supported ones (see the upper line)
+            // And if that fails, return only the non-supported trackers (not to pair mixed)
+
+            var trackers = AppData.Settings.TrackersVector.Where(x => x.Role == Role || (
+                AppData.Settings.UseTrackerPairs && x.Role == TypeUtils.PairedTrackerTypeDictionary[Role])).ToList();
+
+            return trackers.All(x => x.IsSupported) || trackers.All(x => !x.IsSupported)
+                ? trackers // All the same -> standard
+                : trackers.Any(x => x.Role == Role && x.IsSupported)
+                    ? trackers.Where(x => x.IsSupported).ToList()
+                    : trackers.Where(x => !x.IsSupported).ToList();
+        }
+    }
 
     private string Header => Interfacing.LocalizedJsonString(
-        $"/SharedStrings/Joints/{(Trackers.Count > 1 ? "Pairs" : "Enum")}/" +
+        $"/SharedStrings/Joints/{(TrackersCount > 1 ? "Pairs" : "Enum")}/" +
         $"{(int)(Trackers.FirstOrDefault(x => x.Role == Role)?.Role ?? TrackerType.TrackerHanded)}");
 
     private bool IsActive => Trackers.All(x => x.IsActive);
@@ -81,14 +98,37 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     private bool NoPositionFilteringRequested => Trackers.FirstOrDefault()?.NoPositionFilteringRequested ?? false;
     private bool AppOrientationSupported => Trackers.All(x => x.AppOrientationSupported);
 
-    private bool Show => AppData.Settings.UseTrackerPairs
-        ? Trackers.Count > 1 || AppData.Settings.TrackersVector.All(x =>
-            x.Role != TypeUtils.PairedTrackerTypeDictionaryReverse[
-                Trackers.FirstOrDefault()?.Role ?? TrackerType.TrackerHanded])
-        : Trackers.Count == 1; // Either only (paired or mixed) or only the single ones
+    private bool Show
+    {
+        get
+        {
+            // Logic: get all trackers that match the requested role or its flipped equivalent
+            // Then, either group them by whether they are supported (by the current service)
+            // If they appear to be mixed, return only the supported ones (see the upper line)
+            // And if that fails, return only the non-supported trackers (not to pair mixed)
+
+            AppData.Settings.TrackersVector.GroupBy(x =>
+                    x.IsSupported == Trackers.FirstOrDefault()?.IsSupported &&
+                    (x.Role == Trackers.FirstOrDefault()?.Role ||
+                     x.Role == TypeUtils.PairedTrackerTypeDictionaryReverse[
+                         Trackers.FirstOrDefault()?.Role ?? TrackerType.TrackerHanded]))
+                .ToDictionary(x => x.Key)
+                .TryGetValue(true, out var c);
+
+            return AppData.Settings.UseTrackerPairs
+                ? TrackersCount > 1 || (Trackers.Count == 1 && (c?.Count() ?? 1) == 1)
+                : TrackersCount == 1; // Either only (paired or mixed) or only the single ones
+        }
+    }
 
     private string NotSupportedText => Interfacing.LocalizedJsonString("/SharedStrings/Joints/NotSupported/Tooltip")
         .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+
+    private int TrackersCount =>
+        Trackers.All(x => x.IsSupported) ||
+        Trackers.All(x => !x.IsSupported)
+            ? Trackers.Count // All the same -> standard
+            : Trackers.Count(x => x.IsSupported);
 
     public event PropertyChangedEventHandler PropertyChanged;
 
