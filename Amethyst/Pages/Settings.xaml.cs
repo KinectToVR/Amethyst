@@ -56,6 +56,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         SettingsPage.AutoStartTeachingTip = AutoStartTeachingTip;
         SettingsPage.ManageTrackersTeachingTip = ManageTrackersTeachingTip;
+        SettingsPage.AddTrackersTeachingTip = AddTrackersTeachingTip;
 
         // This 'ease in' transition will affect the added expander
         AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
@@ -398,7 +399,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         PageMainScrollViewer.UpdateLayout();
         PageMainScrollViewer.ChangeView(null,
-            PageMainScrollViewer.ExtentHeight / 2.0, null);
+            PageMainScrollViewer.ExtentHeight / 3.0, null);
 
         await Task.Delay(500);
 
@@ -549,7 +550,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         PageMainScrollViewer.UpdateLayout();
         PageMainScrollViewer.ChangeView(null,
-            PageMainScrollViewer.ExtentHeight / 2.0, null);
+            PageMainScrollViewer.ExtentHeight / 3.0, null);
 
         await Task.Delay(500);
 
@@ -589,8 +590,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         AddTrackersTeachingTip.IsOpen = false;
 
         PageMainScrollViewer.UpdateLayout();
-        PageMainScrollViewer.ChangeView(null,
-            PageMainScrollViewer.ExtentHeight / 2.0, null);
+        PageMainScrollViewer.ChangeView(null, 0.0, null);
 
         await Task.Delay(500);
 
@@ -604,13 +604,37 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
-        PageMainScrollViewer.UpdateLayout();
-        PageMainScrollViewer.ChangeView(null, 0.0, null);
+        // Check whether the next tip can be shown
+        if (CanAutoStartAmethyst)
+        {
+            PageMainScrollViewer.UpdateLayout();
+            PageMainScrollViewer.ChangeView(null, 0.0, null);
 
-        await Task.Delay(500);
+            await Task.Delay(500);
 
-        AutoStartTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        AutoStartTeachingTip.IsOpen = true;
+            AutoStartTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+            AutoStartTeachingTip.IsOpen = true;
+        }
+        else
+        {
+            await Task.Delay(200);
+
+            // Navigate to the devices page
+            Shared.Main.MainNavigationView.SelectedItem =
+                Shared.Main.MainNavigationView.MenuItems[2];
+
+            Shared.Main.NavigateToPage("devices",
+                new EntranceNavigationTransitionInfo());
+
+            await Task.Delay(500);
+
+            // Reset the previous page layout
+            PageMainScrollViewer.ScrollToVerticalOffset(0);
+
+            // Show the next tip
+            DevicesPage.DevicesListTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+            DevicesPage.DevicesListTeachingTip.IsOpen = true;
+        }
     }
 
     private void RestartButton_Click(object sender, RoutedEventArgs e)

@@ -362,7 +362,9 @@ public static class Shared
         public static class SettingsPage
         {
             public static TeachingTip
-                ManageTrackersTeachingTip, AutoStartTeachingTip;
+                ManageTrackersTeachingTip,
+                AutoStartTeachingTip,
+                AddTrackersTeachingTip;
         }
 
         public static class DevicesPage

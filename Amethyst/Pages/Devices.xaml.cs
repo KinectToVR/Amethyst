@@ -156,9 +156,25 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
         await Task.Delay(500);
 
-        // Show the next tip
-        Shared.TeachingTips.SettingsPage.AutoStartTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        Shared.TeachingTips.SettingsPage.AutoStartTeachingTip.IsOpen = true;
+        // Check whether the previous tip can be shown
+        if (TrackingDevices.CurrentServiceEndpoint.CanAutoStartAmethyst)
+        {
+            // Show the previous tip: auto-start
+            Shared.TeachingTips.SettingsPage.AutoStartTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+            Shared.TeachingTips.SettingsPage.AutoStartTeachingTip.IsOpen = true;
+        }
+        else
+        {
+            // Show the previous tip: managing trackers
+            Shared.Settings.PageMainScrollViewer?.UpdateLayout();
+            Shared.Settings.PageMainScrollViewer?.ChangeView(null,
+                Shared.Settings.PageMainScrollViewer.ExtentHeight / 3.0, null);
+
+            await Task.Delay(500);
+
+            Shared.TeachingTips.SettingsPage.AddTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+            Shared.TeachingTips.SettingsPage.AddTrackersTeachingTip.IsOpen = true;
+        }
     }
 
     private void DevicesListTeachingTip_CloseButtonClick(TeachingTip sender, object args)

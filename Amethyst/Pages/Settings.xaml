@@ -556,7 +556,7 @@
                                          Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip6/Content'), Mode=OneWay}"
                                          CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
                                          ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
-                                         PreferredPlacement="Right"
+                                         PreferredPlacement="Bottom"
                                          IsLightDismissEnabled="False"
                                          Style="{ThemeResource BigTeachingTipStyle}"
                                          ActionButtonClick="AddTrackersTeachingTip_ActionButtonClick"
