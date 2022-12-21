@@ -25,12 +25,12 @@
     <ApplicationIcon>Assets\ktvr.ico</ApplicationIcon>
     <Authors>K2VR Team</Authors>
     <Copyright>© K2VR Team</Copyright>
-    <Description>Amethyst.NET (Desktop) App</Description>
+    <Description>Amethyst (Desktop) App</Description>
     <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
     <Version>1.2.230000.1</Version>
     <FileVersion>1.2.0.1</FileVersion>
     <AssemblyVersion>1.2.0.1</AssemblyVersion>
-    <RepositoryUrl>https://github.com/KinectToVR/Amethyst.NET</RepositoryUrl>
+    <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup>

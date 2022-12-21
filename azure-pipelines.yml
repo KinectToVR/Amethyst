@@ -85,7 +85,7 @@ steps:
   inputs:
     rootFolderOrFile: $(publishDirectory)
     includeRootFolder: false
-    archiveFile: $(Build.ArtifactStagingDirectory)/Amethyst.NET.$(Build.BuildNumber).zip
+    archiveFile: $(Build.ArtifactStagingDirectory)/Amethyst.$(Build.BuildNumber).zip
 
 - task: GitHubRelease@1
   displayName: Prepare for artifact upload
@@ -107,7 +107,7 @@ steps:
     tagSource: userSpecifiedTag
     tag: latest
     tagPattern: .*
-    title: 'Amethyst.NET $(Build.BuildNumber)'
+    title: 'Amethyst $(Build.BuildNumber)'
     changeLogCompareToRelease: lastFullRelease
     changeLogType: commitBased
     isPreRelease: true
