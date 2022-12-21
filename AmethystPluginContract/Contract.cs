@@ -207,6 +207,14 @@ public interface IServiceEndpoint
     public InputActions ControllerInputActions { get; set; }
 
     /// <summary>
+    ///     For AutoStartAmethyst: check if it's even possible
+    ///     Mark as true to state that starting your app/service
+    ///     / can automatically start Amethyst at the same time
+    /// </summary>
+    [DefaultValue(false)]
+    public bool CanAutoStartAmethyst { get; }
+
+    /// <summary>
     ///     Check or set if starting the service should auto-start Amethyst
     ///     This is only available for a few actual cases, like OpenVR
     /// </summary>

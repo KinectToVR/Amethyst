@@ -143,6 +143,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     private bool ServiceSupportsSettings => TrackingDevices.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
                                             TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
 
+    private bool CanAutoStartAmethyst => TrackingDevices.CurrentServiceEndpoint.CanAutoStartAmethyst;
+
     private string[] ServiceStatusText
     {
         get

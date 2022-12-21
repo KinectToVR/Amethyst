@@ -290,6 +290,11 @@ public class ServiceEndpoint : INotifyPropertyChanged
     // manual calibration and input actions support as [false]
     public InputActions ControllerInputActions => Service.ControllerInputActions;
 
+    // For AutoStartAmethyst: check if it's even possible
+    // Mark as true to state that starting your app/service
+    // / can automatically start Amethyst at the same time
+    public bool CanAutoStartAmethyst => Service.CanAutoStartAmethyst;
+
     // Check or set if starting the service should auto-start Amethyst
     // This is only available for a few actual cases, like OpenVR
     public bool AutoStartAmethyst

@@ -167,7 +167,8 @@
                     </Slider>
                 </Grid>
 
-                <Grid HorizontalAlignment="Stretch" Margin="0,5,0,0">
+                <Grid HorizontalAlignment="Stretch" Margin="0,5,0,0"
+                      Visibility="{x:Bind CanAutoStartAmethyst, Mode=OneWay}">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
                                Text="{x:Bind AutoStartLabelText, Mode=OneWay}"
                                x:Name="Captions_AutoStart" Margin="30,0,0,3" />
