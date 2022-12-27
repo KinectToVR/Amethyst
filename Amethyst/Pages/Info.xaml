@@ -7,7 +7,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:util="using:Amethyst.Utils"
+    xmlns:util="using:Amethyst.Utils" xmlns:classes="using:Amethyst.Classes"
     mc:Ignorable="d" NavigationCacheMode="Required"
     Loaded="Page_Loaded" Background="Transparent">
 
@@ -46,7 +46,7 @@
                              Style="{ThemeResource BigTeachingTipStyle}"
                              CloseButtonClick="EndingTeachingTip_CloseButtonClick" />
 
-                <Flyout x:Name="CommandFlyout" ShowMode="TransientWithDismissOnPointerMoveAway" 
+                <Flyout x:Name="CommandFlyout" ShowMode="TransientWithDismissOnPointerMoveAway"
                         Placement="Top" Opening="CommandFlyout_Opening">
                     <Flyout.FlyoutPresenterStyle>
                         <Style TargetType="FlyoutPresenter">
@@ -67,7 +67,7 @@
 
         <Grid Visibility="Visible" x:Name="TargetGrid" Grid.Column="1"
               Height="25" Background="Transparent"
-              VerticalAlignment="Bottom" HorizontalAlignment="Stretch"/>
+              VerticalAlignment="Bottom" HorizontalAlignment="Stretch" />
 
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Grid.Column="1" Padding="20,-20" Margin="-20,20,-20,20">
@@ -163,6 +163,7 @@
                         </TextBlock>
                     </StackPanel>
 
+                    <!--#MainTeam-->
                     <StackPanel HorizontalAlignment="Stretch"
                                 Grid.Column="2" Orientation="Vertical">
 
@@ -200,6 +201,7 @@
                            Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/Translators/Title'), Mode=OneWay}"
                            Margin="0,17,0,0" />
 
+                <!--#Translators-->
                 <TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords">
                     <Run xml:space="preserve">Noelle (AuroraNemoia)    </Run>
                     <Run xml:space="preserve">Skye (DergnNamedSkye)    </Run>
@@ -211,24 +213,38 @@
                            Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/Helpers/Title'), Mode=OneWay}"
                            Margin="0,17,0,0" />
 
-                <TextBlock FontWeight="SemiBold">
+                <!--#Helpers-->
+                <TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords">
                     <Run xml:space="preserve">Alex (lexd0g)    </Run>
                     <Run xml:space="preserve">Allen    </Run>
                     <Run xml:space="preserve">Aze    </Run>
                     <Run xml:space="preserve">Fiery (fierybattlehawk)    </Run>
                     <Run xml:space="preserve">illyriarose    </Run>
                     <Run xml:space="preserve">Luka (woomie)    </Run>
-                </TextBlock>
-                <TextBlock FontWeight="SemiBold">
                     <Run xml:space="preserve">Sky (P. S.)    </Run>
                     <Run xml:space="preserve">Sylva    </Run>
                     <Run xml:space="preserve">TeH_Venom    </Run>
                     <Run xml:space="preserve">vexa (vexatag)</Run>
                 </TextBlock>
 
+                <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
+                           Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/Donators/Title'), Mode=OneWay}"
+                           Margin="0,17,0,0" />
+
+                <!--#Donators-->
+                <TextBlock FontWeight="SemiBold">
+                    <Run xml:space="preserve">Lines    </Run>
+                    <Run xml:space="preserve">_Legend    </Run>
+                    <Run xml:space="preserve">    </Run>
+                </TextBlock>
+
+                <!--#Other-->
                 <TextBlock FontWeight="SemiBold" Margin="0,17,0,0"
                            Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/Community'), Mode=OneWay}" />
 
+                <TextBlock Opacity="0.5" FontWeight="Light" Margin="0,3,0,0">
+                    <Run>Amethyst.NET</Run> <Run Text="{x:Bind classes:AppData.VersionString.Item2}" />
+                </TextBlock>
             </StackPanel>
 
         </ScrollViewer>

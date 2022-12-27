@@ -63,7 +63,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     private MicaController m_micaController;
 
     private WindowsSystemDispatcherQueueHelper m_wsdqHelper; // See separate sample below for implementation
-    private string remoteVersionString = AppData.K2InternalVersion;
+    private string remoteVersionString = AppData.VersionString.Display;
 
     public MainWindow()
     {
@@ -1242,7 +1242,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     UseShellExecute = true, Verb = "runas",
                     FileName = Path.Combine(Interfacing.GetK2AppDataTempDir().FullName, "Amethyst-Installer.exe"),
                     Arguments =
-                        $" --update {(Interfacing.UpdateOnClosed ? "" : "-o")} -path \"{Interfacing.GetProgramLocation().DirectoryName}\""
+                        $"--update{(Interfacing.UpdateOnClosed ? "" : " -o")} -path \"{Interfacing.GetProgramLocation().DirectoryName}\""
                 });
             }
             catch (Win32Exception e)
@@ -1337,7 +1337,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     {
                         Logger.Info("Checking for updates... [GET]");
                         using var response =
-                            await client.GetAsync(new Uri($"https://api.k2vr.tech/v{AppData.K2ApiVersion}/update"));
+                            await client.GetAsync(new Uri($"https://api.k2vr.tech/v{AppData.ApiVersion}/update"));
                         getReleaseVersion = await response.Content.ReadAsStringAsync();
                     }
                     catch (Exception e)
@@ -1382,19 +1382,19 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         else
                         {
                             // Get the version tag (uint, fallback to latest)
-                            var remoteVersion = (int)jsonRoot.GetNamedNumber("version", AppData.K2IntVersion);
+                            var remoteVersion = (int)jsonRoot.GetNamedNumber("version", AppData.InternalVersion);
 
                             // Get the remote version name
                             remoteVersionString = jsonRoot.GetNamedString("version_string");
 
-                            Logger.Info($"Local version: {AppData.K2IntVersion}");
+                            Logger.Info($"Local version: {AppData.InternalVersion}");
                             Logger.Info($"Remote version: {remoteVersion}");
 
-                            Logger.Info($"Local version string: {AppData.K2InternalVersion}");
+                            Logger.Info($"Local version string: {AppData.VersionString.Display}");
                             Logger.Info($"Remote version string: {remoteVersionString}");
 
                             // Check the version
-                            if (AppData.K2IntVersion < remoteVersion)
+                            if (AppData.InternalVersion < remoteVersion)
                                 Interfacing.UpdateFound = true;
 
                             // Cache the changes
@@ -1463,7 +1463,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 else
                 {
                     FlyoutHeader.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/UpToDate");
-                    FlyoutFooter.Text = $"Amethyst v{AppData.K2InternalVersion}";
+                    FlyoutFooter.Text = $"Amethyst v{AppData.VersionString.Display}";
                     FlyoutContent.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/Suggestions");
                     FlyoutContent.Margin = new Thickness(0);
 

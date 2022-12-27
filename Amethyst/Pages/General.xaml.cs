@@ -180,7 +180,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         }
 
         // Update the internal version
-        VersionLabel.Text = $"v{AppData.K2InternalVersion}";
+        VersionLabel.Text = $"v{AppData.VersionString.Display}";
 
         // Update things
         Interfacing.UpdateServerStatus();

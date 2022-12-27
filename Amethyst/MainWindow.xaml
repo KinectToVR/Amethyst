@@ -30,7 +30,7 @@
                 </TextBlock.OpacityTransition>
             </TextBlock>
 
-            <TextBlock Text=".NET" TextWrapping="NoWrap" Margin="110,14,0,0"
+            <TextBlock Text="PREVIEW" TextWrapping="NoWrap" Margin="110,14,0,0"
                        Opacity="{Binding ElementName=AppTitleLabel, Path=Opacity, TargetNullValue=1.0}"
                        FontSize="10" FontWeight="SemiLight" x:Name="PreviewBadgeLabel"
                        Foreground="{ThemeResource SystemFillColorNeutralBrush}">

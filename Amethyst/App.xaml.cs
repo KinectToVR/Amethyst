@@ -80,9 +80,9 @@ public partial class App : Application
 
         // Log status information
         Logger.Info($".NET CLR Runtime version: {typeof(string).Assembly.ImageRuntimeVersion}");
-        Logger.Info($"Amethyst version: (string) {AppData.K2InternalVersion}");
-        Logger.Info($"Amethyst version: (value) {AppData.K2IntVersion}");
-        Logger.Info($"Amethyst web API version: {AppData.K2ApiVersion}");
+        Logger.Info($"Amethyst version: (string) {AppData.VersionString.Internal}");
+        Logger.Info($"Amethyst version: (value) {AppData.InternalVersion}");
+        Logger.Info($"Amethyst web API version: {AppData.ApiVersion}");
 
         // Read saved settings
         AppData.Settings.ReadSettings();
