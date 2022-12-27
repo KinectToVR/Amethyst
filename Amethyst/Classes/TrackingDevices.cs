@@ -197,7 +197,8 @@ public static class TrackingDevices
 
         var jointsValidBackup = Devices.DevicesJointsValid;
         Devices.DevicesJointsValid = false; // Block signals
-        var currentDevice = GetDevice(AppData.Settings.SelectedTrackingDeviceGuid);
+        var currentDevice =
+            GetDevice(AppData.Settings.SelectedTrackingDeviceGuid ?? AppData.Settings.TrackingDeviceGuid);
 
         if (shouldReconnect) currentDevice.Device.Initialize();
 
