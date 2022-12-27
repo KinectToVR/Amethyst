@@ -313,7 +313,7 @@ public static class TrackingDevices
         Events.ReloadDevicesPageEvent?.Set();
 
         // If this is the first time and happened runtime, also show the notification
-        if (Interfacing.K2AppTrackersSpawned && CurrentServiceEndpoint.IsRestartOnChangesNeeded)
+        if (Interfacing.AppTrackersSpawned && CurrentServiceEndpoint.IsRestartOnChangesNeeded)
         {
             Logger.Info("Trackers config has changed! " +
                         "The selected tracking service endpoint needs to restart now!");

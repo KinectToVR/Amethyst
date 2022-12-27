@@ -771,7 +771,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             "/GeneralPage/Buttons/TrackersToggle/Disconnect");
 
         // Optionally spawn trackers
-        if (!Interfacing.K2AppTrackersSpawned)
+        if (!Interfacing.AppTrackersSpawned)
         {
             if (!await Interfacing.SpawnEnabledTrackers()) // Mark as spawned
             {
@@ -1788,7 +1788,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 : "/GeneralPage/Buttons/Skeleton/Freeze");
 
         // Set up the co/re/disconnect button
-        if (!Interfacing.K2AppTrackersSpawned)
+        if (!Interfacing.AppTrackersSpawned)
         {
             ToggleTrackersButton.IsChecked = false;
             ToggleTrackersButton.Content =

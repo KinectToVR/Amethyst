@@ -115,7 +115,7 @@ public static class Main
     private static async Task UpdateServerTrackers()
     {
         // Update only if we're connected and running
-        if (!Interfacing.K2AppTrackersSpawned || Interfacing.ServiceEndpointFailure) return;
+        if (!Interfacing.AppTrackersSpawned || Interfacing.ServiceEndpointFailure) return;
 
         // Update status right after any change
         if (_bInitialized != Interfacing.AppTrackersInitialized)

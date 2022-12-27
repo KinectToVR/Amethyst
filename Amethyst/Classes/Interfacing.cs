@@ -58,7 +58,7 @@ public static class Interfacing
     public static ElementTheme ActualTheme = ElementTheme.Dark;
 
     // If trackers are added / initialized
-    public static bool K2AppTrackersSpawned,
+    public static bool AppTrackersSpawned,
         AppTrackersInitialized;
 
     // Is the tracking paused
@@ -291,7 +291,7 @@ public static class Interfacing
     // Function to spawn default' enabled trackers
     public static async Task<bool> SpawnEnabledTrackers()
     {
-        if (!K2AppTrackersSpawned)
+        if (!AppTrackersSpawned)
         {
             Logger.Info("[K2Interfacing] Registering trackers now...");
 
@@ -322,7 +322,7 @@ public static class Interfacing
 
                 // Cause not checking anymore
                 ServiceEndpointFailure = true;
-                K2AppTrackersSpawned = false;
+                AppTrackersSpawned = false;
                 AppTrackersInitialized = false;
 
                 return false;
@@ -330,7 +330,7 @@ public static class Interfacing
         }
 
         // Notify that we're good now
-        K2AppTrackersSpawned = true;
+        AppTrackersSpawned = true;
         AppTrackersInitialized = true;
 
         /*

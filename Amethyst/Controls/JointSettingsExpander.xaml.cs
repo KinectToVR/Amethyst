@@ -19,6 +19,7 @@ namespace Amethyst.Controls;
 public sealed partial class JointSettingsExpander : UserControl, INotifyPropertyChanged
 {
     private bool _filterInteractionsBlocked;
+    private bool _blockPropertyToggleSignals;
 
     public JointSettingsExpander()
     {
@@ -172,39 +173,57 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     private async void TrackerToggleSwitch_Toggled(object sender, RoutedEventArgs e)
     {
         // Don't react to pre-init signals
-        if (!Shared.Settings.SettingsTabSetupFinished) return;
-        var context = (sender as ToggleSwitch)!.DataContext;
-
-        // Don't react to pre-init signals
-        if (context is not AppTracker tracker) return;
-        if (Interfacing.AppTrackersInitialized)
-            // try 3 times cause why not
-            for (var i = 0; i < 3; i++)
-            {
-                // Update status in server
-                var trackerBase = tracker.GetTrackerBase();
-                trackerBase.ConnectionState = (sender as ToggleSwitch)!.IsOn;
-
-                await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
-                await Task.Delay(20);
-            }
+        if (!Shared.Settings.SettingsTabSetupFinished ||
+            _blockPropertyToggleSignals) return;
 
         // Check if any trackers are enabled
         if (!(sender as ToggleSwitch)!.IsOn && !AppData.Settings.TrackersVector
-                .Where(x => x.Role != tracker!.Role).Any(x => x.IsActive))
+                .Where(x => Trackers.All(tracker => tracker.Role != x.Role)).Any(x => x.IsActive))
         {
-            Logger.Warn("All supported trackers (except this one) have been disabled, force-re-enabling!");
-            tracker!.IsActive = true; // Force re-enable this tracker
-            tracker.OnPropertyChanged("IsActive");
-            tracker.OnPropertyChanged("IsActiveEnabled");
+            Logger.Warn("All supported trackers have been disabled, force-re-enabling!");
+            Trackers.ForEach(x =>
+            {
+                x.IsActive = true; // Force re-enable this tracker
+                x.OnPropertyChanged("IsActive");
+                x.OnPropertyChanged("IsActiveEnabled");
+            });
+
+            _blockPropertyToggleSignals = true;
+            OnPropertyChanged(); // Refresh UI
+            _blockPropertyToggleSignals = false;
         }
+        // This change was valid, proceed further
+        else
+        {
+            // Update tracker data before the next event
+            // (TrackersConfigChanged) can access/reset it
+            _blockPropertyToggleSignals = true;
+            IsActiveEnabled = (sender as ToggleSwitch)!.IsOn;
+            _blockPropertyToggleSignals = false;
 
-        TrackingDevices.TrackersConfigChanged();
+            // Update states if the change is valid
+            if (Interfacing.AppTrackersInitialized)
+                foreach (var tracker in Trackers)
+                    for (var i = 0; i < 3; i++)
+                    {
+                        // Try 3 times cause why not
+                        // Update status in server
+                        var trackerBase = tracker.GetTrackerBase();
+                        trackerBase.ConnectionState = (sender as ToggleSwitch)!.IsOn;
 
-        // Play a sound
-        AppSounds.PlayAppSound((sender as ToggleSwitch)!.IsOn
-            ? AppSounds.AppSoundType.ToggleOn
-            : AppSounds.AppSoundType.ToggleOff);
+                        await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+                        await Task.Delay(20);
+                    }
+
+            // Notify about our pending changes
+            if (Interfacing.AppTrackersSpawned)
+                TrackingDevices.TrackersConfigChanged();
+
+            if (Show) // Play a sound (if the expander is valid)
+                AppSounds.PlayAppSound((sender as ToggleSwitch)!.IsOn
+                    ? AppSounds.AppSoundType.ToggleOn
+                    : AppSounds.AppSoundType.ToggleOff);
+        }
 
         // Request a check for already-added trackers
         Logger.Info("Requesting a check for already-added trackers...");

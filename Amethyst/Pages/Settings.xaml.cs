@@ -790,7 +790,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 var trackerBase = removedTracker.GetTrackerBase();
                 trackerBase.ConnectionState = false;
 
-                await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+                for (var i = 0; i < 3; i++) // Try 3 times to be extra sure
+                    await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
             }
 
             await Task.Delay(20);
@@ -868,7 +869,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Set up the co/re/disconnect button
         Shared.General.ToggleTrackersButton.IsChecked = false;
         Shared.General.ToggleTrackersButton.Content =
-            Interfacing.LocalizedJsonString(Interfacing.K2AppTrackersSpawned
+            Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
 
@@ -877,7 +878,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Mark the service as non-failed, clean
         Interfacing.ServiceEndpointFailure = false;
-        Interfacing.K2AppTrackersSpawned = false;
+        Interfacing.AppTrackersSpawned = false;
         Interfacing.AppTrackersInitialized = false;
         Interfacing.ServiceEndpointSetup(); // Refresh
 
@@ -921,7 +922,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Set up the co/re/disconnect button
         Shared.General.ToggleTrackersButton.IsChecked = false;
         Shared.General.ToggleTrackersButton.Content =
-            Interfacing.LocalizedJsonString(Interfacing.K2AppTrackersSpawned
+            Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
 
@@ -930,7 +931,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Mark the service as non-failed, clean
         Interfacing.ServiceEndpointFailure = false;
-        Interfacing.K2AppTrackersSpawned = false;
+        Interfacing.AppTrackersSpawned = false;
         Interfacing.AppTrackersInitialized = false;
         Interfacing.ServiceEndpointSetup(); // Refresh
 
@@ -1003,7 +1004,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Set up the co/re/disconnect button
         Shared.General.ToggleTrackersButton.IsChecked = false;
         Shared.General.ToggleTrackersButton.Content =
-            Interfacing.LocalizedJsonString(Interfacing.K2AppTrackersSpawned
+            Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
 
@@ -1015,7 +1016,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Interfacing.AppTrackersInitialized = false;
 
         await Task.Delay(300); // Wait until disabled
-        Interfacing.K2AppTrackersSpawned = false;
+        Interfacing.AppTrackersSpawned = false;
 
         try
         {

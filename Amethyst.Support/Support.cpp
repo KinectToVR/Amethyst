@@ -338,9 +338,9 @@ namespace winrt::AmethystSupport::implementation
 	SVector3 LowPassFilter::Update(const SVector3& input)
 	{
 		output_ = SVector3{
-			.X = (input.X - output_.X) * e_pow_,
-			.Y = (input.Y - output_.Y) * e_pow_,
-			.Z = (input.Z - output_.Z) * e_pow_,
+			.X = output_.X + (input.X - output_.X) * e_pow_,
+			.Y = output_.Y + (input.Y - output_.Y) * e_pow_,
+			.Z = output_.Z + (input.Z - output_.Z) * e_pow_,
 		};
 
 		return output_; // Update and return
