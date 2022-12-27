@@ -45,8 +45,29 @@
                              IsLightDismissEnabled="False"
                              Style="{ThemeResource BigTeachingTipStyle}"
                              CloseButtonClick="EndingTeachingTip_CloseButtonClick" />
+
+                <Flyout x:Name="CommandFlyout" ShowMode="TransientWithDismissOnPointerMoveAway" 
+                        Placement="Top" Opening="CommandFlyout_Opening">
+                    <Flyout.FlyoutPresenterStyle>
+                        <Style TargetType="FlyoutPresenter">
+                            <Setter Property="MaxHeight" Value="60" />
+                            <Setter Property="MaxWidth" Value="735" />
+                            <Setter Property="MinWidth" Value="735" />
+                            <Setter Property="Margin" Value="7,0,0,0" />
+                            <Setter Property="CornerRadius" Value="8" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </Flyout.FlyoutPresenterStyle>
+
+                    <TextBox PlaceholderText="Type command:" x:Name="CommandTextBox"
+                             KeyDown="CommandTextBox_KeyDown" MaxWidth="711" />
+                </Flyout>
             </Grid.Resources>
         </Grid>
+
+        <Grid Visibility="Visible" x:Name="TargetGrid" Grid.Column="1"
+              Height="25" Background="Transparent"
+              VerticalAlignment="Bottom" HorizontalAlignment="Stretch"/>
 
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Grid.Column="1" Padding="20,-20" Margin="-20,20,-20,20">

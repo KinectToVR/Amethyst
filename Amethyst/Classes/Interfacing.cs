@@ -146,14 +146,11 @@ public static class Interfacing
     public static void ShowToast(string header, string text,
         bool highPriority = false, string action = "none")
     {
-        if (string.IsNullOrEmpty(header) ||
-            string.IsNullOrEmpty(text)) return;
-
         var payload =
             $"<toast launch=\"action={action}&amp;actionId=00000\">" +
             "<visual><binding template = \"ToastGeneric\">" +
-            $"<text>{header}</text>" +
-            $"<text>{text}</text>" +
+            (string.IsNullOrEmpty(header) ? "" : $"<text>{header}</text>") +
+            (string.IsNullOrEmpty(text) ? "" : $"<text>{text}</text>") +
             "</binding></visual></toast>";
 
         AppNotification toast = new(payload)

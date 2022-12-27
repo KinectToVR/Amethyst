@@ -297,7 +297,7 @@
   "/SharedStrings/Updates/Headers/Downloading": "Downloading an update",
   "/SharedStrings/Updates/Headers/Status": "Status:",
   "/SharedStrings/Updates/Statuses/Downloading": "Downloading - 0%",
-  "/SharedStrings/Updates/Statuses/Error": "Error downloading!",
+  "/SharedStrings/Updates/Statuses/Error": "Error updating Amethyst!",
 
   "/CrashHandler/Content/AlreadyRunning": "Looks like the app is already running\nand you've tried to launch a second instance,\nthis action is not currently supported.\n\nPlease check if the app isn't opened.\nIf problem persists, press the 'Force Exit' button.",
   "/CrashHandler/Content/Crash/NoPlugins": "There were no appropriate plugins available to load and use in Amethyst.\n\nPlease check if you have all dependencies installed, like proper Service or Framework Runtime and other dependency libraries needed by your plugins.",

@@ -52,6 +52,9 @@ namespace Amethyst;
 /// </summary>
 public sealed partial class MainWindow : Window, INotifyPropertyChanged
 {
+    public delegate Task RequestApplicationUpdate(object sender, EventArgs e);
+
+    public static RequestApplicationUpdate RequestUpdateEvent;
     private readonly bool _mainPageInitFinished;
 
     private readonly SemaphoreSlim _rotationFSemaphore = new(0);
@@ -163,6 +166,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             ("devices", typeof(Devices)),
             ("info", typeof(Info))
         };
+
+        Logger.Info($"Setting up shared events for '{GetType().FullName}'...");
+        RequestUpdateEvent += (_, _) => ExecuteUpdates();
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
@@ -1196,7 +1202,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                         updatePendingProgressBar.Value = progress * 100;
                         UpdatePendingFlyoutStatusContent.Text = downloadStatusString.Replace(
-                            "0", ((int)progress * 100).ToString());
+                            "0", ((int)(progress * 100)).ToString());
 
                         // Write to file
                         await fsInstallerFile.WriteAsync(readBuffer);
@@ -1228,14 +1234,36 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Check the file result and the DL result
         if (!updateError)
         {
-            Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
-                    "K2CrashHandler", "K2CrashHandler.exe"), // Optional auto-restart scenario "-o"
-                $" --update {(Interfacing.UpdateOnClosed ? "" : "-o")} -path \"{Interfacing.GetProgramLocation().DirectoryName}\"");
+            try
+            {
+                // Optional auto-restart scenario "-o" (happens when the user clicks 'update now')
+                Process.Start(new ProcessStartInfo
+                {
+                    UseShellExecute = true, Verb = "runas",
+                    FileName = Path.Combine(Interfacing.GetK2AppDataTempDir().FullName, "Amethyst-Installer.exe"),
+                    Arguments =
+                        $" --update {(Interfacing.UpdateOnClosed ? "" : "-o")} -path \"{Interfacing.GetProgramLocation().DirectoryName}\""
+                });
+            }
+            catch (Win32Exception e)
+            {
+                if (e.NativeErrorCode == 1223)
+                    Logger.Warn($"You need to pass UAC to run the installer! Message: {e.Message}");
+                goto update_error; // Jump to the error scenario
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+                goto update_error; // Jump to the error scenario
+            }
 
             // Exit, cleanup should be automatic
             Interfacing.UpdateOnClosed = false; // Don't re-do
             Environment.Exit(0); // Should get caught by the exit handler
         }
+
+        // Jump-label
+        update_error:
 
         // Still here? Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);

@@ -417,13 +417,11 @@
                 <Flyout.FlyoutPresenterStyle>
                     <Style TargetType="FlyoutPresenter">
                         <Setter Property="CornerRadius" Value="8" />
-                        <Setter Property="Background"
-                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                     </Style>
                 </Flyout.FlyoutPresenterStyle>
 
-                <StackPanel x:Name="UpdatePendingFlyoutMainStack"
-                            Orientation="Vertical">
+                <StackPanel x:Name="UpdatePendingFlyoutMainStack" Orientation="Vertical">
                     <TextBlock x:Name="UpdatePendingFlyoutHeader" FontSize="17"
                                Text="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Headers/Downloading'), Mode=OneWay}"
                                Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />

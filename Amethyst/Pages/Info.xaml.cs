@@ -1,15 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.System;
 using Amethyst.Classes;
+using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,6 +29,7 @@ namespace Amethyst.Pages;
 public sealed partial class Info : Page, INotifyPropertyChanged
 {
     private bool _infoPageLoadedOnce;
+    private bool _commandConfirmLocked = false;
 
     public Info()
     {
@@ -137,10 +145,245 @@ public sealed partial class Info : Page, INotifyPropertyChanged
     private void K2DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         // Show a console-text-box popup
+        CommandFlyout.ShowAt(TargetGrid);
     }
 
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
+    private async void CommandTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty((sender as TextBox)?.Text))
+        {
+            if (_commandConfirmLocked) return;
+            _commandConfirmLocked = true; // Don't re-accept now!
+
+            // Check starts-with first
+            if (((TextBox)sender).Text.ToLowerInvariant().StartsWith("toast"))
+            {
+                Interfacing.ShowToast(
+                    (((TextBox)sender).Text.Contains('/') // Check if there's any description content preset
+                        ? ((TextBox)sender).Text[5..((TextBox)sender).Text.IndexOf("/", StringComparison.Ordinal)]
+                        : ((TextBox)sender).Text[5..])?.Trim(), // Don't show toast text if invalid
+                    ((TextBox)sender).Text.Contains('/') // Check if there's any description content preset
+                        ? ((TextBox)sender).Text[(((TextBox)sender).Text.IndexOf("/", StringComparison.Ordinal) + 1)..]
+                        : "No toast description provided."); // Don't show toast description if invalid
+
+                return; // Nothing else to do!
+            }
+
+            // Parse the passed command now
+            switch (((TextBox)sender).Text.ToLowerInvariant())
+            {
+                case "alltrackers" or "all trackers" or "all":
+                {
+                    // De-spawn all already-added trackers
+                    Interfacing.AppTrackersInitialized = false;
+                    await Task.Delay(200); // Sleep a bit
+
+                    lock (Interfacing.UpdateLock)
+                    {
+                        // Add all create-able trackers
+                        Enum.GetValues<TrackerType>().ToList().ForEach(role =>
+                            AppData.Settings.TrackersVector.Add(new AppTracker
+                            {
+                                Role = role, IsActive = true,
+                                Serial = TypeUtils.TrackerTypeRoleSerialDictionary[role]
+                            }));
+
+                        // Remove duplicates and save
+                        ConfigCheck(); // Check all
+                    }
+
+                    SetCommandText("Trackers added, type 'respawn' to spawn them!");
+                    break;
+                }
+                case "resettrackers" or "reset trackers" or "default":
+                {
+                    // De-spawn all already-added trackers
+                    Interfacing.AppTrackersInitialized = false;
+                    await Task.Delay(200); // Sleep a bit
+
+                    lock (Interfacing.UpdateLock)
+                    {
+                        // Add all create-able trackers
+                        AppData.Settings.TrackersVector.Clear();
+                        ConfigCheck(); // Check all
+                    }
+
+                    SetCommandText("Trackers reset, type 'spawn' to enable them!");
+                    break;
+                }
+                case "respawn" or "spawn" or "on":
+                {
+                    // Try spawning all enabled trackers
+                    var success = await Interfacing.SpawnEnabledTrackers();
+
+                    // Set up the co/re/disconnect button
+                    Shared.General.ToggleTrackersButton.IsChecked = success;
+                    Shared.General.ToggleTrackersButton.Content =
+                        Interfacing.LocalizedJsonString(success
+                            ? "/GeneralPage/Buttons/TrackersToggle/Disconnect"
+                            : "/GeneralPage/Buttons/TrackersToggle/Reconnect");
+
+                    SetCommandText("Trackers spawned, type 'despawn' to disable them!");
+                    break;
+                }
+                case "despawn" or "off":
+                {
+                    // De-spawn all already-added trackers
+                    Interfacing.AppTrackersInitialized = false;
+                    await Task.Delay(200); // Sleep a bit
+
+                    // Set up the co/re/disconnect button
+                    Shared.General.ToggleTrackersButton.IsChecked = false;
+                    Shared.General.ToggleTrackersButton.Content =
+                        Interfacing.LocalizedJsonString(Interfacing.K2AppTrackersSpawned
+                            ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
+                            : "/GeneralPage/Buttons/TrackersToggle/Connect");
+
+                    SetCommandText("Trackers despawned, type 'spawn' to enable them!");
+                    break; // That's all for now!
+                }
+                case "reset":
+                {
+                    // De-spawn all already-added trackers
+                    Interfacing.AppTrackersInitialized = false;
+                    await Task.Delay(200); // Sleep a bit
+
+                    // Set up the co/re/disconnect button
+                    Shared.General.ToggleTrackersButton.IsChecked = false;
+                    Shared.General.ToggleTrackersButton.Content =
+                        Interfacing.LocalizedJsonString(Interfacing.K2AppTrackersSpawned
+                            ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
+                            : "/GeneralPage/Buttons/TrackersToggle/Connect");
+
+                    // Reset application settings
+                    Logger.Info("Reset has been invoked: turning trackers off...");
+
+                    // Play a sound
+                    AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+                    // Mark trackers as inactive
+                    Interfacing.AppTrackersInitialized = false;
+                    Shared.General.ToggleTrackersButton.IsChecked = false;
+
+                    Logger.Info("Reset has been invoked: clearing app settings...");
+
+                    // Mark exiting as true
+                    Interfacing.IsExitingNow = true;
+                    await Task.Delay(50);
+
+                    // Read settings after reset
+                    AppData.Settings = new AppSettings(); // Reset settings
+                    AppData.Settings.SaveSettings(); // Save empty settings
+
+                    /* Restart */
+
+                    Logger.Info("Reset invoked: trying to restart the app...");
+
+                    // If we've found who asked
+                    if (File.Exists(Interfacing.GetProgramLocation().FullName))
+                    {
+                        // Log the caller
+                        Logger.Info($"The current caller process is: {Interfacing.GetProgramLocation().FullName}");
+
+                        // Exit the app
+                        Logger.Info("Configuration has been reset, exiting in 500ms...");
+
+                        // Don't execute the exit routine
+                        Interfacing.IsExitHandled = true;
+
+                        // Handle a typical app exit
+                        await Interfacing.HandleAppExit(500);
+
+                        // Restart and exit with code 0
+                        Process.Start(Interfacing.GetProgramLocation()
+                            .FullName.Replace(".dll", ".exe"));
+
+                        // Exit without re-handling everything
+                        Environment.Exit(0);
+                    }
+
+                    // Still here?
+                    Logger.Error("App will not be restarted due to caller process identification error.");
+
+                    Interfacing.ShowToast(
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
+                    Interfacing.ShowServiceToast(
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
+
+                    SetCommandText("Settings reset, type 'spawn' to enable trackers!");
+                    break; // That's all for now!
+                }
+                case "update":
+                {
+                    await MainWindow.RequestUpdateEvent(this, EventArgs.Empty);
+                    SetCommandText($"Sent an update signal to the '{typeof(MainWindow).FullName}' handler!");
+                    break; // That's all for now!
+                }
+                case "uwu" or "owo" or "omo" or "umu":
+                {
+                    Interfacing.ShowToast(((TextBox)sender).Text
+                        .ToUpperInvariant(), null, true);
+                    SetCommandText("Ugh, what else...?"); // Uh, okay I guess?
+                    break;
+                }
+                case "hello" or "hi" or "yo":
+                {
+                    SetCommandText("Hello!");
+                    break; // Why does this exist...
+                }
+                default:
+                {
+                    SetCommandText($"Invalid command: '{((TextBox)sender).Text}'!");
+                    break; // The command was invalid, give up on it for now
+                }
+            }
+
+            return; // Nothing else to do!
+        }
+
+        // Reset the confirmation flag
+        if (_commandConfirmLocked)
+            _commandConfirmLocked = false;
+    }
+
+    private void ConfigCheck()
+    {
+        // Reload everything we can
+        Shared.Devices.DevicesJointsValid = false;
+
+        // Check app settings and save
+        AppData.Settings.CheckSettings();
+        AppData.Settings.SaveSettings();
+
+        // Request page reloads
+        Translator.Get.OnPropertyChanged();
+        Shared.Events.RequestInterfaceReload();
+
+        // Request manager reloads
+        AppData.Settings.OnPropertyChanged();
+        AppData.Settings.TrackersVector.ToList()
+            .ForEach(x => x.OnPropertyChanged());
+
+        // We're done with our changes now!
+        Shared.Devices.DevicesJointsValid = true;
+    }
+
+    private void SetCommandText(string text)
+    {
+        if (CommandTextBox is null) return;
+        CommandTextBox.PlaceholderText = text;
+        CommandTextBox.Text = null; // Reset
+    }
+
+    private void CommandFlyout_Opening(object sender, object e)
+    {
+        SetCommandText("Type command:");
     }
 }
