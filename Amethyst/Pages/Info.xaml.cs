@@ -160,7 +160,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
             if (_commandConfirmLocked) return;
             _commandConfirmLocked = true; // Don't re-accept now!
 
-            // Check starts-with first
+            // Check starts-with first : toast?
             if (((TextBox)sender).Text.ToLowerInvariant().StartsWith("toast"))
             {
                 Interfacing.ShowToast(
@@ -171,6 +171,30 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                         ? ((TextBox)sender).Text[(((TextBox)sender).Text.IndexOf("/", StringComparison.Ordinal) + 1)..]
                         : "No toast description provided."); // Don't show toast description if invalid
 
+                SetCommandText($"Toast with payload \"{((TextBox)sender).Text[5..]}\" sent!");
+                return; // Nothing else to do!
+            }
+
+            // Check starts-with first : crash/exit/fail?
+            if (((TextBox)sender).Text.ToLowerInvariant().StartsWith("crash") ||
+                ((TextBox)sender).Text.ToLowerInvariant().StartsWith("exit") ||
+                ((TextBox)sender).Text.ToLowerInvariant().StartsWith("fail"))
+            {
+                if (int.TryParse(((TextBox)sender).Text[5..].Trim(), out var code))
+                {
+                    // Exit with a code to be parsed by the crash handler
+                    Logger.Info($"Exit with code \"{((TextBox)sender).Text[5..].Trim()}\" requested!");
+                    Interfacing.IsExitHandled = true;
+                    Environment.Exit(code); // Prepare and exit
+                }
+                else
+                {
+                    // Exit with a custom message to be shown by the crash handler
+                    Logger.Info($"Exit with payload \"{((TextBox)sender).Text[5..].Trim()}\" requested!");
+                    Interfacing.Fail(((TextBox)sender).Text[5..].Trim());
+                }
+
+                SetCommandText("Sending a crash signal failed for some reason!");
                 return; // Nothing else to do!
             }
 
@@ -179,7 +203,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
             {
                 case "alltrackers" or "all trackers" or "all":
                 {
-                    // De-spawn all already-added trackers
+                    // De-spawn all supported-enabled trackers
                     Interfacing.AppTrackersInitialized = false;
                     await Task.Delay(200); // Sleep a bit
 
@@ -202,7 +226,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                 }
                 case "resettrackers" or "reset trackers" or "default":
                 {
-                    // De-spawn all already-added trackers
+                    // De-spawn all supported-enabled trackers
                     Interfacing.AppTrackersInitialized = false;
                     await Task.Delay(200); // Sleep a bit
 
@@ -218,7 +242,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                 }
                 case "respawn" or "spawn" or "on":
                 {
-                    // Try spawning all enabled trackers
+                    // Try spawning all supported-enabled trackers
                     var success = await Interfacing.SpawnEnabledTrackers();
 
                     // Set up the co/re/disconnect button
@@ -233,7 +257,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                 }
                 case "despawn" or "off":
                 {
-                    // De-spawn all already-added trackers
+                    // De-spawn all supported-enabled trackers
                     Interfacing.AppTrackersInitialized = false;
                     await Task.Delay(200); // Sleep a bit
 
