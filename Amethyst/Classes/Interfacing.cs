@@ -36,7 +36,7 @@ public static class Interfacing
         CheckingUpdatesNow = false,
         UpdatingNow = false;
 
-    // Position helpers for k2 devices -> GUID, Pose
+    // Position helpers for devices -> GUID, Pose
     public static readonly SortedDictionary<string, (Vector3 Position, Quaternion Orientation)>
         DeviceHookJointPosition = new(); // This one applies to both
 
@@ -99,12 +99,12 @@ public static class Interfacing
         return new FileInfo(Assembly.GetExecutingAssembly().Location);
     }
 
-    public static DirectoryInfo GetK2AppDataTempDir()
+    public static DirectoryInfo GetAppDataTempDir()
     {
         return Directory.CreateDirectory(Path.GetTempPath() + "Amethyst");
     }
 
-    public static string GetK2AppDataFileDir(string relativeFilePath)
+    public static string GetAppDataFileDir(string relativeFilePath)
     {
         Directory.CreateDirectory(Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst"));
@@ -113,7 +113,7 @@ public static class Interfacing
             Environment.SpecialFolder.ApplicationData), "Amethyst", relativeFilePath);
     }
 
-    public static string GetK2AppDataLogFileDir(string relativeFolderName, string relativeFilePath)
+    public static string GetAppDataLogFileDir(string relativeFolderName, string relativeFilePath)
     {
         Directory.CreateDirectory(Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -293,13 +293,7 @@ public static class Interfacing
     {
         if (!AppTrackersSpawned)
         {
-            Logger.Info("[K2Interfacing] Registering trackers now...");
-
-            // K2Driver is now auto-adding default lower body trackers.
-            // That means that ids are: W-0 L-1 R-2
-            // We may skip downloading them then ^_~
-
-            Logger.Info("[K2Interfacing] App will be using K2Driver's default prepended trackers!");
+            Logger.Info("[Interfacing] Spawning all active-supported trackers now...");
 
             // Helper bool array
             List<bool> spawned = new();

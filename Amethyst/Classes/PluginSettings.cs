@@ -85,7 +85,7 @@ public class AppPluginSettings : INotifyPropertyChanged
         {
             // Save plugin settings to $env:AppData/Amethyst/
             File.WriteAllText(
-                Interfacing.GetK2AppDataFileDir("AmethystPluginsSettings.json"),
+                Interfacing.GetAppDataFileDir("AmethystPluginsSettings.json"),
                 JsonConvert.SerializeObject(TrackingDevices.PluginSettings, Formatting.Indented));
         }
         catch (Exception e)
@@ -101,7 +101,7 @@ public class AppPluginSettings : INotifyPropertyChanged
         {
             // Read plugin settings from $env:AppData/Amethyst/
             TrackingDevices.PluginSettings = JsonConvert.DeserializeObject<AppPluginSettings>(File.ReadAllText(
-                Interfacing.GetK2AppDataFileDir("AmethystPluginsSettings.json"))) ?? new AppPluginSettings();
+                Interfacing.GetAppDataFileDir("AmethystPluginsSettings.json"))) ?? new AppPluginSettings();
         }
         catch (Exception e)
         {

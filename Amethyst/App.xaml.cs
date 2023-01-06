@@ -61,7 +61,7 @@ public partial class App : Application
         ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
         // Initialize the logger
-        Logger.Init(Interfacing.GetK2AppDataLogFileDir("Amethyst",
+        Logger.Init(Interfacing.GetAppDataLogFileDir("Amethyst",
             $"Amethyst_{DateTime.Now:yyyyMMdd-HHmmss.ffffff}.log"));
 
         // Create an empty file for checking for crashes
@@ -71,7 +71,7 @@ public partial class App : Application
         try
         {
             // Try deleting the "latest" log file
-            File.Delete(Interfacing.GetK2AppDataLogFileDir("Amethyst", "_latest.log"));
+            File.Delete(Interfacing.GetAppDataLogFileDir("Amethyst", "_latest.log"));
         }
         catch (Exception)
         {

@@ -280,7 +280,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Load the JSON source into buffer, parse
             Logger.Info("Searching for external plugins now...");
             var jsonRoot = JsonObject.Parse(
-                File.ReadAllText(Interfacing.GetK2AppDataFileDir("amethystpaths.k2path")));
+                File.ReadAllText(Interfacing.GetAppDataFileDir("amethystpaths.k2path")));
 
             // Loop over all the external plugins and append
             if (jsonRoot.ContainsKey("external_plugins"))
@@ -293,8 +293,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         catch (FileNotFoundException e)
         {
             Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
-            Logger.Error($"Creating new {Interfacing.GetK2AppDataFileDir("amethystpaths.k2path")} config...");
-            File.Create(Interfacing.GetK2AppDataFileDir("amethystpaths.k2path")); // Create a placeholder file
+            Logger.Error($"Creating new {Interfacing.GetAppDataFileDir("amethystpaths.k2path")} config...");
+            File.Create(Interfacing.GetAppDataFileDir("amethystpaths.k2path")); // Create a placeholder file
         }
         catch (Exception e)
         {
@@ -1167,7 +1167,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 try
                 {
                     var thisFolder = await StorageFolder
-                        .GetFolderFromPathAsync(Interfacing.GetK2AppDataTempDir().FullName);
+                        .GetFolderFromPathAsync(Interfacing.GetAppDataTempDir().FullName);
 
                     // To save downloaded image to local storage
                     var installerFile = await thisFolder.CreateFileAsync(
@@ -1240,7 +1240,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 Process.Start(new ProcessStartInfo
                 {
                     UseShellExecute = true, Verb = "runas",
-                    FileName = Path.Combine(Interfacing.GetK2AppDataTempDir().FullName, "Amethyst-Installer.exe"),
+                    FileName = Path.Combine(Interfacing.GetAppDataTempDir().FullName, "Amethyst-Installer.exe"),
                     Arguments =
                         $"--update{(Interfacing.UpdateOnClosed ? "" : " -o")} -path \"{Interfacing.GetProgramLocation().DirectoryName}\""
                 });

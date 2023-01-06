@@ -564,7 +564,7 @@ public class AppTracker : INotifyPropertyChanged
 
     // Get tracker base
     // This is for updating the server with
-    // exclusive filtered data from K2AppTracker
+    // exclusive filtered data from AppTracker
     // By default, the saved filter is selected
     // Offsets are added inside called methods
     public TrackerBase GetTrackerBase(
