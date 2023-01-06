@@ -1032,21 +1032,21 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             Logger.Info($"Shutting down service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid} failed! " +
                         $"Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
         }
+        
+        // Update the selected service in application settings
+        AppData.Settings.ServiceEndpointGuid = selectedService.Guid;
 
-        // Check and use service's provided [freeze] action handlers
-        if (TrackingDevices.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid]
+        // Check and use service's provided [flip] action handlers
+        if (TrackingDevices.CurrentServiceEndpoint
                 .ControllerInputActions?.TrackingFreezeToggled is not null)
-            TrackingDevices.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid]
+            TrackingDevices.CurrentServiceEndpoint
                 .ControllerInputActions.TrackingFreezeToggled += Main.FreezeActionToggled;
 
         // Check and use service's provided [flip] action handlers
-        if (TrackingDevices.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid]
+        if (TrackingDevices.CurrentServiceEndpoint
                 .ControllerInputActions?.SkeletonFlipToggled is not null)
-            TrackingDevices.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid]
+            TrackingDevices.CurrentServiceEndpoint
                 .ControllerInputActions.SkeletonFlipToggled += Main.FlipActionToggled;
-
-        // Update the selected service in application settings
-        AppData.Settings.ServiceEndpointGuid = selectedService.Guid;
 
         // Re-initialize just in case
         Logger.Info("Now reinitializing service endpoint " +
