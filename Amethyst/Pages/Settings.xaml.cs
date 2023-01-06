@@ -1056,19 +1056,27 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Interfacing.ServiceEndpointSetup(); // Refresh
 
         // Reload everything we can
-        Shared.Devices.DevicesJointsValid = false;
+        lock (Interfacing.UpdateLock)
+        {
+            // Block MVVM (partial)
+            Shared.Devices.DevicesJointsValid = false;
 
-        // Request page reloads
-        Translator.Get.OnPropertyChanged();
-        Shared.Events.RequestInterfaceReload();
+            // Request page reloads
+            Translator.Get.OnPropertyChanged();
+            Shared.Events.RequestInterfaceReload();
 
-        // Request manager reloads
-        AppData.Settings.OnPropertyChanged();
-        AppData.Settings.TrackersVector.ToList()
-            .ForEach(x => x.OnPropertyChanged());
+            // Request manager reloads
+            AppData.Settings.OnPropertyChanged();
+            AppData.Settings.TrackersVector.ToList()
+                .ForEach(x => x.OnPropertyChanged());
 
-        // We're done with our changes now!
-        Shared.Devices.DevicesJointsValid = true;
+            // Check and save settings
+            AppData.Settings.CheckSettings();
+            AppData.Settings.SaveSettings();
+
+            // We're done with our changes now!
+            Shared.Devices.DevicesJointsValid = true;
+        }
     }
 
     private void ServiceCombo_OnDropDownOpened(object sender, object e)
