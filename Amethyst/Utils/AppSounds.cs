@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -51,14 +52,11 @@ public static class AppSounds
                                 "Assets", "Sounds", sound + ".wav"))),
 
                         // Set the desired volume
-                        Volume = AppData.Settings.AppSoundsVolume
+                        Volume = AppData.Settings.AppSoundsVolume / 100.0
                     };
 
                     player.CommandManager.IsEnabled = false;
-                    player.Play(); // Play the sound
-
-                    // Wait for the sound to complete
-                    await Task.Delay(2000);
+                    await player.PlayAsync(); // Play the sound
                 }
                 else
                 {
@@ -73,5 +71,26 @@ public static class AppSounds
                             $"could not be played due to an unexpected error: {e.Message}");
             }
         });
+    }
+}
+
+public static class MediaPlayerExtensions
+{
+    private static CancellationTokenSource _cancellationTokenSource;
+
+    public static async Task PlayAsync(this MediaPlayer mediaPlayer)
+    {
+        mediaPlayer.MediaEnded -= MediaPlayer_MediaEnded;
+        mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+
+        mediaPlayer.Play();
+
+        _cancellationTokenSource = new CancellationTokenSource();
+        await Task.Run(() => { WaitHandle.WaitAny(new[] { _cancellationTokenSource.Token.WaitHandle }); });
+    }
+
+    private static void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
+    {
+        _cancellationTokenSource.Cancel();
     }
 }
