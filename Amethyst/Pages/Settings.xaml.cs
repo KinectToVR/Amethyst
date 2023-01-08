@@ -955,9 +955,22 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     {
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
-        await Launcher.LaunchUriAsync(
-            new Uri($"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"));
+        switch (TrackingDevices.CurrentServiceEndpoint.Guid)
+        {
+            case "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR":
+                await Launcher.LaunchUriAsync(new Uri(TrackingDevices.BaseTrackingDevice.DeviceStatus switch
+                {
+                    -10 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#2",
+                    -1 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#3",
+                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#6"
+                }));
+                break;
+                
+            default:
+                await Launcher.LaunchUriAsync(
+                    new Uri($"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"));
+                break;
+        }
     }
 
     private async void OpenDiscordButton_Click(object sender, RoutedEventArgs e)

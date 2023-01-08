@@ -172,7 +172,8 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
             await Task.Delay(500);
 
-            Shared.TeachingTips.SettingsPage.AddTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+            Shared.TeachingTips.SettingsPage.AddTrackersTeachingTip.TailVisibility =
+                TeachingTipTailVisibility.Collapsed;
             Shared.TeachingTips.SettingsPage.AddTrackersTeachingTip.IsOpen = true;
         }
     }
@@ -454,44 +455,33 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     {
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
-        var deviceErrorString = TrackingDeviceErrorLabel.Text;
-        var deviceName = SelectedDeviceNameLabel.Text;
-
-        switch (deviceName)
+        switch (AppData.Settings.SelectedTrackingDeviceGuid)
         {
-            case "Xbox 360 Kinect":
-                await Launcher.LaunchUriAsync(new Uri(deviceErrorString switch
+            case "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1":
+                await Launcher.LaunchUriAsync(new Uri(TrackingDevices.BaseTrackingDevice.DeviceStatus switch
                 {
-                    "E_NUI_NOTPOWERED" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notpowered/",
-                    "E_NUI_NOTREADY" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notready/",
-                    "E_NUI_NOTGENUINE" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notgenuine/",
-                    "E_NUI_INSUFFICIENTBANDWIDTH" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/insufficientbandwidth",
-                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"
+                    6 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notpowered/",
+                    7 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notready/",
+                    3 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notgenuine/",
+                    5 =>
+                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/insufficientbandwidth/",
+                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/"
                 }));
                 break;
 
-            case "Xbox One Kinect":
-                await Launcher.LaunchUriAsync(new Uri(deviceErrorString switch
-                {
-                    "E_NOTAVAILABLE" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/one/troubleshooting/",
-                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"
-                }));
+            case "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2":
+                await Launcher.LaunchUriAsync(
+                    new Uri($"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/one/troubleshooting/"));
                 break;
 
-            case "PSMove Service":
-                await Launcher.LaunchUriAsync(new Uri(deviceErrorString switch
-                {
-                    "E_PSMS_NOT_RUNNING" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/psmove/troubleshooting/",
-                    "E_PSMS_NO_JOINTS" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/psmove/troubleshooting/",
-                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"
-                }));
+            case "K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX":
+                await Launcher.LaunchUriAsync(
+                    new Uri($"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/psmove/troubleshooting/"));
+                break;
+
+            case "K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK":
+                await Launcher.LaunchUriAsync(
+                    new Uri($"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/owo/setup/"));
                 break;
 
             default:

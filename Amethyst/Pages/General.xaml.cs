@@ -948,20 +948,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
     {
         Shared.General.AdditionalDeviceErrorsHyperlinkTappedEvent.Start();
     }
-
-    private async void ServerOpenDocsButton_Click(object sender, RoutedEventArgs e)
-    {
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
-        await Launcher.LaunchUriAsync(new Uri(Interfacing.ServiceEndpointStatusCode switch
-        {
-            -10 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#2",
-            -1 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#3",
-            _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#5"
-        }));
-    }
-
+    
     private async void ServiceSettingsButton_Click(object sender, RoutedEventArgs e)
     {
         // Go to the bottom of the settings page to view service endpoint settings
