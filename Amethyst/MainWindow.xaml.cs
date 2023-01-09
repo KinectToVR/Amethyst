@@ -507,7 +507,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             }
 
             Logger.Info("Registration of tracking device plugins has ended, there are " +
-                        $"{TrackingDevices.TrackingDevicesList.Count} valid plugins in total.");
+                        $"[{TrackingDevices.TrackingDevicesList.Count}] valid plugins in total.");
 
             // Loop over service catalog parts and compose
             foreach (var pluginCatalog in catalog.Catalogs)
@@ -671,7 +671,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     // Check if the loaded device is used as anything (AppData.Settings)
                     Logger.Info($"Checking if ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) has any roles set...");
                     Logger.Info($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                $"{(AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid ? "is the selected service!" : "does not serve any purpose:/")}");
+                                $"{(AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid ? "is the selected service!" : "does not serve any purpose :/")}");
 
                     // Check and use service's provided [freeze] action handlers
                     if (AppData.Settings.ServiceEndpointGuid == plugin.Metadata.Guid &&
@@ -710,7 +710,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             }
 
             Logger.Info("Registration of service endpoint plugins has ended, there are " +
-                        $"{TrackingDevices.ServiceEndpointsList.Count} valid plugins in total.");
+                        $"[{TrackingDevices.ServiceEndpointsList.Count}] valid plugins in total.");
         }
         catch (CompositionException e)
         {
@@ -1716,13 +1716,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         await Launcher.LaunchUriAsync(new Uri(Interfacing.CurrentAppState switch
         {
-            "calibration" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/calibration/",
-            "calibration_auto" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/calibration/#3",
-            "calibration_manual" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/calibration/#6",
-            "devices" or "offsets" or "settings" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/",
-            "overrides" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/overrides/",
+            "calibration" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/calibration/",
+            "calibration_auto" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/calibration/#3",
+            "calibration_manual" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/calibration/#6",
+            "devices" or "offsets" or "settings" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/",
+            "overrides" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/overrides/",
             "info" => "https://opencollective.com/k2vr",
-            "general" or _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/"
+            "general" or _ => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/"
         }));
     }
 

@@ -7,19 +7,19 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Amethyst Device Plugin API (Contract)</Title>
     <FileVersion></FileVersion>
-    <Version>0.2.9</Version>
+    <Version>0.2.10</Version>
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>Amethyst.Plugins.Contract</PackageId>
-    <Version>0.2.9</Version>
+    <Version>0.2.10</Version>
     <Authors>K2VR</Authors>
     <Company>K2VR</Company>
     <PackageTags>Amethyst;K2VR;KinectToVR;VR;OpenVR;Fullbody Tracking</PackageTags>
     <Description>
       This client class library lets you export your plugin library for Amethyst with MEF.
-      Compatible with C# (with XAML via WinUI/Winrt) and C++/CLI (no UI here, though...)
+      Compatible with C# (with XAML via WinUI/Winrt) and C++/CLI (no UI there, though...)
       Contains additional functions and helper classes to make plugin developmnet easier.
       The plugin and Amethyst API isn't live yet, please make sure to keep that in mind.
     </Description>

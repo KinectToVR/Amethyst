@@ -50,6 +50,9 @@ public class TrackingDevice : INotifyPropertyChanged
     // Get Path
     [DefaultValue("UNKNOWN")] public string Location { get; }
 
+    // Get Docs
+    [DefaultValue(null)] public Uri ErrorDocsUri => Device.ErrorDocsUri;
+
     // Underlying device handler
     private ITrackingDevice Device { get; }
 
@@ -653,6 +656,9 @@ public class PluginHost : IAmethystHost
 
     // Get Amethyst UI language
     public string LanguageCode => AppData.Settings.AppLanguage;
+
+    // Get Amethyst Docs (web) language
+    public string DocsLanguageCode => Interfacing.DocsLanguageCode;
 
     // Request a string from AME resources, empty for no match
     // Warning: The primarily searched resource is the device-provided one!

@@ -955,21 +955,17 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     {
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-        switch (TrackingDevices.CurrentServiceEndpoint.Guid)
+
+        try
         {
-            case "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR":
-                await Launcher.LaunchUriAsync(new Uri(TrackingDevices.BaseTrackingDevice.DeviceStatus switch
-                {
-                    -10 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#2",
-                    -1 => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#3",
-                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/steamvr-driver-codes/#6"
-                }));
-                break;
-                
-            default:
-                await Launcher.LaunchUriAsync(
-                    new Uri($"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"));
-                break;
+            // Launch passed service docs
+            await Launcher.LaunchUriAsync(
+                TrackingDevices.TrackingDevicesList[AppData.Settings.ServiceEndpointGuid].ErrorDocsUri ??
+                new Uri($"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/app/help/"));
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Couldn't launch service docs! Message: {ex.Message}");
         }
     }
 
@@ -1045,7 +1041,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             Logger.Info($"Shutting down service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid} failed! " +
                         $"Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
         }
-        
+
         // Update the selected service in application settings
         AppData.Settings.ServiceEndpointGuid = selectedService.Guid;
 

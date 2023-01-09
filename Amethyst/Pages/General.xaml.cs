@@ -892,58 +892,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         await Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBQCRDG"));
     }
-
-    private async void OpenDocsButton_Click(object sender, RoutedEventArgs e)
-    {
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
-        var deviceErrorString = TrackingDeviceErrorLabel.Text;
-        var deviceName = SelectedDeviceNameLabel.Text;
-
-        switch (deviceName)
-        {
-            case "Xbox 360 Kinect":
-                await Launcher.LaunchUriAsync(new Uri(deviceErrorString switch
-                {
-                    "E_NUI_NOTPOWERED" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notpowered/",
-                    "E_NUI_NOTREADY" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notready/",
-                    "E_NUI_NOTGENUINE" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/notgenuine/",
-                    "E_NUI_INSUFFICIENTBANDWIDTH" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/360/troubleshooting/insufficientbandwidth",
-                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"
-                }));
-                break;
-
-            case "Xbox One Kinect":
-                await Launcher.LaunchUriAsync(new Uri(deviceErrorString switch
-                {
-                    "E_NOTAVAILABLE" => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/one/troubleshooting/",
-                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"
-                }));
-                break;
-
-            case "PSMove Service":
-                await Launcher.LaunchUriAsync(new Uri(deviceErrorString switch
-                {
-                    "E_PSMS_NOT_RUNNING" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/psmove/troubleshooting/",
-                    "E_PSMS_NO_JOINTS" =>
-                        $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/psmove/troubleshooting/",
-                    _ => $"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"
-                }));
-                break;
-
-            default:
-                await Launcher.LaunchUriAsync(
-                    new Uri($"https://docs.k2vr.tech/{AppData.Settings.AppLanguage}/app/help/"));
-                break;
-        }
-    }
-
+    
     private void AdditionalDeviceErrorsHyperlink_Tapped(object sender, TappedRoutedEventArgs e)
     {
         Shared.General.AdditionalDeviceErrorsHyperlinkTappedEvent.Start();

@@ -122,6 +122,18 @@ public interface ITrackingDevice
     string DeviceStatusString { get; }
 
     /// <summary>
+    ///     The link to launch when 'View Docs' is clicked while
+    ///     this device is reporting a status error.
+    ///     Supports custom protocols, e.g. "host://link"
+    ///     [Note: launched via Launcher.LaunchUriAsync]
+    /// </summary>
+    /// <example>
+    ///     "https://contoso.com/"
+    /// </example>
+    [DefaultValue(null)]
+    public Uri ErrorDocsUri { get; }
+
+    /// <summary>
     ///     This is called after the app loads the plugin
     /// </summary>
     void OnLoad();
@@ -245,6 +257,18 @@ public interface IServiceEndpoint
     public string TrackingSystemName { get; }
 
     /// <summary>
+    ///     The link to launch when 'View Docs' is clicked while
+    ///     this service is reporting a status error.
+    ///     Supports custom protocols, e.g. "host://link"
+    ///     [Note: launched via Launcher.LaunchUriAsync]
+    /// </summary>
+    /// <example>
+    ///     "https://contoso.com/"
+    /// </example>
+    [DefaultValue(null)]
+    public Uri ErrorDocsUri { get; }
+
+    /// <summary>
     ///     Get the absolute pose of the HMD, calibrated against the play space
     ///     Return null if unknown to the service or unavailable
     ///     You'll need to provide this to support automatic calibration
@@ -339,6 +363,11 @@ public interface IAmethystHost
     ///     Get Amethyst UI language
     /// </summary>
     string LanguageCode { get; }
+
+    /// <summary>
+    ///     Get Amethyst Docs (web) language
+    /// </summary>
+    string DocsLanguageCode { get; }
 
     /// <summary>
     ///     Get/Set a serialized object from/to the plugin settings
