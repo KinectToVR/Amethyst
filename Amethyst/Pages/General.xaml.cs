@@ -884,14 +884,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
         SettingsPage.ManageTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
         SettingsPage.ManageTrackersTeachingTip.IsOpen = true;
     }
-
-    private async void OpenDiscordButton_Click(object sender, RoutedEventArgs e)
-    {
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
-        await Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBQCRDG"));
-    }
     
     private void AdditionalDeviceErrorsHyperlink_Tapped(object sender, TappedRoutedEventArgs e)
     {

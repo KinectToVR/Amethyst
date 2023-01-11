@@ -59,11 +59,11 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private readonly SemaphoreSlim _rotationFSemaphore = new(0);
     private bool _mainPageLoadedOnce;
-    private SystemBackdropConfiguration m_configurationSource;
-    private MicaController m_micaController;
+    private SystemBackdropConfiguration _configurationSource;
+    private MicaController _micaController;
 
-    private WindowsSystemDispatcherQueueHelper m_wsdqHelper; // See separate sample below for implementation
-    private string remoteVersionString = AppData.VersionString.Display;
+    private WindowsSystemDispatcherQueueHelper _wsdqHelper; // See separate sample below for implementation
+    private string _remoteVersionString = AppData.VersionString.Display;
 
     public MainWindow()
     {
@@ -1095,7 +1095,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         UpdateIcon.Foreground = Shared.Main.AttentionBrush;
         IconRotation.Begin();
 
-        UpdatePendingFlyoutFooter.Text = $"Amethyst v{remoteVersionString}";
+        UpdatePendingFlyoutFooter.Text = $"Amethyst v{_remoteVersionString}";
         UpdatePendingFlyoutStatusContent.Text =
             Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
 
@@ -1385,13 +1385,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             var remoteVersion = (int)jsonRoot.GetNamedNumber("version", AppData.InternalVersion);
 
                             // Get the remote version name
-                            remoteVersionString = jsonRoot.GetNamedString("version_string");
+                            _remoteVersionString = jsonRoot.GetNamedString("version_string");
 
                             Logger.Info($"Local version: {AppData.InternalVersion}");
                             Logger.Info($"Remote version: {remoteVersion}");
 
                             Logger.Info($"Local version string: {AppData.VersionString.Display}");
-                            Logger.Info($"Remote version string: {remoteVersionString}");
+                            Logger.Info($"Remote version string: {_remoteVersionString}");
 
                             // Check the version
                             if (AppData.InternalVersion < remoteVersion)
@@ -1449,7 +1449,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 if (Interfacing.UpdateFound)
                 {
                     FlyoutHeader.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/NewUpdateFound");
-                    FlyoutFooter.Text = $"Amethyst v{remoteVersionString}";
+                    FlyoutFooter.Text = $"Amethyst v{_remoteVersionString}";
 
                     var changelogString = "";
                     changesStringVector.ForEach(x => changelogString += $"- {x}\n");
@@ -1774,26 +1774,26 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             return false; // Mica is not supported on this system
         }
 
-        m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-        m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+        _wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+        _wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
 
         // Hooking up the policy object
-        m_configurationSource = new SystemBackdropConfiguration();
+        _configurationSource = new SystemBackdropConfiguration();
         Activated += Window_Activated;
         Closed += Window_Closed;
         ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
 
         // Initial configuration state.
-        m_configurationSource.IsInputActive = true;
+        _configurationSource.IsInputActive = true;
         SetConfigurationSourceTheme();
 
-        m_micaController = new MicaController();
+        _micaController = new MicaController();
 
         // Enable the system backdrop.
         // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
-        m_micaController.AddSystemBackdropTarget(this
+        _micaController.AddSystemBackdropTarget(this
             .As<ICompositionSupportsSystemBackdrop>());
-        m_micaController.SetSystemBackdropConfiguration(m_configurationSource);
+        _micaController.SetSystemBackdropConfiguration(_configurationSource);
 
         // Change the window background to support mica
         MainGrid.Background = new SolidColorBrush(Colors.Transparent);
@@ -1802,7 +1802,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private void Window_Activated(object sender, WindowActivatedEventArgs args)
     {
-        m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+        _configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
     }
 
     private async void Window_Closed(object sender, WindowEventArgs args)
@@ -1834,14 +1834,14 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
             // Make sure any Mica/Acrylic controller is disposed so it doesn't try to
             // use this closed window.
-            if (m_micaController is not null)
+            if (_micaController is not null)
             {
-                m_micaController.Dispose();
-                m_micaController = null;
+                _micaController.Dispose();
+                _micaController = null;
             }
 
             Activated -= Window_Activated;
-            m_configurationSource = null;
+            _configurationSource = null;
         }
 
         // Call before exiting for subsequent invocations to launch a new process
@@ -1854,17 +1854,17 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private void Window_ThemeChanged(FrameworkElement sender, object args)
     {
-        if (m_configurationSource is not null) SetConfigurationSourceTheme();
+        if (_configurationSource is not null) SetConfigurationSourceTheme();
     }
 
     private void SetConfigurationSourceTheme()
     {
-        m_configurationSource.Theme = ((FrameworkElement)Content).ActualTheme switch
+        _configurationSource.Theme = ((FrameworkElement)Content).ActualTheme switch
         {
             ElementTheme.Dark => SystemBackdropTheme.Dark,
             ElementTheme.Light => SystemBackdropTheme.Light,
             ElementTheme.Default => SystemBackdropTheme.Default,
-            _ => m_configurationSource.Theme
+            _ => _configurationSource.Theme
         };
     }
 
