@@ -1567,7 +1567,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             await Interfacing.HandleAppExit(500);
 
             // Restart and exit with code 0
-            Process.Start(Interfacing.GetProgramLocation().ToString());
+            Process.Start(Interfacing.GetProgramLocation()
+                .FullName.Replace(".dll", ".exe"));
+
+            // Exit without re-handling everything
             Environment.Exit(0);
         }
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Amethyst.MVVM;
@@ -41,7 +42,7 @@ public static class TrackingDevices
     public static readonly SortedDictionary<string, ServiceEndpoint> ServiceEndpointsList = new();
 
     // Written to at the first plugin load
-    public static readonly List<LoadAttemptedPlugin> LoadAttemptedPluginsList = new();
+    public static readonly ObservableCollection<LoadAttemptedPlugin> LoadAttemptedPluginsList = new();
 
     // Plugin settings (Note: GUIDs must not overlap)
     public static AppPluginSettings PluginSettings { get; set; } = new();
