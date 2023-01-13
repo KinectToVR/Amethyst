@@ -513,6 +513,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Info("Registration of tracking device plugins has ended, there are " +
                         $"[{TrackingDevices.TrackingDevicesList.Count}] valid plugins in total.");
 
+            TrackingDevices.TrackingDevicesList.ToList().ForEach(x => Logger.Info(
+                $"Loaded a valid tracking provider ({{{x.Key}}}, \"{x.Value.Name}\")"));
+
             // Loop over service catalog parts and compose
             foreach (var pluginCatalog in catalog.Catalogs)
             {
@@ -718,6 +721,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
             Logger.Info("Registration of service endpoint plugins has ended, there are " +
                         $"[{TrackingDevices.ServiceEndpointsList.Count}] valid plugins in total.");
+
+            TrackingDevices.ServiceEndpointsList.ToList().ForEach(x => Logger.Info(
+                $"Loaded a valid service endpoint ({{{x.Key}}}, \"{x.Value.Name}\")"));
         }
         catch (CompositionException e)
         {
