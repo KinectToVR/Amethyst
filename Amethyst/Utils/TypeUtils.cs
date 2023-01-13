@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Primitives;
+using System.Linq;
 using System.Numerics;
 using Amethyst.Plugins.Contract;
 using AmethystSupport;
@@ -208,5 +212,33 @@ public static class QuaternionExtensions
     public static Quaternion Inversed(this Quaternion q, bool inverse = true)
     {
         return inverse ? Quaternion.Inverse(q) : q;
+    }
+}
+
+public static class ExceptionExtensions
+{
+    public static Exception UnwrapCompositionException(this Exception exception)
+    {
+        if (exception is not CompositionException compositionException) return exception;
+        var unwrapped = compositionException;
+
+        while (unwrapped != null)
+        {
+            var firstError = unwrapped.Errors.FirstOrDefault();
+            var currentException = firstError?.Exception;
+
+            if (currentException == null) break;
+
+            if (currentException is ComposablePartException { InnerException: { } } decomposablePartException)
+            {
+                if (decomposablePartException.InnerException is not CompositionException innerCompositionException)
+                    return currentException.InnerException ?? exception;
+                currentException = innerCompositionException;
+            }
+
+            unwrapped = currentException as CompositionException;
+        }
+
+        return exception; // Throw the original
     }
 }

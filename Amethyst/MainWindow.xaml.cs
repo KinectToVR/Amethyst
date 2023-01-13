@@ -41,6 +41,7 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.AppNotifications;
 using WinRT;
 using WinRT.Interop;
+using System.ComponentModel.Composition.Primitives;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -398,6 +399,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = TrackingDevices.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Error = e.UnwrapCompositionException().Message,
                             Status = TrackingDevices.PluginLoadError.NoDeviceDependencyDll
                         });
                         continue; // Give up on this one :(
@@ -416,6 +418,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = TrackingDevices.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Error = e.Message,
                             Status = TrackingDevices.PluginLoadError.Other
                         });
                         continue; // Give up on this one :(
@@ -494,6 +497,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         PluginType = TrackingDevices.PluginType.TrackingDevice,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
+                        Error = e.Message,
                         Status = TrackingDevices.PluginLoadError.Other
                     });
                 }
@@ -597,6 +601,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = TrackingDevices.PluginType.ServiceEndpoint,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Error = e.UnwrapCompositionException().Message,
                             Status = TrackingDevices.PluginLoadError.NoDeviceDependencyDll
                         });
                         continue; // Give up on this one :(
@@ -615,6 +620,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = TrackingDevices.PluginType.ServiceEndpoint,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Error = e.Message,
                             Status = TrackingDevices.PluginLoadError.Other
                         });
                         continue; // Give up on this one :(
@@ -697,6 +703,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         PluginType = TrackingDevices.PluginType.ServiceEndpoint,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
+                        Error = e.Message,
                         Status = TrackingDevices.PluginLoadError.Other
                     });
                 }

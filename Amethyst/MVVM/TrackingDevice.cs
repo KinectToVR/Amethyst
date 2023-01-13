@@ -711,6 +711,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 {
     public string Name { get; init; } = "[UNKNOWN]";
     public string Guid { get; init; } = "[INVALID]";
+    public string Error { get; init; } = null;
 
     public string Publisher { get; init; }
     public string Website { get; init; }
@@ -737,7 +738,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public bool IsLoaded
     {
-        get => !AppData.Settings.DisabledPluginsGuidSet.Contains(Guid);
+        get => LoadSuccess && !AppData.Settings.DisabledPluginsGuidSet.Contains(Guid);
         set
         {
             if (IsLoaded == value) return; // No changes
@@ -820,6 +821,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public bool PublisherValid => !string.IsNullOrEmpty(Publisher);
     public bool WebsiteValid => !string.IsNullOrEmpty(Website);
     public bool LocationValid => !string.IsNullOrEmpty(DeviceFolder);
+    public bool GuidValid => !string.IsNullOrEmpty(Guid);
 
     public event PropertyChangedEventHandler PropertyChanged;
 

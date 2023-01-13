@@ -65,8 +65,8 @@
                                 <Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="FlyoutPresenter">
                                         <Setter Property="MaxHeight" Value="615" />
-                                        <Setter Property="MaxWidth" Value="720" />
-                                        <Setter Property="MinWidth" Value="720" />
+                                        <Setter Property="MaxWidth" Value="750" />
+                                        <Setter Property="MinWidth" Value="750" />
                                         <Setter Property="Margin" Value="30,15,0,0" />
                                         <Setter Property="CornerRadius" Value="8" />
                                         <Setter Property="Background"
@@ -79,7 +79,7 @@
                                                Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Title'), Mode=OneWay}" />
 
                                     <ItemsRepeater x:Name="PluginsItemsRepeater" HorizontalAlignment="Stretch"
-                                                   ItemsSource="{x:Bind classes:TrackingDevices.LoadAttemptedPluginsList, Mode=OneTime}"
+                                                   ItemsSource="{x:Bind classes:TrackingDevices.LoadAttemptedPluginsList}"
                                                    Margin="20,0,20,20" AllowDrop="False">
 
                                         <ItemsRepeater.ItemTemplate>
@@ -130,7 +130,7 @@
                                                                 <TextBlock VerticalAlignment="Center"
                                                                            FontWeight="SemiBold" FontSize="12"
                                                                            Opacity="0.5"
-                                                                           Text="{x:Bind TrimString(Publisher, 37), Mode=OneWay}"
+                                                                           Text="{x:Bind TrimString(Publisher, 45), Mode=OneWay}"
                                                                            Tapped="{x:Bind ShowDeviceFolder, Mode=OneWay}"
                                                                            ToolTipService.ToolTip="{x:Bind DeviceFolder, Mode=OneWay}"
                                                                            ToolTipService.Placement="Bottom" />
@@ -152,7 +152,7 @@
                                                               HorizontalContentAlignment="Stretch">
 
                                                         <Expander.Content>
-                                                            <StackPanel Orientation="Vertical" Width="620">
+                                                            <StackPanel Orientation="Vertical" Width="650">
                                                                 <StackPanel Orientation="Vertical"
                                                                             Visibility="{x:Bind LoadError, Mode=OneWay}">
                                                                     <StackPanel.Transitions>
@@ -172,16 +172,26 @@
                                                                             FontWeight="SemiBold" Opacity="0.5"
                                                                             Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Reason'), Mode=OneWay}"
                                                                             Margin="0,0,7,0" />
-                                                                        <TextBlock VerticalAlignment="Top"
-                                                                            FontWeight="SemiBold" Width="560"
-                                                                            TextWrapping="WrapWholeWords"
-                                                                            Text="{x:Bind ErrorText, Mode=OneWay}"
-                                                                            ToolTipService.ToolTip="{x:Bind ErrorText, Mode=OneWay}" />
+                                                                        <StackPanel Orientation="Vertical">
+                                                                            <TextBlock VerticalAlignment="Top"
+                                                                                FontWeight="SemiBold" Width="590"
+                                                                                TextWrapping="WrapWholeWords"
+                                                                                Text="{x:Bind ErrorText, Mode=OneWay}"
+                                                                                ToolTipService.ToolTip="{x:Bind ErrorText, Mode=OneWay}" />
+                                                                            <TextBlock VerticalAlignment="Top"
+                                                                                FontFamily="Consolas"
+                                                                                FontWeight="SemiBold" Width="590"
+                                                                                Margin="0,3,0,0"
+                                                                                TextWrapping="WrapWholeWords"
+                                                                                Opacity="0.6"
+                                                                                Text="{x:Bind Error, Mode=OneWay}"
+                                                                                ToolTipService.ToolTip="{x:Bind Error, Mode=OneWay}" />
+                                                                        </StackPanel>
                                                                     </StackPanel>
                                                                 </StackPanel>
 
                                                                 <StackPanel Orientation="Horizontal"
-                                                                            Visibility="{x:Bind IsLoaded, Mode=OneWay}">
+                                                                            Visibility="{x:Bind GuidValid, Mode=OneWay}">
                                                                     <StackPanel.Transitions>
                                                                         <TransitionCollection>
                                                                             <RepositionThemeTransition />
@@ -194,7 +204,7 @@
                                                                                Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/GUID'), Mode=OneWay}" />
                                                                     <TextBlock VerticalAlignment="Center"
                                                                                FontWeight="SemiBold"
-                                                                               Text="{x:Bind TrimString(Guid, 77), Mode=OneWay}"
+                                                                               Text="{x:Bind TrimString(Guid, 80), Mode=OneWay}"
                                                                                ToolTipService.ToolTip="{x:Bind Guid, Mode=OneWay}" />
                                                                 </StackPanel>
 
@@ -213,7 +223,7 @@
 
                                                                     <TextBlock VerticalAlignment="Center"
                                                                                FontWeight="SemiBold"
-                                                                               Text="{x:Bind TrimString(DeviceFolder, 77), Mode=OneWay}"
+                                                                               Text="{x:Bind TrimString(DeviceFolder, 80), Mode=OneWay}"
                                                                                Tapped="{x:Bind ShowDeviceFolder, Mode=OneWay}"
                                                                                ToolTipService.ToolTip="{x:Bind DeviceFolder, Mode=OneWay}"
                                                                                ToolTipService.Placement="Bottom" />
@@ -236,7 +246,7 @@
                                                                                FontWeight="SemiBold"
                                                                                Foreground="{ThemeResource SystemFillColorAttentionBrush}"
                                                                                TextDecorations="Underline"
-                                                                               Text="{x:Bind TrimString(Website, 77), Mode=OneWay}"
+                                                                               Text="{x:Bind TrimString(Website, 80), Mode=OneWay}"
                                                                                Tapped="{x:Bind OpenDeviceWebsite, Mode=OneWay}"
                                                                                ToolTipService.ToolTip="{x:Bind Website, Mode=OneWay}"
                                                                                ToolTipService.Placement="Bottom" />
