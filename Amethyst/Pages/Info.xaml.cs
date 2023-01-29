@@ -416,6 +416,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
     
     private async void TelemetryToggleSwitch_Toggled(object sender, RoutedEventArgs e)
     {
+        AppData.Settings.IsTelemetryEnabled = (sender as ToggleSwitch)?.IsOn ?? true;
         AppData.Settings.SaveSettings(); // Save our made changes
 
         await Analytics.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);

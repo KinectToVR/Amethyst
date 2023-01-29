@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Globalization;
 using Windows.System.UserProfile;
@@ -128,6 +129,21 @@ public partial class App : Application
 
         // Read plugin settings
         TrackingDevices.PluginSettings.ReadSettings();
+
+        // Run detached to allow for async calls
+        Task.Run(async () =>
+        {
+            try
+            {
+                // Toggle App Center according to our settings
+                await Analytics.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);
+                await Crashes.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);
+            }
+            catch (Exception e)
+            {
+                Logger.Warn($"Couldn't toggle App Center! Message: {e.Message}");
+            }
+        });
 
         // Create the strings directory in case it doesn't exist yet
         Directory.CreateDirectory(Path.Join(
