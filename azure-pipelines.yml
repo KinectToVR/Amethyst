@@ -32,6 +32,13 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
+- pwsh: |
+    ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_COMMIT_SHA', "$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\App.xaml.cs
+    (((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace '<!--AZ_COMMIT_DATA', '') -replace 'AZ_COMMIT_DATA-->', '') | Set-Content -Path .\Amethyst\Pages\Info.xaml
+    ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_SHA', "$("$(Build.SourceVersion)".Substring(0,7))") | Set-Content -Path .\Amethyst\Pages\Info.xaml
+    ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_LINK', "https://github.com/KinectToVR/Amethyst/commit/$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\Pages\Info.xaml
+  displayName: Add commit data to Amethyst
+
 - task: VSBuild@1
   displayName: Build (publish) Amethyst
   inputs:

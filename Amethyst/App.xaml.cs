@@ -79,10 +79,14 @@ public partial class App : Application
         }
 
         // Log status information
-        Logger.Info($".NET CLR Runtime version: {typeof(string).Assembly.ImageRuntimeVersion}");
-        Logger.Info($"Amethyst version: (string) {AppData.VersionString.Internal}");
-        Logger.Info($"Amethyst version: (value) {AppData.InternalVersion}");
+        Logger.Info($"CLR Runtime version: {typeof(string).Assembly.ImageRuntimeVersion}");
+        Logger.Info($"Framework build number: {Environment.Version} (.NET Core)");
+        Logger.Info($"Running on {Environment.OSVersion}");
+
+        Logger.Info($"Amethyst version: {AppData.VersionString}");
+        Logger.Info($"Amethyst internal version: {AppData.InternalVersion}");
         Logger.Info($"Amethyst web API version: {AppData.ApiVersion}");
+        Logger.Info("Amethyst build commit: AZ_COMMIT_SHA");
 
         // Read saved settings
         AppData.Settings.ReadSettings();
