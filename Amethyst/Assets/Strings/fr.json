@@ -243,6 +243,11 @@
   "/InfoPage/Credits/MainTeam/Roles/Ollie": "Support:",
   "/InfoPage/Credits/MainTeam/Title": "Équipe principale:",
   "/InfoPage/Credits/Translators/Title": "Traducteurs:",
+  "/InfoPage/Telemetry/Header": "Collected data and privacy policy",
+  "/InfoPage/Telemetry/Notice": "Amethyst uses Microsoft App Center to collect anonymous data which helps us with app development and troubleshooting major bugs. \nInformation sent to App Center is anonymous and free of any user or contextual data. Additionally, you can disable sending it at any time.",
+  "/InfoPage/Telemetry/Switch": "Toggle the switch below to disable/enable sending anything to App Center.",
+  "/InfoPage/Telemetry/Toggle/On": "Data collection is enabled",
+  "/InfoPage/Telemetry/Toggle/Off": "Data collection is disabled",
 
   "/SharedStrings/Buttons/Devices": "Appareils",
   "/SharedStrings/Buttons/General": "Général",

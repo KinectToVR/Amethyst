@@ -155,6 +155,9 @@ public class AppSettings : INotifyPropertyChanged
     // If the shutdown warning has been shown
     public bool FirstShutdownTipShown { get; set; } = false;
 
+    // Disable/Enable optional data
+    public bool IsTelemetryEnabled { get; set; } = true;
+
     [JsonIgnore]
     public string SelectedTrackingDeviceGuid
     {

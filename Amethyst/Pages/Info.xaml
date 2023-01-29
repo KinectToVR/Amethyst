@@ -248,9 +248,39 @@
                     <Hyperlink NavigateUri="AZ_COMMIT_LINK" UnderlineStyle="None">AZ_COMMIT_SHA</Hyperlink>
                     <Run>)</Run>AZ_COMMIT_DATA-->
                 </TextBlock>
+
+                <TextBlock FontWeight="Light" Margin="0,10,0,0" Tapped="TelemetryTextBlock_Tapped" 
+                           Foreground="{ThemeResource SystemFillColorAttentionBrush}" FontSize="15"
+                           Text="{x:Bind util:Translator.Get.String('/InfoPage/Telemetry/Header'), Mode=OneWay}" />
             </StackPanel>
-
         </ScrollViewer>
-
     </Grid>
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <Flyout x:Name="TelemetryFlyout">
+                <Flyout.FlyoutPresenterStyle>
+                    <Style TargetType="FlyoutPresenter">
+                        <Setter Property="MinWidth" Value="470" />
+                        <Setter Property="MaxWidth" Value="470" />
+                        <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="Background"
+                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                    </Style>
+                </Flyout.FlyoutPresenterStyle>
+
+                <StackPanel Orientation="Vertical" MaxWidth="440" MinWidth="440">
+                    <TextBlock FontWeight="Normal" TextWrapping="Wrap" MaxWidth="440"
+                               Text="{x:Bind util:Translator.Get.String('/InfoPage/Telemetry/Notice'), Mode=OneWay}" />
+                    <TextBlock FontWeight="ExtraLight" TextWrapping="Wrap" MaxWidth="440" Margin="0,7,0,0"
+                               Text="{x:Bind util:Translator.Get.String('/InfoPage/Telemetry/Switch'), Mode=OneWay}" />
+
+                    <ToggleSwitch FontWeight="SemiBold" Toggled="TelemetryToggleSwitch_Toggled"
+                                  IsOn="{x:Bind classes:AppData.Settings.IsTelemetryEnabled, Mode=TwoWay}"
+                                  OnContent="{x:Bind util:Translator.Get.String('/InfoPage/Telemetry/Toggle/On'), Mode=OneWay}"
+                                  OffContent="{x:Bind util:Translator.Get.String('/InfoPage/Telemetry/Toggle/Off'), Mode=OneWay}" />
+                </StackPanel>
+            </Flyout>
+        </ResourceDictionary>
+    </Page.Resources>
 </Page>

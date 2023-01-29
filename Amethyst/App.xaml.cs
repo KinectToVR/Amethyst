@@ -5,9 +5,14 @@ using System;
 using System.IO;
 using System.Linq;
 using Windows.Foundation;
+using Windows.Globalization;
+using Windows.System.UserProfile;
 using Windows.UI.ViewManagement;
 using Amethyst.Classes;
 using Amethyst.Utils;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -40,6 +45,7 @@ public partial class App : Application
             var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Replace("{0}", stc);
 
             Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
+            Crashes.TrackError(e.Exception); // Log the crash reason
             Environment.Exit(0); // Simulate a standard application exit
         };
 
@@ -53,6 +59,7 @@ public partial class App : Application
             var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Replace("{0}", stc);
 
             Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
+            Crashes.TrackError((Exception)e.ExceptionObject); // Log the crash reason
             Environment.Exit(0); // Simulate a standard application exit
         };
 
@@ -87,6 +94,34 @@ public partial class App : Application
         Logger.Info($"Amethyst internal version: {AppData.InternalVersion}");
         Logger.Info($"Amethyst web API version: {AppData.ApiVersion}");
         Logger.Info("Amethyst build commit: AZ_COMMIT_SHA");
+
+        try
+        {
+            // Set maximum log size to 20MB for larger log files
+            AppCenter.SetMaxStorageSizeAsync(20 * 1024 * 1024).ContinueWith(storageTask =>
+            {
+                // Log as an error, we can't really do much about this one after all...
+                if (!storageTask.Result) Logger.Error("App Center log exceeded the maximum size!");
+            });
+
+            // Try starting Visual Studio App Center up
+            AppCenter.Start("AZ_APPSECRET", typeof(Analytics), typeof(Crashes));
+
+            // Set the code of the language used in Windows
+            AppCenter.SetCountryCode(new Language(
+                GlobalizationPreferences.Languages[0]).LanguageTag[3..]);
+
+            // Make App Center send the whole log when crashed
+            Crashes.GetErrorAttachments = _ => new[]
+            {
+                ErrorAttachmentLog.AttachmentWithText(
+                    File.ReadAllText(Logger.LogFilePath), new FileInfo(Logger.LogFilePath).Name)
+            };
+        }
+        catch (Exception e)
+        {
+            Logger.Warn($"Couldn't start App Center! Message: {e.Message}");
+        }
 
         // Read saved settings
         AppData.Settings.ReadSettings();

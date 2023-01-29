@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Crashes;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -52,6 +53,7 @@ public static class Logger
         [CallerMemberName] string memberName = "")
     {
         LogInternal(FormatToLogMessage(text, "E", lineNumber, filePath, memberName), ConsoleColor.Red);
+        Crashes.TrackError(new Exception(text));
     }
 
     public static void Error(object obj, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
@@ -64,6 +66,7 @@ public static class Logger
         [CallerMemberName] string memberName = "")
     {
         LogInternal(FormatToLogMessage(text, "F", lineNumber, filePath, memberName), ConsoleColor.DarkRed);
+        Crashes.TrackError(new Exception(text));
     }
 
     public static void Fatal(object obj, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",

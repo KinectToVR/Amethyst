@@ -42,6 +42,7 @@ using Microsoft.Windows.AppNotifications;
 using WinRT;
 using WinRT.Interop;
 using System.ComponentModel.Composition.Primitives;
+using Microsoft.AppCenter.Analytics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -877,6 +878,19 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Update the UI
         TrackingDevices.UpdateTrackingDevicesInterface();
+
+        // Log our used device to the telemetry module
+        Analytics.TrackEvent("TrackingDevice", new Dictionary<string, string>
+            { { "Guid", AppData.Settings.TrackingDeviceGuid } });
+
+        // Log our used service to the telemetry module
+        Analytics.TrackEvent("ServiceEndpoint", new Dictionary<string, string>
+            { { "Guid", AppData.Settings.ServiceEndpointGuid } });
+
+        // Log our used overrides to the telemetry module
+        Analytics.TrackEvent("OverrideDevices", new Dictionary<string, string>(
+            AppData.Settings.OverrideDevicesGuidMap
+                .Select(x => new KeyValuePair<string, string>("Guid", x))));
 
         // Setup device change watchdog : local devices
         var localWatcher = new FileSystemWatcher

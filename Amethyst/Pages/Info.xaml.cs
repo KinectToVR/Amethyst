@@ -17,6 +17,9 @@ using Microsoft.UI.Xaml.Media.Animation;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -409,5 +412,22 @@ public sealed partial class Info : Page, INotifyPropertyChanged
     private void CommandFlyout_Opening(object sender, object e)
     {
         SetCommandText("Type command:");
+    }
+    
+    private async void TelemetryToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+    {
+        AppData.Settings.SaveSettings(); // Save our made changes
+
+        await Analytics.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);
+        await Crashes.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);
+    }
+
+    private void TelemetryTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
+    {
+        TelemetryFlyout.ShowAt(sender as TextBlock, new FlyoutShowOptions
+        {
+            Placement = FlyoutPlacementMode.Top,
+            ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway
+        });
     }
 }

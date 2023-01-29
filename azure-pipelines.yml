@@ -5,12 +5,18 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'x64'
-  buildConfiguration: 'Release'
-  publishDirectory: 'Pack/Output'
-  artifactDirectory: 'Pack/Zip'
-
+  - name: solution
+    value: '**/*.sln'
+  - name: buildPlatform
+    value: 'x64'
+  - name: buildConfiguration
+    value: 'Release'
+  - name: publishDirectory
+    value: 'Pack/Output'
+  - name: artifactDirectory
+    value: 'Pack/Zip'
+  - group: AppCenter
+  
 parameters:
   - name: 'plugins'
     type: object
@@ -34,6 +40,7 @@ steps:
 
 - pwsh: |
     ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_COMMIT_SHA', "$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\App.xaml.cs
+    ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_APPSECRET', "$(AppSecret)") | Set-Content -Path .\Amethyst\App.xaml.cs
     (((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace '<!--AZ_COMMIT_DATA', '') -replace 'AZ_COMMIT_DATA-->', '') | Set-Content -Path .\Amethyst\Pages\Info.xaml
     ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_SHA', "$("$(Build.SourceVersion)".Substring(0,7))") | Set-Content -Path .\Amethyst\Pages\Info.xaml
     ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_LINK', "https://github.com/KinectToVR/Amethyst/commit/$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\Pages\Info.xaml
