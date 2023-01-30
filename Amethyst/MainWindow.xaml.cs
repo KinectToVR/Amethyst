@@ -289,9 +289,28 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
             // Loop over all the external plugins and append
             if (jsonRoot.ContainsKey("external_plugins"))
+            {
+                // Try loading all path-valid plugin entries
                 jsonRoot.GetNamedArray("external_plugins").ToList()
-                    .Select(pluginEntry => Directory.Exists(pluginEntry.ToString())).ToList()
-                    .ForEach(pluginPath => catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath.ToString())));
+                    .Where(pluginEntry => Directory.Exists(pluginEntry.GetString())).ToList()
+                    .ForEach(pluginPath => catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath.GetString())));
+
+                // Write out all invalid ones
+                jsonRoot.GetNamedArray("external_plugins").ToList()
+                    .Where(pluginEntry => !Directory.Exists(pluginEntry.GetString())).ToList()
+                    .ForEach(pluginPath =>
+                    {
+                        // Add the plugin to the 'attempted' list
+                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        {
+                            Name = pluginPath.GetString(),
+                            Status = TrackingDevices.PluginLoadError.NoPluginFolder
+                        });
+
+                        Logger.Error(new DirectoryNotFoundException(
+                            $"Plugin hint directory \"{pluginPath.GetString()}\" doesn't exist!"));
+                    });
+            }
 
             else Logger.Info("No external plugins found! Loading the local ones now...");
         }
@@ -405,7 +424,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
                             Error = e.UnwrapCompositionException().Message,
-                            Status = TrackingDevices.PluginLoadError.NoDeviceDependencyDll
+                            Status = TrackingDevices.PluginLoadError.NoPluginDependencyDll
                         });
                         continue; // Give up on this one :(
                     }
@@ -444,7 +463,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         PluginType = TrackingDevices.PluginType.TrackingDevice,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
-                        DeviceFolder = pluginFolder,
+                        Folder = pluginFolder,
                         Status = TrackingDevices.PluginLoadError.NoError
                     });
 
@@ -612,7 +631,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
                             Error = e.UnwrapCompositionException().Message,
-                            Status = TrackingDevices.PluginLoadError.NoDeviceDependencyDll
+                            Status = TrackingDevices.PluginLoadError.NoPluginDependencyDll
                         });
                         continue; // Give up on this one :(
                     }
@@ -651,7 +670,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         PluginType = TrackingDevices.PluginType.ServiceEndpoint,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
-                        DeviceFolder = pluginFolder,
+                        Folder = pluginFolder,
                         Status = TrackingDevices.PluginLoadError.NoError
                     });
 

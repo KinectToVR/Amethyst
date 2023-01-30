@@ -19,10 +19,10 @@ public static class TrackingDevices
         Unknown, // We literally don't know what's happened
         NoError, // Everything's fine, celebration time!
         LoadingSkipped, // This device is disabled by the user
-        NoDeviceFolder, // No device folder w/ files found
-        NoDeviceDll, // Device dll not found at proper path
-        NoDeviceDependencyDll, // Dep dll/s not found or invalid
-        DeviceDllLinkError, // Could not link for some reason
+        NoPluginFolder, // No device folder w/ files found
+        NoPluginDll, // Device dll not found at proper path
+        NoPluginDependencyDll, // Dep dll/s not found or invalid
+        PluginDllLinkError, // Could not link for some reason
         BadOrDuplicateGuid, // Empty/Bad/Duplicate device GUID
         InvalidFactory, // Device factory just gave up, now cry
         Other // Check logs, MEF probably gave us up again...

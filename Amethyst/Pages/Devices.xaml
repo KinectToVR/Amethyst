@@ -114,7 +114,8 @@
                                                             </InfoBadge>
 
                                                             <TextBlock FontWeight="SemiBold" FontSize="14"
-                                                                       Text="{x:Bind Name, Mode=OneWay}"
+                                                                       Text="{x:Bind TrimString(Name, 45), Mode=OneWay}"
+                                                                       ToolTipService.ToolTip="{x:Bind Name, Mode=OneWay}"
                                                                        HorizontalAlignment="Left"
                                                                        VerticalAlignment="Center" />
 
@@ -132,7 +133,7 @@
                                                                            Opacity="0.5"
                                                                            Text="{x:Bind TrimString(Publisher, 45), Mode=OneWay}"
                                                                            Tapped="{x:Bind ShowDeviceFolder, Mode=OneWay}"
-                                                                           ToolTipService.ToolTip="{x:Bind DeviceFolder, Mode=OneWay}"
+                                                                           ToolTipService.ToolTip="{x:Bind Folder, Mode=OneWay}"
                                                                            ToolTipService.Placement="Bottom" />
                                                             </StackPanel>
                                                         </StackPanel>
@@ -153,8 +154,7 @@
 
                                                         <Expander.Content>
                                                             <StackPanel Orientation="Vertical" Width="650">
-                                                                <StackPanel Orientation="Vertical"
-                                                                            Visibility="{x:Bind LoadError, Mode=OneWay}">
+                                                                <StackPanel Orientation="Vertical" Visibility="{x:Bind LoadError, Mode=OneWay}">
                                                                     <StackPanel.Transitions>
                                                                         <TransitionCollection>
                                                                             <RepositionThemeTransition />
@@ -166,32 +166,25 @@
                                                                                TextWrapping="WrapWholeWords"
                                                                                Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Blocked'), Mode=OneWay}" />
 
-                                                                    <StackPanel Orientation="Horizontal"
-                                                                        Margin="0,7,0,7">
+                                                                    <StackPanel Orientation="Horizontal" Margin="0,7,0,0">
                                                                         <TextBlock VerticalAlignment="Top"
                                                                             FontWeight="SemiBold" Opacity="0.5"
                                                                             Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Reason'), Mode=OneWay}"
                                                                             Margin="0,0,7,0" />
                                                                         <StackPanel Orientation="Vertical">
-                                                                            <TextBlock VerticalAlignment="Top"
-                                                                                FontWeight="SemiBold" Width="590"
-                                                                                TextWrapping="WrapWholeWords"
+                                                                            <TextBlock FontWeight="SemiBold" Width="590" TextWrapping="WrapWholeWords"
                                                                                 Text="{x:Bind ErrorText, Mode=OneWay}"
                                                                                 ToolTipService.ToolTip="{x:Bind ErrorText, Mode=OneWay}" />
-                                                                            <TextBlock VerticalAlignment="Top"
-                                                                                FontFamily="Consolas"
-                                                                                FontWeight="SemiBold" Width="590"
-                                                                                Margin="0,3,0,0"
-                                                                                TextWrapping="WrapWholeWords"
-                                                                                Opacity="0.6"
-                                                                                Text="{x:Bind Error, Mode=OneWay}"
+                                                                            <TextBlock FontFamily="Consolas" FontWeight="SemiBold" Width="590"
+                                                                                Margin="0,3,0,0" TextWrapping="WrapWholeWords" Opacity="0.6"
+                                                                                Text="{x:Bind Error, Mode=OneWay}" 
+                                                                                Visibility="{x:Bind ErrorValid, Mode=OneWay}"
                                                                                 ToolTipService.ToolTip="{x:Bind Error, Mode=OneWay}" />
                                                                         </StackPanel>
                                                                     </StackPanel>
                                                                 </StackPanel>
 
-                                                                <StackPanel Orientation="Horizontal"
-                                                                            Visibility="{x:Bind GuidValid, Mode=OneWay}">
+                                                                <StackPanel Orientation="Horizontal" Visibility="{x:Bind GuidValid, Mode=OneWay}">
                                                                     <StackPanel.Transitions>
                                                                         <TransitionCollection>
                                                                             <RepositionThemeTransition />
@@ -208,8 +201,7 @@
                                                                                ToolTipService.ToolTip="{x:Bind Guid, Mode=OneWay}" />
                                                                 </StackPanel>
 
-                                                                <StackPanel Orientation="Horizontal"
-                                                                            Visibility="{x:Bind LocationValid, Mode=OneWay}">
+                                                                <StackPanel Orientation="Horizontal" Visibility="{x:Bind LocationValid, Mode=OneWay}">
                                                                     <StackPanel.Transitions>
                                                                         <TransitionCollection>
                                                                             <RepositionThemeTransition />
@@ -223,14 +215,13 @@
 
                                                                     <TextBlock VerticalAlignment="Center"
                                                                                FontWeight="SemiBold"
-                                                                               Text="{x:Bind TrimString(DeviceFolder, 80), Mode=OneWay}"
+                                                                               Text="{x:Bind TrimString(Folder, 80), Mode=OneWay}"
                                                                                Tapped="{x:Bind ShowDeviceFolder, Mode=OneWay}"
-                                                                               ToolTipService.ToolTip="{x:Bind DeviceFolder, Mode=OneWay}"
+                                                                               ToolTipService.ToolTip="{x:Bind Folder, Mode=OneWay}"
                                                                                ToolTipService.Placement="Bottom" />
                                                                 </StackPanel>
 
-                                                                <StackPanel Orientation="Horizontal"
-                                                                            Visibility="{x:Bind WebsiteValid, Mode=OneWay}">
+                                                                <StackPanel Orientation="Horizontal" Visibility="{x:Bind WebsiteValid, Mode=OneWay}">
                                                                     <StackPanel.Transitions>
                                                                         <TransitionCollection>
                                                                             <RepositionThemeTransition />
