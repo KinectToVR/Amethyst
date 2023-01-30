@@ -960,7 +960,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         {
             // Launch passed service docs
             await Launcher.LaunchUriAsync(
-                TrackingDevices.TrackingDevicesList[AppData.Settings.ServiceEndpointGuid].ErrorDocsUri ??
+                TrackingDevices.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid].ErrorDocsUri ??
                 new Uri($"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/app/help/"));
         }
         catch (Exception ex)

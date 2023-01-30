@@ -233,6 +233,9 @@ public class ServiceEndpoint : INotifyPropertyChanged
     // Extensions: is this service used atm?
     public bool IsUsed => AppData.Settings.ServiceEndpointGuid == Guid;
 
+    // Get Docs
+    [DefaultValue(null)] public Uri ErrorDocsUri => Service.ErrorDocsUri;
+
     // Get GUID
     [DefaultValue("INVALID")] public string Guid { get; }
 
