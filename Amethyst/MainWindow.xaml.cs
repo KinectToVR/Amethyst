@@ -42,7 +42,9 @@ using Microsoft.Windows.AppNotifications;
 using WinRT;
 using WinRT.Interop;
 using System.ComponentModel.Composition.Primitives;
+using System.Data;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -208,7 +210,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
             if (!needToCreateNew)
             {
-                Logger.Error("Startup failed! The app is already running.");
+                Logger.Fatal(new AbandonedMutexException("Startup failed! The app is already running."));
 
                 if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
                         "K2CrashHandler", "K2CrashHandler.exe")))
@@ -223,7 +225,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         }
         catch (Exception e)
         {
-            Logger.Error($"Startup failed! Multi-instance lock mutex creation error: {e.Message}");
+            Logger.Fatal(new AbandonedMutexException(
+                $"Startup failed! Multi-instance lock mutex creation error: {e.Message}"));
 
             if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
                     "K2CrashHandler", "K2CrashHandler.exe")))
@@ -356,8 +359,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             Status = TrackingDevices.PluginLoadError.BadOrDuplicateGuid
                         });
 
-                        Logger.Error($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                     "has a duplicate GUID value to another plugin, discarding it!");
+                        Logger.Error(new DuplicateNameException($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                                                "has a duplicate GUID value to another plugin, discarding it!"));
                         continue; // Give up on this one :(
                     }
 
@@ -387,6 +390,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (CompositionException e)
                     {
+                        Crashes.TrackError(e); // Composition exception
                         Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                      "failed with a local (plugin-wise) MEF exception: " +
                                      $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
@@ -407,6 +411,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (Exception e)
                     {
+                        Crashes.TrackError(e); // Other exception
                         Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                      "failed with an exception, probably some of its dependencies are missing. " +
                                      $"Message: {e.Message}, Trace: {e.StackTrace}");
@@ -561,8 +566,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             Status = TrackingDevices.PluginLoadError.BadOrDuplicateGuid
                         });
 
-                        Logger.Error($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                     "has a duplicate GUID value to another plugin, discarding it!");
+                        Logger.Error(new DuplicateNameException($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                                                "has a duplicate GUID value to another plugin, discarding it!"));
                         continue; // Give up on this one :(
                     }
 
@@ -592,6 +597,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (CompositionException e)
                     {
+                        Crashes.TrackError(e); // Composition exception
                         Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                      "failed with a local (plugin-wise) MEF exception: " +
                                      $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
@@ -612,6 +618,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (Exception e)
                     {
+                        Crashes.TrackError(e); // Other exception
                         Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                      "failed with an exception, probably some of its dependencies are missing. " +
                                      $"Message: {e.Message}, Trace: {e.StackTrace}");
@@ -696,6 +703,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 catch (Exception e)
                 {
                     // Add the device to the 'attempted' list, mark as unknown
+                    Crashes.TrackError(e); // Other, outer MEF container exception
                     Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                  "failed with a global outer caught exception. " +
                                  $"Provided exception Message: {e.Message}, Trace: {e.StackTrace}");
@@ -728,6 +736,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         }
         catch (CompositionException e)
         {
+            Crashes.TrackError(e); // Other, outer MEF builder exception
             Logger.Error("Loading plugins failed with a global MEF exception: " +
                          $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
                          $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
@@ -1172,19 +1181,19 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     else
                     {
-                        Logger.Error("Installer-uri-check failed, the \"download\" key wasn't found.");
+                        Logger.Error(new KeyNotFoundException("Installer-uri-check failed, the \"download\" key wasn't found."));
                         updateError = true;
                     }
                 }
                 else
                 {
-                    Logger.Error("Installer-uri-check failed, the string was empty.");
+                    Logger.Error(new NoNullAllowedException("Installer-uri-check failed, the string was empty."));
                     updateError = true;
                 }
             }
             catch (Exception e)
             {
-                Logger.Error($"Error checking the updater download Uri! Message: {e.Message}");
+                Logger.Error(new Exception($"Error checking the updater download Uri! Message: {e.Message}"));
                 updateError = true;
             }
 
@@ -1237,13 +1246,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 }
                 catch (Exception e)
                 {
-                    Logger.Error($"Error downloading the updater! Message: {e.Message}");
+                    Logger.Error(new Exception($"Error downloading the updater! Message: {e.Message}"));
                     updateError = true;
                 }
         }
         catch (Exception e)
         {
-            Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+            Logger.Error(new Exception($"Update failed, an exception occurred. Message: {e.Message}"));
             updateError = true;
         }
 
@@ -1280,7 +1289,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             }
             catch (Exception e)
             {
-                Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+                Logger.Error(new Exception($"Update failed, an exception occurred. Message: {e.Message}"));
                 goto update_error; // Jump to the error scenario
             }
 
@@ -1369,7 +1378,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (Exception e)
                     {
-                        Logger.Error($"Error getting the release info! Message: {e.Message}");
+                        Logger.Error(new Exception($"Error getting the release info! Message: {e.Message}"));
                     }
 
                     // Language
@@ -1382,7 +1391,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (Exception e)
                     {
-                        Logger.Error($"Error getting the language info! Message: {e.Message}");
+                        Logger.Error(new Exception($"Error getting the language info! Message: {e.Message}"));
                     }
 
                     // If the read string isn't empty, proceed to checking for updates
@@ -1394,7 +1403,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         var jsonHead = JsonObject.Parse(getReleaseVersion);
 
                         if (!jsonHead.ContainsKey("amethyst"))
-                            Logger.Error("The latest release's manifest was invalid!");
+                            Logger.Error(new InvalidDataException("The latest release's manifest was invalid!"));
 
                         // Parse the amethyst entry
                         var jsonRoot = jsonHead.GetNamedObject("amethyst");
@@ -1431,7 +1440,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     else
                     {
-                        Logger.Error("Update-check failed, the string was empty.");
+                        Logger.Error(new NoNullAllowedException("Update-check failed, the string was empty."));
                     }
 
                     if (!string.IsNullOrEmpty(getDocsLanguages))
@@ -1451,7 +1460,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     else
                     {
-                        Logger.Error("Language-check failed, the string was empty.");
+                        Logger.Error(new NoNullAllowedException("Language-check failed, the string was empty."));
                     }
                 }
                 catch (Exception e)
@@ -1595,7 +1604,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         }
 
         // Still here?
-        Logger.Error("App will not be restarted due to caller process identification error.");
+        Logger.Fatal(new InvalidDataException("App will not be restarted due to caller process identification error."));
 
         Interfacing.ShowToast(
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),

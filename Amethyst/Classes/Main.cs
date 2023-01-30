@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
@@ -587,15 +588,17 @@ public static class Main
             }
             catch (Exception e)
             {
-                Logger.Error("The main loop has crashed! Restarting it now... " +
-                             $"{e.GetType().Name} in {e.Source}: {e.Message}\n{e.StackTrace}");
+                Logger.Fatal(new AggregateException(
+                    "The main loop has crashed! Restarting it now... " +
+                    $"{e.GetType().Name} in {e.Source}: {e.Message}\n{e.StackTrace}"));
 
                 serverTries++; // One more?
                 switch (serverTries)
                 {
                     case > 3 and <= 7:
                         // We've crashed the third time now. Somethin's off.. really...
-                        Logger.Error("Server loop has already crashed 3 times. Checking the joint config...");
+                        Logger.Fatal(new AggregateException(
+                            "Server loop has already crashed 3 times. Checking the joint config..."));
 
                         // Check the joint configuration
                         AppData.Settings.CheckSettings();
@@ -603,7 +606,8 @@ public static class Main
 
                     case > 7:
                         // We've crashed the seventh time now. Somethin's off.. really...
-                        Logger.Error("Server loop has already crashed 7 times. Giving up...");
+                        Logger.Fatal(new ApplicationException(
+                            "Server loop has already crashed 7 times. Giving up..."));
 
                         // Mark exiting as true
                         Interfacing.IsExitingNow = true;

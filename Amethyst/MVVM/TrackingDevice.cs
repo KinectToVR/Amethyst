@@ -22,6 +22,7 @@ using Amethyst.Utils;
 using AmethystSupport;
 using static Amethyst.Classes.Interfacing;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.AppCenter.Crashes;
 
 namespace Amethyst.MVVM;
 
@@ -432,6 +433,7 @@ public static class ICollectionExtensions
             }
             catch (CompositionException e)
             {
+                Crashes.TrackError(e); // Composition exception
                 if (fileInfo.Name.StartsWith("plugin"))
                     Logger.Error($"Loading {fileInfo} failed with a composition exception: " +
                                  $"Message: {e.Message}\nErrors occurred: {e.Errors}\nPossible causes: {e.RootCauses}");
@@ -441,6 +443,7 @@ public static class ICollectionExtensions
             }
             catch (Exception e)
             {
+                Crashes.TrackError(e); // Unknown exception
                 if (fileInfo.Name.StartsWith("plugin"))
                     Logger.Error($"Loading {fileInfo} failed with an exception: Message: {e.Message} " +
                                  "Probably some assembly referenced by this plugin is missing.");
@@ -448,7 +451,7 @@ public static class ICollectionExtensions
                     Logger.Warn($"[Non-critical] Loading {fileInfo} failed with an exception: {e.Message}");
             }
 
-        return true; // Nah, not this time
+        return false; // Nah, not this time
     }
 }
 

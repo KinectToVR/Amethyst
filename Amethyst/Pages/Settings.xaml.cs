@@ -721,7 +721,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         }
 
         // Still here?
-        Logger.Error("App will not be restarted due to caller process identification error.");
+        Logger.Fatal(new InvalidDataException("App will not be restarted due to caller process identification error."));
 
         Interfacing.ShowToast(
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
@@ -965,7 +965,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            Logger.Error($"Couldn't launch service docs! Message: {ex.Message}");
+            Logger.Error(new InvalidDataException($"Couldn't launch service docs! Message: {ex.Message}"));
         }
     }
 

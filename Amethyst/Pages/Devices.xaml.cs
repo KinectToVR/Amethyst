@@ -465,7 +465,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            Logger.Error($"Couldn't launch device docs! Message: {ex.Message}");
+            Logger.Error(new InvalidOperationException($"Couldn't launch device docs! Message: {ex.Message}"));
         }
     }
 
