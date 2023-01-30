@@ -177,7 +177,7 @@
                                                                                 ToolTipService.ToolTip="{x:Bind ErrorText, Mode=OneWay}" />
                                                                             <TextBlock FontFamily="Consolas" FontWeight="SemiBold" Width="590"
                                                                                 Margin="0,3,0,0" TextWrapping="WrapWholeWords" Opacity="0.6"
-                                                                                Text="{x:Bind Error, Mode=OneWay}" 
+                                                                                Text="{x:Bind Error, Mode=OneWay}" IsTextSelectionEnabled="True"
                                                                                 Visibility="{x:Bind ErrorValid, Mode=OneWay}"
                                                                                 ToolTipService.ToolTip="{x:Bind Error, Mode=OneWay}" />
                                                                         </StackPanel>
