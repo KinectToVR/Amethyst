@@ -305,7 +305,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         if (pluginDirectoryList.Count < 1)
         {
-            Logger.Fatal("No plugins directories found! Shutting down...");
+            Logger.Fatal(new CompositionException("No plugins directories found! Shutting down..."));
             Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoPlugins"));
         }
 
@@ -507,7 +507,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Check if we have enough plugins to run the app
             if (TrackingDevices.TrackingDevicesList.Count < 1)
             {
-                Logger.Fatal("No plugins (tracking devices) loaded! Shutting down...");
+                Logger.Fatal(new CompositionException("No plugins (tracking devices) loaded! Shutting down..."));
                 Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoDevices"));
             }
 
@@ -716,7 +716,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Check if we have enough plugins to run the app
             if (TrackingDevices.ServiceEndpointsList.Count < 1)
             {
-                Logger.Fatal("No plugins (service endpoints) loaded! Shutting down...");
+                Logger.Fatal(new CompositionException("No plugins (service endpoints) loaded! Shutting down..."));
                 Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoServices"));
             }
 
@@ -791,8 +791,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Check if we've found such a device
             if (firstValidDevice is null)
             {
-                Logger.Fatal("No plugins valid (tracking devices) which provide " +
-                             "at lest 1 tracked joint have been found! Shutting down...");
+                Logger.Fatal(new CompositionException("No plugins valid (tracking devices) which provide " +
+                                                      "at lest 1 tracked joint have been found! Shutting down..."));
                 Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoJoints"));
             }
 

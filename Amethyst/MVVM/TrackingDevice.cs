@@ -584,10 +584,12 @@ public class PluginHost : IAmethystHost
         {
             case LogSeverity.Fatal:
                 Logger.Fatal($"[{Guid}] " + message, lineNumber, filePath, memberName);
+                Logger.Fatal(new AggregateException($"[{Guid}] " + message));
                 break;
 
             case LogSeverity.Error:
                 Logger.Error($"[{Guid}] " + message, lineNumber, filePath, memberName);
+                Logger.Fatal(new AggregateException($"[{Guid}] " + message));
                 break;
 
             case LogSeverity.Warning:

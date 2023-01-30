@@ -53,7 +53,17 @@ public static class Logger
         [CallerMemberName] string memberName = "")
     {
         LogInternal(FormatToLogMessage(text, "E", lineNumber, filePath, memberName), ConsoleColor.Red);
-        Crashes.TrackError(new Exception(text));
+    }
+
+    public static void Error(Exception exception, [CallerLineNumber] int lineNumber = 0,
+        [CallerFilePath] string filePath = "", [CallerMemberName] string memberName = "")
+    {
+        LogInternal(FormatToLogMessage(
+            $"Exception occurred! {exception.GetType().Name} " +
+            $"in {exception.Source}: {exception.Message}\n{exception.StackTrace}",
+            "E", lineNumber, filePath, memberName), ConsoleColor.Red);
+
+        Crashes.TrackError(exception);
     }
 
     public static void Error(object obj, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
@@ -66,7 +76,17 @@ public static class Logger
         [CallerMemberName] string memberName = "")
     {
         LogInternal(FormatToLogMessage(text, "F", lineNumber, filePath, memberName), ConsoleColor.DarkRed);
-        Crashes.TrackError(new Exception(text));
+    }
+
+    public static void Fatal(Exception exception, [CallerLineNumber] int lineNumber = 0,
+        [CallerFilePath] string filePath = "", [CallerMemberName] string memberName = "")
+    {
+        LogInternal(FormatToLogMessage(
+            $"Exception occurred! {exception.GetType().Name} " +
+            $"in {exception.Source}: {exception.Message}\n{exception.StackTrace}",
+            "F", lineNumber, filePath, memberName), ConsoleColor.DarkRed);
+
+        Crashes.TrackError(exception);
     }
 
     public static void Fatal(object obj, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
