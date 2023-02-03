@@ -139,29 +139,34 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Making the app dispatcher available for children views...");
         Shared.Main.DispatcherQueue = DispatcherQueue;
 
-        Logger.Info("Registering for NotificationInvoked WinRT event...");
+        try
+        {
+            Logger.Info("Registering for NotificationInvoked WinRT event...");
+            if (!AppNotificationManager.IsSupported()) // Check for compatibility first
+                throw new NotSupportedException("AppNotificationManager is not supported on this system!");
 
-        // To ensure all Notification handling happens in this process instance, register for
-        // NotificationInvoked before calling Register(). Without this a new process will
-        // be launched to handle the notification.
-        AppNotificationManager.Default.NotificationInvoked +=
-            (_, notificationActivatedEventArgs) =>
-            {
-                Interfacing.ProcessToastArguments(notificationActivatedEventArgs);
-            };
+            // To ensure all Notification handling happens in this process instance, register for
+            // NotificationInvoked before calling Register(). Without this a new process will
+            // be launched to handle the notification.
+            AppNotificationManager.Default.NotificationInvoked +=
+                (_, notificationActivatedEventArgs) =>
+                {
+                    Interfacing.ProcessToastArguments(notificationActivatedEventArgs);
+                };
 
-        Logger.Info("Creating the default notification manager...");
-        Shared.Main.NotificationManager = AppNotificationManager.Default;
+            Logger.Info("Creating the default notification manager...");
+            Shared.Main.NotificationManager = AppNotificationManager.Default;
 
-        Logger.Info("Registering the notification manager...");
-        Shared.Main.NotificationManager.Register();
-
-        Logger.Info("Creating and registering the default resource manager...");
-        Shared.Main.ResourceManager = new ResourceManager("resources.pri");
-
-        Logger.Info("Creating and registering the default resource context...");
-        Shared.Main.ResourceContext = Shared.Main.ResourceManager.CreateResourceContext();
-
+            Logger.Info("Registering the notification manager...");
+            Shared.Main.NotificationManager.Register(); // Try registering
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e); // We couldn't set the manager up, sorry...
+            Logger.Info("Resetting the notification manager...");
+            Shared.Main.NotificationManager = null; // Not using it!
+        }
+        
         Logger.Info("Pushing control pages the global collection...");
         Shared.Main.Pages = new List<(string Tag, Type Page)>
         {
@@ -312,7 +317,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     });
             }
 
-            else Logger.Info("No external plugins found! Loading the local ones now...");
+            else
+            {
+                Logger.Info("No external plugins found! Loading the local ones now...");
+            }
         }
         catch (FileNotFoundException e)
         {
@@ -1200,7 +1208,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     else
                     {
-                        Logger.Error(new KeyNotFoundException("Installer-uri-check failed, the \"download\" key wasn't found."));
+                        Logger.Error(
+                            new KeyNotFoundException("Installer-uri-check failed, the \"download\" key wasn't found."));
                         updateError = true;
                     }
                 }
@@ -1902,8 +1911,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             _configurationSource = null;
         }
 
-        // Call before exiting for subsequent invocations to launch a new process
-        Shared.Main.NotificationManager.Unregister();
+        try
+        {
+            // Call before exiting for subsequent invocations to launch a new process
+            Shared.Main.NotificationManager?.Unregister();
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
 
         // Finally allow exits
         args.Handled = false;

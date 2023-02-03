@@ -162,7 +162,7 @@ public static class Interfacing
                 : AppNotificationPriority.Default
         };
 
-        Shared.Main.NotificationManager.Show(toast);
+        Shared.Main.NotificationManager?.Show(toast);
     }
 
     [DllImport("user32.dll")]

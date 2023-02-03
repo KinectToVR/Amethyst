@@ -67,8 +67,6 @@ public static class Shared
         public static DispatcherQueue DispatcherQueue;
 
         public static AppNotificationManager NotificationManager;
-        public static ResourceManager ResourceManager;
-        public static ResourceContext ResourceContext;
 
         public static Grid
             InterfaceBlockerGrid, NavigationBlockerGrid;
