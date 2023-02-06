@@ -872,10 +872,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
-
-        // Hide additional controls
-        Shared.General.CalibrationButton.IsEnabled = false;
-
+        
         // Mark the service as non-failed, clean
         Interfacing.ServiceEndpointFailure = false;
         Interfacing.AppTrackersSpawned = false;
@@ -925,10 +922,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
-
-        // Hide additional controls
-        Shared.General.CalibrationButton.IsEnabled = false;
-
+        
         // Mark the service as non-failed, clean
         Interfacing.ServiceEndpointFailure = false;
         Interfacing.AppTrackersSpawned = false;
@@ -1016,10 +1010,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
-
-        // Hide additional controls
-        Shared.General.CalibrationButton.IsEnabled = false;
-
+        
         // Mark the service as non-failed, disable trackers
         Interfacing.ServiceEndpointFailure = false;
         Interfacing.AppTrackersInitialized = false;

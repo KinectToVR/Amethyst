@@ -129,6 +129,23 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private string ServiceStatusLabel => Interfacing.LocalizedJsonString("/GeneralPage/Captions/DriverStatus/Label")
         .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
 
+    private bool AllowCalibration => Interfacing.AppTrackersInitialized && ServiceStatusOk;
+
+    private bool ServiceStatusError => TrackingDevices.CurrentServiceEndpoint.StatusError;
+
+    private bool ServiceStatusOk => TrackingDevices.CurrentServiceEndpoint.StatusOk;
+
+    private string[] ServiceStatusText
+    {
+        get
+        {
+            var message = StringUtils.SplitStatusString(TrackingDevices.CurrentServiceEndpoint.ServiceStatusString);
+            return message is null || message.Length < 3
+                ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" }
+                : message; // If everything is all right this time
+        }
+    }
+    
     public event PropertyChangedEventHandler PropertyChanged;
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -156,11 +173,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 AppData.Settings.AutoSpawnEnabledJoints) // If autospawn
             {
                 if (await Interfacing.SpawnEnabledTrackers())
-                {
-                    // Mark as spawned
-                    ToggleTrackersButton.IsChecked = true;
-                    CalibrationButton.IsEnabled = true;
-                }
+                    ToggleTrackersButton.IsChecked = true; // Mark as spawned
 
                 // Cry about it
                 else
@@ -786,25 +799,23 @@ public sealed partial class General : Page, INotifyPropertyChanged
                     Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
                     Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
             }
+        }
+        
+        // Give up if failed
+        if (!Interfacing.ServiceEndpointFailure)
+        {
+            // Mark trackers as active
+            Interfacing.AppTrackersInitialized = true;
 
-            // Update things
-            Interfacing.UpdateServerStatus();
+            // Request a check for already-added trackers
+            Interfacing.AlreadyAddedTrackersScanRequested = true;
+
+            // Play a sound
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.TrackersConnected);
         }
 
-        // Give up if failed
-        if (Interfacing.ServiceEndpointFailure) return;
-
-        // Mark trackers as active
-        Interfacing.AppTrackersInitialized = true;
-
-        // Request a check for already-added trackers
-        Interfacing.AlreadyAddedTrackersScanRequested = true;
-
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.TrackersConnected);
-
-        // Show additional controls
-        CalibrationButton.IsEnabled = true;
+        OnPropertyChanged(); // Refresh the UI
+        Interfacing.UpdateServerStatus();
         TrackingDevices.UpdateTrackingDevicesInterface();
     }
 
@@ -823,8 +834,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.TrackersDisconnected);
 
-        // Hide additional controls
-        CalibrationButton.IsEnabled = false;
+        OnPropertyChanged(); // Refresh the UI
+        Interfacing.UpdateServerStatus();
         TrackingDevices.UpdateTrackingDevicesInterface();
     }
 

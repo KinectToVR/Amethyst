@@ -1201,12 +1201,12 @@
                         </Grid.Resources>
 
                         <Button FontSize="15" x:Name="CalibrationButton" Click="CalibrationButton_Click"
-                                Visibility="Visible"
+                                Visibility="Visible" IsEnabled="{x:Bind AllowCalibration, Mode=OneWay}"
                                 Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Calibration/Begin'), Mode=OneWay}"
-                                IsEnabled="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                Padding="55,0"
-                                Margin="10,10,10,10" CornerRadius="4" Grid.Column="0" HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}">
+                                VerticalContentAlignment="Center" FontWeight="SemiBold" Grid.Column="0"
+                                Padding="55,0" Margin="10,10,10,10" CornerRadius="4"
+                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                Style="{ThemeResource AccentButtonStyle}">
                             <Button.OpacityTransition>
                                 <ScalarTransition />
                             </Button.OpacityTransition>
@@ -1253,6 +1253,7 @@
                             <Button.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem x:Name="OffsetsButton" Click="OffsetsButton_Click" Tag="offsets"
+                                                    IsEnabled="{x:Bind ServiceStatusOk, Mode=OneWay}"
                                                     Text="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Offsets'), Mode=OneWay}">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xECC6;" />
@@ -1277,6 +1278,7 @@
                     </Grid>
 
                     <ToggleButton FontSize="15" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked"
+                                  IsEnabled="{x:Bind ServiceStatusOk, Mode=OneWay}"
                                   Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center"
                                   FontWeight="SemiBold" Margin="40,10" CornerRadius="4"
                                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0">
@@ -1405,37 +1407,38 @@
                                            Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
                                            Margin="5,0,0,0" x:Name="ServerStatusLabel"
-                                           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/DriverStatus'), Mode=OneWay}" />
+                                           Text="{x:Bind ServiceStatusText[0], Mode=OneWay}" />
                             </StackPanel>
 
                             <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
                                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                   BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
 
-                                  Padding="0,0,5,10"
-                                  Width="440" Height="Auto" Margin="0,5,0,0" CornerRadius="4"
+                                  Padding="0,0,5,10" Width="440" Height="Auto"
+                                  Margin="0,5,0,0" CornerRadius="4"
+                                  Visibility="{x:Bind ServiceStatusError, Mode=OneWay}"
                                   x:Name="ServerErrorWhatGrid">
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-                                           Text="[DUM_SERVER_ERROR_CODE]" Margin="10,7,0,0" FontFamily="Consolas"
-                                           x:Name="ServerErrorLabel"
+                                           Margin="10,7,0,0" FontFamily="Consolas"
+                                           x:Name="ServerErrorLabel" Text="{x:Bind ServiceStatusText[1], Mode=OneWay}"
+                                           Visibility="{x:Bind ServiceStatusError, Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
+                                           Visibility="{x:Bind ServiceStatusError, Mode=OneWay}"
                                            x:Name="ServerErrorWhatText"
+                                           Text="{x:Bind ServiceStatusText[2], Mode=OneWay}"
                                            Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                           Margin="10,30,5,0" TextWrapping="WrapWholeWords">
-                                    <TextBlock.Text>
-                                        There is either a problem with your adapter/cables or with the Kinect device driver registration in Windows.
-                                    </TextBlock.Text>
-                                </TextBlock>
+                                           Margin="10,30,5,0" TextWrapping="WrapWholeWords" />
                             </Grid>
 
                             <Button Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     x:Name="ServiceSettingsButton" Click="ServiceSettingsButton_Click"
+                                    Visibility="{x:Bind ServiceStatusError, Mode=OneWay}"
                                     Content="{x:Bind ServiceSettingsText, Mode=OneWay}"
-                                    Style="{ThemeResource AccentButtonStyle}" FontWeight="SemiBold"
-                                    Margin="40,10" FontSize="15" Visibility="Collapsed" />
+                                    Style="{ThemeResource AccentButtonStyle}"
+                                    FontWeight="SemiBold" Margin="40,10" FontSize="15" />
 
                             <StackPanel Orientation="Horizontal" Margin="40,5,20,0">
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"

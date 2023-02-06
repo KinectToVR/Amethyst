@@ -432,40 +432,8 @@ public static class Interfacing
 
     public static void UpdateServerStatus()
     {
-        // Check with this one, should be the same for all anyway
-        if (Shared.General.ServerErrorWhatText is not null)
-        {
-            Shared.General.ServerErrorWhatText.Visibility =
-                IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
-            Shared.General.ServerErrorWhatGrid.Visibility =
-                IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
-            Shared.General.ServerErrorLabel.Visibility =
-                IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
-            Shared.General.ServiceSettingsButton.Visibility =
-                IsServiceEndpointPresent ? Visibility.Collapsed : Visibility.Visible;
-
-            // Split status and message by \n
-            var message = StringUtils.SplitStatusString(ServiceEndpointStatusString);
-            if (message is null || message.Length < 3)
-                message = new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" };
-
-            Shared.General.ServerStatusLabel.Text = message[0];
-            Shared.General.ServerErrorLabel.Text = message[1];
-            Shared.General.ServerErrorWhatText.Text = message[2];
-        }
-
         // Block some things if server isn't working properly
-        if (IsServiceEndpointPresent)
-        {
-            Shared.General.ToggleTrackersButton.IsEnabled = true;
-            Shared.General.OffsetsButton.IsEnabled = true;
-            return; // Unlock spawn|offsets|calibration buttons
-        }
-
-        Logger.Error("An error occurred and the app couldn't connect to K2 Server. " +
-                     "Please check the upper message for more info.");
-
-        if (Shared.General.ErrorWhatText is null) return;
+        if (Shared.General.ErrorWhatText is null || IsServiceEndpointPresent) return;
         Logger.Info("[Server Error] Entering the server error state...");
 
         // Hide device error labels (if any)
@@ -818,6 +786,9 @@ public static class Interfacing
             {
                 // Force refresh all the valid pages
                 Shared.Events.RequestInterfaceReload(false);
+                
+                // Optionally hide other status errors
+                UpdateServerStatus();
             });
         }
     }
