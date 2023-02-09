@@ -50,7 +50,7 @@
                         Placement="Top" Opening="CommandFlyout_Opening">
                     <Flyout.FlyoutPresenterStyle>
                         <Style TargetType="FlyoutPresenter">
-                            <Setter Property="MaxHeight" Value="60" />
+                            <Setter Property="MinHeight" Value="60" />
                             <Setter Property="MaxWidth" Value="735" />
                             <Setter Property="MinWidth" Value="735" />
                             <Setter Property="Margin" Value="7,0,0,0" />
@@ -60,6 +60,7 @@
                     </Flyout.FlyoutPresenterStyle>
 
                     <TextBox PlaceholderText="Type command:" x:Name="CommandTextBox"
+                             TextWrapping="Wrap" IsSpellCheckEnabled="False"
                              KeyDown="CommandTextBox_KeyDown" MaxWidth="711" />
                 </Flyout>
             </Grid.Resources>
