@@ -105,7 +105,7 @@
                              Style="{ThemeResource BigTeachingTipStyle}"
                              IsLightDismissEnabled="True" />
 
-                <TeachingTip x:Name="ReloadTeachingTip"
+                <!--<TeachingTip x:Name="ReloadTeachingTip"
                              Canvas.ZIndex="100"
                              Title="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Title'), Mode=OneWay}"
                              Subtitle="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Content'), Mode=OneWay}"
@@ -114,197 +114,85 @@
                              PlacementMargin="0,29,-8,0"
                              CloseButtonClick="ReloadTeachingTip_CloseButtonClick"
                              Style="{ThemeResource BigTeachingTipStyle}"
-                             IsLightDismissEnabled="False" />
+                             IsLightDismissEnabled="False" />-->
             </Grid.Resources>
         </Grid>
 
-        <muxc:NavigationView x:Name="NavView"
-                             IsTabStop="False"
-                             Margin="0,40,0,0"
-                             IsTitleBarAutoPaddingEnabled="False"
-                             Loaded="NavView_Loaded"
-                             ItemInvoked="NavView_ItemInvoked"
-                             BackRequested="NavView_BackRequested"
+        <Grid Margin="0,40,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-                             FontSize="16"
-                             IsPaneOpen="False"
-                             SelectedItem="general"
+            <InfoBar x:Name="ReloadInfoBar" Grid.Row="0" Opacity="0.0"
+                     IsOpen="False" IsClosable="False" Margin="3,0,3,3" Severity="Warning"
+                     Title="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Title'), Mode=OneWay}"
+                     Message="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Content'), Mode=OneWay}">
 
-                             IsSettingsVisible="False"
-                             IsBackButtonVisible="Collapsed"
-                             IsBackEnabled="False"
-                             AlwaysShowHeader="False"
-                             SelectionFollowsFocus="Disabled"
-                             IsPaneToggleButtonVisible="False"
+                <InfoBar.ActionButton>
+                    <Button HorizontalAlignment="Right" Click="ReloadInfoBar_CloseButtonClick"
+                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Restart'), Mode=OneWay}" />
+                </InfoBar.ActionButton>
 
-                             PaneDisplayMode="Left"
-                             CompactPaneLength="70"
-                             OpenPaneLength="70">
+                <InfoBar.OpacityTransition>
+                    <ScalarTransition />
+                </InfoBar.OpacityTransition>
+            </InfoBar>
 
-            <!--Note: Disable/Delete this if using LeftCompat instead of Left pane mode-->
-            <NavigationView.Resources>
-                <!-- ReSharper disable once Xaml.RedundantResource -->
-                <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
-                <!-- ReSharper disable once Xaml.RedundantResource -->
-                <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="Transparent" />
-            </NavigationView.Resources>
+            <muxc:NavigationView x:Name="NavView" Grid.Row="1"
+                                 IsTabStop="False"
+                                 Margin="0,0,0,0"
+                                 IsTitleBarAutoPaddingEnabled="False"
+                                 Loaded="NavView_Loaded"
+                                 ItemInvoked="NavView_ItemInvoked"
+                                 BackRequested="NavView_BackRequested"
 
-            <muxc:NavigationView.MenuItems>
+                                 FontSize="16"
+                                 IsPaneOpen="False"
+                                 SelectedItem="general"
 
-                <NavigationViewItem FontSize="10" FontWeight="Medium"
-                                    Tag="general" x:Name="GeneralItem" Height="63" BackgroundSizing="OuterBorderEdge">
-                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                        <FontIcon Glyph="&#xEA8A;" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
-                                  x:Name="NavViewGeneralButtonIcon" FontSize="22" Translation="0,-8,0">
-                            <FontIcon.TranslationTransition>
-                                <Vector3Transition />
-                            </FontIcon.TranslationTransition>
-                        </FontIcon>
+                                 IsSettingsVisible="False"
+                                 IsBackButtonVisible="Collapsed"
+                                 IsBackEnabled="False"
+                                 AlwaysShowHeader="False"
+                                 SelectionFollowsFocus="Disabled"
+                                 IsPaneToggleButtonVisible="False"
 
-                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock HorizontalAlignment="Center" Opacity="0.0" x:Name="NavViewGeneralButtonLabel"
-                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/General'), Mode=OneWay}"
-                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
-                                <TextBlock.OpacityTransition>
-                                    <ScalarTransition />
-                                </TextBlock.OpacityTransition>
-                            </TextBlock>
-                        </Viewbox>
-                    </Grid>
-                </NavigationViewItem>
+                                 PaneDisplayMode="Left"
+                                 CompactPaneLength="70"
+                                 OpenPaneLength="70">
 
-                <NavigationViewItem FontSize="10" FontWeight="Medium"
-                                    Tag="settings" x:Name="SettingsItem" Height="63" BackgroundSizing="OuterBorderEdge">
-                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                        <FontIcon Glyph="&#xE713;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                  x:Name="NavViewSettingsButtonIcon" FontSize="22" Translation="0,-8,0">
-                            <FontIcon.TranslationTransition>
-                                <Vector3Transition />
-                            </FontIcon.TranslationTransition>
-                        </FontIcon>
+                <NavigationView.Transitions>
+                    <TransitionCollection>
+                        <RepositionThemeTransition />
+                    </TransitionCollection>
+                </NavigationView.Transitions>
 
-                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock HorizontalAlignment="Center" x:Name="NavViewSettingsButtonLabel"
-                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Settings'), Mode=OneWay}"
-                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
-                                <TextBlock.OpacityTransition>
-                                    <ScalarTransition />
-                                </TextBlock.OpacityTransition>
-                            </TextBlock>
-                        </Viewbox>
-                    </Grid>
-                </NavigationViewItem>
+                <!--Note: Disable/Delete this if using LeftCompat instead of Left pane mode-->
+                <NavigationView.Resources>
+                    <!-- ReSharper disable once Xaml.RedundantResource -->
+                    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
+                    <!-- ReSharper disable once Xaml.RedundantResource -->
+                    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="Transparent" />
+                </NavigationView.Resources>
 
-                <NavigationViewItem FontSize="10" FontWeight="Medium"
-                                    Tag="devices" x:Name="DevicesItem" Height="63" BackgroundSizing="OuterBorderEdge">
-                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                        <FontIcon Glyph="&#xF158;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                  x:Name="NavViewDevicesButtonIcon" FontSize="20" Translation="0,-8,0">
-                            <FontIcon.TranslationTransition>
-                                <Vector3Transition />
-                            </FontIcon.TranslationTransition>
-                        </FontIcon>
+                <muxc:NavigationView.MenuItems>
 
-                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock HorizontalAlignment="Center" x:Name="NavViewDevicesButtonLabel"
-                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Devices'), Mode=OneWay}"
-                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
-                                <TextBlock.OpacityTransition>
-                                    <ScalarTransition />
-                                </TextBlock.OpacityTransition>
-                            </TextBlock>
-                        </Viewbox>
-                    </Grid>
-                </NavigationViewItem>
-
-                <NavigationViewItem FontSize="10" FontWeight="Medium"
-                                    Tag="info" x:Name="InfoItem" Height="63" BackgroundSizing="OuterBorderEdge">
-                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                        <FontIcon Glyph="&#xE946;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                  x:Name="NavViewInfoButtonIcon" FontSize="22" Translation="0,-8,0">
-                            <FontIcon.TranslationTransition>
-                                <Vector3Transition />
-                            </FontIcon.TranslationTransition>
-                        </FontIcon>
-
-                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock HorizontalAlignment="Center" x:Name="NavViewInfoButtonLabel"
-                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Info'), Mode=OneWay}"
-                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
-                                <TextBlock.OpacityTransition>
-                                    <ScalarTransition />
-                                </TextBlock.OpacityTransition>
-                            </TextBlock>
-                        </Viewbox>
-                    </Grid>
-                </NavigationViewItem>
-
-                <NavigationViewItem FontSize="10" FontWeight="Medium" Visibility="Collapsed"
-                                    Tag="console" x:Name="ConsoleItem" Height="63" BackgroundSizing="OuterBorderEdge">
-                    <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                        <FontIcon Glyph="&#xEB51;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                  x:Name="NavViewOkashiButtonIcon" FontSize="22" Translation="0,-8,0">
-                            <FontIcon.TranslationTransition>
-                                <Vector3Transition />
-                            </FontIcon.TranslationTransition>
-                        </FontIcon>
-
-                        <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                            <TextBlock Text="お菓子❢" HorizontalAlignment="Center"
-                                       x:Name="NavViewOkashiButtonLabel"
-                                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
-                                <TextBlock.OpacityTransition>
-                                    <ScalarTransition />
-                                </TextBlock.OpacityTransition>
-                            </TextBlock>
-                        </Viewbox>
-                    </Grid>
-                </NavigationViewItem>
-            </muxc:NavigationView.MenuItems>
-
-            <muxc:NavigationView.PaneFooter>
-                <StackPanel Orientation="Vertical">
-                    <NavigationViewItem x:Name="UpdateButton" Height="63"
-                                        FontSize="10" FontWeight="Medium"
-                                        BackgroundSizing="OuterBorderEdge"
-                                        Tapped="UpdateButton_Tapped"
-                                        Loaded="UpdateButton_Loaded">
-
+                    <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                        Tag="general" x:Name="GeneralItem" Height="63"
+                                        BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <Grid Translation="0,-8,0" x:Name="UpdateIconGrid">
-                                <Grid.TranslationTransition>
+                            <FontIcon Glyph="&#xEA8A;" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                      x:Name="NavViewGeneralButtonIcon" FontSize="22" Translation="0,-8,0">
+                                <FontIcon.TranslationTransition>
                                     <Vector3Transition />
-                                </Grid.TranslationTransition>
-
-                                <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" FontSize="20"
-                                          Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                          Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5124">
-                                    <FontIcon.RenderTransform>
-                                        <CompositeTransform />
-                                    </FontIcon.RenderTransform>
-
-                                    <FontIcon.Transitions>
-                                        <TransitionCollection>
-                                            <RepositionThemeTransition />
-                                        </TransitionCollection>
-                                    </FontIcon.Transitions>
-                                </FontIcon>
-
-                                <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="16"
-                                          IsHitTestVisible="False"
-                                          HorizontalAlignment="Left" VerticalAlignment="Bottom" Canvas.ZIndex="1"
-                                          Foreground="{ThemeResource SystemFillColorAttentionBrush}"
-                                          Translation="0,-9,0"
-                                          Opacity="0.0" Margin="16,0,0,0">
-                                    <FontIcon.OpacityTransition>
-                                        <ScalarTransition />
-                                    </FontIcon.OpacityTransition>
-                                </FontIcon>
-                            </Grid>
+                                </FontIcon.TranslationTransition>
+                            </FontIcon>
 
                             <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                                <TextBlock Opacity="1.0" HorizontalAlignment="Center" x:Name="UpdateIconText"
-                                           Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Header'), Mode=OneWay}"
+                                <TextBlock HorizontalAlignment="Center" Opacity="0.0"
+                                           x:Name="NavViewGeneralButtonLabel"
+                                           Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/General'), Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                     <TextBlock.OpacityTransition>
                                         <ScalarTransition />
@@ -314,47 +202,20 @@
                         </Grid>
                     </NavigationViewItem>
 
-                    <NavigationViewItem x:Name="HelpButton" Height="63"
-                                        FontSize="10" FontWeight="Medium"
-                                        BackgroundSizing="OuterBorderEdge"
-                                        Tapped="HelpButton_Tapped">
-
+                    <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                        Tag="settings" x:Name="SettingsItem" Height="63"
+                                        BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <Grid Translation="0,-8,0" x:Name="HelpIconGrid">
-                                <Grid.TranslationTransition>
+                            <FontIcon Glyph="&#xE713;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                      x:Name="NavViewSettingsButtonIcon" FontSize="22" Translation="0,-8,0">
+                                <FontIcon.TranslationTransition>
                                     <Vector3Transition />
-                                </Grid.TranslationTransition>
-
-                                <FontIcon x:Name="HelpIcon" Glyph="&#xEA3A;" FontSize="20"
-                                          Foreground="{ThemeResource SystemFillColorNeutralBrush}">
-                                    <FontIcon.RenderTransform>
-                                        <CompositeTransform />
-                                    </FontIcon.RenderTransform>
-
-                                    <FontIcon.Transitions>
-                                        <TransitionCollection>
-                                            <RepositionThemeTransition />
-                                        </TransitionCollection>
-                                    </FontIcon.Transitions>
-                                </FontIcon>
-
-                                <FontIcon Glyph="&#xE897;" FontSize="12"
-                                          Foreground="{Binding ElementName=HelpIcon, Path=Foreground}">
-                                    <FontIcon.RenderTransform>
-                                        <CompositeTransform />
-                                    </FontIcon.RenderTransform>
-
-                                    <FontIcon.Transitions>
-                                        <TransitionCollection>
-                                            <RepositionThemeTransition />
-                                        </TransitionCollection>
-                                    </FontIcon.Transitions>
-                                </FontIcon>
-                            </Grid>
+                                </FontIcon.TranslationTransition>
+                            </FontIcon>
 
                             <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                                <TextBlock Opacity="1.0" HorizontalAlignment="Center" x:Name="HelpIconText"
-                                           Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Help/Header'), Mode=OneWay}"
+                                <TextBlock HorizontalAlignment="Center" x:Name="NavViewSettingsButtonLabel"
+                                           Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Settings'), Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                     <TextBlock.OpacityTransition>
                                         <ScalarTransition />
@@ -363,11 +224,184 @@
                             </Viewbox>
                         </Grid>
                     </NavigationViewItem>
-                </StackPanel>
-            </muxc:NavigationView.PaneFooter>
 
-            <Frame x:Name="ContentFrame" NavigationFailed="ContentFrame_NavigationFailed" />
-        </muxc:NavigationView>
+                    <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                        Tag="devices" x:Name="DevicesItem" Height="63"
+                                        BackgroundSizing="OuterBorderEdge">
+                        <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                            <FontIcon Glyph="&#xF158;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                      x:Name="NavViewDevicesButtonIcon" FontSize="20" Translation="0,-8,0">
+                                <FontIcon.TranslationTransition>
+                                    <Vector3Transition />
+                                </FontIcon.TranslationTransition>
+                            </FontIcon>
+
+                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                                <TextBlock HorizontalAlignment="Center" x:Name="NavViewDevicesButtonLabel"
+                                           Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Devices'), Mode=OneWay}"
+                                           Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                    <TextBlock.OpacityTransition>
+                                        <ScalarTransition />
+                                    </TextBlock.OpacityTransition>
+                                </TextBlock>
+                            </Viewbox>
+                        </Grid>
+                    </NavigationViewItem>
+
+                    <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                        Tag="info" x:Name="InfoItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                        <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                            <FontIcon Glyph="&#xE946;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                      x:Name="NavViewInfoButtonIcon" FontSize="22" Translation="0,-8,0">
+                                <FontIcon.TranslationTransition>
+                                    <Vector3Transition />
+                                </FontIcon.TranslationTransition>
+                            </FontIcon>
+
+                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                                <TextBlock HorizontalAlignment="Center" x:Name="NavViewInfoButtonLabel"
+                                           Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Info'), Mode=OneWay}"
+                                           Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                    <TextBlock.OpacityTransition>
+                                        <ScalarTransition />
+                                    </TextBlock.OpacityTransition>
+                                </TextBlock>
+                            </Viewbox>
+                        </Grid>
+                    </NavigationViewItem>
+
+                    <NavigationViewItem FontSize="10" FontWeight="Medium" Visibility="Collapsed"
+                                        Tag="console" x:Name="ConsoleItem" Height="63"
+                                        BackgroundSizing="OuterBorderEdge">
+                        <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                            <FontIcon Glyph="&#xEB51;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                      x:Name="NavViewOkashiButtonIcon" FontSize="22" Translation="0,-8,0">
+                                <FontIcon.TranslationTransition>
+                                    <Vector3Transition />
+                                </FontIcon.TranslationTransition>
+                            </FontIcon>
+
+                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                                <TextBlock Text="お菓子❢" HorizontalAlignment="Center"
+                                           x:Name="NavViewOkashiButtonLabel"
+                                           Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                    <TextBlock.OpacityTransition>
+                                        <ScalarTransition />
+                                    </TextBlock.OpacityTransition>
+                                </TextBlock>
+                            </Viewbox>
+                        </Grid>
+                    </NavigationViewItem>
+                </muxc:NavigationView.MenuItems>
+
+                <muxc:NavigationView.PaneFooter>
+                    <StackPanel Orientation="Vertical">
+                        <NavigationViewItem x:Name="UpdateButton" Height="63"
+                                            FontSize="10" FontWeight="Medium"
+                                            BackgroundSizing="OuterBorderEdge"
+                                            Tapped="UpdateButton_Tapped"
+                                            Loaded="UpdateButton_Loaded">
+
+                            <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                                <Grid Translation="0,-8,0" x:Name="UpdateIconGrid">
+                                    <Grid.TranslationTransition>
+                                        <Vector3Transition />
+                                    </Grid.TranslationTransition>
+
+                                    <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" FontSize="20"
+                                              Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                              Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5124">
+                                        <FontIcon.RenderTransform>
+                                            <CompositeTransform />
+                                        </FontIcon.RenderTransform>
+
+                                        <FontIcon.Transitions>
+                                            <TransitionCollection>
+                                                <RepositionThemeTransition />
+                                            </TransitionCollection>
+                                        </FontIcon.Transitions>
+                                    </FontIcon>
+
+                                    <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="16"
+                                              IsHitTestVisible="False"
+                                              HorizontalAlignment="Left" VerticalAlignment="Bottom" Canvas.ZIndex="1"
+                                              Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                              Translation="0,-9,0"
+                                              Opacity="0.0" Margin="16,0,0,0">
+                                        <FontIcon.OpacityTransition>
+                                            <ScalarTransition />
+                                        </FontIcon.OpacityTransition>
+                                    </FontIcon>
+                                </Grid>
+
+                                <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                                    <TextBlock Opacity="1.0" HorizontalAlignment="Center" x:Name="UpdateIconText"
+                                               Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Header'), Mode=OneWay}"
+                                               Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                        <TextBlock.OpacityTransition>
+                                            <ScalarTransition />
+                                        </TextBlock.OpacityTransition>
+                                    </TextBlock>
+                                </Viewbox>
+                            </Grid>
+                        </NavigationViewItem>
+
+                        <NavigationViewItem x:Name="HelpButton" Height="63"
+                                            FontSize="10" FontWeight="Medium"
+                                            BackgroundSizing="OuterBorderEdge"
+                                            Tapped="HelpButton_Tapped">
+
+                            <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
+                                <Grid Translation="0,-8,0" x:Name="HelpIconGrid">
+                                    <Grid.TranslationTransition>
+                                        <Vector3Transition />
+                                    </Grid.TranslationTransition>
+
+                                    <FontIcon x:Name="HelpIcon" Glyph="&#xEA3A;" FontSize="20"
+                                              Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                        <FontIcon.RenderTransform>
+                                            <CompositeTransform />
+                                        </FontIcon.RenderTransform>
+
+                                        <FontIcon.Transitions>
+                                            <TransitionCollection>
+                                                <RepositionThemeTransition />
+                                            </TransitionCollection>
+                                        </FontIcon.Transitions>
+                                    </FontIcon>
+
+                                    <FontIcon Glyph="&#xE897;" FontSize="12"
+                                              Foreground="{Binding ElementName=HelpIcon, Path=Foreground}">
+                                        <FontIcon.RenderTransform>
+                                            <CompositeTransform />
+                                        </FontIcon.RenderTransform>
+
+                                        <FontIcon.Transitions>
+                                            <TransitionCollection>
+                                                <RepositionThemeTransition />
+                                            </TransitionCollection>
+                                        </FontIcon.Transitions>
+                                    </FontIcon>
+                                </Grid>
+
+                                <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                                    <TextBlock Opacity="1.0" HorizontalAlignment="Center" x:Name="HelpIconText"
+                                               Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Help/Header'), Mode=OneWay}"
+                                               Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                        <TextBlock.OpacityTransition>
+                                            <ScalarTransition />
+                                        </TextBlock.OpacityTransition>
+                                    </TextBlock>
+                                </Viewbox>
+                            </Grid>
+                        </NavigationViewItem>
+                    </StackPanel>
+                </muxc:NavigationView.PaneFooter>
+
+                <Frame x:Name="ContentFrame" NavigationFailed="ContentFrame_NavigationFailed" />
+            </muxc:NavigationView>
+
+        </Grid>
 
         <Grid.Resources>
             <Storyboard x:Name="IconRotation" AutoReverse="False" Completed="OnIconRotationOnCompleted">

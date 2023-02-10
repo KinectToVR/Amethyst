@@ -373,6 +373,12 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                     SetCommandText("Settings reset, type 'spawn' to enable trackers!");
                     break; // That's all for now!
                 }
+                case "restartnotice" or "restartbar":
+                {
+                    Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen = !Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen;
+                    Shared.TeachingTips.MainPage.ReloadInfoBar.Opacity = Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen ? 1 : 0;
+                    break; // That's all for now!
+                }
                 case "update":
                 {
                     await MainWindow.RequestUpdateEvent(this, EventArgs.Empty);

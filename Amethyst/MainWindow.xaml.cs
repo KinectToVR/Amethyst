@@ -76,7 +76,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Cache needed UI elements
         Shared.TeachingTips.MainPage.InitializerTeachingTip = InitializerTeachingTip;
-        Shared.TeachingTips.MainPage.ReloadTeachingTip = ReloadTeachingTip;
+        Shared.TeachingTips.MainPage.ReloadInfoBar = ReloadInfoBar;
 
         Shared.Main.MainNavigationView = NavView;
         Shared.Main.AppTitleLabel = AppTitleLabel;
@@ -953,7 +953,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
                 Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
 
-                Shared.TeachingTips.MainPage.ReloadTeachingTip.IsOpen = true;
+                Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen = true;
+                Shared.TeachingTips.MainPage.ReloadInfoBar.Opacity = 1.0;
             });
         }
 
@@ -1585,7 +1586,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.TeachingTips.GeneralPage.ToggleTrackersTeachingTip.IsOpen = true;
     }
 
-    private async void ReloadTeachingTip_CloseButtonClick(TeachingTip sender, object args)
+    private async void ReloadInfoBar_CloseButtonClick(object sender, RoutedEventArgs args)
     {
         Logger.Info("Reload has been invoked: turning trackers off...");
 

@@ -347,8 +347,9 @@ public static class Shared
     {
         public static class MainPage
         {
-            public static TeachingTip
-                InitializerTeachingTip, ReloadTeachingTip;
+            public static TeachingTip InitializerTeachingTip;
+
+            public static InfoBar ReloadInfoBar;
         }
 
         public static class GeneralPage

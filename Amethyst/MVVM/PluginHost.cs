@@ -358,7 +358,10 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             // == cause the upper check would make it different
             // and it's already been assigned at the beginning
             if (Shared.Devices.PluginsPageOpened && IsLoaded == value)
-                Shared.TeachingTips.MainPage.ReloadTeachingTip.IsOpen = true;
+            {
+                Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen = true;
+                Shared.TeachingTips.MainPage.ReloadInfoBar.Opacity = 1.0;
+            }
 
             // Save settings
             AppData.Settings.SaveSettings();
@@ -477,7 +480,9 @@ public static class CollectionExtensions
             }
             catch (Exception e)
             {
-                Crashes.TrackError(e); // Unknown exception
+                if ((e as System.Reflection.ReflectionTypeLoadException)?.LoaderExceptions.First() is not
+                    FileNotFoundException) Crashes.TrackError(e); // Only send unknown exceptions
+
                 if (fileInfo.Name.StartsWith("plugin"))
                     Logger.Error($"Loading {fileInfo} failed with an exception: Message: {e.Message} " +
                                  "Probably some assembly referenced by this plugin is missing.");
