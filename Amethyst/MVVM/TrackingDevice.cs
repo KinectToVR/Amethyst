@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using Windows.Data.Json;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
+using Amethyst.Utils;
 using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
@@ -113,6 +115,9 @@ public class TrackingDevice : INotifyPropertyChanged
     // Is the device used as anything, quick check?
     public bool IsUsed => IsBase || IsOverride;
 
+    // Hot reload handler
+    public FileSystemWatcher AssetsWatcher { get; set; }
+
     // Property changed event
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -201,5 +206,33 @@ public class TrackingDevice : INotifyPropertyChanged
         // Re-register joint changes handlers
         Device.TrackedJoints.CollectionChanged -= TrackedJoints_CollectionChanged;
         Device.TrackedJoints.CollectionChanged += TrackedJoints_CollectionChanged;
+    }
+
+    public void AssetsChanged(object o, FileSystemEventArgs fileSystemEventArgs)
+    {
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            // Hot reload device string resources
+            Logger.Info($"Device ({Guid}, {Name}) assets have changed, reloading!");
+            Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
+            Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
+
+            // Sanity check
+            if (!Shared.Main.MainWindowLoaded) return;
+
+            // Reload plugins' language resources
+            Interfacing.Plugins.SetLocalizationResourcesRoot(
+                LocalizationResourcesRoot.Directory, Guid);
+
+            // Reload everything we can
+            Shared.Devices.DevicesJointsValid = false;
+            Device.OnLoad(); // Reload settings
+
+            // Force refresh all the valid pages
+            Shared.Events.RequestInterfaceReload(false);
+
+            // We're done with our changes now!
+            Shared.Devices.DevicesJointsValid = true;
+        });
     }
 }

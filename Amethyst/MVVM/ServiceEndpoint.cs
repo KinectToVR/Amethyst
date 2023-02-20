@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
+using Amethyst.Utils;
+using System.Linq;
 
 namespace Amethyst.MVVM;
 
@@ -113,6 +116,9 @@ public class ServiceEndpoint : INotifyPropertyChanged
     // You'll need to provide this to support automatic calibration
     public (Vector3 Position, Quaternion Orientation)? HeadsetPose => Service.HeadsetPose;
 
+    // Hot reload handler
+    public FileSystemWatcher AssetsWatcher { get; set; }
+
     // Property changed event
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -190,5 +196,36 @@ public class ServiceEndpoint : INotifyPropertyChanged
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
+    public void AssetsChanged(object o, FileSystemEventArgs fileSystemEventArgs)
+    {
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            // Hot reload device string resources
+            Logger.Info($"Service ({Guid}, {Name}) assets have changed, reloading!");
+            Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
+            Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
+
+            // Sanity check
+            if (!Shared.Main.MainWindowLoaded) return;
+
+            // Reload plugins' language resources
+            Interfacing.Plugins.SetLocalizationResourcesRoot(
+                LocalizationResourcesRoot.Directory, Guid);
+
+            // Reload everything we can
+            Shared.Devices.DevicesJointsValid = false;
+            Service.OnLoad(); // Reload settings
+
+            // Force refresh all the valid pages
+            Shared.Events.RequestInterfaceReload(false);
+
+            if (AppData.Settings.ServiceEndpointGuid == Guid)
+                Interfacing.UpdateServerStatus(); // Refresh
+
+            // We're done with our changes now!
+            Shared.Devices.DevicesJointsValid = true;
+        });
     }
 }

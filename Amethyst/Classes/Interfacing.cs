@@ -735,7 +735,24 @@ public static class Interfacing
                     Logger.Info($"[Requested by device with GUID {guid}] " +
                                 "Successfully loaded language resources with key " +
                                 $"\"{AppData.Settings.AppLanguage}\"!");
+                    
+                    // Setup string hot reload watchdog
+                    device.AssetsWatcher = new FileSystemWatcher
+                    {
+                        Path = device.LocalizationResourcesRoot.Directory,
+                        NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName |
+                                       NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
+                        IncludeSubdirectories = true,
+                        Filter = "*.json",
+                        EnableRaisingEvents = true
+                    };
 
+                    // Add event handlers : local
+                    device.AssetsWatcher.Changed += device.AssetsChanged;
+                    device.AssetsWatcher.Created += device.AssetsChanged;
+                    device.AssetsWatcher.Deleted += device.AssetsChanged;
+                    device.AssetsWatcher.Renamed += device.AssetsChanged;
+                    
                     return true; // Winning it, yay!
                 }
 
@@ -760,6 +777,23 @@ public static class Interfacing
                     Logger.Info($"[Requested by service with GUID {guid}] " +
                                 "Successfully loaded language resources with key " +
                                 $"\"{AppData.Settings.AppLanguage}\"!");
+
+                    // Setup string hot reload watchdog
+                    service.AssetsWatcher = new FileSystemWatcher
+                    {
+                        Path = service.LocalizationResourcesRoot.Directory,
+                        NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName |
+                                       NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
+                        IncludeSubdirectories = true,
+                        Filter = "*.json",
+                        EnableRaisingEvents = true
+                    };
+
+                    // Add event handlers : local
+                    service.AssetsWatcher.Changed += service.AssetsChanged;
+                    service.AssetsWatcher.Created += service.AssetsChanged;
+                    service.AssetsWatcher.Deleted += service.AssetsChanged;
+                    service.AssetsWatcher.Renamed += service.AssetsChanged;
 
                     return true; // Winning it, yay!
                 }

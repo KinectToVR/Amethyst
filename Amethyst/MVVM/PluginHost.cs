@@ -18,7 +18,6 @@ using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
 using Microsoft.AppCenter.Crashes;
-using Microsoft.UI.Xaml;
 using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
@@ -481,7 +480,7 @@ public static class CollectionExtensions
                 if (!assemblyCatalog.Parts.Any(x => x.ExportDefinitions
                         .Any(y => y.ContractName == typeof(ITrackingDevice).FullName ||
                                   y.ContractName == typeof(IServiceEndpoint).FullName))) continue;
-                
+
                 collection.Add((T)(object)assemblyCatalog);
                 return true; // This plugin is probably supported, yay!
             }
@@ -499,7 +498,7 @@ public static class CollectionExtensions
                 TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                 {
                     Name = $"{item.Name}/{fileInfo.Name}",
-                    Error = e.Message, Folder = item.FullName,
+                    Error = $"{e.Message}\n\n{e.StackTrace}", Folder = item.FullName,
                     Status = TrackingDevices.PluginLoadError.NoPluginDll
                 });
 
@@ -520,7 +519,7 @@ public static class CollectionExtensions
                 TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                 {
                     Name = $"{item.Name}/{fileInfo.Name}",
-                    Error = e.Message, Folder = item.FullName,
+                    Error = $"{e.Message}\n\n{e.StackTrace}", Folder = item.FullName,
                     Status = TrackingDevices.PluginLoadError.NoPluginDll
                 });
 
