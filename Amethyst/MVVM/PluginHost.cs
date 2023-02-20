@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Windows.System;
@@ -13,12 +17,9 @@ using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
-using static Amethyst.Classes.Interfacing;
 using Microsoft.AppCenter.Crashes;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
-using System.ComponentModel.Composition;
-using System.Data;
+using Microsoft.UI.Xaml;
+using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
 
@@ -261,7 +262,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 {
     public string Name { get; init; } = "[UNKNOWN]";
     public string Guid { get; init; } = "[INVALID]";
-    public string Error { get; init; } = null;
+    public string Error { get; init; }
 
     public string Publisher { get; init; }
     public string Website { get; init; }
@@ -419,6 +420,32 @@ public static class CollectionExtensions
 {
     public static bool AddPlugin<T>(this ICollection<T> collection, DirectoryInfo item) where T : ComposablePartCatalog
     {
+        // Give up if the plugin directory is invalid
+        if (item is null) return false;
+
+        // Test if the directory is valid
+        try
+        {
+            // This will fail if e.g.
+            // - the "directory" is an invalid junction
+            // - the "directory" is an invalid symlink
+            // - the "directory" is an unknown object
+            item.GetFiles();
+        }
+        catch (Exception e)
+        {
+            // Add the plugin to the 'attempted' list
+            TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+            {
+                Name = item.FullName,
+                Error = $"{e.Message}\n\n{e.StackTrace}",
+                Folder = item.FullName,
+                Status = TrackingDevices.PluginLoadError.NoPluginFolder
+            });
+
+            return false; // Don't do anything stupid
+        }
+
         // Delete the vendor plugin contract, just in case
         item.GetFiles("Amethyst.Plugins.Contract.dll").FirstOrDefault()?.Delete();
         item.GetFiles("Microsoft.Windows.SDK.NET.dll").FirstOrDefault()?.Delete();
@@ -454,7 +481,7 @@ public static class CollectionExtensions
                 if (!assemblyCatalog.Parts.Any(x => x.ExportDefinitions
                         .Any(y => y.ContractName == typeof(ITrackingDevice).FullName ||
                                   y.ContractName == typeof(IServiceEndpoint).FullName))) continue;
-
+                
                 collection.Add((T)(object)assemblyCatalog);
                 return true; // This plugin is probably supported, yay!
             }
@@ -480,7 +507,7 @@ public static class CollectionExtensions
             }
             catch (Exception e)
             {
-                if ((e as System.Reflection.ReflectionTypeLoadException)?.LoaderExceptions.First() is not
+                if ((e as ReflectionTypeLoadException)?.LoaderExceptions.First() is not
                     FileNotFoundException) Crashes.TrackError(e); // Only send unknown exceptions
 
                 if (fileInfo.Name.StartsWith("plugin"))
