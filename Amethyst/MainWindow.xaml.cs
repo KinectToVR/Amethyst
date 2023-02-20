@@ -530,7 +530,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         PluginType = TrackingDevices.PluginType.TrackingDevice,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
-                        Error = e.Message,
+                        Error = $"{e.Message}\n\n{e.StackTrace}",
                         Status = TrackingDevices.PluginLoadError.Other
                     });
                 }
@@ -567,7 +567,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     Logger.Info("Skipping this catalog part as it doesn't contain any usable plugins!");
                     continue; // Skip composing this plugin, it won't do any good!
                 }
-
+                
                 var plugin = devicePlugins.First();
                 Logger.Info($"Preparing exports for ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
 
@@ -668,20 +668,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     var pluginLocation = Assembly.GetAssembly(plugin.Value.GetType()).Location;
                     var pluginFolder = Directory.GetParent(pluginLocation).FullName;
 
-                    // Add the device to the 'attempted' list, mark as all fine
-                    Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                "to the load-attempted device plugins list (TrackingDevices)...");
-                    TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
-                    {
-                        Name = plugin.Metadata.Name,
-                        Guid = plugin.Metadata.Guid,
-                        PluginType = TrackingDevices.PluginType.ServiceEndpoint,
-                        Publisher = plugin.Metadata.Publisher,
-                        Website = plugin.Metadata.Website,
-                        Folder = pluginFolder,
-                        Status = TrackingDevices.PluginLoadError.NoError
-                    });
-
                     // Add the device to the global device list, add the plugin folder path
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "to the global service endpoints plugins list (TrackingDevices)...");
@@ -711,6 +697,20 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                                 $"- Needs to be restarted on changed: {plugin.Value.IsRestartOnChangesNeeded}\n" +
                                 $"- Supports Settings: {plugin.Value.IsSettingsDaemonSupported}\n" +
                                 $"- Additional Supported Trackers: {plugin.Value.AdditionalSupportedTrackerTypes.ToList()}");
+
+                    // Add the device to the 'attempted' list, mark as all fine
+                    Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                "to the load-attempted device plugins list (TrackingDevices)...");
+                    TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                    {
+                        Name = plugin.Metadata.Name,
+                        Guid = plugin.Metadata.Guid,
+                        PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                        Publisher = plugin.Metadata.Publisher,
+                        Website = plugin.Metadata.Website,
+                        Folder = pluginFolder,
+                        Status = TrackingDevices.PluginLoadError.NoError
+                    });
 
                     // Check if the loaded device is used as anything (AppData.Settings)
                     Logger.Info($"Checking if ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) has any roles set...");
@@ -742,7 +742,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         PluginType = TrackingDevices.PluginType.ServiceEndpoint,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
-                        Error = e.Message,
+                        Error = $"{e.Message}\n\n{e.StackTrace}",
                         Status = TrackingDevices.PluginLoadError.Other
                     });
                 }
