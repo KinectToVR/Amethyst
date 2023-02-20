@@ -38,42 +38,42 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <ContentControl
-                            Grid.Row="0"
-                            Margin="{StaticResource ContentDialogTitleMargin}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            d:Content="Title"
-                            x:Name="DialogTitle"
-                            FontSize="20"
-                            FontWeight="SemiBold"
-                            Foreground="{ThemeResource ContentDialogForeground}"
-                            IsTabStop="False">
-                            <ContentControl.Template>
-                                <ControlTemplate TargetType="ContentControl">
-                                    <ContentPresenter
-                                        Margin="{TemplateBinding Margin}"
-                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                        Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                                        MaxLines="2"
-                                        TextWrapping="Wrap" />
-                                </ControlTemplate>
-                            </ContentControl.Template>
-                        </ContentControl>
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+                            <ContentControl
+                                Margin="{StaticResource ContentDialogTitleMargin}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top"
+                                d:Content="Title"
+                                x:Name="DialogTitle"
+                                FontSize="20"
+                                FontWeight="SemiBold"
+                                Foreground="{ThemeResource ContentDialogForeground}"
+                                IsTabStop="False">
+                                <ContentControl.Template>
+                                    <ControlTemplate TargetType="ContentControl">
+                                        <ContentPresenter
+                                            Margin="{TemplateBinding Margin}"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            MaxLines="2"
+                                            TextWrapping="Wrap" />
+                                    </ControlTemplate>
+                                </ContentControl.Template>
+                            </ContentControl>
 
-                        <ContentPresenter
-                            Grid.Row="1"
-                            Margin="{StaticResource ContentDialogContentMargin}"
-                            HorizontalAlignment="Stretch"
-                            d:Content="Message Dialog Content"
-                            x:Name="DialogContent"
-                            FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                            FontSize="{ThemeResource ContentControlFontSize}"
-                            Foreground="{ThemeResource ContentDialogForeground}"
-                            TextWrapping="WrapWholeWords" />
+                            <TextBlock
+                                Margin="{StaticResource ContentDialogContentMargin}"
+                                HorizontalAlignment="Stretch"
+                                d:Content="Message Dialog Content"
+                                x:Name="DialogContent" IsTextSelectionEnabled="True"
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                FontSize="{ThemeResource ContentControlFontSize}"
+                                Foreground="{ThemeResource ContentDialogForeground}"
+                                TextWrapping="WrapWholeWords" />
+                        </StackPanel>
 
                         <ContentPresenter
                             Grid.Row="2"

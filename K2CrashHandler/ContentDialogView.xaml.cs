@@ -42,7 +42,7 @@ public sealed partial class ContentDialogView
         InitializeComponent();
 
         DialogTitle.Content = title;
-        DialogContent.Content = content;
+        DialogContent.Text = content;
 
         // Back up
         _primaryButtonText = primaryButtonText;
