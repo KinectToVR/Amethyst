@@ -74,29 +74,30 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
 
     private void OverrideTrackerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        // Validate the pending input changes
-        Trackers.ForEach(x => x.OnPropertyChanged());
-
         // Don't even care if we're not set up yet
         if (!((sender as ComboBox)?.IsLoaded ?? false) ||
-            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid)
+        {
+            Trackers.ForEach(x => x.OnPropertyChanged());
+            return; // Invalidate the pending input changes
+        }
 
-        // Either fix the selection index or give up on everything
+        // Fix the selection index if it's invalid
         if (((ComboBox)sender).SelectedIndex < 0)
             ((ComboBox)sender).SelectedItem = GetManagingDeviceJointsList(
                     AppData.Settings.SelectedTrackingDeviceGuid)
                 .ElementAtOrDefault((((ComboBox)sender).DataContext as AppTracker)!
                     .SelectedOverrideJointIdForSelectedDevice);
 
-        //else
-        {
-            // Signal the just-selected tracked joint (checker copied from AppTracker.cs)
-            TrackingDevices.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device?
-                .SignalJoint(((ComboBox)sender).SelectedIndex > 0 ? ((ComboBox)sender).SelectedIndex - 1 : 0);
+        // Signal the just-selected tracked joint (checker copied from AppTracker.cs)
+        TrackingDevices.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device?
+            .SignalJoint(((ComboBox)sender).SelectedIndex > 0 ? ((ComboBox)sender).SelectedIndex - 1 : 0);
 
-            (((ComboBox)sender).DataContext as AppTracker)!.SelectedOverrideJointIdForSelectedDevice =
-                ((ComboBox)sender).SelectedIndex; // Set the property of the host
-        }
+        (((ComboBox)sender).DataContext as AppTracker)!.SelectedOverrideJointIdForSelectedDevice =
+            ((ComboBox)sender).SelectedIndex; // Set the property of the host
+
+        // Validate the pending input changes
+        Trackers.ForEach(x => x.OnPropertyChanged());
     }
 
     private void OverrideTrackerCombo_OnDropDownOpened(object sender, object e)
