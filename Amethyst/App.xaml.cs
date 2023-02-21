@@ -99,6 +99,7 @@ public partial class App : Application
         try
         {
             // Set maximum log size to 20MB for larger log files
+            Logger.Info("Setting maximum App Center log size...");
             AppCenter.SetMaxStorageSizeAsync(20 * 1024 * 1024).ContinueWith(storageTask =>
             {
                 // Log as an error, we can't really do much about this one after all...
@@ -106,6 +107,7 @@ public partial class App : Application
             });
 
             // Try starting Visual Studio App Center up
+            Logger.Info("Starting Visual Studio App Center...");
             AppCenter.Start("AZ_APPSECRET", typeof(Analytics), typeof(Crashes));
 
             // Set the code of the language used in Windows
@@ -125,9 +127,11 @@ public partial class App : Application
         }
 
         // Read saved settings
+        Logger.Info("Reading base app settings...");
         AppData.Settings.ReadSettings();
 
         // Read plugin settings
+        Logger.Info("Reading custom plugin settings...");
         TrackingDevices.PluginSettings.ReadSettings();
 
         // Run detached to allow for async calls
