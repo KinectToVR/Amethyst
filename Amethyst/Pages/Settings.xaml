@@ -207,7 +207,7 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock FontWeight="SemiBold" FontSize="14" Margin="0,-3,0,0"
-                                       Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/SkeletonFlip'), Mode=OneWay}"
+                                       Text="{x:Bind FlipDropDownHeader, Mode=OneWay}"
                                        Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
                             <!--This is needed only for the teachingtip-->

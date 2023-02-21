@@ -389,7 +389,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         for (var point = 0; point < AppData.Settings.CalibrationPointsNumber; point++)
         {
             // Wait for the user to move
-            CalibrationInstructionsLabel.Text = CalibrationPointsFormat(
+            CalibrationInstructionsLabel.Text = string.Format(
                 Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Move"),
                 point + 1, AppData.Settings.CalibrationPointsNumber);
 
@@ -411,7 +411,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 if (!_calibrationPending) break; // Check for exiting
             }
 
-            CalibrationInstructionsLabel.Text = CalibrationPointsFormat(
+            CalibrationInstructionsLabel.Text = string.Format(
                 Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Stand"),
                 point + 1, AppData.Settings.CalibrationPointsNumber);
 
@@ -1664,13 +1664,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (!Shared.General.GeneralTabSetupFinished) return;
         Shared.General.ForceRenderCheckBox.IsChecked = visibility;
     }
-
-    private string CalibrationPointsFormat(string format, int p1, uint p2)
-    {
-        return format.Replace("{1}", p1.ToString())
-            .Replace("{2}", p2.ToString());
-    }
-
+    
     private void AllowNavigation(bool allow)
     {
         Shared.Main.NavigationBlockerGrid.IsHitTestVisible = !allow;

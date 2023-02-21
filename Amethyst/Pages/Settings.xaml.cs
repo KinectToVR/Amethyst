@@ -182,6 +182,9 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     private string AutoStartTipContent => string.Format(Interfacing.LocalizedJsonString(
         "/NUX/Tip7/Content"), TrackingDevices.CurrentServiceEndpoint.Name);
 
+    private string FlipDropDownHeader => string.Format(Interfacing.LocalizedJsonString(
+        "/SettingsPage/Captions/SkeletonFlip"), TrackingDevices.BaseTrackingDevice.Name);
+
     private string ManageTrackersText
     {
         get
