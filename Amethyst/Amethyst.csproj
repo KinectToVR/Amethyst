@@ -27,9 +27,9 @@
     <Copyright>© K2VR Team</Copyright>
     <Description>Amethyst (Desktop) App</Description>
     <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
-    <Version>1.2.230000.1</Version>
-    <FileVersion>1.2.0.1</FileVersion>
-    <AssemblyVersion>1.2.0.1</AssemblyVersion>
+    <Version>1.2.230222.1</Version>
+    <FileVersion>1.2.0.2</FileVersion>
+    <AssemblyVersion>1.2.0.2</AssemblyVersion>
     <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
   </PropertyGroup>
 
