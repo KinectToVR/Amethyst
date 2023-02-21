@@ -290,6 +290,10 @@ public static class Shared
             // Update GeneralPage status
             TrackingDevices.UpdateTrackingDevicesInterface();
 
+            // Overwrite the selected device if still null for some reason
+            AppData.Settings.SelectedTrackingDeviceGuid ??= AppData.Settings.TrackingDeviceGuid;
+            AppData.Settings.PreviousSelectedTrackingDeviceGuid ??= AppData.Settings.TrackingDeviceGuid;
+
             // Refresh the device MVVM
             TrackingDevices.TrackingDevicesList[AppData.Settings.SelectedTrackingDeviceGuid].OnPropertyChanged();
 
