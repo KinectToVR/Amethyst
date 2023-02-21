@@ -43,7 +43,7 @@ public partial class App : Application
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
-            var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Replace("{0}", stc);
+            var msg = string.Format(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack"), stc);
 
             Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
             Crashes.TrackError(e.Exception); // Log the crash reason
@@ -57,7 +57,7 @@ public partial class App : Application
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
-            var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Replace("{0}", stc);
+            var msg = string.Format(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack"), stc);
 
             Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
             Crashes.TrackError((Exception)e.ExceptionObject); // Log the crash reason

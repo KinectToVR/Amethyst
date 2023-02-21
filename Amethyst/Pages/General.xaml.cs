@@ -117,17 +117,17 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private List<Line> BoneLines { get; } = new(24);
     private List<Ellipse> JointPoints { get; } = new(60);
 
-    private string ServiceSettingsText => Interfacing.LocalizedJsonString("/SettingsPage/Buttons/ServiceSettings")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+    private string ServiceSettingsText => string.Format(Interfacing.LocalizedJsonString(
+        "/SettingsPage/Buttons/ServiceSettings"), TrackingDevices.CurrentServiceEndpoint.Name);
 
-    private string DeviceSettingsText => Interfacing.LocalizedJsonString("/GeneralPage/Buttons/DeviceSettings")
-        .Replace("{0}", TrackingDevices.BaseTrackingDevice.Name);
+    private string DeviceSettingsText => string.Format(Interfacing.LocalizedJsonString(
+        "/GeneralPage/Buttons/DeviceSettings"), TrackingDevices.BaseTrackingDevice.Name);
 
-    private string AutoStartTipText => Interfacing.LocalizedJsonString("/NUX/Tip2/Content")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+    private string AutoStartTipText => string.Format(Interfacing.LocalizedJsonString(
+        "/NUX/Tip2/Content"), TrackingDevices.CurrentServiceEndpoint.Name);
 
-    private string ServiceStatusLabel => Interfacing.LocalizedJsonString("/GeneralPage/Captions/DriverStatus/Label")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+    private string ServiceStatusLabel => string.Format(Interfacing.LocalizedJsonString(
+        "/GeneralPage/Captions/DriverStatus/Label"), TrackingDevices.CurrentServiceEndpoint.Name);
 
     private bool AllowCalibration => Interfacing.AppTrackersInitialized && ServiceStatusOk;
 
@@ -145,7 +145,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 : message; // If everything is all right this time
         }
     }
-    
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -173,7 +173,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 AppData.Settings.AutoSpawnEnabledJoints) // If autospawn
             {
                 if (await Interfacing.SpawnEnabledTrackers())
+                {
                     ToggleTrackersButton.IsChecked = true; // Mark as spawned
+                }
 
                 // Cry about it
                 else
@@ -785,7 +787,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Optionally spawn trackers
         if (!Interfacing.AppTrackersSpawned)
-        {
             if (!await Interfacing.SpawnEnabledTrackers()) // Mark as spawned
             {
                 Interfacing.ServiceEndpointFailure = true; // WAAAAAAA
@@ -799,8 +800,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                     Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
                     Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
             }
-        }
-        
+
         // Give up if failed
         if (!Interfacing.ServiceEndpointFailure)
         {
@@ -895,12 +895,12 @@ public sealed partial class General : Page, INotifyPropertyChanged
         SettingsPage.ManageTrackersTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
         SettingsPage.ManageTrackersTeachingTip.IsOpen = true;
     }
-    
+
     private void AdditionalDeviceErrorsHyperlink_Tapped(object sender, TappedRoutedEventArgs e)
     {
         Shared.General.AdditionalDeviceErrorsHyperlinkTappedEvent.Start();
     }
-    
+
     private async void ServiceSettingsButton_Click(object sender, RoutedEventArgs e)
     {
         // Go to the bottom of the settings page to view service endpoint settings

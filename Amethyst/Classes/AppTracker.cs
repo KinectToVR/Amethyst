@@ -13,14 +13,11 @@ namespace Amethyst.Classes;
 
 public class AppTracker : INotifyPropertyChanged
 {
-    [JsonIgnore]
-    private readonly KalmanFilter _kalmanFilter = new();
+    [JsonIgnore] private readonly KalmanFilter _kalmanFilter = new();
 
-    [JsonIgnore]
-    private readonly LowPassFilter _lowPassFilter = new(6.9f, .005f);
+    [JsonIgnore] private readonly LowPassFilter _lowPassFilter = new(6.9f, .005f);
 
-    [JsonIgnore]
-    private readonly Vector3 _predictedPosition = new(0);
+    [JsonIgnore] private readonly Vector3 _predictedPosition = new(0);
 
     // Is this tracker enabled?
     private bool _isActive;
@@ -281,9 +278,8 @@ public class AppTracker : INotifyPropertyChanged
         IsPositionOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
 
     [JsonIgnore]
-    public string ManagingDevicePlaceholder =>
-        Interfacing.LocalizedJsonString("/SettingsPage/Filters/Managed")
-            .Replace("{0}", ManagingDeviceGuid);
+    public string ManagingDevicePlaceholder => string.Format(Interfacing.LocalizedJsonString(
+        "/SettingsPage/Filters/Managed"), ManagingDeviceGuid);
 
     [JsonIgnore]
     public bool IsTrackerExpanderOpen
@@ -446,9 +442,8 @@ public class AppTracker : INotifyPropertyChanged
         !string.IsNullOrEmpty(OverrideGuid) && OverrideGuid != AppData.Settings.SelectedTrackingDeviceGuid;
 
     [JsonIgnore]
-    public string OverriddenByOtherDeviceString =>
-        Interfacing.LocalizedJsonString("/DevicesPage/ToolTips/Overrides/Overlapping")
-            .Replace("{0}", ManagingDeviceGuid);
+    public string OverriddenByOtherDeviceString => string.Format(Interfacing.LocalizedJsonString(
+        "/DevicesPage/ToolTips/Overrides/Overlapping"), ManagingDeviceGuid);
 
     // MVVM: a connection of the transitions each tracker expander should animate
     [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = new();

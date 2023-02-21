@@ -1,10 +1,10 @@
-﻿using Microsoft.AppCenter.Crashes;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Microsoft.AppCenter.Crashes;
 
 namespace Amethyst.Utils;
 
@@ -13,15 +13,15 @@ namespace Amethyst.Utils;
 ///     designed to be a simple drag and drop logger which relies solely on built-in C# APIs
 /// </summary>
 /// @https://github.com/KinectToVR/Amethyst-Installer @Hekky
-public static class Logger
+public static partial class Logger
 {
-    public static string LogFilePath;
+    public static string LogFilePath { get; set; }
 
     // This is used instead of Thread.CurrentThread.ManagedThreadId since it returns the OS thread rather than the managed thread
     // Consider using ManagedThreadId instead of this if you have to run this on non-Windows platforms
     // https://stackoverflow.com/a/1679270
-    [DllImport("Kernel32", EntryPoint = "GetCurrentThreadId", ExactSpelling = true)]
-    private static extern int GetCurrentWin32ThreadId();
+    [LibraryImport("Kernel32", EntryPoint = "GetCurrentThreadId")]
+    private static partial int GetCurrentWin32ThreadId();
 
     #region Log Functions
 
@@ -114,11 +114,11 @@ public static class Logger
     {
         LogFilePath = filePath == ""
             ? $"{Assembly.GetCallingAssembly().GetName()}" +
-              $"_{DateTime.Now.ToString("yyyyMMdd-HHmmss.ffffff")}.log"
+              $"_{DateTime.Now:yyyyMMdd-HHmmss.ffffff}.log"
             : filePath;
 
         LogFilePath = Path.GetFullPath(filePath);
-        var dir = Path.GetFullPath(Path.GetDirectoryName(LogFilePath));
+        var dir = Path.GetFullPath(Path.GetDirectoryName(LogFilePath) ?? string.Empty);
 
         var loggingPathDidntExist = false;
         if (!Directory.Exists(dir))
@@ -142,7 +142,7 @@ public static class Logger
     private static string FormatToLogMessage(string message, string level, int lineNumber, string filePath,
         string memberName)
     {
-        return $"{level}{DateTime.Now.ToString("yyyyMMdd HH:mm:ss.ffffff")} " +
+        return $"{level}{DateTime.Now:yyyyMMdd HH:mm:ss.ffffff} " +
                $"{GetCurrentWin32ThreadId(),5:#####} {Path.GetFileName(filePath)}::{memberName}:{lineNumber}] {message}";
     }
 

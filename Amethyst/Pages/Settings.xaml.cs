@@ -164,39 +164,36 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         ServiceSupportsSettings ? new CornerRadius(0) : new CornerRadius(0, 0, 4, 4);
 
     // MVVM stuff: bound strings with placeholders
-    private string RestartServiceText => Interfacing.LocalizedJsonString("/SettingsPage/Buttons/RestartService")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+    private string RestartServiceText => string.Format(Interfacing.LocalizedJsonString(
+        "/SettingsPage/Buttons/RestartService"), TrackingDevices.CurrentServiceEndpoint.Name);
 
-    private string RestartServiceNoteL1 => Interfacing
-        .LocalizedJsonString("/SettingsPage/Captions/TrackersRestart/Line1")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+    private string RestartServiceNoteL1 => string.Format(Interfacing.LocalizedJsonString(
+        "/SettingsPage/Captions/TrackersRestart/Line1"), TrackingDevices.CurrentServiceEndpoint.Name);
 
-    private string RestartServiceNoteL2 => Interfacing
-        .LocalizedJsonString("/SettingsPage/Captions/TrackersRestart/Line2")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+    private string RestartServiceNoteL2 => string.Format(Interfacing.LocalizedJsonString(
+        "/SettingsPage/Captions/TrackersRestart/Line2"), TrackingDevices.CurrentServiceEndpoint.Name);
 
-    private string AutoStartLabelText => Interfacing.LocalizedJsonString("/SettingsPage/Captions/AutoStart")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+    private string AutoStartLabelText => string.Format(Interfacing.LocalizedJsonString(
+        "/SettingsPage/Captions/AutoStart"), TrackingDevices.CurrentServiceEndpoint.Name);
 
-    private string AutoStartTipText => Interfacing.LocalizedJsonString("/NUX/Tip7/Title")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+    private string AutoStartTipText => string.Format(Interfacing.LocalizedJsonString(
+        "/NUX/Tip7/Title"), TrackingDevices.CurrentServiceEndpoint.Name);
 
-    private string AutoStartTipContent => Interfacing.LocalizedJsonString("/NUX/Tip7/Content")
-        .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name);
+    private string AutoStartTipContent => string.Format(Interfacing.LocalizedJsonString(
+        "/NUX/Tip7/Content"), TrackingDevices.CurrentServiceEndpoint.Name);
 
     private string ManageTrackersText
     {
         get
         {
             if (TrackingDevices.CurrentServiceEndpoint.IsRestartOnChangesNeeded)
-                return Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers")
-                    .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name)
-                    .Replace("[[", "").Replace("]]", "");
+                return string.Format(Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers"),
+                    TrackingDevices.CurrentServiceEndpoint.Name).Replace("[[", "").Replace("]]", "");
 
             // If the service doesn't need restarting
             return StringUtils.RemoveBetween(
-                Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers")
-                    .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name), "[[", "]]");
+                string.Format(Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers"),
+                    TrackingDevices.CurrentServiceEndpoint.Name), "[[", "]]");
         }
     }
 
@@ -639,9 +636,9 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     private void RestartButton_Click(object sender, RoutedEventArgs e)
     {
-        TrackingDevices.CurrentServiceEndpoint.RequestServiceRestart(
-            Interfacing.LocalizedJsonString("/SettingsPage/Captions/ServiceRestart")
-                .Replace("{0}", TrackingDevices.CurrentServiceEndpoint.Name));
+        TrackingDevices.CurrentServiceEndpoint.RequestServiceRestart(string.Format(
+            Interfacing.LocalizedJsonString("/SettingsPage/Captions/ServiceRestart"),
+            TrackingDevices.CurrentServiceEndpoint.Name));
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
@@ -872,7 +869,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
-        
+
         // Mark the service as non-failed, clean
         Interfacing.ServiceEndpointFailure = false;
         Interfacing.AppTrackersSpawned = false;
@@ -922,7 +919,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
-        
+
         // Mark the service as non-failed, clean
         Interfacing.ServiceEndpointFailure = false;
         Interfacing.AppTrackersSpawned = false;
@@ -1010,7 +1007,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
-        
+
         // Mark the service as non-failed, disable trackers
         Interfacing.ServiceEndpointFailure = false;
         Interfacing.AppTrackersInitialized = false;
