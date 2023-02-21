@@ -166,7 +166,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Info("Resetting the notification manager...");
             Shared.Main.NotificationManager = null; // Not using it!
         }
-        
+
         Logger.Info("Pushing control pages the global collection...");
         Shared.Main.Pages = new List<(string Tag, Type Page)>
         {
@@ -567,7 +567,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     Logger.Info("Skipping this catalog part as it doesn't contain any usable plugins!");
                     continue; // Skip composing this plugin, it won't do any good!
                 }
-                
+
                 var plugin = devicePlugins.First();
                 Logger.Info($"Preparing exports for ({plugin.Metadata.Name}, {plugin.Metadata.Guid})...");
 
@@ -1157,11 +1157,20 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         UpdateIconGrid.Translation = Vector3.Zero;
         UpdateIconText.Opacity = 0.0;
         UpdateIcon.Foreground = Shared.Main.AttentionBrush;
-        IconRotation.Begin();
-
         UpdatePendingFlyoutFooter.Text = $"Amethyst v{_remoteVersionString}";
         UpdatePendingFlyoutStatusContent.Text =
             Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
+
+        try
+        {
+            Logger.Info("Trying to start the Update Icon storyboard...");
+            IconRotation.Begin(); // Begin animation, not working on some machines
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e); // Log that!
+            _rotationFSemaphore.Release();
+        }
 
         if (!Interfacing.IsNuxPending)
             UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions
@@ -1288,8 +1297,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Wait for a full icon revolve
         await _rotationFSemaphore.WaitAsync();
 
-        // Resume to UI and stop the animation
-        IconRotation.Stop();
+        try
+        {
+            Logger.Info("Trying to stop the Update Icon storyboard...");
+            IconRotation.Stop(); // Stop animating, not working on some machines
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e);
+        }
 
         // Mark the update footer as inactive
         UpdateIcon.Foreground = Shared.Main.NeutralBrush;
@@ -1383,7 +1399,16 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 UpdateIconText.Opacity = 0.0;
                 UpdateIcon.Foreground = Shared.Main.AttentionBrush;
 
-                IconRotation.Begin(); // Begin animation
+                try
+                {
+                    Logger.Info("Trying to start the Update Icon storyboard...");
+                    IconRotation.Begin(); // Begin animation, not working on some machines
+                }
+                catch (Exception e)
+                {
+                    Logger.Warn(e); // Log that!
+                    _rotationFSemaphore.Release();
+                }
 
                 // Check now
                 Interfacing.UpdateFound = false;
@@ -1500,8 +1525,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 // Wait for a full icon revolve
                 await _rotationFSemaphore.WaitAsync();
 
-                // Resume to UI and stop the animation
-                IconRotation.Stop();
+                try
+                {
+                    Logger.Info("Trying to stop the Update Icon storyboard...");
+                    IconRotation.Stop(); // Stop animating, not working on some machines
+                }
+                catch (Exception e)
+                {
+                    Logger.Warn(e);
+                }
 
                 // Mark the update footer as inactive
                 {
@@ -1972,8 +2004,16 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         _rotationFSemaphore.Release();
 
-        IconRotation.Stop(); // Restart
-        IconRotation.Begin();
+        try
+        {
+            Logger.Info("Trying to restart the Update Icon storyboard...");
+            IconRotation.Stop(); // Restart
+            IconRotation.Begin();
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e);
+        }
     }
 
     private void InterfaceBlockerGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
