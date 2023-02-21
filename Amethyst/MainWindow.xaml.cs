@@ -845,6 +845,30 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Validate and initialize the loaded override devices now
         Logger.Info("Checking if saved override devices exist in loaded plugins...");
+        AppData.Settings.OverrideDevicesGuidMap.RemoveWhere(overrideGuid =>
+        {
+            Logger.Info($"Checking if override ({overrideGuid}) exists in loaded plugins...");
+            if (!TrackingDevices.TrackingDevicesList.ContainsKey(overrideGuid))
+            {
+                // This override guid is invalid or missing
+                Logger.Info($"The saved override device ({overrideGuid}) is invalid! Resetting it to NONE!");
+                return true; // Remove this invalid override!
+            }
+
+            Logger.Info($"Checking if override ({overrideGuid}) doesn't derive from the base device...");
+            if (AppData.Settings.TrackingDeviceGuid == overrideGuid)
+            {
+                // Already being used as the base device
+                Logger.Info($"({overrideGuid}) is already set as Base! Resetting it to NONE!");
+                return true; // Remove this invalid override!
+            }
+
+            // Still here? We must be fine then, initialize the device
+            Logger.Info($"Initializing the selected override device ({overrideGuid})...");
+            TrackingDevices.GetDevice(overrideGuid).Device.Initialize();
+            return false; // This override is OK, let's keep it
+        });
+
         foreach (var overrideGuid in AppData.Settings.OverrideDevicesGuidMap)
         {
             Logger.Info($"Checking if override ({overrideGuid}) exists in loaded plugins...");

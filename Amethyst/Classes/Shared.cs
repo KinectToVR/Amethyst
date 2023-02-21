@@ -326,20 +326,25 @@ public static class Shared
 
             // Device stuff reload animation
             if (!manual)
-            {
-                // Remove the only one child of our outer main content grid
-                // (What a bestiality it is to do that!!1)
-                DevicesMainContentGridOuter.Children.Clear();
-                DevicesMainContentGridInner.Transitions.Add(
-                    new EntranceThemeTransition { IsStaggeringEnabled = false });
+                try
+                {
+                    // Remove the only one child of our outer main content grid
+                    // (What a bestiality it is to do that!!1)
+                    DevicesMainContentGridOuter.Children.Clear();
+                    DevicesMainContentGridInner.Transitions.Add(
+                        new EntranceThemeTransition { IsStaggeringEnabled = false });
 
-                // Sleep peacefully pretending that noting happened
-                await Task.Delay(10);
+                    // Sleep peacefully pretending that noting happened
+                    await Task.Delay(10);
 
-                // Re-add the child for it to play our funky transition
-                // (Though it's not the same as before...)
-                DevicesMainContentGridOuter.Children.Add(DevicesMainContentGridInner);
-            }
+                    // Re-add the child for it to play our funky transition
+                    // (Though it's not the same as before...)
+                    DevicesMainContentGridOuter.Children.Add(DevicesMainContentGridInner);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                }
 
             // Remove the transition
             await Task.Delay(100);
