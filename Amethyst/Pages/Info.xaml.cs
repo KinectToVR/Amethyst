@@ -3,6 +3,8 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,19 +12,15 @@ using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media.Animation;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Exception = System.Exception;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media.Animation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -34,8 +32,8 @@ namespace Amethyst.Pages;
 /// </summary>
 public sealed partial class Info : Page, INotifyPropertyChanged
 {
+    private bool _commandConfirmLocked;
     private bool _infoPageLoadedOnce;
-    private bool _commandConfirmLocked = false;
 
     public Info()
     {
@@ -375,8 +373,10 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                 }
                 case "restartnotice" or "restartbar":
                 {
-                    Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen = !Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen;
-                    Shared.TeachingTips.MainPage.ReloadInfoBar.Opacity = Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen ? 1 : 0;
+                    Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen =
+                        !Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen;
+                    Shared.TeachingTips.MainPage.ReloadInfoBar.Opacity =
+                        Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen ? 1 : 0;
                     break; // That's all for now!
                 }
                 case "update":

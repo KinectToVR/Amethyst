@@ -1,123 +1,124 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
-    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
-    <RootNamespace>Amethyst</RootNamespace>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x64</Platforms>
-    <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
-    <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
-    <UseWinUI>true</UseWinUI>
-    <EnableMsixTooling>true</EnableMsixTooling>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+        <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
+        <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+        <RootNamespace>Amethyst</RootNamespace>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <Platforms>x64</Platforms>
+        <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
+        <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
+        <UseWinUI>true</UseWinUI>
+        <EnableMsixTooling>true</EnableMsixTooling>
 
-    <AppxPackage>false</AppxPackage>
-    <WindowsPackageType>None</WindowsPackageType>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <BaseOutputPath></BaseOutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-    <StartupObject>Amethyst.Program</StartupObject>
-    <PublishTrimmed>false</PublishTrimmed>
+        <AppxPackage>false</AppxPackage>
+        <WindowsPackageType>None</WindowsPackageType>
+        <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+        <BaseOutputPath></BaseOutputPath>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+        <StartupObject>Amethyst.Program</StartupObject>
+        <PublishTrimmed>false</PublishTrimmed>
 
-    <ApplicationIcon>Assets\ktvr.ico</ApplicationIcon>
-    <Authors>K2VR Team</Authors>
-    <Copyright>© K2VR Team</Copyright>
-    <Description>Amethyst (Desktop) App</Description>
-    <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
-    <Version>1.2.230222.1</Version>
-    <FileVersion>1.2.0.2</FileVersion>
-    <AssemblyVersion>1.2.0.2</AssemblyVersion>
-    <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
-  </PropertyGroup>
+        <ApplicationIcon>Assets\ktvr.ico</ApplicationIcon>
+        <Authors>K2VR Team</Authors>
+        <Copyright>© K2VR Team</Copyright>
+        <Description>Amethyst (Desktop) App</Description>
+        <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
+        <Version>1.2.230222.1</Version>
+        <FileVersion>1.2.0.2</FileVersion>
+        <AssemblyVersion>1.2.0.2</AssemblyVersion>
+        <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
+    </PropertyGroup>
 
-  <PropertyGroup>
-    <CsWinRTIncludes>AmethystSupport</CsWinRTIncludes>
-    <CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
-  </PropertyGroup>
+    <PropertyGroup>
+        <CsWinRTIncludes>AmethystSupport</CsWinRTIncludes>
+        <CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
-    <PackageReference Include="CommunityToolkit.WinUI.UI.Media" Version="7.1.2" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.4.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25231-preview" />
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="7.0.0" />
-    <PackageReference Include="System.ComponentModel.Composition.Registration" Version="7.0.0" />
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.UI.Media" Version="7.1.2" />
+        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
+        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.4.0" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25231-preview" />
+        <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+        <PackageReference Include="System.ComponentModel.Composition" Version="7.0.0" />
+        <PackageReference Include="System.ComponentModel.Composition.Registration" Version="7.0.0" />
+        <Manifest Include="$(ApplicationManifest)" />
+    </ItemGroup>
 
-  <!-- 
+    <!-- 
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
     Tools extension to be activated for this project even if the Windows App SDK Nuget
     package has not yet been restored.
   -->
-  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix" />
-  </ItemGroup>
+    <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+        <ProjectCapability Include="Msix" />
+    </ItemGroup>
 
-  <!-- 
+    <!-- 
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 
     Explorer "Package and Publish" context menu entry to be enabled for this project even if 
     the Windows App SDK Nuget package has not yet been restored.
   -->
-  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Controls\JointSelectorExpander.xaml" />
-    <None Remove="Controls\JointSettingsExpander.xaml" />
-    <None Remove="Controls\OverrideExpander.xaml" />
-    <None Remove="Pages\Devices.xaml" />
-    <None Remove="Pages\General.xaml" />
-    <None Remove="Pages\Info.xaml" />
-    <None Remove="Pages\Settings.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="MVVM\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Amethyst.Support\Amethyst.Support.vcxproj" />
-    <ProjectReference Include="..\Amethyst.Plugins.Contract\Amethyst.Plugins.Contract.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Assets\**">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Controls\JointSettingsExpander.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Controls\OverrideExpander.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Controls\JointSelectorExpander.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Pages\Info.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\Devices.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\Settings.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\General.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
+    <PropertyGroup
+        Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+        <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Remove="Controls\JointSelectorExpander.xaml" />
+        <None Remove="Controls\JointSettingsExpander.xaml" />
+        <None Remove="Controls\OverrideExpander.xaml" />
+        <None Remove="Pages\Devices.xaml" />
+        <None Remove="Pages\General.xaml" />
+        <None Remove="Pages\Info.xaml" />
+        <None Remove="Pages\Settings.xaml" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="MVVM\" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Amethyst.Support\Amethyst.Support.vcxproj" />
+        <ProjectReference Include="..\Amethyst.Plugins.Contract\Amethyst.Plugins.Contract.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="Assets\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Controls\JointSettingsExpander.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Controls\OverrideExpander.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Controls\JointSelectorExpander.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Pages\Info.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\Devices.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\Settings.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\General.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
 </Project>

@@ -250,7 +250,7 @@
                     <Run>)</Run>AZ_COMMIT_DATA-->
                 </TextBlock>
 
-                <TextBlock FontWeight="Light" Margin="0,10,0,0" Tapped="TelemetryTextBlock_Tapped" 
+                <TextBlock FontWeight="Light" Margin="0,10,0,0" Tapped="TelemetryTextBlock_Tapped"
                            Foreground="{ThemeResource SystemFillColorAttentionBrush}" FontSize="15"
                            Text="{x:Bind util:Translator.Get.String('/InfoPage/Telemetry/Header'), Mode=OneWay}" />
             </StackPanel>

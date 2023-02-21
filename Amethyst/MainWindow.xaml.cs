@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -26,6 +27,8 @@ using Amethyst.MVVM;
 using Amethyst.Pages;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
@@ -37,14 +40,9 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.AppNotifications;
 using WinRT;
 using WinRT.Interop;
-using System.ComponentModel.Composition.Primitives;
-using System.Data;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -62,12 +60,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     private readonly bool _mainPageInitFinished;
 
     private readonly SemaphoreSlim _rotationFSemaphore = new(0);
-    private bool _mainPageLoadedOnce;
     private SystemBackdropConfiguration _configurationSource;
+    private bool _mainPageLoadedOnce;
     private MicaController _micaController;
+    private string _remoteVersionString = AppData.VersionString.Display;
 
     private WindowsSystemDispatcherQueueHelper _wsdqHelper; // See separate sample below for implementation
-    private string _remoteVersionString = AppData.VersionString.Display;
 
     public MainWindow()
     {

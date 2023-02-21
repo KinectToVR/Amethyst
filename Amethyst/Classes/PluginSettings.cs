@@ -17,6 +17,43 @@ public class AppPluginSettings : INotifyPropertyChanged
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
+    // Save settings
+    public void SaveSettings()
+    {
+        try
+        {
+            // Save plugin settings to $env:AppData/Amethyst/
+            File.WriteAllText(
+                Interfacing.GetAppDataFileDir("AmethystPluginsSettings.json"),
+                JsonConvert.SerializeObject(TrackingDevices.PluginSettings, Formatting.Indented));
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Error saving plugin settings! Message: {e.Message}");
+        }
+    }
+
+    // Re/Load settings
+    public void ReadSettings()
+    {
+        try
+        {
+            // Read plugin settings from $env:AppData/Amethyst/
+            TrackingDevices.PluginSettings = JsonConvert.DeserializeObject<AppPluginSettings>(File.ReadAllText(
+                Interfacing.GetAppDataFileDir("AmethystPluginsSettings.json"))) ?? new AppPluginSettings();
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Error reading plugin settings! Message: {e.Message}");
+            TrackingDevices.PluginSettings ??= new AppPluginSettings(); // Reset if null
+        }
+    }
+
+    public void OnPropertyChanged(string propName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
 #nullable enable
     // Get a serialized object from the plugin settings
     public T? GetPluginSetting<T>(string guid, object key, T? fallback = default)
@@ -77,43 +114,6 @@ public class AppPluginSettings : INotifyPropertyChanged
         Logger.Info($"Plugin {guid} settings root is invalid! Giving up...");
     }
 #nullable disable
-
-    // Save settings
-    public void SaveSettings()
-    {
-        try
-        {
-            // Save plugin settings to $env:AppData/Amethyst/
-            File.WriteAllText(
-                Interfacing.GetAppDataFileDir("AmethystPluginsSettings.json"),
-                JsonConvert.SerializeObject(TrackingDevices.PluginSettings, Formatting.Indented));
-        }
-        catch (Exception e)
-        {
-            Logger.Error($"Error saving plugin settings! Message: {e.Message}");
-        }
-    }
-
-    // Re/Load settings
-    public void ReadSettings()
-    {
-        try
-        {
-            // Read plugin settings from $env:AppData/Amethyst/
-            TrackingDevices.PluginSettings = JsonConvert.DeserializeObject<AppPluginSettings>(File.ReadAllText(
-                Interfacing.GetAppDataFileDir("AmethystPluginsSettings.json"))) ?? new AppPluginSettings();
-        }
-        catch (Exception e)
-        {
-            Logger.Error($"Error reading plugin settings! Message: {e.Message}");
-            TrackingDevices.PluginSettings ??= new AppPluginSettings(); // Reset if null
-        }
-    }
-
-    public void OnPropertyChanged(string propName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-    }
 }
 
 public class PluginSettingsHelper : IPluginSettings

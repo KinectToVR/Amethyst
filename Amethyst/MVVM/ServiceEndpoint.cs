@@ -8,7 +8,6 @@ using Windows.Data.Json;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
-using System.Linq;
 
 namespace Amethyst.MVVM;
 

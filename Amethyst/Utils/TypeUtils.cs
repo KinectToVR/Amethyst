@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using AmethystSupport;
-using Microsoft.AppCenter.Crashes;
 
 namespace Amethyst.Utils;
 

@@ -12,7 +12,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.AppNotifications;
 
 namespace Amethyst.Classes;

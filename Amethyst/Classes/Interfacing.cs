@@ -735,7 +735,7 @@ public static class Interfacing
                     Logger.Info($"[Requested by device with GUID {guid}] " +
                                 "Successfully loaded language resources with key " +
                                 $"\"{AppData.Settings.AppLanguage}\"!");
-                    
+
                     // Setup string hot reload watchdog
                     device.AssetsWatcher = new FileSystemWatcher
                     {
@@ -752,7 +752,7 @@ public static class Interfacing
                     device.AssetsWatcher.Created += device.AssetsChanged;
                     device.AssetsWatcher.Deleted += device.AssetsChanged;
                     device.AssetsWatcher.Renamed += device.AssetsChanged;
-                    
+
                     return true; // Winning it, yay!
                 }
 
@@ -820,7 +820,7 @@ public static class Interfacing
             {
                 // Force refresh all the valid pages
                 Shared.Events.RequestInterfaceReload(false);
-                
+
                 // Optionally hide other status errors
                 UpdateServerStatus();
             });

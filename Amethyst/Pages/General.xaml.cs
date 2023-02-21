@@ -9,7 +9,6 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
-using Windows.System;
 using Windows.UI.ViewManagement;
 using Amethyst.Classes;
 using Amethyst.MVVM;
@@ -1664,7 +1663,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (!Shared.General.GeneralTabSetupFinished) return;
         Shared.General.ForceRenderCheckBox.IsChecked = visibility;
     }
-    
+
     private void AllowNavigation(bool allow)
     {
         Shared.Main.NavigationBlockerGrid.IsHitTestVisible = !allow;
