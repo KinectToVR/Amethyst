@@ -192,8 +192,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                 // Reload & restart the waiting loop
                 if (_mainPageLoadedOnce)
-                    Shared.Main.DispatcherQueue.TryEnqueue(
-                        async () => { await MainGrid_LoadedHandler(); });
+                    Shared.Main.DispatcherQueue.TryEnqueue(MainGrid_LoadedHandler);
 
                 // Rebuild devices' settings
                 // (Trick the device into rebuilding its interface)
@@ -1006,7 +1005,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
-    private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
+    private void MainGrid_Loaded(object sender, RoutedEventArgs e)
     {
         // Load theme config
         Shared.Main.MainNavigationView.XamlRoot.Content.As<Grid>().RequestedTheme =
@@ -1018,7 +1017,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             };
 
         // Execute the handler
-        await MainGrid_LoadedHandler();
+        MainGrid_LoadedHandler();
 
         // Register a theme watchdog
         NavView.XamlRoot.Content.As<Grid>().ActualThemeChanged += MainWindow_ActualThemeChanged;
@@ -1057,37 +1056,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Request page reloads
         Shared.Events.RequestInterfaceReload();
+
         OnPropertyChanged(); // Reload all
+        ReloadNavigationIcons();
     }
 
-    private async Task MainGrid_LoadedHandler()
+    private void MainGrid_LoadedHandler()
     {
         OnPropertyChanged(); // All
         ReloadNavigationIcons();
-
-        var oppositeTheme = Interfacing.ActualTheme == ElementTheme.Dark
-            ? ElementTheme.Light
-            : ElementTheme.Dark;
-
-        await Task.Delay(30);
-        HelpButton.RequestedTheme = oppositeTheme;
-        NavViewGeneralButtonLabel.RequestedTheme = oppositeTheme;
-        NavViewSettingsButtonLabel.RequestedTheme = oppositeTheme;
-        NavViewDevicesButtonLabel.RequestedTheme = oppositeTheme;
-        NavViewInfoButtonLabel.RequestedTheme = oppositeTheme;
-        NavViewOkashiButtonLabel.RequestedTheme = oppositeTheme;
-        UpdateIconText.RequestedTheme = oppositeTheme;
-        PreviewBadgeLabel.RequestedTheme = oppositeTheme;
-
-        await Task.Delay(30);
-        HelpButton.RequestedTheme = Interfacing.ActualTheme;
-        NavViewGeneralButtonLabel.RequestedTheme = Interfacing.ActualTheme;
-        NavViewSettingsButtonLabel.RequestedTheme = Interfacing.ActualTheme;
-        NavViewDevicesButtonLabel.RequestedTheme = Interfacing.ActualTheme;
-        NavViewInfoButtonLabel.RequestedTheme = Interfacing.ActualTheme;
-        NavViewOkashiButtonLabel.RequestedTheme = Interfacing.ActualTheme;
-        UpdateIconText.RequestedTheme = Interfacing.ActualTheme;
-        PreviewBadgeLabel.RequestedTheme = Interfacing.ActualTheme;
     }
 
     private void ReloadNavigationIcons()
