@@ -52,14 +52,14 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         Shared.TeachingTips.DevicesPage.DevicesListTeachingTip = DevicesListTeachingTip;
 
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
-        TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesList.Values;
+        TrackingDeviceTreeView.ItemsSource = AppPlugins.TrackingDevicesList.Values;
 
         //AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
         AppData.Settings.TrackersVector.CollectionChanged += (_, _) => OnPropertyChanged();
 
         // Set currently tracking device & selected device
         Logger.Info("Overwriting the devices TreeView selected item...");
-        var devicesListIndex = TrackingDevices.TrackingDevicesList.Keys.ToList()
+        var devicesListIndex = AppPlugins.TrackingDevicesList.Keys.ToList()
             .IndexOf(AppData.Settings.TrackingDeviceGuid);
         TrackingDeviceTreeView.SelectedNode = TrackingDeviceTreeView.RootNodes[devicesListIndex];
 
@@ -157,7 +157,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         await Task.Delay(500);
 
         // Check whether the previous tip can be shown
-        if (TrackingDevices.CurrentServiceEndpoint.CanAutoStartAmethyst)
+        if (AppPlugins.CurrentServiceEndpoint.CanAutoStartAmethyst)
         {
             // Show the previous tip: auto-start
             Shared.TeachingTips.SettingsPage.AutoStartTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
@@ -325,15 +325,15 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     {
         Logger.Info($"Now disconnecting tracking device {AppData.Settings.SelectedTrackingDeviceGuid}...");
 
-        if (TrackingDevices.TrackingDevicesList.TryGetValue(
+        if (AppPlugins.TrackingDevicesList.TryGetValue(
                 AppData.Settings.SelectedTrackingDeviceGuid, out var device))
             device.Shutdown();
 
         // Update the status here
-        TrackingDevices.HandleDeviceRefresh(false);
+        AppPlugins.HandleDeviceRefresh(false);
 
         // Update other statuses
-        TrackingDevices.UpdateTrackingDevicesInterface();
+        AppPlugins.UpdateTrackingDevicesInterface();
         AlternativeConnectionOptionsFlyout.Hide();
 
         // Update the page UI
@@ -342,7 +342,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
     private async void SetAsBaseButton_Click(object sender, RoutedEventArgs e)
     {
-        var device = TrackingDevices.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device;
+        var device = AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device;
         if (device?.TrackedJoints is null || device.TrackedJoints.Count < 1)
         {
             NoJointsFlyout.ShowAt(SelectedDeviceNameLabel);
@@ -365,7 +365,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         await Shared.Devices.ReloadSelectedDevice(true);
 
         // Make all the devices refresh their props
-        TrackingDevices.TrackingDevicesList.ToList()
+        AppPlugins.TrackingDevicesList.ToList()
             .ForEach(x => x.Value.OnPropertyChanged());
 
         // Check the application config, save
@@ -378,7 +378,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
     private async void SetAsOverrideButton_Click(object sender, RoutedEventArgs e)
     {
-        var device = TrackingDevices.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device;
+        var device = AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device;
         if (device?.TrackedJoints is null || device.TrackedJoints.Count < 1)
         {
             NoJointsFlyout.ShowAt(SelectedDeviceNameLabel);
@@ -400,7 +400,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         await Shared.Devices.ReloadSelectedDevice(true);
 
         // Make all the devices refresh their props
-        TrackingDevices.TrackingDevicesList.ToList()
+        AppPlugins.TrackingDevicesList.ToList()
             .ForEach(x => x.Value.OnPropertyChanged());
 
         // Check the application config, save
@@ -429,18 +429,18 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         {
             // Deselect the device, update status
             AppData.Settings.OverrideDevicesGuidMap.Remove(AppData.Settings.SelectedTrackingDeviceGuid);
-            TrackingDevices.HandleDeviceRefresh(false);
+            AppPlugins.HandleDeviceRefresh(false);
 
             // Additionally check settings
             AppData.Settings.CheckSettings();
         }
 
         // Make all the devices refresh their props
-        TrackingDevices.TrackingDevicesList.ToList()
+        AppPlugins.TrackingDevicesList.ToList()
             .ForEach(x => x.Value.OnPropertyChanged());
 
         // Update other statuses
-        TrackingDevices.UpdateTrackingDevicesInterface();
+        AppPlugins.UpdateTrackingDevicesInterface();
         AlternativeConnectionOptionsFlyout.Hide();
 
         // Check the application config, save
@@ -460,7 +460,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         {
             // Launch passed device docs
             await Launcher.LaunchUriAsync(
-                TrackingDevices.TrackingDevicesList[AppData.Settings.SelectedTrackingDeviceGuid].ErrorDocsUri ??
+                AppPlugins.TrackingDevicesList[AppData.Settings.SelectedTrackingDeviceGuid].ErrorDocsUri ??
                 new Uri($"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/app/help/"));
         }
         catch (Exception ex)

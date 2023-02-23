@@ -12,7 +12,7 @@ using static Amethyst.Classes.Shared;
 
 namespace Amethyst.Classes;
 
-public static class TrackingDevices
+public static class AppPlugins
 {
     public enum PluginLoadError
     {

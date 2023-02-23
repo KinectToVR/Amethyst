@@ -79,7 +79,7 @@
                                                Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Title'), Mode=OneWay}" />
 
                                     <ItemsRepeater x:Name="PluginsItemsRepeater" HorizontalAlignment="Stretch"
-                                                   ItemsSource="{x:Bind classes:TrackingDevices.LoadAttemptedPluginsList, Mode=OneWay}"
+                                                   ItemsSource="{x:Bind classes:AppPlugins.LoadAttemptedPluginsList, Mode=OneWay}"
                                                    Margin="20,0,20,20" AllowDrop="False">
 
                                         <ItemsRepeater.ItemTemplate>

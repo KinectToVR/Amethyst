@@ -139,7 +139,7 @@ public static class Interfacing
     // Show SteamVR toast / notification
     public static void ShowServiceToast(string header, string text)
     {
-        TrackingDevices.CurrentServiceEndpoint.DisplayToast((header, text));
+        AppPlugins.CurrentServiceEndpoint.DisplayToast((header, text));
     }
 
     // Show an app toast / notification
@@ -275,11 +275,11 @@ public static class Interfacing
         try
         {
             // Disconnect all loaded devices
-            TrackingDevices.TrackingDevicesList.Values
+            AppPlugins.TrackingDevicesList.Values
                 .ToList().ForEach(device => device.Shutdown());
 
             // Disconnect all loaded services
-            TrackingDevices.ServiceEndpointsList.Values
+            AppPlugins.ServiceEndpointsList.Values
                 .ToList().ForEach(service => service.Shutdown());
         }
         catch (Exception)
@@ -303,7 +303,7 @@ public static class Interfacing
                 for (var i = 0; i < 3; i++)
                 {
                     // Update tracker statuses in the server
-                    spawned.AddRange((await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(
+                    spawned.AddRange((await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(
                             AppData.Settings.TrackersVector.Where(x => x.IsActive).Select(x => x.GetTrackerBase())))
                         ?.Select(x => x.Success) ?? new[] { false }); // Check if the request was actually okay
                     await Task.Delay(15);
@@ -352,7 +352,7 @@ public static class Interfacing
             try
             {
                 // Send a ping message and capture the data
-                var result = await TrackingDevices.CurrentServiceEndpoint.TestConnection();
+                var result = await AppPlugins.CurrentServiceEndpoint.TestConnection();
 
                 // Dump data to variables
                 PingTime = result.PingTime;
@@ -366,8 +366,8 @@ public static class Interfacing
                     PingCheckingThreadsNumber - 1, 0, MaxPingCheckingThreads + 1);
 
                 // Return the result
-                return (TrackingDevices.CurrentServiceEndpoint.ServiceStatus,
-                    TrackingDevices.CurrentServiceEndpoint.ServiceStatusString);
+                return (AppPlugins.CurrentServiceEndpoint.ServiceStatus,
+                    AppPlugins.CurrentServiceEndpoint.ServiceStatusString);
             }
             catch (Exception e)
             {
@@ -422,12 +422,12 @@ public static class Interfacing
     public static (Vector3 Position, Quaternion Orientation)
         GetVrTrackerPoseCalibrated(string nameContains)
     {
-        var result = TrackingDevices.CurrentServiceEndpoint
+        var result = AppPlugins.CurrentServiceEndpoint
             .GetTrackerPose(nameContains, false);
 
         return (result?.Position ?? Vector3.Zero, // Check the result against null, return
             result?.Orientation ??
-            TrackingDevices.CurrentServiceEndpoint.HeadsetPose?.Orientation ?? Quaternion.Identity);
+            AppPlugins.CurrentServiceEndpoint.HeadsetPose?.Orientation ?? Quaternion.Identity);
     }
 
     public static void UpdateServerStatus()
@@ -624,14 +624,14 @@ public static class Interfacing
     public static class Plugins
     {
         public static (Vector3 Position, Quaternion Orientation) GetHmdPose =>
-            TrackingDevices.CurrentServiceEndpoint.HeadsetPose ?? (Vector3.Zero, Quaternion.Identity);
+            AppPlugins.CurrentServiceEndpoint.HeadsetPose ?? (Vector3.Zero, Quaternion.Identity);
 
         public static string RequestLocalizedString(string key, string guid)
         {
             try
             {
-                if (string.IsNullOrEmpty(guid) || (!TrackingDevices.TrackingDevicesList.ContainsKey(guid) &&
-                                                   !TrackingDevices.ServiceEndpointsList.ContainsKey(guid)))
+                if (string.IsNullOrEmpty(guid) || (!AppPlugins.TrackingDevicesList.ContainsKey(guid) &&
+                                                   !AppPlugins.ServiceEndpointsList.ContainsKey(guid)))
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
@@ -639,7 +639,7 @@ public static class Interfacing
                 }
 
                 // Check if the request was from a device
-                if (TrackingDevices.TrackingDevicesList.TryGetValue(guid, out var device))
+                if (AppPlugins.TrackingDevicesList.TryGetValue(guid, out var device))
                 {
                     // Check if the resource root is fine
                     var resourceRootDevice = device?.LocalizationResourcesRoot.Root;
@@ -648,7 +648,7 @@ public static class Interfacing
                 }
 
                 // Check if the request was from a service
-                if (TrackingDevices.ServiceEndpointsList.TryGetValue(guid, out var service))
+                if (AppPlugins.ServiceEndpointsList.TryGetValue(guid, out var service))
                 {
                     // Check if the resource root is fine
                     var resourceRootService = service?.LocalizationResourcesRoot.Root;
@@ -677,8 +677,8 @@ public static class Interfacing
                 Logger.Info($"[Requested by plugin with GUID {guid}] " +
                             $"Searching for language resources with key \"{AppData.Settings.AppLanguage}\"...");
 
-                if (string.IsNullOrEmpty(guid) || (!TrackingDevices.TrackingDevicesList.ContainsKey(guid) &&
-                                                   !TrackingDevices.ServiceEndpointsList.ContainsKey(guid)))
+                if (string.IsNullOrEmpty(guid) || (!AppPlugins.TrackingDevicesList.ContainsKey(guid) &&
+                                                   !AppPlugins.ServiceEndpointsList.ContainsKey(guid)))
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
@@ -715,7 +715,7 @@ public static class Interfacing
                 }
 
                 // ReSharper disable once InvertIf | Check if the request was from a device
-                if (TrackingDevices.TrackingDevicesList.TryGetValue(guid, out var device) && device is not null)
+                if (AppPlugins.TrackingDevicesList.TryGetValue(guid, out var device) && device is not null)
                 {
                     // Parse the loaded json
                     device.LocalizationResourcesRoot =
@@ -757,7 +757,7 @@ public static class Interfacing
                 }
 
                 // ReSharper disable once InvertIf | Check if the request was from a service
-                if (TrackingDevices.ServiceEndpointsList.TryGetValue(guid, out var service) && service is not null)
+                if (AppPlugins.ServiceEndpointsList.TryGetValue(guid, out var service) && service is not null)
                 {
                     // Parse the loaded json
                     service.LocalizationResourcesRoot =

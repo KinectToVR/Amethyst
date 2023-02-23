@@ -74,7 +74,7 @@ public class AppSettings : INotifyPropertyChanged
         set
         {
             _isFlipEnabled = value;
-            TrackingDevices.CheckFlipSupport();
+            AppPlugins.CheckFlipSupport();
 
             OnPropertyChanged("IsFlipEnabled");
             AppData.Settings.SaveSettings();
@@ -87,7 +87,7 @@ public class AppSettings : INotifyPropertyChanged
         set
         {
             _isExternalFlipEnabled = value;
-            TrackingDevices.CheckFlipSupport();
+            AppPlugins.CheckFlipSupport();
             OnPropertyChanged("IsExternalFlipEnabled");
             AppData.Settings.SaveSettings();
         }
@@ -314,8 +314,8 @@ public class AppSettings : INotifyPropertyChanged
             TrackersVector.Where(tracker => !tracker.IsSupported).ToList()
                 .ForEach(tracker => Logger.Info(
                     $"Tracker role {tracker.Role} is not supported by " +
-                    $"({TrackingDevices.CurrentServiceEndpoint.Guid}, " +
-                    $"{TrackingDevices.CurrentServiceEndpoint.Name})! " +
+                    $"({AppPlugins.CurrentServiceEndpoint.Guid}, " +
+                    $"{AppPlugins.CurrentServiceEndpoint.Name})! " +
                     "Disabling this tracker and marking as unsupported!"));
 
         // Check pairs' configs
@@ -401,7 +401,7 @@ public class AppSettings : INotifyPropertyChanged
 
         // Advanced config: runtime and tracking settings
         Logger.Info("Checking AppSettings [runtime] configuration...");
-        var trackingDevice = device ?? TrackingDevices.BaseTrackingDevice;
+        var trackingDevice = device ?? AppPlugins.BaseTrackingDevice;
 
         // Check orientation option configs : left foot
         Logger.Info("Checking left foot orientation settings...");
@@ -468,7 +468,7 @@ public class AppSettings : INotifyPropertyChanged
                             $"({appTracker.OverrideGuid}) exists in loaded plugins...");
 
                 // Check if the override specified by the tracker is real
-                if (!TrackingDevices.TrackingDevicesList.ContainsKey(appTracker.OverrideGuid))
+                if (!AppPlugins.TrackingDevicesList.ContainsKey(appTracker.OverrideGuid))
                 {
                     Logger.Info($"The saved tracker {appTracker.Serial} override " +
                                 $"({appTracker.OverrideGuid}) is invalid! Resetting it to NONE!");
@@ -484,7 +484,7 @@ public class AppSettings : INotifyPropertyChanged
                             $"({appTracker.SelectedTrackedJointId}) is valid for loaded plugins...");
 
                 // ReSharper disable once InvertIf | Check if the specified override index is valid
-                if (TrackingDevices.GetDevice(appTracker.OverrideGuid)
+                if (AppPlugins.GetDevice(appTracker.OverrideGuid)
                         .Device.TrackedJoints.Count <= appTracker.OverrideJointId)
                 {
                     Logger.Info($"The saved tracker {appTracker.Serial} bound joint ID " +

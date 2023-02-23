@@ -123,7 +123,7 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     }
 
     private string NotSupportedText => string.Format(Interfacing.LocalizedJsonString(
-        "/SharedStrings/Joints/NotSupported/Tooltip"), TrackingDevices.CurrentServiceEndpoint.Name);
+        "/SharedStrings/Joints/NotSupported/Tooltip"), AppPlugins.CurrentServiceEndpoint.Name);
 
     private int TrackersCount =>
         Trackers.All(x => x.IsSupported) ||
@@ -211,13 +211,13 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
                         var trackerBase = tracker.GetTrackerBase();
                         trackerBase.ConnectionState = (sender as ToggleSwitch)!.IsOn;
 
-                        await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+                        await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
                         await Task.Delay(20);
                     }
 
             // Notify about our pending changes
             if (Interfacing.AppTrackersSpawned)
-                TrackingDevices.TrackersConfigChanged();
+                AppPlugins.TrackersConfigChanged();
 
             if (Show) // Play a sound (if the expander is valid)
                 AppSounds.PlayAppSound((sender as ToggleSwitch)!.IsOn

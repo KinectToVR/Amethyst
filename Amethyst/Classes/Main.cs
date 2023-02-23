@@ -42,7 +42,7 @@ public static class Main
 
         // Also validate the result
         AppData.Settings.IsFlipEnabled =
-            TrackingDevices.BaseTrackingDevice.IsFlipSupported && AppData.Settings.IsFlipEnabled;
+            AppPlugins.BaseTrackingDevice.IsFlipSupported && AppData.Settings.IsFlipEnabled;
 
         // Save settings
         AppData.Settings.SaveSettings();
@@ -65,31 +65,31 @@ public static class Main
     private static void UpdateTrackingDevices()
     {
         // Update the base device
-        if (!TrackingDevices.BaseTrackingDevice.IsSelfUpdateEnabled)
-            TrackingDevices.BaseTrackingDevice.Update();
+        if (!AppPlugins.BaseTrackingDevice.IsSelfUpdateEnabled)
+            AppPlugins.BaseTrackingDevice.Update();
 
         // Copy needed device transform poses
         {
             // Create a ref to the hook [head] joint (or the first, or default joint)
-            var headJoint = TrackingDevices.BaseTrackingDevice.TrackedJoints
+            var headJoint = AppPlugins.BaseTrackingDevice.TrackedJoints
                 .FirstOrDefault(x => x.Role == TrackedJointType.JointHead,
-                    TrackingDevices.BaseTrackingDevice.TrackedJoints.FirstOrDefault(new TrackedJoint()));
+                    AppPlugins.BaseTrackingDevice.TrackedJoints.FirstOrDefault(new TrackedJoint()));
 
             // Create a ref to the rto [waist] joint (or the first, or default joint)
-            var waistJoint = TrackingDevices.BaseTrackingDevice.TrackedJoints
+            var waistJoint = AppPlugins.BaseTrackingDevice.TrackedJoints
                 .FirstOrDefault(x => x.Role == TrackedJointType.JointSpineWaist,
-                    TrackingDevices.BaseTrackingDevice.TrackedJoints.FirstOrDefault(new TrackedJoint()));
+                    AppPlugins.BaseTrackingDevice.TrackedJoints.FirstOrDefault(new TrackedJoint()));
 
             // Copy the hook joint [head], relative transform origin joint [waist] pose
-            Interfacing.DeviceHookJointPosition[TrackingDevices.BaseTrackingDevice.Guid] =
+            Interfacing.DeviceHookJointPosition[AppPlugins.BaseTrackingDevice.Guid] =
                 (headJoint.Position, headJoint.Orientation);
-            Interfacing.DeviceRelativeTransformOrigin[TrackingDevices.BaseTrackingDevice.Guid] =
+            Interfacing.DeviceRelativeTransformOrigin[AppPlugins.BaseTrackingDevice.Guid] =
                 (waistJoint.Position, waistJoint.Orientation);
         }
 
         // Update override devices (optionally)
         foreach (var device in AppData.Settings.OverrideDevicesGuidMap.Select(overrideGuid =>
-                     TrackingDevices.GetDevice(overrideGuid).Device))
+                     AppPlugins.GetDevice(overrideGuid).Device))
         {
             if (!device.IsSelfUpdateEnabled) device.Update();
 
@@ -109,7 +109,7 @@ public static class Main
         }
 
         // Update service endpoints
-        TrackingDevices.CurrentServiceEndpoint?.Heartbeat();
+        AppPlugins.CurrentServiceEndpoint?.Heartbeat();
     }
 
     private static async Task UpdateServerTrackers()
@@ -123,7 +123,7 @@ public static class Main
             for (var i = 0; i < 3; i++)
             {
                 // Update status in server
-                await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(AppData.Settings.TrackersVector
+                await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(AppData.Settings.TrackersVector
                     .Where(tracker => tracker.IsActive)
                     .Select(tracker =>
                     {
@@ -152,7 +152,7 @@ public static class Main
             var updateLowerBody = !(Interfacing.IsTrackingFrozen && AppData.Settings.FreezeLowerBodyOnly);
 
             // Update the [server] trackers
-            await TrackingDevices.CurrentServiceEndpoint.UpdateTrackerPoses(
+            await AppPlugins.CurrentServiceEndpoint.UpdateTrackerPoses(
                 AppData.Settings.TrackersVector.Where(tracker => tracker.IsActive)
                     .Where(x => (int)TypeUtils.TrackerTypeJointDictionary[x.Role] < 16 || updateLowerBody)
                     .Select(tracker => tracker.GetTrackerBase(
@@ -177,7 +177,7 @@ public static class Main
                     // Search for 
                     foreach (var tracker in AppData.Settings.TrackersVector
                                  .Where(tracker => tracker.IsActive)
-                                 .Where(tracker => TrackingDevices.CurrentServiceEndpoint
+                                 .Where(tracker => AppPlugins.CurrentServiceEndpoint
                                      .GetTrackerPose(TypeUtils.TrackerTypeSerialDictionary[tracker.Role]) != null))
                     {
                         // Make actual changes (self-updates)
@@ -189,7 +189,7 @@ public static class Main
                             var trackerBase = tracker.GetTrackerBase();
                             trackerBase.ConnectionState = false;
 
-                            await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+                            await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
                             await Task.Delay(25);
                         }
 
@@ -236,7 +236,7 @@ public static class Main
         // Base device
         {
             // Get the currently tracking device
-            var device = TrackingDevices.BaseTrackingDevice;
+            var device = AppPlugins.BaseTrackingDevice;
 
             var extFlip =
                 AppData.Settings.IsFlipEnabled &&
@@ -424,7 +424,7 @@ public static class Main
         }
 
         // Override devices, loop over all overrides
-        foreach (var device in TrackingDevices.TrackingDevicesList.Values.Where(
+        foreach (var device in AppPlugins.TrackingDevicesList.Values.Where(
                      device => AppData.Settings.OverrideDevicesGuidMap.Contains(device.Guid)))
         {
             // Strategy:
