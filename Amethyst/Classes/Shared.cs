@@ -25,7 +25,8 @@ public static class Shared
             ReloadGeneralPageEvent,
             ReloadSettingsPageEvent,
             ReloadDevicesPageEvent,
-            ReloadInfoPageEvent;
+            ReloadInfoPageEvent,
+            ReloadPluginsPageEvent;
 
         public static readonly Semaphore
             SemSignalStartMain = new(0, 1);
@@ -41,6 +42,7 @@ public static class Shared
             ReloadSettingsPageEvent?.Set();
             ReloadDevicesPageEvent?.Set();
             ReloadInfoPageEvent?.Set();
+            ReloadPluginsPageEvent?.Set();
 
             Main.DispatcherQueue?.TryEnqueue(() =>
             {
@@ -130,6 +132,15 @@ public static class Shared
                         NavigationItems.NavViewInfoButtonIcon.Foreground = NeutralBrush;
                         NavigationItems.NavViewInfoButtonIcon.Glyph = "\uE946";
                         break;
+                    case "Amethyst.Pages.Plugins":
+                        NavigationItems.NavViewPluginsButtonIcon.Translation = new Vector3(0, -8, 0);
+                        NavigationItems.NavViewPluginsButtonLabel.Opacity = 1.0;
+
+                        NavigationItems.NavViewPluginsButtonIcon.Foreground = NeutralBrush;
+
+                        NavigationItems.NavViewPluginsButtonIcon.Glyph = "\uF158";
+                        NavigationItems.NavViewPluginsButtonIcon.FontSize = 20;
+                        break;
                 }
 
             // Switch the next navview item to the active state
@@ -166,6 +177,15 @@ public static class Shared
                         NavigationItems.NavViewInfoButtonLabel.Opacity = 0.0;
                         NavigationItems.NavViewInfoButtonIcon.Translation = Vector3.Zero;
                         break;
+                    case "Amethyst.Pages.Plugins":
+                        NavigationItems.NavViewPluginsButtonLabel.Opacity = 0.0;
+                        NavigationItems.NavViewPluginsButtonIcon.Translation = Vector3.Zero;
+
+                        NavigationItems.NavViewPluginsButtonIcon.Foreground = AttentionBrush;
+
+                        NavigationItems.NavViewPluginsButtonIcon.Glyph = "\uEBD2";
+                        NavigationItems.NavViewPluginsButtonIcon.Translation = Vector3.Zero;
+                        break;
                 }
 
             Interfacing.CurrentPageTag = navItemTag; // Cache the current page tag
@@ -180,13 +200,15 @@ public static class Shared
                 NavViewGeneralButtonIcon,
                 NavViewSettingsButtonIcon,
                 NavViewDevicesButtonIcon,
-                NavViewInfoButtonIcon;
+                NavViewInfoButtonIcon,
+                NavViewPluginsButtonIcon;
 
             public static TextBlock
                 NavViewGeneralButtonLabel,
                 NavViewSettingsButtonLabel,
                 NavViewDevicesButtonLabel,
-                NavViewInfoButtonLabel;
+                NavViewInfoButtonLabel,
+                NavViewPluginsButtonLabel;
         }
     }
 

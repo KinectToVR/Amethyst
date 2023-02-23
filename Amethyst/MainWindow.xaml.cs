@@ -88,11 +88,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.Main.NavigationItems.NavViewSettingsButtonIcon = NavViewSettingsButtonIcon;
         Shared.Main.NavigationItems.NavViewDevicesButtonIcon = NavViewDevicesButtonIcon;
         Shared.Main.NavigationItems.NavViewInfoButtonIcon = NavViewInfoButtonIcon;
+        Shared.Main.NavigationItems.NavViewPluginsButtonIcon = NavViewPluginsButtonIcon;
 
         Shared.Main.NavigationItems.NavViewGeneralButtonLabel = NavViewGeneralButtonLabel;
         Shared.Main.NavigationItems.NavViewSettingsButtonLabel = NavViewSettingsButtonLabel;
         Shared.Main.NavigationItems.NavViewDevicesButtonLabel = NavViewDevicesButtonLabel;
         Shared.Main.NavigationItems.NavViewInfoButtonLabel = NavViewInfoButtonLabel;
+        Shared.Main.NavigationItems.NavViewPluginsButtonLabel = NavViewPluginsButtonLabel;
 
         // Set up
         Title = "Amethyst";
@@ -172,7 +174,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             ("general", typeof(General)),
             ("settings", typeof(Settings)),
             ("devices", typeof(Devices)),
-            ("info", typeof(Info))
+            ("info", typeof(Info)),
+            ("plugins", typeof(Pages.Plugins))
         };
 
         Logger.Info($"Setting up shared events for '{GetType().FullName}'...");
@@ -1149,6 +1152,27 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
             Shared.Main.NavigationItems.NavViewInfoButtonIcon.Foreground = Shared.Main.NeutralBrush;
             Shared.Main.NavigationItems.NavViewInfoButtonIcon.Glyph = "\uE946";
+        }
+
+        if (Interfacing.CurrentPageClass == "Amethyst.Pages.Plugins")
+        {
+            Shared.Main.NavigationItems.NavViewPluginsButtonLabel.Opacity = 0.0;
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Translation = Vector3.Zero;
+
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Foreground = Shared.Main.AttentionBrush;
+
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Glyph = "\uEBD2";
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.FontSize = 23;
+        }
+        else
+        {
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Translation = new Vector3(0, -8, 0);
+            Shared.Main.NavigationItems.NavViewPluginsButtonLabel.Opacity = 1.0;
+
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Foreground = Shared.Main.NeutralBrush;
+
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Glyph = "\uF158";
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.FontSize = 20;
         }
 
         HelpIcon.Foreground = Shared.Main.NeutralBrush;
