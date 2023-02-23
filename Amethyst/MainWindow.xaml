@@ -302,21 +302,22 @@
                             </Viewbox>
                         </Grid>
                     </NavigationViewItem>
+                </muxc:NavigationView.MenuItems>
 
-                    <NavigationViewItem FontSize="10" FontWeight="Medium" Visibility="Collapsed"
-                                        Tag="console" x:Name="ConsoleItem" Height="63"
-                                        BackgroundSizing="OuterBorderEdge">
+                <muxc:NavigationView.FooterMenuItems>
+                    <NavigationViewItem FontSize="10" FontWeight="Medium"
+                                        Tag="plugins" x:Name="PluginsItem" Height="63" BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <FontIcon Glyph="&#xEB51;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                      x:Name="NavViewOkashiButtonIcon" FontSize="22" Translation="0,-8,0">
+                            <FontIcon Glyph="&#xE946;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                      x:Name="NavViewPluginsButtonIcon" FontSize="22" Translation="0,-8,0">
                                 <FontIcon.TranslationTransition>
                                     <Vector3Transition />
                                 </FontIcon.TranslationTransition>
                             </FontIcon>
 
                             <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                                <TextBlock Text="お菓子❢" HorizontalAlignment="Center"
-                                           x:Name="NavViewOkashiButtonLabel"
+                                <TextBlock HorizontalAlignment="Center" x:Name="NavViewPluginsButtonLabel"
+                                           Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Plugins'), Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                     <TextBlock.OpacityTransition>
                                         <ScalarTransition />
@@ -325,7 +326,7 @@
                             </Viewbox>
                         </Grid>
                     </NavigationViewItem>
-                </muxc:NavigationView.MenuItems>
+                </muxc:NavigationView.FooterMenuItems>
 
                 <muxc:NavigationView.PaneFooter>
                     <StackPanel Orientation="Vertical">
