@@ -385,6 +385,12 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                     SetCommandText($"Sent an update signal to the '{typeof(MainWindow).FullName}' handler!");
                     break; // That's all for now!
                 }
+                case "updatefound":
+                {
+                    await MainWindow.RequestUpdateFoundEvent(this, EventArgs.Empty);
+                    SetCommandText($"Sent an update signal to the '{typeof(MainWindow).FullName}' handler!");
+                    break; // That's all for now!
+                }
                 case "uwu" or "owo" or "omo" or "umu":
                 {
                     Interfacing.ShowToast(((TextBox)sender).Text

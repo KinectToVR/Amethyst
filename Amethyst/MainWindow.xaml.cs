@@ -57,9 +57,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     public delegate Task RequestApplicationUpdate(object sender, EventArgs e);
 
     public static RequestApplicationUpdate RequestUpdateEvent;
+    public static RequestApplicationUpdate RequestUpdateFoundEvent;
+
     private readonly bool _mainPageInitFinished;
 
-    private readonly SemaphoreSlim _rotationFSemaphore = new(0);
     private SystemBackdropConfiguration _configurationSource;
     private bool _mainPageLoadedOnce;
     private MicaController _micaController;
@@ -176,6 +177,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         Logger.Info($"Setting up shared events for '{GetType().FullName}'...");
         RequestUpdateEvent += (_, _) => ExecuteUpdates();
+        RequestUpdateFoundEvent += (_, _) =>
+        {
+            UpdateInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
+                "/SharedStrings/Updates/NewUpdateMessage"), _remoteVersionString);
+
+            UpdateInfoBar.IsOpen = true;
+            UpdateInfoBar.Opacity = 1.0;
+            return Task.CompletedTask;
+        };
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
@@ -1141,42 +1151,23 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewInfoButtonIcon.Glyph = "\uE946";
         }
 
-        UpdateIcon.Foreground = Interfacing.CheckingUpdatesNow ? Shared.Main.AttentionBrush : Shared.Main.NeutralBrush;
         HelpIcon.Foreground = Shared.Main.NeutralBrush;
     }
 
     private async Task ExecuteUpdates()
     {
         Interfacing.UpdatingNow = true;
-        UpdatePendingFlyout.Hide();
-        UpdateIconDot.Opacity = 0.0;
         await Task.Delay(500);
 
         // Mark the update footer as active
-        UpdateIconGrid.Translation = Vector3.Zero;
-        UpdateIconText.Opacity = 0.0;
-        UpdateIcon.Foreground = Shared.Main.AttentionBrush;
-        UpdatePendingFlyoutFooter.Text = $"Amethyst v{_remoteVersionString}";
-        UpdatePendingFlyoutStatusContent.Text =
-            Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
-
-        try
-        {
-            Logger.Info("Trying to start the Update Icon storyboard...");
-            IconRotation.Begin(); // Begin animation, not working on some machines
-        }
-        catch (Exception e)
-        {
-            Logger.Warn(e); // Log that!
-            _rotationFSemaphore.Release();
-        }
+        UpdatePendingInfoBar.Title = string.Format(Interfacing.LocalizedJsonString(
+            "/SharedStrings/Updates/Headers/Downloading"), _remoteVersionString);
 
         if (!Interfacing.IsNuxPending)
-            UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions
-            {
-                Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
-                ShowMode = FlyoutShowMode.Transient
-            });
+        {
+            UpdatePendingInfoBar.IsOpen = true;
+            UpdatePendingInfoBar.Opacity = 1.0;
+        }
 
         // Success? ...or nah?
         var updateError = false;
@@ -1184,7 +1175,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Reset the progressbar
         var updatePendingProgressBar = new ProgressBar
         {
-            IsIndeterminate = false,
+            IsIndeterminate = true,
             HorizontalAlignment = HorizontalAlignment.Stretch
         };
 
@@ -1270,12 +1261,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         totalBytesRead += readBuffer.Length;
                         Logger.Info($"Downloaded {totalBytesRead} of {totalBytesToRead} bytes...");
 
-                        // Update the progressbar
-                        var progress = (double)totalBytesRead / totalBytesToRead;
-
-                        updatePendingProgressBar.Value = progress * 100;
-                        UpdatePendingFlyoutStatusContent.Text = downloadStatusString.Replace(
-                            "0", ((int)(progress * 100)).ToString());
+                        // Update the progress message
+                        UpdatePendingInfoBar.Message = downloadStatusString.Replace(
+                            "0", ((int)(100.0 * totalBytesRead / totalBytesToRead)).ToString());
 
                         // Write to file
                         await fsInstallerFile.WriteAsync(readBuffer);
@@ -1292,24 +1280,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Error(new Exception($"Update failed, an exception occurred. Message: {e.Message}"));
             updateError = true;
         }
-
-        // Wait for a full icon revolve
-        await _rotationFSemaphore.WaitAsync();
-
-        try
-        {
-            Logger.Info("Trying to stop the Update Icon storyboard...");
-            IconRotation.Stop(); // Stop animating, not working on some machines
-        }
-        catch (Exception e)
-        {
-            Logger.Warn(e);
-        }
-
-        // Mark the update footer as inactive
-        UpdateIcon.Foreground = Shared.Main.NeutralBrush;
-        UpdateIconGrid.Translation = new Vector3(0, -8, 0);
-        UpdateIconText.Opacity = 1.0;
 
         // Check the file result and the DL result
         if (!updateError)
@@ -1349,17 +1319,21 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
         updatePendingProgressBar.ShowError = true;
-        UpdatePendingFlyoutStatusContent.Text =
-            Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error");
+        UpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+            "/SharedStrings/Updates/Statuses/Error");
 
         await Task.Delay(3200);
-        UpdatePendingFlyout.Hide();
+        UpdatePendingInfoBar.IsOpen = false;
+        UpdatePendingInfoBar.Opacity = 0.0;
         await Task.Delay(500);
 
         // Don't give up yet
         Interfacing.UpdatingNow = false;
         if (Interfacing.UpdateFound)
-            UpdateIconDot.Opacity = 1.0;
+        {
+            UpdateInfoBar.IsOpen = true;
+            UpdateInfoBar.Opacity = 1.0;
+        }
 
         // Remove the progressbar
         UpdatePendingFlyoutMainStack.Children.Remove(
@@ -1374,17 +1348,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         {
             // Check if we're midway updating
             if (Interfacing.UpdatingNow)
-            {
-                // Show the updater progress flyout
-                if (!Interfacing.IsNuxPending)
-                    UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions
-                    {
-                        Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
-                        ShowMode = FlyoutShowMode.Transient
-                    });
-
                 return; // Don't proceed further
-            }
 
             // Mark as checking
             Interfacing.CheckingUpdatesNow = true;
@@ -1393,27 +1357,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Don't check if found
             if (!Interfacing.UpdateFound)
             {
-                // Mark the update footer as active
-                UpdateIconGrid.Translation = Vector3.Zero;
-                UpdateIconText.Opacity = 0.0;
-                UpdateIcon.Foreground = Shared.Main.AttentionBrush;
-
-                try
-                {
-                    Logger.Info("Trying to start the Update Icon storyboard...");
-                    IconRotation.Begin(); // Begin animation, not working on some machines
-                }
-                catch (Exception e)
-                {
-                    Logger.Warn(e); // Log that!
-                    _rotationFSemaphore.Release();
-                }
-
                 // Check now
                 Interfacing.UpdateFound = false;
-
-                // Dummy for holding change logs
-                List<string> changesStringVector = new();
 
                 // Check for updates
                 try
@@ -1462,8 +1407,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         var jsonRoot = jsonHead.GetNamedObject("amethyst");
 
                         if (!jsonRoot.ContainsKey("version") ||
-                            !jsonRoot.ContainsKey("version_string") ||
-                            !jsonRoot.ContainsKey("changelog"))
+                            !jsonRoot.ContainsKey("version_string"))
                         {
                             Logger.Error("The latest release's manifest was invalid!");
                         }
@@ -1485,10 +1429,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             // Check the version
                             if (AppData.InternalVersion < remoteVersion)
                                 Interfacing.UpdateFound = true;
-
-                            // Cache the changes
-                            changesStringVector = jsonRoot.GetNamedArray("changelog")
-                                .Select(x => x.ToString()).ToList();
                         }
                     }
                     else
@@ -1521,62 +1461,22 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
                 }
 
-                // Wait for a full icon revolve
-                await _rotationFSemaphore.WaitAsync();
-
-                try
-                {
-                    Logger.Info("Trying to stop the Update Icon storyboard...");
-                    IconRotation.Stop(); // Stop animating, not working on some machines
-                }
-                catch (Exception e)
-                {
-                    Logger.Warn(e);
-                }
-
-                // Mark the update footer as inactive
-                {
-                    UpdateIcon.Foreground = Shared.Main.NeutralBrush;
-
-                    UpdateIconGrid.Translation = new Vector3(0, -8, 0);
-                    UpdateIconText.Opacity = 1.0;
-                }
-
                 if (Interfacing.UpdateFound)
                 {
-                    FlyoutHeader.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/NewUpdateFound");
-                    FlyoutFooter.Text = $"Amethyst v{_remoteVersionString}";
+                    UpdateInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
+                        "/SharedStrings/Updates/NewUpdateMessage"), _remoteVersionString);
 
-                    var changelogString = "";
-                    changesStringVector.ForEach(x => changelogString += $"- {x}\n");
-                    FlyoutContent.Text = changelogString.TrimEnd('\n');
-                    FlyoutContent.Margin = new Thickness(0, 0, 0, 12);
-
-                    InstallLaterButton.Visibility = Visibility.Visible;
-                    InstallNowButton.Visibility = Visibility.Visible;
-                    UpdateIconDot.Opacity = 1.0;
-                }
-                else
-                {
-                    FlyoutHeader.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/UpToDate");
-                    FlyoutFooter.Text = $"Amethyst v{AppData.VersionString.Display}";
-                    FlyoutContent.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/Suggestions");
-                    FlyoutContent.Margin = new Thickness(0);
-
-                    InstallLaterButton.Visibility = Visibility.Collapsed;
-                    InstallNowButton.Visibility = Visibility.Collapsed;
-                    UpdateIconDot.Opacity = 0.0;
+                    UpdateInfoBar.IsOpen = true;
+                    UpdateInfoBar.Opacity = 1.0;
                 }
             }
 
             // If an update was found, show it
-            // (or if the check was manual)
             if ((Interfacing.UpdateFound || show) && !Interfacing.IsNuxPending)
-                UpdateFlyout.ShowAt(HelpButton, new FlyoutShowOptions
-                {
-                    Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
-                    ShowMode = FlyoutShowMode.Transient
-                });
+            {
+                UpdateInfoBar.IsOpen = true; // (or if the check was manual)
+                UpdateInfoBar.Opacity = 1.0; // (or if the check was manual)
+            }
 
             // Uncheck
             Interfacing.CheckingUpdatesNow = false;
@@ -1675,7 +1575,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
     }
 
-    private void NavView_Loaded(object sender, RoutedEventArgs e)
+    private async void NavView_Loaded(object sender, RoutedEventArgs e)
     {
         Interfacing.ActualTheme = NavView.ActualTheme;
 
@@ -1701,6 +1601,23 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Because we use ItemInvoked to navigate, we need to call Navigate
         // here to load the home page.
         Shared.Main.NavigateToPage("general", new EntranceNavigationTransitionInfo());
+
+        // Show the startup tour teachingtip
+        if (!AppData.Settings.FirstTimeTourShown)
+        {
+            // Play a sound
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+            // Show the first tip
+            Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
+            Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+
+            Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = true;
+            Interfacing.IsNuxPending = true;
+        }
+
+        // Check for updates (and show)
+        await CheckUpdates(false, 2000);
     }
 
     private void NavView_ItemInvoked(NavigationView sender,
@@ -1719,33 +1636,33 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             ContentFrame.GoBack();
     }
 
-    private async void UpdateButton_Tapped(object sender, TappedRoutedEventArgs e)
-    {
-        // Check for updates (and show)
-        if (Interfacing.CheckingUpdatesNow) return;
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-        await CheckUpdates(true);
-    }
+    //private async void UpdateButton_Tapped(object sender, TappedRoutedEventArgs e)
+    //{
+    //    // Check for updates (and show)
+    //    if (Interfacing.CheckingUpdatesNow) return;
+    //    AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+    //    await CheckUpdates(true);
+    //}
 
-    private async void UpdateButton_Loaded(object sender, RoutedEventArgs e)
-    {
-        // Show the startup tour teachingtip
-        if (!AppData.Settings.FirstTimeTourShown)
-        {
-            // Play a sound
-            AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+    //private async void UpdateButton_Loaded(object sender, RoutedEventArgs e)
+    //{
+    //    // Show the startup tour teachingtip
+    //    if (!AppData.Settings.FirstTimeTourShown)
+    //    {
+    //        // Play a sound
+    //        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
-            // Show the first tip
-            Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
-            Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+    //        // Show the first tip
+    //        Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
+    //        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
 
-            Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = true;
-            Interfacing.IsNuxPending = true;
-        }
+    //        Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = true;
+    //        Interfacing.IsNuxPending = true;
+    //    }
 
-        // Check for updates (and show)
-        await CheckUpdates(false, 2000);
-    }
+    //    // Check for updates (and show)
+    //    await CheckUpdates(false, 2000);
+    //}
 
     private void HelpButton_Tapped(object sender, TappedRoutedEventArgs e)
     {
@@ -1799,16 +1716,17 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
-    private void InstallLaterButton_Click(object sender, RoutedEventArgs e)
+    private void InstallLaterButton_Click(InfoBar sender, object arg)
     {
         Interfacing.UpdateOnClosed = true;
-        UpdateFlyout.Hide();
     }
 
     private async void InstallNowButton_Click(object sender, RoutedEventArgs e)
     {
+        UpdateInfoBar.IsOpen = false;
+        UpdateInfoBar.Opacity = 0.0;
+
         await ExecuteUpdates();
-        UpdateFlyout.Hide();
     }
 
     private async void HelpFlyoutDocsButton_Click(object sender, RoutedEventArgs e)
@@ -1997,22 +1915,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         HelpIcon.Foreground = Shared.Main.NeutralBrush;
         HelpIconGrid.Translation = new Vector3(0, -8, 0);
         HelpIconText.Opacity = 1.0;
-    }
-
-    private void OnIconRotationOnCompleted(object o, object o1)
-    {
-        _rotationFSemaphore.Release();
-
-        try
-        {
-            Logger.Info("Trying to restart the Update Icon storyboard...");
-            IconRotation.Stop(); // Restart
-            IconRotation.Begin();
-        }
-        catch (Exception e)
-        {
-            Logger.Warn(e);
-        }
     }
 
     private void InterfaceBlockerGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
