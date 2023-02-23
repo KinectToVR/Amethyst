@@ -291,7 +291,7 @@
                                 </FontIcon.TranslationTransition>
                             </FontIcon>
 
-                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <Viewbox Margin="-1,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                                 <TextBlock HorizontalAlignment="Center" x:Name="NavViewInfoButtonLabel"
                                            Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Info'), Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
