@@ -132,7 +132,7 @@ public partial class App : Application
 
         // Read plugin settings
         Logger.Info("Reading custom plugin settings...");
-        TrackingDevices.PluginSettings.ReadSettings();
+        AppPlugins.PluginSettings.ReadSettings();
 
         // Run detached to allow for async calls
         Task.Run(async () =>
@@ -205,11 +205,11 @@ public partial class App : Application
             Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
 
             // Reload plugins' language resources
-            foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
+            foreach (var plugin in AppPlugins.TrackingDevicesList.Values)
                 Interfacing.Plugins.SetLocalizationResourcesRoot(
                     plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
-            foreach (var plugin in TrackingDevices.ServiceEndpointsList.Values)
+            foreach (var plugin in AppPlugins.ServiceEndpointsList.Values)
                 Interfacing.Plugins.SetLocalizationResourcesRoot(
                     plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
@@ -217,8 +217,8 @@ public partial class App : Application
             Shared.Devices.DevicesJointsValid = false;
 
             // Reload plugins' interfaces
-            TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
-            TrackingDevices.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
+            AppPlugins.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
+            AppPlugins.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
 
             // Request page reloads
             Translator.Get.OnPropertyChanged();

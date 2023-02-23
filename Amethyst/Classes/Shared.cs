@@ -47,8 +47,8 @@ public static class Shared
             Main.DispatcherQueue?.TryEnqueue(() =>
             {
                 // Reload other stuff, like statuses
-                TrackingDevices.UpdateTrackingDevicesInterface();
-                TrackingDevices.HandleDeviceRefresh(false);
+                AppPlugins.UpdateTrackingDevicesInterface();
+                AppPlugins.HandleDeviceRefresh(false);
             });
         }
     }
@@ -306,19 +306,19 @@ public static class Shared
         public static async Task ReloadSelectedDevice(bool manual, bool reconnect = false)
         {
             // Update the status here
-            TrackingDevices.HandleDeviceRefresh(reconnect);
+            AppPlugins.HandleDeviceRefresh(reconnect);
 
             // Update GeneralPage status
-            TrackingDevices.UpdateTrackingDevicesInterface();
+            AppPlugins.UpdateTrackingDevicesInterface();
 
             // Overwrite the selected device if still null for some reason
             AppData.Settings.SelectedTrackingDeviceGuid ??= AppData.Settings.TrackingDeviceGuid;
             AppData.Settings.PreviousSelectedTrackingDeviceGuid ??= AppData.Settings.TrackingDeviceGuid;
 
             // Refresh the device MVVM
-            TrackingDevices.TrackingDevicesList[AppData.Settings.SelectedTrackingDeviceGuid].OnPropertyChanged();
+            AppPlugins.TrackingDevicesList[AppData.Settings.SelectedTrackingDeviceGuid].OnPropertyChanged();
 
-            if (TrackingDevices.IsBase(AppData.Settings.SelectedTrackingDeviceGuid))
+            if (AppPlugins.IsBase(AppData.Settings.SelectedTrackingDeviceGuid))
             {
                 Logger.Info($"Selected a base ({AppData.Settings.SelectedTrackingDeviceGuid})");
                 SetAsOverrideButton.IsEnabled = false;
@@ -326,7 +326,7 @@ public static class Shared
 
                 DeselectDeviceButton.Visibility = Visibility.Collapsed;
             }
-            else if (TrackingDevices.IsOverride(AppData.Settings.SelectedTrackingDeviceGuid))
+            else if (AppPlugins.IsOverride(AppData.Settings.SelectedTrackingDeviceGuid))
             {
                 Logger.Info($"Selected an override ({AppData.Settings.SelectedTrackingDeviceGuid})");
                 SetAsOverrideButton.IsEnabled = false;

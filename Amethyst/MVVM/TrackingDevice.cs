@@ -22,10 +22,10 @@ public class TrackingDevice : INotifyPropertyChanged
     }
 
     // Extensions: is this device set as base?
-    public bool IsBase => TrackingDevices.IsBase(Guid);
+    public bool IsBase => AppPlugins.IsBase(Guid);
 
     // Extensions: is this device set as an override?
-    public bool IsOverride => TrackingDevices.IsOverride(Guid);
+    public bool IsOverride => AppPlugins.IsOverride(Guid);
 
     // Get GUID
     [DefaultValue("INVALID")] public string Guid { get; }
@@ -184,16 +184,16 @@ public class TrackingDevice : INotifyPropertyChanged
             // Stop the pose composer for now
             lock (UpdateLock)
             {
-                TrackingDevices.HandleDeviceRefresh(false);
+                AppPlugins.HandleDeviceRefresh(false);
                 AppData.Settings.CheckSettings(); // Refresh
             }
 
             // Make all the devices refresh their props
-            TrackingDevices.TrackingDevicesList.ToList()
+            AppPlugins.TrackingDevicesList.ToList()
                 .ForEach(x => x.Value.OnPropertyChanged());
 
             // Update other statuses
-            TrackingDevices.UpdateTrackingDevicesInterface();
+            AppPlugins.UpdateTrackingDevicesInterface();
             Shared.Events.RequestInterfaceReload(false);
 
             // Save the application config

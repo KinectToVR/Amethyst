@@ -44,7 +44,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
         }
     }
 
-    private bool IsAnyTrackerEnabled => TrackingDevices.IsOverride(
+    private bool IsAnyTrackerEnabled => AppPlugins.IsOverride(
         AppData.Settings.SelectedTrackingDeviceGuid) && Trackers.Any(x => x.IsActive);
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -64,7 +64,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
                     "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText")
             };
 
-        var jointsList = TrackingDevices.GetDevice(guid).Device.TrackedJoints
+        var jointsList = AppPlugins.GetDevice(guid).Device.TrackedJoints
             .Select(x => x.Name).ToList();
 
         jointsList.Insert(0, Interfacing.LocalizedJsonString(
@@ -90,7 +90,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
                     .SelectedOverrideJointIdForSelectedDevice);
 
         // Signal the just-selected tracked joint (checker copied from AppTracker.cs)
-        TrackingDevices.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device?
+        AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device?
             .SignalJoint(((ComboBox)sender).SelectedIndex > 0 ? ((ComboBox)sender).SelectedIndex - 1 : 0);
 
         (((ComboBox)sender).DataContext as AppTracker)!.SelectedOverrideJointIdForSelectedDevice =

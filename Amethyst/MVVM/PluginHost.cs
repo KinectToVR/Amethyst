@@ -55,7 +55,7 @@ public class PluginHost : IAmethystHost
     // Check if a joint with the specified role is provided by the base device
     public bool IsTrackedJointValid(TrackedJointType jointType)
     {
-        return TrackingDevices.BaseTrackingDevice.TrackedJoints.Exists(x => x.Role == jointType);
+        return AppPlugins.BaseTrackingDevice.TrackedJoints.Exists(x => x.Role == jointType);
     }
 
     // Lock the main update loop while in scope with [lock (UpdateThreadLock) { }]
@@ -188,12 +188,12 @@ public class PluginHost : IAmethystHost
             Interfacing.Plugins.RefreshApplicationInterface();
 
             // ReSharper disable once InvertIf | Check if the request was from a device
-            if (TrackingDevices.TrackingDevicesList.TryGetValue(Guid, out var device) && device is not null)
+            if (AppPlugins.TrackingDevicesList.TryGetValue(Guid, out var device) && device is not null)
                 device.RefreshWatchHandlers(); // Re-register joint changes handlers
 
             // Check if used in any way: as the base, an override, or the endpoint
-            if (!TrackingDevices.IsBase(Guid) && !TrackingDevices.IsOverride(Guid) &&
-                TrackingDevices.CurrentServiceEndpoint.Guid != Guid) return;
+            if (!AppPlugins.IsBase(Guid) && !AppPlugins.IsOverride(Guid) &&
+                AppPlugins.CurrentServiceEndpoint.Guid != Guid) return;
 
             Logger.Info($"{Guid} is currently being used, refreshing its config!");
             var locked = Monitor.TryEnter(UpdateLock); // Try entering the lock
@@ -271,20 +271,20 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public string Version { get; init; } = "[UNKNOWN]";
     public string ApiVersion { get; init; } = "[INVALID]";
 
-    public TrackingDevices.PluginType PluginType { get; init; } =
-        TrackingDevices.PluginType.Unknown;
+    public AppPlugins.PluginType PluginType { get; init; } =
+        AppPlugins.PluginType.Unknown;
 
     // MVVM stuff
-    public TrackingDevices.PluginLoadError Status { get; init; } =
-        TrackingDevices.PluginLoadError.Unknown;
+    public AppPlugins.PluginLoadError Status { get; init; } =
+        AppPlugins.PluginLoadError.Unknown;
 
     public bool LoadError => Status is not
-        TrackingDevices.PluginLoadError.NoError and not
-        TrackingDevices.PluginLoadError.LoadingSkipped;
+        AppPlugins.PluginLoadError.NoError and not
+        AppPlugins.PluginLoadError.LoadingSkipped;
 
     public bool LoadSuccess => Status is
-        TrackingDevices.PluginLoadError.NoError or
-        TrackingDevices.PluginLoadError.LoadingSkipped;
+        AppPlugins.PluginLoadError.NoError or
+        AppPlugins.PluginLoadError.LoadingSkipped;
 
     public bool IsLoaded
     {
@@ -303,23 +303,23 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             else AppData.Settings.DisabledPluginsGuidSet.Add(Guid);
 
             // Check if the change is valid : tracking provider
-            if (TrackingDevices.TrackingDevicesList.ContainsKey(Guid) &&
+            if (AppPlugins.TrackingDevicesList.ContainsKey(Guid) &&
                 AppData.Settings.DisabledPluginsGuidSet.Contains(Guid))
             {
                 SortedSet<string> loadedDeviceSet = new();
 
                 // Check which devices are loaded : device plugin
-                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"))
+                if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"))
                     loadedDeviceSet.Add("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1");
-                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2"))
+                if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2"))
                     loadedDeviceSet.Add("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2");
-                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX"))
+                if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX"))
                     loadedDeviceSet.Add("K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX");
-                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK"))
+                if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK"))
                     loadedDeviceSet.Add("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK");
 
                 // If we've just disabled the last loaded device, re-enable the first
-                if (TrackingDevices.TrackingDevicesList.Keys.All(
+                if (AppPlugins.TrackingDevicesList.Keys.All(
                         AppData.Settings.DisabledPluginsGuidSet.Contains) ||
 
                     // If this entry happens to be the last one of the official ones
@@ -331,19 +331,19 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             }
 
             // Check if the change is valid : service endpoint
-            else if (TrackingDevices.ServiceEndpointsList.ContainsKey(Guid) &&
+            else if (AppPlugins.ServiceEndpointsList.ContainsKey(Guid) &&
                      AppData.Settings.DisabledPluginsGuidSet.Contains(Guid))
             {
                 SortedSet<string> loadedServiceSet = new();
 
                 // Check which services are loaded
-                if (TrackingDevices.ServiceEndpointsList.ContainsKey("K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR"))
+                if (AppPlugins.ServiceEndpointsList.ContainsKey("K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR"))
                     loadedServiceSet.Add("K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR");
-                if (TrackingDevices.ServiceEndpointsList.ContainsKey("K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC"))
+                if (AppPlugins.ServiceEndpointsList.ContainsKey("K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC"))
                     loadedServiceSet.Add("K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC");
 
                 // If we've just disabled the last loaded service, re-enable the first
-                if (TrackingDevices.ServiceEndpointsList.Keys.All(
+                if (AppPlugins.ServiceEndpointsList.Keys.All(
                         AppData.Settings.DisabledPluginsGuidSet.Contains) ||
 
                     // If this entry happens to be the last one of the official ones
@@ -434,12 +434,12 @@ public static class CollectionExtensions
         catch (Exception e)
         {
             // Add the plugin to the 'attempted' list
-            TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+            AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
             {
                 Name = item.FullName,
                 Error = $"{e.Message}\n\n{e.StackTrace}",
                 Folder = item.FullName,
-                Status = TrackingDevices.PluginLoadError.NoPluginFolder
+                Status = AppPlugins.PluginLoadError.NoPluginFolder
             });
 
             return false; // Don't do anything stupid
@@ -455,10 +455,10 @@ public static class CollectionExtensions
         if (item.GetFiles("plugin*.dll").Length <= 0)
         {
             // Add the plugin to the 'attempted' list
-            TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+            AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
             {
                 Name = item.Name, Folder = item.FullName,
-                Status = TrackingDevices.PluginLoadError.NoPluginDll
+                Status = AppPlugins.PluginLoadError.NoPluginDll
             });
 
             Logger.Error(new FileNotFoundException(
@@ -495,11 +495,11 @@ public static class CollectionExtensions
                                 $"Message: {e.Message}\nErrors occurred: {e.Errors}\nPossible causes: {e.RootCauses}");
 
                 // Add the plugin to the 'attempted' list
-                TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                 {
                     Name = $"{item.Name}/{fileInfo.Name}",
                     Error = $"{e.Message}\n\n{e.StackTrace}", Folder = item.FullName,
-                    Status = TrackingDevices.PluginLoadError.NoPluginDll
+                    Status = AppPlugins.PluginLoadError.NoPluginDll
                 });
 
                 return false; // Nah, not this time
@@ -516,11 +516,11 @@ public static class CollectionExtensions
                     Logger.Warn($"[Non-critical] Loading {fileInfo} failed with an exception: {e.Message}");
 
                 // Add the plugin to the 'attempted' list
-                TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                 {
                     Name = $"{item.Name}/{fileInfo.Name}",
                     Error = $"{e.Message}\n\n{e.StackTrace}", Folder = item.FullName,
-                    Status = TrackingDevices.PluginLoadError.NoPluginDll
+                    Status = AppPlugins.PluginLoadError.NoPluginDll
                 });
 
                 return false; // Nah, not this time

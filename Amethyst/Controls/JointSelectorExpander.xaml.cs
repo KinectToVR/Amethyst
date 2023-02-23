@@ -59,7 +59,7 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
 
     private static List<string> GetBaseDeviceJointsList()
     {
-        return TrackingDevices.BaseTrackingDevice.TrackedJoints.Select(x => x.Name).ToList();
+        return AppPlugins.BaseTrackingDevice.TrackedJoints.Select(x => x.Name).ToList();
     }
 
     private void JointsSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -82,7 +82,7 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
                 ((ComboBox)sender).SelectedItem = e.RemovedItems[0];
 
             // Signal the just-selected tracked joint
-            TrackingDevices.BaseTrackingDevice.SignalJoint(((ComboBox)sender).SelectedIndex);
+            AppPlugins.BaseTrackingDevice.SignalJoint(((ComboBox)sender).SelectedIndex);
             (((ComboBox)sender).DataContext as AppTracker)!.SelectedBaseTrackedJointId =
                 ((ComboBox)sender).SelectedIndex; // Update the host data (manual) binding
         }
