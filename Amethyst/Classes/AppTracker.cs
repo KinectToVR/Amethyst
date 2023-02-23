@@ -47,7 +47,6 @@ public class AppTracker : INotifyPropertyChanged
 
     // If the joint is overridden, overrides' ids (computed)
     private uint _overrideJointId;
-    private bool _overridePhysics;
 
     // Position filter option
     private JointPositionTrackingOption _positionTrackingFilterOption =
@@ -219,19 +218,7 @@ public class AppTracker : INotifyPropertyChanged
         Role is TrackerType.TrackerWaist or TrackerType.TrackerLeftFoot or TrackerType.TrackerRightFoot ||
         (TrackingDevices.CurrentServiceEndpoint?.AdditionalSupportedTrackerTypes.Contains(Role) ?? false);
 
-    [JsonIgnore]
-    public bool OverridePhysics
-    {
-        get => _overridePhysics;
-        set
-        {
-            // Don't do anything on no changes
-            if (_overridePhysics == value) return;
-
-            _overridePhysics = value;
-            OnPropertyChanged();
-        }
-    }
+    [JsonIgnore] public bool OverridePhysics { get; set; }
 
     [JsonIgnore]
     public string TrackerName => Interfacing.LocalizedJsonString($"/SharedStrings/Joints/Enum/{(int)Role}");
