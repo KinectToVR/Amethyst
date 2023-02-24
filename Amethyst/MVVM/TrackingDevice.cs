@@ -8,16 +8,18 @@ using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using static Amethyst.Classes.Interfacing;
+using System.Diagnostics;
 
 namespace Amethyst.MVVM;
 
 public class TrackingDevice : INotifyPropertyChanged
 {
-    public TrackingDevice(string name, string guid, string path, ITrackingDevice device)
+    public TrackingDevice(string name, string guid, string path, Version version, ITrackingDevice device)
     {
         Guid = guid;
         Name = name;
         Location = path;
+        Version = version;
         Device = device;
     }
 
@@ -35,6 +37,9 @@ public class TrackingDevice : INotifyPropertyChanged
 
     // Get Path
     [DefaultValue("UNKNOWN")] public string Location { get; }
+
+    // Get the plugin version using its host assembly
+    [DefaultValue("1.0.0.0")] public Version Version { get; }
 
     // Get Docs
     [DefaultValue(null)] public Uri ErrorDocsUri => Device.ErrorDocsUri;

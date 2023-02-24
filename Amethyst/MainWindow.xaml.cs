@@ -393,6 +393,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = AppPlugins.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Version = new Version(plugin.Metadata.Version),
                             Status = AppPlugins.PluginLoadError.BadOrDuplicateGuid
                         });
 
@@ -412,6 +413,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = AppPlugins.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Version = new Version(plugin.Metadata.Version),
                             Status = AppPlugins.PluginLoadError.LoadingSkipped
                         });
 
@@ -441,6 +443,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = AppPlugins.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Version = new Version(plugin.Metadata.Version),
                             Error = e.UnwrapCompositionException().Message,
                             Status = AppPlugins.PluginLoadError.NoPluginDependencyDll
                         });
@@ -461,6 +464,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = AppPlugins.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Version = new Version(plugin.Metadata.Version),
                             Error = e.Message,
                             Status = AppPlugins.PluginLoadError.Other
                         });
@@ -481,6 +485,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         PluginType = AppPlugins.PluginType.TrackingDevice,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
+                        Version = new Version(plugin.Metadata.Version),
                         Folder = pluginFolder,
                         Status = AppPlugins.PluginLoadError.NoError
                     });
@@ -489,7 +494,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "to the global tracking device plugins list (AppPlugins)...");
                     AppPlugins.TrackingDevicesList.Add(plugin.Metadata.Guid, new TrackingDevice(
-                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation, plugin.Value)
+                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation,
+                        new Version(plugin.Metadata.Version), plugin.Value)
                     {
                         LocalizationResourcesRoot = (new JsonObject(), Path.Join(pluginFolder, "Assets", "Strings"))
                     });
@@ -540,6 +546,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         PluginType = AppPlugins.PluginType.TrackingDevice,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
+                        Version = new Version(plugin.Metadata.Version),
                         Error = $"{e.Message}\n\n{e.StackTrace}",
                         Status = AppPlugins.PluginLoadError.Other
                     });
@@ -600,6 +607,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = AppPlugins.PluginType.ServiceEndpoint,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Version = new Version(plugin.Metadata.Version),
                             Status = AppPlugins.PluginLoadError.BadOrDuplicateGuid
                         });
 
@@ -619,6 +627,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = AppPlugins.PluginType.ServiceEndpoint,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Version = new Version(plugin.Metadata.Version),
                             Status = AppPlugins.PluginLoadError.LoadingSkipped
                         });
 
@@ -648,6 +657,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = AppPlugins.PluginType.ServiceEndpoint,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Version = new Version(plugin.Metadata.Version),
                             Error = e.UnwrapCompositionException().Message,
                             Status = AppPlugins.PluginLoadError.NoPluginDependencyDll
                         });
@@ -668,6 +678,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             PluginType = AppPlugins.PluginType.ServiceEndpoint,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            Version = new Version(plugin.Metadata.Version),
                             Error = e.Message,
                             Status = AppPlugins.PluginLoadError.Other
                         });
@@ -682,7 +693,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "to the global service endpoints plugins list (AppPlugins)...");
                     AppPlugins.ServiceEndpointsList.Add(plugin.Metadata.Guid, new ServiceEndpoint(
-                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation, plugin.Value)
+                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation,
+                        new Version(plugin.Metadata.Version), plugin.Value)
                     {
                         LocalizationResourcesRoot = (new JsonObject(), Path.Join(pluginFolder, "Assets", "Strings"))
                     });
@@ -718,6 +730,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         PluginType = AppPlugins.PluginType.ServiceEndpoint,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
+                        Version = new Version(plugin.Metadata.Version),
                         Folder = pluginFolder,
                         Status = AppPlugins.PluginLoadError.NoError
                     });
@@ -752,6 +765,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         PluginType = AppPlugins.PluginType.ServiceEndpoint,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
+                        Version = new Version(plugin.Metadata.Version),
                         Error = $"{e.Message}\n\n{e.StackTrace}",
                         Status = AppPlugins.PluginLoadError.Other
                     });
@@ -1502,6 +1516,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 UpdateInfoBar.Opacity = 1.0; // (or if the check was manual)
             }
 
+            // Check for plugin updates
+            await Parallel.ForEachAsync(AppPlugins.LoadAttemptedPluginsList,
+                async (x, _) => await x.CheckUpdates());
+
             // Uncheck
             Interfacing.CheckingUpdatesNow = false;
         }
@@ -1745,12 +1763,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Interfacing.UpdateOnClosed = true;
     }
 
-    private async void InstallNowButton_Click(object sender, RoutedEventArgs e)
+    private void InstallNowButton_Click(object sender, RoutedEventArgs e)
     {
         UpdateInfoBar.IsOpen = false;
         UpdateInfoBar.Opacity = 0.0;
 
-        await ExecuteUpdates();
+        Interfacing.UpdateOnClosed = true;
+        // await ExecuteUpdates();
     }
 
     private async void HelpFlyoutDocsButton_Click(object sender, RoutedEventArgs e)

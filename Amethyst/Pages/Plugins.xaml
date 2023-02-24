@@ -109,21 +109,24 @@
                                                   HorizontalAlignment="Right" />
                                 </Grid>
 
-                                <Expander Margin="0,12,0,0"
+                                <Expander Margin="0,12,0,0" Padding="0"
                                           IsExpanded="True" ExpandDirection="Down"
                                           HorizontalAlignment="Stretch"
                                           HorizontalContentAlignment="Stretch">
 
                                     <Expander.Content>
-                                        <StackPanel Orientation="Vertical" Width="650" Margin="0,-5">
-                                            <InfoBar Severity="Informational" Margin="-18,-18,-18,5" IsOpen="False"
-                                                     Opacity="0.0"
-                                                     Title="Update available!"
-                                                     Message="[PLUGIN] will be updated to [VERSION]"
-                                                     IsClosable="False">
+                                        <StackPanel Orientation="Vertical" Width="650" Padding="0,8,0,10">
+                                            <InfoBar Severity="Informational" Margin="-14,-10,-14,5"
+                                                     Opacity="{x:Bind BoolToOpacity(UpdateFound), Mode=OneWay}"
+                                                     IsOpen="{x:Bind UpdateFound, Mode=OneWay}"
+                                                     Title="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/UpdateAvailable'), Mode=OneWay}"
+                                                     Message="{x:Bind UpdateMessage, Mode=OneWay}"
+                                                     IsClosable="False" CornerRadius="0" BorderThickness="0,0,0,1">
                                                 <InfoBar.ActionButton>
                                                     <Button HorizontalAlignment="Right" Margin="0,0,-8,0"
-                                                            Content="Update" />
+                                                            Click="{x:Bind EnqueueUpdates, Mode=OneWay}"
+                                                            Style="{ThemeResource AccentButtonStyle}"
+                                                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Buttons/Update'), Mode=OneWay}" />
                                                 </InfoBar.ActionButton>
                                                 <InfoBar.OpacityTransition>
                                                     <ScalarTransition />

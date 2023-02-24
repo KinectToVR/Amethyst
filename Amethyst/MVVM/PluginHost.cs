@@ -12,12 +12,16 @@ using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using RestSharp;
 using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
@@ -259,6 +263,12 @@ public class PluginHost : IAmethystHost
 
 public class LoadAttemptedPlugin : INotifyPropertyChanged
 {
+    private bool _updateEnqueued;
+    private RestClient _githubClient;
+
+    private RestClient GithubClient => _githubClient ??= new RestClient(Website);
+    private RestClient ApiClient { get; } = new("https://api.github.com");
+
     public string Name { get; init; } = "[UNKNOWN]";
     public string Guid { get; init; } = "[INVALID]";
     public string Error { get; init; }
@@ -267,9 +277,10 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public string Website { get; init; }
     public string Folder { get; init; }
 
-    public string UpdateUri { get; init; } = "[UNKNOWN]";
-    public string Version { get; init; } = "[UNKNOWN]";
-    public string ApiVersion { get; init; } = "[INVALID]";
+    public Version Version { get; init; } = new("0.0.0.0");
+
+    public bool UpdateFound => !_updateEnqueued && UpdateData.Found;
+    public (bool Found, Version Version, string Changelog) UpdateData { get; private set; } = (false, null, null);
 
     public AppPlugins.PluginType PluginType { get; init; } =
         AppPlugins.PluginType.Unknown;
@@ -371,6 +382,10 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string ErrorText => LocalizedJsonString($"/DevicesPage/Devices/Manager/Labels/{Status}");
 
+    public string UpdateMessage => string.Format(
+        LocalizedJsonString("/DevicesPage/Devices/Manager/Labels/UpdateMessage"),
+        Name, (UpdateData.Version ?? Version).ToString());
+
     public bool PublisherValid => !string.IsNullOrEmpty(Publisher);
     public bool WebsiteValid => !string.IsNullOrEmpty(Website);
     public bool LocationValid => !string.IsNullOrEmpty(Folder);
@@ -378,6 +393,66 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public bool ErrorValid => !string.IsNullOrEmpty(Error);
 
     public event PropertyChangedEventHandler PropertyChanged;
+
+    public async Task CheckUpdates()
+    {
+        try
+        {
+            // Fetch manifest details and content
+            var manifestResponse = await GithubClient.GetAsync(
+                new RestRequest("releases/download/latest/manifest.json"));
+
+            if (!manifestResponse.IsSuccessStatusCode || manifestResponse.Content is null)
+                throw new Exception(manifestResponse.ErrorMessage);
+
+            var manifestResult = manifestResponse.Content.TryParseJson(out var manifest);
+            if (!manifestResult || manifest is null)
+                throw new Exception("The manifest was invalid!");
+
+            // Parse the received manifest
+            var remoteVersion = new Version(manifest["version"]?.ToString() ?? Version.ToString());
+            UpdateData = (Version.CompareTo(remoteVersion) < 0,
+                remoteVersion, manifest["changelog"]?.ToString());
+
+            // Notify about updates
+            OnPropertyChanged();
+        }
+        catch (Exception e)
+        {
+            Logger.Info(e);
+        }
+    }
+
+    internal void EnqueueUpdates(object sender, RoutedEventArgs e)
+    {
+        // Mark as ready to update
+        _updateEnqueued = true;
+        if (sender is Button button)
+            button.IsEnabled = false;
+
+        // TODO ENQUEUE THE UPDATE
+
+        // Preparations:
+        // - Create a shutdown update controller taking Tasks
+        // Logic:
+        // - Append a new update task to the controller
+        // - Update in a similar way as the main updater
+
+        // Notify about updates
+        OnPropertyChanged();
+    }
+
+    public async Task ExecuteUpdates()
+    {
+        // TODO PREPARE THE UPDATE
+
+        // Logic:
+        // - Download the zip to where out plugin is, unpack
+        // - Rename the unpacked folder to plugin_{Name}.next
+        // After restart:
+        // - Search for plugin pairs in folders with and without .next
+        // - Delete the old plugin, remove .net from the new one's name
+    }
 
     public string TrimString(string s, int l)
     {
@@ -400,6 +475,11 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         {
             // ignored
         }
+    }
+
+    public double BoolToOpacity(bool value)
+    {
+        return value ? 1.0 : 0.0;
     }
 
     public void OnPropertyChanged(string propName = null)

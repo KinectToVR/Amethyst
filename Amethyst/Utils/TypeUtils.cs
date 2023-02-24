@@ -6,6 +6,8 @@ using System.Linq;
 using System.Numerics;
 using Amethyst.Plugins.Contract;
 using AmethystSupport;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Amethyst.Utils;
 
@@ -176,6 +178,27 @@ public static class TypeUtils
     public static (Vector3 V, Quaternion Q) T(this STransform transform)
     {
         return (transform.Translation.V(), transform.Rotation.Q());
+    }
+
+    public static bool TryParseJson(this string @this, out JObject result)
+    {
+        var success = true;
+        var settings = new JsonSerializerSettings
+        {
+            Error = (sender, args) =>
+            {
+                success = false;
+                args.ErrorContext.Handled = true;
+            },
+            MissingMemberHandling = MissingMemberHandling.Error
+        };
+        result = JsonConvert.DeserializeObject<JObject>(@this, settings);
+        return success;
+    }
+
+    public static JToken TryGetValue(this JObject json, string propertyName)
+    {
+        return json.TryGetValue(propertyName, out var value) ? value : null;
     }
 }
 
