@@ -140,13 +140,13 @@
             </InfoBar>
 
             <InfoBar x:Name="UpdateInfoBar" Grid.Row="0" Opacity="0.0"
-                     IsOpen="False" IsClosable="True" Margin="3,0,3,3" Severity="Informational"
+                     IsOpen="False" IsClosable="False" Margin="3,0,3,3" Severity="Informational"
                      CloseButtonClick="InstallLaterButton_Click"
                      Title="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/NewUpdateFound'), Mode=OneWay}"
                      Message="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/NewUpdateMessage'), Mode=OneWay}">
 
                 <InfoBar.ActionButton>
-                    <Button HorizontalAlignment="Right" Click="InstallNowButton_Click"
+                    <Button HorizontalAlignment="Right" Click="InstallNowButton_Click" Style="{ThemeResource AccentButtonStyle}"
                             Content="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Install'), Mode=OneWay}" />
                 </InfoBar.ActionButton>
 
