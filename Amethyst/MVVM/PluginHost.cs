@@ -437,7 +437,7 @@ public static class CollectionExtensions
             AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
             {
                 Name = item.FullName,
-                Error = $"{e.Message}\n\n{e.StackTrace}",
+                Error = e.Message,
                 Folder = item.FullName,
                 Status = AppPlugins.PluginLoadError.NoPluginFolder
             });

@@ -8,7 +8,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mvvm="using:Amethyst.MVVM"
-    xmlns:controls="using:Amethyst.Controls"
     xmlns:util="using:Amethyst.Utils"
     xmlns:classes="using:Amethyst.Classes"
     Loaded="Page_Loaded" NavigationCacheMode="Required"
@@ -17,26 +16,222 @@
     <Grid Background="Transparent">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="450" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="15*" />
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock FontWeight="SemiBold" x:Name="PluginStoreTipDummyContextDummy"
+                           Text="Devices" Opacity="0.0"
+                           FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
+
+                <Grid HorizontalAlignment="Stretch"
+                      Margin="40,20,0,0" Grid.Row="0">
+                    <TextBlock FontWeight="SemiBold" FontSize="25" TextTrimming="CharacterEllipsis"
+                               Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Title'), Mode=OneWay}" />
+                </Grid>
+
+                <ScrollViewer Margin="25,20,0,20" Padding="20,-20" Grid.Row="1" />
             </Grid>
 
-            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="2"
-                          x:Name="DevicesMainContentScrollViewer"
-                          VerticalScrollBarVisibility="Visible" Padding="20,-20" Margin="-20,20,-20,20">
+            <ScrollViewer Margin="0,20,0,20" Padding="0,-20,20,-20" Width="700" Grid.Column="1">
+                <ItemsRepeater HorizontalAlignment="Stretch" AllowDrop="False" Margin="0,0,0,20"
+                               ItemsSource="{x:Bind classes:AppPlugins.LoadAttemptedPluginsList, Mode=OneWay}">
 
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                      x:Name="DevicesMainContentGridOuter" Margin="0,0,0,15">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="mvvm:LoadAttemptedPlugin">
 
-                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                          x:Name="DevicesMainContentGridInner">
-                    </Grid>
-                </Grid>
+                            <Grid>
+                                <Grid.Transitions>
+                                    <TransitionCollection>
+                                        <RepositionThemeTransition />
+                                    </TransitionCollection>
+                                </Grid.Transitions>
+
+                                <Grid Margin="20,15,60,0"
+                                      VerticalAlignment="Top" Canvas.ZIndex="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Margin="-5,-3,0,0"
+                                                Orientation="Horizontal">
+
+                                        <InfoBadge
+                                            Background="{ThemeResource SystemFillColorCriticalBrush}"
+                                            HorizontalAlignment="Left" VerticalAlignment="Top"
+                                            Visibility="{x:Bind LoadError, Mode=OneWay}"
+                                            Margin="0,15,10,0" Width="17" Height="17">
+                                            <InfoBadge.IconSource>
+                                                <FontIconSource Glyph="&#xEDAE;"
+                                                                Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                            </InfoBadge.IconSource>
+                                        </InfoBadge>
+
+                                        <TextBlock FontWeight="SemiBold" FontSize="14"
+                                                   Text="{x:Bind TrimString(Name, 45), Mode=OneWay}"
+                                                   ToolTipService.ToolTip="{x:Bind Name, Mode=OneWay}"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" />
+
+                                        <StackPanel Orientation="Horizontal"
+                                                    VerticalAlignment="Bottom"
+                                                    Margin="7,0,0,10"
+                                                    Visibility="{x:Bind PublisherValid, Mode=OneWay}">
+                                            <TextBlock VerticalAlignment="Center"
+                                                       FontWeight="SemiBold" Opacity="0.5"
+                                                       Margin="0,0,3,0" FontSize="12"
+                                                       Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Publisher'), Mode=OneWay}" />
+
+                                            <TextBlock VerticalAlignment="Center"
+                                                       FontWeight="SemiBold" FontSize="12"
+                                                       Opacity="0.5"
+                                                       Text="{x:Bind TrimString(Publisher, 30), Mode=OneWay}"
+                                                       Tapped="{x:Bind ShowDeviceFolder, Mode=OneWay}"
+                                                       ToolTipService.ToolTip="{x:Bind Folder, Mode=OneWay}"
+                                                       ToolTipService.Placement="Bottom" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <ToggleSwitch IsOn="{x:Bind IsLoaded, Mode=TwoWay}"
+                                                  IsEnabled="{x:Bind LoadSuccess, Mode=OneWay}"
+                                                  Grid.Column="1"
+                                                  Margin="0,1,-125,0"
+                                                  OnContent="" OffContent=""
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Right" />
+                                </Grid>
+
+                                <Expander Margin="0,12,0,0"
+                                          IsExpanded="True" ExpandDirection="Down"
+                                          HorizontalAlignment="Stretch"
+                                          HorizontalContentAlignment="Stretch">
+
+                                    <Expander.Content>
+                                        <StackPanel Orientation="Vertical" Width="650" Margin="0,-5">
+                                            <InfoBar Severity="Informational" Margin="-18,-18,-18,5" IsOpen="False"
+                                                     Opacity="0.0"
+                                                     Title="Update available!"
+                                                     Message="[PLUGIN] will be updated to [VERSION]"
+                                                     IsClosable="False">
+                                                <InfoBar.ActionButton>
+                                                    <Button HorizontalAlignment="Right" Margin="0,0,-8,0"
+                                                            Content="Update" />
+                                                </InfoBar.ActionButton>
+                                                <InfoBar.OpacityTransition>
+                                                    <ScalarTransition />
+                                                </InfoBar.OpacityTransition>
+                                            </InfoBar>
+
+                                            <Grid RowDefinitions="Auto, *" RowSpacing="7"
+                                                  Visibility="{x:Bind LoadError, Mode=OneWay}">
+                                                <Grid.Transitions>
+                                                    <TransitionCollection>
+                                                        <RepositionThemeTransition />
+                                                    </TransitionCollection>
+                                                </Grid.Transitions>
+
+                                                <TextBlock VerticalAlignment="Center" Grid.Row="0"
+                                                           FontWeight="SemiBold" TextWrapping="WrapWholeWords"
+                                                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Blocked'), Mode=OneWay}" />
+
+                                                <Grid ColumnDefinitions="Auto, *" ColumnSpacing="7" Grid.Row="1">
+                                                    <TextBlock VerticalAlignment="Top" Grid.Column="0"
+                                                               FontWeight="SemiBold" Opacity="0.5"
+                                                               Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Reason'), Mode=OneWay}" />
+
+                                                    <StackPanel Orientation="Vertical" Grid.Column="1">
+                                                        <TextBlock FontWeight="SemiBold"
+                                                                   Width="590" TextWrapping="Wrap"
+                                                                   Text="{x:Bind ErrorText, Mode=OneWay}"
+                                                                   ToolTipService.ToolTip="{x:Bind ErrorText, Mode=OneWay}" />
+                                                        <TextBlock FontFamily="Consolas"
+                                                                   FontWeight="SemiBold"
+                                                                   Margin="0,3,5,0"
+                                                                   TextWrapping="Wrap"
+                                                                   Opacity="0.6" FontSize="14"
+                                                                   Text="{x:Bind Error, Mode=OneWay}"
+                                                                   IsTextSelectionEnabled="True"
+                                                                   Visibility="{x:Bind ErrorValid, Mode=OneWay}"
+                                                                   ToolTipService.ToolTip="{x:Bind Error, Mode=OneWay}" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="7"
+                                                  Visibility="{x:Bind GuidValid, Mode=OneWay}">
+                                                <Grid.Transitions>
+                                                    <TransitionCollection>
+                                                        <RepositionThemeTransition />
+                                                    </TransitionCollection>
+                                                </Grid.Transitions>
+
+                                                <TextBlock VerticalAlignment="Center" Grid.Column="0"
+                                                           FontWeight="SemiBold" Opacity="0.5"
+                                                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/GUID'), Mode=OneWay}" />
+
+                                                <TextBlock VerticalAlignment="Center" Grid.Column="1"
+                                                           FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                                           Text="{x:Bind Guid, Mode=OneWay}"
+                                                           ToolTipService.ToolTip="{x:Bind Guid, Mode=OneWay}" />
+                                            </Grid>
+
+                                            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="7"
+                                                  Visibility="{x:Bind LocationValid, Mode=OneWay}">
+                                                <Grid.Transitions>
+                                                    <TransitionCollection>
+                                                        <RepositionThemeTransition />
+                                                    </TransitionCollection>
+                                                </Grid.Transitions>
+
+                                                <TextBlock VerticalAlignment="Center" Grid.Column="0"
+                                                           FontWeight="SemiBold" Opacity="0.5"
+                                                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Location'), Mode=OneWay}" />
+
+                                                <TextBlock VerticalAlignment="Center" Grid.Column="1"
+                                                           FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                                           Text="{x:Bind Folder, Mode=OneWay}"
+                                                           Tapped="{x:Bind ShowDeviceFolder, Mode=OneWay}"
+                                                           ToolTipService.ToolTip="{x:Bind Folder, Mode=OneWay}"
+                                                           ToolTipService.Placement="Bottom" />
+                                            </Grid>
+
+                                            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="7"
+                                                  Visibility="{x:Bind WebsiteValid, Mode=OneWay}">
+                                                <Grid.Transitions>
+                                                    <TransitionCollection>
+                                                        <RepositionThemeTransition />
+                                                    </TransitionCollection>
+                                                </Grid.Transitions>
+
+                                                <TextBlock VerticalAlignment="Center" Grid.Column="0"
+                                                           FontWeight="SemiBold" Opacity="0.5"
+                                                           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Website'), Mode=OneWay}" />
+
+                                                <TextBlock VerticalAlignment="Center" Grid.Column="1"
+                                                           FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                                           TextDecorations="Underline"
+                                                           Text="{x:Bind Website, Mode=OneWay}"
+                                                           Tapped="{x:Bind OpenDeviceWebsite, Mode=OneWay}"
+                                                           ToolTipService.ToolTip="{x:Bind Website, Mode=OneWay}"
+                                                           ToolTipService.Placement="Bottom" />
+                                            </Grid>
+
+                                        </StackPanel>
+                                    </Expander.Content>
+                                </Expander>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
             </ScrollViewer>
         </Grid>
     </Grid>
