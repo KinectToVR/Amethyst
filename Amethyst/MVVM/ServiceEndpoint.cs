@@ -40,7 +40,7 @@ public class ServiceEndpoint : INotifyPropertyChanged
     [DefaultValue("UNKNOWN")] public string Location { get; }
 
     // Get the plugin version using its host assembly
-    [DefaultValue("1.0.0.0")] public Version Version { get; }
+    [DefaultValue("0.0.0.0")] public Version Version { get; }
 
     // Underlying service handler
     private IServiceEndpoint Service { get; }

@@ -23,6 +23,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using RestSharp;
 using static Amethyst.Classes.Interfacing;
+using Windows.Media.Protection.PlayReady;
+using Windows.Storage;
 
 namespace Amethyst.MVVM;
 
@@ -266,7 +268,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     private bool _updateEnqueued;
     private RestClient _githubClient;
 
-    private RestClient GithubClient => _githubClient ??= new RestClient(Website);
+    private RestClient GithubClient => _githubClient ??= new RestClient(UpdateEndpoint ?? Website);
     private RestClient ApiClient { get; } = new("https://api.github.com");
 
     public string Name { get; init; } = "[UNKNOWN]";
@@ -275,12 +277,15 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string Publisher { get; init; }
     public string Website { get; init; }
+    public string UpdateEndpoint { get; init; }
     public string Folder { get; init; }
 
     public Version Version { get; init; } = new("0.0.0.0");
 
     public bool UpdateFound => !_updateEnqueued && UpdateData.Found;
-    public (bool Found, Version Version, string Changelog) UpdateData { get; private set; } = (false, null, null);
+
+    public (bool Found, string Download, Version Version, string Changelog)
+        UpdateData { get; private set; } = (false, null, null, null);
 
     public AppPlugins.PluginType PluginType { get; init; } =
         AppPlugins.PluginType.Unknown;
@@ -411,11 +416,21 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
             // Parse the received manifest
             var remoteVersion = new Version(manifest["version"]?.ToString() ?? Version.ToString());
-            UpdateData = (Version.CompareTo(remoteVersion) < 0,
+            UpdateData = (Version.CompareTo(remoteVersion) < 0, manifest["download"]?.ToString(),
                 remoteVersion, manifest["changelog"]?.ToString());
 
-            // Notify about updates
-            OnPropertyChanged();
+            Shared.Main.DispatcherQueue.TryEnqueue(() =>
+            {
+                // Also show in MainWindow
+                if (UpdateFound)
+                {
+                    Shared.Main.PluginsUpdateInfoBar.IsOpen = true;
+                    Shared.Main.PluginsUpdateInfoBar.Opacity = 1.0;
+                }
+
+                // Notify about updates
+                OnPropertyChanged();
+            });
         }
         catch (Exception e)
         {
@@ -425,33 +440,156 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     internal void EnqueueUpdates(object sender, RoutedEventArgs e)
     {
+        if (!UpdateFound) return;
+
         // Mark as ready to update
         _updateEnqueued = true;
         if (sender is Button button)
             button.IsEnabled = false;
 
-        // TODO ENQUEUE THE UPDATE
+        // Enqueue the update in the shutdown controller
+        ShutdownController.ShutdownTasks.Add(new ShutdownTask
+        {
+            Name = $"Update plugin {Name}",
+            Priority = true, // Either update right now or skip if it was manual
+            Action = ExecuteUpdates
+        });
 
-        // Preparations:
-        // - Create a shutdown update controller taking Tasks
-        // Logic:
-        // - Append a new update task to the controller
-        // - Update in a similar way as the main updater
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            // Also show/hide the banner in MainWindow
+            if (!AppPlugins.LoadAttemptedPluginsList.Any(x => x.UpdateFound)) 
+            {
+                // Hide if all plugins have their updates queued
+                Shared.Main.PluginsUpdateInfoBar.Opacity = 0.0;
+                Shared.Main.PluginsUpdateInfoBar.IsOpen = false;
+            }
 
-        // Notify about updates
-        OnPropertyChanged();
+            // Notify about updates
+            OnPropertyChanged();
+        });
     }
 
-    public async Task ExecuteUpdates()
+    public async Task<bool> ExecuteUpdates()
     {
         // TODO PREPARE THE UPDATE
 
         // Logic:
         // - Download the zip to where out plugin is, unpack
-        // - Rename the unpacked folder to plugin_{Name}.next
+        // - Rename the zipped plugin to $({Folder}.Name).next.zip
         // After restart:
-        // - Search for plugin pairs in folders with and without .next
-        // - Delete the old plugin, remove .net from the new one's name
+        // - Search for plugin zips matching $({Folder}.Name).next.zip
+        // - Delete the old plugin and unpack the new one to root
+
+        try
+        {
+            // Mark the update footer as active
+            Shared.Main.PluginsUpdatePendingInfoBar.Title = string.Format(LocalizedJsonString(
+                "/SharedStrings/PluginUpdates/Headers/Downloading"), Name, UpdateData.Version.ToString());
+
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = LocalizedJsonString(
+                "/SharedStrings/PluginUpdates/Headers/Preparing");
+
+            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = true;
+            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 1.0;
+
+            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
+
+            if (string.IsNullOrEmpty(UpdateData.Download) || !LocationValid)
+            {
+                // No files to download, switch to update error
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                    "/SharedStrings/PluginUpdates/Statuses/Error"), Name);
+
+                Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+                Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+
+                await Task.Delay(2500);
+                Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+                Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+
+                await Task.Delay(1000);
+                return false; // That's all
+            }
+
+            // Try downloading the plugin archive from the manifest
+            Logger.Info($"Downloading the next {Name} plugin assuming it's under {UpdateData.Download}");
+            try
+            {
+                // Update the progress message
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                    "/SharedStrings/PluginUpdates/Statuses/Downloading"), Name, UpdateData.Version.ToString());
+
+                // Create a stream reader using the received Installer Uri
+                await using var stream = await GithubClient.DownloadStreamAsync(
+                    new RestRequest($"releases/download/latest/{UpdateData.Download}"));
+
+                // Replace or create our installer file
+                var pluginArchive = await (await StorageFolder
+                    .GetFolderFromPathAsync(Folder)).CreateFileAsync(
+                    $"{UpdateData.Download}", CreationCollisionOption.ReplaceExisting);
+
+                // Create an output stream and push all the available data to it
+                await using var fsPluginArchive = await pluginArchive.OpenStreamForWriteAsync();
+                await stream!.CopyToAsync(fsPluginArchive); // The runtime will do the rest for us
+            }
+            catch (Exception e)
+            {
+                Logger.Error(new Exception($"Error downloading the plugin! Message: {e.Message}"));
+
+                // No files to download, switch to update error
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                    "/SharedStrings/PluginUpdates/Statuses/Error"), Name);
+
+                Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+                Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+
+                await Task.Delay(2500);
+                Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+                Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+
+                await Task.Delay(1000);
+                return false; // That's all
+            }
+
+            // Rename the downloaded zip to $({Folder}.Name).next.zip
+            File.Move(Path.Join(Folder, UpdateData.Download),
+                Path.Join(Folder, $"{new DirectoryInfo(Folder).Name}.next.zip"));
+
+            // No files to download, switch to update error
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                "/SharedStrings/PluginUpdates/Headers/Restart"), Name);
+
+            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = false;
+            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
+
+            await Task.Delay(2500);
+            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+
+            // Still here? We're done!
+            await Task.Delay(1000);
+            return true; // That's all
+        }
+        catch (Exception e)
+        {
+            Logger.Info(e);
+
+            // No files to download, switch to update error
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                "/SharedStrings/PluginUpdates/Statuses/Error"), Name);
+
+            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+
+            await Task.Delay(2500);
+            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+
+            await Task.Delay(1000);
+            return false; // That's all
+        }
     }
 
     public string TrimString(string s, int l)

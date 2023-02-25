@@ -39,7 +39,7 @@ public class TrackingDevice : INotifyPropertyChanged
     [DefaultValue("UNKNOWN")] public string Location { get; }
 
     // Get the plugin version using its host assembly
-    [DefaultValue("1.0.0.0")] public Version Version { get; }
+    [DefaultValue("0.0.0.0")] public Version Version { get; }
 
     // Get Docs
     [DefaultValue(null)] public Uri ErrorDocsUri => Device.ErrorDocsUri;

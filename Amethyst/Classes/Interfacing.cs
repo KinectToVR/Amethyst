@@ -32,8 +32,7 @@ public static class Interfacing
     // Update check
     public static bool
         UpdateFound = false,
-        UpdateOnClosed = false,
-        CheckingUpdatesNow = false,
+        ManualUpdate = false,
         UpdatingNow = false;
 
     // Position helpers for devices -> GUID, Pose

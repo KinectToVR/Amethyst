@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Primitives;
+using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Amethyst.Plugins.Contract;
 using AmethystSupport;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using RestSharp;
+using System.Threading;
 
 namespace Amethyst.Utils;
 
@@ -263,5 +267,32 @@ public static class ExceptionExtensions
         }
 
         return exception; // Throw the original
+    }
+}
+
+public static class RestExtensions
+{
+    public static Task<RestResponse<T>> ExecuteGetAsync<T>(this RestClient client, string baseUrl, RestRequest request)
+    {
+        client.Options.BaseUrl = new Uri(baseUrl);
+        return client.ExecuteGetAsync<T>(request);
+    }
+
+    public static Task<RestResponse> ExecuteGetAsync(this RestClient client, string baseUrl, RestRequest request)
+    {
+        client.Options.BaseUrl = new Uri(baseUrl);
+        return client.ExecuteGetAsync(request);
+    }
+
+    public static Task<byte[]> ExecuteDownloadDataAsync(this RestClient client, string baseUrl, RestRequest request)
+    {
+        client.Options.BaseUrl = new Uri(baseUrl);
+        return client.DownloadDataAsync(request);
+    }
+
+    public static Task<Stream> ExecuteDownloadStreamAsync(this RestClient client, string baseUrl, RestRequest request)
+    {
+        client.Options.BaseUrl = new Uri(baseUrl);
+        return client.DownloadStreamAsync(request);
     }
 }
