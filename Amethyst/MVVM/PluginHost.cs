@@ -268,7 +268,9 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     private bool _updateEnqueued;
     private RestClient _githubClient;
 
-    private RestClient GithubClient => _githubClient ??= new RestClient(UpdateEndpoint ?? Website);
+    private RestClient GithubClient => _githubClient ??= new RestClient(
+        UpdateEndpoint ?? $"{Website?.TrimEnd('/')}/releases/download/latest/");
+
     private RestClient ApiClient { get; } = new("https://api.github.com");
 
     public string Name { get; init; } = "[UNKNOWN]";
@@ -405,7 +407,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         {
             // Fetch manifest details and content
             var manifestResponse = await GithubClient.GetAsync(
-                new RestRequest("releases/download/latest/manifest.json"));
+                new RestRequest("manifest.json"));
 
             if (!manifestResponse.IsSuccessStatusCode || manifestResponse.Content is null)
                 throw new Exception(manifestResponse.ErrorMessage);
@@ -458,7 +460,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         Shared.Main.DispatcherQueue.TryEnqueue(() =>
         {
             // Also show/hide the banner in MainWindow
-            if (!AppPlugins.LoadAttemptedPluginsList.Any(x => x.UpdateFound)) 
+            if (!AppPlugins.LoadAttemptedPluginsList.Any(x => x.UpdateFound))
             {
                 // Hide if all plugins have their updates queued
                 Shared.Main.PluginsUpdateInfoBar.Opacity = 0.0;
@@ -472,8 +474,6 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public async Task<bool> ExecuteUpdates()
     {
-        // TODO PREPARE THE UPDATE
-
         // Logic:
         // - Download the zip to where out plugin is, unpack
         // - Rename the zipped plugin to $({Folder}.Name).next.zip
@@ -522,8 +522,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
                     "/SharedStrings/PluginUpdates/Statuses/Downloading"), Name, UpdateData.Version.ToString());
 
                 // Create a stream reader using the received Installer Uri
-                await using var stream = await GithubClient.DownloadStreamAsync(
-                    new RestRequest($"releases/download/latest/{UpdateData.Download}"));
+                await using var stream = await GithubClient.DownloadStreamAsync(new RestRequest(UpdateData.Download));
 
                 // Replace or create our installer file
                 var pluginArchive = await (await StorageFolder
@@ -555,7 +554,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
             // Rename the downloaded zip to $({Folder}.Name).next.zip
             File.Move(Path.Join(Folder, UpdateData.Download),
-                Path.Join(Folder, $"{new DirectoryInfo(Folder).Name}.next.zip"));
+                Path.Join(Folder, $"{new DirectoryInfo(Folder).Name}.next.zip"), true);
 
             // No files to download, switch to update error
             Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
