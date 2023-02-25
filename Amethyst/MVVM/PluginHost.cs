@@ -428,6 +428,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
                 {
                     Shared.Main.PluginsUpdateInfoBar.IsOpen = true;
                     Shared.Main.PluginsUpdateInfoBar.Opacity = 1.0;
+                    Shared.Events.RefreshMainWindowEvent?.Set();
                 }
 
                 // Notify about updates
@@ -465,6 +466,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
                 // Hide if all plugins have their updates queued
                 Shared.Main.PluginsUpdateInfoBar.Opacity = 0.0;
                 Shared.Main.PluginsUpdateInfoBar.IsOpen = false;
+                Shared.Events.RefreshMainWindowEvent?.Set();
             }
 
             // Notify about updates
@@ -495,6 +497,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
+            Shared.Events.RefreshMainWindowEvent?.Set();
 
             if (string.IsNullOrEmpty(UpdateData.Download) || !LocationValid)
             {
@@ -508,6 +511,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
                 await Task.Delay(2500);
                 Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
                 Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+                Shared.Events.RefreshMainWindowEvent?.Set();
 
                 await Task.Delay(1000);
                 return false; // That's all
@@ -547,6 +551,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
                 await Task.Delay(2500);
                 Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
                 Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+                Shared.Events.RefreshMainWindowEvent?.Set();
 
                 await Task.Delay(1000);
                 return false; // That's all
@@ -566,6 +571,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             await Task.Delay(2500);
             Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
             Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+            Shared.Events.RefreshMainWindowEvent?.Set();
 
             // Still here? We're done!
             await Task.Delay(1000);
@@ -585,6 +591,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             await Task.Delay(2500);
             Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
             Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+            Shared.Events.RefreshMainWindowEvent?.Set();
 
             await Task.Delay(1000);
             return false; // That's all

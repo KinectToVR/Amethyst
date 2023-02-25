@@ -189,6 +189,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
 
+        // Reload watchdog
         Task.Run(() =>
         {
             Shared.Events.ReloadMainWindowEvent =
@@ -210,6 +211,26 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                 // Reset the event
                 Shared.Events.ReloadMainWindowEvent.Reset();
+            }
+        });
+
+        // Refresh watchdog
+        Task.Run(() =>
+        {
+            Shared.Events.RefreshMainWindowEvent =
+                new ManualResetEvent(false);
+
+            while (true)
+            {
+                // Wait for a reload signal (blocking)
+                Shared.Events.RefreshMainWindowEvent.WaitOne();
+
+                // Reload & restart the waiting loop
+                if (_mainPageLoadedOnce)
+                    Shared.Main.DispatcherQueue.TryEnqueue(() => OnPropertyChanged());
+
+                // Reset the event
+                Shared.Events.RefreshMainWindowEvent.Reset();
             }
         });
 
@@ -1061,16 +1082,21 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
 
-    private bool CanShowPluginsUpdateBar => !UpdateInfoBar.IsOpen;
+    private bool CanShowPluginsUpdatePendingBar => !PluginsUpdateInfoBar.IsOpen;
 
-    private bool CanShowPluginsUpdatePendingBar =>
-        !UpdateInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+    private bool CanShowUpdateBar =>
+        !PluginsUpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen;
 
     private bool CanShowReloadBar =>
-        !UpdateInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen;
+        !PluginsUpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !UpdateInfoBar.IsOpen;
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
+
+    public double BoolToOpacity(bool v)
+    {
+        return v ? 1.0 : 0.0;
+    }
 
     private void MainGrid_Loaded(object sender, RoutedEventArgs e)
     {
@@ -1479,12 +1505,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         UpdateInfoBar.IsOpen = true;
         UpdateInfoBar.Opacity = 1.0;
+        OnPropertyChanged(); // Visibility
 
         // Enqueue an update task to be run at shutdown
         ShutdownController.ShutdownTasks.Add(new ShutdownTask
         {
             Name = "Update Amethyst using the Installer",
-            Priority = true, // Either update right now or skip if it was manual
+            Priority = false, // First download plugin updates, then everything else
             Action = () => Task.FromResult(Interfacing.ManualUpdate || InstallUpdates())
         });
     }
@@ -1704,6 +1731,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         PluginsUpdateInfoBar.IsOpen = false;
         PluginsUpdateInfoBar.Opacity = 0.0;
+        OnPropertyChanged(); // Visibility
 
         // Enqueue plugin updates for exit
         Shared.Main.DispatcherQueue.TryEnqueue(() =>
@@ -1829,6 +1857,11 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Handle all the exit actions (if needed)
             case false:
             {
+                // Hide the update bar now
+                UpdateInfoBar.IsOpen = false;
+                UpdateInfoBar.Opacity = 0.0;
+                OnPropertyChanged(); // Visibility
+
                 // Run shutdown tasks
                 await ShutdownController.ExecuteAllTasks();
 
