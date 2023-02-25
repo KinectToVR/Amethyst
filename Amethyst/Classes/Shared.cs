@@ -79,6 +79,10 @@ public static class Shared
         public static SolidColorBrush
             AttentionBrush, NeutralBrush;
 
+        public static ProgressBar PluginsUpdatePendingProgressBar;
+        public static InfoBar PluginsUpdatePendingInfoBar;
+        public static InfoBar PluginsUpdateInfoBar;
+
         // Navigate the main view (w/ animations)
         public static void NavigateToPage(string navItemTag,
             NavigationTransitionInfo transitionInfo)

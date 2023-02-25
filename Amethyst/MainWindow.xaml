@@ -124,29 +124,14 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <InfoBar x:Name="ReloadInfoBar" Grid.Row="0" Opacity="0.0"
-                     IsOpen="False" IsClosable="False" Margin="3,0,3,3" Severity="Warning"
-                     Title="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Title'), Mode=OneWay}"
-                     Message="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Content'), Mode=OneWay}">
-
-                <InfoBar.ActionButton>
-                    <Button HorizontalAlignment="Right" Click="ReloadInfoBar_CloseButtonClick"
-                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Restart'), Mode=OneWay}" />
-                </InfoBar.ActionButton>
-
-                <InfoBar.OpacityTransition>
-                    <ScalarTransition />
-                </InfoBar.OpacityTransition>
-            </InfoBar>
-
             <InfoBar x:Name="UpdateInfoBar" Grid.Row="0" Opacity="0.0"
                      IsOpen="False" IsClosable="False" Margin="3,0,3,3" Severity="Informational"
-                     CloseButtonClick="InstallLaterButton_Click"
                      Title="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/NewUpdateFound'), Mode=OneWay}"
                      Message="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/NewUpdateMessage'), Mode=OneWay}">
 
                 <InfoBar.ActionButton>
-                    <Button HorizontalAlignment="Right" Click="InstallNowButton_Click" Style="{ThemeResource AccentButtonStyle}"
+                    <Button HorizontalAlignment="Right" Click="InstallNowButton_Click"
+                            Style="{ThemeResource AccentButtonStyle}"
                             Content="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Install'), Mode=OneWay}" />
                 </InfoBar.ActionButton>
 
@@ -155,17 +140,50 @@
                 </InfoBar.OpacityTransition>
             </InfoBar>
 
-            <InfoBar x:Name="UpdatePendingInfoBar" Grid.Row="0" Opacity="0.0"
+            <InfoBar x:Name="PluginsUpdateInfoBar" Grid.Row="0" Opacity="0.0"
+                     Visibility="{x:Bind CanShowPluginsUpdateBar, Mode=OneWay}"
+                     IsOpen="False" IsClosable="True" Margin="3,-5,3,3" Severity="Informational"
+                     Title="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/PluginUpdates/Message'), Mode=OneWay}">
+
+                <InfoBar.ActionButton>
+                    <Button HorizontalAlignment="Right" Click="PluginsUpdateButton_Click"
+                            Style="{ThemeResource AccentButtonStyle}"
+                            Content="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/PluginUpdates/Inspect'), Mode=OneWay}" />
+                </InfoBar.ActionButton>
+
+                <InfoBar.OpacityTransition>
+                    <ScalarTransition />
+                </InfoBar.OpacityTransition>
+            </InfoBar>
+
+            <InfoBar x:Name="PluginsUpdatePendingInfoBar" Grid.Row="0" Opacity="0.0"
+                     Visibility="{x:Bind CanShowPluginsUpdatePendingBar, Mode=OneWay}"
                      IsOpen="False" IsClosable="False" Margin="3,-5,3,3" Severity="Informational"
-                     CloseButtonClick="InstallLaterButton_Click"
-                     Title="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Headers/Downloading'), Mode=OneWay}"
-                     Message="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Headers/Preparing'), Mode=OneWay}">
+                     Title="{x:Bind util:Translator.Get.String('/SharedStrings/PluginUpdates/Headers/Downloading'), Mode=OneWay}"
+                     Message="{x:Bind util:Translator.Get.String('/SharedStrings/PluginUpdates/Headers/Preparing'), Mode=OneWay}">
 
                 <InfoBar.Content>
-                    <StackPanel x:Name="UpdatePendingFlyoutMainStack" Margin="-45,0,1,0"
-                                HorizontalAlignment="Stretch" Orientation="Vertical">
+                    <StackPanel Margin="-45,0,1,0" HorizontalAlignment="Stretch" Orientation="Vertical">
+                        <ProgressBar x:Name="PluginsUpdatePendingProgressBar" Value="100"
+                                     IsIndeterminate="True" HorizontalAlignment="Stretch" />
                     </StackPanel>
                 </InfoBar.Content>
+
+                <InfoBar.OpacityTransition>
+                    <ScalarTransition />
+                </InfoBar.OpacityTransition>
+            </InfoBar>
+
+            <InfoBar x:Name="ReloadInfoBar" Grid.Row="0" Opacity="0.0"
+                     Visibility="{x:Bind CanShowReloadBar, Mode=OneWay}"
+                     IsOpen="False" IsClosable="False" Margin="3,0,3,3" Severity="Warning"
+                     Title="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Title'), Mode=OneWay}"
+                     Message="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Content'), Mode=OneWay}">
+
+                <InfoBar.ActionButton>
+                    <Button HorizontalAlignment="Right" Click="ReloadInfoBar_CloseButtonClick"
+                            Content="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Restart'), Mode=OneWay}" />
+                </InfoBar.ActionButton>
 
                 <InfoBar.OpacityTransition>
                     <ScalarTransition />
@@ -306,7 +324,8 @@
 
                 <muxc:NavigationView.FooterMenuItems>
                     <NavigationViewItem FontSize="10" FontWeight="Medium"
-                                        Tag="plugins" x:Name="PluginsItem" Height="63" BackgroundSizing="OuterBorderEdge">
+                                        Tag="plugins" x:Name="PluginsItem" Height="63"
+                                        BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
                             <FontIcon Glyph="&#xE946;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
                                       x:Name="NavViewPluginsButtonIcon" FontSize="22" Translation="0,-8,0">

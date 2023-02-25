@@ -22,7 +22,8 @@ public interface IPluginMetadata
 
     [DefaultValue(null)] string Publisher { get; }
     [DefaultValue(null)] string Website { get; }
-    [DefaultValue("1.0.0.0")] string Version { get; }
+    [DefaultValue(null)] string UpdateEndpoint { get; }
+    [DefaultValue("0.0.0.0")] string Version { get; }
 }
 
 /// <summary>
