@@ -22,6 +22,7 @@ public static class Shared
     {
         public static ManualResetEvent
             ReloadMainWindowEvent,
+            RefreshMainWindowEvent,
             ReloadGeneralPageEvent,
             ReloadSettingsPageEvent,
             ReloadDevicesPageEvent,
