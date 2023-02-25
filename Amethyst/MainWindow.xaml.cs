@@ -9,11 +9,13 @@ using System.ComponentModel.Composition.Hosting;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Loader;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Data.Json;
@@ -270,25 +272,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Interfacing.GetProgramLocation().DirectoryName, "Plugins"));
 
         // Search the "Plugins" sub-directory for assemblies that match the imports.
-        var catalog = new AggregateCatalog();
-
-        // Add the current assembly to support invoke method exports
-        //Logger.Info("Exporting the plugin host plugin...");
-        //catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
-
         // Iterate over all directories in .\Plugins dir and add all Plugin* dirs to catalogs
+        Logger.Info("Searching for local plugins now...");
         var pluginDirectoryList = Directory.EnumerateDirectories(
             Path.Combine(Interfacing.GetProgramLocation().DirectoryName!, "Plugins"),
             "*", SearchOption.TopDirectoryOnly).ToList();
 
-        AssemblyLoadContext.Default.LoadFromAssemblyPath(
-            Assembly.GetAssembly(typeof(ITrackingDevice))!.Location);
-
-        // Search for local plugins
-        Logger.Info("Searching for local plugins now...");
-        pluginDirectoryList.ForEach(pluginPath =>
-            catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath)));
-
+        // Search for external plugins
         try
         {
             // Load the JSON source into buffer, parse
@@ -302,7 +292,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 // Try loading all path-valid plugin entries
                 jsonRoot.GetNamedArray("external_plugins").ToList()
                     .Where(pluginEntry => Directory.Exists(pluginEntry.GetString())).ToList()
-                    .ForEach(pluginPath => catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath.GetString())));
+                    .ForEach(pluginPath => pluginDirectoryList.Add(pluginPath.GetString()));
 
                 // Write out all invalid ones
                 jsonRoot.GetNamedArray("external_plugins").ToList()
@@ -337,7 +327,43 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
         }
 
-        if (pluginDirectoryList.Count < 1)
+        // Execute plugin updates: replace plugin files
+        foreach (var folder in pluginDirectoryList)
+            try
+            {
+                if (!Directory.Exists(folder)) continue;
+                var updateFile = new FileInfo(Path.Join(folder, $"{new DirectoryInfo(folder).Name}.next.zip"));
+
+                if (!updateFile.Exists) continue;
+                Logger.Info($"Found a plugin update package in folder \"{folder}\"");
+
+                Logger.Info("Cleaning the plugin folder now...");
+                Directory.GetDirectories(folder).ToList().ForEach(x => Directory.Delete(x, true));
+                Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories)
+                    .Where(x => x != updateFile.FullName).ToList().ForEach(File.Delete);
+
+                Logger.Info("Unpacking the new plugin from its archive...");
+                ZipFile.ExtractToDirectory(updateFile.FullName, updateFile.DirectoryName!, true);
+
+                Logger.Info("Deleting the plugin update package...");
+                updateFile.Delete(); // Cleanup after the update
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
+            }
+
+        // Add the current assembly to support invoke method exports
+        AssemblyLoadContext.Default.LoadFromAssemblyPath(
+            Assembly.GetAssembly(typeof(ITrackingDevice))!.Location);
+
+        Logger.Info("Enumerating all plugins now...");
+        var catalog = new AggregateCatalog();
+
+        pluginDirectoryList.ForEach(pluginPath =>
+            catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath)));
+
+        if (catalog.Catalogs.Count < 1)
         {
             Logger.Fatal(new CompositionException("No plugins directories found! Shutting down..."));
             Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoPlugins"));
