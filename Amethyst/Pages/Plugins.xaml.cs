@@ -78,4 +78,33 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+
+    private void SearchButton_Click(object sender, RoutedEventArgs e)
+    {
+    }
+
+    private void SearchTextBox_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+    {
+    }
+
+    private void SearcherGrid_DragStarting(UIElement sender, DragStartingEventArgs args)
+    {
+    }
+
+    private void SearcherGrid_DropCompleted(UIElement sender, DropCompletedEventArgs args)
+    {
+    }
+
+    private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (MainSplitView is null) return; // Give up before
+        MainSplitView.OpenPaneLength = e.NewSize.Width - 700;
+
+        // Optionally close the whole thing if it doesn't fit
+        MainSplitView.IsPaneOpen = MainSplitView.OpenPaneLength >= 300;
+
+        SecondarySectionNameTextBlock.Visibility = 
+            MainSplitView.IsPaneOpen ? Visibility.Collapsed : Visibility.Visible;
+        SecondarySectionNameTextBlock.Opacity = MainSplitView.IsPaneOpen ? 0.0 : 1.0;
+    }
 }
