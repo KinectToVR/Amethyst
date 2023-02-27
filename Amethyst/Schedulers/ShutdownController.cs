@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amethyst.Classes;
 using Amethyst.Utils;
 
-namespace Amethyst.Classes;
+namespace Amethyst.Schedulers;
 
 public class ShutdownTask
 {

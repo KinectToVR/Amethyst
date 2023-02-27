@@ -334,10 +334,10 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                     Logger.Info("Reset invoked: trying to restart the app...");
 
                     // If we've found who asked
-                    if (File.Exists(Interfacing.GetProgramLocation().FullName))
+                    if (File.Exists(Interfacing.ProgramLocation.FullName))
                     {
                         // Log the caller
-                        Logger.Info($"The current caller process is: {Interfacing.GetProgramLocation().FullName}");
+                        Logger.Info($"The current caller process is: {Interfacing.ProgramLocation.FullName}");
 
                         // Exit the app
                         Logger.Info("Configuration has been reset, exiting in 500ms...");
@@ -349,7 +349,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                         await Interfacing.HandleAppExit(500);
 
                         // Restart and exit with code 0
-                        Process.Start(Interfacing.GetProgramLocation()
+                        Process.Start(Interfacing.ProgramLocation
                             .FullName.Replace(".dll", ".exe"));
 
                         // Exit without re-handling everything

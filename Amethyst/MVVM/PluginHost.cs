@@ -25,6 +25,7 @@ using RestSharp;
 using static Amethyst.Classes.Interfacing;
 using Windows.Media.Protection.PlayReady;
 using Windows.Storage;
+using Amethyst.Schedulers;
 
 namespace Amethyst.MVVM;
 
@@ -248,7 +249,7 @@ public class PluginHost : IAmethystHost
             // Launch the crash handler if fatal
             if (fatal)
             {
-                var hPath = Path.Combine(GetProgramLocation().DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
+                var hPath = Path.Combine(ProgramLocation.DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
                 if (File.Exists(hPath)) Process.Start(hPath, new[] { "plugin_message", message, Guid });
                 else Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
             }
@@ -270,8 +271,6 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     private RestClient GithubClient => _githubClient ??= new RestClient(
         UpdateEndpoint ?? $"{Website?.TrimEnd('/')}/releases/download/latest/");
-
-    private RestClient ApiClient { get; } = new("https://api.github.com");
 
     public string Name { get; init; } = "[UNKNOWN]";
     public string Guid { get; init; } = "[INVALID]";
@@ -558,10 +557,17 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             }
 
             // Rename the downloaded zip to $({Folder}.Name).next.zip
-            File.Move(Path.Join(Folder, UpdateData.Download),
-                Path.Join(Folder, $"{new DirectoryInfo(Folder).Name}.next.zip"), true);
+            var updateZip = Path.Join(Folder, $"{new DirectoryInfo(Folder).Name}.next.zip");
+            File.Move(Path.Join(Folder, UpdateData.Download), updateZip, true);
 
-            // No files to download, switch to update error
+            // Register the update in the Amethyst task scheduler
+            StartupController.Controller.StartupTasks.Add(new StartupUpdateTask
+            {
+                Name = $"Update {Name} to version {UpdateData.Version}",
+                Priority = true, PluginFolder = Folder, UpdatePackage = updateZip
+            });
+
+            // Everything's fine, show the restart notice
             Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
                 "/SharedStrings/PluginUpdates/Headers/Restart"), Name);
 
