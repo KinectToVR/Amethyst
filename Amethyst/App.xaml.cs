@@ -73,7 +73,7 @@ public partial class App : Application
             $"Amethyst_{DateTime.Now:yyyyMMdd-HHmmss.ffffff}.log"));
 
         // Create an empty file for checking for crashes
-        Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.GetProgramLocation().DirectoryName, ".crash"));
+        Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.ProgramLocation.DirectoryName, ".crash"));
         Interfacing.CrashFile.Create(); // Create the file
 
         try
@@ -151,7 +151,7 @@ public partial class App : Application
 
         // Create the strings directory in case it doesn't exist yet
         Directory.CreateDirectory(Path.Join(
-            Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings"));
+            Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings"));
 
         // Load language resources
         Interfacing.LoadJsonStringResourcesEnglish();
@@ -160,7 +160,7 @@ public partial class App : Application
         // Setup string hot reload watchdog
         ResourceWatcher = new FileSystemWatcher
         {
-            Path = Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings"),
+            Path = Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings"),
             NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName |
                            NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
             IncludeSubdirectories = true,

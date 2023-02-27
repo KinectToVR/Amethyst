@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -46,6 +47,7 @@ using Microsoft.Windows.AppNotifications;
 using RestSharp;
 using WinRT;
 using WinRT.Interop;
+using Amethyst.Schedulers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -117,7 +119,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Set titlebar/taskview icon
         Logger.Info("Setting the App Window icon...");
         Shared.Main.AppWindow.SetIcon(Path.Combine(
-            Interfacing.GetProgramLocation().DirectoryName, "Assets", "ktvr.ico"));
+            Interfacing.ProgramLocation.DirectoryName, "Assets", "ktvr.ico"));
 
         Logger.Info("Extending the window titlebar...");
         if (AppWindowTitleBar.IsCustomizationSupported())
@@ -244,9 +246,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             {
                 Logger.Fatal(new AbandonedMutexException("Startup failed! The app is already running."));
 
-                if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+                if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                         "K2CrashHandler", "K2CrashHandler.exe")))
-                    Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+                    Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                         "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
                 else
                     Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
@@ -260,9 +262,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Fatal(new AbandonedMutexException(
                 $"Startup failed! Multi-instance lock mutex creation error: {e.Message}"));
 
-            if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+            if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                     "K2CrashHandler", "K2CrashHandler.exe")))
-                Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+                Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                     "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
             else
                 Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
@@ -274,13 +276,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Priority: Launch the crash handler
         Logger.Info("Starting the crash handler passing the app PID...");
 
-        if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+        if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                 "K2CrashHandler", "K2CrashHandler.exe")))
-            Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+            Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                 "K2CrashHandler", "K2CrashHandler.exe"), $"{Environment.ProcessId} \"{Logger.LogFilePath}\"");
         else
             Logger.Warn(
-                $"Crash handler exe ({Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
+                $"Crash handler exe ({Path.Combine(Interfacing.ProgramLocation.DirectoryName, "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
 
         // Start the main loop
         Task.Run(Main.MainLoop);
@@ -290,13 +292,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Create the plugin directory (if not existent)
         Directory.CreateDirectory(Path.Combine(
-            Interfacing.GetProgramLocation().DirectoryName, "Plugins"));
+            Interfacing.ProgramLocation.DirectoryName, "Plugins"));
 
         // Search the "Plugins" sub-directory for assemblies that match the imports.
         // Iterate over all directories in .\Plugins dir and add all Plugin* dirs to catalogs
         Logger.Info("Searching for local plugins now...");
         var pluginDirectoryList = Directory.EnumerateDirectories(
-            Path.Combine(Interfacing.GetProgramLocation().DirectoryName!, "Plugins"),
+            Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins"),
             "*", SearchOption.TopDirectoryOnly).ToList();
 
         // Search for external plugins
@@ -348,26 +350,37 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
         }
 
+        try
+        {
+            // Try reading the startup task config
+            StartupController.Controller.ReadTasks();
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Reading the startup scheduler configuration failed. Message: {e.Message}");
+        }
+
         // Execute plugin updates: replace plugin files
-        foreach (var folder in pluginDirectoryList)
+        foreach (var action in StartupController.Controller.UpdateTasks)
             try
             {
-                if (!Directory.Exists(folder)) continue;
-                var updateFile = new FileInfo(Path.Join(folder, $"{new DirectoryInfo(folder).Name}.next.zip"));
-
-                if (!updateFile.Exists) continue;
-                Logger.Info($"Found a plugin update package in folder \"{folder}\"");
+                Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
+                if (!Directory.Exists(action.PluginFolder) || !File.Exists(action.UpdatePackage)) continue;
+                Logger.Info($"Found a plugin update package in folder \"{action.PluginFolder}\"");
 
                 Logger.Info("Cleaning the plugin folder now...");
-                Directory.GetDirectories(folder).ToList().ForEach(x => Directory.Delete(x, true));
-                Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories)
-                    .Where(x => x != updateFile.FullName).ToList().ForEach(File.Delete);
+                Directory.GetDirectories(action.PluginFolder).ToList().ForEach(x => Directory.Delete(x, true));
+                Directory.GetFiles(action.PluginFolder, "*.*", SearchOption.AllDirectories)
+                    .Where(x => x != action.UpdatePackage).ToList().ForEach(File.Delete);
 
                 Logger.Info("Unpacking the new plugin from its archive...");
-                ZipFile.ExtractToDirectory(updateFile.FullName, updateFile.DirectoryName!, true);
+                ZipFile.ExtractToDirectory(action.UpdatePackage, action.PluginFolder, true);
 
                 Logger.Info("Deleting the plugin update package...");
-                updateFile.Delete(); // Cleanup after the update
+                File.Delete(action.UpdatePackage); // Cleanup after the update
+
+                Logger.Info($"Looks like a startup {action.GetType()} task with " +
+                            $"name \"{action.Name}\" has been executed successfully!");
             }
             catch (Exception e)
             {
@@ -850,12 +863,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Checking out the default configuration settings...");
         (string DeviceGuid, string ServiceGuid) defaultSettings = (null, null); // Invalid!
 
-        if (File.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")))
+        if (File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")))
             try
             {
                 // Parse the loaded json
                 var jsonHead = JsonObject.Parse(File.ReadAllText(
-                    Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")));
+                    Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")));
 
                 // Check the device guid
                 if (!jsonHead.ContainsKey("TrackingDevice"))
@@ -1032,7 +1045,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Setup device change watchdog : local devices
         var localWatcher = new FileSystemWatcher
         {
-            Path = Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "Plugins"),
+            Path = Path.Combine(Interfacing.ProgramLocation.DirectoryName, "Plugins"),
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
             Filter = "*.dll", IncludeSubdirectories = true, EnableRaisingEvents = true
         };
@@ -1267,9 +1280,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             {
                 UseShellExecute = true,
                 Verb = "runas",
-                FileName = Path.Combine(Interfacing.GetAppDataTempDir().FullName, "Amethyst-Installer.exe"),
+                FileName = Path.Combine(Interfacing.AppDataTempDir.FullName, "Amethyst-Installer.exe"),
                 Arguments =
-                    $"--update {(reopen ? "-o" : "")} -path \"{Interfacing.GetProgramLocation().DirectoryName}\""
+                    $"--update {(reopen ? "-o" : "")} -path \"{Interfacing.ProgramLocation.DirectoryName}\""
             });
         }
         catch (Win32Exception ex)
@@ -1477,7 +1490,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     await using var stream = await client.ExecuteDownloadStreamAsync(installerUri, new RestRequest());
 
                     var installerFile = // Replace or create our installer file
-                        await (await StorageFolder.GetFolderFromPathAsync(Interfacing.GetAppDataTempDir().FullName))
+                        await (await StorageFolder.GetFolderFromPathAsync(Interfacing.AppDataTempDir.FullName))
                             .CreateFileAsync("Amethyst-Installer.exe", CreationCollisionOption.ReplaceExisting);
 
                     // Create an output stream and push all the available data to it
@@ -1574,10 +1587,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Reload has been invoked: trying to restart the app...");
 
         // If we've found who asked
-        if (File.Exists(Interfacing.GetProgramLocation().ToString()))
+        if (File.Exists(Interfacing.ProgramLocation.ToString()))
         {
             // Log the caller
-            Logger.Info($"The current caller process is: {Interfacing.GetProgramLocation()}");
+            Logger.Info($"The current caller process is: {Interfacing.ProgramLocation}");
 
             // Exit the app
             Logger.Info("Exiting in 500ms...");
@@ -1589,7 +1602,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             await Interfacing.HandleAppExit(500);
 
             // Restart and exit with code 0
-            Process.Start(Interfacing.GetProgramLocation()
+            Process.Start(Interfacing.ProgramLocation
                 .FullName.Replace(".dll", ".exe"));
 
             // Exit without re-handling everything
@@ -1782,9 +1795,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Interfacing.IsNuxPending = true;
 
         // Load the license text
-        if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Licenses.txt")))
+        if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName, "Assets", "Licenses.txt")))
             LicensesText.Text = File.ReadAllText(Path.Combine(
-                Interfacing.GetProgramLocation().DirectoryName, "Assets", "Licenses.txt"));
+                Interfacing.ProgramLocation.DirectoryName, "Assets", "Licenses.txt"));
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);

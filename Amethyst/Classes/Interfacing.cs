@@ -93,15 +93,9 @@ public static class Interfacing
 
     public static bool IsServiceEndpointPresent => ServiceEndpointStatusCode == 0;
 
-    public static FileInfo GetProgramLocation()
-    {
-        return new FileInfo(Assembly.GetExecutingAssembly().Location);
-    }
+    public static FileInfo ProgramLocation => new(Assembly.GetExecutingAssembly().Location);
 
-    public static DirectoryInfo GetAppDataTempDir()
-    {
-        return Directory.CreateDirectory(Path.GetTempPath() + "Amethyst");
-    }
+    public static DirectoryInfo AppDataTempDir => Directory.CreateDirectory(Path.GetTempPath() + "Amethyst");
 
     public static string GetAppDataFileDir(string relativeFilePath)
     {
@@ -128,7 +122,7 @@ public static class Interfacing
         IsExitHandled = true;
 
         // Find the crash handler and show it with a custom message
-        var hPath = Path.Combine(GetProgramLocation().DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
+        var hPath = Path.Combine(ProgramLocation.DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
         if (File.Exists(hPath)) Process.Start(hPath, new[] { "message", message });
         else Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
 
@@ -469,7 +463,7 @@ public static class Interfacing
         {
             // Load the locales.json from Assets/Strings/
             var resourcePath = Path.Join(
-                GetProgramLocation().DirectoryName,
+                ProgramLocation.DirectoryName,
                 "Assets", "Strings", "locales.json");
 
             // If the specified language doesn't exist somehow, fallback to 'en'
@@ -517,7 +511,7 @@ public static class Interfacing
             Logger.Info($"Searching for language resources with key \"{languageKey}\"...");
 
             var resourcePath = Path.Join(
-                GetProgramLocation().DirectoryName,
+                ProgramLocation.DirectoryName,
                 "Assets", "Strings", languageKey + ".json");
 
             // If the specified language doesn't exist somehow, fallback to 'en'
@@ -527,7 +521,7 @@ public static class Interfacing
                             $"\"{resourcePath}\", falling back to 'en' (en.json)!");
 
                 resourcePath = Path.Join(
-                    GetProgramLocation().DirectoryName,
+                    ProgramLocation.DirectoryName,
                     "Assets", "Strings", "en.json");
             }
 
@@ -564,7 +558,7 @@ public static class Interfacing
             Logger.Info("Searching for shared (English) language resources...");
 
             var resourcePath = Path.Join(
-                GetProgramLocation().DirectoryName,
+                ProgramLocation.DirectoryName,
                 "Assets", "Strings", "en.json");
 
             // If failed again, just give up

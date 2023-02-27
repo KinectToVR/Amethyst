@@ -225,9 +225,9 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         LanguageOptionBox.Items.Clear();
 
         // Push all the found languages
-        if (Directory.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings")))
+        if (Directory.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings")))
             foreach (var entry in Directory.EnumerateFiles(
-                         Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings")))
+                         Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings")))
             {
                 if (Path.GetFileNameWithoutExtension(entry) == "locales") continue;
 
@@ -254,7 +254,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         AutoStartCheckBox.IsChecked = AppPlugins.CurrentServiceEndpoint.AutoStartAmethyst;
 
         // Optionally show the foreign language grid
-        if (!File.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings",
+        if (!File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings",
                 new Language(GlobalizationPreferences.Languages[0]).LanguageTag[..2] + ".json")))
             ForeignLangGrid.Visibility = Visibility.Visible;
 
@@ -698,10 +698,10 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Logger.Info("Reset invoked: trying to restart the app...");
 
         // If we've found who asked
-        if (File.Exists(Interfacing.GetProgramLocation().FullName))
+        if (File.Exists(Interfacing.ProgramLocation.FullName))
         {
             // Log the caller
-            Logger.Info($"The current caller process is: {Interfacing.GetProgramLocation().FullName}");
+            Logger.Info($"The current caller process is: {Interfacing.ProgramLocation.FullName}");
 
             // Exit the app
             Logger.Info("Configuration has been reset, exiting in 500ms...");
@@ -713,7 +713,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             await Interfacing.HandleAppExit(500);
 
             // Restart and exit with code 0
-            Process.Start(Interfacing.GetProgramLocation()
+            Process.Start(Interfacing.ProgramLocation
                 .FullName.Replace(".dll", ".exe"));
 
             // Exit without re-handling everything

@@ -255,12 +255,12 @@ public class AppSettings : INotifyPropertyChanged
             Logger.Info("Checking out the default configuration settings...");
             (bool ExtraTrackers, bool Valid) defaultSettings = (false, false); // Invalid for now!
 
-            if (File.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")))
+            if (File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")))
                 try
                 {
                     // Parse the loaded json
                     var jsonHead = JsonObject.Parse(File.ReadAllText(
-                        Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")));
+                        Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")));
 
                     if (!jsonHead.ContainsKey("ExtraTrackers"))
                         // Invalid configuration file, don't proceed further!
@@ -366,7 +366,7 @@ public class AppSettings : INotifyPropertyChanged
 
         // Optionally fix the selected language / select a new one
         var resourcePath = Path.Join(
-            Interfacing.GetProgramLocation().DirectoryName,
+            Interfacing.ProgramLocation.DirectoryName,
             "Assets", "Strings", AppLanguage + ".json");
 
         // If there's no specified language, fallback to {system}
@@ -377,7 +377,7 @@ public class AppSettings : INotifyPropertyChanged
 
             Logger.Warn($"No language specified! Trying with the system one: \"{AppLanguage}\"!");
             resourcePath = Path.Join(
-                Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings", AppLanguage + ".json");
+                Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings", AppLanguage + ".json");
         }
 
         // If the specified language doesn't exist somehow, fallback to 'en'
@@ -387,7 +387,7 @@ public class AppSettings : INotifyPropertyChanged
 
             AppLanguage = "en"; // Change to english
             resourcePath = Path.Join(
-                Interfacing.GetProgramLocation().DirectoryName,
+                Interfacing.ProgramLocation.DirectoryName,
                 "Assets", "Strings", AppLanguage + ".json");
         }
 

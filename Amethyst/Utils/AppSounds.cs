@@ -41,14 +41,14 @@ public static class AppSounds
             {
                 // Check if the sound file even exists & if sounds are on
                 if (AppData.Settings.EnableAppSounds &&
-                    File.Exists(Path.Join(Interfacing.GetProgramLocation().Directory.ToString(),
+                    File.Exists(Path.Join(Interfacing.ProgramLocation.Directory.ToString(),
                         "Assets", "Sounds", sound + ".wav")))
                 {
                     // Load the sound file into a player
                     using var player = new MediaPlayer
                     {
                         Source = MediaSource.CreateFromUri(
-                            new Uri(Path.Join(Interfacing.GetProgramLocation().Directory.ToString(),
+                            new Uri(Path.Join(Interfacing.ProgramLocation.Directory.ToString(),
                                 "Assets", "Sounds", sound + ".wav"))),
 
                         // Set the desired volume
@@ -61,7 +61,7 @@ public static class AppSounds
                 else
                 {
                     Logger.Warn(
-                        $"Sound file {Path.Join(Interfacing.GetProgramLocation().Directory.ToString(), "Assets", "Sounds", sound + ".wav")}" +
+                        $"Sound file {Path.Join(Interfacing.ProgramLocation.Directory.ToString(), "Assets", "Sounds", sound + ".wav")}" +
                         "could not be played because it does not exist, please check if it's there.");
                 }
             }

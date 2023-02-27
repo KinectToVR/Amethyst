@@ -83,7 +83,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         Logger.Info($"Setting graphical resources for: '{CalibrationPreviewMediaElement.GetType().FullName}'...");
         CalibrationPreviewMediaElement.Source = MediaSource.CreateFromUri(
-            new Uri(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "CalibrationDirections.mp4")));
+            new Uri(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "CalibrationDirections.mp4")));
         CalibrationPreviewMediaElement.MediaPlayer.CommandManager.IsEnabled = false;
 
         Logger.Info("Registering a detached binary semaphore " +
