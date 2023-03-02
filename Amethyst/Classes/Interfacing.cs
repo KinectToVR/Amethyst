@@ -22,7 +22,8 @@ public static class Interfacing
 
     public static bool
         IsExitingNow, // App closing check
-        IsExitHandled; // If actions have been done
+        IsExitHandled, // If actions have been done
+        IsExitPending; // If actions are running
 
     public static readonly object UpdateLock = new();
 
