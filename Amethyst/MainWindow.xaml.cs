@@ -1856,6 +1856,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // and Handled(false) means Continue()
         // -> Block exiting until we're done
         args.Handled = true;
+
+        if (Interfacing.IsExitPending) return;
         switch (Interfacing.IsExitHandled)
         {
             // Show the close tip (if not shown yet)
@@ -1870,6 +1872,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Handle all the exit actions (if needed)
             case false:
             {
+                // Mark as handled
+                Interfacing.IsExitPending = true;
+
                 // Hide the update bar now
                 UpdateInfoBar.IsOpen = false;
                 UpdateInfoBar.Opacity = 0.0;
@@ -1877,6 +1882,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                 // Run shutdown tasks
                 await ShutdownController.ExecuteAllTasks();
+
+                // Mark as mostly done
+                Interfacing.IsExitPending = true;
 
                 // Make sure any Mica/Acrylic controller is disposed so it doesn't try to
                 // use this closed window.
