@@ -27,10 +27,8 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     {
         InitializeComponent();
 
-        // Register for any pending changes
-        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
-        AppData.Settings.TrackersVector.CollectionChanged += (_, _) => OnPropertyChanged();
-        Trackers.ForEach(x => x.PropertyChanged += (_, _) => OnPropertyChanged());
+        ResubscribeListeners(); // Register for any pending changes
+        Interfacing.AppSettingsRead += (_, _) => ResubscribeListeners();
     }
 
     public string Header { get; set; } = "";
@@ -50,6 +48,14 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
         Trackers.Any(x => x.IsActive && x.IsManuallyManaged);
 
     public event PropertyChangedEventHandler PropertyChanged;
+
+    private void ResubscribeListeners()
+    {
+        // Register for any pending changes
+        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
+        AppData.Settings.TrackersVector.CollectionChanged += (_, _) => OnPropertyChanged();
+        Trackers.ForEach(x => x.PropertyChanged += (_, _) => OnPropertyChanged());
+    }
 
     public void OnPropertyChanged(string propName = null)
     {

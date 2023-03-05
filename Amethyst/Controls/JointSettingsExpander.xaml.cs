@@ -25,8 +25,8 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     {
         InitializeComponent();
 
-        // Register for any pending changes
-        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
+        ResubscribeListeners(); // Register for any pending changes
+        Interfacing.AppSettingsRead += (_, _) => ResubscribeListeners();
     }
 
     public TrackerType Role { get; set; }
@@ -132,6 +132,12 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
             : Trackers.Count(x => x.IsSupported);
 
     public event PropertyChangedEventHandler PropertyChanged;
+
+    private void ResubscribeListeners()
+    {
+        // Register for any pending changes
+        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
+    }
 
     public void OnPropertyChanged(string propName = null)
     {

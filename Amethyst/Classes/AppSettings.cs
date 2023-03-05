@@ -206,7 +206,10 @@ public class AppSettings : INotifyPropertyChanged
             AppData.Settings ??= new AppSettings(); // Reset if null
         }
 
-        CheckSettings(true);
+        Logger.Info("Requesting re-subscription from listeners...");
+        Interfacing.AppSettingsRead(this, EventArgs.Empty);
+
+        CheckSettings(true); // Check partially
     }
 
     public void CheckSettings(bool partial = false, TrackingDevice device = null)

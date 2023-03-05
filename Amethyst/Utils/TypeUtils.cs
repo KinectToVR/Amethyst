@@ -8,10 +8,9 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Amethyst.Plugins.Contract;
 using AmethystSupport;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
-using System.Threading;
 
 namespace Amethyst.Utils;
 
