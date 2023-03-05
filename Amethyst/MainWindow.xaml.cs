@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -14,21 +13,19 @@ using System.IO.Compression;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Loader;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Graphics;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.System;
 using Windows.Web.Http;
 using Amethyst.Classes;
 using Amethyst.MVVM;
 using Amethyst.Pages;
 using Amethyst.Plugins.Contract;
+using Amethyst.Schedulers;
 using Amethyst.Utils;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -47,7 +44,6 @@ using Microsoft.Windows.AppNotifications;
 using RestSharp;
 using WinRT;
 using WinRT.Interop;
-using Amethyst.Schedulers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -350,9 +346,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
         }
 
+        // Try reading the startup task config
         try
         {
-            // Try reading the startup task config
+            Logger.Info("Searching for scheduled startup tasks...");
             StartupController.Controller.ReadTasks();
         }
         catch (Exception e)
@@ -361,7 +358,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         }
 
         // Execute plugin updates: replace plugin files
-        foreach (var action in StartupController.Controller.UpdateTasks)
+        foreach (var action in StartupController.Controller.UpdateTasks.ToList())
             try
             {
                 Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
@@ -379,6 +376,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 Logger.Info("Deleting the plugin update package...");
                 File.Delete(action.UpdatePackage); // Cleanup after the update
 
+                Logger.Info("Deleting attempted scheduled startup " +
+                            $"{action.GetType()} task with name \"{action.Name}\"...");
+
+                StartupController.Controller.StartupTasks.Remove(action);
                 Logger.Info($"Looks like a startup {action.GetType()} task with " +
                             $"name \"{action.Name}\" has been executed successfully!");
             }

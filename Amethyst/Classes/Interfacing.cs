@@ -18,6 +18,8 @@ namespace Amethyst.Classes;
 
 public static class Interfacing
 {
+    public delegate void AppSettingsReadEventHandler(object sender, EventArgs e);
+
     public const uint MaxPingCheckingThreads = 3;
 
     public static bool
@@ -97,6 +99,8 @@ public static class Interfacing
     public static FileInfo ProgramLocation => new(Assembly.GetExecutingAssembly().Location);
 
     public static DirectoryInfo AppDataTempDir => Directory.CreateDirectory(Path.GetTempPath() + "Amethyst");
+
+    public static AppSettingsReadEventHandler AppSettingsRead { get; set; } = (_, _) => { };
 
     public static string GetAppDataFileDir(string relativeFilePath)
     {

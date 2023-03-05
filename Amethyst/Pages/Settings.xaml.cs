@@ -66,31 +66,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             tracker.OnPropertyChanged(); // Refresh the transition
         });
 
-        AppData.Settings.TrackersVector.CollectionChanged += (_, _) =>
-        {
-            // Trackers' collection has changed, 
-            Shared.Main.DispatcherQueue.TryEnqueue(async () =>
-            {
-                // This 'ease in' transition will affect the added expander
-                AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
-                {
-                    tracker.SettingsExpanderTransitions =
-                        new TransitionCollection { new ContentThemeTransition() };
-                    tracker.OnPropertyChanged(); // Refresh the transition
-                });
-
-                // Wait for the transition to end
-                await Task.Delay(200);
-
-                // This 'move' transition will affect all tracker expanders
-                AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
-                {
-                    tracker.SettingsExpanderTransitions =
-                        new TransitionCollection { new RepositionThemeTransition() };
-                    tracker.OnPropertyChanged(); // Refresh the transition
-                });
-            });
-        };
+        ResubscribeListeners(); // Register for any pending changes
+        Interfacing.AppSettingsRead += (_, _) => ResubscribeListeners();
 
         Logger.Info($"Registering settings MVVM for page: '{GetType().FullName}'...");
         DataContext = AppData.Settings; // Set this settings instance as the context
@@ -202,6 +179,35 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
+
+    private void ResubscribeListeners()
+    {
+        AppData.Settings.TrackersVector.CollectionChanged += (_, _) =>
+        {
+            // Trackers' collection has changed, 
+            Shared.Main.DispatcherQueue.TryEnqueue(async () =>
+            {
+                // This 'ease in' transition will affect the added expander
+                AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
+                {
+                    tracker.SettingsExpanderTransitions =
+                        new TransitionCollection { new ContentThemeTransition() };
+                    tracker.OnPropertyChanged(); // Refresh the transition
+                });
+
+                // Wait for the transition to end
+                await Task.Delay(200);
+
+                // This 'move' transition will affect all tracker expanders
+                AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
+                {
+                    tracker.SettingsExpanderTransitions =
+                        new TransitionCollection { new RepositionThemeTransition() };
+                    tracker.OnPropertyChanged(); // Refresh the transition
+                });
+            });
+        };
+    }
 
 
     private void Page_Loaded(object sender, RoutedEventArgs e)

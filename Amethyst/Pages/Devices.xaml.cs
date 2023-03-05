@@ -54,8 +54,8 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
         TrackingDeviceTreeView.ItemsSource = AppPlugins.TrackingDevicesList.Values;
 
-        //AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
-        AppData.Settings.TrackersVector.CollectionChanged += (_, _) => OnPropertyChanged();
+        ResubscribeListeners(); // Register for any pending changes
+        Interfacing.AppSettingsRead += (_, _) => ResubscribeListeners();
 
         // Set currently tracking device & selected device
         Logger.Info("Overwriting the devices TreeView selected item...");
@@ -103,6 +103,12 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
+
+    private void ResubscribeListeners()
+    {
+        //AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
+        AppData.Settings.TrackersVector.CollectionChanged += (_, _) => OnPropertyChanged();
+    }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
