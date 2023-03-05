@@ -5,7 +5,10 @@ using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
+using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using AmethystSupport;
 using Newtonsoft.Json;
@@ -283,6 +286,15 @@ public static class RestExtensions
         return client.ExecuteGetAsync(request);
     }
 
+    public static Task<RestResponse> GetAsyncAuthorized(this RestClient client, RestRequest request)
+    {
+        if (AppData.Settings.GitHubToken.Valid)
+            request.AddHeader("Authorization", // Optionally add the authorization token
+                $"bearer {AppData.Settings.GitHubToken.Token.Decrypt()}");
+
+        return client.GetAsync(request);
+    }
+
     public static Task<byte[]> ExecuteDownloadDataAsync(this RestClient client, string baseUrl, RestRequest request)
     {
         client.Options.BaseUrl = new Uri(baseUrl);
@@ -293,5 +305,28 @@ public static class RestExtensions
     {
         client.Options.BaseUrl = new Uri(baseUrl);
         return client.DownloadStreamAsync(request);
+    }
+}
+
+public static class StringExtensions
+{
+    public static string Encrypt(this string s)
+    {
+        if (string.IsNullOrEmpty(s)) return s;
+
+        var encoding = new UTF8Encoding();
+        var plain = encoding.GetBytes(s);
+        var secret = ProtectedData.Protect(plain, null, DataProtectionScope.CurrentUser);
+        return Convert.ToBase64String(secret);
+    }
+
+    public static string Decrypt(this string s)
+    {
+        if (string.IsNullOrEmpty(s)) return s;
+
+        var secret = Convert.FromBase64String(s);
+        var plain = ProtectedData.Unprotect(secret, null, DataProtectionScope.CurrentUser);
+        var encoding = new UTF8Encoding();
+        return encoding.GetString(plain);
     }
 }

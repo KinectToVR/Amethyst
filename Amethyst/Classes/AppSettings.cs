@@ -45,6 +45,9 @@ public class AppSettings : INotifyPropertyChanged
     // Current language & theme
     public string AppLanguage { get; set; } = "en";
 
+    // GitHub API token, encrypted using System.Security.Cryptography
+    public (bool Valid, string Token) GitHubToken { get; set; } = (false, string.Empty);
+
     // 0:system, 1:dark, 2:light
     public uint AppTheme { get; set; }
 

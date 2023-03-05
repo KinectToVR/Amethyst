@@ -50,6 +50,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBox Header="Search or paste a link:"
                                          PlaceholderText="Search for plugins, or paste the link to a plugin repo"
+                                         TextChanged="SearchTextBox_TextChanged"
                                          x:Name="SearchTextBox" KeyDown="SearchTextBox_KeyDown" />
                                 <Button VerticalAlignment="Bottom" Grid.Column="1"
                                         x:Name="SearchButton" Click="SearchButton_Click">
@@ -64,7 +65,7 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Grid Grid.Row="0" Opacity="0.0" x:Name="SearchPlaceholderGrid">
+                                <Grid Grid.Row="0" Opacity="1.0" x:Name="SearchPlaceholderGrid">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
@@ -88,7 +89,7 @@
                                     </Grid.OpacityTransition>
                                 </Grid>
 
-                                <Grid Grid.Row="0" Opacity="1.0" x:Name="SearchErrorGrid">
+                                <Grid Grid.Row="0" Opacity="0.0" x:Name="SearchErrorGrid">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
@@ -96,15 +97,42 @@
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
                                                 HorizontalAlignment="Center" Margin="0,-35,0,0">
-                                        <FontIcon FontSize="120" Margin="0,0,0,25" Glyph="&#xE721;" />
+                                        <FontIcon FontSize="120" Margin="0,0,0,25" Glyph="&#xEA92;" />
                                         <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
                                                    FontSize="14"
                                                    HorizontalTextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                                   Text="Search for plugins using keywords from their names or descriptions, &#x0a;or just paste the link to a plugin repository located on GitHub." />
+                                                   Text="A fatal exception occurred whilst executing the plugin search query, &#x0a;or you've just exceeded the GitHub API request rate limit." />
                                         <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
                                                    FontSize="14"
                                                    HorizontalTextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                                   Text="You can also drag-and-drop a plugin link/folder/zip here to install it." />
+                                                   Text="You still install plugins via drag-and-drop or using a link/folder/zip." />
+
+                                    </StackPanel>
+                                    <Grid.OpacityTransition>
+                                        <ScalarTransition />
+                                    </Grid.OpacityTransition>
+                                </Grid>
+
+                                <Grid Grid.Row="0" Opacity="0.0" x:Name="DeviceCodeGrid">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
+                                                HorizontalAlignment="Center" Margin="0,-55,0,0">
+                                        <TextBlock FontSize="90" Margin="0,0,0,15"
+                                                   TextWrapping="Wrap" x:Name="DeviceCodeTextBlock"
+                                                   Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                                   FontFamily="Consolas" IsTextSelectionEnabled="True" />
+                                        <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                   FontSize="14"
+                                                   HorizontalTextAlignment="Center" TextTrimming="CharacterEllipsis"
+                                                   Text="Paste this code into the prompt your web browser has just shown." />
+                                        <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                   FontSize="14"
+                                                   HorizontalTextAlignment="Center" TextTrimming="CharacterEllipsis"
+                                                   Text="This will log you in to the GitHub API, allowing higher query rate." />
 
                                     </StackPanel>
                                     <Grid.OpacityTransition>
@@ -282,7 +310,7 @@
                                         </Grid.ColumnDefinitions>
                                         <FontIcon FontSize="27" Glyph="&#xE783;" VerticalAlignment="Center" />
                                         <TextBlock Grid.Column="1" FontSize="14" FontWeight="SemiBold"
-                                                   TextTrimming="CharacterEllipsis"
+                                                   TextTrimming="CharacterEllipsis" Tapped="LoginTextBlock_Tapped"
                                                    VerticalAlignment="Center" TextWrapping="WrapWholeWords">
                                             <Run Text="GitHub API rate exceeded. Please wait a while, or" />
                                             <Run Text="log in to GitHub" TextDecorations="Underline"
