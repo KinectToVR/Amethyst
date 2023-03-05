@@ -2,11 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
@@ -14,11 +15,12 @@ using Windows.System;
 using Amethyst.Classes;
 using Amethyst.MVVM;
 using Amethyst.Utils;
+using Microsoft.AppCenter.Ingestion.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using RestSharp;
 using Newtonsoft.Json.Linq;
+using RestSharp;
 using static Amethyst.Classes.Interfacing;
 using static Amethyst.MVVM.StorePlugin;
 
@@ -65,6 +67,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
     }
 
     private RestClient ApiClient { get; } = new("https://api.github.com");
+
+    private RestClient GithubClient { get; } = new("https://github.com");
 
     public ObservableCollection<StorePlugin> FoundStorePluginsList { get; set; } = new();
 
@@ -118,55 +122,63 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             SearchErrorGrid.Opacity = 0.0;
 
             // FoundStorePluginsList
-            var searchResponse = await ApiClient.GetAsync(
+            var searchResponse = await ApiClient.GetAsyncAuthorized(
                 new RestRequest("search/repositories")
                     .AddQueryParameter("q", $"topic:amethyst-plugin+{query}", false));
 
             // Check if the results are valid
-            if (searchResponse.Content is null && searchResponse.StatusCode is not
-                    HttpStatusCode.Accepted and not HttpStatusCode.Forbidden)
+            if (searchResponse.Content is not null && searchResponse.IsSuccessStatusCode)
             {
-                SearchPlaceholderGrid.Opacity = 0.0;
-                SearchResultsGrid.Opacity = 0.0;
-                SearchErrorGrid.Opacity = 1.0;
-                return; // Show the status controls
-            }
+                // Clear all the results
+                FoundStorePluginsList.Clear();
 
-            // API rate exceeded, show the authorization toast
-            if (searchResponse.StatusCode is HttpStatusCode.Forbidden)
-            {
-                SearchPlaceholderGrid.Opacity = 0.0;
-                SearchResultsGrid.Opacity = 0.0;
-                SearchErrorGrid.Opacity = 1.0;
-
-                ResultForbiddenGrid.Visibility = Visibility.Visible;
-                return; // Show the status controls
-            }
-
-            // Clear all the results
-            FoundStorePluginsList.Clear();
-
-            // Parse all the retrieved items
-            JObject.Parse(searchResponse.Content)["items"]?
-                .Children().ToList().ForEach(x =>
-                    FoundStorePluginsList.Add(new StorePlugin
-                    {
-                        Name = x["name"]?.ToString() ?? string.Empty,
-                        Repository = new PluginRepository
+                // Parse all the retrieved items
+                JObject.Parse(searchResponse.Content)["items"]?
+                    .Children().ToList().ForEach(x =>
+                        FoundStorePluginsList.Add(new StorePlugin
                         {
                             Name = x["name"]?.ToString() ?? string.Empty,
-                            FullName = x["full_name"]?.ToString() ?? string.Empty,
-                            Owner = x["owner"]?["login"]?.ToString() ?? string.Empty,
-                            Description = x["description"]?.ToString() ?? string.Empty
-                        },
-                        Official = (x["full_name"]?.ToString().StartsWith("KinectToVR/") ?? false) ||
-                                   (x["full_name"]?.ToString().StartsWith("KimihikoAkayasaki/") ?? false)
-                    }));
+                            Repository = new PluginRepository
+                            {
+                                Name = x["name"]?.ToString() ?? string.Empty,
+                                FullName = x["full_name"]?.ToString() ?? string.Empty,
+                                Owner = x["owner"]?["login"]?.ToString() ?? string.Empty,
+                                Description = x["description"]?.ToString() ?? string.Empty
+                            },
+                            Official = (x["full_name"]?.ToString().StartsWith("KinectToVR/") ?? false) ||
+                                       (x["full_name"]?.ToString().StartsWith("KimihikoAkayasaki/") ?? false)
+                        }));
 
-            // Show the status controls
-            SearchPlaceholderGrid.Opacity = 0.0;
-            SearchResultsGrid.Opacity = 1.0;
-            SearchErrorGrid.Opacity = 0.0;
+                // Show the status controls
+                SearchPlaceholderGrid.Opacity = 0.0;
+                SearchResultsGrid.Opacity = 1.0;
+                SearchErrorGrid.Opacity = 0.0;
+            }
+            else
+            {
+                // Show the status controls
+                SearchPlaceholderGrid.Opacity = 0.0;
+                SearchResultsGrid.Opacity = 0.0;
+                SearchErrorGrid.Opacity = 1.0;
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            // API rate exceeded, show the authorization toast
+            if (ex.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.Unauthorized)
+            {
+                SearchPlaceholderGrid.Opacity = 0.0;
+                SearchResultsGrid.Opacity = 0.0;
+                SearchErrorGrid.Opacity = 1.0;
+                SearchButton.IsEnabled = false;
+                SearchTextBox.IsEnabled = false;
+
+                ResultForbiddenGrid.Visibility = Visibility.Visible;
+
+                // Invalidate the token in settings
+                AppData.Settings.GitHubToken = (false, string.Empty);
+                AppData.Settings.SaveSettings();
+            }
         }
         catch (Exception ex)
         {
@@ -240,5 +252,122 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             e.DataView.Contains(StandardDataFormats.Text) ||
             e.DataView.Contains(StandardDataFormats.StorageItems))
             e.AcceptedOperation = DataPackageOperation.Copy;
+    }
+
+    private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty((sender as TextBox)?.Text)) return;
+        SearchPlaceholderGrid.Opacity = 1.0;
+        SearchResultsGrid.Opacity = 0.0;
+        SearchErrorGrid.Opacity = 0.0;
+    }
+
+    private async void LoginTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
+    {
+        // Hide everything else
+        SearchPlaceholderGrid.Opacity = 0.0;
+        SearchResultsGrid.Opacity = 0.0;
+        SearchErrorGrid.Opacity = 0.0;
+
+        try
+        {
+            // Request the device code
+            var codeResponse = await GithubClient.PostAsync(new RestRequest("login/device/code")
+                .AddQueryParameter("client_id", AppData.ApiToken, false)
+                .AddHeader("Accept", "application/json"));
+
+            if (!codeResponse.IsSuccessStatusCode || codeResponse.Content is null)
+                throw new Exception(codeResponse.ErrorMessage);
+
+            var codeResult = codeResponse.Content.TryParseJson(out var code);
+            if (!codeResult || code is null)
+                throw new Exception("The code result response was invalid!");
+
+            // Update the app view with the received code
+            DeviceCodeTextBlock.Text = code["user_code"]?.ToString() ?? "ERROR";
+            DeviceCodeGrid.Opacity = 1.0;
+
+            // Open the default web browser to paste the auth code
+            await Launcher.LaunchUriAsync(
+                new Uri(code["verification_uri"]?.ToString() ?? "https://github.com/login/device"));
+
+            // Wait for the user to authorize the OAuth application
+            var timer = new Stopwatch();
+            timer.Start(); // Start the timer
+
+            var intervalValid = int.TryParse(code["interval"]?.ToString(), out var interval);
+            while (timer.Elapsed < TimeSpan.FromMinutes(13))
+            {
+                var authResponse = await GithubClient.PostAsync(new RestRequest("login/oauth/access_token")
+                    .AddQueryParameter("client_id", AppData.ApiToken, false)
+                    .AddQueryParameter("device_code", code["device_code"]?.ToString(), false)
+                    .AddQueryParameter("grant_type", "urn:ietf:params:oauth:grant-type:device_code", false)
+                    .AddHeader("Accept", "application/json"));
+
+                // Check if the response was valid
+                if (authResponse.IsSuccessStatusCode && authResponse.Content is not null)
+                    if (authResponse.Content.TryParseJson(out var auth) && auth is not null)
+                    {
+                        // Search for any errors
+                        if (auth["error"]?.ToString() == "access_denied")
+                        {
+                            Logger.Warn("Access denied, please reauthorize using GitHub.");
+                            break; // Don't even care anymore
+                        }
+
+                        // Search for any errors
+                        if (auth["error"]?.ToString() == "incorrect_device_code")
+                        {
+                            Logger.Warn("Invalid device code, please reauthorize using GitHub.");
+                            break; // Don't even care anymore
+                        }
+
+                        // Search for any errors
+                        if (auth["error"]?.ToString() == "incorrect_client_credentials")
+                        {
+                            Logger.Warn("Our fault, please reauthorize using GitHub.");
+                            break; // Don't even care anymore
+                        }
+
+                        // Check the result
+                        if (!string.IsNullOrEmpty(auth["access_token"]?.ToString()))
+                        {
+                            Logger.Info($"[{auth["token_type"]}] Token acquired!");
+                            AppData.Settings.GitHubToken = (true,
+                                auth["access_token"]?.ToString().Encrypt());
+
+                            // Save the token to settings
+                            AppData.Settings.SaveSettings();
+
+                            // Unblock the resource controls
+                            SearchPlaceholderGrid.Opacity = 1.0;
+                            SearchResultsGrid.Opacity = 0.0;
+                            SearchErrorGrid.Opacity = 0.0;
+                            DeviceCodeGrid.Opacity = 0.0;
+
+                            ResultForbiddenGrid.Visibility = Visibility.Collapsed;
+                            SearchButton.IsEnabled = true;
+                            SearchTextBox.IsEnabled = true;
+
+                            // Refresh everything else
+                            OnPropertyChanged();
+                            return; // Deal with it
+                        }
+                    }
+
+                // Wait 5 seconds before the next request
+                await Task.Delay(TimeSpan.FromSeconds(intervalValid ? interval : 5));
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+
+        // Show the resource controls
+        SearchPlaceholderGrid.Opacity = 0.0;
+        SearchResultsGrid.Opacity = 0.0;
+        SearchErrorGrid.Opacity = 1.0;
+        DeviceCodeGrid.Opacity = 0.0;
     }
 }
