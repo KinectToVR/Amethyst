@@ -50,12 +50,15 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBox Header="Search or paste a link:"
                                          PlaceholderText="Search for plugins, or paste the link to a plugin repo"
+                                         IsSpellCheckEnabled="False"
                                          TextChanged="SearchTextBox_TextChanged"
                                          x:Name="SearchTextBox" KeyDown="SearchTextBox_KeyDown" />
                                 <Button VerticalAlignment="Bottom" Grid.Column="1"
                                         x:Name="SearchButton" Click="SearchButton_Click">
                                     <Button.Content>
-                                        <FontIcon Glyph="&#xE721;" />
+                                        <Grid>
+                                            <FontIcon Glyph="&#xE721;" />
+                                        </Grid>
                                     </Button.Content>
                                 </Button>
                             </Grid>
@@ -484,7 +487,8 @@
                                                                                 <ItemsRepeater.ItemTemplate>
                                                                                     <DataTemplate
                                                                                         x:DataType="mvvm:StorePluginContributor">
-                                                                                        <Grid ColumnSpacing="7" Height="32"
+                                                                                        <Grid ColumnSpacing="7"
+                                                                                            Height="32"
                                                                                             Margin="15,5">
                                                                                             <Grid.ColumnDefinitions>
                                                                                                 <ColumnDefinition
@@ -493,9 +497,11 @@
                                                                                                     Width="*" />
                                                                                             </Grid.ColumnDefinitions>
 
-                                                                                            <PersonPicture Width="32" DisplayName="{x:Bind Name}">
+                                                                                            <PersonPicture Width="32"
+                                                                                                DisplayName="{x:Bind Name}">
                                                                                                 <PersonPicture.ProfilePicture>
-                                                                                                    <BitmapImage UriSource="{x:Bind Avatar}" />
+                                                                                                    <BitmapImage
+                                                                                                        UriSource="{x:Bind Avatar}" />
                                                                                                 </PersonPicture.ProfilePicture>
                                                                                             </PersonPicture>
 
@@ -568,7 +574,7 @@
 
                                                                                 <MenuFlyoutSeparator Grid.Row="0"
                                                                                     Margin="0,10"
-                                                                                    Width="1000" />
+                                                                                    HorizontalAlignment="Stretch" />
 
                                                                                 <Grid Grid.Row="1"
                                                                                     HorizontalAlignment="Stretch">
