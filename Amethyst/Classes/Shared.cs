@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
+using WinUI.System.Icons;
 
 namespace Amethyst.Classes;
 
@@ -126,9 +127,7 @@ public static class Shared
                         NavigationItems.NavViewDevicesButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewDevicesButtonIcon.Foreground = NeutralBrush;
-
-                        NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uF158";
-                        NavigationItems.NavViewDevicesButtonIcon.FontSize = 20;
+                        NavigationItems.NavViewDevicesButtonIcon.Symbol = FluentSymbol.PlugDisconnected24;
                         break;
                     case "Amethyst.Pages.Info":
                         NavigationItems.NavViewInfoButtonIcon.Translation = new Vector3(0, -8, 0);
@@ -142,9 +141,7 @@ public static class Shared
                         NavigationItems.NavViewPluginsButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewPluginsButtonIcon.Foreground = NeutralBrush;
-
-                        NavigationItems.NavViewPluginsButtonIcon.Glyph = "\uF158";
-                        NavigationItems.NavViewPluginsButtonIcon.FontSize = 20;
+                        NavigationItems.NavViewPluginsButtonIcon.Symbol = FluentSymbol.Puzzlepiece24;
                         break;
                 }
 
@@ -171,9 +168,7 @@ public static class Shared
                         NavigationItems.NavViewDevicesButtonIcon.Translation = Vector3.Zero;
 
                         NavigationItems.NavViewDevicesButtonIcon.Foreground = AttentionBrush;
-
-                        NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uEBD2";
-                        NavigationItems.NavViewDevicesButtonIcon.FontSize = 23;
+                        NavigationItems.NavViewDevicesButtonIcon.Symbol = FluentSymbol.PlugConnected24Filled;
                         break;
                     case "Amethyst.Pages.Info":
                         NavigationItems.NavViewInfoButtonIcon.Glyph = "\uF167";
@@ -187,9 +182,7 @@ public static class Shared
                         NavigationItems.NavViewPluginsButtonIcon.Translation = Vector3.Zero;
 
                         NavigationItems.NavViewPluginsButtonIcon.Foreground = AttentionBrush;
-
-                        NavigationItems.NavViewPluginsButtonIcon.Glyph = "\uEBD2";
-                        NavigationItems.NavViewPluginsButtonIcon.Translation = Vector3.Zero;
+                        NavigationItems.NavViewPluginsButtonIcon.Symbol = FluentSymbol.Puzzlepiece24Filled;
                         break;
                 }
 
@@ -204,8 +197,10 @@ public static class Shared
             public static FontIcon
                 NavViewGeneralButtonIcon,
                 NavViewSettingsButtonIcon,
+                NavViewInfoButtonIcon;
+
+            public static FluentSymbolIcon
                 NavViewDevicesButtonIcon,
-                NavViewInfoButtonIcon,
                 NavViewPluginsButtonIcon;
 
             public static TextBlock
