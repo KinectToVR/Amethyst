@@ -315,12 +315,15 @@
   "/SharedStrings/PluginUpdates/Statuses/Downloading": "Downloading {0} v{1}...",
   "/SharedStrings/PluginUpdates/Statuses/Error": "Error updating {0}!",
 
+  "/PluginStore/Titles/Install": "Install {0} {1}",
   "/PluginStore/Titles/Installing/Setup": "Installing {0}...",
+  "/PluginStore/Titles/Uninstalling/Notice": "Enqueued {0} removal!",
   "/PluginStore/Titles/Installing/Error": "Error installing {0}!",
   "/PluginStore/Titles/Installing/Success": "Installed {0}!",
+  "/PluginStore/Captions/Uninstalling/Notice": "Amethyst should delete it during the next startup.",
   "/PluginStore/Captions/Installing/Downloading": "Downloading the plugin package...",
   "/PluginStore/Captions/Installing/Error": "Couldn't install the plugin due to an error. Please try again later.",
-  "/PluginStore/Captions/Installing/Success": "Plugin installed! Amethyst should load it the next time it opens.",
+  "/PluginStore/Captions/Installing/Success": "Plugin installed! Amethyst should load it during the next startup.",
 
   "/CrashHandler/Content/AlreadyRunning": "Looks like the app is already running\nand you've tried to launch a second instance,\nthis action is not currently supported.\n\nPlease check if the app isn't opened.\nIf problem persists, press the 'Force Exit' button.",
   "/CrashHandler/Content/Crash/NoPlugins": "There were no appropriate plugins available to load and use in Amethyst.\n\nPlease check if you have all dependencies installed, like proper Service or Framework Runtime and other dependency libraries needed by your plugins.",

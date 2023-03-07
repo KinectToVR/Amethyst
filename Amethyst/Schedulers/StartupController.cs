@@ -25,7 +25,6 @@ public class StartupUpdateTask : StartupTask
 public class StartupDeleteTask : StartupTask
 {
     public string PluginFolder { get; set; }
-    public string UpdatePackage { get; set; }
 }
 
 public static class StartupController

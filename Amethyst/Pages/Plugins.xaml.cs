@@ -15,7 +15,6 @@ using Windows.System;
 using Amethyst.Classes;
 using Amethyst.MVVM;
 using Amethyst.Utils;
-using Microsoft.AppCenter.Ingestion.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -34,6 +33,9 @@ namespace Amethyst.Pages;
 /// </summary>
 public sealed partial class Plugins : Page, INotifyPropertyChanged
 {
+    public delegate void RequestShowRateExceeded(object sender, EventArgs e);
+
+    public static RequestShowRateExceeded RequestShowRateExceededEvent;
     private bool _pluginsPageLoadedOnce;
 
     public Plugins()
@@ -42,6 +44,25 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
         Logger.Info($"Constructing page: '{GetType().FullName}'...");
         // TODO TeachingTips
+
+        RequestShowRateExceededEvent += (_, _) =>
+            Shared.Main.DispatcherQueue.TryEnqueue(() =>
+            {
+                // API rate exceeded, show the authorization toast
+                SearchPlaceholderGrid.Opacity = 0.0;
+                SearchResultsGrid.Opacity = 0.0;
+                SearchErrorGrid.Opacity = 1.0;
+                NoResultsGrid.Opacity = 0.0;
+
+                SearchButton.IsEnabled = false;
+                SearchTextBox.IsEnabled = false;
+
+                ResultForbiddenGrid.Visibility = Visibility.Visible;
+
+                // Invalidate the token in settings
+                AppData.Settings.GitHubToken = (false, string.Empty);
+                AppData.Settings.SaveSettings();
+            });
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
@@ -65,6 +86,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             }
         });
     }
+
+    public bool LoadingData { get; set; } = false;
+    public bool FinishedLoadingData { get; set; } = true;
 
     private RestClient ApiClient { get; } = new("https://api.github.com");
 
@@ -117,9 +141,16 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             SearchButton.IsEnabled = false;
             SearchTextBox.IsEnabled = false;
 
-            SearchPlaceholderGrid.Opacity = 1.0;
+            SearchPlaceholderGrid.Opacity = 0.0;
             SearchResultsGrid.Opacity = 0.0;
             SearchErrorGrid.Opacity = 0.0;
+            NoResultsGrid.Opacity = 0.0;
+
+            // Mark as loading and trigger a partial refresh
+            LoadingData = true;
+            FinishedLoadingData = false;
+            OnPropertyChanged("LoadingData");
+            OnPropertyChanged("FinishedLoadingData");
 
             // FoundStorePluginsList
             var searchResponse = await ApiClient.GetAsyncAuthorized(
@@ -135,24 +166,32 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                 // Parse all the retrieved items
                 JObject.Parse(searchResponse.Content)["items"]?
                     .Children().ToList().ForEach(x =>
+                    {
+                        // Add a new item to the list
                         FoundStorePluginsList.Add(new StorePlugin
                         {
                             Name = x["name"]?.ToString() ?? string.Empty,
                             Repository = new PluginRepository
                             {
                                 Name = x["name"]?.ToString() ?? string.Empty,
+                                Url = x["html_url"]?.ToString() ?? string.Empty,
                                 FullName = x["full_name"]?.ToString() ?? string.Empty,
                                 Owner = x["owner"]?["login"]?.ToString() ?? string.Empty,
                                 Description = x["description"]?.ToString() ?? string.Empty
                             },
                             Official = (x["full_name"]?.ToString().StartsWith("KinectToVR/") ?? false) ||
                                        (x["full_name"]?.ToString().StartsWith("KimihikoAkayasaki/") ?? false)
-                        }));
+                        });
+
+                        // Also refresh the last item
+                        FoundStorePluginsList.Last().OnPropertyChanged();
+                    });
 
                 // Show the status controls
                 SearchPlaceholderGrid.Opacity = 0.0;
-                SearchResultsGrid.Opacity = 1.0;
+                SearchResultsGrid.Opacity = FoundStorePluginsList.Any() ? 1.0 : 0.0;
                 SearchErrorGrid.Opacity = 0.0;
+                NoResultsGrid.Opacity = FoundStorePluginsList.Any() ? 0.0 : 1.0;
             }
             else
             {
@@ -160,25 +199,14 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                 SearchPlaceholderGrid.Opacity = 0.0;
                 SearchResultsGrid.Opacity = 0.0;
                 SearchErrorGrid.Opacity = 1.0;
+                NoResultsGrid.Opacity = 0.0;
             }
         }
         catch (HttpRequestException ex)
         {
             // API rate exceeded, show the authorization toast
             if (ex.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.Unauthorized)
-            {
-                SearchPlaceholderGrid.Opacity = 0.0;
-                SearchResultsGrid.Opacity = 0.0;
-                SearchErrorGrid.Opacity = 1.0;
-                SearchButton.IsEnabled = false;
-                SearchTextBox.IsEnabled = false;
-
-                ResultForbiddenGrid.Visibility = Visibility.Visible;
-
-                // Invalidate the token in settings
-                AppData.Settings.GitHubToken = (false, string.Empty);
-                AppData.Settings.SaveSettings();
-            }
+                RequestShowRateExceededEvent(this, EventArgs.Empty);
         }
         catch (Exception ex)
         {
@@ -188,14 +216,25 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             SearchPlaceholderGrid.Opacity = 0.0;
             SearchResultsGrid.Opacity = 0.0;
             SearchErrorGrid.Opacity = 1.0;
+            NoResultsGrid.Opacity = 0.0;
         }
+
+        // Refresh everything else
+        OnPropertyChanged();
+
+        // Wait a bit and show the rest
+        // This is to avoid weird transitions
+        await Task.Delay(500);
 
         // Unblock the resource controls
         SearchButton.IsEnabled = true;
         SearchTextBox.IsEnabled = true;
 
-        // Refresh everything else
-        OnPropertyChanged();
+        LoadingData = false;
+        FinishedLoadingData = true;
+
+        OnPropertyChanged("LoadingData");
+        OnPropertyChanged("FinishedLoadingData");
     }
 
     private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -260,6 +299,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         SearchPlaceholderGrid.Opacity = 1.0;
         SearchResultsGrid.Opacity = 0.0;
         SearchErrorGrid.Opacity = 0.0;
+        NoResultsGrid.Opacity = 0.0;
     }
 
     private async void LoginTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
@@ -268,6 +308,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         SearchPlaceholderGrid.Opacity = 0.0;
         SearchResultsGrid.Opacity = 0.0;
         SearchErrorGrid.Opacity = 0.0;
+        NoResultsGrid.Opacity = 0.0;
 
         try
         {
@@ -344,6 +385,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             SearchResultsGrid.Opacity = 0.0;
                             SearchErrorGrid.Opacity = 0.0;
                             DeviceCodeGrid.Opacity = 0.0;
+                            NoResultsGrid.Opacity = 0.0;
 
                             ResultForbiddenGrid.Visibility = Visibility.Collapsed;
                             SearchButton.IsEnabled = true;
@@ -369,5 +411,11 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         SearchResultsGrid.Opacity = 0.0;
         SearchErrorGrid.Opacity = 1.0;
         DeviceCodeGrid.Opacity = 0.0;
+        NoResultsGrid.Opacity = 0.0;
+    }
+
+    public double BoolToOpacity(bool value)
+    {
+        return value ? 1.0 : 0.0;
     }
 }

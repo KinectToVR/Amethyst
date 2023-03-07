@@ -357,6 +357,31 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Error($"Reading the startup scheduler configuration failed. Message: {e.Message}");
         }
 
+        // Execute plugin uninstalls: delete plugin files
+        foreach (var action in StartupController.Controller.DeleteTasks.ToList())
+            try
+            {
+                Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
+                if (!Directory.Exists(action.PluginFolder) ||
+                    action.PluginFolder == Interfacing.ProgramLocation.DirectoryName || Directory
+                        .EnumerateFiles(action.PluginFolder)
+                        .Any(x => x == Interfacing.ProgramLocation.FullName)) continue;
+
+                Logger.Info("Cleaning the plugin folder now...");
+                Directory.Delete(action.PluginFolder, true);
+
+                Logger.Info("Deleting attempted scheduled startup " +
+                            $"{action.GetType()} task with name \"{action.Name}\"...");
+
+                StartupController.Controller.StartupTasks.Remove(action);
+                Logger.Info($"Looks like a startup {action.GetType()} task with " +
+                            $"name \"{action.Name}\" has been executed successfully!");
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
+            }
+
         // Execute plugin updates: replace plugin files
         foreach (var action in StartupController.Controller.UpdateTasks.ToList())
             try
