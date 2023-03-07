@@ -124,13 +124,33 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
     private async void SearchButton_Click(object sender, RoutedEventArgs e)
     {
         if (string.IsNullOrEmpty(SearchTextBox.Text)) return;
-        await ExecuteSearch(SearchTextBox.Text); // Search using our query
+        await ProcessQuery(SearchTextBox.Text); // Search using our query
     }
 
     private async void SearchTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
     {
-        if (e.Key != VirtualKey.Enter || string.IsNullOrEmpty((sender as TextBox)?.Text)) return;
-        await ExecuteSearch(((TextBox)sender).Text); // Search using our query
+        if (e.Key != VirtualKey.Enter) return; // Discard non-confirms
+        await ProcessQuery((sender as TextBox)?.Text);
+    }
+
+    private async Task ProcessQuery(string query)
+    {
+        if (query.EndsWith(".zip"))
+        {
+            // The provided text is a link to the plugin zip, process as drag-and-drop
+            // TODO DRAGANDDROP
+        }
+        else if (query.StartsWith("https://github.com/") || query.StartsWith("http://github.com/"))
+        {
+            await ExecuteSearch(query // The provided text is a link
+                .Replace("https://github.com/", string.Empty)
+                .Replace("http://github.com/", string.Empty));
+        }
+        else
+        {
+            // Only a search query
+            await ExecuteSearch(query); 
+        }
     }
 
     private async Task ExecuteSearch(string query)
