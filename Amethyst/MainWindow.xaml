@@ -9,7 +9,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:util="using:Amethyst.Utils">
+    xmlns:util="using:Amethyst.Utils"
+    xmlns:icons="using:WinUI.System.Icons">
 
     <!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
     <Grid Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
@@ -294,12 +295,13 @@
                                         Tag="devices" x:Name="DevicesItem" Height="63"
                                         BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <FontIcon Glyph="&#xF158;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                      x:Name="NavViewDevicesButtonIcon" FontSize="20" Translation="0,-8,0">
-                                <FontIcon.TranslationTransition>
+                            <icons:FluentSymbolIcon Symbol="PlugDisconnected28"
+                                                    Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                                    x:Name="NavViewDevicesButtonIcon" FontSize="20">
+                                <icons:FluentSymbolIcon.TranslationTransition>
                                     <Vector3Transition />
-                                </FontIcon.TranslationTransition>
-                            </FontIcon>
+                                </icons:FluentSymbolIcon.TranslationTransition>
+                            </icons:FluentSymbolIcon>
 
                             <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                                 <TextBlock HorizontalAlignment="Center" x:Name="NavViewDevicesButtonLabel"
@@ -341,12 +343,12 @@
                                         Tag="plugins" x:Name="PluginsItem" Height="63"
                                         BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <FontIcon Glyph="&#xE946;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                      x:Name="NavViewPluginsButtonIcon" FontSize="22" Translation="0,-8,0">
-                                <FontIcon.TranslationTransition>
+                            <icons:FluentSymbolIcon Symbol="Puzzlepiece24" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                                    x:Name="NavViewPluginsButtonIcon" FontSize="22">
+                                <icons:FluentSymbolIcon.TranslationTransition>
                                     <Vector3Transition />
-                                </FontIcon.TranslationTransition>
-                            </FontIcon>
+                                </icons:FluentSymbolIcon.TranslationTransition>
+                            </icons:FluentSymbolIcon>
 
                             <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                                 <TextBlock HorizontalAlignment="Center" x:Name="NavViewPluginsButtonLabel"
@@ -424,31 +426,18 @@
                                         <Vector3Transition />
                                     </Grid.TranslationTransition>
 
-                                    <FontIcon x:Name="HelpIcon" Glyph="&#xEA3A;" FontSize="20"
-                                              Foreground="{ThemeResource SystemFillColorNeutralBrush}">
-                                        <FontIcon.RenderTransform>
+                                    <icons:FluentSymbolIcon x:Name="HelpIcon" Symbol="QuestionCircle24" FontSize="20"
+                                                             Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                        <icons:FluentSymbolIcon.RenderTransform>
                                             <CompositeTransform />
-                                        </FontIcon.RenderTransform>
+                                        </icons:FluentSymbolIcon.RenderTransform>
 
-                                        <FontIcon.Transitions>
+                                        <icons:FluentSymbolIcon.Transitions>
                                             <TransitionCollection>
                                                 <RepositionThemeTransition />
                                             </TransitionCollection>
-                                        </FontIcon.Transitions>
-                                    </FontIcon>
-
-                                    <FontIcon Glyph="&#xE897;" FontSize="12"
-                                              Foreground="{Binding ElementName=HelpIcon, Path=Foreground}">
-                                        <FontIcon.RenderTransform>
-                                            <CompositeTransform />
-                                        </FontIcon.RenderTransform>
-
-                                        <FontIcon.Transitions>
-                                            <TransitionCollection>
-                                                <RepositionThemeTransition />
-                                            </TransitionCollection>
-                                        </FontIcon.Transitions>
-                                    </FontIcon>
+                                        </icons:FluentSymbolIcon.Transitions>
+                                    </icons:FluentSymbolIcon>
                                 </Grid>
 
                                 <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">

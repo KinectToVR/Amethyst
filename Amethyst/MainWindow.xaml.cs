@@ -44,6 +44,7 @@ using Microsoft.Windows.AppNotifications;
 using RestSharp;
 using WinRT;
 using WinRT.Interop;
+using WinUI.System.Icons;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -1241,9 +1242,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Translation = Vector3.Zero;
 
             Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Foreground = Shared.Main.AttentionBrush;
-
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uEBD2";
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.FontSize = 23;
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Symbol = FluentSymbol.PlugConnected24Filled;
         }
         else
         {
@@ -1251,9 +1250,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewDevicesButtonLabel.Opacity = 1.0;
 
             Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Foreground = Shared.Main.NeutralBrush;
-
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uF158";
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.FontSize = 20;
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Symbol = FluentSymbol.PlugDisconnected24;
         }
 
         if (Interfacing.CurrentPageClass == "Amethyst.Pages.Info")
@@ -1279,9 +1276,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Translation = Vector3.Zero;
 
             Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Foreground = Shared.Main.AttentionBrush;
-
-            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Glyph = "\uEBD2";
-            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.FontSize = 23;
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Symbol = FluentSymbol.Puzzlepiece24Filled;
         }
         else
         {
@@ -1289,12 +1284,11 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewPluginsButtonLabel.Opacity = 1.0;
 
             Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Foreground = Shared.Main.NeutralBrush;
-
-            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Glyph = "\uF158";
-            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.FontSize = 20;
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Symbol = FluentSymbol.Puzzlepiece24;
         }
 
         HelpIcon.Foreground = Shared.Main.NeutralBrush;
+        HelpIcon.Symbol = FluentSymbol.QuestionCircle24;
     }
 
     private bool InstallUpdates(bool reopen = false)
@@ -1968,6 +1962,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
 
         HelpIcon.Foreground = Shared.Main.AttentionBrush;
+        HelpIcon.Symbol = FluentSymbol.QuestionCircle24Filled;
         HelpIconGrid.Translation = Vector3.Zero;
         HelpIconText.Opacity = 0.0;
     }
@@ -1978,6 +1973,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
 
         HelpIcon.Foreground = Shared.Main.NeutralBrush;
+        HelpIcon.Symbol = FluentSymbol.QuestionCircle24;
         HelpIconGrid.Translation = new Vector3(0, -8, 0);
         HelpIconText.Opacity = 1.0;
     }

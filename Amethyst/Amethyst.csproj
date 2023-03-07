@@ -52,6 +52,7 @@
         <PackageReference Include="RestSharp" Version="108.0.3" />
         <PackageReference Include="System.ComponentModel.Composition" Version="7.0.0" />
         <PackageReference Include="System.ComponentModel.Composition.Registration" Version="7.0.0" />
+        <PackageReference Include="WinUI.System.Icons" Version="0.0.5" />
         <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>
 
