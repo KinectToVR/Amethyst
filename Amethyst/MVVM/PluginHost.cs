@@ -13,9 +13,11 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
+using Amethyst.Schedulers;
 using Amethyst.Utils;
 using AmethystSupport;
 using Microsoft.AppCenter.Crashes;
@@ -23,9 +25,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using RestSharp;
 using static Amethyst.Classes.Interfacing;
-using Windows.Media.Protection.PlayReady;
-using Windows.Storage;
-using Amethyst.Schedulers;
 
 namespace Amethyst.MVVM;
 
@@ -266,8 +265,8 @@ public class PluginHost : IAmethystHost
 
 public class LoadAttemptedPlugin : INotifyPropertyChanged
 {
-    private bool _updateEnqueued;
     private RestClient _githubClient;
+    private bool _updateEnqueued;
 
     private RestClient GithubClient => _githubClient ??= new RestClient(
         UpdateEndpoint ?? $"{Website?.TrimEnd('/')}/releases/download/latest/");
@@ -332,8 +331,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
                     loadedDeviceSet.Add("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2");
                 if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX"))
                     loadedDeviceSet.Add("K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX");
-                if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK"))
-                    loadedDeviceSet.Add("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK");
+                if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK"))
+                    loadedDeviceSet.Add("K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK");
 
                 // If we've just disabled the last loaded device, re-enable the first
                 if (AppPlugins.TrackingDevicesList.Keys.All(
@@ -397,6 +396,16 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public bool LocationValid => !string.IsNullOrEmpty(Folder);
     public bool GuidValid => !string.IsNullOrEmpty(Guid) && Guid is not "[INVALID]" or "INVALID";
     public bool ErrorValid => !string.IsNullOrEmpty(Error);
+    public bool Uninstalling { get; set; }
+
+    public bool CanUninstall =>
+        !Uninstalling && LocationValid && GuidValid && Guid
+            is not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"
+            and not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2"
+            and not "K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX"
+            and not "K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK"
+            and not "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR"
+            and not "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC";
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -602,6 +611,20 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             await Task.Delay(1000);
             return false; // That's all
         }
+    }
+
+    public void EnqueuePluginUninstall()
+    {
+        // Enqueue a delete startup action to uninstall this plugin
+        StartupController.Controller.StartupTasks.Add(new StartupDeleteTask
+        {
+            Name = $"Delete plugin {Name} v{Version}",
+            PluginFolder = Folder
+        });
+
+        // Show a badge that this plugin will be uninstalled
+        Uninstalling = true;
+        OnPropertyChanged();
     }
 
     public string TrimString(string s, int l)

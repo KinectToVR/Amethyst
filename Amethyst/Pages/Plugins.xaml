@@ -65,235 +65,552 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Grid Grid.Row="0" Opacity="1.0" x:Name="SearchPlaceholderGrid">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
-                                                HorizontalAlignment="Center" Margin="0,-35,0,0">
-                                        <FontIcon FontSize="120" Margin="0,0,0,25" Glyph="&#xE721;" />
-                                        <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
-                                                   FontSize="14"
-                                                   HorizontalTextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                                   Text="Search for plugins using keywords from their names or descriptions, &#x0a;or just paste the link to a plugin repository located on GitHub." />
-                                        <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
-                                                   FontSize="14"
-                                                   HorizontalTextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                                   Text="You can also drag-and-drop a plugin link/folder/zip here to install it." />
 
-                                    </StackPanel>
+                                <ProgressRing
+                                    Visibility="{x:Bind LoadingData, Mode=OneWay}"
+                                    Opacity="{x:Bind BoolToOpacity(LoadingData), Mode=OneWay}"
+                                    Width="50" Height="50" Margin="30"
+                                    HorizontalAlignment="Center">
+                                    <ProgressRing.OpacityTransition>
+                                        <ScalarTransition />
+                                    </ProgressRing.OpacityTransition>
+                                </ProgressRing>
+
+                                <Grid Grid.Row="0"
+                                      Visibility="{x:Bind FinishedLoadingData, Mode=OneWay}"
+                                      Opacity="{x:Bind BoolToOpacity(FinishedLoadingData), Mode=OneWay}">
                                     <Grid.OpacityTransition>
                                         <ScalarTransition />
                                     </Grid.OpacityTransition>
-                                </Grid>
 
-                                <Grid Grid.Row="0" Opacity="0.0" x:Name="SearchErrorGrid">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
-                                                HorizontalAlignment="Center" Margin="0,-35,0,0">
-                                        <FontIcon FontSize="120" Margin="0,0,0,25" Glyph="&#xEA92;" />
-                                        <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
-                                                   FontSize="14"
-                                                   HorizontalTextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                                   Text="A fatal exception occurred whilst executing the plugin search query, &#x0a;or you've just exceeded the GitHub API request rate limit." />
-                                        <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
-                                                   FontSize="14"
-                                                   HorizontalTextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                                   Text="You still install plugins via drag-and-drop or using a link/folder/zip." />
+                                    <Grid Grid.Row="0" Opacity="1.0" x:Name="SearchPlaceholderGrid">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center" Margin="0,-35,0,0">
+                                            <FontIcon FontSize="120" Margin="0,0,0,25" Glyph="&#xE721;" />
+                                            <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                       FontSize="14"
+                                                       HorizontalTextAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Text="Search for plugins using keywords from their names or descriptions, &#x0a;or just paste the link to a plugin repository located on GitHub." />
+                                            <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                       FontSize="14"
+                                                       HorizontalTextAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Text="You can also drag-and-drop a plugin link/folder/zip here to install it." />
 
-                                    </StackPanel>
-                                    <Grid.OpacityTransition>
-                                        <ScalarTransition />
-                                    </Grid.OpacityTransition>
-                                </Grid>
+                                        </StackPanel>
+                                        <Grid.OpacityTransition>
+                                            <ScalarTransition />
+                                        </Grid.OpacityTransition>
+                                    </Grid>
 
-                                <Grid Grid.Row="0" Opacity="0.0" x:Name="DeviceCodeGrid">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
-                                                HorizontalAlignment="Center" Margin="0,-55,0,0">
-                                        <TextBlock FontSize="90" Margin="0,0,0,15"
-                                                   TextWrapping="Wrap" x:Name="DeviceCodeTextBlock"
-                                                   Foreground="{ThemeResource SystemFillColorAttentionBrush}"
-                                                   FontFamily="Consolas" IsTextSelectionEnabled="True" />
-                                        <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
-                                                   FontSize="14"
-                                                   HorizontalTextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                                   Text="Paste this code into the prompt your web browser has just shown." />
-                                        <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
-                                                   FontSize="14"
-                                                   HorizontalTextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                                   Text="This will log you in to the GitHub API, allowing higher query rate." />
+                                    <Grid Grid.Row="0" Opacity="0.0" x:Name="SearchErrorGrid">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center" Margin="0,-35,0,0">
+                                            <FontIcon FontSize="120" Margin="0,0,0,25" Glyph="&#xEA92;" />
+                                            <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                       FontSize="14"
+                                                       HorizontalTextAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Text="A fatal exception occurred whilst executing the plugin search query, &#x0a;or you've just exceeded the GitHub API request rate limit." />
+                                            <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                       FontSize="14"
+                                                       HorizontalTextAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Text="You still install plugins via drag-and-drop or using a link/folder/zip." />
 
-                                    </StackPanel>
-                                    <Grid.OpacityTransition>
-                                        <ScalarTransition />
-                                    </Grid.OpacityTransition>
-                                </Grid>
+                                        </StackPanel>
+                                        <Grid.OpacityTransition>
+                                            <ScalarTransition />
+                                        </Grid.OpacityTransition>
+                                    </Grid>
 
-                                <Grid Grid.Row="0" Opacity="0.0" x:Name="SearchResultsGrid">
-                                    <ScrollViewer Margin="0,20,0,20" Padding="0,-20,0,-20"
-                                                  HorizontalAlignment="Stretch">
-                                        <ItemsRepeater HorizontalAlignment="Stretch" AllowDrop="False"
-                                                       Margin="0,0,0,20"
-                                                       ItemsSource="{x:Bind FoundStorePluginsList, Mode=OneWay}">
+                                    <Grid Grid.Row="0" Opacity="0.0" x:Name="NoResultsGrid">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center" Margin="0,-35,0,0">
+                                            <FontIcon FontSize="120" Margin="0,0,0,25" Glyph="&#xF6FA;" />
+                                            <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                       FontSize="14"
+                                                       HorizontalTextAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Text="Your search happened not to return any results. &#x0a;...or was it just the wind all along, who knows?" />
+                                        </StackPanel>
+                                        <Grid.OpacityTransition>
+                                            <ScalarTransition />
+                                        </Grid.OpacityTransition>
+                                    </Grid>
 
-                                            <ItemsRepeater.ItemTemplate>
-                                                <DataTemplate x:DataType="mvvm:StorePlugin">
+                                    <Grid Grid.Row="0" Opacity="0.0" x:Name="DeviceCodeGrid">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center" Margin="0,-55,0,0">
+                                            <TextBlock FontSize="90" Margin="0,0,0,15"
+                                                       TextWrapping="Wrap" x:Name="DeviceCodeTextBlock"
+                                                       Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                                       FontFamily="Consolas" IsTextSelectionEnabled="True" />
+                                            <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                       FontSize="14"
+                                                       HorizontalTextAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Text="Paste this code into the prompt your web browser has just shown." />
+                                            <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                       FontSize="14"
+                                                       HorizontalTextAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Text="This will log you in to the GitHub API, allowing higher query rate." />
 
-                                                    <Grid>
-                                                        <Grid.Transitions>
-                                                            <TransitionCollection>
-                                                                <RepositionThemeTransition />
-                                                            </TransitionCollection>
-                                                        </Grid.Transitions>
+                                        </StackPanel>
+                                        <Grid.OpacityTransition>
+                                            <ScalarTransition />
+                                        </Grid.OpacityTransition>
+                                    </Grid>
 
-                                                        <Grid Margin="20,25,60,0"
-                                                              VerticalAlignment="Top" Canvas.ZIndex="1">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                            </Grid.ColumnDefinitions>
+                                    <Grid Grid.Row="0" Opacity="0.0" x:Name="SearchResultsGrid">
+                                        <ScrollViewer Margin="0,20,0,20" Padding="0,-20,0,-20"
+                                                      HorizontalAlignment="Stretch">
+                                            <ItemsRepeater HorizontalAlignment="Stretch" AllowDrop="False"
+                                                           Margin="0,0,0,20"
+                                                           ItemsSource="{x:Bind FoundStorePluginsList, Mode=OneWay}">
 
-                                                            <StackPanel Grid.Column="0" Margin="-5,-3,0,0"
-                                                                        Orientation="Horizontal">
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate x:DataType="mvvm:StorePlugin">
+                                                        <Grid>
+                                                            <Grid.Transitions>
+                                                                <TransitionCollection>
+                                                                    <RepositionThemeTransition />
+                                                                </TransitionCollection>
+                                                            </Grid.Transitions>
 
-                                                                <InfoBadge
-                                                                    Background="{ThemeResource SystemFillColorAttentionBrush}"
-                                                                    HorizontalAlignment="Left" VerticalAlignment="Top"
-                                                                    Visibility="{x:Bind Official, Mode=OneWay}"
-                                                                    Margin="0,5,10,0" Width="17" Height="17">
-                                                                    <InfoBadge.IconSource>
-                                                                        <FontIconSource Glyph="&#xE73E;"
-                                                                            Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
-                                                                    </InfoBadge.IconSource>
-                                                                </InfoBadge>
+                                                            <Grid Margin="20,25,60,0"
+                                                                  VerticalAlignment="Top" Canvas.ZIndex="1">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
 
-                                                                <TextBlock FontWeight="SemiBold" FontSize="14"
-                                                                           Margin="0,2,0,0"
-                                                                           Text="{x:Bind TrimString(Name, 45), Mode=OneWay}"
-                                                                           ToolTipService.ToolTip="{x:Bind Name, Mode=OneWay}"
-                                                                           HorizontalAlignment="Left"
-                                                                           VerticalAlignment="Center" />
-                                                            </StackPanel>
-                                                        </Grid>
+                                                                <StackPanel Grid.Column="0" Margin="-5,-3,0,0"
+                                                                            Orientation="Horizontal">
 
-                                                        <Expander Margin="0,12,0,0" Padding="0"
-                                                                  IsExpanded="False" ExpandDirection="Down"
-                                                                  HorizontalAlignment="Stretch"
-                                                                  HorizontalContentAlignment="Stretch">
+                                                                    <InfoBadge
+                                                                        Background="{ThemeResource SystemFillColorAttentionBrush}"
+                                                                        HorizontalAlignment="Left"
+                                                                        VerticalAlignment="Top"
+                                                                        Visibility="{x:Bind Official, Mode=OneWay}"
+                                                                        Margin="0,5,10,0" Width="17" Height="17"
+                                                                        ToolTipService.ToolTip="Published by K2VR Team">
+                                                                        <InfoBadge.IconSource>
+                                                                            <FontIconSource Glyph="&#xE73E;"
+                                                                                Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
+                                                                        </InfoBadge.IconSource>
+                                                                    </InfoBadge>
 
-                                                            <Expander.Content>
-                                                                <StackPanel Orientation="Vertical" Width="650"
-                                                                            Padding="0,8,0,10">
-                                                                    <Grid Margin="-14,-10,-14,5">
-                                                                        <InfoBar
-                                                                            Severity="Error"
-                                                                            Opacity="{x:Bind BoolToOpacity(InstallError), Mode=OneWay}"
-                                                                            IsOpen="{x:Bind InstallError, Mode=OneWay}"
-                                                                            Title="{x:Bind FormatResourceString('/PluginStore/Titles/Installing/Error'), Mode=OneWay}"
-                                                                            Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Installing/Error'), Mode=OneWay}"
-                                                                            IsClosable="True" CornerRadius="0"
-                                                                            BorderThickness="0,0,0,1">
-                                                                            <InfoBar.OpacityTransition>
-                                                                                <ScalarTransition />
-                                                                            </InfoBar.OpacityTransition>
-                                                                        </InfoBar>
-
-                                                                        <InfoBar
-                                                                            Severity="Success"
-                                                                            Opacity="{x:Bind BoolToOpacity(InstallSuccess), Mode=OneWay}"
-                                                                            IsOpen="{x:Bind InstallSuccess, Mode=OneWay}"
-                                                                            Title="{x:Bind FormatResourceString('/PluginStore/Titles/Installing/Success'), Mode=OneWay}"
-                                                                            Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Installing/Success'), Mode=OneWay}"
-                                                                            IsClosable="True" CornerRadius="0"
-                                                                            BorderThickness="0,0,0,1">
-                                                                            <InfoBar.OpacityTransition>
-                                                                                <ScalarTransition />
-                                                                            </InfoBar.OpacityTransition>
-                                                                        </InfoBar>
-
-                                                                        <InfoBar
-                                                                            Severity="Informational"
-                                                                            Opacity="{x:Bind BoolToOpacity(Installing), Mode=OneWay}"
-                                                                            IsOpen="{x:Bind InstallSuccess, Mode=OneWay}"
-                                                                            Title="{x:Bind FormatResourceString('/PluginStore/Titles/Installing/Setup'), Mode=OneWay}"
-                                                                            Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Installing/Downloading'), Mode=OneWay}"
-                                                                            IsClosable="False" CornerRadius="0"
-                                                                            BorderThickness="0,0,0,1">
-                                                                            <InfoBar.Content>
-                                                                                <StackPanel Margin="-45,0,1,0"
-                                                                                    HorizontalAlignment="Stretch"
-                                                                                    Orientation="Vertical">
-                                                                                    <ProgressBar
-                                                                                        x:Name="PluginsUpdatePendingProgressBar"
-                                                                                        Value="100"
-                                                                                        IsIndeterminate="True"
-                                                                                        ShowError="{x:Bind InstallError, Mode=OneWay}"
-                                                                                        HorizontalAlignment="Stretch" />
-                                                                                </StackPanel>
-                                                                            </InfoBar.Content>
-
-                                                                            <InfoBar.OpacityTransition>
-                                                                                <ScalarTransition />
-                                                                            </InfoBar.OpacityTransition>
-                                                                        </InfoBar>
-                                                                    </Grid>
-
-                                                                    <!--<Grid ColumnSpacing="7"
-                                                                          Visibility="{x:Bind WebsiteValid, Mode=OneWay}">
-                                                                        <Grid.ColumnDefinitions>
-                                                                            <ColumnDefinition Width="Auto" />
-                                                                            <ColumnDefinition Width="*" />
-                                                                        </Grid.ColumnDefinitions>
-                                                                        <Grid.Transitions>
-                                                                            <TransitionCollection>
-                                                                                <RepositionThemeTransition />
-                                                                            </TransitionCollection>
-                                                                        </Grid.Transitions>
-
-                                                                        <TextBlock VerticalAlignment="Center"
-                                                                            Grid.Column="0"
-                                                                            FontWeight="SemiBold" Opacity="0.5"
-                                                                            Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Website'), Mode=OneWay}" />
-
-                                                                        <TextBlock VerticalAlignment="Center"
-                                                                            Grid.Column="1"
-                                                                            FontWeight="SemiBold"
-                                                                            TextTrimming="CharacterEllipsis"
-                                                                            Foreground="{ThemeResource SystemFillColorAttentionBrush}"
-                                                                            TextDecorations="Underline"
-                                                                            Text="{x:Bind Website, Mode=OneWay}"
-                                                                            Tapped="{x:Bind OpenDeviceWebsite, Mode=OneWay}"
-                                                                            ToolTipService.ToolTip="{x:Bind Website, Mode=OneWay}"
-                                                                            ToolTipService.Placement="Bottom" />
-                                                                    </Grid>-->
-
+                                                                    <TextBlock FontWeight="SemiBold" FontSize="14"
+                                                                               Margin="0,2,0,0"
+                                                                               Text="{x:Bind TrimString(Name, 45), Mode=OneWay}"
+                                                                               ToolTipService.ToolTip="{x:Bind Name, Mode=OneWay}"
+                                                                               HorizontalAlignment="Left"
+                                                                               VerticalAlignment="Center" />
                                                                 </StackPanel>
-                                                            </Expander.Content>
-                                                        </Expander>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ItemsRepeater.ItemTemplate>
-                                        </ItemsRepeater>
-                                        <ScrollViewer.Transitions>
-                                            <TransitionCollection>
-                                                <RepositionThemeTransition />
-                                            </TransitionCollection>
-                                        </ScrollViewer.Transitions>
-                                    </ScrollViewer>
-                                    <Grid.OpacityTransition>
-                                        <ScalarTransition />
-                                    </Grid.OpacityTransition>
+
+                                                                <FontIcon Grid.Column="1" FontSize="16"
+                                                                          Glyph="&#xE71B;"
+                                                                          Tapped="{x:Bind OpenPluginWebsite, Mode=OneWay}"
+                                                                          Visibility="{x:Bind WebsiteValid, Mode=OneWay}"
+                                                                          Margin="0,3,-8,0" HorizontalAlignment="Right" />
+                                                            </Grid>
+
+                                                            <Expander Margin="0,12,0,0" Padding="0"
+                                                                      Expanding="{x:Bind FetchPluginData, Mode=OneWay}"
+                                                                      IsExpanded="{x:Bind PluginExpanderExpanded, Mode=TwoWay}"
+                                                                      ExpandDirection="Down"
+                                                                      HorizontalAlignment="Stretch"
+                                                                      HorizontalContentAlignment="Stretch">
+
+                                                                <Expander.Content>
+                                                                    <StackPanel Orientation="Vertical"
+                                                                        Padding="0,8,0,10">
+                                                                        <Grid Margin="0,-10,0,5">
+                                                                            <InfoBar
+                                                                                Severity="Error"
+                                                                                Opacity="{x:Bind BoolToOpacity(InstallError), Mode=OneWay}"
+                                                                                IsOpen="{x:Bind InstallError, Mode=OneWay}"
+                                                                                Title="{x:Bind FormatResourceString('/PluginStore/Titles/Installing/Error'), Mode=OneWay}"
+                                                                                Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Installing/Error'), Mode=OneWay}"
+                                                                                IsClosable="True" CornerRadius="0"
+                                                                                BorderThickness="0,0,0,1">
+                                                                                <InfoBar.OpacityTransition>
+                                                                                    <ScalarTransition />
+                                                                                </InfoBar.OpacityTransition>
+                                                                            </InfoBar>
+
+                                                                            <InfoBar
+                                                                                Severity="Success"
+                                                                                Opacity="{x:Bind BoolToOpacity(InstallSuccess), Mode=OneWay}"
+                                                                                IsOpen="{x:Bind InstallSuccess, Mode=OneWay}"
+                                                                                Title="{x:Bind FormatResourceString('/PluginStore/Titles/Installing/Success'), Mode=OneWay}"
+                                                                                Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Installing/Success'), Mode=OneWay}"
+                                                                                IsClosable="True" CornerRadius="0"
+                                                                                BorderThickness="0,0,0,1">
+                                                                                <InfoBar.OpacityTransition>
+                                                                                    <ScalarTransition />
+                                                                                </InfoBar.OpacityTransition>
+                                                                            </InfoBar>
+
+                                                                            <InfoBar
+                                                                                Severity="Informational"
+                                                                                Opacity="{x:Bind BoolToOpacity(Uninstalling), Mode=OneWay}"
+                                                                                IsOpen="{x:Bind Uninstalling, Mode=OneWay}"
+                                                                                Title="{x:Bind FormatResourceString('/PluginStore/Titles/Uninstalling/Notice'), Mode=OneWay}"
+                                                                                Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Uninstalling/Notice'), Mode=OneWay}"
+                                                                                IsClosable="True" CornerRadius="0"
+                                                                                BorderThickness="0,0,0,1">
+                                                                                <InfoBar.OpacityTransition>
+                                                                                    <ScalarTransition />
+                                                                                </InfoBar.OpacityTransition>
+                                                                            </InfoBar>
+
+                                                                            <InfoBar
+                                                                                Severity="Informational"
+                                                                                Opacity="{x:Bind BoolToOpacity(Installing), Mode=OneWay}"
+                                                                                IsOpen="{x:Bind Installing, Mode=OneWay}"
+                                                                                Title="{x:Bind FormatResourceString('/PluginStore/Titles/Installing/Setup'), Mode=OneWay}"
+                                                                                Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Installing/Downloading'), Mode=OneWay}"
+                                                                                IsClosable="False" CornerRadius="0"
+                                                                                BorderThickness="0,0,0,1">
+                                                                                <InfoBar.Content>
+                                                                                    <StackPanel Margin="-45,0,1,0"
+                                                                                        HorizontalAlignment="Stretch"
+                                                                                        Orientation="Vertical">
+                                                                                        <ProgressBar
+                                                                                            x:Name="PluginsUpdatePendingProgressBar"
+                                                                                            Value="100"
+                                                                                            IsIndeterminate="True"
+                                                                                            ShowError="{x:Bind InstallError, Mode=OneWay}"
+                                                                                            HorizontalAlignment="Stretch" />
+                                                                                    </StackPanel>
+                                                                                </InfoBar.Content>
+
+                                                                                <InfoBar.OpacityTransition>
+                                                                                    <ScalarTransition />
+                                                                                </InfoBar.OpacityTransition>
+                                                                            </InfoBar>
+                                                                        </Grid>
+
+                                                                        <ProgressRing
+                                                                            Visibility="{x:Bind LoadingData, Mode=OneWay}"
+                                                                            Opacity="{x:Bind BoolToOpacity(LoadingData), Mode=OneWay}"
+                                                                            Width="50" Height="50" Margin="30"
+                                                                            HorizontalAlignment="Center">
+                                                                            <ProgressRing.OpacityTransition>
+                                                                                <ScalarTransition />
+                                                                            </ProgressRing.OpacityTransition>
+                                                                        </ProgressRing>
+
+                                                                        <StackPanel Orientation="Vertical"
+                                                                            Visibility="{x:Bind FinishedLoadingData, Mode=OneWay}"
+                                                                            Opacity="{x:Bind BoolToOpacity(FinishedLoadingData), Mode=OneWay}">
+                                                                            <StackPanel.OpacityTransition>
+                                                                                <ScalarTransition />
+                                                                            </StackPanel.OpacityTransition>
+                                                                            <StackPanel.Transitions>
+                                                                                <TransitionCollection>
+                                                                                    <RepositionThemeTransition />
+                                                                                </TransitionCollection>
+                                                                            </StackPanel.Transitions>
+
+                                                                            <!--#region Release Title-->
+                                                                            <StackPanel Orientation="Vertical"
+                                                                                Visibility="{x:Bind HasRelease, Mode=OneWay}">
+
+                                                                                <Grid ColumnSpacing="7"
+                                                                                    Margin="15,5,15,5">
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                        <ColumnDefinition Width="*" />
+                                                                                    </Grid.ColumnDefinitions>
+
+                                                                                    <TextBlock
+                                                                                        VerticalAlignment="Center"
+                                                                                        Grid.Column="0" FontSize="22"
+                                                                                        FontWeight="SemiBold"
+                                                                                        TextTrimming="CharacterEllipsis"
+                                                                                        Text="{x:Bind LatestRelease.DisplayName, Mode=OneWay}" />
+
+                                                                                    <TextBlock
+                                                                                        VerticalAlignment="Center"
+                                                                                        Grid.Column="1" FontSize="22"
+                                                                                        FontWeight="SemiBold"
+                                                                                        TextTrimming="CharacterEllipsis"
+                                                                                        Text="{x:Bind LatestRelease.Version, Mode=OneWay}" />
+                                                                                </Grid>
+                                                                            </StackPanel>
+                                                                            <!--#endregion-->
+
+                                                                            <Grid ColumnSpacing="7" Margin="15,5"
+                                                                                Visibility="{x:Bind DescriptionValid, Mode=OneWay}">
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="Auto" />
+                                                                                    <ColumnDefinition Width="*" />
+                                                                                </Grid.ColumnDefinitions>
+
+                                                                                <TextBlock VerticalAlignment="Top"
+                                                                                    Grid.Column="0"
+                                                                                    FontWeight="SemiBold" Opacity="0.5"
+                                                                                    Text="Plugin description:" />
+
+                                                                                <TextBlock VerticalAlignment="Top"
+                                                                                    Grid.Column="1"
+                                                                                    FontWeight="SemiBold"
+                                                                                    TextWrapping="Wrap"
+                                                                                    Text="{x:Bind Repository.Description, Mode=OneWay}" />
+                                                                            </Grid>
+
+                                                                            <!--#region No Releases-->
+                                                                            <Grid
+                                                                                Visibility="{x:Bind NoReleases, Mode=OneWay}"
+                                                                                HorizontalAlignment="Center"
+                                                                                Margin="15,25">
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="Auto" />
+                                                                                    <ColumnDefinition Width="*" />
+                                                                                </Grid.ColumnDefinitions>
+
+                                                                                <FontIcon FontSize="38"
+                                                                                    Margin="0,3,10,0"
+                                                                                    Glyph="&#xE7BA;"
+                                                                                    VerticalAlignment="Center" />
+
+                                                                                <TextBlock Grid.Column="1"
+                                                                                    HorizontalAlignment="Left"
+                                                                                    TextWrapping="WrapWholeWords"
+                                                                                    TextTrimming="CharacterEllipsis"
+                                                                                    Text="This plugin has no releases and can't be installed using the store.&#x0a;Feel free to contact the author about testing or preview releases." />
+                                                                                <Grid.OpacityTransition>
+                                                                                    <ScalarTransition />
+                                                                                </Grid.OpacityTransition>
+                                                                            </Grid>
+                                                                            <!--#endregion-->
+
+                                                                            <!--#region Release Metadata-->
+                                                                            <StackPanel Orientation="Vertical"
+                                                                                Visibility="{x:Bind HasRelease, Mode=OneWay}">
+                                                                                <Grid ColumnSpacing="7" Margin="15,0">
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                        <ColumnDefinition Width="*" />
+                                                                                    </Grid.ColumnDefinitions>
+
+                                                                                    <TextBlock
+                                                                                        VerticalAlignment="Center"
+                                                                                        Grid.Column="0"
+                                                                                        FontWeight="SemiBold"
+                                                                                        Opacity="0.5"
+                                                                                        Text="Release title:" />
+
+                                                                                    <TextBlock
+                                                                                        VerticalAlignment="Center"
+                                                                                        Grid.Column="1"
+                                                                                        FontWeight="SemiBold"
+                                                                                        TextTrimming="CharacterEllipsis"
+                                                                                        Text="{x:Bind LatestRelease.Title, Mode=OneWay}" />
+                                                                                </Grid>
+
+                                                                                <Grid ColumnSpacing="7" Margin="15,0">
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                        <ColumnDefinition Width="*" />
+                                                                                    </Grid.ColumnDefinitions>
+
+                                                                                    <TextBlock
+                                                                                        VerticalAlignment="Center"
+                                                                                        Grid.Column="0"
+                                                                                        FontWeight="SemiBold"
+                                                                                        Opacity="0.5"
+                                                                                        Text="Published on:" />
+
+                                                                                    <TextBlock
+                                                                                        VerticalAlignment="Center"
+                                                                                        Grid.Column="1"
+                                                                                        FontWeight="SemiBold"
+                                                                                        TextTrimming="CharacterEllipsis"
+                                                                                        Text="{x:Bind LatestRelease.Date, Mode=OneWay}" />
+                                                                                </Grid>
+
+                                                                                <Grid ColumnSpacing="7"
+                                                                                    Margin="15,0,0,15">
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                        <ColumnDefinition Width="*" />
+                                                                                    </Grid.ColumnDefinitions>
+
+                                                                                    <TextBlock VerticalAlignment="Top"
+                                                                                        Grid.Column="0"
+                                                                                        FontWeight="SemiBold"
+                                                                                        Opacity="0.5"
+                                                                                        Text="Changelog:" />
+
+                                                                                    <TextBlock VerticalAlignment="Top"
+                                                                                        Grid.Column="1"
+                                                                                        FontWeight="SemiBold"
+                                                                                        TextWrapping="Wrap"
+                                                                                        Text="{x:Bind LatestRelease.Changelog, Mode=OneWay}" />
+                                                                                </Grid>
+                                                                            </StackPanel>
+                                                                            <!--#endregion-->
+
+                                                                            <!--#region Contributors-->
+                                                                            <ItemsRepeater Margin="0,0,0,0"
+                                                                                ItemsSource="{x:Bind Contributors, Mode=OneWay}">
+
+                                                                                <ItemsRepeater.ItemTemplate>
+                                                                                    <DataTemplate
+                                                                                        x:DataType="mvvm:StorePluginContributor">
+                                                                                        <Grid ColumnSpacing="7" Height="32"
+                                                                                            Margin="15,5">
+                                                                                            <Grid.ColumnDefinitions>
+                                                                                                <ColumnDefinition
+                                                                                                    Width="Auto" />
+                                                                                                <ColumnDefinition
+                                                                                                    Width="*" />
+                                                                                            </Grid.ColumnDefinitions>
+
+                                                                                            <PersonPicture Width="32" DisplayName="{x:Bind Name}">
+                                                                                                <PersonPicture.ProfilePicture>
+                                                                                                    <BitmapImage UriSource="{x:Bind Avatar}" />
+                                                                                                </PersonPicture.ProfilePicture>
+                                                                                            </PersonPicture>
+
+                                                                                            <TextBlock
+                                                                                                Margin="0,0,15,0"
+                                                                                                VerticalAlignment="Center"
+                                                                                                Grid.Column="1"
+                                                                                                FontWeight="SemiBold"
+                                                                                                TextWrapping="Wrap"
+                                                                                                Text="{x:Bind Name}" />
+
+                                                                                            <FontIcon Grid.Column="1"
+                                                                                                FontSize="16"
+                                                                                                Glyph="&#xE71B;"
+                                                                                                Tapped="{x:Bind OpenContributorWebsite}"
+                                                                                                Margin="0,3,3,0"
+                                                                                                VerticalAlignment="Center"
+                                                                                                HorizontalAlignment="Right" />
+                                                                                        </Grid>
+                                                                                    </DataTemplate>
+                                                                                </ItemsRepeater.ItemTemplate>
+                                                                            </ItemsRepeater>
+                                                                            <!--#endregion-->
+
+                                                                            <!--#region Deleter-->
+                                                                            <Grid
+                                                                                Visibility="{x:Bind CanUninstall, Mode=OneWay}"
+                                                                                HorizontalAlignment="Stretch">
+                                                                                <Grid.RowDefinitions>
+                                                                                    <RowDefinition Height="Auto" />
+                                                                                    <RowDefinition Height="*" />
+                                                                                </Grid.RowDefinitions>
+
+                                                                                <MenuFlyoutSeparator Grid.Row="0"
+                                                                                    Margin="0,10"
+                                                                                    Width="1000" />
+
+                                                                                <Grid Grid.Row="1"
+                                                                                    HorizontalAlignment="Stretch">
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition Width="*" />
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                    </Grid.ColumnDefinitions>
+
+                                                                                    <TextBlock Grid.Column="0"
+                                                                                        Margin="15,-3,0,0"
+                                                                                        HorizontalAlignment="Left"
+                                                                                        VerticalAlignment="Center"
+                                                                                        Opacity="0.7" FontSize="15"
+                                                                                        TextWrapping="WrapWholeWords"
+                                                                                        TextTrimming="CharacterEllipsis"
+                                                                                        Text="This plugin is already installed, do you wish to uninstall it?" />
+
+                                                                                    <Button Grid.Column="1"
+                                                                                        Content="Remove"
+                                                                                        Margin="15,0"
+                                                                                        Click="{x:Bind SchedulePluginUninstall, Mode=OneWay}" />
+                                                                                </Grid>
+                                                                            </Grid>
+                                                                            <!--#endregion-->
+
+                                                                            <!--#region Installer-->
+                                                                            <Grid
+                                                                                Visibility="{x:Bind CanInstall, Mode=OneWay}"
+                                                                                HorizontalAlignment="Stretch">
+                                                                                <Grid.RowDefinitions>
+                                                                                    <RowDefinition Height="Auto" />
+                                                                                    <RowDefinition Height="*" />
+                                                                                </Grid.RowDefinitions>
+
+                                                                                <MenuFlyoutSeparator Grid.Row="0"
+                                                                                    Margin="0,10"
+                                                                                    Width="1000" />
+
+                                                                                <Grid Grid.Row="1"
+                                                                                    HorizontalAlignment="Stretch">
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition Width="*" />
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                    </Grid.ColumnDefinitions>
+
+                                                                                    <TextBlock Grid.Column="0"
+                                                                                        Margin="15,-3,0,0"
+                                                                                        HorizontalAlignment="Left"
+                                                                                        VerticalAlignment="Center"
+                                                                                        Opacity="0.7" FontSize="15"
+                                                                                        TextWrapping="WrapWholeWords"
+                                                                                        TextTrimming="CharacterEllipsis"
+                                                                                        Text="{x:Bind FormatReleaseString('/PluginStore/Titles/Install'), Mode=OneWay}" />
+
+                                                                                    <Button Grid.Column="1"
+                                                                                        Content="Install"
+                                                                                        Margin="15,0"
+                                                                                        Click="{x:Bind InstallPlugin, Mode=OneWay}" />
+                                                                                </Grid>
+                                                                            </Grid>
+                                                                            <!--#endregion-->
+                                                                        </StackPanel>
+                                                                    </StackPanel>
+                                                                </Expander.Content>
+                                                            </Expander>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                            <ScrollViewer.Transitions>
+                                                <TransitionCollection>
+                                                    <RepositionThemeTransition />
+                                                </TransitionCollection>
+                                            </ScrollViewer.Transitions>
+                                        </ScrollViewer>
+                                        <Grid.OpacityTransition>
+                                            <ScalarTransition />
+                                        </Grid.OpacityTransition>
+                                    </Grid>
                                 </Grid>
 
                                 <Grid Grid.Row="1" Margin="0,15" Visibility="Collapsed" x:Name="ResultForbiddenGrid">
