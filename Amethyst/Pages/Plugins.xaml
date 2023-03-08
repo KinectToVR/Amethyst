@@ -10,6 +10,7 @@
     xmlns:mvvm="using:Amethyst.MVVM"
     xmlns:util="using:Amethyst.Utils"
     xmlns:classes="using:Amethyst.Classes"
+    xmlns:icons="using:WinUI.System.Icons"
     Loaded="Page_Loaded" NavigationCacheMode="Required"
     mc:Ignorable="d" Background="Transparent">
 
@@ -284,11 +285,16 @@
                                                                                 IsOpen="{x:Bind Uninstalling, Mode=OneWay}"
                                                                                 Title="{x:Bind FormatResourceString('/PluginStore/Titles/Uninstalling/Notice'), Mode=OneWay}"
                                                                                 Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Uninstalling/Notice'), Mode=OneWay}"
-                                                                                IsClosable="True" CornerRadius="0"
+                                                                                IsClosable="false" CornerRadius="0"
                                                                                 BorderThickness="0,0,0,1">
                                                                                 <InfoBar.OpacityTransition>
                                                                                     <ScalarTransition />
                                                                                 </InfoBar.OpacityTransition>
+                                                                                <InfoBar.ActionButton>
+                                                                                    <Button HorizontalAlignment="Right" Margin="0,0,-8,0"
+                                                                                        Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Cancel'), Mode=OneWay}"
+                                                                                        Click="{x:Bind CancelPluginUninstall, Mode=OneWay}" />
+                                                                                </InfoBar.ActionButton>
                                                                             </InfoBar>
 
                                                                             <InfoBar
@@ -685,21 +691,35 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
-                                            <StackPanel Grid.Column="0" Margin="-5,-3,0,0"
+                                            <StackPanel Grid.Column="0" Margin="-5,0,0,0"
                                                         Orientation="Horizontal">
+
+                                                <Button VerticalAlignment="Center" Margin="-10,0,4,0"
+                                                        Visibility="{x:Bind CanUninstall, Mode=OneWay}"
+                                                        Style="{ThemeResource AlternateCloseButtonStyle}"
+                                                        Click="{x:Bind EnqueuePluginUninstall, Mode=OneWay}">
+                                                    <icons:FluentSymbolIcon Symbol="Delete20" />
+                                                </Button>
+
+                                                <Button VerticalAlignment="Center" Margin="-10,0,4,0"
+                                                        Visibility="{x:Bind Uninstalling, Mode=OneWay}"
+                                                        Style="{ThemeResource AlternateCloseButtonStyle}"
+                                                        Click="{x:Bind CancelPluginUninstall, Mode=OneWay}">
+                                                    <icons:FluentSymbolIcon Symbol="DeleteArrowBack20" />
+                                                </Button>
 
                                                 <InfoBadge
                                                     Background="{ThemeResource SystemFillColorCriticalBrush}"
                                                     HorizontalAlignment="Left" VerticalAlignment="Top"
                                                     Visibility="{x:Bind LoadError, Mode=OneWay}"
-                                                    Margin="0,15,10,0" Width="17" Height="17">
+                                                    Margin="0,14,10,0" Width="17" Height="17">
                                                     <InfoBadge.IconSource>
                                                         <FontIconSource Glyph="&#xEDAE;"
                                                                         Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
                                                     </InfoBadge.IconSource>
                                                 </InfoBadge>
 
-                                                <TextBlock FontWeight="SemiBold" FontSize="14"
+                                                <TextBlock FontWeight="SemiBold" FontSize="14" Margin="0,2,0,0"
                                                            Text="{x:Bind TrimString(Name, 45), Mode=OneWay}"
                                                            ToolTipService.ToolTip="{x:Bind Name, Mode=OneWay}"
                                                            HorizontalAlignment="Left"
@@ -707,7 +727,7 @@
 
                                                 <StackPanel Orientation="Horizontal"
                                                             VerticalAlignment="Bottom"
-                                                            Margin="7,0,0,10"
+                                                            Margin="7,0,0,8"
                                                             Visibility="{x:Bind PublisherValid, Mode=OneWay}">
                                                     <TextBlock VerticalAlignment="Center"
                                                                FontWeight="SemiBold" Opacity="0.5"
@@ -740,6 +760,24 @@
 
                                             <Expander.Content>
                                                 <StackPanel Orientation="Vertical" Width="650" Padding="0,8,0,10">
+                                                    <InfoBar
+                                                        Severity="Informational" Margin="-14,-10,-14,5"
+                                                        Opacity="{x:Bind BoolToOpacity(Uninstalling), Mode=OneWay}"
+                                                        IsOpen="{x:Bind Uninstalling, Mode=OneWay}"
+                                                        Title="{x:Bind FormatResourceString('/PluginStore/Titles/Uninstalling/Notice'), Mode=OneWay}"
+                                                        Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Uninstalling/Notice'), Mode=OneWay}"
+                                                        IsClosable="false" CornerRadius="0"
+                                                        BorderThickness="0,0,0,1">
+                                                        <InfoBar.OpacityTransition>
+                                                            <ScalarTransition />
+                                                        </InfoBar.OpacityTransition>
+                                                        <InfoBar.ActionButton>
+                                                            <Button HorizontalAlignment="Right" Margin="0,0,-8,0"
+                                                                    Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Cancel'), Mode=OneWay}"
+                                                                    Click="{x:Bind CancelPluginUninstall, Mode=OneWay}" />
+                                                        </InfoBar.ActionButton>
+                                                    </InfoBar>
+
                                                     <InfoBar Severity="Informational" Margin="-14,-10,-14,5"
                                                              Opacity="{x:Bind BoolToOpacity(UpdateFound), Mode=OneWay}"
                                                              IsOpen="{x:Bind UpdateFound, Mode=OneWay}"
@@ -874,7 +912,6 @@
                                                                    ToolTipService.ToolTip="{x:Bind Website, Mode=OneWay}"
                                                                    ToolTipService.Placement="Bottom" />
                                                     </Grid>
-
                                                 </StackPanel>
                                             </Expander.Content>
                                         </Expander>
