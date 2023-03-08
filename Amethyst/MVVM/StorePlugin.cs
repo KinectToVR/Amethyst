@@ -96,6 +96,13 @@ public class StorePlugin : INotifyPropertyChanged
         OnPropertyChanged(); // Refresh everything
     }
 
+    public void CancelPluginUninstall()
+    {
+        // Enqueue a delete startup action to uninstall this plugin
+        InstalledPlugin?.CancelPluginUninstall();
+        OnPropertyChanged(); // Refresh everything
+    }
+
     public async void InstallPlugin()
     {
         // TODO download action etc
@@ -169,6 +176,13 @@ public class StorePlugin : INotifyPropertyChanged
                         x => x["name"]?.ToString().EndsWith(".zip") ?? false, null)?
                     ["browser_download_url"]?.ToString()
             };
+
+            // Setup property watchers
+            if (InstalledPlugin is not null)
+            {
+                InstalledPlugin.PropertyChanged -= InstalledPluginOnPropertyChanged;
+                InstalledPlugin.PropertyChanged += InstalledPluginOnPropertyChanged;
+            }
         }
         catch (HttpRequestException e)
         {
@@ -182,7 +196,7 @@ public class StorePlugin : INotifyPropertyChanged
             LatestRelease = null;
             Logger.Error(e);
         }
-        
+
         // Refresh everything else
         OnPropertyChanged();
 
@@ -195,6 +209,11 @@ public class StorePlugin : INotifyPropertyChanged
 
         OnPropertyChanged("LoadingData");
         OnPropertyChanged("FinishedLoadingData");
+    }
+
+    private void InstalledPluginOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        Shared.Main.DispatcherQueue.TryEnqueue(() => OnPropertyChanged());
     }
 
     public class PluginRepository

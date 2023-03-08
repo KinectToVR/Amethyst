@@ -282,7 +282,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public Version Version { get; init; } = new("0.0.0.0");
 
-    public bool UpdateFound => !_updateEnqueued && UpdateData.Found;
+    public bool UpdateFound => !_updateEnqueued && UpdateData.Found && !Uninstalling;
 
     public (bool Found, string Download, Version Version, string Changelog)
         UpdateData { get; private set; } = (false, null, null, null);
@@ -616,14 +616,28 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public void EnqueuePluginUninstall()
     {
         // Enqueue a delete startup action to uninstall this plugin
-        StartupController.Controller.StartupTasks.Add(new StartupDeleteTask
-        {
-            Name = $"Delete plugin {Name} v{Version}",
-            PluginFolder = Folder
-        });
+        StartupController.Controller.StartupTasks.Add(
+            new StartupDeleteTask
+            {
+                Name = $"Delete plugin {Name} v{Version}",
+                Data = Folder + Guid + Version,
+                PluginFolder = Folder
+            });
 
         // Show a badge that this plugin will be uninstalled
         Uninstalling = true;
+        OnPropertyChanged();
+    }
+
+    public void CancelPluginUninstall()
+    {
+        // Delete the uninstall startup action
+        StartupController.Controller.StartupTasks.Remove(
+            StartupController.Controller.StartupTasks
+                .FirstOrDefault(x => x.Data == Folder + Guid + Version));
+
+        // Hide the uninstall badge
+        Uninstalling = false;
         OnPropertyChanged();
     }
 
@@ -653,6 +667,11 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public double BoolToOpacity(bool value)
     {
         return value ? 1.0 : 0.0;
+    }
+
+    public string FormatResourceString(string resourceName)
+    {
+        return string.Format(LocalizedJsonString(resourceName), Name);
     }
 
     public void OnPropertyChanged(string propName = null)
