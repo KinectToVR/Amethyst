@@ -144,8 +144,8 @@
                   Visibility="{x:Bind CanShowPluginsUpdatePendingBar, Mode=OneWay}">
                 <InfoBar x:Name="PluginsUpdatePendingInfoBar" Opacity="0.0"
                          IsOpen="False" IsClosable="False" Margin="3,-5,3,3" Severity="Informational"
-                         Title="{x:Bind util:Translator.Get.String('/SharedStrings/PluginUpdates/Headers/Downloading'), Mode=OneWay}"
-                         Message="{x:Bind util:Translator.Get.String('/SharedStrings/PluginUpdates/Headers/Preparing'), Mode=OneWay}">
+                         Title="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Updates/Headers/Downloading'), Mode=OneWay}"
+                         Message="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Updates/Headers/Preparing'), Mode=OneWay}">
 
                     <InfoBar.Content>
                         <StackPanel Margin="-45,0,1,0" HorizontalAlignment="Stretch" Orientation="Vertical">

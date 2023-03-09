@@ -399,7 +399,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public bool Uninstalling { get; set; }
 
     public bool CanUninstall =>
-        !Uninstalling && LocationValid && GuidValid && Guid
+        !IsExitPending && !Uninstalling &&
+        LocationValid && GuidValid && Guid
             is not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"
             and not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2"
             and not "K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX"
@@ -495,10 +496,10 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         {
             // Mark the update footer as active
             Shared.Main.PluginsUpdatePendingInfoBar.Title = string.Format(LocalizedJsonString(
-                "/SharedStrings/PluginUpdates/Headers/Downloading"), Name, UpdateData.Version.ToString());
+                "/SharedStrings/Plugins/Updates/Headers/Downloading"), Name, UpdateData.Version.ToString());
 
             Shared.Main.PluginsUpdatePendingInfoBar.Message = LocalizedJsonString(
-                "/SharedStrings/PluginUpdates/Headers/Preparing");
+                "/SharedStrings/Plugins/Updates/Headers/Preparing");
 
             Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = true;
             Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 1.0;
@@ -511,7 +512,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             {
                 // No files to download, switch to update error
                 Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                    "/SharedStrings/PluginUpdates/Statuses/Error"), Name);
+                    "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
 
                 Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
                 Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
@@ -531,7 +532,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             {
                 // Update the progress message
                 Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                    "/SharedStrings/PluginUpdates/Statuses/Downloading"), Name, UpdateData.Version.ToString());
+                    "/SharedStrings/Plugins/Updates/Statuses/Downloading"), Name, UpdateData.Version.ToString());
 
                 // Create a stream reader using the received Installer Uri
                 await using var stream = await GithubClient.DownloadStreamAsync(new RestRequest(UpdateData.Download));
@@ -551,7 +552,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
                 // No files to download, switch to update error
                 Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                    "/SharedStrings/PluginUpdates/Statuses/Error"), Name);
+                    "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
 
                 Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
                 Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
@@ -578,7 +579,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
             // Everything's fine, show the restart notice
             Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                "/SharedStrings/PluginUpdates/Headers/Restart"), Name);
+                "/SharedStrings/Plugins/Updates/Headers/Restart"), Name);
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = false;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
@@ -598,7 +599,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
             // No files to download, switch to update error
             Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                "/SharedStrings/PluginUpdates/Statuses/Error"), Name);
+                "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;

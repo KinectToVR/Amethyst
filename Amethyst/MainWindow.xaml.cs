@@ -291,62 +291,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Directory.CreateDirectory(Path.Combine(
             Interfacing.ProgramLocation.DirectoryName, "Plugins"));
 
-        // Search the "Plugins" sub-directory for assemblies that match the imports.
-        // Iterate over all directories in .\Plugins dir and add all Plugin* dirs to catalogs
-        Logger.Info("Searching for local plugins now...");
-        var pluginDirectoryList = Directory.EnumerateDirectories(
-            Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins"),
-            "*", SearchOption.TopDirectoryOnly).ToList();
-
-        // Search for external plugins
-        try
-        {
-            // Load the JSON source into buffer, parse
-            Logger.Info("Searching for external plugins now...");
-            var jsonRoot = JsonObject.Parse(
-                File.ReadAllText(Interfacing.GetAppDataFileDir("amethystpaths.k2path")));
-
-            // Loop over all the external plugins and append
-            if (jsonRoot.ContainsKey("external_plugins"))
-            {
-                // Try loading all path-valid plugin entries
-                jsonRoot.GetNamedArray("external_plugins").ToList()
-                    .Where(pluginEntry => Directory.Exists(pluginEntry.GetString())).ToList()
-                    .ForEach(pluginPath => pluginDirectoryList.Add(pluginPath.GetString()));
-
-                // Write out all invalid ones
-                jsonRoot.GetNamedArray("external_plugins").ToList()
-                    .Where(pluginEntry => !Directory.Exists(pluginEntry.GetString())).ToList()
-                    .ForEach(pluginPath =>
-                    {
-                        // Add the plugin to the 'attempted' list
-                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
-                        {
-                            Name = pluginPath.GetString(),
-                            Status = AppPlugins.PluginLoadError.NoPluginFolder
-                        });
-
-                        Logger.Error(new DirectoryNotFoundException(
-                            $"Plugin hint directory \"{pluginPath.GetString()}\" doesn't exist!"));
-                    });
-            }
-
-            else
-            {
-                Logger.Info("No external plugins found! Loading the local ones now...");
-            }
-        }
-        catch (FileNotFoundException e)
-        {
-            Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
-            Logger.Error($"Creating new {Interfacing.GetAppDataFileDir("amethystpaths.k2path")} config...");
-            File.Create(Interfacing.GetAppDataFileDir("amethystpaths.k2path")); // Create a placeholder file
-        }
-        catch (Exception e)
-        {
-            Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
-        }
-
         // Try reading the startup task config
         try
         {
@@ -413,6 +357,71 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             {
                 Logger.Warn(e);
             }
+
+        // Search the "Plugins" sub-directory for assemblies that match the imports.
+        // Iterate over all directories in .\Plugins dir and add all * dirs to catalogs
+        Logger.Info("Searching for local plugins now...");
+        var pluginDirectoryList = Directory.EnumerateDirectories(
+            Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins"),
+            "*", SearchOption.TopDirectoryOnly).ToList();
+
+        // Search the "Plugins" AppData directory for assemblies that match the imports.
+        // Iterate over all directories in Plugins dir and add all * dirs to catalogs
+        // Discard working directories i.e. starting with ".TEMPORARY"
+        Logger.Info("Searching for shared plugins now...");
+        pluginDirectoryList.AddRange(Directory.EnumerateDirectories(
+                Interfacing.GetAppDataPluginFolderDir(""),
+                "*", SearchOption.TopDirectoryOnly)
+            .Where(x => !x.EndsWith(".TEMPORARY")));
+
+        // Search for external plugins
+        try
+        {
+            // Load the JSON source into buffer, parse
+            Logger.Info("Searching for external plugins now...");
+            var jsonRoot = JsonObject.Parse(
+                File.ReadAllText(Interfacing.GetAppDataFileDir("amethystpaths.k2path")));
+
+            // Loop over all the external plugins and append
+            if (jsonRoot.ContainsKey("external_plugins"))
+            {
+                // Try loading all path-valid plugin entries
+                jsonRoot.GetNamedArray("external_plugins").ToList()
+                    .Where(pluginEntry => Directory.Exists(pluginEntry.GetString())).ToList()
+                    .ForEach(pluginPath => pluginDirectoryList.Add(pluginPath.GetString()));
+
+                // Write out all invalid ones
+                jsonRoot.GetNamedArray("external_plugins").ToList()
+                    .Where(pluginEntry => !Directory.Exists(pluginEntry.GetString())).ToList()
+                    .ForEach(pluginPath =>
+                    {
+                        // Add the plugin to the 'attempted' list
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        {
+                            Name = pluginPath.GetString(),
+                            Status = AppPlugins.PluginLoadError.NoPluginFolder
+                        });
+
+                        Logger.Error(new DirectoryNotFoundException(
+                            $"Plugin hint directory \"{pluginPath.GetString()}\" doesn't exist!"));
+                    });
+            }
+
+            else
+            {
+                Logger.Info("No external plugins found! Loading the local ones now...");
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
+            Logger.Error($"Creating new {Interfacing.GetAppDataFileDir("amethystpaths.k2path")} config...");
+            File.Create(Interfacing.GetAppDataFileDir("amethystpaths.k2path")); // Create a placeholder file
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
+        }
 
         // Add the current assembly to support invoke method exports
         AssemblyLoadContext.Default.LoadFromAssemblyPath(

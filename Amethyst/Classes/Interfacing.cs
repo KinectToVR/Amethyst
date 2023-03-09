@@ -111,6 +111,15 @@ public static class Interfacing
             Environment.SpecialFolder.ApplicationData), "Amethyst", relativeFilePath);
     }
 
+    public static string GetAppDataPluginFolderDir(string relativeFilePath)
+    {
+        Directory.CreateDirectory(Path.Join(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst", "Plugins"));
+
+        return Path.Join(Environment.GetFolderPath(
+            Environment.SpecialFolder.ApplicationData), "Amethyst", "Plugins", relativeFilePath);
+    }
+
     public static string GetAppDataLogFileDir(string relativeFolderName, string relativeFilePath)
     {
         Directory.CreateDirectory(Path.Join(
