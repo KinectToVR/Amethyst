@@ -188,6 +188,53 @@
                                         </Grid.OpacityTransition>
                                     </Grid>
 
+                                    <Grid Grid.Row="0" Opacity="0.0" x:Name="DropInstallerGrid">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center" Margin="0,-15,0,0">
+                                            <Grid HorizontalAlignment="Center">
+                                                <ProgressRing Opacity="0.0" IsIndeterminate="True"
+                                                              x:Name="DropInstallerProgressRing" Value="100"
+                                                              Margin="-8,-8,0,25" Height="120" Width="120">
+                                                    <ProgressRing.OpacityTransition>
+                                                        <ScalarTransition />
+                                                    </ProgressRing.OpacityTransition>
+                                                </ProgressRing>
+                                                <FontIcon Opacity="0.0" x:Name="DropInstallerErrorIcon" FontSize="120"
+                                                          Margin="0,0,0,25" Glyph="&#xE783;">
+                                                    <FontIcon.OpacityTransition>
+                                                        <ScalarTransition />
+                                                    </FontIcon.OpacityTransition>
+                                                </FontIcon>
+                                            </Grid>
+
+                                            <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                       x:Name="DropInstallerHeaderTextBlock"
+                                                       Style="{ThemeResource TitleTextBlockStyle}"
+                                                       HorizontalTextAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Drop/Headers/Validating'), Mode=OneWay}" />
+
+                                            <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+                                                       x:Name="DropInstallerMessageTextBlock"
+                                                       FontSize="14" Opacity="0.0"
+                                                       HorizontalTextAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Drop/Headers/Validating'), Mode=OneWay}">
+                                                <TextBlock.OpacityTransition>
+                                                    <ScalarTransition />
+                                                </TextBlock.OpacityTransition>
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <Grid.OpacityTransition>
+                                            <ScalarTransition />
+                                        </Grid.OpacityTransition>
+                                    </Grid>
+
                                     <Grid Grid.Row="0" Opacity="0.0" x:Name="SearchResultsGrid">
                                         <ScrollViewer Margin="0,20,0,20" Padding="0,-20,0,-20"
                                                       HorizontalAlignment="Stretch">
@@ -265,7 +312,8 @@
                                                                                     <ScalarTransition />
                                                                                 </InfoBar.OpacityTransition>
                                                                                 <InfoBar.ActionButton>
-                                                                                    <Button HorizontalAlignment="Right" Margin="0,0,-8,0"
+                                                                                    <Button HorizontalAlignment="Right"
+                                                                                        Margin="0,0,-8,0"
                                                                                         Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Cancel'), Mode=OneWay}"
                                                                                         Click="{x:Bind CancelPluginUninstall, Mode=OneWay}" />
                                                                                 </InfoBar.ActionButton>
@@ -283,7 +331,8 @@
                                                                                     <ScalarTransition />
                                                                                 </InfoBar.OpacityTransition>
                                                                                 <InfoBar.ActionButton>
-                                                                                    <Button HorizontalAlignment="Right" Margin="0,0,-8,0"
+                                                                                    <Button HorizontalAlignment="Right"
+                                                                                        Margin="0,0,-8,0"
                                                                                         Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Cancel'), Mode=OneWay}"
                                                                                         Click="{x:Bind CancelPluginInstall, Mode=OneWay}" />
                                                                                 </InfoBar.ActionButton>

@@ -5,12 +5,15 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
 using Windows.System;
 using Amethyst.Classes;
 using Amethyst.MVVM;
@@ -272,6 +275,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
     private async void SearcherGrid_Drop(object sender, DragEventArgs e)
     {
+        if (!SearchTextBox?.IsEnabled ?? true) return;
         if (e.DataView.Contains(StandardDataFormats.WebLink))
         {
             var uri = await e.DataView.GetWebLinkAsync();
@@ -328,8 +332,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         }
         else if (e.DataView.Contains(StandardDataFormats.StorageItems))
         {
-            var file = await e.DataView.GetStorageItemsAsync();
-            Logger.Info($"Dropped a StorageItem! Entities: {file.Count}");
+            var files = await e.DataView.GetStorageItemsAsync();
+            Logger.Info($"Dropped a StorageItem! Entities: {files.Count}");
 
             // Parse the result and display the status:
             // - If it's a .zip file:
@@ -338,6 +342,473 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             // - If it's a SINGLE folder:
             //     - Copy it to Amethyst's shared plugin directory
             //     - Search for 'plugin*.dll' and prompt to restart if OK
+            try
+            {
+                switch (files.Count)
+                {
+                    case <= 0:
+                        Logger.Info("No files passed!");
+                        return;
+
+                    case > 1:
+                    {
+                        Logger.Info($"Dropped an installation package: {files.Count} file/s");
+
+                        // Block other controls
+                        SearchButton.IsEnabled = false;
+                        SearchTextBox.IsEnabled = false;
+
+                        // Hide everything
+                        SearchPlaceholderGrid.Opacity = 0.0;
+                        SearchErrorGrid.Opacity = 0.0;
+                        NoResultsGrid.Opacity = 0.0;
+                        DeviceCodeGrid.Opacity = 0.0;
+                        DropInstallerGrid.Opacity = 0.0;
+
+                        DropInstallerMessageTextBlock.Opacity = 0.0;
+
+                        // Search for a plugin dll
+                        if (files.Any(x => x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll")))
+                        {
+                            // Prepare our resources
+                            DropInstallerProgressRing.IsIndeterminate = true;
+                            DropInstallerProgressRing.Opacity = 1.0;
+                            DropInstallerErrorIcon.Opacity = 0.0;
+
+                            DropInstallerHeaderTextBlock.Text =
+                                string.Format(LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installing"),
+                                    files.Count + " " +
+                                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+
+                            // Show the progress indicator
+                            DropInstallerGrid.Opacity = 1.0;
+
+                            // Search for an empty folder in AppData
+                            var installFolder = GetAppDataPluginFolderDir(
+                                string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                    .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) + ".TEMPORARY");
+
+                            // Randomize the path if already exists
+                            // Delete if only a single null folder
+                            if (Directory.Exists(installFolder))
+                            {
+                                if (Directory.EnumerateFileSystemEntries(installFolder).Any())
+                                    installFolder = GetAppDataPluginFolderDir(
+                                        string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) +
+                                        ".TEMPORARY");
+
+                                // Else delete if empty
+                                else Directory.Delete(installFolder, true);
+                            }
+
+                            // Try creating the install folder
+                            Directory.CreateDirectory(installFolder!);
+
+                            // Unpack the archive now
+                            Logger.Info("Unpacking the new plugin from its package...");
+                            foreach (var x in files.ToList())
+                                switch (x)
+                                {
+                                    case StorageFile file:
+                                        Logger.Info($"Copying file {file.Name} to {installFolder}\\");
+                                        File.Copy(file.Path, Path.Join(installFolder, file.Name), true);
+                                        break;
+                                    case StorageFolder folder:
+                                        Logger.Info($"Copying folder {folder.Name} to {installFolder}\\");
+                                        new DirectoryInfo(folder.Path).CopyToFolderAsync(installFolder);
+                                        break;
+                                }
+
+                            // Rename the plugin folder if everything's fine
+                            Directory.Move(installFolder, installFolder[..^".TEMPORARY".Length]);
+
+                            // Wait a bit
+                            await Task.Delay(3000);
+
+                            // Prepare our resources
+                            DropInstallerProgressRing.IsIndeterminate = false;
+                            DropInstallerProgressRing.Value = 100;
+
+                            DropInstallerHeaderTextBlock.Text = string.Format(
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installed"),
+                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                            DropInstallerMessageTextBlock.Text = string.Format(
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Installed"),
+                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                            DropInstallerMessageTextBlock.Opacity = 1.0;
+
+                            // Wait a moment and hide
+                            await Task.Delay(3500);
+
+                            // Unlock other controls
+                            SearchButton.IsEnabled = true;
+                            SearchTextBox.IsEnabled = true;
+
+                            // Show everything
+                            SearchPlaceholderGrid.Opacity = 1.0;
+                            SearchErrorGrid.Opacity = 0.0;
+                            NoResultsGrid.Opacity = 0.0;
+                            DeviceCodeGrid.Opacity = 0.0;
+                            DropInstallerGrid.Opacity = 0.0;
+                        }
+                        else
+                        {
+                            // Prepare our resources
+                            DropInstallerProgressRing.Opacity = 0.0;
+                            DropInstallerErrorIcon.Opacity = 1.0;
+
+                            DropInstallerHeaderTextBlock.Text = string.Format(
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating"),
+                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                            DropInstallerMessageTextBlock.Text = string.Format(
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural"),
+                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                            DropInstallerMessageTextBlock.Opacity = 1.0;
+
+                            // Show the result
+                            DropInstallerGrid.Opacity = 1.0;
+
+                            // Wait a moment and hide
+                            await Task.Delay(2500);
+
+                            // Unlock other controls
+                            SearchButton.IsEnabled = true;
+                            SearchTextBox.IsEnabled = true;
+
+                            // Show everything
+                            SearchPlaceholderGrid.Opacity = 1.0;
+                            SearchErrorGrid.Opacity = 0.0;
+                            NoResultsGrid.Opacity = 0.0;
+                            DeviceCodeGrid.Opacity = 0.0;
+                            DropInstallerGrid.Opacity = 0.0;
+                        }
+                    }
+                        break;
+
+                    default:
+                        switch (files[0])
+                        {
+                            case StorageFolder:
+                            {
+                                var entries = Directory.EnumerateFiles(files[0].Path).ToList();
+                                Logger.Info($"Dropped an installation package: {entries.Count} file/s");
+
+                                // Block other controls
+                                SearchButton.IsEnabled = false;
+                                SearchTextBox.IsEnabled = false;
+
+                                // Hide everything
+                                SearchPlaceholderGrid.Opacity = 0.0;
+                                SearchErrorGrid.Opacity = 0.0;
+                                NoResultsGrid.Opacity = 0.0;
+                                DeviceCodeGrid.Opacity = 0.0;
+                                DropInstallerGrid.Opacity = 0.0;
+
+                                DropInstallerMessageTextBlock.Opacity = 0.0;
+
+                                // Search for a plugin dll
+                                if (entries.Select(x => new FileInfo(x))
+                                    .Any(x => x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll")))
+                                {
+                                    // Prepare our resources
+                                    DropInstallerProgressRing.IsIndeterminate = true;
+                                    DropInstallerProgressRing.Opacity = 1.0;
+                                    DropInstallerErrorIcon.Opacity = 0.0;
+
+                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                                        "/SharedStrings/Plugins/Drop/Headers/Installing"), files[0].Name);
+
+                                    // Show the progress indicator
+                                    DropInstallerGrid.Opacity = 1.0;
+
+                                    // Search for an empty folder in AppData
+                                    var installFolder = GetAppDataPluginFolderDir(
+                                        string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) +
+                                        ".TEMPORARY");
+
+                                    // Randomize the path if already exists
+                                    // Delete if only a single null folder
+                                    if (Directory.Exists(installFolder))
+                                    {
+                                        if (Directory.EnumerateFileSystemEntries(installFolder).Any())
+                                            installFolder = GetAppDataPluginFolderDir(
+                                                string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                                    .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) +
+                                                ".TEMPORARY");
+
+                                        // Else delete if empty
+                                        else Directory.Delete(installFolder, true);
+                                    }
+
+                                    // Try creating the install folder
+                                    Directory.CreateDirectory(installFolder!);
+
+                                    // Unpack the archive now
+                                    Logger.Info("Unpacking the new plugin from its package...");
+                                    foreach (var x in await (files[0] as StorageFolder)!.GetItemsAsync())
+                                        switch (x)
+                                        {
+                                            case StorageFile file:
+                                                Logger.Info($"Copying file {file.Name} to {installFolder}\\");
+                                                File.Copy(file.Path, Path.Join(installFolder, file.Name), true);
+                                                break;
+                                            case StorageFolder folder:
+                                                Logger.Info($"Copying folder {folder.Name} to {installFolder}\\");
+                                                new DirectoryInfo(folder.Path).CopyToFolderAsync(installFolder);
+                                                break;
+                                        }
+
+                                    // Rename the plugin folder if everything's fine
+                                    Directory.Move(installFolder, installFolder[..^".TEMPORARY".Length]);
+
+                                    // Wait a bit
+                                    await Task.Delay(3000);
+
+                                    // Prepare our resources
+                                    DropInstallerProgressRing.IsIndeterminate = false;
+                                    DropInstallerProgressRing.Value = 100;
+
+                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                                        "/SharedStrings/Plugins/Drop/Headers/Installed"), files[0].Name);
+                                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
+                                        "/SharedStrings/Plugins/Drop/Statuses/Installed"), files[0].Name);
+                                    DropInstallerMessageTextBlock.Opacity = 1.0;
+
+                                    // Wait a moment and hide
+                                    await Task.Delay(3500);
+
+                                    // Unlock other controls
+                                    SearchButton.IsEnabled = true;
+                                    SearchTextBox.IsEnabled = true;
+
+                                    // Show everything
+                                    SearchPlaceholderGrid.Opacity = 1.0;
+                                    SearchErrorGrid.Opacity = 0.0;
+                                    NoResultsGrid.Opacity = 0.0;
+                                    DeviceCodeGrid.Opacity = 0.0;
+                                    DropInstallerGrid.Opacity = 0.0;
+                                }
+                                else
+                                {
+                                    // Prepare our resources
+                                    DropInstallerProgressRing.Opacity = 0.0;
+                                    DropInstallerErrorIcon.Opacity = 1.0;
+
+                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                                        "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
+                                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
+                                        "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), files[0].Name);
+                                    DropInstallerMessageTextBlock.Opacity = 1.0;
+
+                                    // Show the result
+                                    DropInstallerGrid.Opacity = 1.0;
+
+                                    // Wait a moment and hide
+                                    await Task.Delay(2500);
+
+                                    // Unlock other controls
+                                    SearchButton.IsEnabled = true;
+                                    SearchTextBox.IsEnabled = true;
+
+                                    // Show everything
+                                    SearchPlaceholderGrid.Opacity = 1.0;
+                                    SearchErrorGrid.Opacity = 0.0;
+                                    NoResultsGrid.Opacity = 0.0;
+                                    DeviceCodeGrid.Opacity = 0.0;
+                                    DropInstallerGrid.Opacity = 0.0;
+                                }
+                            }
+                                break;
+                            case StorageFile:
+                            {
+                                Logger.Info($"Dropped an installation package: {files[0].Name}");
+
+                                // Block other controls
+                                SearchButton.IsEnabled = false;
+                                SearchTextBox.IsEnabled = false;
+
+                                // Hide everything
+                                SearchPlaceholderGrid.Opacity = 0.0;
+                                SearchErrorGrid.Opacity = 0.0;
+                                NoResultsGrid.Opacity = 0.0;
+                                DeviceCodeGrid.Opacity = 0.0;
+                                DropInstallerGrid.Opacity = 0.0;
+
+                                DropInstallerMessageTextBlock.Opacity = 0.0;
+
+                                // Check if the file is a zip
+                                if (files[0].Name.EndsWith(".zip"))
+                                {
+                                    // Search for a plugin dll
+                                    using var archive = ZipFile.OpenRead(files[0].Path);
+                                    if (archive.Entries.Any(x =>
+                                            x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll")))
+                                    {
+                                        // Prepare our resources
+                                        DropInstallerProgressRing.IsIndeterminate = true;
+                                        DropInstallerProgressRing.Opacity = 1.0;
+                                        DropInstallerErrorIcon.Opacity = 0.0;
+
+                                        DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                                            "/SharedStrings/Plugins/Drop/Headers/Installing"), files[0].Name);
+
+                                        // Show the progress indicator
+                                        DropInstallerGrid.Opacity = 1.0;
+
+                                        // Search for an empty folder in AppData
+                                        var installFolder = GetAppDataPluginFolderDir(
+                                            string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) +
+                                            ".TEMPORARY");
+
+                                        // Randomize the path if already exists
+                                        // Delete if only a single null folder
+                                        if (Directory.Exists(installFolder))
+                                        {
+                                            if (Directory.EnumerateFileSystemEntries(installFolder).Any())
+                                                installFolder = GetAppDataPluginFolderDir(
+                                                    string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) +
+                                                    ".TEMPORARY");
+
+                                            // Else delete if empty
+                                            else Directory.Delete(installFolder, true);
+                                        }
+
+                                        // Try creating the install folder
+                                        Directory.CreateDirectory(installFolder!);
+
+                                        // Unpack the archive now
+                                        Logger.Info("Unpacking the new plugin from its package...");
+                                        archive.ExtractToDirectory(installFolder, true);
+
+                                        // Rename the plugin folder if everything's fine
+                                        Directory.Move(installFolder, installFolder[..^".TEMPORARY".Length]);
+
+                                        // Wait a bit
+                                        await Task.Delay(3000);
+
+                                        // Prepare our resources
+                                        DropInstallerProgressRing.IsIndeterminate = false;
+                                        DropInstallerProgressRing.Value = 100;
+
+                                        DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                                            "/SharedStrings/Plugins/Drop/Headers/Installed"), files[0].Name);
+                                        DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
+                                            "/SharedStrings/Plugins/Drop/Statuses/Installed"), files[0].Name);
+                                        DropInstallerMessageTextBlock.Opacity = 1.0;
+
+                                        // Wait a moment and hide
+                                        await Task.Delay(3500);
+
+                                        // Unlock other controls
+                                        SearchButton.IsEnabled = true;
+                                        SearchTextBox.IsEnabled = true;
+
+                                        // Show everything
+                                        SearchPlaceholderGrid.Opacity = 1.0;
+                                        SearchErrorGrid.Opacity = 0.0;
+                                        NoResultsGrid.Opacity = 0.0;
+                                        DeviceCodeGrid.Opacity = 0.0;
+                                        DropInstallerGrid.Opacity = 0.0;
+                                    }
+                                    else
+                                    {
+                                        // Prepare our resources
+                                        DropInstallerProgressRing.Opacity = 0.0;
+                                        DropInstallerErrorIcon.Opacity = 1.0;
+
+                                        DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                                            "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
+                                        DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
+                                            "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), files[0].Name);
+                                        DropInstallerMessageTextBlock.Opacity = 1.0;
+
+                                        // Show the result
+                                        DropInstallerGrid.Opacity = 1.0;
+
+                                        // Wait a moment and hide
+                                        await Task.Delay(2500);
+
+                                        // Unlock other controls
+                                        SearchButton.IsEnabled = true;
+                                        SearchTextBox.IsEnabled = true;
+
+                                        // Show everything
+                                        SearchPlaceholderGrid.Opacity = 1.0;
+                                        SearchErrorGrid.Opacity = 0.0;
+                                        NoResultsGrid.Opacity = 0.0;
+                                        DeviceCodeGrid.Opacity = 0.0;
+                                        DropInstallerGrid.Opacity = 0.0;
+                                    }
+                                }
+                                else
+                                {
+                                    // Prepare our resources
+                                    DropInstallerProgressRing.Opacity = 0.0;
+                                    DropInstallerErrorIcon.Opacity = 1.0;
+
+                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                                        "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
+                                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
+                                        "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid"), files[0].Name);
+                                    DropInstallerMessageTextBlock.Opacity = 1.0;
+
+                                    // Show the result
+                                    DropInstallerGrid.Opacity = 1.0;
+
+                                    // Wait a moment and hide
+                                    await Task.Delay(2500);
+
+                                    // Unlock other controls
+                                    SearchButton.IsEnabled = true;
+                                    SearchTextBox.IsEnabled = true;
+
+                                    // Show everything
+                                    SearchPlaceholderGrid.Opacity = 1.0;
+                                    SearchErrorGrid.Opacity = 0.0;
+                                    NoResultsGrid.Opacity = 0.0;
+                                    DeviceCodeGrid.Opacity = 0.0;
+                                    DropInstallerGrid.Opacity = 0.0;
+                                }
+                            }
+                                break;
+                        }
+
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Prepare our resources
+                DropInstallerProgressRing.Opacity = 0.0;
+                DropInstallerErrorIcon.Opacity = 1.0;
+
+                DropInstallerHeaderTextBlock.Text = LocalizedJsonString(
+                    "/SharedStrings/Plugins/Drop/Headers/Error/Exception");
+                DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
+                    "/SharedStrings/Plugins/Drop/Statuses/Error/Exception"), ex.Message);
+                DropInstallerMessageTextBlock.Opacity = 1.0;
+
+                // Show the result
+                DropInstallerGrid.Opacity = 1.0;
+
+                // Wait a moment and hide
+                await Task.Delay(2500);
+
+                // Unlock other controls
+                SearchButton.IsEnabled = true;
+                SearchTextBox.IsEnabled = true;
+
+                // Show everything
+                SearchPlaceholderGrid.Opacity = 1.0;
+                SearchErrorGrid.Opacity = 0.0;
+                NoResultsGrid.Opacity = 0.0;
+                DeviceCodeGrid.Opacity = 0.0;
+                DropInstallerGrid.Opacity = 0.0;
+            }
         }
     }
 
