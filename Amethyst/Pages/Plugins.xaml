@@ -254,32 +254,6 @@
                                                                         Padding="0,8,0,10">
                                                                         <Grid Margin="0,-10,0,5">
                                                                             <InfoBar
-                                                                                Severity="Error"
-                                                                                Opacity="{x:Bind BoolToOpacity(InstallError), Mode=OneWay}"
-                                                                                IsOpen="{x:Bind InstallError, Mode=OneWay}"
-                                                                                Title="{x:Bind FormatResourceString('/PluginStore/Titles/Installing/Error'), Mode=OneWay}"
-                                                                                Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Installing/Error'), Mode=OneWay}"
-                                                                                IsClosable="True" CornerRadius="0"
-                                                                                BorderThickness="0,0,0,1">
-                                                                                <InfoBar.OpacityTransition>
-                                                                                    <ScalarTransition />
-                                                                                </InfoBar.OpacityTransition>
-                                                                            </InfoBar>
-
-                                                                            <InfoBar
-                                                                                Severity="Success"
-                                                                                Opacity="{x:Bind BoolToOpacity(InstallSuccess), Mode=OneWay}"
-                                                                                IsOpen="{x:Bind InstallSuccess, Mode=OneWay}"
-                                                                                Title="{x:Bind FormatResourceString('/PluginStore/Titles/Installing/Success'), Mode=OneWay}"
-                                                                                Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Installing/Success'), Mode=OneWay}"
-                                                                                IsClosable="True" CornerRadius="0"
-                                                                                BorderThickness="0,0,0,1">
-                                                                                <InfoBar.OpacityTransition>
-                                                                                    <ScalarTransition />
-                                                                                </InfoBar.OpacityTransition>
-                                                                            </InfoBar>
-
-                                                                            <InfoBar
                                                                                 Severity="Informational"
                                                                                 Opacity="{x:Bind BoolToOpacity(Uninstalling), Mode=OneWay}"
                                                                                 IsOpen="{x:Bind Uninstalling, Mode=OneWay}"
@@ -299,28 +273,20 @@
 
                                                                             <InfoBar
                                                                                 Severity="Informational"
-                                                                                Opacity="{x:Bind BoolToOpacity(Installing), Mode=OneWay}"
-                                                                                IsOpen="{x:Bind Installing, Mode=OneWay}"
+                                                                                Opacity="{x:Bind BoolToOpacity(InstallQueued), Mode=OneWay}"
+                                                                                IsOpen="{x:Bind InstallQueued, Mode=OneWay}"
                                                                                 Title="{x:Bind FormatResourceString('/PluginStore/Titles/Installing/Setup'), Mode=OneWay}"
-                                                                                Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Installing/Downloading'), Mode=OneWay}"
+                                                                                Message="{x:Bind util:Translator.Get.String('/PluginStore/Captions/Installing/Setup'), Mode=OneWay}"
                                                                                 IsClosable="False" CornerRadius="0"
                                                                                 BorderThickness="0,0,0,1">
-                                                                                <InfoBar.Content>
-                                                                                    <StackPanel Margin="-45,0,1,0"
-                                                                                        HorizontalAlignment="Stretch"
-                                                                                        Orientation="Vertical">
-                                                                                        <ProgressBar
-                                                                                            x:Name="PluginsUpdatePendingProgressBar"
-                                                                                            Value="100"
-                                                                                            IsIndeterminate="True"
-                                                                                            ShowError="{x:Bind InstallError, Mode=OneWay}"
-                                                                                            HorizontalAlignment="Stretch" />
-                                                                                    </StackPanel>
-                                                                                </InfoBar.Content>
-
                                                                                 <InfoBar.OpacityTransition>
                                                                                     <ScalarTransition />
                                                                                 </InfoBar.OpacityTransition>
+                                                                                <InfoBar.ActionButton>
+                                                                                    <Button HorizontalAlignment="Right" Margin="0,0,-8,0"
+                                                                                        Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Cancel'), Mode=OneWay}"
+                                                                                        Click="{x:Bind CancelPluginInstall, Mode=OneWay}" />
+                                                                                </InfoBar.ActionButton>
                                                                             </InfoBar>
                                                                         </Grid>
 
@@ -601,7 +567,7 @@
                                                                                     <Button Grid.Column="1"
                                                                                         Content="Install"
                                                                                         Margin="15,0"
-                                                                                        Click="{x:Bind InstallPlugin, Mode=OneWay}" />
+                                                                                        Click="{x:Bind SchedulePluginInstall, Mode=OneWay}" />
                                                                                 </Grid>
                                                                             </Grid>
                                                                             <!--#endregion-->

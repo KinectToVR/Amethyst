@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Windows.System;
 using Amethyst.Classes;
-using Amethyst.Utils;
-using RestSharp;
-using Newtonsoft.Json.Linq;
-using Microsoft.UI.Xaml;
-using System.Net.Http;
-using System.Numerics;
 using Amethyst.Schedulers;
-using System.Threading.Tasks;
+using Amethyst.Utils;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using Microsoft.UI.Xaml.Controls;
+using System.IO;
+using Windows.Storage;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Collections.Specialized.BitVector32;
+using System.IO.Compression;
 
 namespace Amethyst.MVVM;
 
@@ -24,12 +28,9 @@ public class StorePlugin : INotifyPropertyChanged
     public string Name { get; set; }
     public bool Official { get; set; } = false;
 
-    public bool Installing { get; set; } = false;
     public bool LoadingData { get; set; } = true;
-    public bool FinishedLoadingData { get; set; } = false;
+    public bool FinishedLoadingData { get; set; }
     public bool Uninstalling => InstalledPlugin?.Uninstalling ?? false;
-    public bool InstallSuccess { get; set; } = false;
-    public bool InstallError { get; set; } = false;
     public bool PluginExpanderExpanded { get; set; } = false;
 
     public IEnumerable<StorePluginContributor> Contributors { get; set; }
@@ -42,7 +43,12 @@ public class StorePlugin : INotifyPropertyChanged
     public bool NoReleases => !HasRelease;
 
     public bool CanUninstall => InstalledPlugin?.CanUninstall ?? false;
-    public bool CanInstall => HasRelease && InstalledPlugin is null && !Uninstalling;
+
+    public bool InstallQueued => ShutdownController.ShutdownTasks
+        .Any(x => x.Data == Name + LatestRelease.Version);
+
+    public bool CanInstall => HasRelease && InstalledPlugin is null && !Uninstalling &&
+                              !Interfacing.IsExitPending && !InstallQueued;
 
     private LoadAttemptedPlugin InstalledPlugin => AppPlugins.LoadAttemptedPluginsList.FirstOrDefault(x =>
         x.Website == Repository?.Url || (x.GuidValid && x.Guid == LatestRelease?.Guid), null);
@@ -103,10 +109,185 @@ public class StorePlugin : INotifyPropertyChanged
         OnPropertyChanged(); // Refresh everything
     }
 
-    public async void InstallPlugin()
+    public void SchedulePluginInstall()
     {
-        // TODO download action etc
+        // Enqueue the update in the shutdown controller
+        ShutdownController.ShutdownTasks.Add(new ShutdownTask
+        {
+            Name = $"Install plugin ({Name}, {LatestRelease.Guid}) v{LatestRelease.Version}",
+            Priority = true,
+            Data = Name + LatestRelease.Version,
+            Action = ExecuteUpdates
+        });
+
         OnPropertyChanged(); // Refresh everything
+    }
+
+    public void CancelPluginInstall()
+    {
+        // Delete the uninstall startup action
+        ShutdownController.ShutdownTasks.Remove(ShutdownController.ShutdownTasks
+            .FirstOrDefault(x => x.Data == Name + LatestRelease.Version));
+
+        OnPropertyChanged(); // Refresh everything
+    }
+
+    private async Task<bool> ExecuteUpdates()
+    {
+        // Logic:
+        // - Download the zip to AppData\Roaming\Amethyst\Plugins\$({LatestRelease}.Guid).TEMPORARY
+        // - Unzip the plugin, dispose and delete the package if worked
+        // - Delete the .TEMPORARY suffix so Amethyst loads the plugin
+
+        try
+        {
+            // Mark the update footer as active
+            Shared.Main.PluginsUpdatePendingInfoBar.Title = string.Format(Interfacing.LocalizedJsonString(
+                "/SharedStrings/Plugins/Store/Headers/Downloading"), LatestRelease.DisplayName, LatestRelease.Version);
+
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                "/SharedStrings/Plugins/Store/Headers/Preparing");
+
+            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = true;
+            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 1.0;
+
+            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
+            Shared.Events.RefreshMainWindowEvent?.Set();
+
+            if (string.IsNullOrEmpty(LatestRelease.Download))
+            {
+                // No files to download, switch to update error
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(
+                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Store/Statuses/Error"),
+                    LatestRelease.DisplayName);
+
+                Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+                Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+
+                await Task.Delay(2500);
+                Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+                Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+                Shared.Events.RefreshMainWindowEvent?.Set();
+
+                await Task.Delay(1000);
+                return false; // That's all
+            }
+
+            // Try downloading the plugin archive from the manifest
+            Logger.Info($"Downloading the next {Name} plugin assuming it's under {LatestRelease.Download}");
+            try
+            {
+                // Update the progress message
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
+                        "/SharedStrings/Plugins/Store/Statuses/Downloading"), LatestRelease.DisplayName,
+                    LatestRelease.Version);
+
+                // Create a stream reader using the received Installer Uri
+                await using var stream =
+                    await GithubClient.DownloadStreamAsync(new RestRequest(LatestRelease.Download));
+
+                // Search for an empty folder in AppData
+                var installFolder = Interfacing.GetAppDataPluginFolderDir(
+                    string.Join("_", LatestRelease.Guid.Split(
+                        Path.GetInvalidFileNameChars().Append('.').ToArray())) + ".TEMPORARY");
+
+                // Randomize the path if already exists
+                // Delete if only a single null folder
+                if (Directory.Exists(installFolder))
+                {
+                    if (Directory.EnumerateFileSystemEntries(installFolder).Any())
+                        installFolder = Interfacing.GetAppDataPluginFolderDir(
+                            string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) + ".TEMPORARY");
+
+                    // Else delete if empty
+                    else Directory.Delete(installFolder, true);
+                }
+
+                // Try creating the install folder
+                Directory.CreateDirectory(installFolder!);
+
+                // Replace or create our installer file
+                var pluginArchive = await (await StorageFolder
+                    .GetFolderFromPathAsync(installFolder)).CreateFileAsync(
+                    "package.zip", CreationCollisionOption.ReplaceExisting);
+
+                // Create an output stream and push all the available data to it
+                await using var fsPluginArchive = await pluginArchive.OpenStreamForWriteAsync();
+                await stream!.CopyToAsync(fsPluginArchive); // The runtime will do the rest for us
+
+                // Close the stream
+                await stream.DisposeAsync();
+                await fsPluginArchive.DisposeAsync();
+
+                // Unpack the archive now
+                Logger.Info("Unpacking the new plugin from its archive...");
+                ZipFile.ExtractToDirectory(pluginArchive.Path, installFolder, true);
+
+                Logger.Info("Deleting the plugin installation package...");
+                File.Delete(pluginArchive.Path); // Cleanup after the install
+
+                // Rename the plugin folder if everything's fine
+                Directory.Move(installFolder, installFolder[..^".TEMPORARY".Length]);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Error installing {Name}");
+                Logger.Error(e); // Print everything
+
+                // No files to download, switch to update error
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(
+                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Store/Statuses/Error"),
+                    LatestRelease.DisplayName);
+
+                Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+                Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+
+                await Task.Delay(2500);
+                Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+                Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+                Shared.Events.RefreshMainWindowEvent?.Set();
+
+                await Task.Delay(1000);
+                return false; // That's all
+            }
+
+            // Everything's fine, show the restart notice
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
+                "/SharedStrings/Plugins/Store/Headers/Restart"), LatestRelease.DisplayName);
+
+            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = false;
+            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
+
+            await Task.Delay(2500);
+            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+            Shared.Events.RefreshMainWindowEvent?.Set();
+
+            // Still here? We're done!
+            await Task.Delay(1000);
+            return true; // That's all
+        }
+        catch (Exception e)
+        {
+            Logger.Info(e);
+
+            // No files to download, switch to update error
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
+                "/SharedStrings/Plugins/Store/Statuses/Error"), LatestRelease.DisplayName);
+
+            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+
+            await Task.Delay(2500);
+            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+            Shared.Events.RefreshMainWindowEvent?.Set();
+
+            await Task.Delay(1000);
+            return false; // That's all
+        }
     }
 
     public async void FetchPluginData()
@@ -168,12 +349,12 @@ public class StorePlugin : INotifyPropertyChanged
                 Description = release["body"]?.ToString() ?? Repository.Description,
 
                 Guid = manifest["guid"]?.ToString(),
-                Version = manifest["version"]?.ToString(),
+                Version = "v" + (manifest["version"]?.ToString() ?? "1.0.0.0"),
                 Changelog = manifest["changelog"]?.ToString(),
                 DisplayName = manifest["display_name"]?.ToString(),
 
                 Download = release["assets"]?.Children().FirstOrDefault(
-                        x => x["name"]?.ToString().EndsWith(".zip") ?? false, null)?
+                        x => x["name"]?.ToString() == manifest["download"]?.ToString(), null)?
                     ["browser_download_url"]?.ToString()
             };
 
