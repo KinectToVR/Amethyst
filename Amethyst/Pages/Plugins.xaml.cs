@@ -149,7 +149,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         else
         {
             // Only a search query
-            await ExecuteSearch(query); 
+            await ExecuteSearch(query);
         }
     }
 
@@ -281,14 +281,50 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             // - Check if it's actually from GitHub
             // - Search for the releases and the manifest
             // - Install the plugin and prompt to restart
-        }
 
-        if (e.DataView.Contains(StandardDataFormats.Text))
+            if (uri.ToString().EndsWith(".zip"))
+            {
+                // The provided text is a link to the plugin zip, process as drag-and-drop
+                // TODO DRAGANDDROP
+            }
+            else if (uri.ToString().StartsWith("https://github.com/") ||
+                     uri.ToString().StartsWith("http://github.com/"))
+            {
+                SearchTextBox.Text = uri.ToString();
+                await ExecuteSearch(uri.ToString() // The provided text is a link
+                    .Replace("https://github.com/", string.Empty)
+                    .Replace("http://github.com/", string.Empty));
+            }
+            else
+            {
+                SearchTextBox.Text = uri.ToString();
+                await ExecuteSearch(uri.ToString());
+            }
+        }
+        else if (e.DataView.Contains(StandardDataFormats.Text))
         {
-            var uri = await e.DataView.GetTextAsync();
-            Logger.Info($"Dropped a web link! Data: {uri}");
+            var text = await e.DataView.GetTextAsync();
+            Logger.Info($"Dropped a text chunk! Data: {text}");
 
             // (The same as upper)
+            if (text.EndsWith(".zip") && Uri.TryCreate(text, UriKind.Absolute, out _))
+            {
+                // The provided text is a link to the plugin zip, process as drag-and-drop
+                // TODO DRAGANDDROP
+            }
+            else if (text.StartsWith("https://github.com/") ||
+                     text.StartsWith("http://github.com/"))
+            {
+                SearchTextBox.Text = text;
+                await ExecuteSearch(text // The provided text is a link
+                    .Replace("https://github.com/", string.Empty)
+                    .Replace("http://github.com/", string.Empty));
+            }
+            else
+            {
+                SearchTextBox.Text = text;
+                await ExecuteSearch(text);
+            }
         }
         else if (e.DataView.Contains(StandardDataFormats.StorageItems))
         {
