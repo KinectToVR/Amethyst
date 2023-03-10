@@ -47,7 +47,7 @@
                              CloseButtonClick="EndingTeachingTip_CloseButtonClick" />
 
                 <Flyout x:Name="CommandFlyout" ShowMode="TransientWithDismissOnPointerMoveAway"
-                        Placement="Top" Opening="CommandFlyout_Opening">
+                        Placement="Top" Opening="CommandFlyout_Opening" Closing="CommandFlyout_Closing">
                     <Flyout.FlyoutPresenterStyle>
                         <Style TargetType="FlyoutPresenter">
                             <Setter Property="MinHeight" Value="60" />
@@ -259,7 +259,7 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <Flyout x:Name="TelemetryFlyout">
+            <Flyout x:Name="TelemetryFlyout" Opening="TelemetryFlyout_Opening" Closing="TelemetryFlyout_Closing">
                 <Flyout.FlyoutPresenterStyle>
                     <Style TargetType="FlyoutPresenter">
                         <Setter Property="MinWidth" Value="470" />
