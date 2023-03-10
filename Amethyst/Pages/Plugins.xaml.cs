@@ -138,22 +138,16 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
     private async Task ProcessQuery(string query)
     {
-        if (query.EndsWith(".zip"))
-        {
+        if (query.EndsWith(".zip") && Uri.TryCreate(query, UriKind.Absolute, out var uri))
             // The provided text is a link to the plugin zip, process as drag-and-drop
-            // TODO DRAGANDDROP
-        }
+            await InstallRemoteZipPlugin(uri);
         else if (query.StartsWith("https://github.com/") || query.StartsWith("http://github.com/"))
-        {
             await ExecuteSearch(query // The provided text is a link
                 .Replace("https://github.com/", string.Empty)
                 .Replace("http://github.com/", string.Empty));
-        }
         else
-        {
             // Only a search query
             await ExecuteSearch(query);
-        }
     }
 
     private async Task ExecuteSearch(string query)
@@ -289,7 +283,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             if (uri.ToString().EndsWith(".zip"))
             {
                 // The provided text is a link to the plugin zip, process as drag-and-drop
-                // TODO DRAGANDDROP
+                await InstallRemoteZipPlugin(uri);
             }
             else if (uri.ToString().StartsWith("https://github.com/") ||
                      uri.ToString().StartsWith("http://github.com/"))
@@ -311,10 +305,10 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             Logger.Info($"Dropped a text chunk! Data: {text}");
 
             // (The same as upper)
-            if (text.EndsWith(".zip") && Uri.TryCreate(text, UriKind.Absolute, out _))
+            if (text.EndsWith(".zip") && Uri.TryCreate(text, UriKind.Absolute, out var uri))
             {
                 // The provided text is a link to the plugin zip, process as drag-and-drop
-                // TODO DRAGANDDROP
+                await InstallRemoteZipPlugin(uri);
             }
             else if (text.StartsWith("https://github.com/") ||
                      text.StartsWith("http://github.com/"))
@@ -393,6 +387,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                 string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                     .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
+                            Logger.Info("Preparing the file system...");
+
                             // Randomize the path if already exists
                             // Delete if only a single null folder
                             if (Directory.Exists(installFolder))
@@ -428,6 +424,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         new DirectoryInfo(folder.Path).CopyToFolderAsync(downloadFolder);
                                         break;
                                 }
+
+                            Logger.Info($"Moving temp {downloadFolder} to {installFolder}...");
 
                             // Rename the plugin folder if everything's fine
                             Directory.Move(downloadFolder, installFolder);
@@ -541,6 +539,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                             .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
+                                    Logger.Info("Preparing the file system...");
+
                                     // Randomize the path if already exists
                                     // Delete if only a single null folder
                                     if (Directory.Exists(installFolder))
@@ -576,6 +576,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                                 new DirectoryInfo(folder.Path).CopyToFolderAsync(downloadFolder);
                                                 break;
                                         }
+
+                                    Logger.Info($"Moving temp {downloadFolder} to {installFolder}...");
 
                                     // Rename the plugin folder if everything's fine
                                     Directory.Move(downloadFolder, installFolder);
@@ -684,6 +686,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                             string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                                 .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
+                                        Logger.Info("Preparing the file system...");
+
                                         // Randomize the path if already exists
                                         // Delete if only a single null folder
                                         if (Directory.Exists(installFolder))
@@ -708,6 +712,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         // Unpack the archive now
                                         Logger.Info("Unpacking the new plugin from its package...");
                                         archive.ExtractToDirectory(downloadFolder, true);
+
+                                        Logger.Info($"Moving temp {downloadFolder} to {installFolder}...");
 
                                         // Rename the plugin folder if everything's fine
                                         Directory.Move(downloadFolder, installFolder);
@@ -834,6 +840,229 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                 DeviceCodeGrid.Opacity = 0.0;
                 DropInstallerGrid.Opacity = 0.0;
             }
+        }
+    }
+
+    private async Task InstallRemoteZipPlugin(Uri link)
+    {
+        Logger.Info($"Dropped an installation package: {link.AbsoluteUri}");
+
+        // Block other controls
+        SearchButton.IsEnabled = false;
+        SearchTextBox.IsEnabled = false;
+
+        // Hide everything
+        SearchPlaceholderGrid.Opacity = 0.0;
+        SearchErrorGrid.Opacity = 0.0;
+        NoResultsGrid.Opacity = 0.0;
+        DeviceCodeGrid.Opacity = 0.0;
+        DropInstallerGrid.Opacity = 0.0;
+
+        DropInstallerMessageTextBlock.Opacity = 0.0;
+
+        // Check if the file is a zip
+        if (link.IsAbsoluteUri)
+        {
+            // Try downloading the plugin archive from the link
+            Logger.Info($"Downloading the next {Name} plugin assuming it's under {link.AbsoluteUri}");
+            try
+            {
+                Logger.Info("Preparing UI resources...");
+
+                // Prepare our resources
+                DropInstallerProgressRing.IsIndeterminate = true;
+                DropInstallerProgressRing.Opacity = 1.0;
+                DropInstallerErrorIcon.Opacity = 0.0;
+
+                DropInstallerHeaderTextBlock.Text = string.Format(
+                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Downloading"),
+                    link.Segments.LastOrDefault("package.zip"));
+
+                // Show the progress indicator
+                DropInstallerGrid.Opacity = 1.0;
+
+                Logger.Info("Creating the download stream...");
+
+                // Create a stream reader using the received Installer Uri
+                await using var stream = await GithubClient.DownloadStreamAsync(new RestRequest(link));
+
+                // Search for an empty folder in AppData
+                var installFolder = new DirectoryInfo(GetAppDataPluginFolderDir(
+                    string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray()))));
+
+                // Create an empty folder in TempAppData
+                var downloadFolder = new DirectoryInfo(GetTempPluginFolderDir(
+                    string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray()))));
+
+                Logger.Info("Preparing the file system...");
+
+                // Randomize the path if already exists
+                // Delete if only a single null folder
+                if (installFolder.Exists)
+                {
+                    if (Directory.EnumerateFileSystemEntries(installFolder.FullName).Any())
+                        installFolder = new DirectoryInfo(GetAppDataPluginFolderDir(
+                            string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray()))));
+
+                    // Else delete if empty
+                    else installFolder.Delete(true);
+                }
+
+                // Try reserving the install folder
+                if (installFolder!.Exists)
+                    installFolder!.Delete(true);
+
+                // Try creating the download folder
+                if (!downloadFolder!.Exists)
+                    Directory.CreateDirectory(downloadFolder.FullName);
+
+                // Replace or create our installer file
+                var pluginArchive = await (await StorageFolder
+                        .GetFolderFromPathAsync(downloadFolder.FullName))
+                    .CreateFileAsync(link.Segments.LastOrDefault("package.zip"),
+                        CreationCollisionOption.ReplaceExisting);
+
+                // Create an output stream and push all the available data to it
+                await using var fsPluginArchive = await pluginArchive.OpenStreamForWriteAsync();
+                await stream!.CopyToAsync(fsPluginArchive); // The runtime will do the rest for us
+
+                // Close the stream
+                await stream.DisposeAsync();
+                await fsPluginArchive.DisposeAsync();
+
+                Logger.Info($"Validating the downloaded archive at {pluginArchive.Path}...");
+
+                // Search for a plugin dll
+                using var archive = ZipFile.OpenRead(pluginArchive.Path);
+                if (archive.Entries.Any(x =>
+                        x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll")))
+                {
+                    // Prepare our resources
+                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                        "/SharedStrings/Plugins/Drop/Headers/Installing"), pluginArchive.Name);
+
+                    Logger.Info($"Unpacking the archive at {pluginArchive.Path}...");
+
+                    // Unpack the archive now
+                    Logger.Info("Unpacking the new plugin from its package...");
+                    archive.ExtractToDirectory(downloadFolder.FullName, true);
+
+                    archive.Dispose(); // Close the archive file, dispose
+                    Logger.Info("Deleting the plugin installation package...");
+                    File.Delete(pluginArchive.Path); // Cleanup after the install
+
+                    Logger.Info($"Moving temp {downloadFolder.FullName} to {installFolder.FullName}...");
+
+                    // Rename the plugin folder if everything's fine
+                    downloadFolder.MoveTo(installFolder.FullName);
+
+                    // Wait a bit
+                    await Task.Delay(3000);
+
+                    // Prepare our resources
+                    DropInstallerProgressRing.IsIndeterminate = false;
+                    DropInstallerProgressRing.Value = 100;
+
+                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                        "/SharedStrings/Plugins/Drop/Headers/Installed"), pluginArchive.Name);
+                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
+                        "/SharedStrings/Plugins/Drop/Statuses/Installed"), pluginArchive.Name);
+                    DropInstallerMessageTextBlock.Opacity = 1.0;
+
+                    // Wait a moment and hide
+                    await Task.Delay(3500);
+
+                    // Unlock other controls
+                    SearchButton.IsEnabled = true;
+                    SearchTextBox.IsEnabled = true;
+
+                    // Show everything
+                    SearchPlaceholderGrid.Opacity = 1.0;
+                    SearchErrorGrid.Opacity = 0.0;
+                    NoResultsGrid.Opacity = 0.0;
+                    DeviceCodeGrid.Opacity = 0.0;
+                    DropInstallerGrid.Opacity = 0.0;
+                }
+                else
+                {
+                    // Prepare our resources
+                    DropInstallerProgressRing.Opacity = 0.0;
+                    DropInstallerErrorIcon.Opacity = 1.0;
+
+                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                        "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), pluginArchive.Name);
+                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
+                        "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), pluginArchive.Name);
+                    DropInstallerMessageTextBlock.Opacity = 1.0;
+
+                    // Show the result
+                    DropInstallerGrid.Opacity = 1.0;
+
+                    // Wait a moment and hide
+                    await Task.Delay(2500);
+
+                    // Unlock other controls
+                    SearchButton.IsEnabled = true;
+                    SearchTextBox.IsEnabled = true;
+
+                    // Show everything
+                    SearchPlaceholderGrid.Opacity = 1.0;
+                    SearchErrorGrid.Opacity = 0.0;
+                    NoResultsGrid.Opacity = 0.0;
+                    DeviceCodeGrid.Opacity = 0.0;
+                    DropInstallerGrid.Opacity = 0.0;
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(new Exception($"Error downloading the plugin! Message: {e.Message}"));
+
+                // No files to download, switch to update error
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                    "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
+
+                Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+                Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+
+                await Task.Delay(2500);
+                Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+                Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+                Shared.Events.RefreshMainWindowEvent?.Set();
+
+                await Task.Delay(1000);
+            }
+        }
+        else
+        {
+            // Prepare our resources
+            DropInstallerProgressRing.Opacity = 0.0;
+            DropInstallerErrorIcon.Opacity = 1.0;
+
+            DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), link);
+            DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
+                "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid"), link);
+            DropInstallerMessageTextBlock.Opacity = 1.0;
+
+            // Show the result
+            DropInstallerGrid.Opacity = 1.0;
+
+            // Wait a moment and hide
+            await Task.Delay(2500);
+
+            // Unlock other controls
+            SearchButton.IsEnabled = true;
+            SearchTextBox.IsEnabled = true;
+
+            // Show everything
+            SearchPlaceholderGrid.Opacity = 1.0;
+            SearchErrorGrid.Opacity = 0.0;
+            NoResultsGrid.Opacity = 0.0;
+            DeviceCodeGrid.Opacity = 0.0;
+            DropInstallerGrid.Opacity = 0.0;
         }
     }
 

@@ -49,11 +49,12 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBox Header="Search or paste a link:"
-                                         PlaceholderText="Search for plugins, or paste the link to a plugin repo"
-                                         IsSpellCheckEnabled="False"
-                                         TextChanged="SearchTextBox_TextChanged"
-                                         x:Name="SearchTextBox" KeyDown="SearchTextBox_KeyDown" />
+                                <TextBox
+                                    Header="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/Search'), Mode=OneWay}"
+                                    PlaceholderText="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Contents/Search'), Mode=OneWay}"
+                                    IsSpellCheckEnabled="False"
+                                    TextChanged="SearchTextBox_TextChanged"
+                                    x:Name="SearchTextBox" KeyDown="SearchTextBox_KeyDown" />
                                 <Button VerticalAlignment="Bottom" Grid.Column="1"
                                         x:Name="SearchButton" Click="SearchButton_Click">
                                     <Button.Content>
@@ -100,12 +101,12 @@
                                                        FontSize="14"
                                                        HorizontalTextAlignment="Center"
                                                        TextTrimming="CharacterEllipsis"
-                                                       Text="Search for plugins using keywords from their names or descriptions, &#x0a;or just paste the link to a plugin repository located on GitHub." />
+                                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/SearchTip/Search'), Mode=OneWay}" />
                                             <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
                                                        FontSize="14"
                                                        HorizontalTextAlignment="Center"
                                                        TextTrimming="CharacterEllipsis"
-                                                       Text="You can also drag-and-drop a plugin link/folder/zip here to install it." />
+                                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/SearchTip/Drag'), Mode=OneWay}" />
 
                                         </StackPanel>
                                         <Grid.OpacityTransition>
@@ -126,12 +127,12 @@
                                                        FontSize="14"
                                                        HorizontalTextAlignment="Center"
                                                        TextTrimming="CharacterEllipsis"
-                                                       Text="A fatal exception occurred whilst executing the plugin search query, &#x0a;or you've just exceeded the GitHub API request rate limit." />
+                                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/ErrorTip/Content'), Mode=OneWay}" />
                                             <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
                                                        FontSize="14"
                                                        HorizontalTextAlignment="Center"
                                                        TextTrimming="CharacterEllipsis"
-                                                       Text="You still install plugins via drag-and-drop or using a link/folder/zip." />
+                                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/ErrorTip/Drag'), Mode=OneWay}" />
 
                                         </StackPanel>
                                         <Grid.OpacityTransition>
@@ -152,7 +153,7 @@
                                                        FontSize="14"
                                                        HorizontalTextAlignment="Center"
                                                        TextTrimming="CharacterEllipsis"
-                                                       Text="Your search happened not to return any results. &#x0a;...or was it just the wind all along, who knows?" />
+                                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/NoResults'), Mode=OneWay}" />
                                         </StackPanel>
                                         <Grid.OpacityTransition>
                                             <ScalarTransition />
@@ -175,12 +176,12 @@
                                                        FontSize="14"
                                                        HorizontalTextAlignment="Center"
                                                        TextTrimming="CharacterEllipsis"
-                                                       Text="Paste this code into the prompt your web browser has just shown." />
+                                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/Login/Instructions'), Mode=OneWay}" />
                                             <TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
                                                        FontSize="14"
                                                        HorizontalTextAlignment="Center"
                                                        TextTrimming="CharacterEllipsis"
-                                                       Text="This will log you in to the GitHub API, allowing higher query rate." />
+                                                       Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/Login/Message'), Mode=OneWay}" />
 
                                         </StackPanel>
                                         <Grid.OpacityTransition>
@@ -267,7 +268,7 @@
                                                                         VerticalAlignment="Top"
                                                                         Visibility="{x:Bind Official, Mode=OneWay}"
                                                                         Margin="0,5,10,0" Width="17" Height="17"
-                                                                        ToolTipService.ToolTip="Published by K2VR Team">
+                                                                        ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Tips/Official'), Mode=OneWay}">
                                                                         <InfoBadge.IconSource>
                                                                             <FontIconSource Glyph="&#xE73E;"
                                                                                 Foreground="{ThemeResource NoThemeColorSolidColorBrush}" />
@@ -399,7 +400,7 @@
                                                                                 <TextBlock VerticalAlignment="Top"
                                                                                     Grid.Column="0"
                                                                                     FontWeight="SemiBold" Opacity="0.5"
-                                                                                    Text="Plugin description:" />
+                                                                                    Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Labels/Description'), Mode=OneWay}" />
 
                                                                                 <TextBlock VerticalAlignment="Top"
                                                                                     Grid.Column="1"
@@ -427,7 +428,7 @@
                                                                                     HorizontalAlignment="Left"
                                                                                     TextWrapping="WrapWholeWords"
                                                                                     TextTrimming="CharacterEllipsis"
-                                                                                    Text="This plugin has no releases and can't be installed using the store.&#x0a;Feel free to contact the author about testing or preview releases." />
+                                                                                    Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Labels/NoReleases'), Mode=OneWay}" />
                                                                                 <Grid.OpacityTransition>
                                                                                     <ScalarTransition />
                                                                                 </Grid.OpacityTransition>
@@ -448,7 +449,7 @@
                                                                                         Grid.Column="0"
                                                                                         FontWeight="SemiBold"
                                                                                         Opacity="0.5"
-                                                                                        Text="Release title:" />
+                                                                                        Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Labels/Title'), Mode=OneWay}" />
 
                                                                                     <TextBlock
                                                                                         VerticalAlignment="Center"
@@ -469,7 +470,7 @@
                                                                                         Grid.Column="0"
                                                                                         FontWeight="SemiBold"
                                                                                         Opacity="0.5"
-                                                                                        Text="Published on:" />
+                                                                                        Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Labels/Date'), Mode=OneWay}" />
 
                                                                                     <TextBlock
                                                                                         VerticalAlignment="Center"
@@ -490,7 +491,7 @@
                                                                                         Grid.Column="0"
                                                                                         FontWeight="SemiBold"
                                                                                         Opacity="0.5"
-                                                                                        Text="Changelog:" />
+                                                                                        Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Labels/Changelog'), Mode=OneWay}" />
 
                                                                                     <TextBlock VerticalAlignment="Top"
                                                                                         Grid.Column="1"
@@ -574,7 +575,7 @@
                                                                                         Opacity="0.7" FontSize="15"
                                                                                         TextWrapping="WrapWholeWords"
                                                                                         TextTrimming="CharacterEllipsis"
-                                                                                        Text="This plugin is already installed, do you wish to uninstall it?" />
+                                                                                        Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Tips/AlreadyInstalled'), Mode=OneWay}" />
 
                                                                                     <Button Grid.Column="1"
                                                                                         Content="Remove"
@@ -614,8 +615,9 @@
                                                                                         Text="{x:Bind FormatReleaseString('/PluginStore/Titles/Install'), Mode=OneWay}" />
 
                                                                                     <Button Grid.Column="1"
-                                                                                        Content="Install"
+                                                                                        Content="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Buttons/Install'), Mode=OneWay}"
                                                                                         Margin="15,0"
+                                                                                        Style="{ThemeResource AccentButtonStyle}"
                                                                                         Click="{x:Bind SchedulePluginInstall, Mode=OneWay}" />
                                                                                 </Grid>
                                                                             </Grid>
@@ -656,11 +658,14 @@
                                         <TextBlock Grid.Column="1" FontSize="14" FontWeight="SemiBold"
                                                    TextTrimming="CharacterEllipsis" Tapped="LoginTextBlock_Tapped"
                                                    VerticalAlignment="Center" TextWrapping="WrapWholeWords">
-                                            <Run Text="GitHub API rate exceeded. Please wait a while, or" />
-                                            <Run Text="log in to GitHub" TextDecorations="Underline"
-                                                 Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
-                                            <Run Text="to search for more Amethyst plugins." />
-                                            <Run Text="You can still install plugins using drag-and-drop." />
+                                            <Run
+                                                Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/RateTip/Start'), Mode=OneWay}" />
+                                            <Run
+                                                Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/RateTip/Link'), Mode=OneWay}"
+                                                TextDecorations="Underline"
+                                                Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+                                            <Run
+                                                Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Headers/RateTip/End'), Mode=OneWay}" />
                                         </TextBlock>
                                     </Grid>
                                 </Grid>
