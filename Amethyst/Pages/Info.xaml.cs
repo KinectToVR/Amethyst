@@ -163,6 +163,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
         {
             if (_commandConfirmLocked) return;
             _commandConfirmLocked = true; // Don't re-accept now!
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
             // Check starts-with first : toast?
             if (((TextBox)sender).Text.ToLowerInvariant().StartsWith("toast "))
@@ -444,15 +445,21 @@ public sealed partial class Info : Page, INotifyPropertyChanged
     private void CommandFlyout_Opening(object sender, object e)
     {
         SetCommandText("Type command:");
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
     }
 
     private async void TelemetryToggleSwitch_Toggled(object sender, RoutedEventArgs e)
     {
+        if (!_infoPageLoadedOnce) return;
         AppData.Settings.IsTelemetryEnabled = (sender as ToggleSwitch)?.IsOn ?? true;
         AppData.Settings.SaveSettings(); // Save our made changes
 
         await Analytics.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);
         await Crashes.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);
+
+        AppSounds.PlayAppSound(AppData.Settings.IsTelemetryEnabled
+            ? AppSounds.AppSoundType.ToggleOn
+            : AppSounds.AppSoundType.ToggleOff);
     }
 
     private void TelemetryTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
@@ -462,5 +469,20 @@ public sealed partial class Info : Page, INotifyPropertyChanged
             Placement = FlyoutPlacementMode.Top,
             ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway
         });
+    }
+
+    private void TelemetryFlyout_Opening(object sender, object e)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    private void TelemetryFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+    }
+
+    private void CommandFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 }
