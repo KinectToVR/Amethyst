@@ -192,33 +192,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         DeviceStatusTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
         DeviceStatusTeachingTip.IsOpen = true;
     }
-
-    private void PluginManagerFlyout_Opening(object sender, object e)
-    {
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
-
-        Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
-        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
-
-        Interfacing.IsNuxPending = true;
-    }
-
-    private void PluginManagerFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
-    {
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
-    }
-
-    private void PluginManagerFlyout_Closed(object sender, object e)
-    {
-        Shared.Main.InterfaceBlockerGrid.Opacity = 0.0;
-        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
-
-        Interfacing.IsNuxPending = false;
-        Shared.Devices.PluginsPageOpened = false;
-    }
-
+    
     private async void TrackingDeviceTreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
     {
         if (!Shared.Devices.DevicesTabSetupFinished) return; // Block dummy selects
@@ -500,12 +474,6 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
-    }
-
-    private async void PluginManagerFlyout_OnOpened(object sender, object e)
-    {
-        await Task.Delay(100); // Wait a bit and unblock
-        Shared.Devices.PluginsPageOpened = true;
     }
 
     public void OnPropertyChanged(string propName = null)

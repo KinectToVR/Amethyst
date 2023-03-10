@@ -308,7 +308,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         set
         {
             if (IsLoaded == value) return; // No changes
-            if (!Shared.Devices.PluginsPageOpened)
+            if (CurrentAppState != "plugins")
             {
                 OnPropertyChanged();
                 return; // Sanity check
@@ -373,10 +373,14 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             // Show the reload tip on any valid changes
             // == cause the upper check would make it different
             // and it's already been assigned at the beginning
-            if (Shared.Devices.PluginsPageOpened && IsLoaded == value)
+            if (CurrentAppState == "plugins" && IsLoaded == value)
             {
                 Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen = true;
                 Shared.TeachingTips.MainPage.ReloadInfoBar.Opacity = 1.0;
+
+                AppSounds.PlayAppSound(value
+                    ? AppSounds.AppSoundType.ToggleOn
+                    : AppSounds.AppSoundType.ToggleOff);
             }
 
             // Save settings
@@ -516,6 +520,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
                 Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
                 Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
                 await Task.Delay(2500);
                 Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
@@ -556,6 +561,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
                 Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
                 Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
                 await Task.Delay(2500);
                 Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
@@ -583,6 +589,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = false;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
             await Task.Delay(2500);
             Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
@@ -603,6 +610,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
             await Task.Delay(2500);
             Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
@@ -617,6 +625,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public void EnqueuePluginUninstall()
     {
         // Enqueue a delete startup action to uninstall this plugin
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         StartupController.Controller.StartupTasks.Add(
             new StartupDeleteTask
             {
@@ -633,6 +642,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public void CancelPluginUninstall()
     {
         // Delete the uninstall startup action
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         StartupController.Controller.StartupTasks.Remove(
             StartupController.Controller.StartupTasks
                 .FirstOrDefault(x => x.Data == Folder + Guid + Version));
@@ -678,6 +688,16 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
+    public void PlayExpandingSound()
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    public void PlayCollapsingSound()
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 }
 

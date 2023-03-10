@@ -34,6 +34,7 @@ public static class ShutdownController
             try
             {
                 // Try running the queued task
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
                 Logger.Info($"Task result: {await task.Action()}");
             }
             catch (Exception e)
@@ -49,7 +50,7 @@ public static class ShutdownController
             Logger.Info($"Starting task with name \"{task.Name}\"...");
             try
             {
-                // Try running the queued task
+                // Try running the queued task, no sounds here though
                 Logger.Info($"Task result: {await task.Action()}");
             }
             catch (Exception e)

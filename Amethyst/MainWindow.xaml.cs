@@ -1730,9 +1730,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overview"),
             "overrides" => Interfacing.LocalizedJsonString(
                 "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overrides"),
-            "info" => Interfacing.LocalizedJsonString(
-                "/SharedStrings/Buttons/Help/Docs/InfoPage/OpenCollective"),
-            _ => HelpFlyoutDocsButton.Text
+            "info" or _ => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/InfoPage/OpenCollective")
         };
 
         // Show the help flyout

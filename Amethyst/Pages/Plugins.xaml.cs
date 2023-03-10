@@ -61,6 +61,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                 SearchTextBox.IsEnabled = false;
 
                 ResultForbiddenGrid.Visibility = Visibility.Visible;
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
                 // Invalidate the token in settings
                 AppData.Settings.GitHubToken = (false, string.Empty);
@@ -126,13 +127,14 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
     private async void SearchButton_Click(object sender, RoutedEventArgs e)
     {
-        if (string.IsNullOrEmpty(SearchTextBox.Text)) return;
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         await ProcessQuery(SearchTextBox.Text); // Search using our query
     }
 
     private async void SearchTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key != VirtualKey.Enter) return; // Discard non-confirms
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         await ProcessQuery((sender as TextBox)?.Text);
     }
 
@@ -358,6 +360,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                         NoResultsGrid.Opacity = 0.0;
                         DeviceCodeGrid.Opacity = 0.0;
                         DropInstallerGrid.Opacity = 0.0;
+                        SearchResultsGrid.Opacity = 0.0;
 
                         DropInstallerMessageTextBlock.Opacity = 0.0;
 
@@ -376,9 +379,10 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
                             // Show the progress indicator
                             DropInstallerGrid.Opacity = 1.0;
+                            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
-                            // Search for an empty folder in AppData
-                            var installFolder = GetAppDataPluginFolderDir(
+                                // Search for an empty folder in AppData
+                                var installFolder = GetAppDataPluginFolderDir(
                                 string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                     .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
@@ -443,10 +447,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             DropInstallerMessageTextBlock.Text = string.Format(
                                 LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Installed"),
                                 files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
-                            DropInstallerMessageTextBlock.Opacity = 1.0;
 
-                            // Wait a moment and hide
-                            await Task.Delay(3500);
+                            DropInstallerMessageTextBlock.Opacity = 1.0;
+                            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
+
+                                // Wait a moment and hide
+                                await Task.Delay(3500);
 
                             // Unlock other controls
                             SearchButton.IsEnabled = true;
@@ -471,7 +477,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             DropInstallerMessageTextBlock.Text = string.Format(
                                 LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural"),
                                 files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+
                             DropInstallerMessageTextBlock.Opacity = 1.0;
+                            AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
                             // Show the result
                             DropInstallerGrid.Opacity = 1.0;
@@ -511,6 +519,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                 NoResultsGrid.Opacity = 0.0;
                                 DeviceCodeGrid.Opacity = 0.0;
                                 DropInstallerGrid.Opacity = 0.0;
+                                SearchResultsGrid.Opacity = 0.0;
 
                                 DropInstallerMessageTextBlock.Opacity = 0.0;
 
@@ -528,9 +537,10 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
                                     // Show the progress indicator
                                     DropInstallerGrid.Opacity = 1.0;
+                                    AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
-                                    // Search for an empty folder in AppData
-                                    var installFolder = GetAppDataPluginFolderDir(
+                                        // Search for an empty folder in AppData
+                                        var installFolder = GetAppDataPluginFolderDir(
                                         string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                             .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
@@ -593,10 +603,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         "/SharedStrings/Plugins/Drop/Headers/Installed"), files[0].Name);
                                     DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
                                         "/SharedStrings/Plugins/Drop/Statuses/Installed"), files[0].Name);
-                                    DropInstallerMessageTextBlock.Opacity = 1.0;
 
-                                    // Wait a moment and hide
-                                    await Task.Delay(3500);
+                                    DropInstallerMessageTextBlock.Opacity = 1.0;
+                                    AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
+
+                                        // Wait a moment and hide
+                                        await Task.Delay(3500);
 
                                     // Unlock other controls
                                     SearchButton.IsEnabled = true;
@@ -619,7 +631,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
                                     DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
                                         "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), files[0].Name);
+
                                     DropInstallerMessageTextBlock.Opacity = 1.0;
+                                    AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
                                     // Show the result
                                     DropInstallerGrid.Opacity = 1.0;
@@ -654,6 +668,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                 NoResultsGrid.Opacity = 0.0;
                                 DeviceCodeGrid.Opacity = 0.0;
                                 DropInstallerGrid.Opacity = 0.0;
+                                SearchResultsGrid.Opacity = 0.0;
 
                                 DropInstallerMessageTextBlock.Opacity = 0.0;
 
@@ -675,9 +690,10 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
                                         // Show the progress indicator
                                         DropInstallerGrid.Opacity = 1.0;
+                                        AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
-                                        // Search for an empty folder in AppData
-                                        var installFolder = GetAppDataPluginFolderDir(
+                                            // Search for an empty folder in AppData
+                                            var installFolder = GetAppDataPluginFolderDir(
                                             string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                                 .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
@@ -729,10 +745,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                             "/SharedStrings/Plugins/Drop/Headers/Installed"), files[0].Name);
                                         DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
                                             "/SharedStrings/Plugins/Drop/Statuses/Installed"), files[0].Name);
-                                        DropInstallerMessageTextBlock.Opacity = 1.0;
 
-                                        // Wait a moment and hide
-                                        await Task.Delay(3500);
+                                        DropInstallerMessageTextBlock.Opacity = 1.0;
+                                        AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
+
+                                            // Wait a moment and hide
+                                            await Task.Delay(3500);
 
                                         // Unlock other controls
                                         SearchButton.IsEnabled = true;
@@ -755,7 +773,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                             "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
                                         DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
                                             "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), files[0].Name);
+
                                         DropInstallerMessageTextBlock.Opacity = 1.0;
+                                        AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
                                         // Show the result
                                         DropInstallerGrid.Opacity = 1.0;
@@ -785,7 +805,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
                                     DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
                                         "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid"), files[0].Name);
+
                                     DropInstallerMessageTextBlock.Opacity = 1.0;
+                                    AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
                                     // Show the result
                                     DropInstallerGrid.Opacity = 1.0;
@@ -821,7 +843,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                     "/SharedStrings/Plugins/Drop/Headers/Error/Exception");
                 DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
                     "/SharedStrings/Plugins/Drop/Statuses/Error/Exception"), ex.Message);
+
                 DropInstallerMessageTextBlock.Opacity = 1.0;
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
                 // Show the result
                 DropInstallerGrid.Opacity = 1.0;
@@ -857,6 +881,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         NoResultsGrid.Opacity = 0.0;
         DeviceCodeGrid.Opacity = 0.0;
         DropInstallerGrid.Opacity = 0.0;
+        SearchResultsGrid.Opacity = 0.0;
 
         DropInstallerMessageTextBlock.Opacity = 0.0;
 
@@ -945,6 +970,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                         "/SharedStrings/Plugins/Drop/Headers/Installing"), pluginArchive.Name);
 
                     Logger.Info($"Unpacking the archive at {pluginArchive.Path}...");
+                    AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
                     // Unpack the archive now
                     Logger.Info("Unpacking the new plugin from its package...");
@@ -970,7 +996,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                         "/SharedStrings/Plugins/Drop/Headers/Installed"), pluginArchive.Name);
                     DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
                         "/SharedStrings/Plugins/Drop/Statuses/Installed"), pluginArchive.Name);
+
                     DropInstallerMessageTextBlock.Opacity = 1.0;
+                    AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
                     // Wait a moment and hide
                     await Task.Delay(3500);
@@ -996,7 +1024,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                         "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), pluginArchive.Name);
                     DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
                         "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), pluginArchive.Name);
+
                     DropInstallerMessageTextBlock.Opacity = 1.0;
+                    AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
                     // Show the result
                     DropInstallerGrid.Opacity = 1.0;
@@ -1045,7 +1075,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                 "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), link);
             DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
                 "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid"), link);
+
             DropInstallerMessageTextBlock.Opacity = 1.0;
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
             // Show the result
             DropInstallerGrid.Opacity = 1.0;
@@ -1198,5 +1230,11 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
     public double BoolToOpacity(bool value)
     {
         return value ? 1.0 : 0.0;
+    }
+
+    private void Expander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
+    {
+        if (!(sender?.IsLoaded ?? false)) return;
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
     }
 }

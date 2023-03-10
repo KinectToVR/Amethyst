@@ -237,7 +237,7 @@
                                     </Grid>
 
                                     <Grid Grid.Row="0" Opacity="0.0" x:Name="SearchResultsGrid">
-                                        <ScrollViewer Margin="0,20,0,20" Padding="0,-20,0,-20"
+                                        <ScrollViewer Margin="0,20,-8,20" Padding="0,-20,8,-20"
                                                       HorizontalAlignment="Stretch">
                                             <ItemsRepeater HorizontalAlignment="Stretch" AllowDrop="False"
                                                            Margin="0,0,0,20"
@@ -292,6 +292,7 @@
 
                                                             <Expander Margin="0,12,0,0" Padding="0"
                                                                       Expanding="{x:Bind FetchPluginData, Mode=OneWay}"
+                                                                      Collapsed="{x:Bind PlayCollapsingSound, Mode=OneWay}"
                                                                       IsExpanded="{x:Bind PluginExpanderExpanded, Mode=TwoWay}"
                                                                       ExpandDirection="Down"
                                                                       HorizontalAlignment="Stretch"
@@ -775,6 +776,8 @@
 
                                         <Expander Margin="0,12,0,0" Padding="0"
                                                   IsExpanded="True" ExpandDirection="Down"
+                                                  Expanding="Expander_Expanding"
+                                                  Collapsed="{x:Bind PlayCollapsingSound, Mode=OneWay}"
                                                   HorizontalAlignment="Stretch"
                                                   HorizontalContentAlignment="Stretch">
 
