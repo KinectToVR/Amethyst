@@ -113,14 +113,14 @@ public static class Shared
                         NavigationItems.NavViewGeneralButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewGeneralButtonIcon.Foreground = NeutralBrush;
-                        NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uE80F";
+                        NavigationItems.NavViewGeneralButtonIcon.Symbol = FluentSymbol.Home24;
                         break;
                     case "Amethyst.Pages.Settings":
                         NavigationItems.NavViewSettingsButtonIcon.Translation = new Vector3(0, -8, 0);
                         NavigationItems.NavViewSettingsButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewSettingsButtonIcon.Foreground = NeutralBrush;
-                        NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uE713";
+                        NavigationItems.NavViewSettingsButtonIcon.Symbol = FluentSymbol.Settings24;
                         break;
                     case "Amethyst.Pages.Devices":
                         NavigationItems.NavViewDevicesButtonIcon.Translation = new Vector3(0, -8, 0);
@@ -134,7 +134,7 @@ public static class Shared
                         NavigationItems.NavViewInfoButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewInfoButtonIcon.Foreground = NeutralBrush;
-                        NavigationItems.NavViewInfoButtonIcon.Glyph = "\uE946";
+                        NavigationItems.NavViewInfoButtonIcon.Symbol = FluentSymbol.Info24;
                         break;
                     case "Amethyst.Pages.Plugins":
                         NavigationItems.NavViewPluginsButtonIcon.Translation = new Vector3(0, -8, 0);
@@ -150,14 +150,14 @@ public static class Shared
                 switch (page.FullName)
                 {
                     case "Amethyst.Pages.General":
-                        NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uEA8A";
+                        NavigationItems.NavViewGeneralButtonIcon.Symbol = FluentSymbol.Home24Filled;
                         NavigationItems.NavViewGeneralButtonIcon.Foreground = AttentionBrush;
 
                         NavigationItems.NavViewGeneralButtonLabel.Opacity = 0.0;
                         NavigationItems.NavViewGeneralButtonIcon.Translation = Vector3.Zero;
                         break;
                     case "Amethyst.Pages.Settings":
-                        NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uF8B0";
+                        NavigationItems.NavViewSettingsButtonIcon.Symbol = FluentSymbol.Settings24Filled;
                         NavigationItems.NavViewSettingsButtonIcon.Foreground = AttentionBrush;
 
                         NavigationItems.NavViewSettingsButtonLabel.Opacity = 0.0;
@@ -171,7 +171,7 @@ public static class Shared
                         NavigationItems.NavViewDevicesButtonIcon.Symbol = FluentSymbol.PlugConnected24Filled;
                         break;
                     case "Amethyst.Pages.Info":
-                        NavigationItems.NavViewInfoButtonIcon.Glyph = "\uF167";
+                        NavigationItems.NavViewInfoButtonIcon.Symbol = FluentSymbol.Info24Filled;
                         NavigationItems.NavViewInfoButtonIcon.Foreground = AttentionBrush;
 
                         NavigationItems.NavViewInfoButtonLabel.Opacity = 0.0;
@@ -194,13 +194,11 @@ public static class Shared
 
         public static class NavigationItems
         {
-            public static FontIcon
+            public static FluentSymbolIcon
                 NavViewGeneralButtonIcon,
                 NavViewSettingsButtonIcon,
-                NavViewInfoButtonIcon;
-
-            public static FluentSymbolIcon
                 NavViewDevicesButtonIcon,
+                NavViewInfoButtonIcon,
                 NavViewPluginsButtonIcon;
 
             public static TextBlock
