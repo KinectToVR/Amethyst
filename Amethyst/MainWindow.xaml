@@ -248,14 +248,14 @@
                                         Tag="general" x:Name="GeneralItem" Height="63"
                                         BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <FontIcon Glyph="&#xEA8A;" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
-                                      x:Name="NavViewGeneralButtonIcon" FontSize="22" Translation="0,-8,0">
-                                <FontIcon.TranslationTransition>
+                            <icons:FluentSymbolIcon Symbol="Home24" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                      x:Name="NavViewGeneralButtonIcon" FontSize="22">
+                                <icons:FluentSymbolIcon.TranslationTransition>
                                     <Vector3Transition />
-                                </FontIcon.TranslationTransition>
-                            </FontIcon>
+                                </icons:FluentSymbolIcon.TranslationTransition>
+                            </icons:FluentSymbolIcon>
 
-                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <Viewbox Margin="2,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                                 <TextBlock HorizontalAlignment="Center" Opacity="0.0"
                                            x:Name="NavViewGeneralButtonLabel"
                                            Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/General'), Mode=OneWay}"
@@ -272,14 +272,14 @@
                                         Tag="settings" x:Name="SettingsItem" Height="63"
                                         BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <FontIcon Glyph="&#xE713;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                      x:Name="NavViewSettingsButtonIcon" FontSize="22" Translation="0,-8,0">
-                                <FontIcon.TranslationTransition>
+                            <icons:FluentSymbolIcon Symbol="Settings24" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                      x:Name="NavViewSettingsButtonIcon" FontSize="22">
+                                <icons:FluentSymbolIcon.TranslationTransition>
                                     <Vector3Transition />
-                                </FontIcon.TranslationTransition>
-                            </FontIcon>
+                                </icons:FluentSymbolIcon.TranslationTransition>
+                            </icons:FluentSymbolIcon>
 
-                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <Viewbox Margin="2,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                                 <TextBlock HorizontalAlignment="Center" x:Name="NavViewSettingsButtonLabel"
                                            Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Settings'), Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
@@ -303,7 +303,7 @@
                                 </icons:FluentSymbolIcon.TranslationTransition>
                             </icons:FluentSymbolIcon>
 
-                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <Viewbox Margin="2,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                                 <TextBlock HorizontalAlignment="Center" x:Name="NavViewDevicesButtonLabel"
                                            Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Devices'), Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
@@ -318,14 +318,14 @@
                     <NavigationViewItem FontSize="10" FontWeight="Medium"
                                         Tag="info" x:Name="InfoItem" Height="63" BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <FontIcon Glyph="&#xE946;" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                      x:Name="NavViewInfoButtonIcon" FontSize="22" Translation="0,-8,0">
-                                <FontIcon.TranslationTransition>
+                            <icons:FluentSymbolIcon Symbol="Info24" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                      x:Name="NavViewInfoButtonIcon" FontSize="22">
+                                <icons:FluentSymbolIcon.TranslationTransition>
                                     <Vector3Transition />
-                                </FontIcon.TranslationTransition>
-                            </FontIcon>
+                                </icons:FluentSymbolIcon.TranslationTransition>
+                            </icons:FluentSymbolIcon>
 
-                            <Viewbox Margin="-1,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <Viewbox Margin="2,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                                 <TextBlock HorizontalAlignment="Center" x:Name="NavViewInfoButtonLabel"
                                            Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Info'), Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
@@ -350,7 +350,7 @@
                                 </icons:FluentSymbolIcon.TranslationTransition>
                             </icons:FluentSymbolIcon>
 
-                            <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                            <Viewbox Margin="2,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                                 <TextBlock HorizontalAlignment="Center" x:Name="NavViewPluginsButtonLabel"
                                            Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Plugins'), Mode=OneWay}"
                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
@@ -365,57 +365,7 @@
 
                 <muxc:NavigationView.PaneFooter>
                     <StackPanel Orientation="Vertical">
-                        <!--<NavigationViewItem x:Name="UpdateButton" Height="63"
-                                            FontSize="10" FontWeight="Medium"
-                                            BackgroundSizing="OuterBorderEdge"
-                                            Tapped="UpdateButton_Tapped"
-                                            Loaded="UpdateButton_Loaded">
-
-                            <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                                <Grid Translation="0,-8,0" x:Name="UpdateIconGrid">
-                                    <Grid.TranslationTransition>
-                                        <Vector3Transition />
-                                    </Grid.TranslationTransition>
-
-                                    <FontIcon x:Name="UpdateIcon" Glyph="&#xE895;" FontSize="20"
-                                              Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                              Canvas.ZIndex="1" RenderTransformOrigin="0.5,0.5124">
-                                        <FontIcon.RenderTransform>
-                                            <CompositeTransform />
-                                        </FontIcon.RenderTransform>
-
-                                        <FontIcon.Transitions>
-                                            <TransitionCollection>
-                                                <RepositionThemeTransition />
-                                            </TransitionCollection>
-                                        </FontIcon.Transitions>
-                                    </FontIcon>
-
-                                    <FontIcon x:Name="UpdateIconDot" Glyph="&#xF83F;" FontSize="16"
-                                              IsHitTestVisible="False"
-                                              HorizontalAlignment="Left" VerticalAlignment="Bottom" Canvas.ZIndex="1"
-                                              Foreground="{ThemeResource SystemFillColorAttentionBrush}"
-                                              Translation="0,-9,0"
-                                              Opacity="0.0" Margin="16,0,0,0">
-                                        <FontIcon.OpacityTransition>
-                                            <ScalarTransition />
-                                        </FontIcon.OpacityTransition>
-                                    </FontIcon>
-                                </Grid>
-
-                                <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
-                                    <TextBlock Opacity="1.0" HorizontalAlignment="Center" x:Name="UpdateIconText"
-                                               Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Header'), Mode=OneWay}"
-                                               Foreground="{ThemeResource SystemFillColorNeutralBrush}">
-                                        <TextBlock.OpacityTransition>
-                                            <ScalarTransition />
-                                        </TextBlock.OpacityTransition>
-                                    </TextBlock>
-                                </Viewbox>
-                            </Grid>
-                        </NavigationViewItem>-->
-
-                        <NavigationViewItem x:Name="HelpButton" Height="63"
+                      <NavigationViewItem x:Name="HelpButton" Height="63"
                                             FontSize="10" FontWeight="Medium"
                                             BackgroundSizing="OuterBorderEdge"
                                             Tapped="HelpButton_Tapped">
@@ -440,7 +390,7 @@
                                     </icons:FluentSymbolIcon>
                                 </Grid>
 
-                                <Viewbox Margin="0,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
+                                <Viewbox Margin="2,27,0,0" Stretch="Uniform" StretchDirection="DownOnly">
                                     <TextBlock Opacity="1.0" HorizontalAlignment="Center" x:Name="HelpIconText"
                                                Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Help/Header'), Mode=OneWay}"
                                                Foreground="{ThemeResource SystemFillColorNeutralBrush}">
@@ -456,78 +406,10 @@
 
                 <Frame x:Name="ContentFrame" NavigationFailed="ContentFrame_NavigationFailed" />
             </muxc:NavigationView>
-
         </Grid>
 
         <Grid.Resources>
-            <!--<Storyboard x:Name="IconRotation" AutoReverse="False" Completed="OnIconRotationOnCompleted">
-                <DoubleAnimation Duration="0:0:1" To="360"
-                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)"
-                                 Storyboard.TargetName="UpdateIcon" />
-            </Storyboard>-->
-
-            <!--<Flyout x:Name="UpdateFlyout"
-                    Opening="ButtonFlyout_Opening"
-                    Closing="ButtonFlyout_Closing">
-                <Flyout.FlyoutPresenterStyle>
-                    <Style TargetType="FlyoutPresenter">
-                        <Setter Property="CornerRadius" Value="8" />
-                        <Setter Property="Background"
-                                Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                    </Style>
-                </Flyout.FlyoutPresenterStyle>
-
-                <StackPanel>
-                    <TextBlock x:Name="FlyoutHeader" FontSize="17"
-                               Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
-                    <TextBlock x:Name="FlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
-                    <TextBlock x:Name="FlyoutContent" Margin="0,0,0,12" />
-
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Button x:Name="InstallLaterButton" Click="InstallLaterButton_Click"
-                                Content="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Skip'), Mode=OneWay}"
-                                Grid.Column="0" Margin="0,0,5,0"
-                                HorizontalAlignment="Stretch" />
-                        <Button x:Name="InstallNowButton" Click="InstallNowButton_Click"
-                                Content="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Install'), Mode=OneWay}"
-                                Grid.Column="1" Margin="5,0,0,0"
-                                Style="{ThemeResource AccentButtonStyle}"
-                                HorizontalAlignment="Stretch" />
-                    </Grid>
-                </StackPanel>
-            </Flyout>-->
-
-            <!--<Flyout x:Name="UpdatePendingFlyout"
-                    Opening="ButtonFlyout_Opening"
-                    Closing="ButtonFlyout_Closing">
-                <Flyout.FlyoutPresenterStyle>
-                    <Style TargetType="FlyoutPresenter">
-                        <Setter Property="CornerRadius" Value="8" />
-                        <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                    </Style>
-                </Flyout.FlyoutPresenterStyle>
-
-                <StackPanel x:Name="UpdatePendingFlyoutMainStack" Orientation="Vertical">
-                    <TextBlock x:Name="UpdatePendingFlyoutHeader" FontSize="17"
-                               Text="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Headers/Downloading'), Mode=OneWay}"
-                               Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,15" />
-                    <TextBlock Text="Amethyst [version_string]"
-                               x:Name="UpdatePendingFlyoutFooter" FontWeight="SemiBold" Margin="0,0,0,0" />
-
-                    <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
-                        <TextBlock Margin="0,0,7,0" x:Name="UpdatePendingFlyoutStatusLabel"
-                                   Text="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Headers/Status'), Mode=OneWay}"
-                                   Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
-                        <TextBlock x:Name="UpdatePendingFlyoutStatusContent" Margin="0,0,0,0" />
-                    </StackPanel>
-                </StackPanel>
-            </Flyout>-->
-
-            <MenuFlyout x:Name="HelpFlyout"
+        <MenuFlyout x:Name="HelpFlyout"
                         Opening="HelpFlyout_Opening"
                         Closing="HelpFlyout_Closing">
                 <MenuFlyout.MenuFlyoutPresenterStyle>
@@ -543,7 +425,7 @@
                                 Click="HelpFlyoutDocsButton_Click"
                                 Text="[NOT_SET_DOCS]">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Glyph="&#xE897;" />
+                        <icons:FluentIconElement Symbol="Question24" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
 
@@ -551,7 +433,7 @@
                 <MenuFlyoutItem Click="HelpFlyoutDiscordButton_Click"
                                 Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Help/Discord'), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Glyph="&#xE8F2;" />
+                        <icons:FluentIconElement Symbol="chatBubblesQuestion24" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
 
@@ -559,7 +441,7 @@
                 <MenuFlyoutItem Click="HelpFlyoutDevButton_Click"
                                 Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Help/Developers'), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Glyph="&#xE943;" />
+                        <icons:FluentIconElement Symbol="Code24" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
 
@@ -567,7 +449,7 @@
                 <MenuFlyoutItem Click="HelpFlyoutLicensesButton_Click"
                                 Text="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Help/Licenses'), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Glyph="&#xF000;" />
+                        <icons:FluentIconElement Symbol="DocumentBulletList24" />
                     </MenuFlyoutItem.Icon>
 
                     <MenuFlyoutItem.Resources>

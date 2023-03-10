@@ -1211,7 +1211,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         if (Interfacing.CurrentPageClass == "Amethyst.Pages.General")
         {
-            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uEA8A";
+            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Symbol = FluentSymbol.Home24Filled;
             Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Foreground = Shared.Main.AttentionBrush;
 
             Shared.Main.NavigationItems.NavViewGeneralButtonLabel.Opacity = 0.0;
@@ -1223,12 +1223,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewGeneralButtonLabel.Opacity = 1.0;
 
             Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Foreground = Shared.Main.NeutralBrush;
-            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uE80F";
+            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Symbol = FluentSymbol.Home24;
         }
 
         if (Interfacing.CurrentPageClass == "Amethyst.Pages.Settings")
         {
-            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uF8B0";
+            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Symbol = FluentSymbol.Settings24Filled;
             Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Foreground = Shared.Main.AttentionBrush;
 
             Shared.Main.NavigationItems.NavViewSettingsButtonLabel.Opacity = 0.0;
@@ -1240,7 +1240,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewSettingsButtonLabel.Opacity = 1.0;
 
             Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Foreground = Shared.Main.NeutralBrush;
-            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uE713";
+            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Symbol = FluentSymbol.Settings24;
         }
 
         if (Interfacing.CurrentPageClass == "Amethyst.Pages.Devices")
@@ -1262,7 +1262,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         if (Interfacing.CurrentPageClass == "Amethyst.Pages.Info")
         {
-            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Glyph = "\uF167";
+            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Symbol = FluentSymbol.Info24Filled;
             Shared.Main.NavigationItems.NavViewInfoButtonIcon.Foreground = Shared.Main.AttentionBrush;
 
             Shared.Main.NavigationItems.NavViewInfoButtonLabel.Opacity = 0.0;
@@ -1274,7 +1274,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewInfoButtonLabel.Opacity = 1.0;
 
             Shared.Main.NavigationItems.NavViewInfoButtonIcon.Foreground = Shared.Main.NeutralBrush;
-            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Glyph = "\uE946";
+            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Symbol = FluentSymbol.Info24;
         }
 
         if (Interfacing.CurrentPageClass == "Amethyst.Pages.Plugins")
@@ -1736,7 +1736,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         };
 
         // Show the help flyout
-        HelpFlyout.ShowAt(HelpButton, new FlyoutShowOptions
+        HelpFlyout.ShowAt(PluginsItem, new FlyoutShowOptions
         {
             Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
             ShowMode = FlyoutShowMode.Transient
