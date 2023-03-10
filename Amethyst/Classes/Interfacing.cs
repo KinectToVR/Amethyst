@@ -120,6 +120,12 @@ public static class Interfacing
             Environment.SpecialFolder.ApplicationData), "Amethyst", "Plugins", relativeFilePath);
     }
 
+    public static string GetTempPluginFolderDir(string relativeFilePath)
+    {
+        Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "Amethyst", "Plugins"));
+        return Path.Join(Path.GetTempPath(), "Amethyst", "Plugins", relativeFilePath);
+    }
+
     public static string GetAppDataLogFileDir(string relativeFolderName, string relativeFilePath)
     {
         Directory.CreateDirectory(Path.Join(

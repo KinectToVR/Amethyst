@@ -367,12 +367,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Search the "Plugins" AppData directory for assemblies that match the imports.
         // Iterate over all directories in Plugins dir and add all * dirs to catalogs
-        // Discard working directories i.e. starting with ".TEMPORARY"
         Logger.Info("Searching for shared plugins now...");
         pluginDirectoryList.AddRange(Directory.EnumerateDirectories(
-                Interfacing.GetAppDataPluginFolderDir(""),
-                "*", SearchOption.TopDirectoryOnly)
-            .Where(x => !x.EndsWith(".TEMPORARY")));
+            Interfacing.GetAppDataPluginFolderDir(""),
+            "*", SearchOption.TopDirectoryOnly));
 
         // Search for external plugins
         try

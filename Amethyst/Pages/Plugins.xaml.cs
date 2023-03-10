@@ -386,7 +386,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             // Search for an empty folder in AppData
                             var installFolder = GetAppDataPluginFolderDir(
                                 string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                    .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) + ".TEMPORARY");
+                                    .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
+
+                            // Create an empty folder in TempAppData
+                            var downloadFolder = GetTempPluginFolderDir(
+                                string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                    .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                             // Randomize the path if already exists
                             // Delete if only a single null folder
@@ -395,15 +400,19 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                 if (Directory.EnumerateFileSystemEntries(installFolder).Any())
                                     installFolder = GetAppDataPluginFolderDir(
                                         string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) +
-                                        ".TEMPORARY");
+                                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                                 // Else delete if empty
                                 else Directory.Delete(installFolder, true);
                             }
 
-                            // Try creating the install folder
-                            Directory.CreateDirectory(installFolder!);
+                            // Try reserving the install folder
+                            if (Directory.Exists(installFolder!))
+                                Directory.Delete(installFolder!, true);
+
+                            // Try creating the download folder
+                            if (!Directory.Exists(downloadFolder!))
+                                Directory.CreateDirectory(downloadFolder!);
 
                             // Unpack the archive now
                             Logger.Info("Unpacking the new plugin from its package...");
@@ -411,17 +420,17 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                 switch (x)
                                 {
                                     case StorageFile file:
-                                        Logger.Info($"Copying file {file.Name} to {installFolder}\\");
-                                        File.Copy(file.Path, Path.Join(installFolder, file.Name), true);
+                                        Logger.Info($"Copying file {file.Name} to {downloadFolder}\\");
+                                        File.Copy(file.Path, Path.Join(downloadFolder, file.Name), true);
                                         break;
                                     case StorageFolder folder:
-                                        Logger.Info($"Copying folder {folder.Name} to {installFolder}\\");
-                                        new DirectoryInfo(folder.Path).CopyToFolderAsync(installFolder);
+                                        Logger.Info($"Copying folder {folder.Name} to {downloadFolder}\\");
+                                        new DirectoryInfo(folder.Path).CopyToFolderAsync(downloadFolder);
                                         break;
                                 }
 
                             // Rename the plugin folder if everything's fine
-                            Directory.Move(installFolder, installFolder[..^".TEMPORARY".Length]);
+                            Directory.Move(downloadFolder, installFolder);
 
                             // Wait a bit
                             await Task.Delay(3000);
@@ -525,8 +534,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     // Search for an empty folder in AppData
                                     var installFolder = GetAppDataPluginFolderDir(
                                         string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) +
-                                        ".TEMPORARY");
+                                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
+
+                                    // Create an empty folder in TempAppData
+                                    var downloadFolder = GetTempPluginFolderDir(
+                                        string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                                     // Randomize the path if already exists
                                     // Delete if only a single null folder
@@ -535,15 +548,19 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         if (Directory.EnumerateFileSystemEntries(installFolder).Any())
                                             installFolder = GetAppDataPluginFolderDir(
                                                 string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                                    .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) +
-                                                ".TEMPORARY");
+                                                    .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                                         // Else delete if empty
                                         else Directory.Delete(installFolder, true);
                                     }
 
-                                    // Try creating the install folder
-                                    Directory.CreateDirectory(installFolder!);
+                                    // Try reserving the install folder
+                                    if (Directory.Exists(installFolder!))
+                                        Directory.Delete(installFolder!, true);
+
+                                    // Try creating the download folder
+                                    if (!Directory.Exists(downloadFolder!))
+                                        Directory.CreateDirectory(downloadFolder!);
 
                                     // Unpack the archive now
                                     Logger.Info("Unpacking the new plugin from its package...");
@@ -551,17 +568,17 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         switch (x)
                                         {
                                             case StorageFile file:
-                                                Logger.Info($"Copying file {file.Name} to {installFolder}\\");
-                                                File.Copy(file.Path, Path.Join(installFolder, file.Name), true);
+                                                Logger.Info($"Copying file {file.Name} to {downloadFolder}\\");
+                                                File.Copy(file.Path, Path.Join(downloadFolder, file.Name), true);
                                                 break;
                                             case StorageFolder folder:
-                                                Logger.Info($"Copying folder {folder.Name} to {installFolder}\\");
-                                                new DirectoryInfo(folder.Path).CopyToFolderAsync(installFolder);
+                                                Logger.Info($"Copying folder {folder.Name} to {downloadFolder}\\");
+                                                new DirectoryInfo(folder.Path).CopyToFolderAsync(downloadFolder);
                                                 break;
                                         }
 
                                     // Rename the plugin folder if everything's fine
-                                    Directory.Move(installFolder, installFolder[..^".TEMPORARY".Length]);
+                                    Directory.Move(downloadFolder, installFolder);
 
                                     // Wait a bit
                                     await Task.Delay(3000);
@@ -660,8 +677,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         // Search for an empty folder in AppData
                                         var installFolder = GetAppDataPluginFolderDir(
                                             string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) +
-                                            ".TEMPORARY");
+                                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
+
+                                        // Create an empty folder in TempAppData
+                                        var downloadFolder = GetTempPluginFolderDir(
+                                            string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                                         // Randomize the path if already exists
                                         // Delete if only a single null folder
@@ -670,22 +691,26 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                             if (Directory.EnumerateFileSystemEntries(installFolder).Any())
                                                 installFolder = GetAppDataPluginFolderDir(
                                                     string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) +
-                                                    ".TEMPORARY");
+                                                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                                             // Else delete if empty
                                             else Directory.Delete(installFolder, true);
                                         }
 
-                                        // Try creating the install folder
-                                        Directory.CreateDirectory(installFolder!);
+                                        // Try reserving the install folder
+                                        if (Directory.Exists(installFolder!))
+                                            Directory.Delete(installFolder!, true);
+
+                                        // Try creating the download folder
+                                        if (!Directory.Exists(downloadFolder!))
+                                            Directory.CreateDirectory(downloadFolder!);
 
                                         // Unpack the archive now
                                         Logger.Info("Unpacking the new plugin from its package...");
-                                        archive.ExtractToDirectory(installFolder, true);
+                                        archive.ExtractToDirectory(downloadFolder, true);
 
                                         // Rename the plugin folder if everything's fine
-                                        Directory.Move(installFolder, installFolder[..^".TEMPORARY".Length]);
+                                        Directory.Move(downloadFolder, installFolder);
 
                                         // Wait a bit
                                         await Task.Delay(3000);
