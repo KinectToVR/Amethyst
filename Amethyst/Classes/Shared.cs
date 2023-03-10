@@ -278,8 +278,7 @@ public static class Shared
     {
         // Devices Page
         public static bool DevicesTabSetupFinished = false, // On-load setup
-            DevicesJointsValid = true, // Optionally no signal
-            PluginsPageOpened = false; // Manager flyout
+            DevicesJointsValid = true; // Optionally no signal
 
         public static TextBlock
             DeviceNameLabel,

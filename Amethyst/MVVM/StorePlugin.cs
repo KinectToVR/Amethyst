@@ -112,6 +112,7 @@ public class StorePlugin : INotifyPropertyChanged
     public void SchedulePluginInstall()
     {
         // Enqueue the update in the shutdown controller
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         ShutdownController.ShutdownTasks.Add(new ShutdownTask
         {
             Name = $"Install plugin ({Name}, {LatestRelease.Guid}) v{LatestRelease.Version}",
@@ -126,6 +127,7 @@ public class StorePlugin : INotifyPropertyChanged
     public void CancelPluginInstall()
     {
         // Delete the uninstall startup action
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         ShutdownController.ShutdownTasks.Remove(ShutdownController.ShutdownTasks
             .FirstOrDefault(x => x.Data == Name + LatestRelease.Version));
 
@@ -164,6 +166,7 @@ public class StorePlugin : INotifyPropertyChanged
 
                 Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
                 Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
                 await Task.Delay(2500);
                 Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
@@ -269,6 +272,7 @@ public class StorePlugin : INotifyPropertyChanged
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = false;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
             await Task.Delay(2500);
             Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
@@ -289,6 +293,7 @@ public class StorePlugin : INotifyPropertyChanged
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
 
             await Task.Delay(2500);
             Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
@@ -304,6 +309,8 @@ public class StorePlugin : INotifyPropertyChanged
     {
         try
         {
+            PlayExpandingSound();
+
             // Mark as loading and trigger a partial refresh
             LoadingData = true;
             FinishedLoadingData = false;
@@ -405,6 +412,16 @@ public class StorePlugin : INotifyPropertyChanged
     private void InstalledPluginOnPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         Shared.Main.DispatcherQueue.TryEnqueue(() => OnPropertyChanged());
+    }
+
+    public void PlayExpandingSound()
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    public void PlayCollapsingSound()
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
     public class PluginRepository
