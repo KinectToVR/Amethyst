@@ -135,9 +135,9 @@ public class StorePlugin : INotifyPropertyChanged
     private async Task<bool> ExecuteUpdates()
     {
         // Logic:
-        // - Download the zip to AppData\Roaming\Amethyst\Plugins\$({LatestRelease}.Guid).TEMPORARY
+        // - Download the zip to TempAppData\Amethyst\Plugins\$({LatestRelease}.Guid)
         // - Unzip the plugin, dispose and delete the package if worked
-        // - Delete the .TEMPORARY suffix so Amethyst loads the plugin
+        // - Move from temporary AppData (tmp) to the regular one (roa)
 
         try
         {
@@ -190,7 +190,12 @@ public class StorePlugin : INotifyPropertyChanged
                 // Search for an empty folder in AppData
                 var installFolder = Interfacing.GetAppDataPluginFolderDir(
                     string.Join("_", LatestRelease.Guid.Split(
-                        Path.GetInvalidFileNameChars().Append('.').ToArray())) + ".TEMPORARY");
+                        Path.GetInvalidFileNameChars().Append('.').ToArray())));
+
+                // Create an empty folder in TempAppData
+                var downloadFolder = Interfacing.GetTempPluginFolderDir(
+                    string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                 // Randomize the path if already exists
                 // Delete if only a single null folder
@@ -199,18 +204,23 @@ public class StorePlugin : INotifyPropertyChanged
                     if (Directory.EnumerateFileSystemEntries(installFolder).Any())
                         installFolder = Interfacing.GetAppDataPluginFolderDir(
                             string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())) + ".TEMPORARY");
+                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                     // Else delete if empty
                     else Directory.Delete(installFolder, true);
                 }
 
-                // Try creating the install folder
-                Directory.CreateDirectory(installFolder!);
+                // Try reserving the install folder
+                if (Directory.Exists(installFolder!))
+                    Directory.Delete(installFolder!, true);
+
+                // Try creating the download folder
+                if (!Directory.Exists(downloadFolder!))
+                    Directory.CreateDirectory(downloadFolder!);
 
                 // Replace or create our installer file
                 var pluginArchive = await (await StorageFolder
-                    .GetFolderFromPathAsync(installFolder)).CreateFileAsync(
+                    .GetFolderFromPathAsync(downloadFolder)).CreateFileAsync(
                     "package.zip", CreationCollisionOption.ReplaceExisting);
 
                 // Create an output stream and push all the available data to it
@@ -223,13 +233,13 @@ public class StorePlugin : INotifyPropertyChanged
 
                 // Unpack the archive now
                 Logger.Info("Unpacking the new plugin from its archive...");
-                ZipFile.ExtractToDirectory(pluginArchive.Path, installFolder, true);
+                ZipFile.ExtractToDirectory(pluginArchive.Path, downloadFolder, true);
 
                 Logger.Info("Deleting the plugin installation package...");
                 File.Delete(pluginArchive.Path); // Cleanup after the install
 
                 // Rename the plugin folder if everything's fine
-                Directory.Move(installFolder, installFolder[..^".TEMPORARY".Length]);
+                Directory.Move(downloadFolder, installFolder);
             }
             catch (Exception e)
             {
