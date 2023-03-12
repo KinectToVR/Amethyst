@@ -8,7 +8,7 @@ public static class AppData
 
     // Internal version number
     public static (string Display, string Internal)
-        VersionString { get; } = ("1.2.0.2", "1.2.230222.1");
+        VersionString { get; } = ("1.2.1.2", "1.2.230313.2");
 
     // Application settings
     public static AppSettings Settings { get; set; } = new();
