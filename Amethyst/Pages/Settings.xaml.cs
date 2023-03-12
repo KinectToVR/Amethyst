@@ -66,31 +66,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             tracker.OnPropertyChanged(); // Refresh the transition
         });
 
-        AppData.Settings.TrackersVector.CollectionChanged += (_, _) =>
-        {
-            // Trackers' collection has changed, 
-            Shared.Main.DispatcherQueue.TryEnqueue(async () =>
-            {
-                // This 'ease in' transition will affect the added expander
-                AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
-                {
-                    tracker.SettingsExpanderTransitions =
-                        new TransitionCollection { new ContentThemeTransition() };
-                    tracker.OnPropertyChanged(); // Refresh the transition
-                });
-
-                // Wait for the transition to end
-                await Task.Delay(200);
-
-                // This 'move' transition will affect all tracker expanders
-                AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
-                {
-                    tracker.SettingsExpanderTransitions =
-                        new TransitionCollection { new RepositionThemeTransition() };
-                    tracker.OnPropertyChanged(); // Refresh the transition
-                });
-            });
-        };
+        ResubscribeListeners(); // Register for any pending changes
+        Interfacing.AppSettingsRead += (_, _) => ResubscribeListeners();
 
         Logger.Info($"Registering settings MVVM for page: '{GetType().FullName}'...");
         DataContext = AppData.Settings; // Set this settings instance as the context
@@ -130,34 +107,34 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     // MVVM stuff: service settings and its status
     private IEnumerable<Page> ServiceSettingsPage => new[]
     {
-        TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot as Page
+        AppPlugins.CurrentServiceEndpoint.SettingsInterfaceRoot as Page
     };
 
     private IEnumerable<string> LoadedServiceNames =>
-        TrackingDevices.ServiceEndpointsList.Values.Select(service => service.Name);
+        AppPlugins.ServiceEndpointsList.Values.Select(service => service.Name);
 
     private int SelectedServiceIndex =>
-        TrackingDevices.ServiceEndpointsList.Values.ToList().IndexOf(TrackingDevices.CurrentServiceEndpoint);
+        AppPlugins.ServiceEndpointsList.Values.ToList().IndexOf(AppPlugins.CurrentServiceEndpoint);
 
-    private bool ServiceStatusError => TrackingDevices.CurrentServiceEndpoint.StatusError;
+    private bool ServiceStatusError => AppPlugins.CurrentServiceEndpoint.StatusError;
 
-    private bool ServiceSupportsSettings => TrackingDevices.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
-                                            TrackingDevices.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
+    private bool ServiceSupportsSettings => AppPlugins.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
+                                            AppPlugins.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
 
-    private bool CanAutoStartAmethyst => TrackingDevices.CurrentServiceEndpoint.CanAutoStartAmethyst;
+    private bool CanAutoStartAmethyst => AppPlugins.CurrentServiceEndpoint.CanAutoStartAmethyst;
 
     private string[] ServiceStatusText
     {
         get
         {
-            var message = StringUtils.SplitStatusString(TrackingDevices.CurrentServiceEndpoint.ServiceStatusString);
+            var message = StringUtils.SplitStatusString(AppPlugins.CurrentServiceEndpoint.ServiceStatusString);
             return message is null || message.Length < 3
                 ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" }
                 : message; // If everything is all right this time
         }
     }
 
-    private bool ServiceNeedsRestart => TrackingDevices.CurrentServiceEndpoint.IsRestartOnChangesNeeded;
+    private bool ServiceNeedsRestart => AppPlugins.CurrentServiceEndpoint.IsRestartOnChangesNeeded;
 
     // Dynamically switch between CardMiddleStyle and CardBottomStyle
     private CornerRadius ServiceControlsCornerRadius =>
@@ -165,43 +142,72 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     // MVVM stuff: bound strings with placeholders
     private string RestartServiceText => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Buttons/RestartService"), TrackingDevices.CurrentServiceEndpoint.Name);
+        "/SettingsPage/Buttons/RestartService"), AppPlugins.CurrentServiceEndpoint.Name);
 
     private string RestartServiceNoteL1 => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Captions/TrackersRestart/Line1"), TrackingDevices.CurrentServiceEndpoint.Name);
+        "/SettingsPage/Captions/TrackersRestart/Line1"), AppPlugins.CurrentServiceEndpoint.Name);
 
     private string RestartServiceNoteL2 => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Captions/TrackersRestart/Line2"), TrackingDevices.CurrentServiceEndpoint.Name);
+        "/SettingsPage/Captions/TrackersRestart/Line2"), AppPlugins.CurrentServiceEndpoint.Name);
 
     private string AutoStartLabelText => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Captions/AutoStart"), TrackingDevices.CurrentServiceEndpoint.Name);
+        "/SettingsPage/Captions/AutoStart"), AppPlugins.CurrentServiceEndpoint.Name);
 
     private string AutoStartTipText => string.Format(Interfacing.LocalizedJsonString(
-        "/NUX/Tip7/Title"), TrackingDevices.CurrentServiceEndpoint.Name);
+        "/NUX/Tip7/Title"), AppPlugins.CurrentServiceEndpoint.Name);
 
     private string AutoStartTipContent => string.Format(Interfacing.LocalizedJsonString(
-        "/NUX/Tip7/Content"), TrackingDevices.CurrentServiceEndpoint.Name);
+        "/NUX/Tip7/Content"), AppPlugins.CurrentServiceEndpoint.Name);
 
     private string FlipDropDownHeader => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Captions/SkeletonFlip"), TrackingDevices.BaseTrackingDevice.Name);
+        "/SettingsPage/Captions/SkeletonFlip"), AppPlugins.BaseTrackingDevice.Name);
 
     private string ManageTrackersText
     {
         get
         {
-            if (TrackingDevices.CurrentServiceEndpoint.IsRestartOnChangesNeeded)
+            if (AppPlugins.CurrentServiceEndpoint.IsRestartOnChangesNeeded)
                 return string.Format(Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers"),
-                    TrackingDevices.CurrentServiceEndpoint.Name).Replace("[[", "").Replace("]]", "");
+                    AppPlugins.CurrentServiceEndpoint.Name).Replace("[[", "").Replace("]]", "");
 
             // If the service doesn't need restarting
             return StringUtils.RemoveBetween(
                 string.Format(Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers"),
-                    TrackingDevices.CurrentServiceEndpoint.Name), "[[", "]]");
+                    AppPlugins.CurrentServiceEndpoint.Name), "[[", "]]");
         }
     }
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
+
+    private void ResubscribeListeners()
+    {
+        AppData.Settings.TrackersVector.CollectionChanged += (_, _) =>
+        {
+            // Trackers' collection has changed, 
+            Shared.Main.DispatcherQueue.TryEnqueue(async () =>
+            {
+                // This 'ease in' transition will affect the added expander
+                AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
+                {
+                    tracker.SettingsExpanderTransitions =
+                        new TransitionCollection { new ContentThemeTransition() };
+                    tracker.OnPropertyChanged(); // Refresh the transition
+                });
+
+                // Wait for the transition to end
+                await Task.Delay(200);
+
+                // This 'move' transition will affect all tracker expanders
+                AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
+                {
+                    tracker.SettingsExpanderTransitions =
+                        new TransitionCollection { new RepositionThemeTransition() };
+                    tracker.OnPropertyChanged(); // Refresh the transition
+                });
+            });
+        };
+    }
 
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -225,9 +231,9 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         LanguageOptionBox.Items.Clear();
 
         // Push all the found languages
-        if (Directory.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings")))
+        if (Directory.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings")))
             foreach (var entry in Directory.EnumerateFiles(
-                         Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings")))
+                         Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings")))
             {
                 if (Path.GetFileNameWithoutExtension(entry) == "locales") continue;
 
@@ -251,15 +257,15 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         AppThemeOptionBox.SelectedIndex = (int)AppData.Settings.AppTheme;
 
         // Check for autostart
-        AutoStartCheckBox.IsChecked = TrackingDevices.CurrentServiceEndpoint.AutoStartAmethyst;
+        AutoStartCheckBox.IsChecked = AppPlugins.CurrentServiceEndpoint.AutoStartAmethyst;
 
         // Optionally show the foreign language grid
-        if (!File.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings",
+        if (!File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings",
                 new Language(GlobalizationPreferences.Languages[0]).LanguageTag[..2] + ".json")))
             ForeignLangGrid.Visibility = Visibility.Visible;
 
         // Enable/Disable Ext/Flip
-        TrackingDevices.CheckFlipSupport();
+        AppPlugins.CheckFlipSupport();
 
         // Notify of the setup's end
         OnPropertyChanged(); // Just everything
@@ -285,17 +291,17 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
 
         // Reload plugins' language resources
-        foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
+        foreach (var plugin in AppPlugins.TrackingDevicesList.Values)
             Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
-        foreach (var plugin in TrackingDevices.ServiceEndpointsList.Values)
+        foreach (var plugin in AppPlugins.ServiceEndpointsList.Values)
             Interfacing.Plugins.SetLocalizationResourcesRoot(plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
         // Reload everything we can
         Shared.Devices.DevicesJointsValid = false;
 
         // Reload plugins' interfaces
-        TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
-        TrackingDevices.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
+        AppPlugins.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
+        AppPlugins.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
 
         // Request page reloads
         Translator.Get.OnPropertyChanged();
@@ -355,7 +361,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     {
         // Don't react to pre-init signals
         if (!Shared.Settings.SettingsTabSetupFinished) return;
-        TrackingDevices.CurrentServiceEndpoint.AutoStartAmethyst = true;
+        AppPlugins.CurrentServiceEndpoint.AutoStartAmethyst = true;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOn);
@@ -365,7 +371,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     {
         // Don't react to pre-init signals
         if (!Shared.Settings.SettingsTabSetupFinished) return;
-        TrackingDevices.CurrentServiceEndpoint.AutoStartAmethyst = false;
+        AppPlugins.CurrentServiceEndpoint.AutoStartAmethyst = false;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOff);
@@ -440,14 +446,14 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         // Optionally show the binding teaching tip
         if (!AppData.Settings.TeachingTipShownFlip && Interfacing.CurrentPageTag == "settings" &&
             !string.IsNullOrEmpty(
-                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionTitleString) &&
+                AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionTitleString) &&
             !string.IsNullOrEmpty(
-                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionContentString))
+                AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionContentString))
         {
             ToggleFlipTeachingTip.Title =
-                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionTitleString;
+                AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionTitleString;
             ToggleFlipTeachingTip.Subtitle =
-                TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionContentString;
+                AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.SkeletonFlipActionContentString;
 
             ToggleFlipTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
 
@@ -473,7 +479,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     {
         // Don't react to pre-init signals
         if (!Shared.Settings.SettingsTabSetupFinished) return;
-        TrackingDevices.CheckFlipSupport();
+        AppPlugins.CheckFlipSupport();
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
@@ -639,9 +645,9 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     private void RestartButton_Click(object sender, RoutedEventArgs e)
     {
-        TrackingDevices.CurrentServiceEndpoint.RequestServiceRestart(string.Format(
+        AppPlugins.CurrentServiceEndpoint.RequestServiceRestart(string.Format(
             Interfacing.LocalizedJsonString("/SettingsPage/Captions/ServiceRestart"),
-            TrackingDevices.CurrentServiceEndpoint.Name));
+            AppPlugins.CurrentServiceEndpoint.Name));
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
@@ -698,10 +704,10 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Logger.Info("Reset invoked: trying to restart the app...");
 
         // If we've found who asked
-        if (File.Exists(Interfacing.GetProgramLocation().FullName))
+        if (File.Exists(Interfacing.ProgramLocation.FullName))
         {
             // Log the caller
-            Logger.Info($"The current caller process is: {Interfacing.GetProgramLocation().FullName}");
+            Logger.Info($"The current caller process is: {Interfacing.ProgramLocation.FullName}");
 
             // Exit the app
             Logger.Info("Configuration has been reset, exiting in 500ms...");
@@ -713,7 +719,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             await Interfacing.HandleAppExit(500);
 
             // Restart and exit with code 0
-            Process.Start(Interfacing.GetProgramLocation()
+            Process.Start(Interfacing.ProgramLocation
                 .FullName.Replace(".dll", ".exe"));
 
             // Exit without re-handling everything
@@ -791,7 +797,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 trackerBase.ConnectionState = false;
 
                 for (var i = 0; i < 3; i++) // Try 3 times to be extra sure
-                    await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+                    await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
             }
 
             await Task.Delay(20);
@@ -802,14 +808,14 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             {
                 // Show the notifications and rebuild (boiler-ed)
                 Shared.Settings.SettingsTabSetupFinished = true;
-                TrackingDevices.TrackersConfigChanged();
+                AppPlugins.TrackersConfigChanged();
                 Shared.Settings.SettingsTabSetupFinished = false;
             }
         }
 
         // Notify of the setup end
         Shared.Settings.SettingsTabSetupFinished = true;
-        TrackingDevices.CheckFlipSupport();
+        AppPlugins.CheckFlipSupport();
 
         AppData.Settings.CheckSettings();
         AppData.Settings.SaveSettings();
@@ -855,15 +861,15 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     private void RefreshServiceButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
     {
-        Logger.Info($"Now reinitializing service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid}...");
-        TrackingDevices.CurrentServiceEndpoint.Initialize();
+        Logger.Info($"Now reinitializing service endpoint {AppPlugins.CurrentServiceEndpoint.Guid}...");
+        AppPlugins.CurrentServiceEndpoint.Initialize();
 
         // Force refresh all the valid pages
         Shared.Events.RequestInterfaceReload(false);
 
         // Update other components (may be moved to MVVM)
-        TrackingDevices.HandleDeviceRefresh(false);
-        TrackingDevices.UpdateTrackingDevicesInterface();
+        AppPlugins.HandleDeviceRefresh(false);
+        AppPlugins.UpdateTrackingDevicesInterface();
         AlternativeConnectionOptionsFlyout.Hide();
 
         // Set up the co/re/disconnect button
@@ -899,12 +905,12 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     {
         try
         {
-            Logger.Info($"Now shutting down service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid}...");
-            TrackingDevices.CurrentServiceEndpoint.Shutdown();
+            Logger.Info($"Now shutting down service endpoint {AppPlugins.CurrentServiceEndpoint.Guid}...");
+            AppPlugins.CurrentServiceEndpoint.Shutdown();
         }
         catch (Exception ex)
         {
-            Logger.Info($"Shutting down service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid} failed! " +
+            Logger.Info($"Shutting down service endpoint {AppPlugins.CurrentServiceEndpoint.Guid} failed! " +
                         $"Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
         }
 
@@ -912,8 +918,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         Shared.Events.RequestInterfaceReload(false);
 
         // Update other components (may be moved to MVVM)
-        TrackingDevices.HandleDeviceRefresh(false);
-        TrackingDevices.UpdateTrackingDevicesInterface();
+        AppPlugins.HandleDeviceRefresh(false);
+        AppPlugins.UpdateTrackingDevicesInterface();
         AlternativeConnectionOptionsFlyout.Hide();
 
         // Set up the co/re/disconnect button
@@ -954,7 +960,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         {
             // Launch passed service docs
             await Launcher.LaunchUriAsync(
-                TrackingDevices.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid].ErrorDocsUri ??
+                AppPlugins.ServiceEndpointsList[AppData.Settings.ServiceEndpointGuid].ErrorDocsUri ??
                 new Uri($"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/app/help/"));
         }
         catch (Exception ex)
@@ -977,7 +983,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
             (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
 
         // Get the selected device by its vector index
-        var selectedService = TrackingDevices.ServiceEndpointsList.Values
+        var selectedService = AppPlugins.ServiceEndpointsList.Values
             .ElementAt((sender as ComboBox)!.SelectedIndex);
 
         // Check if not null
@@ -988,20 +994,20 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         }
 
         // Check if the selected service isn't already set
-        if (selectedService == TrackingDevices.CurrentServiceEndpoint) return;
+        if (selectedService == AppPlugins.CurrentServiceEndpoint) return;
         Logger.Info("The selected service endpoint was requested to be changed to " +
                     $"({selectedService.Guid}, {selectedService.Name})!");
 
         // Check and disable previous service's provided [freeze] action handlers
-        if (TrackingDevices.CurrentServiceEndpoint
+        if (AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions?.TrackingFreezeToggled is not null)
-            TrackingDevices.CurrentServiceEndpoint
+            AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions.TrackingFreezeToggled -= Main.FreezeActionToggled;
 
         // Check and disable previous service's provided [flip] action handlers
-        if (TrackingDevices.CurrentServiceEndpoint
+        if (AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions?.SkeletonFlipToggled is not null)
-            TrackingDevices.CurrentServiceEndpoint
+            AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions.SkeletonFlipToggled -= Main.FlipActionToggled;
 
         // Set up the co/re/disconnect button
@@ -1022,14 +1028,14 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         {
             // Try disabling the currently selected service endpoint
             Logger.Info("Shutting down the currently selected service " +
-                        $"({TrackingDevices.CurrentServiceEndpoint.Guid}, " +
-                        $"{TrackingDevices.CurrentServiceEndpoint.Name})...");
+                        $"({AppPlugins.CurrentServiceEndpoint.Guid}, " +
+                        $"{AppPlugins.CurrentServiceEndpoint.Name})...");
 
-            TrackingDevices.CurrentServiceEndpoint.Shutdown();
+            AppPlugins.CurrentServiceEndpoint.Shutdown();
         }
         catch (Exception ex)
         {
-            Logger.Info($"Shutting down service endpoint {TrackingDevices.CurrentServiceEndpoint.Guid} failed! " +
+            Logger.Info($"Shutting down service endpoint {AppPlugins.CurrentServiceEndpoint.Guid} failed! " +
                         $"Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
         }
 
@@ -1037,22 +1043,22 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         AppData.Settings.ServiceEndpointGuid = selectedService.Guid;
 
         // Check and use service's provided [flip] action handlers
-        if (TrackingDevices.CurrentServiceEndpoint
+        if (AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions?.TrackingFreezeToggled is not null)
-            TrackingDevices.CurrentServiceEndpoint
+            AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions.TrackingFreezeToggled += Main.FreezeActionToggled;
 
         // Check and use service's provided [flip] action handlers
-        if (TrackingDevices.CurrentServiceEndpoint
+        if (AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions?.SkeletonFlipToggled is not null)
-            TrackingDevices.CurrentServiceEndpoint
+            AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions.SkeletonFlipToggled += Main.FlipActionToggled;
 
         // Re-initialize just in case
         Logger.Info("Now reinitializing service endpoint " +
-                    $"{TrackingDevices.CurrentServiceEndpoint.Guid}...");
+                    $"{AppPlugins.CurrentServiceEndpoint.Guid}...");
 
-        TrackingDevices.CurrentServiceEndpoint.Initialize();
+        AppPlugins.CurrentServiceEndpoint.Initialize();
         Interfacing.ServiceEndpointSetup(); // Refresh
 
         // Reload everything we can

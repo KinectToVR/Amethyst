@@ -9,23 +9,23 @@ using System.ComponentModel.Composition.Hosting;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Graphics;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.System;
 using Windows.Web.Http;
 using Amethyst.Classes;
 using Amethyst.MVVM;
 using Amethyst.Pages;
 using Amethyst.Plugins.Contract;
+using Amethyst.Schedulers;
 using Amethyst.Utils;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -41,8 +41,10 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.AppNotifications;
+using RestSharp;
 using WinRT;
 using WinRT.Interop;
+using WinUI.System.Icons;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -57,9 +59,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     public delegate Task RequestApplicationUpdate(object sender, EventArgs e);
 
     public static RequestApplicationUpdate RequestUpdateEvent;
+
     private readonly bool _mainPageInitFinished;
 
-    private readonly SemaphoreSlim _rotationFSemaphore = new(0);
     private SystemBackdropConfiguration _configurationSource;
     private bool _mainPageLoadedOnce;
     private MicaController _micaController;
@@ -82,16 +84,21 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.Main.InterfaceBlockerGrid = InterfaceBlockerGrid;
         Shared.Main.NavigationBlockerGrid = NavigationBlockerGrid;
         Shared.Main.MainContentFrame = ContentFrame;
+        Shared.Main.PluginsUpdatePendingProgressBar = PluginsUpdatePendingProgressBar;
+        Shared.Main.PluginsUpdatePendingInfoBar = PluginsUpdatePendingInfoBar;
+        Shared.Main.PluginsUpdateInfoBar = PluginsUpdateInfoBar;
 
         Shared.Main.NavigationItems.NavViewGeneralButtonIcon = NavViewGeneralButtonIcon;
         Shared.Main.NavigationItems.NavViewSettingsButtonIcon = NavViewSettingsButtonIcon;
         Shared.Main.NavigationItems.NavViewDevicesButtonIcon = NavViewDevicesButtonIcon;
         Shared.Main.NavigationItems.NavViewInfoButtonIcon = NavViewInfoButtonIcon;
+        Shared.Main.NavigationItems.NavViewPluginsButtonIcon = NavViewPluginsButtonIcon;
 
         Shared.Main.NavigationItems.NavViewGeneralButtonLabel = NavViewGeneralButtonLabel;
         Shared.Main.NavigationItems.NavViewSettingsButtonLabel = NavViewSettingsButtonLabel;
         Shared.Main.NavigationItems.NavViewDevicesButtonLabel = NavViewDevicesButtonLabel;
         Shared.Main.NavigationItems.NavViewInfoButtonLabel = NavViewInfoButtonLabel;
+        Shared.Main.NavigationItems.NavViewPluginsButtonLabel = NavViewPluginsButtonLabel;
 
         // Set up
         Title = "Amethyst";
@@ -109,7 +116,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Set titlebar/taskview icon
         Logger.Info("Setting the App Window icon...");
         Shared.Main.AppWindow.SetIcon(Path.Combine(
-            Interfacing.GetProgramLocation().DirectoryName, "Assets", "ktvr.ico"));
+            Interfacing.ProgramLocation.DirectoryName, "Assets", "ktvr.ico"));
 
         Logger.Info("Extending the window titlebar...");
         if (AppWindowTitleBar.IsCustomizationSupported())
@@ -171,15 +178,17 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             ("general", typeof(General)),
             ("settings", typeof(Settings)),
             ("devices", typeof(Devices)),
-            ("info", typeof(Info))
+            ("info", typeof(Info)),
+            ("plugins", typeof(Pages.Plugins))
         };
 
         Logger.Info($"Setting up shared events for '{GetType().FullName}'...");
-        RequestUpdateEvent += (_, _) => ExecuteUpdates();
+        RequestUpdateEvent += (_, _) => DownloadUpdates();
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
 
+        // Reload watchdog
         Task.Run(() =>
         {
             Shared.Events.ReloadMainWindowEvent =
@@ -196,11 +205,31 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                 // Rebuild devices' settings
                 // (Trick the device into rebuilding its interface)
-                TrackingDevices.TrackingDevicesList.Values.ToList()
+                AppPlugins.TrackingDevicesList.Values.ToList()
                     .ForEach(plugin => plugin.OnLoad());
 
                 // Reset the event
                 Shared.Events.ReloadMainWindowEvent.Reset();
+            }
+        });
+
+        // Refresh watchdog
+        Task.Run(() =>
+        {
+            Shared.Events.RefreshMainWindowEvent =
+                new ManualResetEvent(false);
+
+            while (true)
+            {
+                // Wait for a reload signal (blocking)
+                Shared.Events.RefreshMainWindowEvent.WaitOne();
+
+                // Reload & restart the waiting loop
+                if (_mainPageLoadedOnce)
+                    Shared.Main.DispatcherQueue.TryEnqueue(() => OnPropertyChanged());
+
+                // Reset the event
+                Shared.Events.RefreshMainWindowEvent.Reset();
             }
         });
 
@@ -214,9 +243,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             {
                 Logger.Fatal(new AbandonedMutexException("Startup failed! The app is already running."));
 
-                if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+                if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                         "K2CrashHandler", "K2CrashHandler.exe")))
-                    Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+                    Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                         "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
                 else
                     Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
@@ -230,9 +259,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Fatal(new AbandonedMutexException(
                 $"Startup failed! Multi-instance lock mutex creation error: {e.Message}"));
 
-            if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+            if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                     "K2CrashHandler", "K2CrashHandler.exe")))
-                Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+                Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                     "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
             else
                 Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
@@ -244,13 +273,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Priority: Launch the crash handler
         Logger.Info("Starting the crash handler passing the app PID...");
 
-        if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+        if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                 "K2CrashHandler", "K2CrashHandler.exe")))
-            Process.Start(Path.Combine(Interfacing.GetProgramLocation().DirectoryName,
+            Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
                 "K2CrashHandler", "K2CrashHandler.exe"), $"{Environment.ProcessId} \"{Logger.LogFilePath}\"");
         else
             Logger.Warn(
-                $"Crash handler exe ({Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
+                $"Crash handler exe ({Path.Combine(Interfacing.ProgramLocation.DirectoryName, "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
 
         // Start the main loop
         Task.Run(Main.MainLoop);
@@ -260,28 +289,90 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Create the plugin directory (if not existent)
         Directory.CreateDirectory(Path.Combine(
-            Interfacing.GetProgramLocation().DirectoryName, "Plugins"));
+            Interfacing.ProgramLocation.DirectoryName, "Plugins"));
+
+        // Try reading the startup task config
+        try
+        {
+            Logger.Info("Searching for scheduled startup tasks...");
+            StartupController.Controller.ReadTasks();
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Reading the startup scheduler configuration failed. Message: {e.Message}");
+        }
+
+        // Execute plugin uninstalls: delete plugin files
+        foreach (var action in StartupController.Controller.DeleteTasks.ToList())
+            try
+            {
+                Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
+                if (!Directory.Exists(action.PluginFolder) ||
+                    action.PluginFolder == Interfacing.ProgramLocation.DirectoryName || Directory
+                        .EnumerateFiles(action.PluginFolder)
+                        .Any(x => x == Interfacing.ProgramLocation.FullName)) continue;
+
+                Logger.Info("Cleaning the plugin folder now...");
+                Directory.Delete(action.PluginFolder, true);
+
+                Logger.Info("Deleting attempted scheduled startup " +
+                            $"{action.GetType()} task with name \"{action.Name}\"...");
+
+                StartupController.Controller.StartupTasks.Remove(action);
+                Logger.Info($"Looks like a startup {action.GetType()} task with " +
+                            $"name \"{action.Name}\" has been executed successfully!");
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
+            }
+
+        // Execute plugin updates: replace plugin files
+        foreach (var action in StartupController.Controller.UpdateTasks.ToList())
+            try
+            {
+                Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
+                if (!Directory.Exists(action.PluginFolder) || !File.Exists(action.UpdatePackage)) continue;
+                Logger.Info($"Found a plugin update package in folder \"{action.PluginFolder}\"");
+
+                Logger.Info("Cleaning the plugin folder now...");
+                Directory.GetDirectories(action.PluginFolder).ToList().ForEach(x => Directory.Delete(x, true));
+                Directory.GetFiles(action.PluginFolder, "*.*", SearchOption.AllDirectories)
+                    .Where(x => x != action.UpdatePackage).ToList().ForEach(File.Delete);
+
+                Logger.Info("Unpacking the new plugin from its archive...");
+                ZipFile.ExtractToDirectory(action.UpdatePackage, action.PluginFolder, true);
+
+                Logger.Info("Deleting the plugin update package...");
+                File.Delete(action.UpdatePackage); // Cleanup after the update
+
+                Logger.Info("Deleting attempted scheduled startup " +
+                            $"{action.GetType()} task with name \"{action.Name}\"...");
+
+                StartupController.Controller.StartupTasks.Remove(action);
+                Logger.Info($"Looks like a startup {action.GetType()} task with " +
+                            $"name \"{action.Name}\" has been executed successfully!");
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
+            }
 
         // Search the "Plugins" sub-directory for assemblies that match the imports.
-        var catalog = new AggregateCatalog();
-
-        // Add the current assembly to support invoke method exports
-        //Logger.Info("Exporting the plugin host plugin...");
-        //catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
-
-        // Iterate over all directories in .\Plugins dir and add all Plugin* dirs to catalogs
+        // Iterate over all directories in .\Plugins dir and add all * dirs to catalogs
+        Logger.Info("Searching for local plugins now...");
         var pluginDirectoryList = Directory.EnumerateDirectories(
-            Path.Combine(Interfacing.GetProgramLocation().DirectoryName!, "Plugins"),
+            Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins"),
             "*", SearchOption.TopDirectoryOnly).ToList();
 
-        AssemblyLoadContext.Default.LoadFromAssemblyPath(
-            Assembly.GetAssembly(typeof(ITrackingDevice))!.Location);
+        // Search the "Plugins" AppData directory for assemblies that match the imports.
+        // Iterate over all directories in Plugins dir and add all * dirs to catalogs
+        Logger.Info("Searching for shared plugins now...");
+        pluginDirectoryList.AddRange(Directory.EnumerateDirectories(
+            Interfacing.GetAppDataPluginFolderDir(""),
+            "*", SearchOption.TopDirectoryOnly));
 
-        // Search for local plugins
-        Logger.Info("Searching for local plugins now...");
-        pluginDirectoryList.ForEach(pluginPath =>
-            catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath)));
-
+        // Search for external plugins
         try
         {
             // Load the JSON source into buffer, parse
@@ -295,7 +386,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 // Try loading all path-valid plugin entries
                 jsonRoot.GetNamedArray("external_plugins").ToList()
                     .Where(pluginEntry => Directory.Exists(pluginEntry.GetString())).ToList()
-                    .ForEach(pluginPath => catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath.GetString())));
+                    .ForEach(pluginPath => pluginDirectoryList.Add(pluginPath.GetString()));
 
                 // Write out all invalid ones
                 jsonRoot.GetNamedArray("external_plugins").ToList()
@@ -303,10 +394,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     .ForEach(pluginPath =>
                     {
                         // Add the plugin to the 'attempted' list
-                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = pluginPath.GetString(),
-                            Status = TrackingDevices.PluginLoadError.NoPluginFolder
+                            Status = AppPlugins.PluginLoadError.NoPluginFolder
                         });
 
                         Logger.Error(new DirectoryNotFoundException(
@@ -330,7 +421,17 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
         }
 
-        if (pluginDirectoryList.Count < 1)
+        // Add the current assembly to support invoke method exports
+        AssemblyLoadContext.Default.LoadFromAssemblyPath(
+            Assembly.GetAssembly(typeof(ITrackingDevice))!.Location);
+
+        Logger.Info("Enumerating all plugins now...");
+        var catalog = new AggregateCatalog();
+
+        pluginDirectoryList.ForEach(pluginPath =>
+            catalog.Catalogs.AddPlugin(new DirectoryInfo(pluginPath)));
+
+        if (catalog.Catalogs.Count < 1)
         {
             Logger.Fatal(new CompositionException("No plugins directories found! Shutting down..."));
             Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoPlugins"));
@@ -370,17 +471,19 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                     // Check the plugin GUID against others loaded, INVALID and null
                     if (string.IsNullOrEmpty(plugin.Metadata.Guid) || plugin.Metadata.Guid == "INVALID" ||
-                        TrackingDevices.TrackingDevicesList.ContainsKey(plugin.Metadata.Guid))
+                        AppPlugins.TrackingDevicesList.ContainsKey(plugin.Metadata.Guid))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
-                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
-                            PluginType = TrackingDevices.PluginType.TrackingDevice,
+                            PluginType = AppPlugins.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
-                            Status = TrackingDevices.PluginLoadError.BadOrDuplicateGuid
+                            UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                            Version = new Version(plugin.Metadata.Version),
+                            Status = AppPlugins.PluginLoadError.BadOrDuplicateGuid
                         });
 
                         Logger.Error(new DuplicateNameException($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
@@ -392,14 +495,16 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     if (AppData.Settings.DisabledPluginsGuidSet.Contains(plugin.Metadata.Guid))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
-                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
-                            PluginType = TrackingDevices.PluginType.TrackingDevice,
+                            PluginType = AppPlugins.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
-                            Status = TrackingDevices.PluginLoadError.LoadingSkipped
+                            UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                            Version = new Version(plugin.Metadata.Version),
+                            Status = AppPlugins.PluginLoadError.LoadingSkipped
                         });
 
                         Logger.Error($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
@@ -421,15 +526,17 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                                      $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
 
                         // Add the device to the 'attempted' list, mark as possibly missing deps
-                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
-                            PluginType = TrackingDevices.PluginType.TrackingDevice,
+                            PluginType = AppPlugins.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                            Version = new Version(plugin.Metadata.Version),
                             Error = e.UnwrapCompositionException().Message,
-                            Status = TrackingDevices.PluginLoadError.NoPluginDependencyDll
+                            Status = AppPlugins.PluginLoadError.NoPluginDependencyDll
                         });
                         continue; // Give up on this one :(
                     }
@@ -441,15 +548,17 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                                      $"Message: {e.Message}, Trace: {e.StackTrace}");
 
                         // Add the device to the 'attempted' list, mark as unknown
-                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
-                            PluginType = TrackingDevices.PluginType.TrackingDevice,
+                            PluginType = AppPlugins.PluginType.TrackingDevice,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                            Version = new Version(plugin.Metadata.Version),
                             Error = e.Message,
-                            Status = TrackingDevices.PluginLoadError.Other
+                            Status = AppPlugins.PluginLoadError.Other
                         });
                         continue; // Give up on this one :(
                     }
@@ -460,23 +569,26 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                     // Add the device to the 'attempted' list, mark as all fine
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                "to the load-attempted device plugins list (TrackingDevices)...");
-                    TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                                "to the load-attempted device plugins list (AppPlugins)...");
+                    AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                     {
                         Name = plugin.Metadata.Name,
                         Guid = plugin.Metadata.Guid,
-                        PluginType = TrackingDevices.PluginType.TrackingDevice,
+                        PluginType = AppPlugins.PluginType.TrackingDevice,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
+                        UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                        Version = new Version(plugin.Metadata.Version),
                         Folder = pluginFolder,
-                        Status = TrackingDevices.PluginLoadError.NoError
+                        Status = AppPlugins.PluginLoadError.NoError
                     });
 
                     // Add the device to the global device list, add the plugin folder path
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                "to the global tracking device plugins list (TrackingDevices)...");
-                    TrackingDevices.TrackingDevicesList.Add(plugin.Metadata.Guid, new TrackingDevice(
-                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation, plugin.Value)
+                                "to the global tracking device plugins list (AppPlugins)...");
+                    AppPlugins.TrackingDevicesList.Add(plugin.Metadata.Guid, new TrackingDevice(
+                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation,
+                        new Version(plugin.Metadata.Version), plugin.Value)
                     {
                         LocalizationResourcesRoot = (new JsonObject(), Path.Join(pluginFolder, "Assets", "Strings"))
                     });
@@ -484,7 +596,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     // Set the device's string resources root to its provided folder
                     // (If it wants to change it, it's gonna need to do that after OnLoad anyway)
                     Logger.Info($"Registering ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                "default root language resource context (TrackingDevices)...");
+                                "default root language resource context (AppPlugins)...");
                     Interfacing.Plugins.SetLocalizationResourcesRoot(
                         Path.Join(pluginFolder, "Assets", "Strings"), plugin.Metadata.Guid);
 
@@ -506,9 +618,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                     // Check if the loaded device is used as anything (AppData.Settings)
                     Logger.Info($"Checking if ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) has any roles set...");
-                    if (TrackingDevices.IsBase(plugin.Metadata.Guid))
+                    if (AppPlugins.IsBase(plugin.Metadata.Guid))
                         Logger.Info($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) is a Base device!");
-                    else if (TrackingDevices.IsOverride(plugin.Metadata.Guid))
+                    else if (AppPlugins.IsOverride(plugin.Metadata.Guid))
                         Logger.Info($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) is an Override device!");
                     else
                         Logger.Info($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) does not serve any purpose :/");
@@ -520,30 +632,32 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                                  "failed with a global outer caught exception. " +
                                  $"Provided exception Message: {e.Message}, Trace: {e.StackTrace}");
 
-                    TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                    AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                     {
                         Name = plugin.Metadata.Name,
                         Guid = plugin.Metadata.Guid,
-                        PluginType = TrackingDevices.PluginType.TrackingDevice,
+                        PluginType = AppPlugins.PluginType.TrackingDevice,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
+                        UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                        Version = new Version(plugin.Metadata.Version),
                         Error = $"{e.Message}\n\n{e.StackTrace}",
-                        Status = TrackingDevices.PluginLoadError.Other
+                        Status = AppPlugins.PluginLoadError.Other
                     });
                 }
             }
 
             // Check if we have enough plugins to run the app
-            if (TrackingDevices.TrackingDevicesList.Count < 1)
+            if (AppPlugins.TrackingDevicesList.Count < 1)
             {
                 Logger.Fatal(new CompositionException("No plugins (tracking devices) loaded! Shutting down..."));
                 Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoDevices"));
             }
 
             Logger.Info("Registration of tracking device plugins has ended, there are " +
-                        $"[{TrackingDevices.TrackingDevicesList.Count}] valid plugins in total.");
+                        $"[{AppPlugins.TrackingDevicesList.Count}] valid plugins in total.");
 
-            TrackingDevices.TrackingDevicesList.ToList().ForEach(x => Logger.Info(
+            AppPlugins.TrackingDevicesList.ToList().ForEach(x => Logger.Info(
                 $"Loaded a valid tracking provider ({{{x.Key}}}, \"{x.Value.Name}\")"));
 
             // Loop over service catalog parts and compose
@@ -577,17 +691,19 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                     // Check the plugin GUID against others loaded, INVALID and null
                     if (string.IsNullOrEmpty(plugin.Metadata.Guid) || plugin.Metadata.Guid == "INVALID" ||
-                        TrackingDevices.ServiceEndpointsList.ContainsKey(plugin.Metadata.Guid))
+                        AppPlugins.ServiceEndpointsList.ContainsKey(plugin.Metadata.Guid))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
-                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
-                            PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                            PluginType = AppPlugins.PluginType.ServiceEndpoint,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
-                            Status = TrackingDevices.PluginLoadError.BadOrDuplicateGuid
+                            UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                            Version = new Version(plugin.Metadata.Version),
+                            Status = AppPlugins.PluginLoadError.BadOrDuplicateGuid
                         });
 
                         Logger.Error(new DuplicateNameException($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
@@ -599,14 +715,16 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     if (AppData.Settings.DisabledPluginsGuidSet.Contains(plugin.Metadata.Guid))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
-                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
-                            PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                            PluginType = AppPlugins.PluginType.ServiceEndpoint,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
-                            Status = TrackingDevices.PluginLoadError.LoadingSkipped
+                            UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                            Version = new Version(plugin.Metadata.Version),
+                            Status = AppPlugins.PluginLoadError.LoadingSkipped
                         });
 
                         Logger.Error($"({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
@@ -628,15 +746,17 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                                      $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
 
                         // Add the device to the 'attempted' list, mark as possibly missing deps
-                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
-                            PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                            PluginType = AppPlugins.PluginType.ServiceEndpoint,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                            Version = new Version(plugin.Metadata.Version),
                             Error = e.UnwrapCompositionException().Message,
-                            Status = TrackingDevices.PluginLoadError.NoPluginDependencyDll
+                            Status = AppPlugins.PluginLoadError.NoPluginDependencyDll
                         });
                         continue; // Give up on this one :(
                     }
@@ -648,15 +768,17 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                                      $"Message: {e.Message}, Trace: {e.StackTrace}");
 
                         // Add the device to the 'attempted' list, mark as unknown
-                        TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
                             Name = plugin.Metadata.Name,
                             Guid = plugin.Metadata.Guid,
-                            PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                            PluginType = AppPlugins.PluginType.ServiceEndpoint,
                             Publisher = plugin.Metadata.Publisher,
                             Website = plugin.Metadata.Website,
+                            UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                            Version = new Version(plugin.Metadata.Version),
                             Error = e.Message,
-                            Status = TrackingDevices.PluginLoadError.Other
+                            Status = AppPlugins.PluginLoadError.Other
                         });
                         continue; // Give up on this one :(
                     }
@@ -667,9 +789,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                     // Add the device to the global device list, add the plugin folder path
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                "to the global service endpoints plugins list (TrackingDevices)...");
-                    TrackingDevices.ServiceEndpointsList.Add(plugin.Metadata.Guid, new ServiceEndpoint(
-                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation, plugin.Value)
+                                "to the global service endpoints plugins list (AppPlugins)...");
+                    AppPlugins.ServiceEndpointsList.Add(plugin.Metadata.Guid, new ServiceEndpoint(
+                        plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation,
+                        new Version(plugin.Metadata.Version), plugin.Value)
                     {
                         LocalizationResourcesRoot = (new JsonObject(), Path.Join(pluginFolder, "Assets", "Strings"))
                     });
@@ -677,7 +800,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     // Set the device's string resources root to its provided folder
                     // (If it wants to change it, it's gonna need to do that after OnLoad anyway)
                     Logger.Info($"Registering ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                "default root language resource context (TrackingDevices)...");
+                                "default root language resource context (AppPlugins)...");
                     Interfacing.Plugins.SetLocalizationResourcesRoot(
                         Path.Join(pluginFolder, "Assets", "Strings"), plugin.Metadata.Guid);
 
@@ -697,16 +820,18 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                     // Add the device to the 'attempted' list, mark as all fine
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
-                                "to the load-attempted device plugins list (TrackingDevices)...");
-                    TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                                "to the load-attempted device plugins list (AppPlugins)...");
+                    AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                     {
                         Name = plugin.Metadata.Name,
                         Guid = plugin.Metadata.Guid,
-                        PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                        PluginType = AppPlugins.PluginType.ServiceEndpoint,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
+                        UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                        Version = new Version(plugin.Metadata.Version),
                         Folder = pluginFolder,
-                        Status = TrackingDevices.PluginLoadError.NoError
+                        Status = AppPlugins.PluginLoadError.NoError
                     });
 
                     // Check if the loaded device is used as anything (AppData.Settings)
@@ -732,30 +857,32 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                                  "failed with a global outer caught exception. " +
                                  $"Provided exception Message: {e.Message}, Trace: {e.StackTrace}");
 
-                    TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                    AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                     {
                         Name = plugin.Metadata.Name,
                         Guid = plugin.Metadata.Guid,
-                        PluginType = TrackingDevices.PluginType.ServiceEndpoint,
+                        PluginType = AppPlugins.PluginType.ServiceEndpoint,
                         Publisher = plugin.Metadata.Publisher,
                         Website = plugin.Metadata.Website,
+                        UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
+                        Version = new Version(plugin.Metadata.Version),
                         Error = $"{e.Message}\n\n{e.StackTrace}",
-                        Status = TrackingDevices.PluginLoadError.Other
+                        Status = AppPlugins.PluginLoadError.Other
                     });
                 }
             }
 
             // Check if we have enough plugins to run the app
-            if (TrackingDevices.ServiceEndpointsList.Count < 1)
+            if (AppPlugins.ServiceEndpointsList.Count < 1)
             {
                 Logger.Fatal(new CompositionException("No plugins (service endpoints) loaded! Shutting down..."));
                 Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoServices"));
             }
 
             Logger.Info("Registration of service endpoint plugins has ended, there are " +
-                        $"[{TrackingDevices.ServiceEndpointsList.Count}] valid plugins in total.");
+                        $"[{AppPlugins.ServiceEndpointsList.Count}] valid plugins in total.");
 
-            TrackingDevices.ServiceEndpointsList.ToList().ForEach(x => Logger.Info(
+            AppPlugins.ServiceEndpointsList.ToList().ForEach(x => Logger.Info(
                 $"Loaded a valid service endpoint ({{{x.Key}}}, \"{x.Value.Name}\")"));
         }
         catch (CompositionException e)
@@ -770,12 +897,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Checking out the default configuration settings...");
         (string DeviceGuid, string ServiceGuid) defaultSettings = (null, null); // Invalid!
 
-        if (File.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")))
+        if (File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")))
             try
             {
                 // Parse the loaded json
                 var jsonHead = JsonObject.Parse(File.ReadAllText(
-                    Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")));
+                    Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")));
 
                 // Check the device guid
                 if (!jsonHead.ContainsKey("TrackingDevice"))
@@ -803,12 +930,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Validate the saved base plugin guid
         Logger.Info("Checking if the saved base device exists in loaded plugins...");
-        if (!TrackingDevices.TrackingDevicesList.ContainsKey(AppData.Settings.TrackingDeviceGuid))
+        if (!AppPlugins.TrackingDevicesList.ContainsKey(AppData.Settings.TrackingDeviceGuid))
         {
             // Check against the defaults
             var firstValidDevice = string.IsNullOrEmpty(defaultSettings.DeviceGuid)
                 ? null // Default to null for an empty default guid passed
-                : TrackingDevices.GetDevice(defaultSettings.DeviceGuid).Device;
+                : AppPlugins.GetDevice(defaultSettings.DeviceGuid).Device;
 
             // Check the device now
             if (firstValidDevice is null || firstValidDevice.TrackedJoints.Count <= 0)
@@ -817,7 +944,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             "was invalid! Searching for any non-disabled suitable device now...");
 
                 // Find the first device that provides any joints
-                firstValidDevice = TrackingDevices.TrackingDevicesList.Values
+                firstValidDevice = AppPlugins.TrackingDevicesList.Values
                     .FirstOrDefault(device => device.TrackedJoints.Count > 0, null);
             }
 
@@ -838,14 +965,14 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Initialize the loaded base device now
         Logger.Info("Initializing the selected base device...");
-        TrackingDevices.BaseTrackingDevice.Initialize();
+        AppPlugins.BaseTrackingDevice.Initialize();
 
         // Validate and initialize the loaded override devices now
         Logger.Info("Checking if saved override devices exist in loaded plugins...");
         AppData.Settings.OverrideDevicesGuidMap.RemoveWhere(overrideGuid =>
         {
             Logger.Info($"Checking if override ({overrideGuid}) exists in loaded plugins...");
-            if (!TrackingDevices.TrackingDevicesList.ContainsKey(overrideGuid))
+            if (!AppPlugins.TrackingDevicesList.ContainsKey(overrideGuid))
             {
                 // This override guid is invalid or missing
                 Logger.Info($"The saved override device ({overrideGuid}) is invalid! Resetting it to NONE!");
@@ -862,14 +989,14 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
             // Still here? We must be fine then, initialize the device
             Logger.Info($"Initializing the selected override device ({overrideGuid})...");
-            TrackingDevices.GetDevice(overrideGuid).Device.Initialize();
+            AppPlugins.GetDevice(overrideGuid).Device.Initialize();
             return false; // This override is OK, let's keep it
         });
 
         foreach (var overrideGuid in AppData.Settings.OverrideDevicesGuidMap)
         {
             Logger.Info($"Checking if override ({overrideGuid}) exists in loaded plugins...");
-            if (!TrackingDevices.TrackingDevicesList.ContainsKey(overrideGuid))
+            if (!AppPlugins.TrackingDevicesList.ContainsKey(overrideGuid))
             {
                 // This override guid is invalid or missing
                 Logger.Info($"The saved override device ({overrideGuid}) is invalid! Resetting it to NONE!");
@@ -888,15 +1015,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
             // Still here? We must be fine then, initialize the device
             Logger.Info($"Initializing the selected override device ({overrideGuid})...");
-            TrackingDevices.GetDevice(overrideGuid).Device.Initialize();
+            AppPlugins.GetDevice(overrideGuid).Device.Initialize();
         }
 
         // Validate the saved service plugin guid
         Logger.Info("Checking if the saved service endpoint exists in loaded plugins...");
-        if (!TrackingDevices.ServiceEndpointsList.ContainsKey(AppData.Settings.ServiceEndpointGuid))
+        if (!AppPlugins.ServiceEndpointsList.ContainsKey(AppData.Settings.ServiceEndpointGuid))
         {
             if (!string.IsNullOrEmpty(defaultSettings.ServiceGuid) && // Check the guid first
-                TrackingDevices.ServiceEndpointsList.ContainsKey(defaultSettings.ServiceGuid))
+                AppPlugins.ServiceEndpointsList.ContainsKey(defaultSettings.ServiceGuid))
             {
                 Logger.Info($"The selected service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
                             $"Resetting it to the default one selected in defaults: ({defaultSettings.ServiceGuid})!");
@@ -905,14 +1032,14 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             else
             {
                 Logger.Info($"The default service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
-                            $"Resetting it to the first one: ({TrackingDevices.ServiceEndpointsList.First().Key})!");
-                AppData.Settings.ServiceEndpointGuid = TrackingDevices.ServiceEndpointsList.First().Key;
+                            $"Resetting it to the first one: ({AppPlugins.ServiceEndpointsList.First().Key})!");
+                AppData.Settings.ServiceEndpointGuid = AppPlugins.ServiceEndpointsList.First().Key;
             }
         }
 
         // Priority: Connect to the tracking service
         Logger.Info("Initializing the selected service endpoint...");
-        TrackingDevices.CurrentServiceEndpoint.Initialize();
+        AppPlugins.CurrentServiceEndpoint.Initialize();
 
         Logger.Info("Checking the selected service endpoint...");
         Interfacing.ServiceEndpointSetup();
@@ -924,17 +1051,17 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Task.Run(() =>
         {
             // The Base device
-            if (!TrackingDevices.BaseTrackingDevice.IsInitialized)
-                TrackingDevices.BaseTrackingDevice.Initialize();
+            if (!AppPlugins.BaseTrackingDevice.IsInitialized)
+                AppPlugins.BaseTrackingDevice.Initialize();
 
             // All valid override devices
             AppData.Settings.OverrideDevicesGuidMap
-                .Where(x => !TrackingDevices.GetDevice(x).Device.IsInitialized).ToList()
-                .ForEach(device => TrackingDevices.GetDevice(device).Device.Initialize());
+                .Where(x => !AppPlugins.GetDevice(x).Device.IsInitialized).ToList()
+                .ForEach(device => AppPlugins.GetDevice(device).Device.Initialize());
         });
 
         // Update the UI
-        TrackingDevices.UpdateTrackingDevicesInterface();
+        AppPlugins.UpdateTrackingDevicesInterface();
 
         // Log our used device to the telemetry module
         Analytics.TrackEvent("TrackingDevice", new Dictionary<string, string>
@@ -952,7 +1079,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Setup device change watchdog : local devices
         var localWatcher = new FileSystemWatcher
         {
-            Path = Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "Plugins"),
+            Path = Path.Combine(Interfacing.ProgramLocation.DirectoryName, "Plugins"),
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
             Filter = "*.dll", IncludeSubdirectories = true, EnableRaisingEvents = true
         };
@@ -1002,8 +1129,21 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
 
+    private bool CanShowPluginsUpdatePendingBar => !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowUpdateBar =>
+        !PluginsUpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen;
+
+    private bool CanShowReloadBar =>
+        !PluginsUpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !UpdateInfoBar.IsOpen;
+
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
+
+    public double BoolToOpacity(bool v)
+    {
+        return v ? 1.0 : 0.0;
+    }
 
     private void MainGrid_Loaded(object sender, RoutedEventArgs e)
     {
@@ -1071,7 +1211,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         if (Interfacing.CurrentPageClass == "Amethyst.Pages.General")
         {
-            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uEA8A";
+            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Symbol = FluentSymbol.Home24Filled;
             Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Foreground = Shared.Main.AttentionBrush;
 
             Shared.Main.NavigationItems.NavViewGeneralButtonLabel.Opacity = 0.0;
@@ -1083,12 +1223,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewGeneralButtonLabel.Opacity = 1.0;
 
             Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Foreground = Shared.Main.NeutralBrush;
-            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uE80F";
+            Shared.Main.NavigationItems.NavViewGeneralButtonIcon.Symbol = FluentSymbol.Home24;
         }
 
         if (Interfacing.CurrentPageClass == "Amethyst.Pages.Settings")
         {
-            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uF8B0";
+            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Symbol = FluentSymbol.Settings24Filled;
             Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Foreground = Shared.Main.AttentionBrush;
 
             Shared.Main.NavigationItems.NavViewSettingsButtonLabel.Opacity = 0.0;
@@ -1100,7 +1240,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewSettingsButtonLabel.Opacity = 1.0;
 
             Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Foreground = Shared.Main.NeutralBrush;
-            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uE713";
+            Shared.Main.NavigationItems.NavViewSettingsButtonIcon.Symbol = FluentSymbol.Settings24;
         }
 
         if (Interfacing.CurrentPageClass == "Amethyst.Pages.Devices")
@@ -1109,9 +1249,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Translation = Vector3.Zero;
 
             Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Foreground = Shared.Main.AttentionBrush;
-
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uEBD2";
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.FontSize = 23;
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Symbol = FluentSymbol.PlugConnected24Filled;
         }
         else
         {
@@ -1119,14 +1257,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewDevicesButtonLabel.Opacity = 1.0;
 
             Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Foreground = Shared.Main.NeutralBrush;
-
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uF158";
-            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.FontSize = 20;
+            Shared.Main.NavigationItems.NavViewDevicesButtonIcon.Symbol = FluentSymbol.PlugDisconnected24;
         }
 
         if (Interfacing.CurrentPageClass == "Amethyst.Pages.Info")
         {
-            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Glyph = "\uF167";
+            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Symbol = FluentSymbol.Info24Filled;
             Shared.Main.NavigationItems.NavViewInfoButtonIcon.Foreground = Shared.Main.AttentionBrush;
 
             Shared.Main.NavigationItems.NavViewInfoButtonLabel.Opacity = 0.0;
@@ -1138,64 +1274,203 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NavigationItems.NavViewInfoButtonLabel.Opacity = 1.0;
 
             Shared.Main.NavigationItems.NavViewInfoButtonIcon.Foreground = Shared.Main.NeutralBrush;
-            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Glyph = "\uE946";
+            Shared.Main.NavigationItems.NavViewInfoButtonIcon.Symbol = FluentSymbol.Info24;
         }
 
-        UpdateIcon.Foreground = Interfacing.CheckingUpdatesNow ? Shared.Main.AttentionBrush : Shared.Main.NeutralBrush;
+        if (Interfacing.CurrentPageClass == "Amethyst.Pages.Plugins")
+        {
+            Shared.Main.NavigationItems.NavViewPluginsButtonLabel.Opacity = 0.0;
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Translation = Vector3.Zero;
+
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Foreground = Shared.Main.AttentionBrush;
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Symbol = FluentSymbol.Puzzlepiece24Filled;
+        }
+        else
+        {
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Translation = new Vector3(0, -8, 0);
+            Shared.Main.NavigationItems.NavViewPluginsButtonLabel.Opacity = 1.0;
+
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Foreground = Shared.Main.NeutralBrush;
+            Shared.Main.NavigationItems.NavViewPluginsButtonIcon.Symbol = FluentSymbol.Puzzlepiece24;
+        }
+
         HelpIcon.Foreground = Shared.Main.NeutralBrush;
+        HelpIcon.Symbol = FluentSymbol.QuestionCircle24;
     }
 
-    private async Task ExecuteUpdates()
+    private bool InstallUpdates(bool reopen = false)
     {
-        Interfacing.UpdatingNow = true;
-        UpdatePendingFlyout.Hide();
-        UpdateIconDot.Opacity = 0.0;
-        await Task.Delay(500);
-
-        // Mark the update footer as active
-        UpdateIconGrid.Translation = Vector3.Zero;
-        UpdateIconText.Opacity = 0.0;
-        UpdateIcon.Foreground = Shared.Main.AttentionBrush;
-        UpdatePendingFlyoutFooter.Text = $"Amethyst v{_remoteVersionString}";
-        UpdatePendingFlyoutStatusContent.Text =
-            Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
-
         try
         {
-            Logger.Info("Trying to start the Update Icon storyboard...");
-            IconRotation.Begin(); // Begin animation, not working on some machines
+            // Optional auto-restart scenario "-o" (happens when the user clicks 'update now')
+            Process.Start(new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                Verb = "runas",
+                FileName = Path.Combine(Interfacing.AppDataTempDir.FullName, "Amethyst-Installer.exe"),
+                Arguments =
+                    $"--update {(reopen ? "-o" : "")} -path \"{Interfacing.ProgramLocation.DirectoryName}\""
+            });
         }
-        catch (Exception e)
+        catch (Win32Exception ex)
         {
-            Logger.Warn(e); // Log that!
-            _rotationFSemaphore.Release();
+            if (ex.NativeErrorCode == 1223)
+                Logger.Warn($"You need to pass UAC to run the installer! Message: {ex.Message}");
+            return false; // Keep the update banner available
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(new Exception($"Update failed, an exception occurred. Message: {ex.Message}"));
+            return false; // Keep the update banner available
         }
 
-        if (!Interfacing.IsNuxPending)
-            UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions
+        // Exit, cleanup should be automatic
+        Interfacing.ManualUpdate = true;
+        Environment.Exit(0);
+        return true; // Will exit before
+    }
+
+    private async Task CheckUpdates(uint delay = 0)
+    {
+        // Attempt only after init
+        if (!_mainPageInitFinished) return;
+
+        // Check if we're midway updating
+        if (Interfacing.UpdatingNow)
+            return; // Don't proceed further
+
+        await Task.Delay((int)delay);
+
+        // Don't check if found
+        if (!Interfacing.UpdateFound)
+        {
+            // Check now
+            Interfacing.UpdateFound = false;
+
+            // Check for updates
+            try
             {
-                Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
-                ShowMode = FlyoutShowMode.Transient
-            });
+                using var client = new HttpClient();
+                string getReleaseVersion = "", getDocsLanguages = "en";
+
+                // Release
+                try
+                {
+                    Logger.Info("Checking for updates... [GET]");
+                    using var response =
+                        await client.GetAsync(new Uri($"https://api.k2vr.tech/v{AppData.ApiVersion}/update"));
+                    getReleaseVersion = await response.Content.ReadAsStringAsync();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(new Exception($"Error getting the release info! Message: {e.Message}"));
+                }
+
+                // Language
+                try
+                {
+                    Logger.Info("Checking available languages... [GET]");
+                    using var response =
+                        await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
+                    getDocsLanguages = await response.Content.ReadAsStringAsync();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(new Exception($"Error getting the language info! Message: {e.Message}"));
+                }
+
+                // If the read string isn't empty, proceed to checking for updates
+                if (!string.IsNullOrEmpty(getReleaseVersion))
+                {
+                    Logger.Info($"Update-check successful, string:\n{getReleaseVersion}");
+
+                    // Parse the loaded json
+                    var jsonHead = JsonObject.Parse(getReleaseVersion);
+
+                    if (!jsonHead.ContainsKey("amethyst"))
+                        Logger.Error(new InvalidDataException("The latest release's manifest was invalid!"));
+
+                    // Parse the amethyst entry
+                    var jsonRoot = jsonHead.GetNamedObject("amethyst");
+
+                    if (!jsonRoot.ContainsKey("version") ||
+                        !jsonRoot.ContainsKey("version_string"))
+                    {
+                        Logger.Error("The latest release's manifest was invalid!");
+                    }
+
+                    else
+                    {
+                        // Get the version tag (uint, fallback to latest)
+                        var remoteVersion = (int)jsonRoot.GetNamedNumber("version", AppData.InternalVersion);
+
+                        // Get the remote version name
+                        _remoteVersionString = jsonRoot.GetNamedString("version_string");
+
+                        Logger.Info($"Local version: {AppData.InternalVersion}");
+                        Logger.Info($"Remote version: {remoteVersion}");
+
+                        Logger.Info($"Local version string: {AppData.VersionString.Display}");
+                        Logger.Info($"Remote version string: {_remoteVersionString}");
+
+                        // Check the version
+                        if (AppData.InternalVersion < remoteVersion)
+                            Interfacing.UpdateFound = true;
+                    }
+                }
+                else
+                {
+                    Logger.Error(new NoNullAllowedException("Update-check failed, the string was empty."));
+                }
+
+                if (!string.IsNullOrEmpty(getDocsLanguages))
+                {
+                    // Parse the loaded json
+                    var jsonRoot = JsonObject.Parse(getDocsLanguages);
+
+                    // Check if the resource root is fine & the language code exists
+                    Interfacing.DocsLanguageCode = AppData.Settings.AppLanguage;
+
+                    if (jsonRoot is null || !jsonRoot.ContainsKey(Interfacing.DocsLanguageCode))
+                    {
+                        Logger.Info("Docs do not contain a language with code " +
+                                    $"\"{Interfacing.DocsLanguageCode}\", falling back to \"en\" (English)!");
+                        Interfacing.DocsLanguageCode = "en";
+                    }
+                }
+                else
+                {
+                    Logger.Error(new NoNullAllowedException("Language-check failed, the string was empty."));
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+            }
+
+            // Download the update and show the notice
+            if (Interfacing.UpdateFound)
+                await DownloadUpdates();
+        }
+
+        // Check for plugin updates
+        await Parallel.ForEachAsync(AppPlugins.LoadAttemptedPluginsList,
+            async (x, _) => await x.CheckUpdates());
+    }
+
+    private async Task DownloadUpdates()
+    {
+        Interfacing.UpdatingNow = true;
+        await Task.Delay(500);
 
         // Success? ...or nah?
         var updateError = false;
 
-        // Reset the progressbar
-        var updatePendingProgressBar = new ProgressBar
-        {
-            IsIndeterminate = false,
-            HorizontalAlignment = HorizontalAlignment.Stretch
-        };
-
-        UpdatePendingFlyoutMainStack.Children.Add(updatePendingProgressBar);
-
         // Download the latest installer/updater
         // https://github.com/KinectToVR/Amethyst-Installer-Releases/releases/latest/download/Amethyst-Installer.exe
-
         try
         {
-            using var client = new HttpClient();
+            using var client = new RestClient();
             var installerUri = "";
 
             Logger.Info("Checking out the updater version... [GET]");
@@ -1203,12 +1478,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Get the installer download Uri
             try
             {
-                using var response = await client.GetAsync(new Uri("https://api.k2vr.tech/v0/installer/version"));
-                var getInstallerUri = await response.Content.ReadAsStringAsync();
+                var response = await client.ExecuteGetAsync(
+                    "https://api.k2vr.tech/v0/installer/version", new RestRequest());
 
-                if (!string.IsNullOrEmpty(getInstallerUri))
+                if (!string.IsNullOrEmpty(response.Content))
                 {
-                    var jsonRoot = JsonObject.Parse(getInstallerUri);
+                    var jsonRoot = JsonObject.Parse(response.Content);
 
                     // Parse the loaded json
                     if (jsonRoot.ContainsKey("download"))
@@ -1217,69 +1492,37 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     else
                     {
-                        Logger.Error(
-                            new KeyNotFoundException("Installer-uri-check failed, the \"download\" key wasn't found."));
-                        updateError = true;
+                        Logger.Error(new KeyNotFoundException(
+                            "Installer-uri-check failed, the \"download\" key wasn't found."));
+                        updateError = true; // Skill issue
                     }
                 }
                 else
                 {
                     Logger.Error(new NoNullAllowedException("Installer-uri-check failed, the string was empty."));
-                    updateError = true;
+                    updateError = true; // What happened?
                 }
             }
             catch (Exception e)
             {
                 Logger.Error(new Exception($"Error checking the updater download Uri! Message: {e.Message}"));
-                updateError = true;
+                updateError = true; // Something else
             }
-
 
             // Download if we're ok
             if (!updateError)
                 try
                 {
-                    var thisFolder = await StorageFolder
-                        .GetFolderFromPathAsync(Interfacing.GetAppDataTempDir().FullName);
+                    // Create a stream reader using the received Installer Uri
+                    await using var stream = await client.ExecuteDownloadStreamAsync(installerUri, new RestRequest());
 
-                    // To save downloaded image to local storage
-                    var installerFile = await thisFolder.CreateFileAsync(
-                        "Amethyst-Installer.exe", CreationCollisionOption.ReplaceExisting);
+                    var installerFile = // Replace or create our installer file
+                        await (await StorageFolder.GetFolderFromPathAsync(Interfacing.AppDataTempDir.FullName))
+                            .CreateFileAsync("Amethyst-Installer.exe", CreationCollisionOption.ReplaceExisting);
 
-                    using var fsInstallerFile = await installerFile.OpenAsync(FileAccessMode.ReadWrite);
-                    using var response = await client.GetAsync(new Uri(installerUri),
-                        HttpCompletionOption.ResponseHeadersRead);
-
-                    using var stream = await response.Content.ReadAsInputStreamAsync();
-
-                    ulong totalBytesRead = 0; // Already read buffer
-                    var totalBytesToRead = response.Content.Headers.ContentLength.Value;
-                    var downloadStatusString =
-                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
-
-                    while (true)
-                    {
-                        var buffer = new byte[64 * 1024];
-                        var readBuffer = await stream.ReadAsync(
-                            buffer.AsBuffer(), (uint)buffer.Length, InputStreamOptions.None);
-
-                        // There's nothing else to read
-                        if (readBuffer is null || readBuffer.Length == 0) break;
-
-                        // Report the progress
-                        totalBytesRead += readBuffer.Length;
-                        Logger.Info($"Downloaded {totalBytesRead} of {totalBytesToRead} bytes...");
-
-                        // Update the progressbar
-                        var progress = (double)totalBytesRead / totalBytesToRead;
-
-                        updatePendingProgressBar.Value = progress * 100;
-                        UpdatePendingFlyoutStatusContent.Text = downloadStatusString.Replace(
-                            "0", ((int)(progress * 100)).ToString());
-
-                        // Write to file
-                        await fsInstallerFile.WriteAsync(readBuffer);
-                    }
+                    // Create an output stream and push all the available data to it
+                    await using var fsInstallerFile = await installerFile.OpenStreamForWriteAsync();
+                    await stream.CopyToAsync(fsInstallerFile); // The runtime will do the rest for us
                 }
                 catch (Exception e)
                 {
@@ -1293,294 +1536,24 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             updateError = true;
         }
 
-        // Wait for a full icon revolve
-        await _rotationFSemaphore.WaitAsync();
-
-        try
-        {
-            Logger.Info("Trying to stop the Update Icon storyboard...");
-            IconRotation.Stop(); // Stop animating, not working on some machines
-        }
-        catch (Exception e)
-        {
-            Logger.Warn(e);
-        }
-
-        // Mark the update footer as inactive
-        UpdateIcon.Foreground = Shared.Main.NeutralBrush;
-        UpdateIconGrid.Translation = new Vector3(0, -8, 0);
-        UpdateIconText.Opacity = 1.0;
-
         // Check the file result and the DL result
-        if (!updateError)
+        if (updateError) return;
+
+        // If found and downloaded properly
+        UpdateInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
+            "/SharedStrings/Updates/NewUpdateMessage"), _remoteVersionString);
+
+        UpdateInfoBar.IsOpen = true;
+        UpdateInfoBar.Opacity = 1.0;
+        OnPropertyChanged(); // Visibility
+
+        // Enqueue an update task to be run at shutdown
+        ShutdownController.ShutdownTasks.Add(new ShutdownTask
         {
-            try
-            {
-                // Optional auto-restart scenario "-o" (happens when the user clicks 'update now')
-                Process.Start(new ProcessStartInfo
-                {
-                    UseShellExecute = true, Verb = "runas",
-                    FileName = Path.Combine(Interfacing.GetAppDataTempDir().FullName, "Amethyst-Installer.exe"),
-                    Arguments =
-                        $"--update{(Interfacing.UpdateOnClosed ? "" : " -o")} -path \"{Interfacing.GetProgramLocation().DirectoryName}\""
-                });
-            }
-            catch (Win32Exception e)
-            {
-                if (e.NativeErrorCode == 1223)
-                    Logger.Warn($"You need to pass UAC to run the installer! Message: {e.Message}");
-                goto update_error; // Jump to the error scenario
-            }
-            catch (Exception e)
-            {
-                Logger.Error(new Exception($"Update failed, an exception occurred. Message: {e.Message}"));
-                goto update_error; // Jump to the error scenario
-            }
-
-            // Exit, cleanup should be automatic
-            Interfacing.UpdateOnClosed = false; // Don't re-do
-            Environment.Exit(0); // Should get caught by the exit handler
-        }
-
-        // Jump-label
-        update_error:
-
-        // Still here? Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
-
-        updatePendingProgressBar.ShowError = true;
-        UpdatePendingFlyoutStatusContent.Text =
-            Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error");
-
-        await Task.Delay(3200);
-        UpdatePendingFlyout.Hide();
-        await Task.Delay(500);
-
-        // Don't give up yet
-        Interfacing.UpdatingNow = false;
-        if (Interfacing.UpdateFound)
-            UpdateIconDot.Opacity = 1.0;
-
-        // Remove the progressbar
-        UpdatePendingFlyoutMainStack.Children.Remove(
-            UpdatePendingFlyoutMainStack.Children.Last());
-    }
-
-    private async Task CheckUpdates(bool show, uint delay = 0)
-    {
-        // Attempt only after init
-        if (!_mainPageInitFinished) return;
-
-        {
-            // Check if we're midway updating
-            if (Interfacing.UpdatingNow)
-            {
-                // Show the updater progress flyout
-                if (!Interfacing.IsNuxPending)
-                    UpdatePendingFlyout.ShowAt(HelpButton, new FlyoutShowOptions
-                    {
-                        Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
-                        ShowMode = FlyoutShowMode.Transient
-                    });
-
-                return; // Don't proceed further
-            }
-
-            // Mark as checking
-            Interfacing.CheckingUpdatesNow = true;
-            await Task.Delay((int)delay);
-
-            // Don't check if found
-            if (!Interfacing.UpdateFound)
-            {
-                // Mark the update footer as active
-                UpdateIconGrid.Translation = Vector3.Zero;
-                UpdateIconText.Opacity = 0.0;
-                UpdateIcon.Foreground = Shared.Main.AttentionBrush;
-
-                try
-                {
-                    Logger.Info("Trying to start the Update Icon storyboard...");
-                    IconRotation.Begin(); // Begin animation, not working on some machines
-                }
-                catch (Exception e)
-                {
-                    Logger.Warn(e); // Log that!
-                    _rotationFSemaphore.Release();
-                }
-
-                // Check now
-                Interfacing.UpdateFound = false;
-
-                // Dummy for holding change logs
-                List<string> changesStringVector = new();
-
-                // Check for updates
-                try
-                {
-                    using var client = new HttpClient();
-                    string getReleaseVersion = "", getDocsLanguages = "en";
-
-                    // Release
-                    try
-                    {
-                        Logger.Info("Checking for updates... [GET]");
-                        using var response =
-                            await client.GetAsync(new Uri($"https://api.k2vr.tech/v{AppData.ApiVersion}/update"));
-                        getReleaseVersion = await response.Content.ReadAsStringAsync();
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(new Exception($"Error getting the release info! Message: {e.Message}"));
-                    }
-
-                    // Language
-                    try
-                    {
-                        Logger.Info("Checking available languages... [GET]");
-                        using var response =
-                            await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
-                        getDocsLanguages = await response.Content.ReadAsStringAsync();
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(new Exception($"Error getting the language info! Message: {e.Message}"));
-                    }
-
-                    // If the read string isn't empty, proceed to checking for updates
-                    if (!string.IsNullOrEmpty(getReleaseVersion))
-                    {
-                        Logger.Info($"Update-check successful, string:\n{getReleaseVersion}");
-
-                        // Parse the loaded json
-                        var jsonHead = JsonObject.Parse(getReleaseVersion);
-
-                        if (!jsonHead.ContainsKey("amethyst"))
-                            Logger.Error(new InvalidDataException("The latest release's manifest was invalid!"));
-
-                        // Parse the amethyst entry
-                        var jsonRoot = jsonHead.GetNamedObject("amethyst");
-
-                        if (!jsonRoot.ContainsKey("version") ||
-                            !jsonRoot.ContainsKey("version_string") ||
-                            !jsonRoot.ContainsKey("changelog"))
-                        {
-                            Logger.Error("The latest release's manifest was invalid!");
-                        }
-
-                        else
-                        {
-                            // Get the version tag (uint, fallback to latest)
-                            var remoteVersion = (int)jsonRoot.GetNamedNumber("version", AppData.InternalVersion);
-
-                            // Get the remote version name
-                            _remoteVersionString = jsonRoot.GetNamedString("version_string");
-
-                            Logger.Info($"Local version: {AppData.InternalVersion}");
-                            Logger.Info($"Remote version: {remoteVersion}");
-
-                            Logger.Info($"Local version string: {AppData.VersionString.Display}");
-                            Logger.Info($"Remote version string: {_remoteVersionString}");
-
-                            // Check the version
-                            if (AppData.InternalVersion < remoteVersion)
-                                Interfacing.UpdateFound = true;
-
-                            // Cache the changes
-                            changesStringVector = jsonRoot.GetNamedArray("changelog")
-                                .Select(x => x.ToString()).ToList();
-                        }
-                    }
-                    else
-                    {
-                        Logger.Error(new NoNullAllowedException("Update-check failed, the string was empty."));
-                    }
-
-                    if (!string.IsNullOrEmpty(getDocsLanguages))
-                    {
-                        // Parse the loaded json
-                        var jsonRoot = JsonObject.Parse(getDocsLanguages);
-
-                        // Check if the resource root is fine & the language code exists
-                        Interfacing.DocsLanguageCode = AppData.Settings.AppLanguage;
-
-                        if (jsonRoot is null || !jsonRoot.ContainsKey(Interfacing.DocsLanguageCode))
-                        {
-                            Logger.Info("Docs do not contain a language with code " +
-                                        $"\"{Interfacing.DocsLanguageCode}\", falling back to \"en\" (English)!");
-                            Interfacing.DocsLanguageCode = "en";
-                        }
-                    }
-                    else
-                    {
-                        Logger.Error(new NoNullAllowedException("Language-check failed, the string was empty."));
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
-                }
-
-                // Wait for a full icon revolve
-                await _rotationFSemaphore.WaitAsync();
-
-                try
-                {
-                    Logger.Info("Trying to stop the Update Icon storyboard...");
-                    IconRotation.Stop(); // Stop animating, not working on some machines
-                }
-                catch (Exception e)
-                {
-                    Logger.Warn(e);
-                }
-
-                // Mark the update footer as inactive
-                {
-                    UpdateIcon.Foreground = Shared.Main.NeutralBrush;
-
-                    UpdateIconGrid.Translation = new Vector3(0, -8, 0);
-                    UpdateIconText.Opacity = 1.0;
-                }
-
-                if (Interfacing.UpdateFound)
-                {
-                    FlyoutHeader.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/NewUpdateFound");
-                    FlyoutFooter.Text = $"Amethyst v{_remoteVersionString}";
-
-                    var changelogString = "";
-                    changesStringVector.ForEach(x => changelogString += $"- {x}\n");
-                    FlyoutContent.Text = changelogString.TrimEnd('\n');
-                    FlyoutContent.Margin = new Thickness(0, 0, 0, 12);
-
-                    InstallLaterButton.Visibility = Visibility.Visible;
-                    InstallNowButton.Visibility = Visibility.Visible;
-                    UpdateIconDot.Opacity = 1.0;
-                }
-                else
-                {
-                    FlyoutHeader.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/UpToDate");
-                    FlyoutFooter.Text = $"Amethyst v{AppData.VersionString.Display}";
-                    FlyoutContent.Text = Interfacing.LocalizedJsonString("/SharedStrings/Updates/Suggestions");
-                    FlyoutContent.Margin = new Thickness(0);
-
-                    InstallLaterButton.Visibility = Visibility.Collapsed;
-                    InstallNowButton.Visibility = Visibility.Collapsed;
-                    UpdateIconDot.Opacity = 0.0;
-                }
-            }
-
-            // If an update was found, show it
-            // (or if the check was manual)
-            if ((Interfacing.UpdateFound || show) && !Interfacing.IsNuxPending)
-                UpdateFlyout.ShowAt(HelpButton, new FlyoutShowOptions
-                {
-                    Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
-                    ShowMode = FlyoutShowMode.Transient
-                });
-
-            // Uncheck
-            Interfacing.CheckingUpdatesNow = false;
-        }
+            Name = "Update Amethyst using the Installer",
+            Priority = false, // First download plugin updates, then everything else
+            Action = () => Task.FromResult(Interfacing.ManualUpdate || InstallUpdates())
+        });
     }
 
     private void InitializerTeachingTip_ActionButtonClick(TeachingTip sender, object args)
@@ -1641,10 +1614,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Reload has been invoked: trying to restart the app...");
 
         // If we've found who asked
-        if (File.Exists(Interfacing.GetProgramLocation().ToString()))
+        if (File.Exists(Interfacing.ProgramLocation.ToString()))
         {
             // Log the caller
-            Logger.Info($"The current caller process is: {Interfacing.GetProgramLocation()}");
+            Logger.Info($"The current caller process is: {Interfacing.ProgramLocation}");
 
             // Exit the app
             Logger.Info("Exiting in 500ms...");
@@ -1656,7 +1629,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             await Interfacing.HandleAppExit(500);
 
             // Restart and exit with code 0
-            Process.Start(Interfacing.GetProgramLocation()
+            Process.Start(Interfacing.ProgramLocation
                 .FullName.Replace(".dll", ".exe"));
 
             // Exit without re-handling everything
@@ -1675,7 +1648,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
     }
 
-    private void NavView_Loaded(object sender, RoutedEventArgs e)
+    private async void NavView_Loaded(object sender, RoutedEventArgs e)
     {
         Interfacing.ActualTheme = NavView.ActualTheme;
 
@@ -1701,6 +1674,23 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Because we use ItemInvoked to navigate, we need to call Navigate
         // here to load the home page.
         Shared.Main.NavigateToPage("general", new EntranceNavigationTransitionInfo());
+
+        // Show the startup tour teachingtip
+        if (!AppData.Settings.FirstTimeTourShown)
+        {
+            // Play a sound
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+            // Show the first tip
+            Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
+            Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+
+            Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = true;
+            Interfacing.IsNuxPending = true;
+        }
+
+        // Check for updates (and show)
+        await CheckUpdates(2000);
     }
 
     private void NavView_ItemInvoked(NavigationView sender,
@@ -1717,34 +1707,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         if (ContentFrame.CanGoBack && (!NavView.IsPaneOpen || NavView.DisplayMode is not
                 (NavigationViewDisplayMode.Compact or NavigationViewDisplayMode.Minimal)))
             ContentFrame.GoBack();
-    }
-
-    private async void UpdateButton_Tapped(object sender, TappedRoutedEventArgs e)
-    {
-        // Check for updates (and show)
-        if (Interfacing.CheckingUpdatesNow) return;
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-        await CheckUpdates(true);
-    }
-
-    private async void UpdateButton_Loaded(object sender, RoutedEventArgs e)
-    {
-        // Show the startup tour teachingtip
-        if (!AppData.Settings.FirstTimeTourShown)
-        {
-            // Play a sound
-            AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
-            // Show the first tip
-            Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
-            Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
-
-            Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = true;
-            Interfacing.IsNuxPending = true;
-        }
-
-        // Check for updates (and show)
-        await CheckUpdates(false, 2000);
     }
 
     private void HelpButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -1768,13 +1730,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overview"),
             "overrides" => Interfacing.LocalizedJsonString(
                 "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overrides"),
-            "info" => Interfacing.LocalizedJsonString(
-                "/SharedStrings/Buttons/Help/Docs/InfoPage/OpenCollective"),
-            _ => HelpFlyoutDocsButton.Text
+            "info" or _ => Interfacing.LocalizedJsonString(
+                "/SharedStrings/Buttons/Help/Docs/InfoPage/OpenCollective")
         };
 
         // Show the help flyout
-        HelpFlyout.ShowAt(HelpButton, new FlyoutShowOptions
+        HelpFlyout.ShowAt(PluginsItem, new FlyoutShowOptions
         {
             Placement = FlyoutPlacementMode.RightEdgeAlignedBottom,
             ShowMode = FlyoutShowMode.Transient
@@ -1799,16 +1760,27 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
-    private void InstallLaterButton_Click(object sender, RoutedEventArgs e)
+    private void InstallNowButton_Click(object sender, RoutedEventArgs e)
     {
-        Interfacing.UpdateOnClosed = true;
-        UpdateFlyout.Hide();
+        // Try installing
+        InstallUpdates();
     }
 
-    private async void InstallNowButton_Click(object sender, RoutedEventArgs e)
+    private void PluginsUpdateButton_Click(object sender, RoutedEventArgs e)
     {
-        await ExecuteUpdates();
-        UpdateFlyout.Hide();
+        PluginsUpdateInfoBar.IsOpen = false;
+        PluginsUpdateInfoBar.Opacity = 0.0;
+        OnPropertyChanged(); // Visibility
+
+        // Enqueue plugin updates for exit
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            foreach (var plugin in AppPlugins.LoadAttemptedPluginsList.Where(x => x.UpdateFound))
+            {
+                Logger.Info($"Queueing plugin {plugin.Name} update task for the shutdown controller...");
+                plugin.EnqueueUpdates(null, null); // Let the plugin class do this for us
+            }
+        });
     }
 
     private async void HelpFlyoutDocsButton_Click(object sender, RoutedEventArgs e)
@@ -1849,9 +1821,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Interfacing.IsNuxPending = true;
 
         // Load the license text
-        if (File.Exists(Path.Combine(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Licenses.txt")))
+        if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName, "Assets", "Licenses.txt")))
             LicensesText.Text = File.ReadAllText(Path.Combine(
-                Interfacing.GetProgramLocation().DirectoryName, "Assets", "Licenses.txt"));
+                Interfacing.ProgramLocation.DirectoryName, "Assets", "Licenses.txt"));
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
@@ -1911,36 +1883,47 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // -> Block exiting until we're done
         args.Handled = true;
 
-        // Handle all the exit actions (if needed)
-        // Show the close tip (if not shown yet)
-        if (!Interfacing.IsExitHandled &&
-            !AppData.Settings.FirstShutdownTipShown)
+        if (Interfacing.IsExitPending) return;
+        switch (Interfacing.IsExitHandled)
         {
-            ShutdownTeachingTip.IsOpen = true;
+            // Show the close tip (if not shown yet)
+            case false when
+                !AppData.Settings.FirstShutdownTipShown:
+                ShutdownTeachingTip.IsOpen = true;
 
-            AppData.Settings.FirstShutdownTipShown = true;
-            AppData.Settings.SaveSettings(); // Save settings
-            return;
-        }
+                AppData.Settings.FirstShutdownTipShown = true;
+                AppData.Settings.SaveSettings(); // Save settings
+                return;
 
-        if (Interfacing.UpdateOnClosed)
-            await ExecuteUpdates();
-
-        if (!Interfacing.IsExitHandled)
-        {
-            // Handle the exit actions
-            await Interfacing.HandleAppExit(1000);
-
-            // Make sure any Mica/Acrylic controller is disposed so it doesn't try to
-            // use this closed window.
-            if (_micaController is not null)
+            // Handle all the exit actions (if needed)
+            case false:
             {
-                _micaController.Dispose();
-                _micaController = null;
-            }
+                // Mark as handled
+                Interfacing.IsExitPending = true;
 
-            Activated -= Window_Activated;
-            _configurationSource = null;
+                // Hide the update bar now
+                UpdateInfoBar.IsOpen = false;
+                UpdateInfoBar.Opacity = 0.0;
+                OnPropertyChanged(); // Visibility
+
+                // Run shutdown tasks
+                await ShutdownController.ExecuteAllTasks();
+
+                // Mark as mostly done
+                Interfacing.IsExitPending = true;
+
+                // Make sure any Mica/Acrylic controller is disposed so it doesn't try to
+                // use this closed window.
+                if (_micaController is not null)
+                {
+                    _micaController.Dispose();
+                    _micaController = null;
+                }
+
+                Activated -= Window_Activated;
+                _configurationSource = null;
+                break;
+            }
         }
 
         try
@@ -1985,6 +1968,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
 
         HelpIcon.Foreground = Shared.Main.AttentionBrush;
+        HelpIcon.Symbol = FluentSymbol.QuestionCircle24Filled;
         HelpIconGrid.Translation = Vector3.Zero;
         HelpIconText.Opacity = 0.0;
     }
@@ -1995,24 +1979,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
 
         HelpIcon.Foreground = Shared.Main.NeutralBrush;
+        HelpIcon.Symbol = FluentSymbol.QuestionCircle24;
         HelpIconGrid.Translation = new Vector3(0, -8, 0);
         HelpIconText.Opacity = 1.0;
-    }
-
-    private void OnIconRotationOnCompleted(object o, object o1)
-    {
-        _rotationFSemaphore.Release();
-
-        try
-        {
-            Logger.Info("Trying to restart the Update Icon storyboard...");
-            IconRotation.Stop(); // Restart
-            IconRotation.Begin();
-        }
-        catch (Exception e)
-        {
-            Logger.Warn(e);
-        }
     }
 
     private void InterfaceBlockerGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)

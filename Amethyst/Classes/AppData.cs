@@ -12,4 +12,7 @@ public static class AppData
 
     // Application settings
     public static AppSettings Settings { get; set; } = new();
+
+    // Application token
+    public const string ApiToken = "AZ_API_TOKEN";
 }

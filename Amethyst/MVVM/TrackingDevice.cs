@@ -8,24 +8,26 @@ using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using static Amethyst.Classes.Interfacing;
+using System.Diagnostics;
 
 namespace Amethyst.MVVM;
 
 public class TrackingDevice : INotifyPropertyChanged
 {
-    public TrackingDevice(string name, string guid, string path, ITrackingDevice device)
+    public TrackingDevice(string name, string guid, string path, Version version, ITrackingDevice device)
     {
         Guid = guid;
         Name = name;
         Location = path;
+        Version = version;
         Device = device;
     }
 
     // Extensions: is this device set as base?
-    public bool IsBase => TrackingDevices.IsBase(Guid);
+    public bool IsBase => AppPlugins.IsBase(Guid);
 
     // Extensions: is this device set as an override?
-    public bool IsOverride => TrackingDevices.IsOverride(Guid);
+    public bool IsOverride => AppPlugins.IsOverride(Guid);
 
     // Get GUID
     [DefaultValue("INVALID")] public string Guid { get; }
@@ -35,6 +37,9 @@ public class TrackingDevice : INotifyPropertyChanged
 
     // Get Path
     [DefaultValue("UNKNOWN")] public string Location { get; }
+
+    // Get the plugin version using its host assembly
+    [DefaultValue("0.0.0.0")] public Version Version { get; }
 
     // Get Docs
     [DefaultValue(null)] public Uri ErrorDocsUri => Device.ErrorDocsUri;
@@ -184,16 +189,16 @@ public class TrackingDevice : INotifyPropertyChanged
             // Stop the pose composer for now
             lock (UpdateLock)
             {
-                TrackingDevices.HandleDeviceRefresh(false);
+                AppPlugins.HandleDeviceRefresh(false);
                 AppData.Settings.CheckSettings(); // Refresh
             }
 
             // Make all the devices refresh their props
-            TrackingDevices.TrackingDevicesList.ToList()
+            AppPlugins.TrackingDevicesList.ToList()
                 .ForEach(x => x.Value.OnPropertyChanged());
 
             // Update other statuses
-            TrackingDevices.UpdateTrackingDevicesInterface();
+            AppPlugins.UpdateTrackingDevicesInterface();
             Shared.Events.RequestInterfaceReload(false);
 
             // Save the application config

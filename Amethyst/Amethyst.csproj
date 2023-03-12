@@ -40,16 +40,19 @@
 
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown" Version="7.1.2" />
         <PackageReference Include="CommunityToolkit.WinUI.UI.Media" Version="7.1.2" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.4.0" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.5.0" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230217.4" />
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25231-preview" />
         <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+        <PackageReference Include="RestSharp" Version="108.0.3" />
         <PackageReference Include="System.ComponentModel.Composition" Version="7.0.0" />
         <PackageReference Include="System.ComponentModel.Composition.Registration" Version="7.0.0" />
+        <PackageReference Include="WinUI.System.Icons" Version="0.0.5" />
         <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>
 
@@ -67,8 +70,7 @@
     Explorer "Package and Publish" context menu entry to be enabled for this project even if 
     the Windows App SDK Nuget package has not yet been restored.
   -->
-    <PropertyGroup
-        Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
         <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
     </PropertyGroup>
     <ItemGroup>
@@ -78,6 +80,7 @@
         <None Remove="Pages\Devices.xaml" />
         <None Remove="Pages\General.xaml" />
         <None Remove="Pages\Info.xaml" />
+        <None Remove="Pages\Plugins.xaml" />
         <None Remove="Pages\Settings.xaml" />
     </ItemGroup>
     <ItemGroup>
@@ -91,6 +94,11 @@
         <Content Include="Assets\**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Pages\Plugins.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     <ItemGroup>
         <Page Update="Controls\JointSettingsExpander.xaml">

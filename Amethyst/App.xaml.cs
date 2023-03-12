@@ -73,7 +73,7 @@ public partial class App : Application
             $"Amethyst_{DateTime.Now:yyyyMMdd-HHmmss.ffffff}.log"));
 
         // Create an empty file for checking for crashes
-        Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.GetProgramLocation().DirectoryName, ".crash"));
+        Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.ProgramLocation.DirectoryName, ".crash"));
         Interfacing.CrashFile.Create(); // Create the file
 
         try
@@ -132,7 +132,7 @@ public partial class App : Application
 
         // Read plugin settings
         Logger.Info("Reading custom plugin settings...");
-        TrackingDevices.PluginSettings.ReadSettings();
+        AppPlugins.PluginSettings.ReadSettings();
 
         // Run detached to allow for async calls
         Task.Run(async () =>
@@ -151,7 +151,7 @@ public partial class App : Application
 
         // Create the strings directory in case it doesn't exist yet
         Directory.CreateDirectory(Path.Join(
-            Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings"));
+            Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings"));
 
         // Load language resources
         Interfacing.LoadJsonStringResourcesEnglish();
@@ -160,7 +160,7 @@ public partial class App : Application
         // Setup string hot reload watchdog
         ResourceWatcher = new FileSystemWatcher
         {
-            Path = Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings"),
+            Path = Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings"),
             NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName |
                            NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
             IncludeSubdirectories = true,
@@ -205,11 +205,11 @@ public partial class App : Application
             Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
 
             // Reload plugins' language resources
-            foreach (var plugin in TrackingDevices.TrackingDevicesList.Values)
+            foreach (var plugin in AppPlugins.TrackingDevicesList.Values)
                 Interfacing.Plugins.SetLocalizationResourcesRoot(
                     plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
-            foreach (var plugin in TrackingDevices.ServiceEndpointsList.Values)
+            foreach (var plugin in AppPlugins.ServiceEndpointsList.Values)
                 Interfacing.Plugins.SetLocalizationResourcesRoot(
                     plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
@@ -217,8 +217,8 @@ public partial class App : Application
             Shared.Devices.DevicesJointsValid = false;
 
             // Reload plugins' interfaces
-            TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
-            TrackingDevices.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
+            AppPlugins.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
+            AppPlugins.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
 
             // Request page reloads
             Translator.Get.OnPropertyChanged();

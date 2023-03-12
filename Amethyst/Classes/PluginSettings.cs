@@ -25,7 +25,7 @@ public class AppPluginSettings : INotifyPropertyChanged
             // Save plugin settings to $env:AppData/Amethyst/
             File.WriteAllText(
                 Interfacing.GetAppDataFileDir("AmethystPluginsSettings.json"),
-                JsonConvert.SerializeObject(TrackingDevices.PluginSettings, Formatting.Indented));
+                JsonConvert.SerializeObject(AppPlugins.PluginSettings, Formatting.Indented));
         }
         catch (Exception e)
         {
@@ -39,13 +39,13 @@ public class AppPluginSettings : INotifyPropertyChanged
         try
         {
             // Read plugin settings from $env:AppData/Amethyst/
-            TrackingDevices.PluginSettings = JsonConvert.DeserializeObject<AppPluginSettings>(File.ReadAllText(
+            AppPlugins.PluginSettings = JsonConvert.DeserializeObject<AppPluginSettings>(File.ReadAllText(
                 Interfacing.GetAppDataFileDir("AmethystPluginsSettings.json"))) ?? new AppPluginSettings();
         }
         catch (Exception e)
         {
             Logger.Error($"Error reading plugin settings! Message: {e.Message}");
-            TrackingDevices.PluginSettings ??= new AppPluginSettings(); // Reset if null
+            AppPlugins.PluginSettings ??= new AppPluginSettings(); // Reset if null
         }
     }
 
@@ -130,8 +130,8 @@ public class PluginSettingsHelper : IPluginSettings
     // Get a serialized object from the plugin settings
     public T? GetSetting<T>(object key, T? fallback = default)
     {
-        if (TrackingDevices.PluginSettings is null) return fallback ?? default;
-        return TrackingDevices.PluginSettings.GetPluginSetting(Guid, key, fallback);
+        if (AppPlugins.PluginSettings is null) return fallback ?? default;
+        return AppPlugins.PluginSettings.GetPluginSetting(Guid, key, fallback);
     }
 
     // Write a serialized object to the plugin settings
@@ -143,8 +143,8 @@ public class PluginSettingsHelper : IPluginSettings
             return; // Sanity check, discard if null for some reason
         }
 
-        TrackingDevices.PluginSettings?.SetPluginSetting(Guid, key, value);
-        TrackingDevices.PluginSettings?.SaveSettings(); // Save it btw!
+        AppPlugins.PluginSettings?.SetPluginSetting(Guid, key, value);
+        AppPlugins.PluginSettings?.SaveSettings(); // Save it btw!
     }
 #nullable disable
 }

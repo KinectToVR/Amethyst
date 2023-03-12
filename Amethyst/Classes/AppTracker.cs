@@ -216,7 +216,7 @@ public class AppTracker : INotifyPropertyChanged
     [JsonIgnore]
     public bool IsSupported =>
         Role is TrackerType.TrackerWaist or TrackerType.TrackerLeftFoot or TrackerType.TrackerRightFoot ||
-        (TrackingDevices.CurrentServiceEndpoint?.AdditionalSupportedTrackerTypes.Contains(Role) ?? false);
+        (AppPlugins.CurrentServiceEndpoint?.AdditionalSupportedTrackerTypes.Contains(Role) ?? false);
 
     [JsonIgnore] public bool OverridePhysics { get; set; }
 
@@ -250,7 +250,7 @@ public class AppTracker : INotifyPropertyChanged
     [JsonIgnore]
     public bool AppOrientationSupported =>
         Role is TrackerType.TrackerLeftFoot or TrackerType.TrackerRightFoot &&
-        TrackingDevices.BaseTrackingDevice.IsAppOrientationSupported;
+        AppPlugins.BaseTrackingDevice.IsAppOrientationSupported;
 
     [JsonIgnore]
     public string ManagingDeviceGuid =>
@@ -376,7 +376,7 @@ public class AppTracker : INotifyPropertyChanged
 
     // Is force-updated by the base device
     [JsonIgnore]
-    public bool IsAutoManaged => TrackingDevices.BaseTrackingDevice.TrackedJoints.Any(x =>
+    public bool IsAutoManaged => AppPlugins.BaseTrackingDevice.TrackedJoints.Any(x =>
         x.Role != TrackedJointType.JointManual && x.Role == TypeUtils.TrackerTypeJointDictionary[Role]);
 
     // Is NOT force-updated by the base device

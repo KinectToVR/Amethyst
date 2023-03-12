@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
+using WinUI.System.Icons;
 
 namespace Amethyst.Classes;
 
@@ -22,10 +23,12 @@ public static class Shared
     {
         public static ManualResetEvent
             ReloadMainWindowEvent,
+            RefreshMainWindowEvent,
             ReloadGeneralPageEvent,
             ReloadSettingsPageEvent,
             ReloadDevicesPageEvent,
-            ReloadInfoPageEvent;
+            ReloadInfoPageEvent,
+            ReloadPluginsPageEvent;
 
         public static readonly Semaphore
             SemSignalStartMain = new(0, 1);
@@ -41,12 +44,13 @@ public static class Shared
             ReloadSettingsPageEvent?.Set();
             ReloadDevicesPageEvent?.Set();
             ReloadInfoPageEvent?.Set();
+            ReloadPluginsPageEvent?.Set();
 
             Main.DispatcherQueue?.TryEnqueue(() =>
             {
                 // Reload other stuff, like statuses
-                TrackingDevices.UpdateTrackingDevicesInterface();
-                TrackingDevices.HandleDeviceRefresh(false);
+                AppPlugins.UpdateTrackingDevicesInterface();
+                AppPlugins.HandleDeviceRefresh(false);
             });
         }
     }
@@ -77,6 +81,10 @@ public static class Shared
         public static SolidColorBrush
             AttentionBrush, NeutralBrush;
 
+        public static ProgressBar PluginsUpdatePendingProgressBar;
+        public static InfoBar PluginsUpdatePendingInfoBar;
+        public static InfoBar PluginsUpdateInfoBar;
+
         // Navigate the main view (w/ animations)
         public static void NavigateToPage(string navItemTag,
             NavigationTransitionInfo transitionInfo)
@@ -105,30 +113,35 @@ public static class Shared
                         NavigationItems.NavViewGeneralButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewGeneralButtonIcon.Foreground = NeutralBrush;
-                        NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uE80F";
+                        NavigationItems.NavViewGeneralButtonIcon.Symbol = FluentSymbol.Home24;
                         break;
                     case "Amethyst.Pages.Settings":
                         NavigationItems.NavViewSettingsButtonIcon.Translation = new Vector3(0, -8, 0);
                         NavigationItems.NavViewSettingsButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewSettingsButtonIcon.Foreground = NeutralBrush;
-                        NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uE713";
+                        NavigationItems.NavViewSettingsButtonIcon.Symbol = FluentSymbol.Settings24;
                         break;
                     case "Amethyst.Pages.Devices":
                         NavigationItems.NavViewDevicesButtonIcon.Translation = new Vector3(0, -8, 0);
                         NavigationItems.NavViewDevicesButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewDevicesButtonIcon.Foreground = NeutralBrush;
-
-                        NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uF158";
-                        NavigationItems.NavViewDevicesButtonIcon.FontSize = 20;
+                        NavigationItems.NavViewDevicesButtonIcon.Symbol = FluentSymbol.PlugDisconnected24;
                         break;
                     case "Amethyst.Pages.Info":
                         NavigationItems.NavViewInfoButtonIcon.Translation = new Vector3(0, -8, 0);
                         NavigationItems.NavViewInfoButtonLabel.Opacity = 1.0;
 
                         NavigationItems.NavViewInfoButtonIcon.Foreground = NeutralBrush;
-                        NavigationItems.NavViewInfoButtonIcon.Glyph = "\uE946";
+                        NavigationItems.NavViewInfoButtonIcon.Symbol = FluentSymbol.Info24;
+                        break;
+                    case "Amethyst.Pages.Plugins":
+                        NavigationItems.NavViewPluginsButtonIcon.Translation = new Vector3(0, -8, 0);
+                        NavigationItems.NavViewPluginsButtonLabel.Opacity = 1.0;
+
+                        NavigationItems.NavViewPluginsButtonIcon.Foreground = NeutralBrush;
+                        NavigationItems.NavViewPluginsButtonIcon.Symbol = FluentSymbol.Puzzlepiece24;
                         break;
                 }
 
@@ -137,14 +150,14 @@ public static class Shared
                 switch (page.FullName)
                 {
                     case "Amethyst.Pages.General":
-                        NavigationItems.NavViewGeneralButtonIcon.Glyph = "\uEA8A";
+                        NavigationItems.NavViewGeneralButtonIcon.Symbol = FluentSymbol.Home24Filled;
                         NavigationItems.NavViewGeneralButtonIcon.Foreground = AttentionBrush;
 
                         NavigationItems.NavViewGeneralButtonLabel.Opacity = 0.0;
                         NavigationItems.NavViewGeneralButtonIcon.Translation = Vector3.Zero;
                         break;
                     case "Amethyst.Pages.Settings":
-                        NavigationItems.NavViewSettingsButtonIcon.Glyph = "\uF8B0";
+                        NavigationItems.NavViewSettingsButtonIcon.Symbol = FluentSymbol.Settings24Filled;
                         NavigationItems.NavViewSettingsButtonIcon.Foreground = AttentionBrush;
 
                         NavigationItems.NavViewSettingsButtonLabel.Opacity = 0.0;
@@ -155,16 +168,21 @@ public static class Shared
                         NavigationItems.NavViewDevicesButtonIcon.Translation = Vector3.Zero;
 
                         NavigationItems.NavViewDevicesButtonIcon.Foreground = AttentionBrush;
-
-                        NavigationItems.NavViewDevicesButtonIcon.Glyph = "\uEBD2";
-                        NavigationItems.NavViewDevicesButtonIcon.FontSize = 23;
+                        NavigationItems.NavViewDevicesButtonIcon.Symbol = FluentSymbol.PlugConnected24Filled;
                         break;
                     case "Amethyst.Pages.Info":
-                        NavigationItems.NavViewInfoButtonIcon.Glyph = "\uF167";
+                        NavigationItems.NavViewInfoButtonIcon.Symbol = FluentSymbol.Info24Filled;
                         NavigationItems.NavViewInfoButtonIcon.Foreground = AttentionBrush;
 
                         NavigationItems.NavViewInfoButtonLabel.Opacity = 0.0;
                         NavigationItems.NavViewInfoButtonIcon.Translation = Vector3.Zero;
+                        break;
+                    case "Amethyst.Pages.Plugins":
+                        NavigationItems.NavViewPluginsButtonLabel.Opacity = 0.0;
+                        NavigationItems.NavViewPluginsButtonIcon.Translation = Vector3.Zero;
+
+                        NavigationItems.NavViewPluginsButtonIcon.Foreground = AttentionBrush;
+                        NavigationItems.NavViewPluginsButtonIcon.Symbol = FluentSymbol.Puzzlepiece24Filled;
                         break;
                 }
 
@@ -176,17 +194,19 @@ public static class Shared
 
         public static class NavigationItems
         {
-            public static FontIcon
+            public static FluentSymbolIcon
                 NavViewGeneralButtonIcon,
                 NavViewSettingsButtonIcon,
                 NavViewDevicesButtonIcon,
-                NavViewInfoButtonIcon;
+                NavViewInfoButtonIcon,
+                NavViewPluginsButtonIcon;
 
             public static TextBlock
                 NavViewGeneralButtonLabel,
                 NavViewSettingsButtonLabel,
                 NavViewDevicesButtonLabel,
-                NavViewInfoButtonLabel;
+                NavViewInfoButtonLabel,
+                NavViewPluginsButtonLabel;
         }
     }
 
@@ -258,8 +278,7 @@ public static class Shared
     {
         // Devices Page
         public static bool DevicesTabSetupFinished = false, // On-load setup
-            DevicesJointsValid = true, // Optionally no signal
-            PluginsPageOpened = false; // Manager flyout
+            DevicesJointsValid = true; // Optionally no signal
 
         public static TextBlock
             DeviceNameLabel,
@@ -284,19 +303,19 @@ public static class Shared
         public static async Task ReloadSelectedDevice(bool manual, bool reconnect = false)
         {
             // Update the status here
-            TrackingDevices.HandleDeviceRefresh(reconnect);
+            AppPlugins.HandleDeviceRefresh(reconnect);
 
             // Update GeneralPage status
-            TrackingDevices.UpdateTrackingDevicesInterface();
+            AppPlugins.UpdateTrackingDevicesInterface();
 
             // Overwrite the selected device if still null for some reason
             AppData.Settings.SelectedTrackingDeviceGuid ??= AppData.Settings.TrackingDeviceGuid;
             AppData.Settings.PreviousSelectedTrackingDeviceGuid ??= AppData.Settings.TrackingDeviceGuid;
 
             // Refresh the device MVVM
-            TrackingDevices.TrackingDevicesList[AppData.Settings.SelectedTrackingDeviceGuid].OnPropertyChanged();
+            AppPlugins.TrackingDevicesList[AppData.Settings.SelectedTrackingDeviceGuid].OnPropertyChanged();
 
-            if (TrackingDevices.IsBase(AppData.Settings.SelectedTrackingDeviceGuid))
+            if (AppPlugins.IsBase(AppData.Settings.SelectedTrackingDeviceGuid))
             {
                 Logger.Info($"Selected a base ({AppData.Settings.SelectedTrackingDeviceGuid})");
                 SetAsOverrideButton.IsEnabled = false;
@@ -304,7 +323,7 @@ public static class Shared
 
                 DeselectDeviceButton.Visibility = Visibility.Collapsed;
             }
-            else if (TrackingDevices.IsOverride(AppData.Settings.SelectedTrackingDeviceGuid))
+            else if (AppPlugins.IsOverride(AppData.Settings.SelectedTrackingDeviceGuid))
             {
                 Logger.Info($"Selected an override ({AppData.Settings.SelectedTrackingDeviceGuid})");
                 SetAsOverrideButton.IsEnabled = false;

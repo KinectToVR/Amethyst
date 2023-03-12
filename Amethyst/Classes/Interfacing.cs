@@ -18,11 +18,14 @@ namespace Amethyst.Classes;
 
 public static class Interfacing
 {
+    public delegate void AppSettingsReadEventHandler(object sender, EventArgs e);
+
     public const uint MaxPingCheckingThreads = 3;
 
     public static bool
         IsExitingNow, // App closing check
-        IsExitHandled; // If actions have been done
+        IsExitHandled, // If actions have been done
+        IsExitPending; // If actions are running
 
     public static readonly object UpdateLock = new();
 
@@ -32,8 +35,7 @@ public static class Interfacing
     // Update check
     public static bool
         UpdateFound = false,
-        UpdateOnClosed = false,
-        CheckingUpdatesNow = false,
+        ManualUpdate = false,
         UpdatingNow = false;
 
     // Position helpers for devices -> GUID, Pose
@@ -94,15 +96,11 @@ public static class Interfacing
 
     public static bool IsServiceEndpointPresent => ServiceEndpointStatusCode == 0;
 
-    public static FileInfo GetProgramLocation()
-    {
-        return new FileInfo(Assembly.GetExecutingAssembly().Location);
-    }
+    public static FileInfo ProgramLocation => new(Assembly.GetExecutingAssembly().Location);
 
-    public static DirectoryInfo GetAppDataTempDir()
-    {
-        return Directory.CreateDirectory(Path.GetTempPath() + "Amethyst");
-    }
+    public static DirectoryInfo AppDataTempDir => Directory.CreateDirectory(Path.GetTempPath() + "Amethyst");
+
+    public static AppSettingsReadEventHandler AppSettingsRead { get; set; } = (_, _) => { };
 
     public static string GetAppDataFileDir(string relativeFilePath)
     {
@@ -111,6 +109,21 @@ public static class Interfacing
 
         return Path.Join(Environment.GetFolderPath(
             Environment.SpecialFolder.ApplicationData), "Amethyst", relativeFilePath);
+    }
+
+    public static string GetAppDataPluginFolderDir(string relativeFilePath)
+    {
+        Directory.CreateDirectory(Path.Join(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst", "Plugins"));
+
+        return Path.Join(Environment.GetFolderPath(
+            Environment.SpecialFolder.ApplicationData), "Amethyst", "Plugins", relativeFilePath);
+    }
+
+    public static string GetTempPluginFolderDir(string relativeFilePath)
+    {
+        Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "Amethyst", "Plugins"));
+        return Path.Join(Path.GetTempPath(), "Amethyst", "Plugins", relativeFilePath);
     }
 
     public static string GetAppDataLogFileDir(string relativeFolderName, string relativeFilePath)
@@ -129,7 +142,7 @@ public static class Interfacing
         IsExitHandled = true;
 
         // Find the crash handler and show it with a custom message
-        var hPath = Path.Combine(GetProgramLocation().DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
+        var hPath = Path.Combine(ProgramLocation.DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
         if (File.Exists(hPath)) Process.Start(hPath, new[] { "message", message });
         else Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
 
@@ -139,7 +152,7 @@ public static class Interfacing
     // Show SteamVR toast / notification
     public static void ShowServiceToast(string header, string text)
     {
-        TrackingDevices.CurrentServiceEndpoint.DisplayToast((header, text));
+        AppPlugins.CurrentServiceEndpoint.DisplayToast((header, text));
     }
 
     // Show an app toast / notification
@@ -275,11 +288,11 @@ public static class Interfacing
         try
         {
             // Disconnect all loaded devices
-            TrackingDevices.TrackingDevicesList.Values
+            AppPlugins.TrackingDevicesList.Values
                 .ToList().ForEach(device => device.Shutdown());
 
             // Disconnect all loaded services
-            TrackingDevices.ServiceEndpointsList.Values
+            AppPlugins.ServiceEndpointsList.Values
                 .ToList().ForEach(service => service.Shutdown());
         }
         catch (Exception)
@@ -303,7 +316,7 @@ public static class Interfacing
                 for (var i = 0; i < 3; i++)
                 {
                     // Update tracker statuses in the server
-                    spawned.AddRange((await TrackingDevices.CurrentServiceEndpoint.SetTrackerStates(
+                    spawned.AddRange((await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(
                             AppData.Settings.TrackersVector.Where(x => x.IsActive).Select(x => x.GetTrackerBase())))
                         ?.Select(x => x.Success) ?? new[] { false }); // Check if the request was actually okay
                     await Task.Delay(15);
@@ -352,7 +365,7 @@ public static class Interfacing
             try
             {
                 // Send a ping message and capture the data
-                var result = await TrackingDevices.CurrentServiceEndpoint.TestConnection();
+                var result = await AppPlugins.CurrentServiceEndpoint.TestConnection();
 
                 // Dump data to variables
                 PingTime = result.PingTime;
@@ -366,8 +379,8 @@ public static class Interfacing
                     PingCheckingThreadsNumber - 1, 0, MaxPingCheckingThreads + 1);
 
                 // Return the result
-                return (TrackingDevices.CurrentServiceEndpoint.ServiceStatus,
-                    TrackingDevices.CurrentServiceEndpoint.ServiceStatusString);
+                return (AppPlugins.CurrentServiceEndpoint.ServiceStatus,
+                    AppPlugins.CurrentServiceEndpoint.ServiceStatusString);
             }
             catch (Exception e)
             {
@@ -422,12 +435,12 @@ public static class Interfacing
     public static (Vector3 Position, Quaternion Orientation)
         GetVrTrackerPoseCalibrated(string nameContains)
     {
-        var result = TrackingDevices.CurrentServiceEndpoint
+        var result = AppPlugins.CurrentServiceEndpoint
             .GetTrackerPose(nameContains, false);
 
         return (result?.Position ?? Vector3.Zero, // Check the result against null, return
             result?.Orientation ??
-            TrackingDevices.CurrentServiceEndpoint.HeadsetPose?.Orientation ?? Quaternion.Identity);
+            AppPlugins.CurrentServiceEndpoint.HeadsetPose?.Orientation ?? Quaternion.Identity);
     }
 
     public static void UpdateServerStatus()
@@ -470,7 +483,7 @@ public static class Interfacing
         {
             // Load the locales.json from Assets/Strings/
             var resourcePath = Path.Join(
-                GetProgramLocation().DirectoryName,
+                ProgramLocation.DirectoryName,
                 "Assets", "Strings", "locales.json");
 
             // If the specified language doesn't exist somehow, fallback to 'en'
@@ -518,7 +531,7 @@ public static class Interfacing
             Logger.Info($"Searching for language resources with key \"{languageKey}\"...");
 
             var resourcePath = Path.Join(
-                GetProgramLocation().DirectoryName,
+                ProgramLocation.DirectoryName,
                 "Assets", "Strings", languageKey + ".json");
 
             // If the specified language doesn't exist somehow, fallback to 'en'
@@ -528,7 +541,7 @@ public static class Interfacing
                             $"\"{resourcePath}\", falling back to 'en' (en.json)!");
 
                 resourcePath = Path.Join(
-                    GetProgramLocation().DirectoryName,
+                    ProgramLocation.DirectoryName,
                     "Assets", "Strings", "en.json");
             }
 
@@ -565,7 +578,7 @@ public static class Interfacing
             Logger.Info("Searching for shared (English) language resources...");
 
             var resourcePath = Path.Join(
-                GetProgramLocation().DirectoryName,
+                ProgramLocation.DirectoryName,
                 "Assets", "Strings", "en.json");
 
             // If failed again, just give up
@@ -624,14 +637,14 @@ public static class Interfacing
     public static class Plugins
     {
         public static (Vector3 Position, Quaternion Orientation) GetHmdPose =>
-            TrackingDevices.CurrentServiceEndpoint.HeadsetPose ?? (Vector3.Zero, Quaternion.Identity);
+            AppPlugins.CurrentServiceEndpoint.HeadsetPose ?? (Vector3.Zero, Quaternion.Identity);
 
         public static string RequestLocalizedString(string key, string guid)
         {
             try
             {
-                if (string.IsNullOrEmpty(guid) || (!TrackingDevices.TrackingDevicesList.ContainsKey(guid) &&
-                                                   !TrackingDevices.ServiceEndpointsList.ContainsKey(guid)))
+                if (string.IsNullOrEmpty(guid) || (!AppPlugins.TrackingDevicesList.ContainsKey(guid) &&
+                                                   !AppPlugins.ServiceEndpointsList.ContainsKey(guid)))
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
@@ -639,7 +652,7 @@ public static class Interfacing
                 }
 
                 // Check if the request was from a device
-                if (TrackingDevices.TrackingDevicesList.TryGetValue(guid, out var device))
+                if (AppPlugins.TrackingDevicesList.TryGetValue(guid, out var device))
                 {
                     // Check if the resource root is fine
                     var resourceRootDevice = device?.LocalizationResourcesRoot.Root;
@@ -648,7 +661,7 @@ public static class Interfacing
                 }
 
                 // Check if the request was from a service
-                if (TrackingDevices.ServiceEndpointsList.TryGetValue(guid, out var service))
+                if (AppPlugins.ServiceEndpointsList.TryGetValue(guid, out var service))
                 {
                     // Check if the resource root is fine
                     var resourceRootService = service?.LocalizationResourcesRoot.Root;
@@ -677,8 +690,8 @@ public static class Interfacing
                 Logger.Info($"[Requested by plugin with GUID {guid}] " +
                             $"Searching for language resources with key \"{AppData.Settings.AppLanguage}\"...");
 
-                if (string.IsNullOrEmpty(guid) || (!TrackingDevices.TrackingDevicesList.ContainsKey(guid) &&
-                                                   !TrackingDevices.ServiceEndpointsList.ContainsKey(guid)))
+                if (string.IsNullOrEmpty(guid) || (!AppPlugins.TrackingDevicesList.ContainsKey(guid) &&
+                                                   !AppPlugins.ServiceEndpointsList.ContainsKey(guid)))
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
@@ -715,7 +728,7 @@ public static class Interfacing
                 }
 
                 // ReSharper disable once InvertIf | Check if the request was from a device
-                if (TrackingDevices.TrackingDevicesList.TryGetValue(guid, out var device) && device is not null)
+                if (AppPlugins.TrackingDevicesList.TryGetValue(guid, out var device) && device is not null)
                 {
                     // Parse the loaded json
                     device.LocalizationResourcesRoot =
@@ -757,7 +770,7 @@ public static class Interfacing
                 }
 
                 // ReSharper disable once InvertIf | Check if the request was from a service
-                if (TrackingDevices.ServiceEndpointsList.TryGetValue(guid, out var service) && service is not null)
+                if (AppPlugins.ServiceEndpointsList.TryGetValue(guid, out var service) && service is not null)
                 {
                     // Parse the loaded json
                     service.LocalizationResourcesRoot =

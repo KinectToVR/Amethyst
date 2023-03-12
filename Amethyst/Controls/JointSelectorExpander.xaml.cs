@@ -27,10 +27,8 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     {
         InitializeComponent();
 
-        // Register for any pending changes
-        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
-        AppData.Settings.TrackersVector.CollectionChanged += (_, _) => OnPropertyChanged();
-        Trackers.ForEach(x => x.PropertyChanged += (_, _) => OnPropertyChanged());
+        ResubscribeListeners(); // Register for any pending changes
+        Interfacing.AppSettingsRead += (_, _) => ResubscribeListeners();
     }
 
     public string Header { get; set; } = "";
@@ -51,6 +49,14 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
 
     public event PropertyChangedEventHandler PropertyChanged;
 
+    private void ResubscribeListeners()
+    {
+        // Register for any pending changes
+        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
+        AppData.Settings.TrackersVector.CollectionChanged += (_, _) => OnPropertyChanged();
+        Trackers.ForEach(x => x.PropertyChanged += (_, _) => OnPropertyChanged());
+    }
+
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
@@ -59,7 +65,7 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
 
     private static List<string> GetBaseDeviceJointsList()
     {
-        return TrackingDevices.BaseTrackingDevice.TrackedJoints.Select(x => x.Name).ToList();
+        return AppPlugins.BaseTrackingDevice.TrackedJoints.Select(x => x.Name).ToList();
     }
 
     private void JointsSelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -82,7 +88,7 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
                 ((ComboBox)sender).SelectedItem = e.RemovedItems[0];
 
             // Signal the just-selected tracked joint
-            TrackingDevices.BaseTrackingDevice.SignalJoint(((ComboBox)sender).SelectedIndex);
+            AppPlugins.BaseTrackingDevice.SignalJoint(((ComboBox)sender).SelectedIndex);
             (((ComboBox)sender).DataContext as AppTracker)!.SelectedBaseTrackedJointId =
                 ((ComboBox)sender).SelectedIndex; // Update the host data (manual) binding
         }

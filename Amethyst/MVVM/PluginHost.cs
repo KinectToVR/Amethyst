@@ -12,12 +12,18 @@ using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
+using Amethyst.Schedulers;
 using Amethyst.Utils;
 using AmethystSupport;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using RestSharp;
 using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
@@ -55,7 +61,7 @@ public class PluginHost : IAmethystHost
     // Check if a joint with the specified role is provided by the base device
     public bool IsTrackedJointValid(TrackedJointType jointType)
     {
-        return TrackingDevices.BaseTrackingDevice.TrackedJoints.Exists(x => x.Role == jointType);
+        return AppPlugins.BaseTrackingDevice.TrackedJoints.Exists(x => x.Role == jointType);
     }
 
     // Lock the main update loop while in scope with [lock (UpdateThreadLock) { }]
@@ -188,12 +194,12 @@ public class PluginHost : IAmethystHost
             Interfacing.Plugins.RefreshApplicationInterface();
 
             // ReSharper disable once InvertIf | Check if the request was from a device
-            if (TrackingDevices.TrackingDevicesList.TryGetValue(Guid, out var device) && device is not null)
+            if (AppPlugins.TrackingDevicesList.TryGetValue(Guid, out var device) && device is not null)
                 device.RefreshWatchHandlers(); // Re-register joint changes handlers
 
             // Check if used in any way: as the base, an override, or the endpoint
-            if (!TrackingDevices.IsBase(Guid) && !TrackingDevices.IsOverride(Guid) &&
-                TrackingDevices.CurrentServiceEndpoint.Guid != Guid) return;
+            if (!AppPlugins.IsBase(Guid) && !AppPlugins.IsOverride(Guid) &&
+                AppPlugins.CurrentServiceEndpoint.Guid != Guid) return;
 
             Logger.Info($"{Guid} is currently being used, refreshing its config!");
             var locked = Monitor.TryEnter(UpdateLock); // Try entering the lock
@@ -242,7 +248,7 @@ public class PluginHost : IAmethystHost
             // Launch the crash handler if fatal
             if (fatal)
             {
-                var hPath = Path.Combine(GetProgramLocation().DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
+                var hPath = Path.Combine(ProgramLocation.DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
                 if (File.Exists(hPath)) Process.Start(hPath, new[] { "plugin_message", message, Guid });
                 else Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
             }
@@ -259,32 +265,42 @@ public class PluginHost : IAmethystHost
 
 public class LoadAttemptedPlugin : INotifyPropertyChanged
 {
+    private RestClient _githubClient;
+    private bool _updateEnqueued;
+
+    private RestClient GithubClient => _githubClient ??= new RestClient(
+        UpdateEndpoint ?? $"{Website?.TrimEnd('/')}/releases/download/latest/");
+
     public string Name { get; init; } = "[UNKNOWN]";
     public string Guid { get; init; } = "[INVALID]";
     public string Error { get; init; }
 
     public string Publisher { get; init; }
     public string Website { get; init; }
+    public string UpdateEndpoint { get; init; }
     public string Folder { get; init; }
 
-    public string UpdateUri { get; init; } = "[UNKNOWN]";
-    public string Version { get; init; } = "[UNKNOWN]";
-    public string ApiVersion { get; init; } = "[INVALID]";
+    public Version Version { get; init; } = new("0.0.0.0");
 
-    public TrackingDevices.PluginType PluginType { get; init; } =
-        TrackingDevices.PluginType.Unknown;
+    public bool UpdateFound => !_updateEnqueued && UpdateData.Found && !Uninstalling;
+
+    public (bool Found, string Download, Version Version, string Changelog)
+        UpdateData { get; private set; } = (false, null, null, null);
+
+    public AppPlugins.PluginType PluginType { get; init; } =
+        AppPlugins.PluginType.Unknown;
 
     // MVVM stuff
-    public TrackingDevices.PluginLoadError Status { get; init; } =
-        TrackingDevices.PluginLoadError.Unknown;
+    public AppPlugins.PluginLoadError Status { get; init; } =
+        AppPlugins.PluginLoadError.Unknown;
 
     public bool LoadError => Status is not
-        TrackingDevices.PluginLoadError.NoError and not
-        TrackingDevices.PluginLoadError.LoadingSkipped;
+        AppPlugins.PluginLoadError.NoError and not
+        AppPlugins.PluginLoadError.LoadingSkipped;
 
     public bool LoadSuccess => Status is
-        TrackingDevices.PluginLoadError.NoError or
-        TrackingDevices.PluginLoadError.LoadingSkipped;
+        AppPlugins.PluginLoadError.NoError or
+        AppPlugins.PluginLoadError.LoadingSkipped;
 
     public bool IsLoaded
     {
@@ -292,7 +308,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         set
         {
             if (IsLoaded == value) return; // No changes
-            if (!Shared.Devices.PluginsPageOpened)
+            if (CurrentAppState != "plugins")
             {
                 OnPropertyChanged();
                 return; // Sanity check
@@ -303,23 +319,23 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             else AppData.Settings.DisabledPluginsGuidSet.Add(Guid);
 
             // Check if the change is valid : tracking provider
-            if (TrackingDevices.TrackingDevicesList.ContainsKey(Guid) &&
+            if (AppPlugins.TrackingDevicesList.ContainsKey(Guid) &&
                 AppData.Settings.DisabledPluginsGuidSet.Contains(Guid))
             {
                 SortedSet<string> loadedDeviceSet = new();
 
                 // Check which devices are loaded : device plugin
-                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"))
+                if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"))
                     loadedDeviceSet.Add("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1");
-                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2"))
+                if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2"))
                     loadedDeviceSet.Add("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2");
-                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX"))
+                if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX"))
                     loadedDeviceSet.Add("K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX");
-                if (TrackingDevices.TrackingDevicesList.ContainsKey("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK"))
-                    loadedDeviceSet.Add("K2VRTEAM-VEND-API1-DVCE-DVCEOWOTRACK");
+                if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK"))
+                    loadedDeviceSet.Add("K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK");
 
                 // If we've just disabled the last loaded device, re-enable the first
-                if (TrackingDevices.TrackingDevicesList.Keys.All(
+                if (AppPlugins.TrackingDevicesList.Keys.All(
                         AppData.Settings.DisabledPluginsGuidSet.Contains) ||
 
                     // If this entry happens to be the last one of the official ones
@@ -331,19 +347,19 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             }
 
             // Check if the change is valid : service endpoint
-            else if (TrackingDevices.ServiceEndpointsList.ContainsKey(Guid) &&
+            else if (AppPlugins.ServiceEndpointsList.ContainsKey(Guid) &&
                      AppData.Settings.DisabledPluginsGuidSet.Contains(Guid))
             {
                 SortedSet<string> loadedServiceSet = new();
 
                 // Check which services are loaded
-                if (TrackingDevices.ServiceEndpointsList.ContainsKey("K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR"))
+                if (AppPlugins.ServiceEndpointsList.ContainsKey("K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR"))
                     loadedServiceSet.Add("K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR");
-                if (TrackingDevices.ServiceEndpointsList.ContainsKey("K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC"))
+                if (AppPlugins.ServiceEndpointsList.ContainsKey("K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC"))
                     loadedServiceSet.Add("K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC");
 
                 // If we've just disabled the last loaded service, re-enable the first
-                if (TrackingDevices.ServiceEndpointsList.Keys.All(
+                if (AppPlugins.ServiceEndpointsList.Keys.All(
                         AppData.Settings.DisabledPluginsGuidSet.Contains) ||
 
                     // If this entry happens to be the last one of the official ones
@@ -357,10 +373,14 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             // Show the reload tip on any valid changes
             // == cause the upper check would make it different
             // and it's already been assigned at the beginning
-            if (Shared.Devices.PluginsPageOpened && IsLoaded == value)
+            if (CurrentAppState == "plugins" && IsLoaded == value)
             {
                 Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen = true;
                 Shared.TeachingTips.MainPage.ReloadInfoBar.Opacity = 1.0;
+
+                AppSounds.PlayAppSound(value
+                    ? AppSounds.AppSoundType.ToggleOn
+                    : AppSounds.AppSoundType.ToggleOff);
             }
 
             // Save settings
@@ -371,13 +391,266 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string ErrorText => LocalizedJsonString($"/DevicesPage/Devices/Manager/Labels/{Status}");
 
+    public string UpdateMessage => string.Format(
+        LocalizedJsonString("/DevicesPage/Devices/Manager/Labels/UpdateMessage"),
+        Name, (UpdateData.Version ?? Version).ToString());
+
     public bool PublisherValid => !string.IsNullOrEmpty(Publisher);
     public bool WebsiteValid => !string.IsNullOrEmpty(Website);
     public bool LocationValid => !string.IsNullOrEmpty(Folder);
     public bool GuidValid => !string.IsNullOrEmpty(Guid) && Guid is not "[INVALID]" or "INVALID";
     public bool ErrorValid => !string.IsNullOrEmpty(Error);
+    public bool Uninstalling { get; set; }
+
+    public bool CanUninstall =>
+        !IsExitPending && !Uninstalling &&
+        LocationValid && GuidValid && Guid
+            is not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"
+            and not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2"
+            and not "K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX"
+            and not "K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK"
+            and not "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR"
+            and not "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC";
 
     public event PropertyChangedEventHandler PropertyChanged;
+
+    public async Task CheckUpdates()
+    {
+        try
+        {
+            // Fetch manifest details and content
+            var manifestResponse = await GithubClient.GetAsync(
+                new RestRequest("manifest.json"));
+
+            if (!manifestResponse.IsSuccessStatusCode || manifestResponse.Content is null)
+                throw new Exception(manifestResponse.ErrorMessage);
+
+            var manifestResult = manifestResponse.Content.TryParseJson(out var manifest);
+            if (!manifestResult || manifest is null)
+                throw new Exception("The manifest was invalid!");
+
+            // Parse the received manifest
+            var remoteVersion = new Version(manifest["version"]?.ToString() ?? Version.ToString());
+            UpdateData = (Version.CompareTo(remoteVersion) < 0, manifest["download"]?.ToString(),
+                remoteVersion, manifest["changelog"]?.ToString());
+
+            Shared.Main.DispatcherQueue.TryEnqueue(() =>
+            {
+                // Also show in MainWindow
+                if (UpdateFound)
+                {
+                    Shared.Main.PluginsUpdateInfoBar.IsOpen = true;
+                    Shared.Main.PluginsUpdateInfoBar.Opacity = 1.0;
+                    Shared.Events.RefreshMainWindowEvent?.Set();
+                }
+
+                // Notify about updates
+                OnPropertyChanged();
+            });
+        }
+        catch (Exception e)
+        {
+            Logger.Info(e);
+        }
+    }
+
+    internal void EnqueueUpdates(object sender, RoutedEventArgs e)
+    {
+        if (!UpdateFound) return;
+
+        // Mark as ready to update
+        _updateEnqueued = true;
+        if (sender is Button button)
+            button.IsEnabled = false;
+
+        // Enqueue the update in the shutdown controller
+        ShutdownController.ShutdownTasks.Add(new ShutdownTask
+        {
+            Name = $"Update plugin {Name}",
+            Priority = true, // Either update right now or skip if it was manual
+            Action = ExecuteUpdates
+        });
+
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            // Also show/hide the banner in MainWindow
+            if (!AppPlugins.LoadAttemptedPluginsList.Any(x => x.UpdateFound))
+            {
+                // Hide if all plugins have their updates queued
+                Shared.Main.PluginsUpdateInfoBar.Opacity = 0.0;
+                Shared.Main.PluginsUpdateInfoBar.IsOpen = false;
+                Shared.Events.RefreshMainWindowEvent?.Set();
+            }
+
+            // Notify about updates
+            OnPropertyChanged();
+        });
+    }
+
+    public async Task<bool> ExecuteUpdates()
+    {
+        // Logic:
+        // - Download the zip to where out plugin is, unpack
+        // - Rename the zipped plugin to $({Folder}.Name).next.zip
+        // After restart:
+        // - Search for plugin zips matching $({Folder}.Name).next.zip
+        // - Delete the old plugin and unpack the new one to root
+
+        try
+        {
+            // Mark the update footer as active
+            Shared.Main.PluginsUpdatePendingInfoBar.Title = string.Format(LocalizedJsonString(
+                "/SharedStrings/Plugins/Updates/Headers/Downloading"), Name, UpdateData.Version.ToString());
+
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = LocalizedJsonString(
+                "/SharedStrings/Plugins/Updates/Headers/Preparing");
+
+            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = true;
+            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 1.0;
+
+            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
+            Shared.Events.RefreshMainWindowEvent?.Set();
+
+            if (string.IsNullOrEmpty(UpdateData.Download) || !LocationValid)
+            {
+                // No files to download, switch to update error
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                    "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
+
+                Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+                Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
+
+                await Task.Delay(2500);
+                Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+                Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+                Shared.Events.RefreshMainWindowEvent?.Set();
+
+                await Task.Delay(1000);
+                return false; // That's all
+            }
+
+            // Try downloading the plugin archive from the manifest
+            Logger.Info($"Downloading the next {Name} plugin assuming it's under {UpdateData.Download}");
+            try
+            {
+                // Update the progress message
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                    "/SharedStrings/Plugins/Updates/Statuses/Downloading"), Name, UpdateData.Version.ToString());
+
+                // Create a stream reader using the received Installer Uri
+                await using var stream = await GithubClient.DownloadStreamAsync(new RestRequest(UpdateData.Download));
+
+                // Replace or create our installer file
+                var pluginArchive = await (await StorageFolder
+                    .GetFolderFromPathAsync(Folder)).CreateFileAsync(
+                    $"{UpdateData.Download}", CreationCollisionOption.ReplaceExisting);
+
+                // Create an output stream and push all the available data to it
+                await using var fsPluginArchive = await pluginArchive.OpenStreamForWriteAsync();
+                await stream!.CopyToAsync(fsPluginArchive); // The runtime will do the rest for us
+            }
+            catch (Exception e)
+            {
+                Logger.Error(new Exception($"Error downloading the plugin! Message: {e.Message}"));
+
+                // No files to download, switch to update error
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                    "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
+
+                Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+                Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
+
+                await Task.Delay(2500);
+                Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+                Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+                Shared.Events.RefreshMainWindowEvent?.Set();
+
+                await Task.Delay(1000);
+                return false; // That's all
+            }
+
+            // Rename the downloaded zip to $({Folder}.Name).next.zip
+            var updateZip = Path.Join(Folder, $"{new DirectoryInfo(Folder).Name}.next.zip");
+            File.Move(Path.Join(Folder, UpdateData.Download), updateZip, true);
+
+            // Register the update in the Amethyst task scheduler
+            StartupController.Controller.StartupTasks.Add(new StartupUpdateTask
+            {
+                Name = $"Update {Name} to version {UpdateData.Version}",
+                Priority = true, PluginFolder = Folder, UpdatePackage = updateZip
+            });
+
+            // Everything's fine, show the restart notice
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                "/SharedStrings/Plugins/Updates/Headers/Restart"), Name);
+
+            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = false;
+            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
+
+            await Task.Delay(2500);
+            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+            Shared.Events.RefreshMainWindowEvent?.Set();
+
+            // Still here? We're done!
+            await Task.Delay(1000);
+            return true; // That's all
+        }
+        catch (Exception e)
+        {
+            Logger.Info(e);
+
+            // No files to download, switch to update error
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
+                "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
+
+            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
+            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
+
+            await Task.Delay(2500);
+            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
+            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
+            Shared.Events.RefreshMainWindowEvent?.Set();
+
+            await Task.Delay(1000);
+            return false; // That's all
+        }
+    }
+
+    public void EnqueuePluginUninstall()
+    {
+        // Enqueue a delete startup action to uninstall this plugin
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+        StartupController.Controller.StartupTasks.Add(
+            new StartupDeleteTask
+            {
+                Name = $"Delete plugin {Name} v{Version}",
+                Data = Folder + Guid + Version,
+                PluginFolder = Folder
+            });
+
+        // Show a badge that this plugin will be uninstalled
+        Uninstalling = true;
+        OnPropertyChanged();
+    }
+
+    public void CancelPluginUninstall()
+    {
+        // Delete the uninstall startup action
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+        StartupController.Controller.StartupTasks.Remove(
+            StartupController.Controller.StartupTasks
+                .FirstOrDefault(x => x.Data == Folder + Guid + Version));
+
+        // Hide the uninstall badge
+        Uninstalling = false;
+        OnPropertyChanged();
+    }
 
     public string TrimString(string s, int l)
     {
@@ -402,9 +675,29 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         }
     }
 
+    public double BoolToOpacity(bool value)
+    {
+        return value ? 1.0 : 0.0;
+    }
+
+    public string FormatResourceString(string resourceName)
+    {
+        return string.Format(LocalizedJsonString(resourceName), Name);
+    }
+
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
+    public void PlayExpandingSound()
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    public void PlayCollapsingSound()
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 }
 
@@ -434,12 +727,12 @@ public static class CollectionExtensions
         catch (Exception e)
         {
             // Add the plugin to the 'attempted' list
-            TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+            AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
             {
                 Name = item.FullName,
-                Error = $"{e.Message}\n\n{e.StackTrace}",
+                Error = e.Message,
                 Folder = item.FullName,
-                Status = TrackingDevices.PluginLoadError.NoPluginFolder
+                Status = AppPlugins.PluginLoadError.NoPluginFolder
             });
 
             return false; // Don't do anything stupid
@@ -455,10 +748,10 @@ public static class CollectionExtensions
         if (item.GetFiles("plugin*.dll").Length <= 0)
         {
             // Add the plugin to the 'attempted' list
-            TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+            AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
             {
                 Name = item.Name, Folder = item.FullName,
-                Status = TrackingDevices.PluginLoadError.NoPluginDll
+                Status = AppPlugins.PluginLoadError.NoPluginDll
             });
 
             Logger.Error(new FileNotFoundException(
@@ -495,11 +788,11 @@ public static class CollectionExtensions
                                 $"Message: {e.Message}\nErrors occurred: {e.Errors}\nPossible causes: {e.RootCauses}");
 
                 // Add the plugin to the 'attempted' list
-                TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                 {
                     Name = $"{item.Name}/{fileInfo.Name}",
                     Error = $"{e.Message}\n\n{e.StackTrace}", Folder = item.FullName,
-                    Status = TrackingDevices.PluginLoadError.NoPluginDll
+                    Status = AppPlugins.PluginLoadError.NoPluginDll
                 });
 
                 return false; // Nah, not this time
@@ -516,11 +809,11 @@ public static class CollectionExtensions
                     Logger.Warn($"[Non-critical] Loading {fileInfo} failed with an exception: {e.Message}");
 
                 // Add the plugin to the 'attempted' list
-                TrackingDevices.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                 {
                     Name = $"{item.Name}/{fileInfo.Name}",
                     Error = $"{e.Message}\n\n{e.StackTrace}", Folder = item.FullName,
-                    Status = TrackingDevices.PluginLoadError.NoPluginDll
+                    Status = AppPlugins.PluginLoadError.NoPluginDll
                 });
 
                 return false; // Nah, not this time

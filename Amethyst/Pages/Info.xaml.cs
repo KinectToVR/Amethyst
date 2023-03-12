@@ -163,6 +163,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
         {
             if (_commandConfirmLocked) return;
             _commandConfirmLocked = true; // Don't re-accept now!
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
             // Check starts-with first : toast?
             if (((TextBox)sender).Text.ToLowerInvariant().StartsWith("toast "))
@@ -334,10 +335,10 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                     Logger.Info("Reset invoked: trying to restart the app...");
 
                     // If we've found who asked
-                    if (File.Exists(Interfacing.GetProgramLocation().FullName))
+                    if (File.Exists(Interfacing.ProgramLocation.FullName))
                     {
                         // Log the caller
-                        Logger.Info($"The current caller process is: {Interfacing.GetProgramLocation().FullName}");
+                        Logger.Info($"The current caller process is: {Interfacing.ProgramLocation.FullName}");
 
                         // Exit the app
                         Logger.Info("Configuration has been reset, exiting in 500ms...");
@@ -349,7 +350,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                         await Interfacing.HandleAppExit(500);
 
                         // Restart and exit with code 0
-                        Process.Start(Interfacing.GetProgramLocation()
+                        Process.Start(Interfacing.ProgramLocation
                             .FullName.Replace(".dll", ".exe"));
 
                         // Exit without re-handling everything
@@ -444,15 +445,21 @@ public sealed partial class Info : Page, INotifyPropertyChanged
     private void CommandFlyout_Opening(object sender, object e)
     {
         SetCommandText("Type command:");
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
     }
 
     private async void TelemetryToggleSwitch_Toggled(object sender, RoutedEventArgs e)
     {
+        if (!_infoPageLoadedOnce) return;
         AppData.Settings.IsTelemetryEnabled = (sender as ToggleSwitch)?.IsOn ?? true;
         AppData.Settings.SaveSettings(); // Save our made changes
 
         await Analytics.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);
         await Crashes.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);
+
+        AppSounds.PlayAppSound(AppData.Settings.IsTelemetryEnabled
+            ? AppSounds.AppSoundType.ToggleOn
+            : AppSounds.AppSoundType.ToggleOff);
     }
 
     private void TelemetryTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
@@ -462,5 +469,20 @@ public sealed partial class Info : Page, INotifyPropertyChanged
             Placement = FlyoutPlacementMode.Top,
             ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway
         });
+    }
+
+    private void TelemetryFlyout_Opening(object sender, object e)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    private void TelemetryFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+    }
+
+    private void CommandFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 }

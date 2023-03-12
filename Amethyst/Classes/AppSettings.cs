@@ -45,6 +45,9 @@ public class AppSettings : INotifyPropertyChanged
     // Current language & theme
     public string AppLanguage { get; set; } = "en";
 
+    // GitHub API token, encrypted using System.Security.Cryptography
+    public (bool Valid, string Token) GitHubToken { get; set; } = (false, string.Empty);
+
     // 0:system, 1:dark, 2:light
     public uint AppTheme { get; set; }
 
@@ -74,7 +77,7 @@ public class AppSettings : INotifyPropertyChanged
         set
         {
             _isFlipEnabled = value;
-            TrackingDevices.CheckFlipSupport();
+            AppPlugins.CheckFlipSupport();
 
             OnPropertyChanged("IsFlipEnabled");
             AppData.Settings.SaveSettings();
@@ -87,7 +90,7 @@ public class AppSettings : INotifyPropertyChanged
         set
         {
             _isExternalFlipEnabled = value;
-            TrackingDevices.CheckFlipSupport();
+            AppPlugins.CheckFlipSupport();
             OnPropertyChanged("IsExternalFlipEnabled");
             AppData.Settings.SaveSettings();
         }
@@ -206,7 +209,10 @@ public class AppSettings : INotifyPropertyChanged
             AppData.Settings ??= new AppSettings(); // Reset if null
         }
 
-        CheckSettings(true);
+        Logger.Info("Requesting re-subscription from listeners...");
+        Interfacing.AppSettingsRead(this, EventArgs.Empty);
+
+        CheckSettings(true); // Check partially
     }
 
     public void CheckSettings(bool partial = false, TrackingDevice device = null)
@@ -255,12 +261,12 @@ public class AppSettings : INotifyPropertyChanged
             Logger.Info("Checking out the default configuration settings...");
             (bool ExtraTrackers, bool Valid) defaultSettings = (false, false); // Invalid for now!
 
-            if (File.Exists(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")))
+            if (File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")))
                 try
                 {
                     // Parse the loaded json
                     var jsonHead = JsonObject.Parse(File.ReadAllText(
-                        Path.Join(Interfacing.GetProgramLocation().DirectoryName, "defaults.json")));
+                        Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")));
 
                     if (!jsonHead.ContainsKey("ExtraTrackers"))
                         // Invalid configuration file, don't proceed further!
@@ -314,8 +320,8 @@ public class AppSettings : INotifyPropertyChanged
             TrackersVector.Where(tracker => !tracker.IsSupported).ToList()
                 .ForEach(tracker => Logger.Info(
                     $"Tracker role {tracker.Role} is not supported by " +
-                    $"({TrackingDevices.CurrentServiceEndpoint.Guid}, " +
-                    $"{TrackingDevices.CurrentServiceEndpoint.Name})! " +
+                    $"({AppPlugins.CurrentServiceEndpoint.Guid}, " +
+                    $"{AppPlugins.CurrentServiceEndpoint.Name})! " +
                     "Disabling this tracker and marking as unsupported!"));
 
         // Check pairs' configs
@@ -366,7 +372,7 @@ public class AppSettings : INotifyPropertyChanged
 
         // Optionally fix the selected language / select a new one
         var resourcePath = Path.Join(
-            Interfacing.GetProgramLocation().DirectoryName,
+            Interfacing.ProgramLocation.DirectoryName,
             "Assets", "Strings", AppLanguage + ".json");
 
         // If there's no specified language, fallback to {system}
@@ -377,7 +383,7 @@ public class AppSettings : INotifyPropertyChanged
 
             Logger.Warn($"No language specified! Trying with the system one: \"{AppLanguage}\"!");
             resourcePath = Path.Join(
-                Interfacing.GetProgramLocation().DirectoryName, "Assets", "Strings", AppLanguage + ".json");
+                Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings", AppLanguage + ".json");
         }
 
         // If the specified language doesn't exist somehow, fallback to 'en'
@@ -387,7 +393,7 @@ public class AppSettings : INotifyPropertyChanged
 
             AppLanguage = "en"; // Change to english
             resourcePath = Path.Join(
-                Interfacing.GetProgramLocation().DirectoryName,
+                Interfacing.ProgramLocation.DirectoryName,
                 "Assets", "Strings", AppLanguage + ".json");
         }
 
@@ -401,7 +407,7 @@ public class AppSettings : INotifyPropertyChanged
 
         // Advanced config: runtime and tracking settings
         Logger.Info("Checking AppSettings [runtime] configuration...");
-        var trackingDevice = device ?? TrackingDevices.BaseTrackingDevice;
+        var trackingDevice = device ?? AppPlugins.BaseTrackingDevice;
 
         // Check orientation option configs : left foot
         Logger.Info("Checking left foot orientation settings...");
@@ -468,7 +474,7 @@ public class AppSettings : INotifyPropertyChanged
                             $"({appTracker.OverrideGuid}) exists in loaded plugins...");
 
                 // Check if the override specified by the tracker is real
-                if (!TrackingDevices.TrackingDevicesList.ContainsKey(appTracker.OverrideGuid))
+                if (!AppPlugins.TrackingDevicesList.ContainsKey(appTracker.OverrideGuid))
                 {
                     Logger.Info($"The saved tracker {appTracker.Serial} override " +
                                 $"({appTracker.OverrideGuid}) is invalid! Resetting it to NONE!");
@@ -484,7 +490,7 @@ public class AppSettings : INotifyPropertyChanged
                             $"({appTracker.SelectedTrackedJointId}) is valid for loaded plugins...");
 
                 // ReSharper disable once InvertIf | Check if the specified override index is valid
-                if (TrackingDevices.GetDevice(appTracker.OverrideGuid)
+                if (AppPlugins.GetDevice(appTracker.OverrideGuid)
                         .Device.TrackedJoints.Count <= appTracker.OverrideJointId)
                 {
                     Logger.Info($"The saved tracker {appTracker.Serial} bound joint ID " +

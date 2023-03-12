@@ -79,11 +79,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
         GeneralPage.StatusTeachingTip = StatusTeachingTip;
 
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
-        TrackingDeviceTreeView.ItemsSource = TrackingDevices.TrackingDevicesList.Values;
+        TrackingDeviceTreeView.ItemsSource = AppPlugins.TrackingDevicesList.Values;
 
         Logger.Info($"Setting graphical resources for: '{CalibrationPreviewMediaElement.GetType().FullName}'...");
         CalibrationPreviewMediaElement.Source = MediaSource.CreateFromUri(
-            new Uri(Path.Join(Interfacing.GetProgramLocation().DirectoryName, "Assets", "CalibrationDirections.mp4")));
+            new Uri(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "CalibrationDirections.mp4")));
         CalibrationPreviewMediaElement.MediaPlayer.CommandManager.IsEnabled = false;
 
         Logger.Info("Registering a detached binary semaphore " +
@@ -117,28 +117,28 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private List<Ellipse> JointPoints { get; } = new(60);
 
     private string ServiceSettingsText => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Buttons/ServiceSettings"), TrackingDevices.CurrentServiceEndpoint.Name);
+        "/SettingsPage/Buttons/ServiceSettings"), AppPlugins.CurrentServiceEndpoint.Name);
 
     private string DeviceSettingsText => string.Format(Interfacing.LocalizedJsonString(
-        "/GeneralPage/Buttons/DeviceSettings"), TrackingDevices.BaseTrackingDevice.Name);
+        "/GeneralPage/Buttons/DeviceSettings"), AppPlugins.BaseTrackingDevice.Name);
 
     private string AutoStartTipText => string.Format(Interfacing.LocalizedJsonString(
-        "/NUX/Tip2/Content"), TrackingDevices.CurrentServiceEndpoint.Name);
+        "/NUX/Tip2/Content"), AppPlugins.CurrentServiceEndpoint.Name);
 
     private string ServiceStatusLabel => string.Format(Interfacing.LocalizedJsonString(
-        "/GeneralPage/Captions/DriverStatus/Label"), TrackingDevices.CurrentServiceEndpoint.Name);
+        "/GeneralPage/Captions/DriverStatus/Label"), AppPlugins.CurrentServiceEndpoint.Name);
 
     private bool AllowCalibration => Interfacing.AppTrackersInitialized && ServiceStatusOk;
 
-    private bool ServiceStatusError => TrackingDevices.CurrentServiceEndpoint.StatusError;
+    private bool ServiceStatusError => AppPlugins.CurrentServiceEndpoint.StatusError;
 
-    private bool ServiceStatusOk => TrackingDevices.CurrentServiceEndpoint.StatusOk;
+    private bool ServiceStatusOk => AppPlugins.CurrentServiceEndpoint.StatusOk;
 
     private string[] ServiceStatusText
     {
         get
         {
-            var message = StringUtils.SplitStatusString(TrackingDevices.CurrentServiceEndpoint.ServiceStatusString);
+            var message = StringUtils.SplitStatusString(AppPlugins.CurrentServiceEndpoint.ServiceStatusString);
             return message is null || message.Length < 3
                 ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" }
                 : message; // If everything is all right this time
@@ -198,7 +198,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Update things
         Interfacing.UpdateServerStatus();
-        TrackingDevices.UpdateTrackingDevicesInterface();
+        AppPlugins.UpdateTrackingDevicesInterface();
 
         // Reload offset values
         Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
@@ -206,7 +206,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Reload tracking devices
         Logger.Info($"Force refreshing devices MVVM for page: '{GetType().FullName}'...");
-        TrackingDevices.TrackingDevicesList.Values.ToList().ForEach(x => x.OnPropertyChanged());
+        AppPlugins.TrackingDevicesList.Values.ToList().ForEach(x => x.OnPropertyChanged());
 
         // Notify of the setup's end
         OnPropertyChanged(); // Just everything
@@ -287,9 +287,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
         }
 
         // If no actual calibration is supported
-        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions == null &&
+        if (AppPlugins.CurrentServiceEndpoint.ControllerInputActions == null &&
             (node.TrackedJoints.All(x => x.Role != TrackedJointType.JointHead) ||
-             TrackingDevices.CurrentServiceEndpoint.HeadsetPose == null))
+             AppPlugins.CurrentServiceEndpoint.HeadsetPose == null))
         {
             // Set the correct target
             NoCalibrationTeachingTip.Target =
@@ -336,7 +336,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (node.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead))
         {
             // If manual calibration is not supported, proceed straight to automatic
-            if (TrackingDevices.CurrentServiceEndpoint.HeadsetPose == null) ExecuteAutomaticCalibration();
+            if (AppPlugins.CurrentServiceEndpoint.HeadsetPose == null) ExecuteAutomaticCalibration();
             else return; // Else open the selection pane
         }
 
@@ -596,7 +596,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (AppData.Settings.OverrideDevicesGuidMap.Count < 1)
         {
             // Get our current device
-            var trackingDevice = TrackingDevices.BaseTrackingDevice;
+            var trackingDevice = AppPlugins.BaseTrackingDevice;
 
             // If the status isn't OK, cry about it
             if (trackingDevice.StatusError)
@@ -648,7 +648,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             if (trackingDevice.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead))
             {
                 // If manual calibration is not supported, proceed straight to automatic
-                if (TrackingDevices.CurrentServiceEndpoint.HeadsetPose == null) ExecuteAutomaticCalibration();
+                if (AppPlugins.CurrentServiceEndpoint.HeadsetPose == null) ExecuteAutomaticCalibration();
                 else return; // Else open the selection pane
             }
 
@@ -668,7 +668,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
 
             // If all used devices are erred: cry about it
-            if (TrackingDevices.TrackingDevicesList.Values
+            if (AppPlugins.TrackingDevicesList.Values
                 .Where(plugin => plugin.IsBase || plugin.IsOverride)
                 .All(device => device.StatusError))
             {
@@ -725,15 +725,15 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Optionally show the binding teaching tip
         if (AppData.Settings.TeachingTipShownFreeze || Interfacing.CurrentPageTag != "general" ||
-            string.IsNullOrEmpty(TrackingDevices.CurrentServiceEndpoint
+            string.IsNullOrEmpty(AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions?.TrackingFreezeActionTitleString) ||
-            string.IsNullOrEmpty(TrackingDevices.CurrentServiceEndpoint
+            string.IsNullOrEmpty(AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions?.TrackingFreezeActionContentString)) return;
 
         FreezeTrackingTeachingTip.Title =
-            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.TrackingFreezeActionTitleString;
+            AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.TrackingFreezeActionTitleString;
         FreezeTrackingTeachingTip.Subtitle =
-            TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.TrackingFreezeActionContentString;
+            AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.TrackingFreezeActionContentString;
         FreezeTrackingTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
 
         Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
@@ -815,7 +815,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         OnPropertyChanged(); // Refresh the UI
         Interfacing.UpdateServerStatus();
-        TrackingDevices.UpdateTrackingDevicesInterface();
+        AppPlugins.UpdateTrackingDevicesInterface();
     }
 
     private void ToggleTrackersButton_Unchecked(object sender, RoutedEventArgs e)
@@ -835,7 +835,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         OnPropertyChanged(); // Refresh the UI
         Interfacing.UpdateServerStatus();
-        TrackingDevices.UpdateTrackingDevicesInterface();
+        AppPlugins.UpdateTrackingDevicesInterface();
     }
 
     private void ToggleTrackersTeachingTip_ActionButtonClick(TeachingTip sender, object args)
@@ -933,7 +933,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Should already be init-ed after 500ms, but check anyway
         if (Shared.Devices.DevicesTreeView is null) return;
-        var devicesListIndex = TrackingDevices.TrackingDevicesList.Keys.ToList()
+        var devicesListIndex = AppPlugins.TrackingDevicesList.Keys.ToList()
             .IndexOf(AppData.Settings.TrackingDeviceGuid);
         var devicesListNode = Shared.Devices.DevicesTreeView.RootNodes[devicesListIndex];
 
@@ -994,7 +994,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             if (!AppData.Settings.ForceSkeletonPreview)
             {
                 // If the dashboard's closed
-                if (!TrackingDevices.CurrentServiceEndpoint.IsAmethystVisible)
+                if (!AppPlugins.CurrentServiceEndpoint.IsAmethystVisible)
                 {
                     // Hide the UI, only show that viewing is disabled
                     (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (0, 0);
@@ -1018,7 +1018,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity,
                 OutOfFocusNotice.Opacity) = (0, 0, 0); // Only these for now
 
-            var trackingDevice = TrackingDevices.BaseTrackingDevice;
+            var trackingDevice = AppPlugins.BaseTrackingDevice;
             var joints = trackingDevice.TrackedJoints;
 
             // Okay to do this here => the preview is forced on calibration
@@ -1469,11 +1469,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
         LabelFineTuneNormal.Visibility = Visibility.Visible;
 
         // Swap (optionally)
-        if (TrackingDevices.CurrentServiceEndpoint.TrackingSystemName.Contains("knuckles",
+        if (AppPlugins.CurrentServiceEndpoint.TrackingSystemName.Contains("knuckles",
                 StringComparison.OrdinalIgnoreCase) ||
-            TrackingDevices.CurrentServiceEndpoint.TrackingSystemName.Contains("index",
+            AppPlugins.CurrentServiceEndpoint.TrackingSystemName.Contains("index",
                 StringComparison.OrdinalIgnoreCase) ||
-            TrackingDevices.CurrentServiceEndpoint.TrackingSystemName.Contains("vive",
+            AppPlugins.CurrentServiceEndpoint.TrackingSystemName.Contains("vive",
                 StringComparison.OrdinalIgnoreCase))
         {
             LabelFineTuneVive.Visibility = Visibility.Visible;
@@ -1520,11 +1520,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
             calibrationModeSwap = true;
         }
 
-        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.CalibrationConfirmed is not null)
-            TrackingDevices.CurrentServiceEndpoint
+        if (AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.CalibrationConfirmed is not null)
+            AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions.CalibrationConfirmed += OnCalibrationConfirmed;
-        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.CalibrationModeChanged is not null)
-            TrackingDevices.CurrentServiceEndpoint
+        if (AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.CalibrationModeChanged is not null)
+            AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions.CalibrationModeChanged += OnCalibrationModeChanged;
 
         // Loop over until finished
@@ -1535,7 +1535,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             {
                 // Apply to the global base
                 AppData.Settings.DeviceCalibrationTranslationVectors[_calibratingDeviceGuid] +=
-                    TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.MovePositionValues ?? Vector3.Zero;
+                    AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.MovePositionValues ?? Vector3.Zero;
 
                 await Task.Delay(7);
 
@@ -1562,9 +1562,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
             // Wait for a mode switch
             while (!calibrationModeSwap && !calibrationConfirm)
             {
-                tempYaw += TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.AdjustRotationValues
+                tempYaw += AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.AdjustRotationValues
                     .Y ?? 0f; // Left X
-                tempPitch += TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.AdjustRotationValues
+                tempPitch += AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.AdjustRotationValues
                     .X ?? 0f; // Right Y
 
                 anglesVector3 = new Vector3(tempPitch, tempYaw, 0f);
@@ -1593,11 +1593,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
             if (!_calibrationPending) break;
         }
 
-        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.CalibrationConfirmed is not null)
-            TrackingDevices.CurrentServiceEndpoint
+        if (AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.CalibrationConfirmed is not null)
+            AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions.CalibrationConfirmed -= OnCalibrationConfirmed;
-        if (TrackingDevices.CurrentServiceEndpoint.ControllerInputActions?.CalibrationModeChanged is not null)
-            TrackingDevices.CurrentServiceEndpoint
+        if (AppPlugins.CurrentServiceEndpoint.ControllerInputActions?.CalibrationModeChanged is not null)
+            AppPlugins.CurrentServiceEndpoint
                 .ControllerInputActions.CalibrationModeChanged -= OnCalibrationModeChanged;
 
         // Reset by re-reading the settings if aborted

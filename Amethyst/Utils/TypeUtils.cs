@@ -2,10 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Primitives;
+using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using AmethystSupport;
+using Microsoft.UI.Xaml.Controls;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using Windows.Storage;
 
 namespace Amethyst.Utils;
 
@@ -177,6 +187,27 @@ public static class TypeUtils
     {
         return (transform.Translation.V(), transform.Rotation.Q());
     }
+
+    public static bool TryParseJson(this string @this, out JObject result)
+    {
+        var success = true;
+        var settings = new JsonSerializerSettings
+        {
+            Error = (sender, args) =>
+            {
+                success = false;
+                args.ErrorContext.Handled = true;
+            },
+            MissingMemberHandling = MissingMemberHandling.Error
+        };
+        result = JsonConvert.DeserializeObject<JObject>(@this, settings);
+        return success;
+    }
+
+    public static JToken TryGetValue(this JObject json, string propertyName)
+    {
+        return json.TryGetValue(propertyName, out var value) ? value : null;
+    }
 }
 
 public static class SortedDictionaryExtensions
@@ -240,5 +271,84 @@ public static class ExceptionExtensions
         }
 
         return exception; // Throw the original
+    }
+}
+
+public static class RestExtensions
+{
+    public static Task<RestResponse<T>> ExecuteGetAsync<T>(this RestClient client, string baseUrl, RestRequest request)
+    {
+        client.Options.BaseUrl = new Uri(baseUrl);
+        return client.ExecuteGetAsync<T>(request);
+    }
+
+    public static Task<RestResponse> ExecuteGetAsync(this RestClient client, string baseUrl, RestRequest request)
+    {
+        client.Options.BaseUrl = new Uri(baseUrl);
+        return client.ExecuteGetAsync(request);
+    }
+
+    public static Task<RestResponse> GetAsyncAuthorized(this RestClient client, RestRequest request)
+    {
+        if (AppData.Settings.GitHubToken.Valid)
+            request.AddHeader("Authorization", // Optionally add the authorization token
+                $"bearer {AppData.Settings.GitHubToken.Token.Decrypt()}");
+
+        return client.GetAsync(request);
+    }
+
+    public static Task<byte[]> ExecuteDownloadDataAsync(this RestClient client, string baseUrl, RestRequest request)
+    {
+        client.Options.BaseUrl = new Uri(baseUrl);
+        return client.DownloadDataAsync(request);
+    }
+
+    public static Task<Stream> ExecuteDownloadStreamAsync(this RestClient client, string baseUrl, RestRequest request)
+    {
+        client.Options.BaseUrl = new Uri(baseUrl);
+        return client.DownloadStreamAsync(request);
+    }
+}
+
+public static class StringExtensions
+{
+    public static string Encrypt(this string s)
+    {
+        if (string.IsNullOrEmpty(s)) return s;
+
+        var encoding = new UTF8Encoding();
+        var plain = encoding.GetBytes(s);
+        var secret = ProtectedData.Protect(plain, null, DataProtectionScope.CurrentUser);
+        return Convert.ToBase64String(secret);
+    }
+
+    public static string Decrypt(this string s)
+    {
+        if (string.IsNullOrEmpty(s)) return s;
+
+        var secret = Convert.FromBase64String(s);
+        var plain = ProtectedData.Unprotect(secret, null, DataProtectionScope.CurrentUser);
+        var encoding = new UTF8Encoding();
+        return encoding.GetString(plain);
+    }
+}
+
+public static class StorageExtensions
+{
+    public static void CopyToFolderAsync(this DirectoryInfo source, string destination, bool log = false)
+    {
+        // Now Create all of the directories
+        foreach (var dirPath in source.GetDirectories("*", SearchOption.AllDirectories))
+        {
+            Logger.Info($"Copying file {source} to {destination}\\");
+            Directory.CreateDirectory(dirPath.FullName.Replace(source.FullName, destination));
+        }
+
+        // Copy all the files & Replaces any files with the same name
+        foreach (var newPath in source.GetFiles("*.*", SearchOption.AllDirectories))
+        {
+            Logger.Info($"Copying file {source} to {destination}\\");
+            newPath.CopyTo(newPath.FullName.Replace(source.FullName, destination), true);
+        }
     }
 }

@@ -8,16 +8,19 @@ using Windows.Data.Json;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
+using System.Diagnostics;
+using CommunityToolkit.WinUI.Helpers;
 
 namespace Amethyst.MVVM;
 
 public class ServiceEndpoint : INotifyPropertyChanged
 {
-    public ServiceEndpoint(string name, string guid, string path, IServiceEndpoint service)
+    public ServiceEndpoint(string name, string guid, string path, Version version, IServiceEndpoint service)
     {
         Guid = guid;
         Name = name;
         Location = path;
+        Version = version;
         Service = service;
     }
 
@@ -35,6 +38,9 @@ public class ServiceEndpoint : INotifyPropertyChanged
 
     // Get Path
     [DefaultValue("UNKNOWN")] public string Location { get; }
+
+    // Get the plugin version using its host assembly
+    [DefaultValue("0.0.0.0")] public Version Version { get; }
 
     // Underlying service handler
     private IServiceEndpoint Service { get; }
@@ -114,7 +120,7 @@ public class ServiceEndpoint : INotifyPropertyChanged
     // Return null if unknown to the service or unavailable
     // You'll need to provide this to support automatic calibration
     public (Vector3 Position, Quaternion Orientation)? HeadsetPose => Service.HeadsetPose;
-
+    
     // Hot reload handler
     public FileSystemWatcher AssetsWatcher { get; set; }
 
