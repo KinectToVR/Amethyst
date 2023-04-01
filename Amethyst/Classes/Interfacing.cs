@@ -339,19 +339,8 @@ public static class Interfacing
         // Notify that we're good now
         AppTrackersSpawned = true;
         AppTrackersInitialized = true;
-
-        /*
-         * Trackers are stealing input from controllers when first added,
-         * due to some weird wonky stuff happening and OpenVR not expecting them.
-         * We're gonna de-spawn them for 8 frames (100ms) and re-spawn after another
-         */
-
-        await Task.Delay(100);
-        AppTrackersInitialized = false;
-        await Task.Delay(500);
-        AppTrackersInitialized = true;
-
-        return true;
+        
+        return true; // We're done here!
     }
 
     public static async Task<(int Code, string Message)> TestServiceConnection()

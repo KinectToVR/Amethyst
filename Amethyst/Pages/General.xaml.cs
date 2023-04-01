@@ -780,6 +780,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private async void ToggleTrackersButton_Checked(object sender, RoutedEventArgs e)
     {
+        Logger.Info("Trackers initialization requested!");
+
         // Don't check if setup's finished since we're gonna emulate a click rather than change the state only
         ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
             "/GeneralPage/Buttons/TrackersToggle/Disconnect");
@@ -803,6 +805,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Give up if failed
         if (!Interfacing.ServiceEndpointFailure)
         {
+            Logger.Info("Trying to initialize app trackers within the selected service...");
+
             // Mark trackers as active
             Interfacing.AppTrackersInitialized = true;
 
@@ -820,9 +824,13 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private void ToggleTrackersButton_Unchecked(object sender, RoutedEventArgs e)
     {
+        Logger.Info("Trackers removal requested!");
+
         // Don't check if setup's finished since we're gonna emulate a click rather than change the state only
         ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
             "/GeneralPage/Buttons/TrackersToggle/Reconnect");
+
+        Logger.Info("Trying to shut app trackers within the selected service...");
 
         // Mark trackers as inactive
         Interfacing.AppTrackersInitialized = false;
