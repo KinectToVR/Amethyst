@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Amethyst.Classes;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
@@ -19,15 +20,14 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
 {
     private List<AppTracker> _trackers = new();
 
-    // OnPropertyChanged listener for containers
-    public EventHandler PropertyChangedEvent;
-
     public OverrideExpander()
     {
         InitializeComponent();
-
         ResubscribeListeners(); // Register for any pending changes
+
         Interfacing.AppSettingsRead += (_, _) => ResubscribeListeners();
+        Shared.Events.RequestOverrideExpandersCollapseEvent += (_, _) => Task.FromResult(
+            Shared.Main.DispatcherQueue.TryEnqueue(() => OverridesItemsExpander.IsExpanded = false));
     }
 
     public string Header { get; set; } = "";
@@ -58,7 +58,6 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 
     private static List<string> GetManagingDeviceJointsList(string guid)
@@ -82,7 +81,10 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     {
         // Don't even care if we're not set up yet
         if (!((sender as ComboBox)?.IsLoaded ?? false) ||
-            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid)
+            !Shared.Devices.DevicesJointsValid) return;
+
+        // Block invalid requests
+        if (!IsAnyTrackerEnabled)
         {
             Trackers.ForEach(x => x.OnPropertyChanged());
             return; // Invalidate the pending input changes
@@ -108,12 +110,14 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
 
     private void OverrideTrackerCombo_OnDropDownOpened(object sender, object e)
     {
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+        if (!Pages.Devices.DisableJointExpanderSounds)
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
     }
 
     private void OverrideTrackerCombo_OnDropDownClosed(object sender, object e)
     {
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+        if (!Pages.Devices.DisableJointExpanderSounds)
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
     private void OverridePositionSwitch_Toggled(object sender, RoutedEventArgs e)
@@ -146,7 +150,9 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     {
         // Don't even care if we're not set up yet
         if (!IsAnyTrackerEnabled) return;
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+
+        if (!Pages.Devices.DisableJointExpanderSounds)
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
 
         Trackers.ForEach(x => x.OnPropertyChanged());
         OnPropertyChanged(); // Refresh everything upon expanding

@@ -53,6 +53,11 @@ public static class Shared
                 AppPlugins.HandleDeviceRefresh(false);
             });
         }
+
+        public delegate Task RequestEvent(object sender, EventArgs e);
+
+        public static RequestEvent RequestJointSelectorExpandersCollapseEvent;
+        public static RequestEvent RequestOverrideExpandersCollapseEvent;
     }
 
     public static class Main

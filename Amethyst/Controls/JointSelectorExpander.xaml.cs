@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Amethyst.Classes;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
@@ -20,15 +21,14 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     private bool _areChangesValid;
     private List<AppTracker> _trackers = new();
 
-    // OnPropertyChanged listener for containers
-    public EventHandler PropertyChangedEvent;
-
     public JointSelectorExpander()
     {
         InitializeComponent();
-
         ResubscribeListeners(); // Register for any pending changes
+
         Interfacing.AppSettingsRead += (_, _) => ResubscribeListeners();
+        Shared.Events.RequestJointSelectorExpandersCollapseEvent += (_, _) => Task.FromResult(
+            Shared.Main.DispatcherQueue.TryEnqueue(() => JointsItemsExpander.IsExpanded = false));
     }
 
     public string Header { get; set; } = "";
@@ -60,7 +60,6 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     public void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 
     private static List<string> GetBaseDeviceJointsList()
@@ -72,7 +71,14 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     {
         // Don't even care if we're not set up yet
         if (!((sender as ComboBox)?.IsLoaded ?? false) ||
-            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+            !Shared.Devices.DevicesJointsValid) return;
+
+        // Block invalid requests
+        if (!IsAnyTrackerEnabled)
+        {
+            Trackers.ForEach(x => x.OnPropertyChanged());
+            return; // Invalidate the pending input changes
+        }
 
         // Either fix the selection index or give up on everything
         if (((ComboBox)sender).SelectedIndex < 0)
@@ -81,7 +87,7 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
                 .ElementAtOrDefault((((ComboBox)sender).DataContext as AppTracker)!.SelectedBaseTrackedJointId);
         }
 
-        //else
+        // else
         else if (_areChangesValid)
         {
             if (((ComboBox)sender).SelectedIndex < 0)
@@ -109,14 +115,16 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     private void JointsItemsExpander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
     {
         // Don't even care if we're not set up yet
-        if (!IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+        if (!IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid ||
+            Pages.Devices.DisableJointExpanderSounds) return;
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
     }
 
     private void JointsItemsExpander_Collapsed(Expander sender, ExpanderCollapsedEventArgs args)
     {
         // Don't even care if we're not set up yet
-        if (!IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+        if (!IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid ||
+            Pages.Devices.DisableJointExpanderSounds) return;
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 

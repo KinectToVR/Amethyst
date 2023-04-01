@@ -9,6 +9,7 @@ using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using static Amethyst.Classes.Interfacing;
 using System.Diagnostics;
+using Amethyst.Controls;
 
 namespace Amethyst.MVVM;
 

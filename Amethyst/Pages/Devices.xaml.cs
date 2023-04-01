@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
 using Amethyst.Classes;
+using Amethyst.Controls;
 using Amethyst.MVVM;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
@@ -27,6 +28,7 @@ namespace Amethyst.Pages;
 public sealed partial class Devices : Page, INotifyPropertyChanged
 {
     private bool _devicesPageLoadedOnce;
+    public static bool DisableJointExpanderSounds = false;
 
     public Devices()
     {
@@ -192,7 +194,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         DeviceStatusTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
         DeviceStatusTeachingTip.IsOpen = true;
     }
-    
+
     private async void TrackingDeviceTreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
     {
         if (!Shared.Devices.DevicesTabSetupFinished) return; // Block dummy selects
@@ -213,6 +215,11 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         // Backup
         AppData.Settings.PreviousSelectedTrackingDeviceGuid = AppData.Settings.SelectedTrackingDeviceGuid;
 
+        // Collapse
+        DisableJointExpanderSounds = true;
+        Shared.Events.RequestJointSelectorExpandersCollapseEvent?.Invoke(this, EventArgs.Empty);
+        Shared.Events.RequestOverrideExpandersCollapseEvent?.Invoke(this, EventArgs.Empty);
+
         await Task.Delay(10);
         WaistAndFeetTrackersExpander.InvalidateMeasure();
         KneesAndElbowsTrackersExpander.InvalidateMeasure();
@@ -227,6 +234,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         // We're done here
         AppData.Settings.TrackersVector.ToList().ForEach(x => x.OnPropertyChanged());
         Shared.Devices.DevicesJointsValid = true;
+        DisableJointExpanderSounds = false;
     }
 
     private void DeviceStatusTeachingTip_ActionButtonClick(TeachingTip sender, object args)
