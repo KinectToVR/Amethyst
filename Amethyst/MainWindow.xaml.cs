@@ -1889,6 +1889,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Show the close tip (if not shown yet)
             case false when
                 !AppData.Settings.FirstShutdownTipShown:
+                // Bring up the window
+                Shared.Main.Window.Activate();
+
+                // Show the tip
                 ShutdownTeachingTip.IsOpen = true;
 
                 AppData.Settings.FirstShutdownTipShown = true;

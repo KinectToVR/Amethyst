@@ -318,7 +318,7 @@ public sealed partial class MainWindow : Window
 
         // (Second try ...but first)
         Activate();
-
+        
         // And show it (forcibly)
         SetForegroundWindow(WindowNative
             .GetWindowHandle(this));
