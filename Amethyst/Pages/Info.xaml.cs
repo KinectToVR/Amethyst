@@ -93,10 +93,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
         // Dismiss the current tip
         HelpTeachingTip.IsOpen = false;
         await Task.Delay(400);
-
-        // Reset the next page layout (if ever changed)
-        Shared.Settings.PageMainScrollViewer?.ScrollToVerticalOffset(0);
-
+        
         // Navigate to the devices page
         Shared.Main.MainNavigationView.SelectedItem =
             Shared.Main.MainNavigationView.MenuItems[2];
@@ -111,41 +108,25 @@ public sealed partial class Info : Page, INotifyPropertyChanged
         Shared.TeachingTips.DevicesPage.DeviceControlsTeachingTip.IsOpen = true;
     }
 
-    private void HelpTeachingTip_CloseButtonClick(TeachingTip sender, object args)
+    private async void HelpTeachingTip_CloseButtonClick(TeachingTip sender, object args)
     {
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
-        EndingTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
-        EndingTeachingTip.IsOpen = true;
-    }
-
-    private async void EndingTeachingTip_CloseButtonClick(TeachingTip sender, object args)
-    {
-        // Play a sound
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
-        // Dismiss the current tip
-        EndingTeachingTip.IsOpen = false;
-        await Task.Delay(200);
-
-        // Unblock the interface
-        Shared.Main.InterfaceBlockerGrid.Opacity = 0.0;
-        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
-
-        Interfacing.IsNuxPending = false;
-
-        // Navigate to the general page
+        // Navigate to the plugin page
         Shared.Main.MainNavigationView.SelectedItem =
-            Shared.Main.MainNavigationView.MenuItems[0];
-        Shared.Main.NavigateToPage("general",
+            Shared.Main.MainNavigationView.FooterMenuItems[0];
+        Shared.Main.NavigateToPage("plugins",
             new EntranceNavigationTransitionInfo());
 
-        // We're done
-        AppData.Settings.FirstTimeTourShown = true;
-        AppData.Settings.SaveSettings();
-    }
+        // Wait a bit
+        await Task.Delay(500);
 
+        // Show the next tip
+        Shared.TeachingTips.PluginsPage.ManagerTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.PluginsPage.ManagerTeachingTip.IsOpen = true;
+    }
+    
     private void K2DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         // Show a console-text-box popup

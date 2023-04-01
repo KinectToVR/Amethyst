@@ -21,6 +21,7 @@ using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media.Animation;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using static Amethyst.Classes.Interfacing;
@@ -46,7 +47,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         InitializeComponent();
 
         Logger.Info($"Constructing page: '{GetType().FullName}'...");
-        // TODO TeachingTips
+
+        Shared.TeachingTips.PluginsPage.ManagerTeachingTip = PluginsListTeachingTip;
+        Shared.TeachingTips.PluginsPage.StoreTeachingTip = PluginsStoreTeachingTip;
 
         RequestShowRateExceededEvent += (_, _) =>
             Shared.Main.DispatcherQueue.TryEnqueue(() =>
@@ -381,8 +384,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             DropInstallerGrid.Opacity = 1.0;
                             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
-                                // Search for an empty folder in AppData
-                                var installFolder = GetAppDataPluginFolderDir(
+                            // Search for an empty folder in AppData
+                            var installFolder = GetAppDataPluginFolderDir(
                                 string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                     .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
@@ -451,8 +454,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             DropInstallerMessageTextBlock.Opacity = 1.0;
                             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
-                                // Wait a moment and hide
-                                await Task.Delay(3500);
+                            // Wait a moment and hide
+                            await Task.Delay(3500);
 
                             // Unlock other controls
                             SearchButton.IsEnabled = true;
@@ -539,8 +542,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     DropInstallerGrid.Opacity = 1.0;
                                     AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
-                                        // Search for an empty folder in AppData
-                                        var installFolder = GetAppDataPluginFolderDir(
+                                    // Search for an empty folder in AppData
+                                    var installFolder = GetAppDataPluginFolderDir(
                                         string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                             .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
@@ -607,8 +610,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     DropInstallerMessageTextBlock.Opacity = 1.0;
                                     AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
-                                        // Wait a moment and hide
-                                        await Task.Delay(3500);
+                                    // Wait a moment and hide
+                                    await Task.Delay(3500);
 
                                     // Unlock other controls
                                     SearchButton.IsEnabled = true;
@@ -692,8 +695,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         DropInstallerGrid.Opacity = 1.0;
                                         AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
-                                            // Search for an empty folder in AppData
-                                            var installFolder = GetAppDataPluginFolderDir(
+                                        // Search for an empty folder in AppData
+                                        var installFolder = GetAppDataPluginFolderDir(
                                             string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                                 .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
@@ -749,8 +752,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         DropInstallerMessageTextBlock.Opacity = 1.0;
                                         AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
-                                            // Wait a moment and hide
-                                            await Task.Delay(3500);
+                                        // Wait a moment and hide
+                                        await Task.Delay(3500);
 
                                         // Unlock other controls
                                         SearchButton.IsEnabled = true;
@@ -1236,5 +1239,71 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
     {
         if (!(sender?.IsLoaded ?? false)) return;
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    private async void PluginsListTeachingTip_ActionButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+        await Task.Delay(200);
+
+        // Navigate to the info page
+        Shared.Main.MainNavigationView.SelectedItem =
+            Shared.Main.MainNavigationView.MenuItems[3];
+
+        Shared.Main.NavigateToPage("info",
+            new EntranceNavigationTransitionInfo());
+
+        await Task.Delay(500);
+
+        // Show the next tip
+        Shared.TeachingTips.InfoPage.HelpTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.InfoPage.HelpTeachingTip.IsOpen = true;
+    }
+
+    private void PluginsListTeachingTip_CloseButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        // Close the current tip
+        PluginsListTeachingTip.IsOpen = false;
+
+        // Show the previous one
+        PluginsStoreTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        PluginsStoreTeachingTip.IsOpen = true;
+    }
+
+    private void PluginsStoreTeachingTip_ActionButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        // Close the current tip
+        PluginsStoreTeachingTip.IsOpen = false;
+
+        // Show the previous one
+        PluginsListTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        PluginsListTeachingTip.IsOpen = true;
+    }
+
+    private async void PluginsStoreTeachingTip_CloseButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+        await Task.Delay(200);
+
+        // Navigate to the info page
+        Shared.Main.MainNavigationView.SelectedItem =
+            Shared.Main.MainNavigationView.MenuItems[0];
+
+        Shared.Main.NavigateToPage("general",
+            new EntranceNavigationTransitionInfo());
+
+        await Task.Delay(500);
+
+        // Show the next tip
+        Shared.TeachingTips.MainPage.EndingTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        Shared.TeachingTips.MainPage.EndingTeachingTip.IsOpen = true;
     }
 }

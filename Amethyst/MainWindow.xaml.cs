@@ -76,6 +76,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Cache needed UI elements
         Shared.TeachingTips.MainPage.InitializerTeachingTip = InitializerTeachingTip;
+        Shared.TeachingTips.MainPage.EndingTeachingTip = EndingTeachingTip;
         Shared.TeachingTips.MainPage.ReloadInfoBar = ReloadInfoBar;
 
         Shared.Main.MainNavigationView = NavView;
@@ -1999,6 +2000,25 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.TeachingTips.MainPage.InitializerTeachingTip.IsOpen = false;
 
         // Just dismiss the tip
+        Shared.Main.InterfaceBlockerGrid.Opacity = 0.0;
+        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
+        Interfacing.IsNuxPending = false;
+
+        // We're done
+        AppData.Settings.FirstTimeTourShown = true;
+        AppData.Settings.SaveSettings();
+    }
+
+    private async void EndingTeachingTip_CloseButtonClick(TeachingTip sender, object args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        // Dismiss the current tip
+        EndingTeachingTip.IsOpen = false;
+        await Task.Delay(200);
+
+        // Unblock the interface
         Shared.Main.InterfaceBlockerGrid.Opacity = 0.0;
         Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
         Interfacing.IsNuxPending = false;

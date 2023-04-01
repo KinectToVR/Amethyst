@@ -28,10 +28,6 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock FontWeight="SemiBold" x:Name="PluginStoreTipDummyContextDummy"
-                                   Text="Devices" Opacity="0.0"
-                                   FontSize="25" Margin="0,20,0,0" Grid.Row="0" />
-
                         <Grid HorizontalAlignment="Stretch"
                               Margin="40,20,0,0" Grid.Row="0">
                             <TextBlock FontWeight="SemiBold" FontSize="25" TextTrimming="CharacterEllipsis"
@@ -87,6 +83,24 @@
                                     <Grid.OpacityTransition>
                                         <ScalarTransition />
                                     </Grid.OpacityTransition>
+
+                                    <Grid.Resources>
+                                        <TeachingTip x:Name="PluginsStoreTeachingTip"
+                                                     Target="{Binding ElementName=PluginStoreTipDummyContextDummy}"
+                                                     Title="{x:Bind util:Translator.Get.String('/NUX/Tip13/Title'), Mode=OneWay}"
+                                                     Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip13/Content'), Mode=OneWay}"
+                                                     CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+                                                     ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
+                                                     PreferredPlacement="Bottom"
+                                                     IsLightDismissEnabled="False"
+                                                     Style="{ThemeResource BigTeachingTipStyle}"
+                                                     ActionButtonClick="PluginsStoreTeachingTip_ActionButtonClick"
+                                                     CloseButtonClick="PluginsStoreTeachingTip_CloseButtonClick" />
+                                    </Grid.Resources>
+
+                                    <TextBlock FontWeight="SemiBold" x:Name="PluginStoreTipDummyContextDummy" Text="Devices"
+                                               HorizontalAlignment="Center" VerticalAlignment="Top"
+                                               Opacity="0.0" FontSize="25" Margin="-20,130,0,0" Grid.Row="0" />
 
                                     <Grid Grid.Row="0" Opacity="1.0" x:Name="SearchPlaceholderGrid">
                                         <Grid.ColumnDefinitions>
@@ -680,6 +694,20 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
+
+                    <Grid.Resources>
+                        <TeachingTip x:Name="PluginsListTeachingTip"
+                                     Target="{Binding ElementName=PluginManagerTipDummyContextDummy}"
+                                     Title="{x:Bind util:Translator.Get.String('/NUX/Tip12/Title'), Mode=OneWay}"
+                                     Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip12/Content'), Mode=OneWay}"
+                                     CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+                                     ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
+                                     PreferredPlacement="BottomRight"
+                                     IsLightDismissEnabled="False"
+                                     Style="{ThemeResource BigTeachingTipStyle}"
+                                     ActionButtonClick="PluginsListTeachingTip_ActionButtonClick"
+                                     CloseButtonClick="PluginsListTeachingTip_CloseButtonClick" />
+                    </Grid.Resources>
 
                     <TextBlock FontWeight="SemiBold" x:Name="PluginManagerTipDummyContextDummy" Text="Devices"
                                Visibility="{Binding ElementName=SecondarySectionNameTextBlock, Path=Visibility}"

@@ -374,7 +374,8 @@ public static class Shared
     {
         public static class MainPage
         {
-            public static TeachingTip InitializerTeachingTip;
+            public static TeachingTip 
+                InitializerTeachingTip, EndingTeachingTip;
 
             public static InfoBar ReloadInfoBar;
         }
@@ -403,6 +404,12 @@ public static class Shared
         {
             public static TeachingTip
                 HelpTeachingTip;
+        }
+
+        public static class PluginsPage
+        {
+            public static TeachingTip
+                ManagerTeachingTip, StoreTeachingTip;
         }
     }
 }

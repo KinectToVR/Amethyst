@@ -97,6 +97,17 @@
                              ActionButtonClick="InitializerTeachingTip_ActionButtonClick"
                              CloseButtonClick="InitializerTeachingTip_CloseButtonClick" />
 
+                <TeachingTip x:Name="EndingTeachingTip"
+                             Canvas.ZIndex="100"
+                             Title="{x:Bind util:Translator.Get.String('/NUX/Tip14/Title'), Mode=OneWay}"
+                             Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip14/Content'), Mode=OneWay}"
+                             CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Finish'), Mode=OneWay}"
+                             PreferredPlacement="Top"
+                             PlacementMargin="20"
+                             IsLightDismissEnabled="False"
+                             Style="{ThemeResource BigTeachingTipStyle}"
+                             CloseButtonClick="EndingTeachingTip_CloseButtonClick" />
+
                 <TeachingTip x:Name="ShutdownTeachingTip"
                              Canvas.ZIndex="100"
                              Title="{x:Bind util:Translator.Get.String('/NUX/Tip0/Title'), Mode=OneWay}"
