@@ -31,18 +31,17 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
-        <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25231-preview" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+        <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.2" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25330-preview" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>
 
     <!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
        Tools extension to be activated for this project even if the Windows App SDK Nuget
        package has not yet been restored -->
-    <ItemGroup
-        Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
+    <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
         <ProjectCapability Include="Msix" />
     </ItemGroup>
     <ItemGroup>

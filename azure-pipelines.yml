@@ -26,6 +26,7 @@ parameters:
       - "plugin_PSMoveService"
       - "plugin_owoTrackVR"
       - "plugin_OpenVR"
+      - "plugin_OSC"
 
 steps:
 - checkout: self

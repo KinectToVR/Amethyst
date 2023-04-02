@@ -63,9 +63,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     private readonly bool _mainPageInitFinished;
 
     private SystemBackdropConfiguration _configurationSource;
-    private bool _mainPageLoadedOnce;
     private MicaController _micaController;
+    private DesktopAcrylicController _acrylicController;
+
+    private bool _mainPageLoadedOnce;
     private string _remoteVersionString = AppData.VersionString.Display;
+    private Shared.Events.RequestEvent _updateBrushesEvent;
 
     private WindowsSystemDispatcherQueueHelper _wsdqHelper; // See separate sample below for implementation
 
@@ -73,6 +76,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         InitializeComponent();
         TrySetMicaBackdrop();
+
+        // Set up the shutdown handler
+        Closed += Window_Closed;
 
         // Cache needed UI elements
         Shared.TeachingTips.MainPage.InitializerTeachingTip = InitializerTeachingTip;
@@ -1195,6 +1201,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.Main.AppWindow.TitleBar.ButtonHoverBackgroundColor =
             Shared.Main.AppWindow.TitleBar.ButtonPressedBackgroundColor;
 
+        // Refresh other stuff
+        _updateBrushesEvent?.Invoke(this, EventArgs.Empty);
+
         // Request page reloads
         Shared.Events.RequestInterfaceReload();
 
@@ -1838,12 +1847,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Interfacing.IsNuxPending = false;
     }
 
-    private bool TrySetMicaBackdrop()
+    private void TrySetMicaBackdrop()
     {
-        if (!MicaController.IsSupported())
+        if (!MicaController.IsSupported() && !DesktopAcrylicController.IsSupported())
         {
-            Logger.Info("Mica is not supported! Time to update Windows, man!");
-            return false; // Mica is not supported on this system
+            Logger.Info("Mica and acrylic are not supported! Time to update Windows, man!");
+            return; // Mica/acrylic is not supported on this system
         }
 
         _wsdqHelper = new WindowsSystemDispatcherQueueHelper();
@@ -1852,24 +1861,55 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Hooking up the policy object
         _configurationSource = new SystemBackdropConfiguration();
         Activated += Window_Activated;
-        Closed += Window_Closed;
         ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
 
         // Initial configuration state.
         _configurationSource.IsInputActive = true;
         SetConfigurationSourceTheme();
 
-        _micaController = new MicaController();
+        if (MicaController.IsSupported())
+        {
+            _micaController = new MicaController();
 
-        // Enable the system backdrop.
-        // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
-        _micaController.AddSystemBackdropTarget(this
-            .As<ICompositionSupportsSystemBackdrop>());
-        _micaController.SetSystemBackdropConfiguration(_configurationSource);
+            // Enable the system backdrop.
+            // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
+            _micaController.AddSystemBackdropTarget(this
+                .As<ICompositionSupportsSystemBackdrop>());
+            _micaController.SetSystemBackdropConfiguration(_configurationSource);
 
-        // Change the window background to support mica
-        MainGrid.Background = new SolidColorBrush(Colors.Transparent);
-        return true; // succeeded
+            // Change the window background to support mica
+            MainGrid.Background = new SolidColorBrush(Colors.Transparent);
+        }
+        else if (DesktopAcrylicController.IsSupported())
+        {
+            _acrylicController = new DesktopAcrylicController();
+
+            // Enable the system backdrop.
+            // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
+            _acrylicController.AddSystemBackdropTarget(this
+                .As<ICompositionSupportsSystemBackdrop>());
+            _acrylicController.SetSystemBackdropConfiguration(_configurationSource);
+
+            // Change the window background to support acrylic
+            MainGrid.Background = Application.Current.RequestedTheme == ApplicationTheme.Dark
+                ? Application.Current.Resources["AcrylicBrush_Dark"].As<AcrylicBrush>()
+                : Application.Current.Resources["AcrylicBrush_Light"].As<AcrylicBrush>();
+            ContentFrame.Background = Application.Current.RequestedTheme == ApplicationTheme.Dark
+                ? Application.Current.Resources["AcrylicBrush_Darker"].As<AcrylicBrush>()
+                : Application.Current.Resources["AcrylicBrush_Lighter"].As<AcrylicBrush>();
+
+            _updateBrushesEvent += (_, _) =>
+            {
+                // Change the window background to support acrylic
+                MainGrid.Background = Interfacing.ActualTheme == ElementTheme.Dark
+                    ? Application.Current.Resources["AcrylicBrush_Dark"].As<AcrylicBrush>()
+                    : Application.Current.Resources["AcrylicBrush_Light"].As<AcrylicBrush>();
+                ContentFrame.Background = Interfacing.ActualTheme == ElementTheme.Dark
+                    ? Application.Current.Resources["AcrylicBrush_Darker"].As<AcrylicBrush>()
+                    : Application.Current.Resources["AcrylicBrush_Lighter"].As<AcrylicBrush>();
+                return Task.CompletedTask;
+            };
+        }
     }
 
     private void Window_Activated(object sender, WindowActivatedEventArgs args)
@@ -1923,6 +1963,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 {
                     _micaController.Dispose();
                     _micaController = null;
+                }
+
+                if (_acrylicController is not null)
+                {
+                    _acrylicController.Dispose();
+                    _acrylicController = null;
                 }
 
                 Activated -= Window_Activated;

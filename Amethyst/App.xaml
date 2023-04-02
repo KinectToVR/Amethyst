@@ -23,6 +23,15 @@
             <SolidColorBrush x:Key="NeutralBrush_Dark" Color="#8BFFFFFF" />
             <SolidColorBrush x:Key="NeutralBrush_Light" Color="#72000000" />
 
+            <AcrylicBrush x:Key="AcrylicBrush_Dark" Opacity="0.5"
+                          TintColor="#202020" TintOpacity="0.5" FallbackColor="#1C1C1C" />
+            <AcrylicBrush x:Key="AcrylicBrush_Darker" Opacity="0.7"
+                          TintColor="#202020" TintOpacity="0.7" FallbackColor="#1C1C1C" />
+            <AcrylicBrush x:Key="AcrylicBrush_Light" Opacity="0.5"
+                          TintColor="#F3F3F3" TintOpacity="0.0" FallbackColor="#EEEEEE" />
+            <AcrylicBrush x:Key="AcrylicBrush_Lighter" Opacity="0.3"
+                          TintColor="#F3F3F3" TintOpacity="0.0" FallbackColor="#EEEEEE" />
+
             <!--Resource overrides-->
             <x:Double x:Key="TeachingTipMinHeight">20</x:Double>
             <x:Double x:Key="TeachingTipMaxHeight">800</x:Double>
