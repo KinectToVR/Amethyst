@@ -23,7 +23,7 @@
         <Copyright>© K2VR Team</Copyright>
         <Description>Amethyst Crash and Recovery Handler</Description>
         <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
-        <Version>1.2.230402.2</Version>
+        <Version>AZ_BUILD_NUMBER</Version>
         <FileVersion>1.2.1.3</FileVersion>
         <AssemblyVersion>1.2.1.3</AssemblyVersion>
         <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>

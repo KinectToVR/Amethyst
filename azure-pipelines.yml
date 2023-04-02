@@ -40,6 +40,12 @@ steps:
     restoreSolution: '$(solution)'
 
 - pwsh: |
+    ((Get-Content -path .\Amethyst\Amethyst.csproj -Raw) -replace 'AZ_BUILD_NUMBER', "$(Build.BuildNumber)") | Set-Content -Path .\Amethyst\Amethyst.csproj
+    ((Get-Content -path .\K2CrashHandler\K2CrashHandler.csproj -Raw) -replace 'AZ_BUILD_NUMBER', "$(Build.BuildNumber)") | Set-Content -Path .\K2CrashHandler\K2CrashHandler.csproj
+    ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_BUILD_NUMBER', "$(Build.BuildNumber)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
+  displayName: Add version data to Amethyst
+
+- pwsh: |
     ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_API_TOKEN', "$(AppToken)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
     ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_COMMIT_SHA', "$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\App.xaml.cs
     ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_APPSECRET', "$(AppSecret)") | Set-Content -Path .\Amethyst\App.xaml.cs
