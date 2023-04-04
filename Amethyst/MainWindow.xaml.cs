@@ -1081,7 +1081,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Log our used overrides to the telemetry module
         Analytics.TrackEvent("OverrideDevices", new Dictionary<string, string>(
             AppData.Settings.OverrideDevicesGuidMap
-                .Select(x => new KeyValuePair<string, string>("Guid", x))));
+                .Select(x => new KeyValuePair<string, string>(
+                    $"Guid{AppData.Settings.OverrideDevicesGuidMap.ToList().IndexOf(x)}", x))));
 
         // Setup device change watchdog : local devices
         var localWatcher = new FileSystemWatcher

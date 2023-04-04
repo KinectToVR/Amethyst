@@ -83,13 +83,13 @@ public class AppTracker : INotifyPropertyChanged
     // Is this joint overridden?
     public bool IsPositionOverridden
     {
-        get => !string.IsNullOrEmpty(OverrideGuid) && _isPositionOverridden;
+        get => !string.IsNullOrEmpty(OverrideGuid) && AppPlugins.IsOverride(OverrideGuid) && _isPositionOverridden;
         set => _isPositionOverridden = value;
     }
 
     public bool IsOrientationOverridden
     {
-        get => !string.IsNullOrEmpty(OverrideGuid) && _isOrientationOverridden;
+        get => !string.IsNullOrEmpty(OverrideGuid) && AppPlugins.IsOverride(OverrideGuid) && _isOrientationOverridden;
         set => _isOrientationOverridden = value;
     }
 
@@ -429,8 +429,9 @@ public class AppTracker : INotifyPropertyChanged
         !string.IsNullOrEmpty(OverrideGuid) && OverrideGuid != AppData.Settings.SelectedTrackingDeviceGuid;
 
     [JsonIgnore]
-    public string OverriddenByOtherDeviceString => string.Format(Interfacing.LocalizedJsonString(
-        "/DevicesPage/ToolTips/Overrides/Overlapping"), ManagingDeviceGuid);
+    public string OverriddenByOtherDeviceString => string.Format(
+        Interfacing.LocalizedJsonString("/DevicesPage/ToolTips/Overrides/Overlapping"),
+        $"{AppPlugins.GetDevice(ManagingDeviceGuid).Device?.Name ?? "INVALID"} (GUID: {ManagingDeviceGuid})");
 
     // MVVM: a connection of the transitions each tracker expander should animate
     [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = new();

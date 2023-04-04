@@ -201,7 +201,7 @@
   "/DevicesPage/Badges/Devices/Base": "Base",
   "/DevicesPage/Badges/Devices/Override": "Override",
   "/DevicesPage/Badges/Devices/Error": "Error",
-  "/DevicesPage/ToolTips/Overrides/Overlapping": "This joint is currently overiden by:\n{0}",
+  "/DevicesPage/ToolTips/Overrides/Overlapping": "This joint is currently overridden by {0}",
   "/DevicesPage/Devices/Reload/Title": "Plugin configuration has changed!",
   "/DevicesPage/Devices/Reload/Content": "A new plugin has been added or removed. Amethyst must be restarted for these changes to take effect.",
   "/DevicesPage/Devices/Reload/Restart": "Restart Amethyst",
