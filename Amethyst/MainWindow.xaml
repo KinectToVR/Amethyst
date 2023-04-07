@@ -34,6 +34,7 @@
             <TextBlock Text="PREVIEW" TextWrapping="NoWrap" Margin="110,14,0,0"
                        Opacity="{Binding ElementName=AppTitleLabel, Path=Opacity, TargetNullValue=1.0}"
                        FontSize="10" FontWeight="SemiLight" x:Name="PreviewBadgeLabel"
+                       Visibility="Collapsed"
                        Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                 <TextBlock.OpacityTransition>
                     <ScalarTransition />
