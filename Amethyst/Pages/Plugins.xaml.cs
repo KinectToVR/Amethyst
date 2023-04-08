@@ -228,7 +228,19 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         {
             // API rate exceeded, show the authorization toast
             if (ex.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.Unauthorized)
+            {
                 RequestShowRateExceededEvent(this, EventArgs.Empty);
+            }
+            else
+            {
+                Logger.Warn(ex);
+
+                // Show the status controls
+                SearchPlaceholderGrid.Opacity = 0.0;
+                SearchResultsGrid.Opacity = 0.0;
+                SearchErrorGrid.Opacity = 1.0;
+                NoResultsGrid.Opacity = 0.0;
+            }
         }
         catch (Exception ex)
         {
@@ -892,7 +904,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         if (link.IsAbsoluteUri)
         {
             // Try downloading the plugin archive from the link
-            Logger.Info($"Downloading the next {Name} plugin assuming it's under {link.AbsoluteUri}");
+            Logger.Info($"Downloading the plugin assuming it's under {link.AbsoluteUri}");
             try
             {
                 Logger.Info("Preparing UI resources...");
@@ -1053,19 +1065,36 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             {
                 Logger.Error(new Exception($"Error downloading the plugin! Message: {e.Message}"));
 
-                // No files to download, switch to update error
-                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                    "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
+                // Prepare our resources
+                DropInstallerProgressRing.Opacity = 0.0;
+                DropInstallerErrorIcon.Opacity = 1.0;
 
-                Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
-                Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
+                DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
+                        "/SharedStrings/Plugins/Drop/Headers/Error/Installing"),
+                    link.Segments.LastOrDefault("package.zip"));
 
+                DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
+                    "/SharedStrings/Plugins/Drop/Statuses/Error/Exception"), e.Message.TrimEnd('.'));
+
+                DropInstallerMessageTextBlock.Opacity = 1.0;
+                AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
+
+                // Show the result
+                DropInstallerGrid.Opacity = 1.0;
+
+                // Wait a moment and hide
                 await Task.Delay(2500);
-                Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
-                Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
-                Shared.Events.RefreshMainWindowEvent?.Set();
 
-                await Task.Delay(1000);
+                // Unlock other controls
+                SearchButton.IsEnabled = true;
+                SearchTextBox.IsEnabled = true;
+
+                // Show everything
+                SearchPlaceholderGrid.Opacity = 1.0;
+                SearchErrorGrid.Opacity = 0.0;
+                NoResultsGrid.Opacity = 0.0;
+                DeviceCodeGrid.Opacity = 0.0;
+                DropInstallerGrid.Opacity = 0.0;
             }
         }
         else
