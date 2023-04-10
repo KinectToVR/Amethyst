@@ -58,9 +58,15 @@
         </Grid>
 
         <Grid VerticalAlignment="Top" HorizontalAlignment="Left"
-              Width="70" Height="560" Margin="0,40,0,0"
+              Width="70" Height="300" Margin="0,40,0,0"
               x:Name="NavigationBlockerGrid" Background="Transparent"
               Canvas.ZIndex="1" IsHitTestVisible="False" />
+
+        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left"
+              Width="70" Height="70" Margin="0,40,0,0"
+              Background="{Binding ElementName=NavigationBlockerGrid, Path=Background, TargetNullValue=Transparent}"
+              IsHitTestVisible="{Binding ElementName=NavigationBlockerGrid, Path=IsHitTestVisible, TargetNullValue=False}"
+              Canvas.ZIndex="1" />
 
         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
               x:Name="InterfaceDimGrid"
@@ -260,8 +266,9 @@
                                         Tag="general" x:Name="GeneralItem" Height="63"
                                         BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <icons:FluentSymbolIcon Symbol="Home24" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
-                                      x:Name="NavViewGeneralButtonIcon" FontSize="22">
+                            <icons:FluentSymbolIcon Symbol="Home24"
+                                                    Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                                    x:Name="NavViewGeneralButtonIcon" FontSize="22">
                                 <icons:FluentSymbolIcon.TranslationTransition>
                                     <Vector3Transition />
                                 </icons:FluentSymbolIcon.TranslationTransition>
@@ -284,8 +291,9 @@
                                         Tag="settings" x:Name="SettingsItem" Height="63"
                                         BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <icons:FluentSymbolIcon Symbol="Settings24" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                      x:Name="NavViewSettingsButtonIcon" FontSize="22">
+                            <icons:FluentSymbolIcon Symbol="Settings24"
+                                                    Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                                    x:Name="NavViewSettingsButtonIcon" FontSize="22">
                                 <icons:FluentSymbolIcon.TranslationTransition>
                                     <Vector3Transition />
                                 </icons:FluentSymbolIcon.TranslationTransition>
@@ -330,8 +338,9 @@
                     <NavigationViewItem FontSize="10" FontWeight="Medium"
                                         Tag="info" x:Name="InfoItem" Height="63" BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <icons:FluentSymbolIcon Symbol="Info24" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
-                                      x:Name="NavViewInfoButtonIcon" FontSize="22">
+                            <icons:FluentSymbolIcon Symbol="Info24"
+                                                    Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                                                    x:Name="NavViewInfoButtonIcon" FontSize="22">
                                 <icons:FluentSymbolIcon.TranslationTransition>
                                     <Vector3Transition />
                                 </icons:FluentSymbolIcon.TranslationTransition>
@@ -355,7 +364,8 @@
                                         Tag="plugins" x:Name="PluginsItem" Height="63"
                                         BackgroundSizing="OuterBorderEdge">
                         <Grid Margin="8,0,0,0" HorizontalAlignment="Center" Padding="-10">
-                            <icons:FluentSymbolIcon Symbol="Puzzlepiece24" Foreground="{ThemeResource SystemFillColorNeutralBrush}"
+                            <icons:FluentSymbolIcon Symbol="Puzzlepiece24"
+                                                    Foreground="{ThemeResource SystemFillColorNeutralBrush}"
                                                     x:Name="NavViewPluginsButtonIcon" FontSize="22">
                                 <icons:FluentSymbolIcon.TranslationTransition>
                                     <Vector3Transition />
@@ -377,7 +387,7 @@
 
                 <muxc:NavigationView.PaneFooter>
                     <StackPanel Orientation="Vertical">
-                      <NavigationViewItem x:Name="HelpButton" Height="63"
+                        <NavigationViewItem x:Name="HelpButton" Height="63"
                                             FontSize="10" FontWeight="Medium"
                                             BackgroundSizing="OuterBorderEdge"
                                             Tapped="HelpButton_Tapped">
@@ -389,7 +399,7 @@
                                     </Grid.TranslationTransition>
 
                                     <icons:FluentSymbolIcon x:Name="HelpIcon" Symbol="QuestionCircle24" FontSize="20"
-                                                             Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                                                            Foreground="{ThemeResource SystemFillColorNeutralBrush}">
                                         <icons:FluentSymbolIcon.RenderTransform>
                                             <CompositeTransform />
                                         </icons:FluentSymbolIcon.RenderTransform>
@@ -421,7 +431,7 @@
         </Grid>
 
         <Grid.Resources>
-        <MenuFlyout x:Name="HelpFlyout"
+            <MenuFlyout x:Name="HelpFlyout"
                         Opening="HelpFlyout_Opening"
                         Closing="HelpFlyout_Closing">
                 <MenuFlyout.MenuFlyoutPresenterStyle>
