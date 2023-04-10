@@ -44,8 +44,15 @@ public partial class App : Application
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
             var msg = string.Format(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack"), stc);
-
             Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
+
+            // Make App Center send the whole log when crashed
+            Crashes.GetErrorAttachments = _ => new[]
+            {
+                ErrorAttachmentLog.AttachmentWithText(
+                    File.ReadAllText(Logger.LogFilePath), new FileInfo(Logger.LogFilePath).Name)
+            };
+
             Crashes.TrackError(e.Exception); // Log the crash reason
             Environment.Exit(0); // Simulate a standard application exit
         };
@@ -58,8 +65,15 @@ public partial class App : Application
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
             var msg = string.Format(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack"), stc);
-
             Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
+
+            // Make App Center send the whole log when crashed
+            Crashes.GetErrorAttachments = _ => new[]
+            {
+                ErrorAttachmentLog.AttachmentWithText(
+                    File.ReadAllText(Logger.LogFilePath), new FileInfo(Logger.LogFilePath).Name)
+            };
+
             Crashes.TrackError((Exception)e.ExceptionObject); // Log the crash reason
             Environment.Exit(0); // Simulate a standard application exit
         };
