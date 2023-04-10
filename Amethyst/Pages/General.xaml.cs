@@ -905,7 +905,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private void AdditionalDeviceErrorsHyperlink_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        Shared.General.AdditionalDeviceErrorsHyperlinkTappedEvent.Start();
+        if (Shared.General.AdditionalDeviceErrorsHyperlinkTappedEvent.Status
+            is not TaskStatus.Running and not TaskStatus.WaitingToRun // If not running
+            and not TaskStatus.WaitingForActivation // If not already scheduled by ame
+            and not TaskStatus.WaitingForChildrenToComplete) // If not finishing the run
+            Shared.General.AdditionalDeviceErrorsHyperlinkTappedEvent.Start();
     }
 
     private async void ServiceSettingsButton_Click(object sender, RoutedEventArgs e)
@@ -1565,7 +1569,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
             // Cache the calibration first_time
             calibrationFirstTime = false;
-            await Task.Delay(300);
+            await Task.Delay(1000);
 
             // Wait for a mode switch
             while (!calibrationModeSwap && !calibrationConfirm)
@@ -1591,7 +1595,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             // Reset the swap event
             calibrationModeSwap = false;
 
-            await Task.Delay(300);
+            await Task.Delay(1000);
 
             // Play mode swap sound
             if (_calibrationPending && !calibrationConfirm)
