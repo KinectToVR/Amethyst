@@ -6,8 +6,6 @@ using System.Numerics;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Newtonsoft.Json;
 
@@ -463,6 +461,31 @@ public class AppTracker : INotifyPropertyChanged
     // MVVM: a connection of the transitions each tracker expander should animate
     [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = new();
 
+    [JsonIgnore]
+    public List<string> BaseDeviceJointsList =>
+        AppPlugins.BaseTrackingDevice.TrackedJoints.Select(x => x.Name).ToList();
+
+    [JsonIgnore]
+    public List<string> SelectedDeviceJointsList
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(AppData.Settings.SelectedTrackingDeviceGuid))
+                return new List<string>
+                {
+                    Interfacing.LocalizedJsonString(
+                        "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText")
+                };
+
+            var jointsList = AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid)
+                .Device.TrackedJoints.Select(x => x.Name).ToList();
+
+            jointsList.Insert(0, Interfacing.LocalizedJsonString(
+                "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText"));
+            return jointsList;
+        }
+    }
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     // Get filtered data
@@ -691,29 +714,6 @@ public class AppTracker : INotifyPropertyChanged
                 ? TrackedJointState.StateTracked
                 : TrackedJointState.StateNotTracked
         };
-    }
-
-    public List<string> BaseDeviceJointsList =>
-        AppPlugins.BaseTrackingDevice.TrackedJoints.Select(x => x.Name).ToList();
-
-    public List<string> SelectedDeviceJointsList
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(AppData.Settings.SelectedTrackingDeviceGuid))
-                return new List<string>
-                {
-                    Interfacing.LocalizedJsonString(
-                        "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText")
-                };
-
-            var jointsList = AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid)
-                .Device.TrackedJoints.Select(x => x.Name).ToList();
-
-            jointsList.Insert(0, Interfacing.LocalizedJsonString(
-                "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText"));
-            return jointsList;
-        }
     }
 
     public void OnPropertyChanged(string propName = null)
