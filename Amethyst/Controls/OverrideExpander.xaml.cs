@@ -49,15 +49,21 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
 
     private void ResubscribeListeners()
     {
+        // Unregister all reload events
+        AppData.Settings.PropertyChanged -= OnPropertyChanged;
+        AppData.Settings.TrackersVector.CollectionChanged -= OnPropertyChanged;
+        Trackers.ForEach(x => x.PropertyChanged -= OnPropertyChanged);
+
         // Register for any pending changes
-        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
-        AppData.Settings.TrackersVector.CollectionChanged += (_, _) => OnPropertyChanged();
-        Trackers.ForEach(x => x.PropertyChanged += (_, _) => OnPropertyChanged());
+        AppData.Settings.PropertyChanged += OnPropertyChanged;
+        AppData.Settings.TrackersVector.CollectionChanged += OnPropertyChanged;
+        Trackers.ForEach(x => x.PropertyChanged += OnPropertyChanged);
     }
 
-    public void OnPropertyChanged(string propName = null)
+    public void OnPropertyChanged(object propName = null, object e = null)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(
+            propName is string ? propName.ToString() : null));
     }
 
     private static List<string> GetManagingDeviceJointsList(string guid)
@@ -85,10 +91,8 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
 
         // Block invalid requests
         if (!IsAnyTrackerEnabled)
-        {
-            Trackers.ForEach(x => x.OnPropertyChanged());
+            // Trackers.ForEach(x => x.OnPropertyChanged());
             return; // Invalidate the pending input changes
-        }
 
         // Fix the selection index if it's invalid
         if (((ComboBox)sender).SelectedIndex < 0)
@@ -97,9 +101,13 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
                 .ElementAtOrDefault((((ComboBox)sender).DataContext as AppTracker)!
                     .SelectedOverrideJointIdForSelectedDevice);
 
+        if ((((ComboBox)sender).DataContext as AppTracker)!.SelectedOverrideJointIdForSelectedDevice ==
+            ((ComboBox)sender).SelectedIndex) return; // Check if already okay
+
         // Signal the just-selected tracked joint (checker copied from AppTracker.cs)
-        AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device?
-            .SignalJoint(((ComboBox)sender).SelectedIndex > 0 ? ((ComboBox)sender).SelectedIndex - 1 : 0);
+        if (((ComboBox)sender).SelectedIndex > 0)
+            AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device?
+                .SignalJoint(((ComboBox)sender).SelectedIndex > 0 ? ((ComboBox)sender).SelectedIndex - 1 : 0);
 
         (((ComboBox)sender).DataContext as AppTracker)!.SelectedOverrideJointIdForSelectedDevice =
             ((ComboBox)sender).SelectedIndex; // Set the property of the host
@@ -130,7 +138,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
             ? AppSounds.AppSoundType.ToggleOn
             : AppSounds.AppSoundType.ToggleOff);
 
-        OnPropertyChanged();
+        // OnPropertyChanged(); // Not needed anymore
     }
 
     private void OverrideOrientationSwitch_Toggled(object sender, RoutedEventArgs e)
@@ -143,7 +151,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
             ? AppSounds.AppSoundType.ToggleOn
             : AppSounds.AppSoundType.ToggleOff);
 
-        OnPropertyChanged();
+        // OnPropertyChanged(); // Not needed anymore
     }
 
     private void OverridesItemsExpander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
@@ -166,5 +174,18 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
 
         Trackers.ForEach(x => x.OnPropertyChanged());
         OnPropertyChanged(); // Refresh everything upon expanding
+    }
+
+    private void OverrideSwitch_Toggled(object sender, RoutedEventArgs e)
+    {
+        // Don't even care if we're not set up yet
+        if (!((sender as CheckBox)?.IsLoaded ?? false) ||
+            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
+
+        AppSounds.PlayAppSound(((CheckBox)sender).IsChecked ?? false
+            ? AppSounds.AppSoundType.ToggleOn
+            : AppSounds.AppSoundType.ToggleOff);
+
+        // OnPropertyChanged(); // Not needed anymore
     }
 }

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Windows.Data.Json;
 using Windows.Globalization;
 using Windows.System.UserProfile;
@@ -215,10 +216,14 @@ public class AppSettings : INotifyPropertyChanged
         CheckSettings(true); // Check partially
     }
 
-    public void CheckSettings(bool partial = false, TrackingDevice device = null)
+    public void CheckSettings(bool partial = false, TrackingDevice device = null,
+        [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
+        [CallerMemberName] string memberName = "")
     {
         // Basic config: global and pre-setup settings
-        Logger.Info("Checking AppSettings [global] configuration...");
+        Logger.Info($"[Requested by {filePath}::{memberName}:{lineNumber}] " +
+                    "Checking Amethyst AppSettings [global] configuration...");
+
         CheckingSettings = true; // Don't check interface
 
         // Check if the trackers vector is broken

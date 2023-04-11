@@ -198,7 +198,11 @@ public partial class App : Application
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
+        Logger.Info($"Received launch arguments: {args.Arguments}");
+        Logger.Info("Creating a new MainWindow view...");
         _mWindow = new MainWindow();
+
+        Logger.Info($"Activating {_mWindow.GetType()}...");
         _mWindow.Activate();
     }
 

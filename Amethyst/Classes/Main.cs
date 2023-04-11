@@ -595,16 +595,15 @@ public static class Main
                 switch (serverTries)
                 {
                     case > 3 and <= 7:
-                        // We've crashed the third time now. Somethin's off.. really...
+                        // We've crashed the third time now. Something's off.. really...
                         Logger.Fatal(new AggregateException(
                             "Server loop has already crashed 3 times. Checking the joint config..."));
 
-                        // Check the joint configuration
-                        AppData.Settings.CheckSettings();
-                        break;
+                        Shared.Main.DispatcherQueue?.TryEnqueue(() => { AppData.Settings.CheckSettings(); });
+                        break; // Check the joint configuration and retry for now
 
                     case > 7:
-                        // We've crashed the seventh time now. Somethin's off.. really...
+                        // We've crashed the seventh time now. Something's off.. really...
                         Logger.Fatal(new ApplicationException(
                             "Server loop has already crashed 7 times. Giving up..."));
 

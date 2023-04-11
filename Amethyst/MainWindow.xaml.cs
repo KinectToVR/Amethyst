@@ -74,13 +74,19 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     public MainWindow()
     {
+        Logger.Info($"Constructing a new {GetType()}...");
+        Logger.Info("Initializing shared XAML components...");
         InitializeComponent();
+
+        Logger.Info("Applying available window backdrops...");
         TrySetMicaBackdrop();
 
         // Set up the shutdown handler
+        Logger.Info("Setting up the close handler...");
         Closed += Window_Closed;
 
         // Cache needed UI elements
+        Logger.Info("Making shared elements available for children views...");
         Shared.TeachingTips.MainPage.InitializerTeachingTip = InitializerTeachingTip;
         Shared.TeachingTips.MainPage.EndingTeachingTip = EndingTeachingTip;
         Shared.TeachingTips.MainPage.ReloadInfoBar = ReloadInfoBar;
@@ -108,6 +114,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.Main.NavigationItems.NavViewPluginsButtonLabel = NavViewPluginsButtonLabel;
 
         // Set up
+        Logger.Info("Setting up the window decoration data...");
         Title = "Amethyst";
 
         Logger.Info("Making the app window available for children views... (Window Handle)");
@@ -1850,61 +1857,86 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private void TrySetMicaBackdrop()
     {
+        Logger.Info("Searching for supported backdrop systems...");
         if (!MicaController.IsSupported() && !DesktopAcrylicController.IsSupported())
         {
             Logger.Info("Mica and acrylic are not supported! Time to update Windows, man!");
             return; // Mica/acrylic is not supported on this system
         }
 
+        Logger.Info("Creating a new system dispatcher helper...");
         _wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+
+        Logger.Info("Setting up the system dispatcher helper...");
         _wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
 
         // Hooking up the policy object
+        Logger.Info("Hooking up system backdrop policies...");
         _configurationSource = new SystemBackdropConfiguration();
+
+        Logger.Info("Setting up activation and theme handlers...");
         Activated += Window_Activated;
         ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
 
         // Initial configuration state.
+        Logger.Info("Initializing the configuration source...");
         _configurationSource.IsInputActive = true;
         SetConfigurationSourceTheme();
 
         if (MicaController.IsSupported())
         {
+            Logger.Info("Creating a new shared mica backdrop controller...");
             _micaController = new MicaController();
 
             // Enable the system backdrop.
             // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
+            Logger.Info("Registering the generated backdrop within the controller...");
             _micaController.AddSystemBackdropTarget(this
                 .As<ICompositionSupportsSystemBackdrop>());
+
+            Logger.Info("Configuring the backdrop within the controller...");
             _micaController.SetSystemBackdropConfiguration(_configurationSource);
 
             // Change the window background to support mica
+            Logger.Info("Sharing the set up backdrop with the host element...");
+            Logger.Info("Clearing the host element background for the backdrop...");
             MainGrid.Background = new SolidColorBrush(Colors.Transparent);
         }
         else if (DesktopAcrylicController.IsSupported())
         {
+            Logger.Info("Creating a new shared acrylic backdrop controller...");
             _acrylicController = new DesktopAcrylicController();
 
             // Enable the system backdrop.
             // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
+            Logger.Info("Registering the generated backdrop within the controller...");
             _acrylicController.AddSystemBackdropTarget(this
                 .As<ICompositionSupportsSystemBackdrop>());
+
+            Logger.Info("Configuring the backdrop within the controller...");
             _acrylicController.SetSystemBackdropConfiguration(_configurationSource);
 
             // Change the window background to support acrylic
+            Logger.Info("Clearing the outer host element background for the backdrop...");
             MainGrid.Background = Application.Current.RequestedTheme == ApplicationTheme.Dark
                 ? Application.Current.Resources["AcrylicBrush_Dark"].As<AcrylicBrush>()
                 : Application.Current.Resources["AcrylicBrush_Light"].As<AcrylicBrush>();
+
+            Logger.Info("Clearing the host frame element background for the backdrop...");
             ContentFrame.Background = Application.Current.RequestedTheme == ApplicationTheme.Dark
                 ? Application.Current.Resources["AcrylicBrush_Darker"].As<AcrylicBrush>()
                 : Application.Current.Resources["AcrylicBrush_Lighter"].As<AcrylicBrush>();
 
+            Logger.Info("Registering an update event for brush updates...");
             _updateBrushesEvent += (_, _) =>
             {
                 // Change the window background to support acrylic
+                Logger.Info("Clearing the outer host element background for the backdrop...");
                 MainGrid.Background = Interfacing.ActualTheme == ElementTheme.Dark
                     ? Application.Current.Resources["AcrylicBrush_Dark"].As<AcrylicBrush>()
                     : Application.Current.Resources["AcrylicBrush_Light"].As<AcrylicBrush>();
+
+                Logger.Info("Clearing the host frame element background for the backdrop...");
                 ContentFrame.Background = Interfacing.ActualTheme == ElementTheme.Dark
                     ? Application.Current.Resources["AcrylicBrush_Darker"].As<AcrylicBrush>()
                     : Application.Current.Resources["AcrylicBrush_Lighter"].As<AcrylicBrush>();

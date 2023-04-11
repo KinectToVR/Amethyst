@@ -8,7 +8,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Visibility="{x:Bind IsAnyTrackerEnabled, Mode=OneWay}"
-    xmlns:local="using:Amethyst.Controls"
     xmlns:classes="using:Amethyst.Classes"
     xmlns:util="using:Amethyst.Utils"
     mc:Ignorable="d">
@@ -123,28 +122,51 @@
                                       DropDownClosed="OverrideTrackerCombo_OnDropDownClosed"
                                       SelectionChanged="OverrideTrackerComboBox_SelectionChanged"
                                       PlaceholderText="{x:Bind util:Translator.Get.String('/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText'), Mode=OneWay}"
-                                      ItemsSource="{x:Bind local:OverrideExpander.GetManagingDeviceJointsList(classes:AppData.Settings.SelectedTrackingDeviceGuid), Mode=OneWay}"
+                                      ItemsSource="{x:Bind SelectedDeviceJointsList, Mode=OneWay}"
                                       IsEnabled="{x:Bind IsActive, Mode=OneWay}" DataContext="{x:Bind}"
                                       SelectedIndex="{x:Bind SelectedOverrideJointIdForSelectedDevice, Mode=OneWay}" />
                         </Grid>
 
                         <!--Position toggle-->
+                        <CheckBox Grid.Column="2" x:Name="OverridePositionSwitch"
+                                  IsChecked="{x:Bind IsPositionOverriddenBySelectedDevice, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind IsActive, Mode=OneWay}" DataContext="{x:Bind}"
+                                  Checked="OverrideSwitch_Toggled"
+                                  Unchecked="OverrideSwitch_Toggled"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,-107,0" />
+
+                        <!--Orientation toggle-->
+                        <CheckBox Grid.Column="4" x:Name="OverrideOrientationSwitch"
+                                  IsChecked="{x:Bind IsOrientationOverriddenBySelectedDevice, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind IsActive, Mode=OneWay}" DataContext="{x:Bind}"
+                                  Checked="OverrideSwitch_Toggled"
+                                  Unchecked="OverrideSwitch_Toggled"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,-107,0" />
+
+                        <!--Position toggle--><!--
                         <ToggleSwitch Grid.Column="2" x:Name="OverridePositionSwitch"
                                       IsOn="{x:Bind IsPositionOverriddenBySelectedDevice, Mode=TwoWay}"
+                                      IsEnabled="{x:Bind IsActive, Mode=OneWay}" DataContext="{x:Bind}"
                                       Toggled="OverridePositionSwitch_Toggled"
+                                      Loaded="OverridePositionSwitch_Loaded"
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Center"
                                       Margin="0,0,-107,0"
                                       OnContent="" OffContent="" />
 
-                        <!--Orientation toggle-->
+                        --><!--Orientation toggle--><!--
                         <ToggleSwitch Grid.Column="4" x:Name="OverrideOrientationSwitch"
                                       IsOn="{x:Bind IsOrientationOverriddenBySelectedDevice, Mode=TwoWay}"
+                                      IsEnabled="{x:Bind IsActive, Mode=OneWay}" DataContext="{x:Bind}"
                                       Toggled="OverrideOrientationSwitch_Toggled"
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Center"
                                       Margin="0,0,-107,0"
-                                      OnContent="" OffContent="" />
+                                      OnContent="" OffContent="" />-->
                     </Grid>
                 </DataTemplate>
             </ItemsRepeater>

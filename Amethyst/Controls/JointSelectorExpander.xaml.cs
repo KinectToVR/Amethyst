@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Amethyst.Classes;
+using Amethyst.MVVM;
+using Amethyst.Pages;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -51,15 +52,21 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
 
     private void ResubscribeListeners()
     {
+        // Unregister all reload events
+        AppData.Settings.PropertyChanged -= OnPropertyChanged;
+        AppData.Settings.TrackersVector.CollectionChanged -= OnPropertyChanged;
+        Trackers.ForEach(x => x.PropertyChanged -= OnPropertyChanged);
+
         // Register for any pending changes
-        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
-        AppData.Settings.TrackersVector.CollectionChanged += (_, _) => OnPropertyChanged();
-        Trackers.ForEach(x => x.PropertyChanged += (_, _) => OnPropertyChanged());
+        AppData.Settings.PropertyChanged += OnPropertyChanged;
+        AppData.Settings.TrackersVector.CollectionChanged += OnPropertyChanged;
+        Trackers.ForEach(x => x.PropertyChanged += OnPropertyChanged);
     }
 
-    public void OnPropertyChanged(string propName = null)
+    public void OnPropertyChanged(object propName = null, object e = null)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(
+            propName is string ? propName.ToString() : null));
     }
 
     private static List<string> GetBaseDeviceJointsList()
@@ -75,10 +82,8 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
 
         // Block invalid requests
         if (!IsAnyTrackerEnabled)
-        {
-            Trackers.ForEach(x => x.OnPropertyChanged());
+            // Trackers.ForEach(x => x.OnPropertyChanged());
             return; // Invalidate the pending input changes
-        }
 
         // Either fix the selection index or give up on everything
         if (((ComboBox)sender).SelectedIndex < 0)
@@ -92,6 +97,9 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
         {
             if (((ComboBox)sender).SelectedIndex < 0)
                 ((ComboBox)sender).SelectedItem = e.RemovedItems[0];
+
+            if ((((ComboBox)sender).DataContext as AppTracker)!.SelectedBaseTrackedJointId ==
+                ((ComboBox)sender).SelectedIndex) return; // Check if already okay
 
             // Signal the just-selected tracked joint
             AppPlugins.BaseTrackingDevice.SignalJoint(((ComboBox)sender).SelectedIndex);
@@ -116,7 +124,9 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     {
         // Don't even care if we're not set up yet
         if (!IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid ||
-            Pages.Devices.DisableJointExpanderSounds) return;
+            Devices.DisableJointExpanderSounds) return;
+
+        Trackers.ForEach(x => x.OnPropertyChanged());
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
     }
 
@@ -124,7 +134,7 @@ public sealed partial class JointSelectorExpander : UserControl, INotifyProperty
     {
         // Don't even care if we're not set up yet
         if (!IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid ||
-            Pages.Devices.DisableJointExpanderSounds) return;
+            Devices.DisableJointExpanderSounds) return;
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 

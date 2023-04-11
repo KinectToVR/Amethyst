@@ -305,7 +305,7 @@ public static class Shared
         public static TreeView DevicesTreeView;
         public static StackPanel SelectedDeviceSettingsRootLayoutPanel;
 
-        public static async Task ReloadSelectedDevice(bool manual, bool reconnect = false)
+        public static void ReloadSelectedDeviceSync(bool manual, bool reconnect = false)
         {
             // Update the status here
             AppPlugins.HandleDeviceRefresh(reconnect);
@@ -346,6 +346,12 @@ public static class Shared
 
                 DeselectDeviceButton.Visibility = Visibility.Collapsed;
             }
+        }
+
+        public static async Task ReloadSelectedDevice(bool manual, bool reconnect = false)
+        {
+            // Reload the device
+            ReloadSelectedDeviceSync(manual, reconnect);
 
             // Device stuff reload animation
             if (!manual)

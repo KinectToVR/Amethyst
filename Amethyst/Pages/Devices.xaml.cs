@@ -198,15 +198,31 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     private async void TrackingDeviceTreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
     {
         if (!Shared.Devices.DevicesTabSetupFinished) return; // Block dummy selects
+        args.Handled = true; // Tell XAML we're currently working on the TreeView
         Shared.Devices.DevicesJointsValid = false; // Don't signal on device selection
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
         var node = args.InvokedItem as TrackingDevice;
-        AppData.Settings.SelectedTrackingDeviceGuid = node?.Guid;
 
+        // Collapse
+        DisableJointExpanderSounds = true;
+        if (node?.Guid != AppData.Settings.PreviousSelectedTrackingDeviceGuid)
+        {
+            // Collapse all expanders if the update was not triggered manually
+            Shared.Events.RequestJointSelectorExpandersCollapseEvent?.Invoke(this, EventArgs.Empty);
+            Shared.Events.RequestOverrideExpandersCollapseEvent?.Invoke(this, EventArgs.Empty);
+
+            TrackingDeviceTreeView.IsHitTestVisible = false; // Mark as working on UI
+            await Task.Delay(300); // Wait a moment until they actually collapse
+            TrackingDeviceTreeView.IsHitTestVisible = true; // Mark as done
+        }
+
+        AppData.Settings.SelectedTrackingDeviceGuid = node?.Guid;
         Logger.Info($"Selected device: ({node!.Name}, {node!.Guid})");
+
+        // Request a reload from most of the internal app components
+        AppData.Settings.TrackersVector.ToList().ForEach(x => x.OnPropertyChanged());
 
         // Reload the tracking device UI (no animations if unchanged)
         await Shared.Devices.ReloadSelectedDevice(
@@ -214,11 +230,6 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
         // Backup
         AppData.Settings.PreviousSelectedTrackingDeviceGuid = AppData.Settings.SelectedTrackingDeviceGuid;
-
-        // Collapse
-        DisableJointExpanderSounds = true;
-        Shared.Events.RequestJointSelectorExpandersCollapseEvent?.Invoke(this, EventArgs.Empty);
-        Shared.Events.RequestOverrideExpandersCollapseEvent?.Invoke(this, EventArgs.Empty);
 
         await Task.Delay(10);
         WaistAndFeetTrackersExpander.InvalidateMeasure();
@@ -235,6 +246,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         AppData.Settings.TrackersVector.ToList().ForEach(x => x.OnPropertyChanged());
         Shared.Devices.DevicesJointsValid = true;
         DisableJointExpanderSounds = false;
+        args.Handled = false; // Tell XAML we've finished now
     }
 
     private void DeviceStatusTeachingTip_ActionButtonClick(TeachingTip sender, object args)
@@ -328,7 +340,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         OnPropertyChanged();
     }
 
-    private async void SetAsBaseButton_Click(object sender, RoutedEventArgs e)
+    private void SetAsBaseButton_Click(object sender, RoutedEventArgs e)
     {
         var device = AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device;
         if (device?.TrackedJoints is null || device.TrackedJoints.Count < 1)
@@ -340,31 +352,47 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         // Stop the pose composer for now
         lock (Interfacing.UpdateLock)
         {
-            // Setup the new base
-            AppData.Settings.CheckSettings(false, device);
-            AppData.Settings.TrackingDeviceGuid = device.Guid;
-
             // Remove an override if exists and overlaps
             if (device.IsOverride) AppData.Settings.OverrideDevicesGuidMap.Remove(device.Guid);
+
+            // Block interface interactions
+            Shared.Devices.DevicesJointsValid = false;
+
+            // Setup the new base: change the GUID
+            Logger.Info($"Changing the current tracking device (Base) to: ({device.Name}, {device.Guid})");
+            AppData.Settings.TrackingDeviceGuid = device.Guid;
+
+            // Setup the new base: prepare the config
+            Logger.Info("Checking the configuration before continuing...");
+            AppData.Settings.CheckSettings(false, device);
+
+            Logger.Info("Requesting internal updates from all of the linked components...");
+            AppData.Settings.TrackersVector.ToList().ForEach(x => x.OnPropertyChanged());
+
+            // Update the status here
+            Logger.Info("Updating the device status and management interface...");
+            Shared.Devices.ReloadSelectedDeviceSync(true);
+
+            // Make all the devices refresh their props
+            Logger.Info("Refreshing shared properties of all other devices...");
+            AppPlugins.TrackingDevicesList.ToList()
+                .ForEach(x => x.Value.OnPropertyChanged());
+
+            // Check the application config, save
+            Logger.Info("Saving the configuration...");
+            AppData.Settings.CheckSettings();
+            AppData.Settings.SaveSettings();
+
+            // Unblock config checking from XAML
+            Shared.Devices.DevicesJointsValid = true;
             Logger.Info($"Changed the current tracking device (Base) to: ({device.Name}, {device.Guid})");
         }
-
-        // Update the status here
-        await Shared.Devices.ReloadSelectedDevice(true);
-
-        // Make all the devices refresh their props
-        AppPlugins.TrackingDevicesList.ToList()
-            .ForEach(x => x.Value.OnPropertyChanged());
-
-        // Check the application config, save
-        AppData.Settings.CheckSettings();
-        AppData.Settings.SaveSettings();
 
         SetDeviceTypeFlyout.Hide(); // Hide the flyout
         OnPropertyChanged(); // Update the page UI
     }
 
-    private async void SetAsOverrideButton_Click(object sender, RoutedEventArgs e)
+    private void SetAsOverrideButton_Click(object sender, RoutedEventArgs e)
     {
         var device = AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device;
         if (device?.TrackedJoints is null || device.TrackedJoints.Count < 1)
@@ -376,24 +404,35 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         // Stop the pose composer for now
         lock (Interfacing.UpdateLock)
         {
+            // Block interface interactions
+            Shared.Devices.DevicesJointsValid = false;
+
             // Setup the new override
+            Logger.Info($"Setting up a new override device: ({device.Name}, {device.Guid})");
             AppData.Settings.OverrideDevicesGuidMap.Add(device.Guid);
-            Logger.Info($"Changed the current tracking device (Base) to: ({device.Name}, {device.Guid})");
 
             // Additionally check settings
+            Logger.Info("Checking the configuration before continuing...");
             AppData.Settings.CheckSettings();
+
+            // Update the status here
+            Logger.Info("Updating the device status and management interface...");
+            Shared.Devices.ReloadSelectedDeviceSync(true);
+
+            // Make all the devices refresh their props
+            Logger.Info("Refreshing shared properties of all other devices...");
+            AppPlugins.TrackingDevicesList.ToList()
+                .ForEach(x => x.Value.OnPropertyChanged());
+
+            // Check the application config, save
+            Logger.Info("Saving the configuration...");
+            AppData.Settings.CheckSettings();
+            AppData.Settings.SaveSettings();
+
+            // Unblock config checking from XAML
+            Shared.Devices.DevicesJointsValid = true;
+            Logger.Info($"Set up a new override device: ({device.Name}, {device.Guid})");
         }
-
-        // Update the status here
-        await Shared.Devices.ReloadSelectedDevice(true);
-
-        // Make all the devices refresh their props
-        AppPlugins.TrackingDevicesList.ToList()
-            .ForEach(x => x.Value.OnPropertyChanged());
-
-        // Check the application config, save
-        AppData.Settings.CheckSettings();
-        AppData.Settings.SaveSettings();
 
         SetDeviceTypeFlyout.Hide(); // Hide the flyout
         OnPropertyChanged(); // Update the page UI
@@ -406,34 +445,56 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
 
     private void DeselectDeviceButton_Click(object sender, RoutedEventArgs e)
     {
-        Logger.Info($"Now disconnecting tracking device {AppData.Settings.SelectedTrackingDeviceGuid}...");
+        var device = AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid).Device;
+        if (device?.TrackedJoints is null || device.TrackedJoints.Count < 1)
+        {
+            NoJointsFlyout.ShowAt(SelectedDeviceNameLabel);
+            return; // Better give up on this one
+        }
 
-        SetAsOverrideButton.IsEnabled = true;
-        SetAsBaseButton.IsEnabled = true;
-        DeselectDeviceButton.Visibility = Visibility.Collapsed;
+        Logger.Info($"Deselecting tracking device ({device.Name}, {device.Guid})...");
 
         // Stop the pose composer for now
         lock (Interfacing.UpdateLock)
         {
+            // Block interface interactions
+            Shared.Devices.DevicesJointsValid = false;
+
             // Deselect the device, update status
-            AppData.Settings.OverrideDevicesGuidMap.Remove(AppData.Settings.SelectedTrackingDeviceGuid);
+            Logger.Info($"Removing ({device.Name}, {device.Guid}) from the shared override map...");
+            AppData.Settings.OverrideDevicesGuidMap.Remove(device.Guid);
+
+            // Update the status here
+            Logger.Info("Updating the device status and management interface...");
             AppPlugins.HandleDeviceRefresh(false);
 
             // Additionally check settings
+            Logger.Info("Checking the configuration before continuing...");
             AppData.Settings.CheckSettings();
+
+            // Make all the devices refresh their props
+            Logger.Info("Refreshing shared properties of all other devices...");
+            AppPlugins.TrackingDevicesList.ToList()
+                .ForEach(x => x.Value.OnPropertyChanged());
+
+            // Update other statuses
+            Logger.Info("Updating the device status and management interface...");
+            AppPlugins.UpdateTrackingDevicesInterface();
+            AlternativeConnectionOptionsFlyout.Hide();
+
+            // Check the application config, save
+            Logger.Info("Saving the configuration...");
+            AppData.Settings.CheckSettings();
+            AppData.Settings.SaveSettings();
+
+            // Unblock config checking from XAML
+            Shared.Devices.DevicesJointsValid = true;
+            Logger.Info($"Removed an override device: ({device.Name}, {device.Guid})");
         }
 
-        // Make all the devices refresh their props
-        AppPlugins.TrackingDevicesList.ToList()
-            .ForEach(x => x.Value.OnPropertyChanged());
-
-        // Update other statuses
-        AppPlugins.UpdateTrackingDevicesInterface();
-        AlternativeConnectionOptionsFlyout.Hide();
-
-        // Check the application config, save
-        AppData.Settings.CheckSettings();
-        AppData.Settings.SaveSettings();
+        SetAsOverrideButton.IsEnabled = true;
+        SetAsBaseButton.IsEnabled = true;
+        DeselectDeviceButton.Visibility = Visibility.Collapsed;
 
         // Update the page UI
         OnPropertyChanged();

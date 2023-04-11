@@ -97,7 +97,7 @@
                                   DropDownClosed="JointTrackerCombo_OnDropDownClosed"
                                   SelectionChanged="JointsSelectorComboBox_SelectionChanged"
                                   PlaceholderText="{x:Bind util:Translator.Get.String('/DevicesPage/Placeholders/Joints/Disabled/PlaceholderText'), Mode=OneWay}"
-                                  ItemsSource="{x:Bind local:JointSelectorExpander.GetBaseDeviceJointsList(), Mode=OneWay}"
+                                  ItemsSource="{x:Bind BaseDeviceJointsList, Mode=OneWay}"
                                   IsEnabled="{x:Bind IsActive, Mode=OneWay}" DataContext="{x:Bind}"
                                   SelectedIndex="{x:Bind SelectedBaseTrackedJointId, Mode=OneWay}" />
                     </Grid>
