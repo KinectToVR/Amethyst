@@ -37,15 +37,15 @@ public class StorePlugin : INotifyPropertyChanged
     public PluginRepository Repository { get; set; }
     public PluginRelease LatestRelease { get; set; }
 
-    public bool WebsiteValid => !string.IsNullOrEmpty(Repository.Url);
-    public bool DescriptionValid => !string.IsNullOrEmpty(Repository.Description);
-    public bool HasRelease => LatestRelease is not null && !string.IsNullOrEmpty(LatestRelease.Download);
+    public bool WebsiteValid => !string.IsNullOrEmpty(Repository?.Url);
+    public bool DescriptionValid => !string.IsNullOrEmpty(Repository?.Description);
+    public bool HasRelease => LatestRelease is not null && !string.IsNullOrEmpty(LatestRelease?.Download);
     public bool NoReleases => !HasRelease;
 
     public bool CanUninstall => InstalledPlugin?.CanUninstall ?? false;
 
     public bool InstallQueued => ShutdownController.ShutdownTasks
-        .Any(x => x.Data == Name + LatestRelease.Version);
+        .Any(x => x?.Data == Name + LatestRelease?.Version);
 
     public bool CanInstall => HasRelease && InstalledPlugin is null && !Uninstalling &&
                               !Interfacing.IsExitPending && !InstallQueued;
@@ -115,9 +115,9 @@ public class StorePlugin : INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         ShutdownController.ShutdownTasks.Add(new ShutdownTask
         {
-            Name = $"Install plugin ({Name}, {LatestRelease.Guid}) v{LatestRelease.Version}",
+            Name = $"Install plugin ({Name}, {LatestRelease?.Guid}) v{LatestRelease?.Version}",
             Priority = true,
-            Data = Name + LatestRelease.Version,
+            Data = Name + LatestRelease?.Version,
             Action = ExecuteUpdates
         });
 
@@ -144,7 +144,7 @@ public class StorePlugin : INotifyPropertyChanged
         // Delete the uninstall startup action
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         ShutdownController.ShutdownTasks.Remove(ShutdownController.ShutdownTasks
-            .FirstOrDefault(x => x.Data == Name + LatestRelease.Version));
+            .FirstOrDefault(x => x.Data == Name + LatestRelease?.Version));
 
         // Show the update notice
         OnPropertyChanged(); // Refresh everything
