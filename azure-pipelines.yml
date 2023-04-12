@@ -79,7 +79,7 @@ steps:
 - task: CopyFiles@2
   displayName: Pack Amethyst
   inputs:
-    SourceFolder: 'Amethyst\bin\$(buildPlatform)\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\publish'
+    SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\publish'
     Contents: '**'
     TargetFolder: $(publishDirectory)
     preserveTimestamp: true
@@ -87,7 +87,7 @@ steps:
 - task: CopyFiles@2
   displayName: Pack K2CrashHandler
   inputs:
-    SourceFolder: 'K2CrashHandler\bin\$(buildPlatform)\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\publish'
+    SourceFolder: 'K2CrashHandler\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\publish'
     Contents: '**'
     TargetFolder: $(publishDirectory)\K2CrashHandler
     preserveTimestamp: true
