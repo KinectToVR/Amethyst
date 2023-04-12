@@ -8,8 +8,6 @@ using Windows.Data.Json;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
-using System.Diagnostics;
-using CommunityToolkit.WinUI.Helpers;
 
 namespace Amethyst.MVVM;
 
@@ -120,7 +118,7 @@ public class ServiceEndpoint : INotifyPropertyChanged
     // Return null if unknown to the service or unavailable
     // You'll need to provide this to support automatic calibration
     public (Vector3 Position, Quaternion Orientation)? HeadsetPose => Service.HeadsetPose;
-    
+
     // Hot reload handler
     public FileSystemWatcher AssetsWatcher { get; set; }
 
