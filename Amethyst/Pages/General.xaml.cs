@@ -1555,9 +1555,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 if (!_calibrationPending) break;
             }
 
-            // Reset the swap event
-            calibrationModeSwap = false;
-
             // Play mode swap sound
             if (_calibrationPending && !calibrationConfirm)
                 AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationPointCaptured);
@@ -1570,6 +1567,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
             // Cache the calibration first_time
             calibrationFirstTime = false;
             await Task.Delay(1000);
+
+            // Reset the swap event
+            calibrationModeSwap = false;
 
             // Wait for a mode switch
             while (!calibrationModeSwap && !calibrationConfirm)
@@ -1592,10 +1592,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 if (!_calibrationPending) break;
             }
 
+            // Wait a bit for the switch
+            await Task.Delay(1000);
+
             // Reset the swap event
             calibrationModeSwap = false;
-
-            await Task.Delay(1000);
 
             // Play mode swap sound
             if (_calibrationPending && !calibrationConfirm)
