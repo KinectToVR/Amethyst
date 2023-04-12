@@ -339,7 +339,7 @@ public static class Interfacing
         // Notify that we're good now
         AppTrackersSpawned = true;
         AppTrackersInitialized = true;
-        
+
         return true; // We're done here!
     }
 
@@ -621,6 +621,43 @@ public static class Interfacing
             // Else return they key alone
             return resourceKey;
         }
+    }
+
+    // Restart Amethyst
+    public static async Task ExecuteAppRestart()
+    {
+        Logger.Info("Restart requested: trying to restart the app...");
+
+        // If we've found who asked
+        if (File.Exists(ProgramLocation.FullName))
+        {
+            // Log the caller
+            Logger.Info($"The current caller process is: {ProgramLocation.FullName}");
+
+            // Exit the app
+            Logger.Info("Configuration has been reset, exiting in 500ms...");
+
+            // Don't execute the exit routine
+            IsExitHandled = true;
+
+            // Handle a typical app exit
+            await HandleAppExit(500);
+
+            // Restart and exit with code 0
+            Process.Start(ProgramLocation
+                .FullName.Replace(".dll", ".exe"));
+
+            // Exit without re-handling everything
+            Environment.Exit(0);
+        }
+
+        // Still here?
+        Logger.Fatal(new InvalidDataException("App will not be restarted due to caller process identification error."));
+
+        ShowToast(LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
+            LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
+        ShowServiceToast(LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
+            LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
     }
 
     public static class Plugins

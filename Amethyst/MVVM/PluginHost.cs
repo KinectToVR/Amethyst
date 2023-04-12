@@ -282,7 +282,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public Version Version { get; init; } = new("0.0.0.0");
 
-    public bool UpdateFound => !_updateEnqueued && UpdateData.Found && !Uninstalling;
+    public bool UpdateFound => UpdateData.Found && !Uninstalling;
+    public bool UpdateAvailable => UpdateFound && _updateEnqueued;
 
     public (bool Found, string Download, Version Version, string Changelog)
         UpdateData { get; private set; } = (false, null, null, null);
@@ -434,10 +435,18 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             UpdateData = (Version.CompareTo(remoteVersion) < 0, manifest["download"]?.ToString(),
                 remoteVersion, manifest["changelog"]?.ToString());
 
+            // Try downloading the update if found
+            if (UpdateFound)
+            {
+                Logger.Info($"Trying to update {Name} to {UpdateData.Version}! Trying to download it now...");
+                _updateEnqueued = await ExecuteUpdates(); // Try to execute basic updates, mark as queued if succeeded
+            }
+
+            // Show the update notice
             Shared.Main.DispatcherQueue.TryEnqueue(() =>
             {
                 // Also show in MainWindow
-                if (UpdateFound)
+                if (UpdateAvailable)
                 {
                     Shared.Main.PluginsUpdateInfoBar.IsOpen = true;
                     Shared.Main.PluginsUpdateInfoBar.Opacity = 1.0;
@@ -454,37 +463,10 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         }
     }
 
-    internal void EnqueueUpdates(object sender, RoutedEventArgs e)
+    internal async void ExecuteAppRestart(object sender, RoutedEventArgs e)
     {
-        if (!UpdateFound) return;
-
-        // Mark as ready to update
-        _updateEnqueued = true;
-        if (sender is Button button)
-            button.IsEnabled = false;
-
-        // Enqueue the update in the shutdown controller
-        ShutdownController.ShutdownTasks.Add(new ShutdownTask
-        {
-            Name = $"Update plugin {Name}",
-            Priority = true, // Either update right now or skip if it was manual
-            Action = ExecuteUpdates
-        });
-
-        Shared.Main.DispatcherQueue.TryEnqueue(() =>
-        {
-            // Also show/hide the banner in MainWindow
-            if (!AppPlugins.LoadAttemptedPluginsList.Any(x => x.UpdateFound))
-            {
-                // Hide if all plugins have their updates queued
-                Shared.Main.PluginsUpdateInfoBar.Opacity = 0.0;
-                Shared.Main.PluginsUpdateInfoBar.IsOpen = false;
-                Shared.Events.RefreshMainWindowEvent?.Set();
-            }
-
-            // Notify about updates
-            OnPropertyChanged();
-        });
+        Logger.Info($"[{Name}->{UpdateData.Version}] Update invoked: trying to restart the app...");
+        await Interfacing.ExecuteAppRestart(); // Try restarting ame
     }
 
     public async Task<bool> ExecuteUpdates()
@@ -498,126 +480,59 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
         try
         {
-            // Mark the update footer as active
-            Shared.Main.PluginsUpdatePendingInfoBar.Title = string.Format(LocalizedJsonString(
-                "/SharedStrings/Plugins/Updates/Headers/Downloading"), Name, UpdateData.Version.ToString());
-
-            Shared.Main.PluginsUpdatePendingInfoBar.Message = LocalizedJsonString(
-                "/SharedStrings/Plugins/Updates/Headers/Preparing");
-
-            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = true;
-            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 1.0;
-
-            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
-            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
-            Shared.Events.RefreshMainWindowEvent?.Set();
-
             if (string.IsNullOrEmpty(UpdateData.Download) || !LocationValid)
             {
-                // No files to download, switch to update error
-                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                    "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
-
-                Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
-                Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
-                AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
-
-                await Task.Delay(2500);
-                Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
-                Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
-                Shared.Events.RefreshMainWindowEvent?.Set();
-
-                await Task.Delay(1000);
+                Logger.Error($"[{Name}->{UpdateData.Version}] No files to download, aborting!");
                 return false; // That's all
             }
 
             // Try downloading the plugin archive from the manifest
-            Logger.Info($"Downloading the next {Name} plugin assuming it's under {UpdateData.Download}");
+            Logger.Info(
+                $"[{Name}->{UpdateData.Version}] Downloading the next {Name} plugin assuming it's under {UpdateData.Download}");
             try
             {
-                // Update the progress message
-                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                    "/SharedStrings/Plugins/Updates/Statuses/Downloading"), Name, UpdateData.Version.ToString());
-
                 // Create a stream reader using the received Installer Uri
+                Logger.Info($"[{Name}->{UpdateData.Version}] Preparing update streams...");
                 await using var stream = await GithubClient.DownloadStreamAsync(new RestRequest(UpdateData.Download));
 
                 // Replace or create our installer file
+                Logger.Info($"[{Name}->{UpdateData.Version}] Creating the plugin archive...");
                 var pluginArchive = await (await StorageFolder
                     .GetFolderFromPathAsync(Folder)).CreateFileAsync(
                     $"{UpdateData.Download}", CreationCollisionOption.ReplaceExisting);
 
                 // Create an output stream and push all the available data to it
+                Logger.Info($"[{Name}->{UpdateData.Version}] Opening the plugin archive now...");
                 await using var fsPluginArchive = await pluginArchive.OpenStreamForWriteAsync();
+
+                Logger.Info($"[{Name}->{UpdateData.Version}] Trying to copy the download-able data...");
                 await stream!.CopyToAsync(fsPluginArchive); // The runtime will do the rest for us
             }
             catch (Exception e)
             {
-                Logger.Error(new Exception($"Error downloading the plugin! Message: {e.Message}"));
-
-                // No files to download, switch to update error
-                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                    "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
-
-                Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
-                Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
-                AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
-
-                await Task.Delay(2500);
-                Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
-                Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
-                Shared.Events.RefreshMainWindowEvent?.Set();
-
-                await Task.Delay(1000);
+                Logger.Error($"[{Name}->{UpdateData.Version}] Error downloading the plugin! Message: {e.Message}");
                 return false; // That's all
             }
 
             // Rename the downloaded zip to $({Folder}.Name).next.zip
+            Logger.Info($"[{Name}->{UpdateData.Version}] Renaming the plugin zip package...");
             var updateZip = Path.Join(Folder, $"{new DirectoryInfo(Folder).Name}.next.zip");
             File.Move(Path.Join(Folder, UpdateData.Download), updateZip, true);
 
             // Register the update in the Amethyst task scheduler
+            Logger.Info($"[{Name}->{UpdateData.Version}] Scheduling a startup update task...");
             StartupController.Controller.StartupTasks.Add(new StartupUpdateTask
             {
                 Name = $"Update {Name} to version {UpdateData.Version}",
                 Priority = true, PluginFolder = Folder, UpdatePackage = updateZip
             });
 
-            // Everything's fine, show the restart notice
-            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                "/SharedStrings/Plugins/Updates/Headers/Restart"), Name);
-
-            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = false;
-            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
-            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
-
-            await Task.Delay(2500);
-            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
-            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
-            Shared.Events.RefreshMainWindowEvent?.Set();
-
-            // Still here? We're done!
-            await Task.Delay(1000);
+            Logger.Info($"[{Name}->{UpdateData.Version}] Looks like that's all for now...");
             return true; // That's all
         }
         catch (Exception e)
         {
-            Logger.Info(e);
-
-            // No files to download, switch to update error
-            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(LocalizedJsonString(
-                "/SharedStrings/Plugins/Updates/Statuses/Error"), Name);
-
-            Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
-            Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
-            AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
-
-            await Task.Delay(2500);
-            Shared.Main.PluginsUpdatePendingInfoBar.Opacity = 0.0;
-            Shared.Main.PluginsUpdatePendingInfoBar.IsOpen = false;
-            Shared.Events.RefreshMainWindowEvent?.Set();
-
-            await Task.Delay(1000);
+            Logger.Error(e);
             return false; // That's all
         }
     }
@@ -626,6 +541,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     {
         // Enqueue a delete startup action to uninstall this plugin
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        Logger.Info($"Queueing a startup delete task for {Name} from {Folder}...");
         StartupController.Controller.StartupTasks.Add(
             new StartupDeleteTask
             {
@@ -636,7 +553,23 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
         // Show a badge that this plugin will be uninstalled
         Uninstalling = true;
-        OnPropertyChanged();
+
+        // Show the update notice
+        OnPropertyChanged(); // Refresh everything
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            // Search for any pending plugin install task
+            var uninstallsPending = StartupController.Controller.StartupTasks
+                .Any(x => x.Name.StartsWith("Delete"));
+
+            // Also show in MainWindow
+            Shared.Main.PluginsUninstallInfoBar.IsOpen = uninstallsPending;
+            Shared.Main.PluginsUninstallInfoBar.Opacity = BoolToOpacity(uninstallsPending);
+            Shared.Events.RefreshMainWindowEvent?.Set();
+
+            // Notify about updates
+            OnPropertyChanged();
+        });
     }
 
     public void CancelPluginUninstall()
@@ -649,7 +582,23 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
         // Hide the uninstall badge
         Uninstalling = false;
-        OnPropertyChanged();
+
+        // Show the update notice
+        OnPropertyChanged(); // Refresh everything
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            // Search for any pending plugin install task
+            var uninstallsPending = StartupController.Controller.StartupTasks
+                .Any(x => x.Name.StartsWith("Delete"));
+
+            // Also show in MainWindow
+            Shared.Main.PluginsUninstallInfoBar.IsOpen = uninstallsPending;
+            Shared.Main.PluginsUninstallInfoBar.Opacity = BoolToOpacity(uninstallsPending);
+            Shared.Events.RefreshMainWindowEvent?.Set();
+
+            // Notify about updates
+            OnPropertyChanged();
+        });
     }
 
     public string TrimString(string s, int l)

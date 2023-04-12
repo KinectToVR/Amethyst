@@ -10,8 +10,8 @@ namespace Amethyst.Schedulers;
 public class ShutdownTask
 {
     public string Name { get; set; }
-    public bool Priority { get; set; } = false;
     public string Data { get; set; }
+    public bool Priority { get; set; } = false;
     public Func<Task<bool>> Action { get; init; }
 }
 

@@ -830,15 +830,15 @@
                                                     </InfoBar>
 
                                                     <InfoBar Severity="Informational" Margin="-14,-10,-14,5"
-                                                             Opacity="{x:Bind BoolToOpacity(UpdateFound), Mode=OneWay}"
-                                                             IsOpen="{x:Bind UpdateFound, Mode=OneWay}"
+                                                             Opacity="{x:Bind BoolToOpacity(UpdateAvailable), Mode=OneWay}"
+                                                             IsOpen="{x:Bind UpdateAvailable, Mode=OneWay}"
                                                              Title="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/UpdateAvailable'), Mode=OneWay}"
                                                              Message="{x:Bind UpdateMessage, Mode=OneWay}"
                                                              IsClosable="False" CornerRadius="0"
                                                              BorderThickness="0,0,0,1">
                                                         <InfoBar.ActionButton>
                                                             <Button HorizontalAlignment="Right" Margin="0,0,-8,0"
-                                                                    Click="{x:Bind EnqueueUpdates, Mode=OneWay}"
+                                                                    Click="{x:Bind ExecuteAppRestart, Mode=OneWay}"
                                                                     Style="{ThemeResource AccentButtonStyle}"
                                                                     Content="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Buttons/Update'), Mode=OneWay}" />
                                                         </InfoBar.ActionButton>

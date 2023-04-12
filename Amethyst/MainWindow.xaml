@@ -144,8 +144,9 @@
             </Grid.RowDefinitions>
 
             <InfoBar x:Name="PluginsUpdateInfoBar" Grid.Row="0" Opacity="0.0"
-                     IsOpen="False" IsClosable="True" Margin="3,-5,3,3" Severity="Informational"
-                     Title="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/PluginUpdates/Message'), Mode=OneWay}">
+                     IsOpen="False" IsClosable="False" Margin="3,-5,3,3" Severity="Informational"
+                     Title="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/PluginUpdates/Title'), Mode=OneWay}"
+                     Message="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/PluginUpdates/Message'), Mode=OneWay}">
 
                 <InfoBar.ActionButton>
                     <Button HorizontalAlignment="Right" Click="PluginsUpdateButton_Click"
@@ -190,7 +191,52 @@
 
                     <InfoBar.ActionButton>
                         <Button HorizontalAlignment="Right" Click="InstallNowButton_Click"
+                                Style="{ThemeResource AccentButtonStyle}"
                                 Content="{x:Bind util:Translator.Get.String('/SharedStrings/Buttons/Updates/Install'), Mode=OneWay}" />
+                    </InfoBar.ActionButton>
+
+                    <InfoBar.OpacityTransition>
+                        <ScalarTransition />
+                    </InfoBar.OpacityTransition>
+                </InfoBar>
+                <Grid.OpacityTransition>
+                    <ScalarTransition />
+                </Grid.OpacityTransition>
+            </Grid>
+
+            <Grid Grid.Row="0" Opacity="{x:Bind BoolToOpacity(CanShowPluginsInstallBar), Mode=OneWay}"
+                  Visibility="{x:Bind CanShowPluginsInstallBar, Mode=OneWay}">
+                <InfoBar x:Name="PluginsInstallInfoBar" Grid.Row="0" Opacity="0.0"
+                         IsOpen="False" IsClosable="False" Margin="3,-5,3,3" Severity="Informational"
+                         Title="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/PluginInstall/Title'), Mode=OneWay}"
+                         Message="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/PluginInstall/Message'), Mode=OneWay}">
+
+                    <InfoBar.ActionButton>
+                        <Button HorizontalAlignment="Right" Click="PluginsInstallButton_Click"
+                                Style="{ThemeResource AccentButtonStyle}"
+                                Content="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/PluginInstall/Action'), Mode=OneWay}" />
+                    </InfoBar.ActionButton>
+
+                    <InfoBar.OpacityTransition>
+                        <ScalarTransition />
+                    </InfoBar.OpacityTransition>
+                </InfoBar>
+                <Grid.OpacityTransition>
+                    <ScalarTransition />
+                </Grid.OpacityTransition>
+            </Grid>
+
+            <Grid Grid.Row="0" Opacity="{x:Bind BoolToOpacity(CanShowPluginsUninstallBar), Mode=OneWay}"
+                  Visibility="{x:Bind CanShowPluginsUninstallBar, Mode=OneWay}">
+                <InfoBar x:Name="PluginsUninstallInfoBar" Grid.Row="0" Opacity="0.0"
+                         IsOpen="False" IsClosable="False" Margin="3,-5,3,3" Severity="Informational"
+                         Title="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/PluginUninstall/Title'), Mode=OneWay}"
+                         Message="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/PluginUninstall/Message'), Mode=OneWay}">
+
+                    <InfoBar.ActionButton>
+                        <Button HorizontalAlignment="Right" Click="PluginsInstallButton_Click"
+                                Style="{ThemeResource AccentButtonStyle}"
+                                Content="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/PluginUninstall/Action'), Mode=OneWay}" />
                     </InfoBar.ActionButton>
 
                     <InfoBar.OpacityTransition>

@@ -99,6 +99,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.Main.MainContentFrame = ContentFrame;
         Shared.Main.PluginsUpdatePendingProgressBar = PluginsUpdatePendingProgressBar;
         Shared.Main.PluginsUpdatePendingInfoBar = PluginsUpdatePendingInfoBar;
+        Shared.Main.PluginsInstallInfoBar = PluginsInstallInfoBar;
+        Shared.Main.PluginsUninstallInfoBar = PluginsUninstallInfoBar;
         Shared.Main.PluginsUpdateInfoBar = PluginsUpdateInfoBar;
 
         Shared.Main.NavigationItems.NavViewGeneralButtonIcon = NavViewGeneralButtonIcon;
@@ -1147,10 +1149,18 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     private bool CanShowPluginsUpdatePendingBar => !PluginsUpdateInfoBar.IsOpen;
 
     private bool CanShowUpdateBar =>
-        !PluginsUpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen;
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowPluginsInstallBar =>
+        !UpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowPluginsUninstallBar =>
+        !PluginsInstallInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
 
     private bool CanShowReloadBar =>
-        !PluginsUpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !UpdateInfoBar.IsOpen;
+        !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
@@ -1781,24 +1791,41 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     private void InstallNowButton_Click(object sender, RoutedEventArgs e)
     {
         // Try installing
-        InstallUpdates();
+        InstallUpdates(true);
     }
 
-    private void PluginsUpdateButton_Click(object sender, RoutedEventArgs e)
+    private async void PluginsUpdateButton_Click(object sender, RoutedEventArgs e)
     {
         PluginsUpdateInfoBar.IsOpen = false;
         PluginsUpdateInfoBar.Opacity = 0.0;
         OnPropertyChanged(); // Visibility
 
-        // Enqueue plugin updates for exit
-        Shared.Main.DispatcherQueue.TryEnqueue(() =>
-        {
-            foreach (var plugin in AppPlugins.LoadAttemptedPluginsList.Where(x => x.UpdateFound))
-            {
-                Logger.Info($"Queueing plugin {plugin.Name} update task for the shutdown controller...");
-                plugin.EnqueueUpdates(null, null); // Let the plugin class do this for us
-            }
-        });
+        // Mark as handled
+        Interfacing.IsExitPending = true;
+
+        // Run shutdown tasks
+        await ShutdownController.ExecuteAllTasks();
+
+        // Restart Amethyst now
+        Logger.Info("Update invoked: trying to restart the app...");
+        await Interfacing.ExecuteAppRestart(); // Try restarting ame
+    }
+
+    private async void PluginsInstallButton_Click(object sender, RoutedEventArgs e)
+    {
+        PluginsInstallInfoBar.IsOpen = false;
+        PluginsInstallInfoBar.Opacity = 0.0;
+        OnPropertyChanged(); // Visibility
+
+        // Mark as handled
+        Interfacing.IsExitPending = true;
+        
+        // Run shutdown tasks
+        await ShutdownController.ExecuteAllTasks();
+
+        // Restart Amethyst now
+        Logger.Info("Update invoked: trying to restart the app...");
+        await Interfacing.ExecuteAppRestart(); // Try restarting ame
     }
 
     private async void HelpFlyoutDocsButton_Click(object sender, RoutedEventArgs e)

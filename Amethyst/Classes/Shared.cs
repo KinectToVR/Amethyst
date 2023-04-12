@@ -87,8 +87,12 @@ public static class Shared
             AttentionBrush, NeutralBrush;
 
         public static ProgressBar PluginsUpdatePendingProgressBar;
-        public static InfoBar PluginsUpdatePendingInfoBar;
-        public static InfoBar PluginsUpdateInfoBar;
+
+        public static InfoBar
+            PluginsUpdatePendingInfoBar,
+            PluginsInstallInfoBar,
+            PluginsUninstallInfoBar,
+            PluginsUpdateInfoBar;
 
         // Navigate the main view (w/ animations)
         public static void NavigateToPage(string navItemTag,
@@ -385,7 +389,7 @@ public static class Shared
     {
         public static class MainPage
         {
-            public static TeachingTip 
+            public static TeachingTip
                 InitializerTeachingTip, EndingTeachingTip;
 
             public static InfoBar ReloadInfoBar;

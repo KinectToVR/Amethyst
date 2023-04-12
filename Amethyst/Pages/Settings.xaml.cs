@@ -702,39 +702,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         /* Restart */
 
         Logger.Info("Reset invoked: trying to restart the app...");
-
-        // If we've found who asked
-        if (File.Exists(Interfacing.ProgramLocation.FullName))
-        {
-            // Log the caller
-            Logger.Info($"The current caller process is: {Interfacing.ProgramLocation.FullName}");
-
-            // Exit the app
-            Logger.Info("Configuration has been reset, exiting in 500ms...");
-
-            // Don't execute the exit routine
-            Interfacing.IsExitHandled = true;
-
-            // Handle a typical app exit
-            await Interfacing.HandleAppExit(500);
-
-            // Restart and exit with code 0
-            Process.Start(Interfacing.ProgramLocation
-                .FullName.Replace(".dll", ".exe"));
-
-            // Exit without re-handling everything
-            Environment.Exit(0);
-        }
-
-        // Still here?
-        Logger.Fatal(new InvalidDataException("App will not be restarted due to caller process identification error."));
-
-        Interfacing.ShowToast(
-            Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
-            Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
-        Interfacing.ShowServiceToast(
-            Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
-            Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
+        await Interfacing.ExecuteAppRestart(); // Try restarting ame
     }
 
     private void ViewLogsButton_Click(object sender, RoutedEventArgs e)

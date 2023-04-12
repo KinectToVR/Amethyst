@@ -121,7 +121,22 @@ public class StorePlugin : INotifyPropertyChanged
             Action = ExecuteUpdates
         });
 
+        // Show the update notice
         OnPropertyChanged(); // Refresh everything
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            // Search for any pending plugin install task
+            var installsPending = ShutdownController.ShutdownTasks
+                .Any(x => x.Name.StartsWith("Install"));
+
+            // Also show in MainWindow
+            Shared.Main.PluginsInstallInfoBar.IsOpen = installsPending;
+            Shared.Main.PluginsInstallInfoBar.Opacity = BoolToOpacity(installsPending);
+            Shared.Events.RefreshMainWindowEvent?.Set();
+
+            // Notify about updates
+            OnPropertyChanged();
+        });
     }
 
     public void CancelPluginInstall()
@@ -131,7 +146,22 @@ public class StorePlugin : INotifyPropertyChanged
         ShutdownController.ShutdownTasks.Remove(ShutdownController.ShutdownTasks
             .FirstOrDefault(x => x.Data == Name + LatestRelease.Version));
 
+        // Show the update notice
         OnPropertyChanged(); // Refresh everything
+        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            // Search for any pending plugin install task
+            var installsPending = ShutdownController.ShutdownTasks
+                .Any(x => x.Name.StartsWith("Install"));
+
+            // Also show in MainWindow
+            Shared.Main.PluginsInstallInfoBar.IsOpen = installsPending;
+            Shared.Main.PluginsInstallInfoBar.Opacity = BoolToOpacity(installsPending);
+            Shared.Events.RefreshMainWindowEvent?.Set();
+
+            // Notify about updates
+            OnPropertyChanged();
+        });
     }
 
     private async Task<bool> ExecuteUpdates()
