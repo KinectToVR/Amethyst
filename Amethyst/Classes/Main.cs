@@ -516,7 +516,7 @@ public static class Main
     {
         // Warning: this is meant to work as fire-and-forget
         Logger.Info("[Main] Waiting for the start sem to open..");
-        Shared.Events.SemSignalStartMain.WaitOne();
+        Shared.Events.StartMainLoopEvent.WaitOne();
 
         Logger.Info("[Main] Starting the main app loop now...");
 

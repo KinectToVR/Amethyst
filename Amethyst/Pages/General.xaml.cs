@@ -165,7 +165,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (!_generalPageLoadedOnce)
         {
             Logger.Info("Basic setup done! Starting the main loop now...");
-            Shared.Events.SemSignalStartMain.Release();
+            Shared.Events.StartMainLoopEvent.Set();
 
             // Try auto-spawning trackers if stated so
             if (Interfacing.IsServiceEndpointPresent && // If the driver's ok

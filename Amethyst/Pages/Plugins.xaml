@@ -787,7 +787,6 @@
                                                                FontWeight="SemiBold" FontSize="12"
                                                                Opacity="0.5"
                                                                Text="{x:Bind TrimString(Publisher, 30), Mode=OneWay}"
-                                                               Tapped="{x:Bind ShowDeviceFolder, Mode=OneWay}"
                                                                ToolTipService.ToolTip="{x:Bind Folder, Mode=OneWay}"
                                                                ToolTipService.Placement="Bottom" />
                                                 </StackPanel>

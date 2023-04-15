@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Amethyst.Classes;
@@ -27,8 +28,11 @@ public static class ShutdownController
         // First run all queued tasks waiting for us
         Logger.Info("Running all actions queued for shutdown...");
 
+        Logger.Info("Preparing an immutable task list...");
+        var queuedShutdownTasks = ShutdownTasks.ToImmutableList();
+
         Logger.Info("Executing tasks marked as priority...");
-        foreach (var task in ShutdownTasks.Where(x => x.Priority))
+        foreach (var task in queuedShutdownTasks.Where(x => x.Priority))
         {
             Logger.Info($"Starting task with name \"{task.Name}\"...");
             try
@@ -45,7 +49,7 @@ public static class ShutdownController
         }
 
         Logger.Info("Executing all other tasks now...");
-        foreach (var task in ShutdownTasks.Where(x => !x.Priority))
+        foreach (var task in queuedShutdownTasks.Where(x => !x.Priority))
         {
             Logger.Info($"Starting task with name \"{task.Name}\"...");
             try

@@ -30,9 +30,9 @@ public static class Shared
             ReloadInfoPageEvent,
             ReloadPluginsPageEvent;
 
-        public static readonly Semaphore
-            SemSignalStartMain = new(0, 1);
-
+        public static readonly ManualResetEvent
+            StartMainLoopEvent = new(false);
+        
         public static void RequestInterfaceReload(bool all = true)
         {
             if (!General.GeneralTabSetupFinished)
