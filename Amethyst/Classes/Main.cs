@@ -563,8 +563,8 @@ public static class Main
                             var elapsedTicks = loopStopWatch.ElapsedTicks; // Cache the elapsed time
                             await Task.Delay(TimeSpan.FromTicks(diffTicks));
 
-                            Logger.Info($"10000 loops have passed: this loop took {elapsedTicks}, " +
-                                        $"the loop's time after time correction (sleep) is: {loopStopWatch.ElapsedTicks}ns");
+                            Logger.Info($"10000 loops have passed: this loop took {elapsedTicks} [ticks], " +
+                                        $"the loop's time after time correction (sleep) is: {loopStopWatch.ElapsedTicks} [ticks]");
                         }
                         else
                         {
@@ -580,7 +580,7 @@ public static class Main
                     else if (loopStopWatch.ElapsedMilliseconds > 30)
                     {
                         // Cry if the loop took longer than 30ms for some weird reason
-                        Logger.Warn($"Can't keep up! The last loop took {loopStopWatch.ElapsedTicks} Ticks. " +
+                        Logger.Warn($"Can't keep up! The last loop took {loopStopWatch.ElapsedTicks} [ticks]. " +
                                     $"(Ran at approximately {1000.0 / loopStopWatch.ElapsedMilliseconds} fps (1/s))");
                     }
                 }
