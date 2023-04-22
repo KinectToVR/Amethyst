@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Runtime.Serialization;
 
 namespace Amethyst.Plugins.Contract;
 
@@ -104,6 +105,7 @@ public class TrackedJoint
     public long PreviousPoseTimestamp { get; private set; }
 }
 
+[DataContract]
 public class TrackerBase
 {
     [SetsRequiredMembers]
@@ -116,50 +118,59 @@ public class TrackerBase
     /// <summary>
     ///     Connection state: active/non-active
     /// </summary>
+    [DataMember(Name = "ConnectionState")]
     public bool ConnectionState { get; set; } = false;
 
     /// <summary>
     ///     Serial number, or name, identifies a tracker
     /// </summary>
+    [DataMember(Name = "TrackerSerial")]
     public required string Serial { get; init; }
 
     /// <summary>
     ///     Tracker role type
     /// </summary>
+    [DataMember(Name = "TrackerRole")]
     public required TrackerType Role { get; init; }
 
     /// <summary>
     ///     Tracker position (in meters, left-handed)
     /// </summary>
+    [DataMember(Name = "Position")]
     public Vector3 Position { get; set; } = Vector3.Zero;
 
     /// <summary>
     ///     Tracker position (quaternion, left-handed)
     /// </summary>
+    [DataMember(Name = "Orientation")]
     public Quaternion Orientation { get; set; } = Quaternion.Identity;
 
     /// <summary>
     ///     Tracker position velocity (in meters per second, left-handed)
     ///     Leave null to disable physics support and auto-compute
     /// </summary>
+    [DataMember(Name = "VelocityNullable")]
     public Vector3? Velocity { get; set; }
 
     /// <summary>
     ///     Tracker position acceleration (in meters per second, left-handed)
     ///     Leave null to disable physics support and auto-compute
     /// </summary>
+    [DataMember(Name = "AccelerationNullable")]
     public Vector3? Acceleration { get; set; }
 
     /// <summary>
     ///     Tracker position angular velocity (in rad/s, euler, left-handed)
     ///     Leave null to disable physics support and auto-compute
     /// </summary>
+    [DataMember(Name = "AngularVelocityNullable")]
     public Vector3? AngularVelocity { get; set; }
 
     /// <summary>
     ///     Tracker position angular acc (in rad/s, euler, left-handed)
     ///     Leave null to disable physics support and auto-compute
     /// </summary>
+    [DataMember(Name = "AngularAccelerationNullable")]
     public Vector3? AngularAcceleration { get; set; }
 }
 
