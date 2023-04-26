@@ -175,13 +175,15 @@ public class AppSettings : INotifyPropertyChanged
 
     [JsonIgnore] public static bool CheckingSettings { get; private set; }
 
+    [JsonIgnore] public static bool DoNotSaveSettings { get; set; }
+
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
     // Save settings
     public void SaveSettings()
     {
-        if (CheckingSettings) return;
+        if (CheckingSettings || DoNotSaveSettings) return;
         try
         {
             // Save application settings to $env:AppData/Amethyst/

@@ -2,14 +2,20 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Globalization;
 using Windows.System.UserProfile;
 using Windows.UI.ViewManagement;
 using Amethyst.Classes;
+using Amethyst.Popups;
+using Amethyst.Schedulers;
 using Amethyst.Utils;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
@@ -26,7 +32,7 @@ namespace Amethyst;
 /// </summary>
 public partial class App : Application
 {
-    private Window _mWindow;
+    private MainWindow _mWindow;
 
     /// <summary>
     ///     Initializes the singleton application object.  This is the first line of authored code
@@ -87,17 +93,24 @@ public partial class App : Application
             $"Amethyst_{DateTime.Now:yyyyMMdd-HHmmss.ffffff}.log"));
 
         // Create an empty file for checking for crashes
-        Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.ProgramLocation.DirectoryName, ".crash"));
-        Interfacing.CrashFile.Create(); // Create the file
+        try
+        {
+            Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.ProgramLocation.DirectoryName, ".crash"));
+            Interfacing.CrashFile.Create(); // Create the file
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
 
         try
         {
             // Try deleting the "latest" log file
             File.Delete(Interfacing.GetAppDataLogFileDir("Amethyst", "_latest.log"));
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            // ignored
+            Logger.Info(e);
         }
 
         // Log status information
@@ -142,7 +155,8 @@ public partial class App : Application
 
         // Read saved settings
         Logger.Info("Reading base app settings...");
-        AppData.Settings.ReadSettings();
+        AppSettings.DoNotSaveSettings = true;
+        AppData.Settings.ReadSettings(); // Now read
 
         // Read plugin settings
         Logger.Info("Reading custom plugin settings...");
@@ -195,10 +209,209 @@ public partial class App : Application
     ///     Invoked when the application is launched normally by the end user.  Other entry points
     ///     will be used such as when the application is launched to open a specific file.
     /// </summary>
-    /// <param name="args">Details about the launch request and process.</param>
-    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    /// <param name="_">Details about the launch request and process.</param>
+    protected override async void OnLaunched(LaunchActivatedEventArgs _)
     {
-        Logger.Info($"Received launch arguments: {args.Arguments}");
+        // Check if there's any argv[1]
+        var args = Environment.GetCommandLineArgs();
+        Logger.Info($"Received launch arguments: {string.Join(", ", args)}");
+
+        // Check if this startup isn't a request
+        if (args.Length > 2 && args[1] == "Kill")
+        {
+            try
+            {
+                Logger.Info($"Amethyst running in process kill slave mode! ID: {args[2]}");
+                var processToKill = Process.GetProcessById(int.Parse(args[2]));
+
+                // If we want to kill server, shut down monitor first
+                if (processToKill.ProcessName == "vrserver")
+                    Process.GetProcessesByName("vrmonitor").ToList().ForEach(x => x.Kill());
+
+                processToKill.Kill(); // Now kill the actual process
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+
+            Logger.Info("That's all! Shutting down now...");
+            Environment.Exit(0); // Cancel further application startup
+        }
+
+        Logger.Info("Registering a named mutex for com_k2vr_amethyst...");
+        try
+        {
+            Shared.Main.ApplicationMultiInstanceMutex = new Mutex(
+                true, "com_k2vr_amethyst", out var needToCreateNew);
+
+            if (!needToCreateNew)
+            {
+                Logger.Fatal(new AbandonedMutexException("Startup failed! The app is already running."));
+
+                if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
+                        "K2CrashHandler", "K2CrashHandler.exe")))
+                    Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
+                        "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
+                else
+                    Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
+
+                await Task.Delay(3000);
+                Environment.Exit(0); // Exit peacefully
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Fatal(new AbandonedMutexException(
+                $"Startup failed! Multi-instance lock mutex creation error: {e.Message}"));
+
+            if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
+                    "K2CrashHandler", "K2CrashHandler.exe")))
+                Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
+                    "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
+            else
+                Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
+
+            await Task.Delay(3000);
+            Environment.Exit(0); // Exit peacefully
+        }
+
+        // Priority: Launch the crash handler
+        Logger.Info("Starting the crash handler passing the app PID...");
+
+        if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
+                "K2CrashHandler", "K2CrashHandler.exe")))
+            Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
+                "K2CrashHandler", "K2CrashHandler.exe"), $"{Environment.ProcessId} \"{Logger.LogFilePath}\"");
+        else
+            Logger.Warn(
+                $"Crash handler exe ({Path.Combine(Interfacing.ProgramLocation.DirectoryName, "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
+
+        // Disable internal sounds
+        ElementSoundPlayer.State = ElementSoundPlayerState.Off;
+
+        // Create the plugin directory (if not existent)
+        Directory.CreateDirectory(Path.Combine(
+            Interfacing.ProgramLocation.DirectoryName, "Plugins"));
+
+        // Try reading the startup task config
+        try
+        {
+            Logger.Info("Searching for scheduled startup tasks...");
+            StartupController.Controller.ReadTasks();
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Reading the startup scheduler configuration failed. Message: {e.Message}");
+        }
+
+        // Execute plugin uninstalls: delete plugin files
+        foreach (var action in StartupController.Controller.DeleteTasks.ToList())
+            try
+            {
+                Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
+                if (!Directory.Exists(action.PluginFolder) ||
+                    action.PluginFolder == Interfacing.ProgramLocation.DirectoryName || Directory
+                        .EnumerateFiles(action.PluginFolder)
+                        .Any(x => x == Interfacing.ProgramLocation.FullName))
+                {
+                    StartupController.Controller.StartupTasks.Remove(action);
+                    continue; // Remove the action as it was invalid at this time
+                }
+
+                Logger.Info("Cleaning the plugin folder now...");
+                Directory.Delete(action.PluginFolder, true);
+
+                Logger.Info("Deleting attempted scheduled startup " +
+                            $"{action.GetType()} task with name \"{action.Name}\"...");
+
+                StartupController.Controller.StartupTasks.Remove(action);
+                Logger.Info($"Looks like a startup {action.GetType()} task with " +
+                            $"name \"{action.Name}\" has been executed successfully!");
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
+            }
+
+        // Execute plugin updates: replace plugin files
+        if (args.Length < 2 || args[1] != "NoUpdate")
+            foreach (var action in StartupController.Controller.UpdateTasks.ToList())
+                try
+                {
+                    Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
+                    if (!Directory.Exists(action.PluginFolder) || !File.Exists(action.UpdatePackage))
+                    {
+                        StartupController.Controller.StartupTasks.Remove(action);
+                        continue; // Remove the action as it was invalid at this time
+                    }
+
+                    Logger.Info($"Found a plugin update package in folder \"{action.PluginFolder}\"");
+                    Logger.Info("Checking if the plugin folder is not locked...");
+                    if (FileUtils.WhoIsLocking(action.PluginFolder).Any())
+                    {
+                        Logger.Info("Some plugin files are still locked! Showing the update dialog...");
+                        Logger.Info($"Creating a new {typeof(Host)}...");
+                        var dialogWindow = new Host();
+
+                        Logger.Info("Preparing the data regarding the blocking process...");
+                        dialogWindow.Content = new Blocked(new DirectoryInfo(action.PluginFolder).Name,
+                            FileUtils.WhoIsLocking(action.PluginFolder)
+                                .Select(x => new BlockingProcess
+                                {
+                                    ProcessPath = new FileInfo(FileUtils.GetProcessFilename(x) ?? "tmp"),
+                                    Process = x,
+                                    IsElevated = FileUtils.IsProcessElevated(x) && !FileUtils.IsCurrentProcessElevated()
+                                }).ToList())
+                        {
+                            // Also set the parent to close
+                            ParentWindow = dialogWindow
+                        };
+
+                        Logger.Info($"Activating {dialogWindow.GetType()} now...");
+                        dialogWindow.Activate(); // Activate the window now
+
+                        var continueEvent = new SemaphoreSlim(0);
+                        var result = false; // Prepare [out] results for the event handler
+
+                        // Wait for the dialog window to close
+                        dialogWindow.Closed += (sender, _) =>
+                        {
+                            result = (sender as Host)?.Result ?? false;
+                            Logger.Info($"The dialog was closed with result {result}!");
+                            continueEvent.Release(); // Unlock further program execution
+                        };
+
+                        await continueEvent.WaitAsync(); // Wait for the closed event
+                        Logger.Info($"Plugin update conflict resolved with result: {result}! Restarting...");
+                        await Interfacing.ExecuteAppRestart(false, result ? "" : "NoUpdate");
+                    }
+
+                    Logger.Info("Cleaning the plugin folder now...");
+                    Directory.GetDirectories(action.PluginFolder).ToList().ForEach(x => Directory.Delete(x, true));
+                    Directory.GetFiles(action.PluginFolder, "*.*", SearchOption.AllDirectories)
+                        .Where(x => x != action.UpdatePackage).ToList().ForEach(File.Delete);
+
+                    Logger.Info("Unpacking the new plugin from its archive...");
+                    ZipFile.ExtractToDirectory(action.UpdatePackage, action.PluginFolder, true);
+
+                    Logger.Info("Deleting the plugin update package...");
+                    File.Delete(action.UpdatePackage); // Cleanup after the update
+
+                    Logger.Info("Deleting attempted scheduled startup " +
+                                $"{action.GetType()} task with name \"{action.Name}\"...");
+
+                    StartupController.Controller.StartupTasks.Remove(action);
+                    Logger.Info($"Looks like a startup {action.GetType()} task with " +
+                                $"name \"{action.Name}\" has been executed successfully!");
+                }
+                catch (Exception e)
+                {
+                    Logger.Warn(e);
+                }
+        else
+            Logger.Info("Plugin update skip requested!");
+
         Logger.Info("Creating a new MainWindow view...");
         _mWindow = new MainWindow();
 

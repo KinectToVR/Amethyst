@@ -60,7 +60,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     public static RequestApplicationUpdate RequestUpdateEvent;
 
-    private readonly bool _mainPageInitFinished;
+    private bool _mainPageInitFinished;
 
     private SystemBackdropConfiguration _configurationSource;
     private MicaController _micaController;
@@ -132,7 +132,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Set titlebar/taskview icon
         Logger.Info("Setting the App Window icon...");
         Shared.Main.AppWindow.SetIcon(Path.Combine(
-            Interfacing.ProgramLocation.DirectoryName, "Assets", "ktvr.ico"));
+            Interfacing.ProgramLocation.DirectoryName!, "Assets", "ktvr.ico"));
 
         Logger.Info("Extending the window titlebar...");
         if (AppWindowTitleBar.IsCustomizationSupported())
@@ -188,191 +188,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Shared.Main.NotificationManager = null; // Not using it!
         }
 
-        Logger.Info("Pushing control pages the global collection...");
-        Shared.Main.Pages = new List<(string Tag, Type Page)>
-        {
-            ("general", typeof(General)),
-            ("settings", typeof(Settings)),
-            ("devices", typeof(Devices)),
-            ("info", typeof(Info)),
-            ("plugins", typeof(Pages.Plugins))
-        };
-
-        Logger.Info($"Setting up shared events for '{GetType().FullName}'...");
-        RequestUpdateEvent += (_, _) => DownloadUpdates();
-
-        Logger.Info("Registering a detached binary semaphore " +
-                    $"reload handler for '{GetType().FullName}'...");
-
-        // Reload watchdog
-        Task.Run(() =>
-        {
-            Shared.Events.ReloadMainWindowEvent =
-                new ManualResetEvent(false);
-
-            while (true)
-            {
-                // Wait for a reload signal (blocking)
-                Shared.Events.ReloadMainWindowEvent.WaitOne();
-
-                // Reload & restart the waiting loop
-                if (_mainPageLoadedOnce)
-                    Shared.Main.DispatcherQueue.TryEnqueue(MainGrid_LoadedHandler);
-
-                // Rebuild devices' settings
-                // (Trick the device into rebuilding its interface)
-                AppPlugins.TrackingDevicesList.Values.ToList()
-                    .ForEach(plugin => plugin.OnLoad());
-
-                // Reset the event
-                Shared.Events.ReloadMainWindowEvent.Reset();
-            }
-        });
-
-        // Refresh watchdog
-        Task.Run(() =>
-        {
-            Shared.Events.RefreshMainWindowEvent =
-                new ManualResetEvent(false);
-
-            while (true)
-            {
-                // Wait for a reload signal (blocking)
-                Shared.Events.RefreshMainWindowEvent.WaitOne();
-
-                // Reload & restart the waiting loop
-                if (_mainPageLoadedOnce)
-                    Shared.Main.DispatcherQueue.TryEnqueue(() => OnPropertyChanged());
-
-                // Reset the event
-                Shared.Events.RefreshMainWindowEvent.Reset();
-            }
-        });
-
-        Logger.Info("Registering a named mutex for com_k2vr_amethyst...");
-        try
-        {
-            Shared.Main.ApplicationMultiInstanceMutex = new Mutex(
-                true, "com_k2vr_amethyst", out var needToCreateNew);
-
-            if (!needToCreateNew)
-            {
-                Logger.Fatal(new AbandonedMutexException("Startup failed! The app is already running."));
-
-                if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                        "K2CrashHandler", "K2CrashHandler.exe")))
-                    Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                        "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
-                else
-                    Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
-
-                Task.Delay(3000);
-                Environment.Exit(0); // Exit peacefully
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.Fatal(new AbandonedMutexException(
-                $"Startup failed! Multi-instance lock mutex creation error: {e.Message}"));
-
-            if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                    "K2CrashHandler", "K2CrashHandler.exe")))
-                Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                    "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
-            else
-                Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
-
-            Task.Delay(3000);
-            Environment.Exit(0); // Exit peacefully
-        }
-
-        // Priority: Launch the crash handler
-        Logger.Info("Starting the crash handler passing the app PID...");
-
-        if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                "K2CrashHandler", "K2CrashHandler.exe")))
-            Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                "K2CrashHandler", "K2CrashHandler.exe"), $"{Environment.ProcessId} \"{Logger.LogFilePath}\"");
-        else
-            Logger.Warn(
-                $"Crash handler exe ({Path.Combine(Interfacing.ProgramLocation.DirectoryName, "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
-
-        // Start the main loop
-        Task.Run(Main.MainLoop);
-
-        // Disable internal sounds
-        ElementSoundPlayer.State = ElementSoundPlayerState.Off;
-
-        // Create the plugin directory (if not existent)
-        Directory.CreateDirectory(Path.Combine(
-            Interfacing.ProgramLocation.DirectoryName, "Plugins"));
-
-        // Try reading the startup task config
-        try
-        {
-            Logger.Info("Searching for scheduled startup tasks...");
-            StartupController.Controller.ReadTasks();
-        }
-        catch (Exception e)
-        {
-            Logger.Error($"Reading the startup scheduler configuration failed. Message: {e.Message}");
-        }
-
-        // Execute plugin uninstalls: delete plugin files
-        foreach (var action in StartupController.Controller.DeleteTasks.ToList())
-            try
-            {
-                Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
-                if (!Directory.Exists(action.PluginFolder) ||
-                    action.PluginFolder == Interfacing.ProgramLocation.DirectoryName || Directory
-                        .EnumerateFiles(action.PluginFolder)
-                        .Any(x => x == Interfacing.ProgramLocation.FullName)) continue;
-
-                Logger.Info("Cleaning the plugin folder now...");
-                Directory.Delete(action.PluginFolder, true);
-
-                Logger.Info("Deleting attempted scheduled startup " +
-                            $"{action.GetType()} task with name \"{action.Name}\"...");
-
-                StartupController.Controller.StartupTasks.Remove(action);
-                Logger.Info($"Looks like a startup {action.GetType()} task with " +
-                            $"name \"{action.Name}\" has been executed successfully!");
-            }
-            catch (Exception e)
-            {
-                Logger.Warn(e);
-            }
-
-        // Execute plugin updates: replace plugin files
-        foreach (var action in StartupController.Controller.UpdateTasks.ToList())
-            try
-            {
-                Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
-                if (!Directory.Exists(action.PluginFolder) || !File.Exists(action.UpdatePackage)) continue;
-                Logger.Info($"Found a plugin update package in folder \"{action.PluginFolder}\"");
-
-                Logger.Info("Cleaning the plugin folder now...");
-                Directory.GetDirectories(action.PluginFolder).ToList().ForEach(x => Directory.Delete(x, true));
-                Directory.GetFiles(action.PluginFolder, "*.*", SearchOption.AllDirectories)
-                    .Where(x => x != action.UpdatePackage).ToList().ForEach(File.Delete);
-
-                Logger.Info("Unpacking the new plugin from its archive...");
-                ZipFile.ExtractToDirectory(action.UpdatePackage, action.PluginFolder, true);
-
-                Logger.Info("Deleting the plugin update package...");
-                File.Delete(action.UpdatePackage); // Cleanup after the update
-
-                Logger.Info("Deleting attempted scheduled startup " +
-                            $"{action.GetType()} task with name \"{action.Name}\"...");
-
-                StartupController.Controller.StartupTasks.Remove(action);
-                Logger.Info($"Looks like a startup {action.GetType()} task with " +
-                            $"name \"{action.Name}\" has been executed successfully!");
-            }
-            catch (Exception e)
-            {
-                Logger.Warn(e);
-            }
+        // Start the main program loop
+        _ = Task.Run(Main.MainLoop);
 
         // Search the "Plugins" sub-directory for assemblies that match the imports.
         // Iterate over all directories in .\Plugins dir and add all * dirs to catalogs
@@ -1064,7 +881,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppData.Settings.CheckSettings();
 
         // Second check and try after 3 seconds
-        Task.Run(() =>
+        _ = Task.Run(() =>
         {
             // The Base device
             if (!AppPlugins.BaseTrackingDevice.IsInitialized)
@@ -1074,6 +891,67 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             AppData.Settings.OverrideDevicesGuidMap
                 .Where(x => !AppPlugins.GetDevice(x).Device.IsInitialized).ToList()
                 .ForEach(device => AppPlugins.GetDevice(device).Device.Initialize());
+        });
+
+        Logger.Info("Pushing control pages the global collection...");
+        Shared.Main.Pages = new List<(string Tag, Type Page)>
+        {
+            ("general", typeof(General)),
+            ("settings", typeof(Settings)),
+            ("devices", typeof(Devices)),
+            ("info", typeof(Info)),
+            ("plugins", typeof(Pages.Plugins))
+        };
+
+        Logger.Info($"Setting up shared events for '{GetType().FullName}'...");
+        RequestUpdateEvent += (_, _) => DownloadUpdates();
+
+        Logger.Info("Registering a detached binary semaphore " +
+                    $"reload handler for '{GetType().FullName}'...");
+
+        // Reload watchdog
+        _ = Task.Run(() =>
+        {
+            Shared.Events.ReloadMainWindowEvent =
+                new ManualResetEvent(false);
+
+            while (true)
+            {
+                // Wait for a reload signal (blocking)
+                Shared.Events.ReloadMainWindowEvent.WaitOne();
+
+                // Reload & restart the waiting loop
+                if (_mainPageLoadedOnce)
+                    Shared.Main.DispatcherQueue.TryEnqueue(MainGrid_LoadedHandler);
+
+                // Rebuild devices' settings
+                // (Trick the device into rebuilding its interface)
+                AppPlugins.TrackingDevicesList.Values.ToList()
+                    .ForEach(plugin => plugin.OnLoad());
+
+                // Reset the event
+                Shared.Events.ReloadMainWindowEvent.Reset();
+            }
+        });
+
+        // Refresh watchdog
+        _ = Task.Run(() =>
+        {
+            Shared.Events.RefreshMainWindowEvent =
+                new ManualResetEvent(false);
+
+            while (true)
+            {
+                // Wait for a reload signal (blocking)
+                Shared.Events.RefreshMainWindowEvent.WaitOne();
+
+                // Reload & restart the waiting loop
+                if (_mainPageLoadedOnce)
+                    Shared.Main.DispatcherQueue.TryEnqueue(() => OnPropertyChanged());
+
+                // Reset the event
+                Shared.Events.RefreshMainWindowEvent.Reset();
+            }
         });
 
         // Update the UI
@@ -1136,6 +1014,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         externalWatcher.Renamed += OnWatcherOnChanged;
 
         // Check settings once again and save
+        AppSettings.DoNotSaveSettings = false;
         AppData.Settings.CheckSettings();
         AppData.Settings.SaveSettings();
 
@@ -1172,6 +1051,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private void MainGrid_Loaded(object sender, RoutedEventArgs e)
     {
+        if (!_mainPageInitFinished) return; // Don't care
+
         // Load theme config
         Shared.Main.MainNavigationView.XamlRoot.Content.As<Grid>().RequestedTheme =
             AppData.Settings.AppTheme switch
@@ -1678,6 +1559,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private async void NavView_Loaded(object sender, RoutedEventArgs e)
     {
+        if (!_mainPageInitFinished) return; // Don't care
         Interfacing.ActualTheme = NavView.ActualTheme;
 
         Shared.Main.AppWindow.TitleBar.ButtonForegroundColor =
@@ -1819,7 +1701,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Mark as handled
         Interfacing.IsExitPending = true;
-        
+
         // Run shutdown tasks
         await ShutdownController.ExecuteAllTasks();
 

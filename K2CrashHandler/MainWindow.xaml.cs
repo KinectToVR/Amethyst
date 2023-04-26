@@ -318,6 +318,9 @@ public sealed partial class MainWindow : Window
 
         // (Second try ...but first)
         Activate();
+
+        // Another one
+        AppWindow.Show(true);
         
         // And show it (forcibly)
         SetForegroundWindow(WindowNative

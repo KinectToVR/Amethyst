@@ -248,6 +248,12 @@
   "/InfoPage/Telemetry/Toggle/On": "Data collection is enabled",
   "/InfoPage/Telemetry/Toggle/Off": "Data collection is disabled",
 
+  "/BlockedPage/Buttons/Kill": "End task",
+  "/BlockedPage/Buttons/Skip": "Skip updating {0}",
+  "/BlockedPage/Headers/Blocked": "Couldn't update {0}!",
+  "/BlockedPage/Contents/Blocked": "Some processes are blocking {0} from being updated automatically, please shut them down manually, kill each process using the button next to it, or skip updating {0} for now.",
+  "/BlockedPage/Flyouts/Elevated/Notice": "This process is currently running with administrator privileges, \nAmethyst will need to ask for additional permissions to kill it.",
+
   "/SharedStrings/Buttons/Devices": "Geräte",
   "/SharedStrings/Buttons/General": "Generell",
   "/SharedStrings/Buttons/Help/Developers": "Für Entwickler",

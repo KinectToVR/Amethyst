@@ -28,11 +28,12 @@ public static class Shared
             ReloadSettingsPageEvent,
             ReloadDevicesPageEvent,
             ReloadInfoPageEvent,
-            ReloadPluginsPageEvent;
+            ReloadPluginsPageEvent,
+            ReloadVendorPagesEvent = new(false);
 
         public static readonly ManualResetEvent
             StartMainLoopEvent = new(false);
-        
+
         public static void RequestInterfaceReload(bool all = true)
         {
             if (!General.GeneralTabSetupFinished)
@@ -45,6 +46,7 @@ public static class Shared
             ReloadDevicesPageEvent?.Set();
             ReloadInfoPageEvent?.Set();
             ReloadPluginsPageEvent?.Set();
+            ReloadVendorPagesEvent?.Set();
 
             Main.DispatcherQueue?.TryEnqueue(() =>
             {

@@ -624,7 +624,7 @@ public static class Interfacing
     }
 
     // Restart Amethyst
-    public static async Task ExecuteAppRestart()
+    public static async Task ExecuteAppRestart(bool handleExit = true, string parameters = "")
     {
         Logger.Info("Restart requested: trying to restart the app...");
 
@@ -640,12 +640,15 @@ public static class Interfacing
             // Don't execute the exit routine
             IsExitHandled = true;
 
-            // Handle a typical app exit
-            await HandleAppExit(500);
+            if (handleExit) // Handle a typical exit
+                await HandleAppExit(500);
 
             // Restart and exit with code 0
-            Process.Start(ProgramLocation
-                .FullName.Replace(".dll", ".exe"));
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = ProgramLocation.FullName.Replace(".dll", ".exe"),
+                Arguments = parameters // Pass same args
+            });
 
             // Exit without re-handling everything
             Environment.Exit(0);
@@ -653,6 +656,7 @@ public static class Interfacing
 
         // Still here?
         Logger.Fatal(new InvalidDataException("App will not be restarted due to caller process identification error."));
+        if (!handleExit) return;
 
         ShowToast(LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),
             LocalizedJsonString("/SharedStrings/Toasts/RestartFailed"));
