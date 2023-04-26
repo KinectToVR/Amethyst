@@ -926,8 +926,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                 // Rebuild devices' settings
                 // (Trick the device into rebuilding its interface)
-                AppPlugins.TrackingDevicesList.Values.ToList()
-                    .ForEach(plugin => plugin.OnLoad());
+                Shared.Main.DispatcherQueue.TryEnqueue(() =>
+                    AppPlugins.TrackingDevicesList.Values.ToList()
+                        .ForEach(plugin => plugin.OnLoad()));
 
                 // Reset the event
                 Shared.Events.ReloadMainWindowEvent.Reset();

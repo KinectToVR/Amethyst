@@ -232,9 +232,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
             AppData.Settings.CheckSettings();
         }
 
-        // Reload offset values
         Logger.Info($"Force refreshing offsets MVVM for page: '{GetType().FullName}'...");
         AppData.Settings.TrackersVector.ToList().ForEach(x => x.OnPropertyChanged());
+        OnPropertyChanged(); // Reload offset values
 
         // Close the pane now
         OffsetsView.DisplayMode = SplitViewDisplayMode.Overlay;

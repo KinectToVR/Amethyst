@@ -538,8 +538,11 @@ public class AppTracker : INotifyPropertyChanged
     // Additionally, this adds the offsets
     public Quaternion GetFullOrientation(RotationTrackingFilterOption? filter = null)
     {
-        return GetFilteredOrientation(filter) * Quaternion.CreateFromYawPitchRoll(
-            OrientationOffset.Y, OrientationOffset.X, OrientationOffset.Z);
+        return GetFilteredOrientation(filter) *
+               Quaternion.CreateFromYawPitchRoll(
+                   OrientationOffset.Y * MathF.PI / 180f,
+                   OrientationOffset.X * MathF.PI / 180f,
+                   OrientationOffset.Z * MathF.PI / 180f);
     }
 
     // Get calibrated position, w/ offsets & filters
@@ -548,10 +551,10 @@ public class AppTracker : INotifyPropertyChanged
         JointPositionTrackingOption? filter = null)
     {
         // Construct the calibrated pose
-        return Vector3.Transform(GetFilteredPosition(filter) -
-                calibrationOrigin ?? Vector3.Zero, calibrationRotation) +
-            calibrationTranslation + calibrationOrigin ?? Vector3.Zero +
-            PositionOffset; // Unwrap, rotate, transform, wrap, offset
+        return Vector3.Transform(GetFilteredPosition(filter) - (
+                   calibrationOrigin ?? Vector3.Zero), calibrationRotation) +
+               calibrationTranslation + (calibrationOrigin ?? Vector3.Zero) +
+               PositionOffset; // Unwrap, rotate, transform, wrap, offset
     }
 
     // Get calibrated orientation, w/ offsets & filters
@@ -568,8 +571,10 @@ public class AppTracker : INotifyPropertyChanged
             rawOrientation = calibrationRotation * rawOrientation;
 
         // Return the calibrated orientation with offset
-        return Quaternion.CreateFromYawPitchRoll(OrientationOffset.Y,
-            OrientationOffset.X, OrientationOffset.Z) * rawOrientation;
+        return Quaternion.CreateFromYawPitchRoll(
+            OrientationOffset.Y * MathF.PI / 180f,
+            OrientationOffset.X * MathF.PI / 180f,
+            OrientationOffset.Z * MathF.PI / 180f) * rawOrientation;
     }
 
     // Get filtered data
