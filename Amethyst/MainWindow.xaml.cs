@@ -1732,7 +1732,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private async void HelpFlyoutDevButton_Click(object sender, RoutedEventArgs e)
     {
-        await Launcher.LaunchUriAsync(new Uri("https://github.com/KinectToVR"));
+        await Launcher.LaunchUriAsync(new Uri($"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/dev/overview/"));
     }
 
     private async void HelpFlyoutLicensesButton_Click(object sender, RoutedEventArgs e)
