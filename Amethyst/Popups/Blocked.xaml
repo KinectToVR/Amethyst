@@ -4,7 +4,7 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Loaded="Page_Loaded"
-      xmlns:icons="using:WinUI.System.Icons"
+      xmlns:icons="using:WinUI.Fluent.Icons"
       xmlns:popups="using:Amethyst.Popups"
       xmlns:util="using:Amethyst.Utils">
 

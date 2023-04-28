@@ -2,8 +2,7 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
-        <TargetOSVersion>net7.0-windows10.0.22621.0</TargetOSVersion>
-        <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+        <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
         <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
         <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
         <RootNamespace>Amethyst</RootNamespace>
@@ -21,7 +20,6 @@
         
         <AppxPackage>false</AppxPackage>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
         <StartupObject>Amethyst.Program</StartupObject>
 
         <ApplicationIcon>Assets\ktvr.ico</ApplicationIcon>
@@ -51,7 +49,7 @@
         <PackageReference Include="RestSharp" Version="108.0.3" />
         <PackageReference Include="System.ComponentModel.Composition" Version="7.0.0" />
         <PackageReference Include="System.ComponentModel.Composition.Registration" Version="7.0.0" />
-        <PackageReference Include="WinUI.System.Icons" Version="0.0.5" />
+        <PackageReference Include="WinUI.Fluent.Icons" Version="0.0.9" />
         <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>
 

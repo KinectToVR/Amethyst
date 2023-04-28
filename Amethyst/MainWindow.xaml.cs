@@ -44,7 +44,7 @@ using Microsoft.Windows.AppNotifications;
 using RestSharp;
 using WinRT;
 using WinRT.Interop;
-using WinUI.System.Icons;
+using WinUI.Fluent.Icons;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

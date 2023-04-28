@@ -10,7 +10,7 @@
     xmlns:mvvm="using:Amethyst.MVVM"
     xmlns:util="using:Amethyst.Utils"
     xmlns:classes="using:Amethyst.Classes"
-    xmlns:icons="using:WinUI.System.Icons"
+    xmlns:icons="using:WinUI.Fluent.Icons"
     Loaded="Page_Loaded" NavigationCacheMode="Required"
     mc:Ignorable="d" Background="Transparent">
 

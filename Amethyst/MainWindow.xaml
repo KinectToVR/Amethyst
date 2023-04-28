@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:util="using:Amethyst.Utils"
-    xmlns:icons="using:WinUI.System.Icons">
+    xmlns:icons="using:WinUI.Fluent.Icons">
 
     <!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
     <Grid Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"

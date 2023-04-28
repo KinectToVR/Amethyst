@@ -2,8 +2,7 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
-        <TargetOSVersion>net7.0-windows10.0.22621.0</TargetOSVersion>
-        <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+        <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
         <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
         <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
         <RootNamespace>K2CrashHandler</RootNamespace>

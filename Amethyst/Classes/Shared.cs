@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
-using WinUI.System.Icons;
+using WinUI.Fluent.Icons;
 
 namespace Amethyst.Classes;
 
