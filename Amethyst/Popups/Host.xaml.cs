@@ -93,7 +93,6 @@ public sealed partial class Host : Window
         _configurationSource = new SystemBackdropConfiguration();
 
         Logger.Info("Setting up activation and theme handlers...");
-        Closed += Window_Closed;
         Activated += Window_Activated;
 
         // Initial configuration state.
@@ -133,28 +132,7 @@ public sealed partial class Host : Window
     {
         _configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
     }
-
-    private void Window_Closed(object sender, WindowEventArgs args)
-    {
-        // Handled(true) means Cancel()
-        // and Handled(false) means Continue()
-        // -> Block exiting until we're done
-        args.Handled = true;
-
-        try
-        {
-            // Call before exiting for subsequent invocations to launch a new process
-            Shared.Main.NotificationManager?.Unregister();
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
-
-        // Finally allow exits
-        args.Handled = false;
-    }
-
+    
     private void SetConfigurationSourceTheme()
     {
         _configurationSource.Theme = Application.Current.RequestedTheme switch

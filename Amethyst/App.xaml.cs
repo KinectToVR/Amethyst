@@ -33,6 +33,8 @@ namespace Amethyst;
 public partial class App : Application
 {
     private MainWindow _mWindow;
+    private bool _canCloseViews = false;
+    private List<Host> _views = new();
 
     /// <summary>
     ///     Initializes the singleton application object.  This is the first line of authored code
@@ -335,88 +337,98 @@ public partial class App : Application
             }
 
         // Execute plugin updates: replace plugin files
-        if (args.Length < 2 || args[1] != "NoUpdate")
-            foreach (var action in StartupController.Controller.UpdateTasks.ToList())
-                try
+        foreach (var action in StartupController.Controller.UpdateTasks.ToList())
+            try
+            {
+                Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
+                if (!Directory.Exists(action.PluginFolder) || !File.Exists(action.UpdatePackage))
                 {
-                    Logger.Info($"Parsing a startup {action.GetType()} task with name \"{action.Name}\"...");
-                    if (!Directory.Exists(action.PluginFolder) || !File.Exists(action.UpdatePackage))
-                    {
-                        StartupController.Controller.StartupTasks.Remove(action);
-                        continue; // Remove the action as it was invalid at this time
-                    }
-
-                    Logger.Info($"Found a plugin update package in folder \"{action.PluginFolder}\"");
-                    Logger.Info("Checking if the plugin folder is not locked...");
-                    if (FileUtils.WhoIsLocking(action.PluginFolder).Any())
-                    {
-                        Logger.Info("Some plugin files are still locked! Showing the update dialog...");
-                        Logger.Info($"Creating a new {typeof(Host)}...");
-                        var dialogWindow = new Host();
-
-                        Logger.Info("Preparing the data regarding the blocking process...");
-                        dialogWindow.Content = new Blocked(new DirectoryInfo(action.PluginFolder).Name,
-                            FileUtils.WhoIsLocking(action.PluginFolder)
-                                .Select(x => new BlockingProcess
-                                {
-                                    ProcessPath = new FileInfo(FileUtils.GetProcessFilename(x) ?? "tmp"),
-                                    Process = x,
-                                    IsElevated = FileUtils.IsProcessElevated(x) && !FileUtils.IsCurrentProcessElevated()
-                                }).ToList())
-                        {
-                            // Also set the parent to close
-                            ParentWindow = dialogWindow
-                        };
-
-                        Logger.Info($"Activating {dialogWindow.GetType()} now...");
-                        dialogWindow.Activate(); // Activate the window now
-
-                        var continueEvent = new SemaphoreSlim(0);
-                        var result = false; // Prepare [out] results for the event handler
-
-                        // Wait for the dialog window to close
-                        dialogWindow.Closed += (sender, _) =>
-                        {
-                            result = (sender as Host)?.Result ?? false;
-                            Logger.Info($"The dialog was closed with result {result}!");
-                            continueEvent.Release(); // Unlock further program execution
-                        };
-
-                        await continueEvent.WaitAsync(); // Wait for the closed event
-                        Logger.Info($"Plugin update conflict resolved with result: {result}! Restarting...");
-                        await Interfacing.ExecuteAppRestart(false, result ? "" : "NoUpdate");
-                    }
-
-                    Logger.Info("Cleaning the plugin folder now...");
-                    Directory.GetDirectories(action.PluginFolder).ToList().ForEach(x => Directory.Delete(x, true));
-                    Directory.GetFiles(action.PluginFolder, "*.*", SearchOption.AllDirectories)
-                        .Where(x => x != action.UpdatePackage).ToList().ForEach(File.Delete);
-
-                    Logger.Info("Unpacking the new plugin from its archive...");
-                    ZipFile.ExtractToDirectory(action.UpdatePackage, action.PluginFolder, true);
-
-                    Logger.Info("Deleting the plugin update package...");
-                    File.Delete(action.UpdatePackage); // Cleanup after the update
-
-                    Logger.Info("Deleting attempted scheduled startup " +
-                                $"{action.GetType()} task with name \"{action.Name}\"...");
-
                     StartupController.Controller.StartupTasks.Remove(action);
-                    Logger.Info($"Looks like a startup {action.GetType()} task with " +
-                                $"name \"{action.Name}\" has been executed successfully!");
+                    continue; // Remove the action as it was invalid at this time
                 }
-                catch (Exception e)
+
+                Logger.Info($"Found a plugin update package in folder \"{action.PluginFolder}\"");
+                Logger.Info("Checking if the plugin folder is not locked...");
+                if (FileUtils.WhoIsLocking(action.PluginFolder).Any())
                 {
-                    Logger.Warn(e);
+                    Logger.Info("Some plugin files are still locked! Showing the update dialog...");
+                    Logger.Info($"Creating a new {typeof(Host)}...");
+                    var dialogWindow = new Host();
+
+                    Logger.Info("Preparing the data regarding the blocking process...");
+                    dialogWindow.Content = new Blocked(new DirectoryInfo(action.PluginFolder).Name,
+                        FileUtils.WhoIsLocking(action.PluginFolder)
+                            .Select(x => new BlockingProcess
+                            {
+                                ProcessPath = new FileInfo(FileUtils.GetProcessFilename(x) ?? "tmp"),
+                                Process = x,
+                                IsElevated = FileUtils.IsProcessElevated(x) && !FileUtils.IsCurrentProcessElevated()
+                            }).ToList())
+                    {
+                        // Also set the parent to close
+                        ParentWindow = dialogWindow
+                    };
+
+                    Logger.Info($"Activating {dialogWindow.GetType()} now...");
+                    dialogWindow.Activate(); // Activate the window now
+
+                    var continueEvent = new SemaphoreSlim(0);
+                    var result = false; // Prepare [out] results for the event handler
+
+                    // Wait for the dialog window to close
+                    dialogWindow.Closed += (sender, arg) =>
+                    {
+                        arg.Handled = !_canCloseViews; // Mark as handled (or not)
+                        if (_canCloseViews) return; // Close if already done...
+
+                        _views.Add(sender as Host); // Add this sender to closable list
+                        result = (sender as Host)?.Result ?? false; // Grab the result
+                        Logger.Info($"The dialog was closed with result {result}!");
+                        continueEvent.Release(); // Unlock further program execution
+                    };
+
+                    await continueEvent.WaitAsync(); // Wait for the closed event
+                    if (!result) continue; // Don't update if not resolved properly (yet)
                 }
-        else
-            Logger.Info("Plugin update skip requested!");
+
+                Logger.Info("Cleaning the plugin folder now...");
+                Directory.GetDirectories(action.PluginFolder).ToList().ForEach(x => Directory.Delete(x, true));
+                Directory.GetFiles(action.PluginFolder, "*.*", SearchOption.AllDirectories)
+                    .Where(x => x != action.UpdatePackage).ToList().ForEach(File.Delete);
+
+                Logger.Info("Unpacking the new plugin from its archive...");
+                ZipFile.ExtractToDirectory(action.UpdatePackage, action.PluginFolder, true);
+
+                Logger.Info("Deleting the plugin update package...");
+                File.Delete(action.UpdatePackage); // Cleanup after the update
+
+                Logger.Info("Deleting attempted scheduled startup " +
+                            $"{action.GetType()} task with name \"{action.Name}\"...");
+
+                StartupController.Controller.StartupTasks.Remove(action);
+                Logger.Info($"Looks like a startup {action.GetType()} task with " +
+                            $"name \"{action.Name}\" has been executed successfully!");
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
+            }
 
         Logger.Info("Creating a new MainWindow view...");
-        _mWindow = new MainWindow();
+        _mWindow = new MainWindow(); // Create a new window
 
         Logger.Info($"Activating {_mWindow.GetType()}...");
-        _mWindow.Activate();
+        _mWindow.Activate(); // Activate the main window
+
+        // Check for any additional work
+        if (!_views.Any()) return;
+
+        Logger.Info($"Waiting for {_mWindow.GetType()} to show up...");
+        await Task.Delay(1000); // Assume this will be enough
+
+        Logger.Info("Closing all other views now...");
+        _canCloseViews = true; // Tell other views they can close
+        _views.ForEach(x => x.Close()); // Try closing each
     }
 
     // Send a non-dismissible tip about reloading the app
